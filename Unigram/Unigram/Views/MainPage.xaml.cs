@@ -833,6 +833,11 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(CreateChannelStep1Page));
         }
 
+        private void NewContact_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(UserCreatePage));
+        }
+
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             NavigationChats.IsChecked = rpMasterTitlebar.SelectedIndex == 0;
@@ -845,6 +850,7 @@ namespace Unigram.Views
             ButtonOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
             //DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex == 0 || rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Collapsed : Visibility.Visible;
             DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
+            NewContact.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void NavigationView_ItemClick(object sender, NavigationViewItemClickEventArgs args)
@@ -872,6 +878,10 @@ namespace Unigram.Views
             else if (args.ClickedItem == NavigationSettings)
             {
                 rpMasterTitlebar.SelectedIndex = 3;
+            }
+            else if (args.ClickedItem == NavigationSavedMessages && ViewModel.Contacts.Self != null)
+            {
+                MasterDetail.NavigationService.NavigateToDialog(ViewModel.Contacts.Self);
             }
             else if (args.ClickedItem == NavigationOfficialChannel)
             {

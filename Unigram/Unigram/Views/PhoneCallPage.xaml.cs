@@ -10,7 +10,9 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -62,7 +64,9 @@ namespace Unigram.Views
 
         private bool _disposed;
 
-        public PhoneCallPage()
+        public ContentDialogBase Dialog { get; set; }
+
+        public PhoneCallPage(bool extend)
         {
             this.InitializeComponent();
 
@@ -113,7 +117,7 @@ namespace Unigram.Views
 
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             //coreTitleBar.IsVisibleChanged += CoreBar_IsVisibleChanged;
-            coreTitleBar.ExtendViewIntoTitleBar = true;
+            coreTitleBar.ExtendViewIntoTitleBar = extend;
 
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -452,11 +456,11 @@ namespace Unigram.Views
         private async void ShowDebugString()
         {
             var result = await VoIPConnection.Current.GetDebugStringAsync();
-            if (result != null)
+            if (result != null && result.Item1 != null)
             {
                 var text = new TextBlock();
                 text.Text = result.Item1;
-                text.Margin = new Thickness(0, 16, 0, 0);
+                text.Margin = new Thickness(12, 16, 12, 0);
                 text.Style = Application.Current.Resources["BodyTextBlockStyle"] as Style;
 
                 var scroll = new ScrollViewer();
@@ -464,11 +468,10 @@ namespace Unigram.Views
                 scroll.VerticalScrollMode = ScrollMode.Auto;
                 scroll.Content = text;
 
-                var dialog = new ContentDialog();
+                var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
                 dialog.Title = $"libtgvoip v{result.Item2}";
                 dialog.Content = scroll;
                 dialog.PrimaryButtonText = "OK";
-                dialog.Style = Application.Current.Resources["FixedContentDialogStyle"] as Style;
                 dialog.Closed += (s, args) =>
                 {
                     _debugDialog = null;

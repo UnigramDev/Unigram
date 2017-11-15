@@ -1,6 +1,8 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -8,8 +10,10 @@ using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -18,7 +22,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-   public class BubbleListView : PaddedListView
+    public class BubbleListView : PaddedListView
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -30,6 +34,7 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(ListView);
 
             Loaded += OnLoaded;
+            SizeChanged += OnSizeChanged;
         }
 
         public void ScrollToBottom()
@@ -40,16 +45,99 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             var panel = ItemsPanelRoot as ItemsStackPanel;
             if (panel != null)
             {
                 ItemsStack = panel;
-                ItemsStack.ItemsUpdatingScrollMode = UpdatingScrollMode == UpdatingScrollMode.KeepItemsInView || UpdatingScrollMode == UpdatingScrollMode.ForceKeepItemsInView
-                    ? ItemsUpdatingScrollMode.KeepItemsInView
-                    : ItemsUpdatingScrollMode.KeepLastItemInView;
                 ItemsStack.SizeChanged += Panel_SizeChanged;
+
+                SetScrollMode();
+            }
+
+            ViewModel.Items.CollectionChanged += OnCollectionChanged;
+
+            if (ScrollingHost.ScrollableHeight < 120 && Items.Count > 0)
+            {
+                if (!ViewModel.IsFirstSliceLoaded)
+                {
+                    await ViewModel.LoadPreviousSliceAsync(false, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
+                }
+
+                await ViewModel.LoadNextSliceAsync();
+            }
+        }
+
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var groups = new Dictionary<long, GroupedMessages>();
+
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    if (item is TLMessage message && message.HasGroupedId && message.GroupedId is long groupedId && ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group))
+                    {
+                        groups[groupedId] = group;
+                    }
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (var item in e.OldItems)
+                {
+                    if (item is TLMessage message && message.HasGroupedId && message.GroupedId is long groupedId && ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group))
+                    {
+                        groups[groupedId] = group;
+                    }
+                }
+            }
+
+            foreach (var group in groups.Values)
+            {
+                foreach (var message in group.Messages)
+                {
+                    var container = ContainerFromItem(message) as BubbleListViewItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    PrepareContainerForItemOverride(container, message);
+                }
+            }
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var previousWidth = Math.Min(Math.Max(e.PreviousSize.Width, 320) - 12 - 52, 320);
+            var previousHeight = Math.Min(Math.Max(e.PreviousSize.Width, 320) - 12 - 52, 420);
+
+            var newWidth = Math.Min(Math.Max(e.NewSize.Width, 320) - 12 - 52, 320);
+            var newHeight = Math.Min(Math.Max(e.NewSize.Width, 320) - 12 - 52, 420);
+
+            if (ItemsStack != null && (newWidth != previousWidth || newHeight != previousHeight))
+            {
+                for (int i = ItemsStack.FirstCacheIndex; i <= ItemsStack.LastCacheIndex; i++)
+                {
+                    var container = ContainerFromIndex(i);
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var message = ItemFromContainer(container) as TLMessage;
+                    if (message == null)
+                    {
+                        continue;
+                    }
+
+                    if (message.HasGroupedId && message.GroupedId is long groupedId)
+                    {
+                        PrepareContainerForItemGrouping(container, message, groupedId);
+                    }
+                }
             }
         }
 
@@ -94,57 +182,164 @@ namespace Unigram.Controls
             }
         }
 
-        #region UpdatingScrollMode
+        private ItemsUpdatingScrollMode? _pendingMode;
+        private bool? _pendingForce;
 
-        public UpdatingScrollMode UpdatingScrollMode
+        public void SetScrollMode()
         {
-            get { return (UpdatingScrollMode)GetValue(UpdatingScrollModeProperty); }
-            set { SetValue(UpdatingScrollModeProperty, value); }
-        }
-
-        public static readonly DependencyProperty UpdatingScrollModeProperty =
-            DependencyProperty.Register("UpdatingScrollMode", typeof(UpdatingScrollMode), typeof(BubbleListView), new PropertyMetadata(UpdatingScrollMode.KeepItemsInView, OnUpdatingScrollModeChanged));
-
-        private static void OnUpdatingScrollModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as BubbleListView;
-            if (sender.ItemsStack != null)
+            if (_pendingMode is ItemsUpdatingScrollMode mode && _pendingForce is bool force)
             {
-                var mode = (UpdatingScrollMode)e.NewValue;
-                if (mode == UpdatingScrollMode.ForceKeepItemsInView)
-                {
-                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
-                }
-                else if (mode == UpdatingScrollMode.ForceKeepLastItemInView)
-                {
-                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
-                }
-                else if (mode == UpdatingScrollMode.KeepItemsInView && sender.ScrollingHost.VerticalOffset < 120)
-                {
-                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
-                }
-                else if (mode == UpdatingScrollMode.KeepLastItemInView && sender.ScrollingHost.ScrollableHeight - sender.ScrollingHost.VerticalOffset < 120)
-                {
-                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
-                }
+                _pendingMode = null;
+                _pendingForce = null;
+
+                SetScrollMode(mode, force);
             }
         }
 
-        #endregion
+        public void SetScrollMode(ItemsUpdatingScrollMode mode, bool force)
+        {
+            var panel = ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null)
+            {
+                _pendingMode = mode;
+                _pendingForce = force;
 
-        private int count;
+                return;
+            }
+
+            var scroll = ScrollingHost;
+            if (scroll == null)
+            {
+                _pendingMode = mode;
+                _pendingForce = force;
+
+                return;
+            }
+
+            if (mode == ItemsUpdatingScrollMode.KeepItemsInView && (force || scroll.VerticalOffset < 120))
+            {
+                Debug.WriteLine("Changed scrolling mode to KeepItemsInView");
+
+                panel.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+            }
+            else if (mode == ItemsUpdatingScrollMode.KeepLastItemInView && (force || scroll.ScrollableHeight - scroll.VerticalOffset < 120))
+            {
+                Debug.WriteLine("Changed scrolling mode to KeepLastItemInView");
+
+                panel.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+            }
+        }
+
         protected override DependencyObject GetContainerForItemOverride()
         {
-            //Debug.WriteLine($"New listview item: {++count}");
             return new BubbleListViewItem(this);
         }
-    }
 
-    public enum UpdatingScrollMode
-    {
-        KeepItemsInView,
-        ForceKeepItemsInView,
-        KeepLastItemInView,
-        ForceKeepLastItemInView
+        protected override bool PrepareContainerForItemGrouping(DependencyObject element, TLMessage message, long groupedId)
+        {
+            var container = element as BubbleListViewItem;
+            if (container == null)
+            {
+                return false;
+            }
+
+            if (ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group) && 
+                group.Positions.TryGetValue(message, out GroupedMessagePosition position) && 
+                group.Messages.Count > 1)
+            {
+                var messageId = message.RandomId ?? message.Id;
+
+                var photo = message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost);
+
+                var width = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 320);
+                var height = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 420);
+
+                container.HorizontalAlignment = message.IsOut ? HorizontalAlignment.Right : HorizontalAlignment.Left;
+                container.Width = position.Width / 800d * width;
+                container.Height = position.Height * height;
+
+                container.Width -= 2;
+                container.Height -= 2;
+
+                double maxWidth = group.Width;
+
+                double left = group.Width;
+                double top = 0;
+
+                for (int i = 0; i < group.Messages.Count; i++)
+                {
+                    var msg = group.Messages[i];
+                    var pos = group.Positions[msg];
+                    var msgId = msg.RandomId ?? msg.Id;
+
+                    if (msgId > messageId && pos.MinY == position.MinY && message.IsOut)
+                    {
+                        left -= pos.Width;
+                    }
+                    else if (msgId < messageId && pos.MinY == position.MinY && !message.IsOut)
+                    {
+                        left -= pos.Width;
+                    }
+
+                    if (msgId < messageId && pos.MinY == position.MinY)
+                    {
+                        top = pos.Height * 2 - position.Height;
+                    }
+
+                    if (msgId <= messageId && i > 0 && (position.SpanSize == 800 || position.SpanSize == 1000) && ((position.Flags & 1) == 0 || (position.Flags & 2) == 0))
+                    {
+                        if (i == 1)
+                        {
+                            top = group.Positions[group.Messages[0]].Height * 2 - pos.Height;
+                        }
+                        else if (i > 1)
+                        {
+                            top = top - group.Positions[group.Messages[i - 1]].Height - pos.Height;
+                        }
+                    }
+                }
+
+                if (position.SpanSize == 800 || position.SpanSize == 1000)
+                {
+                    left = message.IsOut ? maxWidth : position.Width;
+                }
+
+                left = (maxWidth - left) / 800d * width;
+                top = message == group.Messages[0] ? message.IsFirst ? 2d : -2d : -top * height;
+
+                if (message.IsOut)
+                {
+                    container.Margin = new Thickness(2, 2 + top, 12 + left, position.IsLast ? 2 : 0);
+                }
+                else
+                {
+                    container.Margin = new Thickness(photo ? position.IsLast ? 0 : 52 + left : 12 + left, 2 + top, 2, position.IsLast ? 4 : 0);
+                }
+
+                if (message == group.Messages[0] && ((message.HasReplyToMsgId && message.ReplyToMsgId.HasValue) || (message.HasFwdFrom && message.FwdFrom != null) || (message.HasViaBotId && message.ViaBotId.HasValue)))
+                {
+                    var add = message.HasReplyToMsgId && message.ReplyToMsgId.HasValue ? 50 : 26;
+                    container.Padding = new Thickness(0, add, 0, 0);
+                    container.ContentMargin = new Thickness(0, -add, 0, 0);
+                    container.Height += add;
+                }
+                else if (position.IsLast && photo)
+                {
+                    var add = left + 52;
+                    container.Padding = new Thickness(add, 0, 0, 0);
+                    container.ContentMargin = new Thickness(-add, 0, 0, 0);
+                    container.Width += add;
+                }
+                else
+                {
+                    container.Padding = new Thickness();
+                    container.ContentMargin = new Thickness();
+                }
+
+                return true;
+            }
+
+            return false;
+        }
     }
 }

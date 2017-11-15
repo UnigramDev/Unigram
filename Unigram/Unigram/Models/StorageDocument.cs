@@ -10,8 +10,13 @@ namespace Unigram.Models
     public class StorageDocument : StorageMedia
     {
         public StorageDocument(StorageFile file)
-            : base(file)
+            : base(file, null)
         {
+        }
+
+        public override StorageMedia Clone()
+        {
+            throw new NotImplementedException();
         }
     }
 }

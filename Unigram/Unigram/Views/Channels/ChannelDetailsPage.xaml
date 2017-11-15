@@ -87,7 +87,7 @@
 
                     <controls:HyperButton Tag="Link"
                                           Command="{x:Bind ViewModel.UsernameCommand}"
-                                          Content="{x:Bind ViewModel.Item.Username, Mode=OneWay, Converter={StaticResource UsernameToLinkConverter}}"
+                                          Content="{x:Bind ViewModel.Item.Username, Mode=OneWay, Converter={StaticResource MeUrlPrefixConverter}}"
                                           Visibility="{x:Bind ViewModel.Item.Username, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                           Style="{StaticResource SubtitleButtonStyle}"/>
 
@@ -97,7 +97,7 @@
                                               Style="{StaticResource BadgeButtonStyle}"/>
 
                         <ToggleSwitch Header="Notifications"
-                                      IsOn="{x:Bind ViewModel.AreNotificationsEnabled, Mode=OneWay}"
+                                      IsOn="{x:Bind ViewModel.IsMuted, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                       Style="{ThemeResource CheckButtonStyle}"
                                       Toggled="Notifications_Toggled"/>
 

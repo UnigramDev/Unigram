@@ -343,8 +343,7 @@ namespace Unigram.Converters
         public string DateExtended(int value)
         {
             var clientDelta = MTProtoService.Current.ClientTicksDelta;
-            var utc0SecsLong = value * 4294967296 - clientDelta;
-            var utc0SecsInt = utc0SecsLong / 4294967296.0;
+            var utc0SecsInt = value - clientDelta / 4294967296.0;
             var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
 
             //Today
@@ -382,8 +381,7 @@ namespace Unigram.Converters
         public DateTime DateTime(int value)
         {
             var clientDelta = MTProtoService.Current.ClientTicksDelta;
-            var utc0SecsLong = value * 4294967296 - clientDelta;
-            var utc0SecsInt = utc0SecsLong / 4294967296.0;
+            var utc0SecsInt = value - clientDelta / 4294967296.0;
             var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
 
             return dateTime;

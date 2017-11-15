@@ -6,11 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    Style="{StaticResource ModernContentDialogStyle}"
     Title="Delete"
     PrimaryButtonText="Delete"
     SecondaryButtonText="Cancel">
 
-    <StackPanel>
+    <StackPanel Padding="12,0">
         <TextBlock Text="Do you want to delete this message?" Margin="0,16,0,0" Style="{StaticResource BodyTextBlockStyle}"/>
         <CheckBox x:Name="BanUserCheck" Content="Ban user" Margin="0,24,0,0"/>
         <CheckBox x:Name="ReportSpamCheck" Content="Report Spam"/>

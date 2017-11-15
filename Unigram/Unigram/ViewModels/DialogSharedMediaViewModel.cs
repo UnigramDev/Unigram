@@ -129,13 +129,13 @@ namespace Unigram.ViewModels
             var photo = messageBase.GetPhoto();
             if (photo?.Full is TLPhotoSize photoSize)
             {
-                await TLFileHelper.SavePhotoAsync(photoSize, messageBase.Date);
+                await TLFileHelper.SavePhotoAsync(photoSize, messageBase.Date, false);
             }
 
             var document = messageBase.GetDocument();
             if (document != null)
             {
-                await TLFileHelper.SaveDocumentAsync(document, messageBase.Date);
+                await TLFileHelper.SaveDocumentAsync(document, messageBase.Date, false);
             }
         }
 

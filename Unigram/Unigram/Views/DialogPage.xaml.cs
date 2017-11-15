@@ -478,9 +478,16 @@ namespace Unigram.Views
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.With is TLUserBase)
+            if (ViewModel.With is TLUser user)
             {
-                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), ViewModel.Peer.ToPeer());
+                if (user.IsSelf)
+                {
+                    ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage), ViewModel.Peer);
+                }
+                else
+                {
+                    ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), ViewModel.Peer.ToPeer());
+                }
             }
             else if (ViewModel.With is TLChannel)
             {
@@ -542,8 +549,14 @@ namespace Unigram.Views
                 flyout.Hide();
             }
 
-            ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia>(ViewModel.MediaLibrary), e.Item);
-            //ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
+            if (e.IsLocal)
+            {
+                ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
+            }
+            else
+            {
+                ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia>(ViewModel.MediaLibrary), e.Item);
+            }
         }
 
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
@@ -571,6 +584,7 @@ namespace Unigram.Views
             if (package.Contains(StandardDataFormats.Bitmap))
             {
                 var bitmap = await package.GetBitmapAsync();
+                var media = new ObservableCollection<StorageMedia>();
                 var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
 
                 using (var stream = await bitmap.OpenReadAsync())
@@ -580,9 +594,11 @@ namespace Unigram.Views
                     var buffer = new byte[(int)stream.Size];
                     reader.ReadBytes(buffer);
                     await FileIO.WriteBytesAsync(cache, buffer);
+
+                    media.Add(await StoragePhoto.CreateAsync(cache, true));
                 }
 
-                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
+                ViewModel.SendMediaExecute(media, media[0]);
             }
             else if (package.Contains(StandardDataFormats.StorageItems))
             {
@@ -614,10 +630,7 @@ namespace Unigram.Views
                 }
                 else if (files.Count > 0)
                 {
-                    foreach (var file in files)
-                    {
-                        ViewModel.SendFileCommand.Execute(file);
-                    }
+                    ViewModel.SendFileExecute(files);
                 }
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
@@ -782,9 +795,40 @@ namespace Unigram.Views
         {
             var control = sender as FrameworkElement;
             var message = control.DataContext as TLMessage;
-            if (message != null && message.HasFromId)
+
+            if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasFromId)
+            {
+                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFrom.FromId.Value });
+            }
+            else if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasChannelId)
+            {
+                ViewModel.NavigationService.NavigateToDialog(message.FwdFromChannel);
+            }
+            else if (message != null && message.HasFromId)
             {
                 ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FromId.Value });
+            }
+        }
+
+        private void View_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var message = button.DataContext as TLMessage;
+
+            if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasSavedFromPeer && message.FwdFrom.SavedFromPeer != null && message.FwdFrom.HasSavedFromMsgId && message.FwdFrom.SavedFromMsgId != null)
+            {
+                ITLDialogWith with = null;
+                if (message.FwdFrom.SavedFromPeer is TLPeerUser user)
+                    with = InMemoryCacheService.Current.GetUser(user.UserId);
+                else if (message.FwdFrom.SavedFromPeer is TLPeerChat chat)
+                    with = InMemoryCacheService.Current.GetChat(chat.ChatId);
+                else if (message.FwdFrom.SavedFromPeer is TLPeerChannel channel)
+                    with = InMemoryCacheService.Current.GetChat(channel.ChannelId);
+
+                if (with != null)
+                {
+                    ViewModel.NavigationService.NavigateToDialog(with, message: message.FwdFrom.SavedFromMsgId);
+                }
             }
         }
 
@@ -825,6 +869,7 @@ namespace Unigram.Views
 
             CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, AppResources.MessageSaveGIF);
             CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, AppResources.MessageSaveMedia);
+            //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, AppResources.MessageSaveDownload);
 
             //sender.ContextFlyout = menu;
 
@@ -878,7 +923,7 @@ namespace Unigram.Views
 
         private Visibility MessagePin_Loaded(TLMessageCommonBase messageCommon)
         {
-            if (messageCommon is TLMessage message && message.Parent is TLChannel channel && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages)) && !channel.IsBroadcast)
+            if (messageCommon is TLMessage message && message.Parent is TLChannel channel && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages)))
             {
                 if (message.ToId is TLPeerChannel)
                 {
@@ -1090,6 +1135,27 @@ namespace Unigram.Views
             return Visibility.Collapsed;
         }
 
+        private Visibility MessageSaveDownload_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon is TLMessage message)
+            {
+                if (message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+                {
+                    return webPage.HasDocument || webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+
+            return Visibility.Collapsed;
+        }
+
         private Visibility MessageSaveGIF_Loaded(TLMessageCommonBase messageCommon)
         {
             if (messageCommon is TLMessage message)
@@ -1125,6 +1191,11 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void Media_Click(object sender, RoutedEventArgs e)
+        {
+            Media.Download_Click(sender as FrameworkElement, null);
+        }
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
@@ -1700,12 +1771,109 @@ namespace Unigram.Views
         {
             ViewModel.ReadMentionsCommand.Execute();
         }
+
+        private void Media_Loaded(object sender, RoutedEventArgs e)
+        {
+            Media_DataContextChanged(sender as FrameworkElement, null);
+        }
+
+        private void Media_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            var message = sender.DataContext as TLMessage;
+            if (message == null)
+            {
+                return;
+            }
+
+            var groupedId = message.GroupedId ?? 0;
+
+            if (ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group) &&
+                group.Positions.TryGetValue(message, out GroupedMessagePosition position) &&
+                group.Messages.Count > 1)
+            {
+                var background = sender.FindName("Background") as FrameworkElement;
+                var header = sender.FindName("Header") as FrameworkElement;
+                var footer = sender.FindName("Footer") as FrameworkElement;
+                var media = sender.FindName("Media") as FrameworkElement;
+                var photo = sender.FindName("PhotoBubble") as FrameworkElement;
+
+                var width = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 320);
+                var height = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 420);
+
+                var maxWidth = group.Width / 800d * width;
+                var maxHeight = group.Height * height;
+
+                media.Width = position.Width / 800d * width;
+                media.Height = position.Height * height;
+
+                media.Width -= 2;
+                media.Height -= 2;
+
+                if (message == group.Messages[0] && ((message.HasReplyToMsgId && message.ReplyToMsgId.HasValue) || (message.HasFwdFrom && message.FwdFrom != null) || (message.HasViaBotId && message.ViaBotId.HasValue)))
+                {
+                    var refresh = false;
+                    if (message.IsOut && sender.Resources.MergedDictionaries.IsEmpty())
+                    {
+                        sender.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/AccentOut.xaml") });
+                        refresh = true;
+                    }
+                    else if (!message.IsOut && sender.Resources.MergedDictionaries.Count > 0)
+                    {
+                        sender.Resources.MergedDictionaries.Clear();
+                        refresh = true;
+                    }
+
+                    if (refresh)
+                    { 
+                        sender.RequestedTheme = ElementTheme.Dark;
+                        sender.RequestedTheme = ElementTheme.Default;
+                    }
+
+                    header.Width = maxWidth - 2;
+                    header.Margin = new Thickness(0, 0, -(maxWidth - (position.Width / 800d * width)), 0);
+
+                    var add = message.HasReplyToMsgId && message.ReplyToMsgId.HasValue ? 50 : 26;
+
+                    background.Width = maxWidth - 2;
+                    background.Height = maxHeight + add - 2;
+                    background.Margin = new Thickness(0, 0, -(maxWidth - (position.Width / 800d * width)), -(maxHeight + add - ((position.Height * height) + add)));
+
+                    header.Visibility = Visibility.Visible;
+                    background.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    header.Visibility = Visibility.Collapsed;
+                    background.Visibility = Visibility.Collapsed;
+                }
+
+                if (position.IsLast)
+                {
+                    photo.Height = message.IsOut && !message.IsSaved() ? 0 : 32;
+                    footer.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    photo.Height = 0;
+                    footer.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private void ItemsStackPanel_Loading(FrameworkElement sender, object args)
+        {
+            Messages.SetScrollMode();
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
     {
+        public StorageLibrary Library { get; private set; }
         public StorageFileQueryResult Query { get; private set; }
-        public uint StartIndex { get; private set; }
+
+        private readonly StorageMediaComparer _comparer;
+
+        private uint _startIndex;
 
         public MediaLibraryCollection()
         {
@@ -1714,12 +1882,19 @@ namespace Unigram.Views
                 return;
             }
 
-            var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
-            queryOptions.FolderDepth = FolderDepth.Deep;
+            _comparer = new StorageMediaComparer();
 
-            Query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
-            Query.ContentsChanged += OnContentsChanged;
-            StartIndex = 0;
+            Task.Run(async () =>
+            {
+                Library = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
+                Library.ChangeTracker.Enable();
+
+                var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
+                queryOptions.FolderDepth = FolderDepth.Deep;
+
+                Query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
+                Query.ContentsChanged += OnContentsChanged;
+            });
         }
 
         private int _selectedCount;
@@ -1731,24 +1906,118 @@ namespace Unigram.Views
             }
         }
 
-        private void OnContentsChanged(IStorageQueryResultBase sender, object args)
+        private async void OnContentsChanged(IStorageQueryResultBase sender, object args)
         {
-            Execute.BeginOnUIThread(() =>
+            var reader = Library.ChangeTracker.GetChangeReader();
+            var changes = await reader.ReadBatchAsync();
+
+            foreach (StorageLibraryChange change in changes)
             {
-                StartIndex = 0;
-                Clear();
-                UpdateCount();
-            });
+                if (change.ChangeType == StorageLibraryChangeType.ChangeTrackingLost)
+                {
+                    // Change tracker is in an invalid state and must be reset
+                    // This should be a very rare case, but must be handled
+                    Library.ChangeTracker.Reset();
+                    return;
+                }
+                if (change.IsOfType(StorageItemTypes.File))
+                {
+                    await ProcessFileChange(change);
+                }
+                else if (change.IsOfType(StorageItemTypes.Folder))
+                {
+                    // No-op; not interested in folders
+                }
+                else
+                {
+                    if (change.ChangeType == StorageLibraryChangeType.Deleted)
+                    {
+                        //UnknownItemRemoved(change.Path);
+                    }
+                }
+            }
+
+            // Mark that all the changes have been seen and for the change tracker
+            // to never return these changes again
+            await reader.AcceptChangesAsync();
+        }
+
+        private async Task ProcessFileChange(StorageLibraryChange change)
+        {
+            switch (change.ChangeType)
+            {
+                // New File in the Library
+                case StorageLibraryChangeType.Created:
+                case StorageLibraryChangeType.MovedIntoLibrary:
+                case StorageLibraryChangeType.MovedOrRenamed:
+                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var file = (StorageFile)(await change.GetStorageItemAsync());
+
+                        Execute.BeginOnUIThread(async () =>
+                        {
+                            var storage = await StorageMedia.CreateAsync(file, false);
+                            if (storage != null)
+                            {
+                                var array = this.ToArray();
+                                var index = Array.BinarySearch(array, storage, _comparer);
+                                if (index < 0) index = ~index;
+
+                                // Insert only if newer than the last item
+                                if (index < array.Length || !HasMoreItems)
+                                {
+                                    _startIndex++;
+
+                                    Insert(index, storage);
+                                    storage.PropertyChanged += OnPropertyChanged;
+                                }
+                            }
+                        });
+                    }
+                    break;
+                // File Removed From Library
+                case StorageLibraryChangeType.Deleted:
+                case StorageLibraryChangeType.MovedOutOfLibrary:
+                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            var already = this.FirstOrDefault(x => x.File.Path.Equals(change.Path));
+                            if (already != null)
+                            {
+                                _startIndex--;
+
+                                Remove(already);
+                                UpdateSelected();
+                            }
+                        });
+                    }
+                    break;
+                // Modified Contents
+                case StorageLibraryChangeType.ContentsChanged:
+                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var file = (StorageFile)(await change.GetStorageItemAsync());
+
+                        // Update thumbnail maybe
+                    }
+                    break;
+                // Ignored Cases
+                case StorageLibraryChangeType.EncryptionChanged:
+                case StorageLibraryChangeType.ContentsReplaced:
+                case StorageLibraryChangeType.IndexingStatusChanged:
+                default:
+                    // These are safe to ignore in this application
+                    break;
+            }
         }
 
         public override async Task<IList<StorageMedia>> LoadDataAsync()
         {
             var items = new List<StorageMedia>();
-            uint resultCount = 0;
-            var result = await Query.GetFilesAsync(StartIndex, 10);
-            StartIndex += (uint)result.Count;
+            var result = await Query.GetFilesAsync(_startIndex, 10);
 
-            resultCount = (uint)result.Count;
+            _startIndex += (uint)result.Count;
 
             foreach (var file in result)
             {
@@ -1767,14 +2036,22 @@ namespace Unigram.Views
         {
             if (e.PropertyName.Equals("IsSelected"))
             {
-                UpdateCount();
+                UpdateSelected();
             }
         }
 
-        private void UpdateCount()
+        private void UpdateSelected()
         {
             _selectedCount = this.Count(x => x.IsSelected);
             OnPropertyChanged(new PropertyChangedEventArgs("SelectedCount"));
+        }
+
+        class StorageMediaComparer : IComparer<StorageMedia>
+        {
+            public int Compare(StorageMedia x, StorageMedia y)
+            {
+                return y.Basic.ItemDate.CompareTo(x.Basic.ItemDate);
+            }
         }
     }
 }

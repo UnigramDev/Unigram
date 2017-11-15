@@ -155,6 +155,8 @@ namespace Telegram.Api.TL
                     var channel = Parent as TLChannel;
                     if (channel != null && channel.IsBroadcast)
                         _participant = Parent;
+                    else if (this is TLMessage message && message.IsSaved())
+                        _participant = message.FwdFromUser ?? (ITLDialogWith)message.FwdFromChannel;
                     else
                         _participant = From;
                 }
@@ -282,6 +284,15 @@ namespace Telegram.Api.TL
     public partial class TLMessage
     {
 
+        #region Saved
+
+        public bool IsSaved()
+        {
+            return HasFwdFrom && FwdFrom != null && FwdFrom.HasSavedFromPeer && FwdFrom.SavedFromPeer != null;
+        }
+
+        #endregion
+
         #region Game
 
         public bool IsGame()
@@ -328,7 +339,7 @@ namespace Telegram.Api.TL
 
         public static bool IsGif(TLVector<TLDocumentAttributeBase> attributes, int size)
         {
-            if (size > 0 && size < 10383360)
+            if (/*size > 0 &&*/ size < 10383360)
             {
                 var animated = attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
                 var video = attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
@@ -694,6 +705,8 @@ namespace Telegram.Api.TL
             FromId = m.FromId;
             ToId = m.ToId;
             IsOut = m.IsOut;
+            GroupedId = m.GroupedId;
+            HasGroupedId = m.HasGroupedId;
             if (IsUnread != IsUnread)
             {
                 if (IsUnread)
@@ -773,7 +786,7 @@ namespace Telegram.Api.TL
                     if (oldMediaDocument.Document == null || oldMediaDocument.Document.GetType() != newMediaDocument.Document.GetType())
                     {
                         Media = m.Media;
-                        RaisePropertyChanged("Media");
+                        RaisePropertyChanged(() => Media);
                     }
                     else
                     {
@@ -789,7 +802,7 @@ namespace Telegram.Api.TL
                             var file = Media.File;
 #endif
                             Media = m.Media;
-                            RaisePropertyChanged("Media");
+                            RaisePropertyChanged(() => Media);
                             //Media.IsoFileName = isoFileName;
 #if WP8
                             _media.File = file;

@@ -153,7 +153,7 @@ namespace Unigram.Controls.Views
             }
 
             var title = AppResources.ProxySettingsShareTitle;
-            var link = new Uri(UsernameToLinkConverter.Convert($"socks?{string.Join("&", builder)}"));
+            var link = new Uri(MeUrlPrefixConverter.Convert($"socks?{string.Join("&", builder)}"));
 
             await ShareView.Current.ShowAsync(link, title);
         }

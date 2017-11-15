@@ -76,7 +76,7 @@ namespace Unigram.Views.Channels
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            //ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
+            ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
         }
     }
 }

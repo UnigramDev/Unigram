@@ -101,7 +101,9 @@
     <Compile Include="Common\AdminLogHelper.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\Dialogs\OutputTypingManager.cs" />
+    <Compile Include="Common\LocaleHelper.cs" />
     <Compile Include="Common\MosaicMedia.cs" />
+    <Compile Include="Common\GroupedMessages.cs" />
     <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
     <Compile Include="Common\ImageLoader\ImageLoader.cs" />
     <Compile Include="Common\ImageLoader\ManagedSurface.cs" />
@@ -110,11 +112,14 @@
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\Theme.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
+    <Compile Include="Common\UniqueList.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\ChannelStickersButton.cs" />
     <Compile Include="Controls\DialogBackgroundPresenter.cs" />
+    <Compile Include="Controls\DialogListView.cs" />
+    <Compile Include="Controls\DialogListViewItem.cs" />
     <Compile Include="Controls\DialogSearchToolBar.xaml.cs">
       <DependentUpon>DialogSearchToolBar.xaml</DependentUpon>
     </Compile>
@@ -128,15 +133,24 @@
       <DependentUpon>SharedLinkListViewItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MediaPlayerView.cs" />
+    <Compile Include="Controls\Media\MusicMediaView.xaml.cs">
+      <DependentUpon>MusicMediaView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Media\MusicPlaybackItem.xaml.cs">
+      <DependentUpon>MusicPlaybackItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Media\VoiceMediaView.xaml.cs">
+      <DependentUpon>VoiceMediaView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\HistoryCallMessageControlBase.cs" />
     <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
       <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\InvoiceStatusBar.xaml.cs">
-      <DependentUpon>InvoiceStatusBar.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\InvoiceFooter.xaml.cs">
+      <DependentUpon>InvoiceFooter.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\MessageStatusBar.xaml.cs">
-      <DependentUpon>MessageStatusBar.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\MessageFooter.xaml.cs">
+      <DependentUpon>MessageFooter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MosaicRow.cs" />
     <Compile Include="Controls\NavigationView.cs" />
@@ -164,6 +178,9 @@
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\PeriodTimer.cs" />
+    <Compile Include="Controls\PlaybackHeader.xaml.cs">
+      <DependentUpon>PlaybackHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
     <Compile Include="Controls\SelectGridView.cs" />
@@ -215,6 +232,9 @@
     <Compile Include="Controls\Views\JoinChatView.xaml.cs">
       <DependentUpon>JoinChatView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\PlaybackView.xaml.cs">
+      <DependentUpon>PlaybackView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\ProxyView.xaml.cs">
       <DependentUpon>ProxyView.xaml</DependentUpon>
     </Compile>
@@ -264,6 +284,7 @@
     <Compile Include="Converters\BooleanToIndexConverter.cs" />
     <Compile Include="Converters\ChannelJoinedToVisibilityConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
+    <Compile Include="Converters\ChannelToSummaryConverter.cs" />
     <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
     <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
@@ -274,13 +295,12 @@
     <Compile Include="Converters\MessageShortTTLConverter.cs" />
     <Compile Include="Converters\MessageToShareConverter.cs" />
     <Compile Include="Converters\MessageTTLConverter.cs" />
+    <Compile Include="Converters\MeUrlPrefixConverter.cs" />
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\ProportionsToLabelConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
-    <Compile Include="Converters\UsernameToLinkConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
-    <Compile Include="Helpers\AudioGraphHelper.cs" />
     <Compile Include="Helpers\TLFileHelper.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\StorageDocument.cs" />
@@ -289,6 +309,7 @@
     <Compile Include="Models\StorageVideo.cs" />
     <Compile Include="Selectors\AdminLogTemplateSelector.cs" />
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
+    <Compile Include="Selectors\DialogTemplateSelector.cs" />
     <Compile Include="Selectors\GalleryTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
@@ -297,6 +318,7 @@
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
+    <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\PushService.cs" />
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>
@@ -315,7 +337,6 @@
     <Compile Include="ViewModels\Channels\ChannelBannedRightsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelKickedViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelDetailsViewModel.cs" />
-    <Compile Include="ViewModels\Channels\ChannelEditTypeViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelEditViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelManageViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelParticipantsViewModel.cs" />
@@ -342,6 +363,7 @@
     <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
+    <Compile Include="ViewModels\PlaybackViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsDataAndStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsGeneralViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
@@ -373,6 +395,10 @@
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
+    <Compile Include="Views\Channels\ChannelAdminLogPage.Bubbles.cs">
+      <DependentUpon>ChannelAdminLogPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Channels\ChannelAdminLogPage.xaml.cs">
       <DependentUpon>ChannelAdminLogPage.xaml</DependentUpon>
     </Compile>
@@ -393,9 +419,6 @@
     </Compile>
     <Compile Include="Views\Channels\ChannelEditPage.xaml.cs">
       <DependentUpon>ChannelEditPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Channels\ChannelEditTypePage.xaml.cs">
-      <DependentUpon>ChannelEditTypePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Channels\ChannelBannedPage.xaml.cs">
       <DependentUpon>ChannelBannedPage.xaml</DependentUpon>
@@ -502,6 +525,7 @@
     <Compile Include="Views\Settings\SettingsStickersArchivedPage.xaml.cs">
       <DependentUpon>SettingsStickersArchivedPage.xaml</DependentUpon>
     </Compile>
+    <Content Include="Assets\Audio\silence.mp3" />
     <Content Include="Assets\Audio\voip_busy.mp3" />
     <Content Include="Assets\Audio\voip_connecting.mp3" />
     <Content Include="Assets\Audio\voip_end.mp3" />
@@ -843,7 +867,6 @@
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <Compile Include="Common\Language.cs" />
     <Compile Include="Controls\BubbleBottomButton.cs" />
-    <Compile Include="Controls\DialogsListView.cs" />
     <Compile Include="Controls\GlyphToggleButton.cs" />
     <Compile Include="Controls\ProgressShape.cs" />
     <Compile Include="Controls\ProgressVoice.cs" />
@@ -929,9 +952,6 @@
       <DependentUpon>SharedFileListViewItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MediaControl.cs" />
-    <Compile Include="Controls\Media\VoiceMediaControl.xaml.cs">
-      <DependentUpon>VoiceMediaControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Messages\MessageBubble.xaml.cs">
       <DependentUpon>MessageBubble.xaml</DependentUpon>
     </Compile>
@@ -1087,11 +1107,11 @@
     <Compile Include="Views\Settings\SettingsWallPaperPage.xaml.cs">
       <DependentUpon>SettingsWallPaperPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ShareTargetPage.xaml.cs">
-      <DependentUpon>ShareTargetPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Users\UserCommonChatsPage.xaml.cs">
       <DependentUpon>UserCommonChatsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Users\UserCreatePage.xaml.cs">
+      <DependentUpon>UserCreatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Users\UserDetailsPage.xaml.cs">
       <DependentUpon>UserDetailsPage.xaml</DependentUpon>
@@ -1122,17 +1142,16 @@
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-150.png" />
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-200.png" />
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-400.png" />
-    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-16.png" />
-    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-24.png" />
-    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-256.png" />
-    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-32.png" />
-    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-48.png" />
+    <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-16.png" />
+    <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-24.png" />
+    <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-256.png" />
+    <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-32.png" />
+    <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-48.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-100.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-125.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-150.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-400.png" />
-    <Content Include="Assets\Logos\Placeholder\Placeholder-2.png" />
     <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-100.png" />
     <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-125.png" />
     <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-150.png" />
@@ -1243,17 +1262,33 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Media\MusicMediaView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Media\MusicPlaybackItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Media\VoiceMediaView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Messages\EditedMessageBubble.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Messages\InvoiceStatusBar.xaml">
+    <Page Include="Controls\Messages\InvoiceFooter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Messages\MessageStatusBar.xaml">
+    <Page Include="Controls\Messages\MessageFooter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\PlaybackHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\StartupSwitch.xaml">
       <SubType>Designer</SubType>
@@ -1292,10 +1327,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Items\SharedFileListViewItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Media\VoiceMediaControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1362,6 +1393,10 @@
     <Page Include="Controls\TabHeaderStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Views\PlaybackView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\ProxyView.xaml">
       <SubType>Designer</SubType>
@@ -1468,10 +1503,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Channels\ChannelEditPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Channels\ChannelEditTypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1723,13 +1754,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ShareTargetPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Users\UserCommonChatsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Users\UserCreatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Users\UserDetailsPage.xaml">
       <SubType>Designer</SubType>

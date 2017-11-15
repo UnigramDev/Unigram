@@ -280,7 +280,7 @@ namespace Unigram.ViewModels.Settings
         private async void CopyExecute()
         {
             var dataPackage = new DataPackage();
-            dataPackage.SetText(UsernameToLinkConverter.Convert(_username));
+            dataPackage.SetText(MeUrlPrefixConverter.Convert(_username));
             ClipboardEx.TrySetContent(dataPackage);
 
             await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();

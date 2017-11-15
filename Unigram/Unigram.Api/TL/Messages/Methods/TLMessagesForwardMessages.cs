@@ -15,11 +15,13 @@ namespace Telegram.Api.TL.Messages.Methods
 			Silent = (1 << 5),
 			Background = (1 << 6),
 			WithMyScore = (1 << 8),
+			Grouped = (1 << 9),
 		}
 
 		public bool IsSilent { get { return Flags.HasFlag(Flag.Silent); } set { Flags = value ? (Flags | Flag.Silent) : (Flags & ~Flag.Silent); } }
 		public bool IsBackground { get { return Flags.HasFlag(Flag.Background); } set { Flags = value ? (Flags | Flag.Background) : (Flags & ~Flag.Background); } }
 		public bool IsWithMyScore { get { return Flags.HasFlag(Flag.WithMyScore); } set { Flags = value ? (Flags | Flag.WithMyScore) : (Flags & ~Flag.WithMyScore); } }
+		public bool IsGrouped { get { return Flags.HasFlag(Flag.Grouped); } set { Flags = value ? (Flags | Flag.Grouped) : (Flags & ~Flag.Grouped); } }
 
 		public Flag Flags { get; set; }
 		public TLInputPeerBase FromPeer { get; set; }

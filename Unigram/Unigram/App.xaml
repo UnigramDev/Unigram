@@ -99,7 +99,9 @@
                     <StaticResource x:Key="NavigationViewSelectionIndicatorForeground" ResourceKey="SystemControlForegroundAccentBrush" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
-            
+
+            <SolidColorBrush x:Key="GridViewItemCheckBrush" Color="White"/>
+
             <x:Double x:Key="PaneToggleButtonSize">48</x:Double>
             <Thickness x:Key="NavigationViewToggleBorderThickness">1</Thickness>
             <Thickness x:Key="NavigationViewItemBorderThickness">2,1</Thickness>
@@ -118,9 +120,6 @@
             <local:ViewModelLocator x:Key="Locator"/>
             <views:MediaLibraryCollection x:Key="MediaLibrary"/>
 
-            <x:String x:Key="MeUrlPrefix">https://t.me/</x:String>
-            <x:String x:Key="MeUrlPrefixShort">t.me/</x:String>
-
             <x:Double x:Key="TelegramLightMediaMaxWidth">200</x:Double>
             <x:Double x:Key="TelegramLightMediaMaxHeight">200</x:Double>
 
@@ -136,7 +135,8 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
-            <converters:UsernameToLinkConverter x:Key="UsernameToLinkConverter"/>
+            <converters:ChannelToSummaryConverter x:Key="ChannelToSummaryConverter"/>
+            <converters:MeUrlPrefixConverter x:Key="MeUrlPrefixConverter"/>
             <converters:GeoLivePeriodConverter x:Key="GeoLivePeriodConverter"/>
             <converters:GeoLiveToVisibilityConverter x:Key="GeoLiveToVisibilityConverter"/>
             <converters:GeoLiveToLabelConverter x:Key="GeoLiveToLabelConverter"/>

@@ -26,7 +26,6 @@ using Telegram.Api.Transport;
 
 namespace Unigram.ViewModels.SignIn
 {
-
     public class SignInViewModel : UnigramViewModelBase
     {
         public SignInViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
@@ -137,7 +136,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public List<KeyedList<string, Country>> Countries { get; } = Country.GroupedCountries;
+        public IList<Country> Countries { get; } = Country.Countries;
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()

@@ -10,6 +10,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Account;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.Strings;
 using Unigram.Views.Settings;
@@ -105,7 +106,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ClearPaymentsCommand { get; }
         private async void ClearPaymentsExecute()
         {
-            var dialog = new ContentDialog();
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
             var checkShipping = new CheckBox { Content = "Shipping info", IsChecked = true };
             var checkPayment = new CheckBox { Content = "Payment info", IsChecked = true };
@@ -120,7 +121,7 @@ namespace Unigram.ViewModels.Settings
             checkPayment.Checked += toggle;
             checkPayment.Unchecked += toggle;
 
-            stack.Margin = new Thickness(0, 16, 0, 0);
+            stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(checkShipping);
             stack.Children.Add(checkPayment);
 
@@ -149,9 +150,9 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand AccountTTLCommand { get; }
         private async void AccountTTLExecute()
         {
-            var dialog = new ContentDialog();
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
-            stack.Margin = new Thickness(0, 16, 0, 0);
+            stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(new RadioButton { Tag = 30,  Content = Language.Declension(1, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });
             stack.Children.Add(new RadioButton { Tag = 90,  Content = Language.Declension(3, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });
             stack.Children.Add(new RadioButton { Tag = 180, Content = Language.Declension(6, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });

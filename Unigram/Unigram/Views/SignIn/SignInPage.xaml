@@ -46,7 +46,7 @@
                        Padding="0,8,0,16"
                        Grid.Row="1"/>
 
-            <ComboBox ItemsSource="{Binding Source={StaticResource Countries}}"
+            <ComboBox ItemsSource="{Binding Countries}"
                       SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
                       Header="Country:"
                       MinWidth="280"
@@ -71,7 +71,7 @@
 
                 <!-- The user can enter their phone number here -->
                 <controls:UpdateTextBox Text="{Binding PhoneCode, Mode=TwoWay}"
-                                        Margin="0,0,12,0"
+                                        Margin="0,0,8,0"
                                         Width="30"
                                         Header="Code:"
                                         InputScope="TelephoneNumber"

@@ -23,7 +23,7 @@ namespace Telegram.Api.TL
             set
             {
                 _uploadingProgress = value;
-                RaisePropertyChanged(() => UploadingProgress);
+                RaisePropertyChanged(() => IsTransferring);
                 RaisePropertyChanged(() => Progress);
             }
         }
@@ -38,7 +38,7 @@ namespace Telegram.Api.TL
             set
             {
                 _downloadingProgress = value;
-                RaisePropertyChanged(() => DownloadingProgress);
+                RaisePropertyChanged(() => IsTransferring);
                 RaisePropertyChanged(() => Progress);
             }
         }
@@ -56,20 +56,11 @@ namespace Telegram.Api.TL
             }
         }
 
-        private bool _isTransferring;
         public bool IsTransferring
         {
             get
             {
-                return _isTransferring;
-            }
-            set
-            {
-                if (_isTransferring != value)
-                {
-                    _isTransferring = value;
-                    RaisePropertyChanged(() => IsTransferring);
-                }
+                return (_downloadingProgress > 0 && _downloadingProgress < 1) || (_uploadingProgress > 0 && _uploadingProgress < 1);
             }
         }
 
@@ -77,11 +68,10 @@ namespace Telegram.Api.TL
 
         public Progress<double> Download()
         {
-            IsTransferring = true;
+            DownloadingProgress = double.Epsilon;
 
             return new Progress<double>((value) =>
             {
-                IsTransferring = value < 1 && value > 0;
                 DownloadingProgress = value;
                 Debug.WriteLine(value);
             });
@@ -89,11 +79,10 @@ namespace Telegram.Api.TL
 
         public Progress<double> Upload()
         {
-            IsTransferring = true;
+            UploadingProgress = double.Epsilon;
 
             return new Progress<double>((value) =>
             {
-                IsTransferring = value < 1 && value > 0;
                 UploadingProgress = value;
                 Debug.WriteLine(value);
             });

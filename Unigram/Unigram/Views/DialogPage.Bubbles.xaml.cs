@@ -46,7 +46,7 @@ using Unigram.Common;
 
 namespace Unigram.Views
 {
-    public partial class DialogPage : Page
+    public partial class DialogPage : Page, IGifPlayback
     {
         private ItemsStackPanel _panel;
         private Dictionary<string, MediaPlayerItem> _old = new Dictionary<string, MediaPlayerItem>();
@@ -55,14 +55,14 @@ namespace Unigram.Views
         {
             if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 120)
             {
-                if (ViewModel.IsFirstSliceLoaded)
-                {
-                    ViewModel.UpdatingScrollMode = UpdatingScrollMode.KeepLastItemInView;
-                }
-                else
-                {
-                    ViewModel.UpdatingScrollMode = UpdatingScrollMode.ForceKeepItemsInView;
-                }
+                //if (ViewModel.IsFirstSliceLoaded)
+                //{
+                //    Messages.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, false);
+                //}
+                //else
+                //{
+                //    Messages.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                //}
 
                 Arrow.Visibility = Visibility.Collapsed;
             }
@@ -296,7 +296,9 @@ namespace Unigram.Views
                 {
                     var player = new MediaPlayer();
                     player.AutoPlay = true;
+                    player.IsMuted = true;
                     player.IsLoopingEnabled = true;
+                    player.CommandManager.IsEnabled = false;
                     player.Source = MediaSource.CreateFromUri(new Uri(item));
 
                     var presenter = new MediaPlayerView();
@@ -305,7 +307,7 @@ namespace Unigram.Views
                     presenter.Constraint = container.DataContext;
 
                     news[item].Presenter = presenter;
-                    container.Children.Insert(news[item].Watermark ? 3 : 3, presenter);
+                    container.Children.Insert(news[item].Watermark ? 2 : 2, presenter);
                 }
 
                 _old.Add(item, news[item]);
@@ -427,6 +429,11 @@ namespace Unigram.Views
             }
             else if (messageBase is TLMessage message)
             {
+                if (message.HasGroupedId && message.GroupedId is long groupedId && ViewModel.GroupedItems != null && ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group) && group.Messages.Count > 1)
+                {
+                    return message.Media is TLMessageMediaPhoto ? "GroupedPhotoTemplate" : "GroupedVideoTemplate";
+                }
+
                 if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
                 {
                     return "ServiceMessageTemplate";
@@ -434,6 +441,11 @@ namespace Unigram.Views
                 else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
                 {
                     return "ServiceMessageTemplate";
+                }
+
+                if (message.IsSaved())
+                {
+                    return "ChatFriendMessageTemplate";
                 }
 
                 if (message.IsOut && !message.IsPost)
@@ -476,5 +488,11 @@ namespace Unigram.Views
 
             return "EmptyMessageTemplate";
         }
+    }
+
+    public interface IGifPlayback
+    {
+        void Play(TLMessage message);
+        void Play(IEnumerable<TLMessage> items, bool auto);
     }
 }

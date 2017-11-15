@@ -383,7 +383,7 @@ namespace Unigram.Controls.Messages
             ServiceLabel.Text = $"{messages.Count} forwarded messages";
             MessageLabel.Text = string.Empty;
 
-            var users = messages.Select(x => x.From).Distinct(new LambdaComparer<TLUser>((x, y) => x.Id == y.Id)).ToList();
+            var users = messages.Select(x => x.From).Distinct(new EqualityComparerDelegate<TLUser>((x, y) => x.Id == y.Id)).ToList();
             if (users.Count > 2)
             {
                 TitleLabel.Text = $"{users[0].FullName} and {users.Count - 1} others";
@@ -871,19 +871,13 @@ namespace Unigram.Controls.Messages
             {
                 if (title.Equals("forward"))
                 {
-                    if (message.HasFwdFrom && message.FwdFrom.HasChannelId)
+                    if (message.FwdFromChannel is TLChannel channel)
                     {
-                        if (InMemoryCacheService.Current.GetChat(message.FwdFrom.ChannelId) is TLChannel channel)
-                        {
-                            return channel.Title;
-                        }
+                        return channel.Title;
                     }
-                    else if (message.HasFwdFrom && message.FwdFrom.HasFromId)
+                    else if (message.FwdFromUser is TLUser user)
                     {
-                        if (InMemoryCacheService.Current.GetUser(message.FwdFrom.FromId) is TLUser user)
-                        {
-                            return user.FullName;
-                        }
+                        return user.FullName;
                     }
                 }
                 else
@@ -896,16 +890,18 @@ namespace Unigram.Controls.Messages
             {
                 return message.Parent?.DisplayName ?? string.Empty;
             }
-            else
+            else if (message.IsSaved() && message.FwdFromUser is TLUser user)
             {
-                var from = message.From?.FullName ?? string.Empty;
-                if (message.ViaBot != null && message.FwdFrom == null)
-                {
-                    from += $" via @{message.ViaBot.Username}";
-                }
-
-                return from;
+                return user.FullName;
             }
+
+            var from = message.From?.FullName ?? string.Empty;
+            if (message.ViaBot != null && message.FwdFrom == null)
+            {
+                from += $" via @{message.ViaBot.Username}";
+            }
+
+            return from;
         }
 
         private string GetFromLabel(TLMessageService message, string title)

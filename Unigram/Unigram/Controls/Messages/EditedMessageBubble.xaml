@@ -16,7 +16,7 @@
     MaxWidth="{ThemeResource MessageMaxWidth}">
 
     <!-- TODO: not the right way -->
-    <Border Height="4" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
+    <Border Height="2" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <UserControl x:Name="LayoutRoot">
         <Grid x:Name="ContentPanel"
@@ -27,21 +27,21 @@
                 BorderThickness="0,0,0,2">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
-                    <VisualState x:Name="FullMedia">
+                    <VisualState x:Name="MediaState">
                         <VisualState.Setters>
-                            <Setter Target="StatusBar.Padding" Value="6,4,6,4"/>
-                            <Setter Target="StatusBar.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
-                            <Setter Target="StatusBar.Foreground" Value="White"/>
+                            <Setter Target="Footer.Padding" Value="6,4,6,4"/>
+                            <Setter Target="Footer.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                            <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
                         </VisualState.Setters>
                     </VisualState>
-                    <VisualState x:Name="Hidden">
+                    <VisualState x:Name="HiddenState">
                         <VisualState.Setters>
-                            <Setter Target="StatusBar.Opacity" Value="0"/>
-                            <Setter Target="StatusBar.IsHitTestVisible" Value="False"/>
+                            <Setter Target="Footer.Opacity" Value="0"/>
+                            <Setter Target="Footer.IsHitTestVisible" Value="False"/>
                         </VisualState.Setters>
                     </VisualState>
-                    <VisualState x:Name="Default"/>
+                    <VisualState x:Name="Normal"/>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
             <Grid.RowDefinitions>
@@ -100,11 +100,11 @@
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                 Grid.Row="3"/>
 
-            <local:MessageStatusBar
-                x:Name="StatusBar"
+            <local:MessageFooter
+                x:Name="Footer"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                SizeChanged="StatusBar_SizeChanged"
+                SizeChanged="Footer_SizeChanged"
                 Margin="0,0,-6,-2"
                 Grid.Row="4"/>
         </Grid>

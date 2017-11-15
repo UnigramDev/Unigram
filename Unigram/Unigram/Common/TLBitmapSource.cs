@@ -30,23 +30,17 @@ namespace Unigram.Common
         private static readonly IDownloadDocumentFileManager _downloadFileManager;
         private static readonly IDownloadWebFileManager _downloadWebFileManager;
 
-        private static readonly AnimatedImageSourceRendererFactory _animatedFactory;
-
         static TLBitmapSource()
         {
             _protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
             _downloadManager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
             _downloadFileManager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
             _downloadWebFileManager = UnigramContainer.Current.ResolveType<IDownloadWebFileManager>();
-
-            _animatedFactory = new AnimatedImageSourceRendererFactory();
         }
 
         public const int PHASE_PLACEHOLDER = 0;
         public const int PHASE_THUMBNAIL = 1;
         public const int PHASE_FULL = 2;
-
-        private AnimatedImageSourceRenderer _renderer;
 
         private BitmapImage _bitmapImage => Image as BitmapImage;
 
@@ -67,11 +61,12 @@ namespace Unigram.Common
             var userProfilePhoto = user.Photo as TLUserProfilePhoto;
             if (userProfilePhoto != null)
             {
-                if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
+                if (TrySetSource(userProfilePhoto.PhotoSmall as TLFileLocation, PHASE_FULL))
                 {
-                    //SetProfilePlaceholder(user, "u" + user.Id, user.Id, user.FullName);
-                    SetSource(null, userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
+                    return;
                 }
+
+                SetSource(null, userProfilePhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
             }
             else
             {
@@ -100,11 +95,12 @@ namespace Unigram.Common
 
             if (chatPhotoBase is TLChatPhoto chatPhoto)
             {
-                if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL) == false)
+                if (TrySetSource(chatPhoto.PhotoSmall as TLFileLocation, PHASE_FULL))
                 {
-                    //SetProfilePlaceholder(chatBase, "c" + chatBase.Id, chatBase.Id, chatBase.DisplayName);
-                    SetSource(null, chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
+                    return;
                 }
+
+                SetSource(null, chatPhoto.PhotoSmall as TLFileLocation, 0, PHASE_FULL);
             }
             else
             {
@@ -119,15 +115,16 @@ namespace Unigram.Common
             var photo = photoBase as TLPhoto;
             if (photo != null)
             {
-                if (TrySetSource(photo.Full, PHASE_FULL) == false)
+                if (TrySetSource(photo.Full, PHASE_FULL))
                 {
-                    SetSource(null, photo.Thumb, PHASE_THUMBNAIL);
-                    //SetSource(photo, photo.Full, PHASE_FULL);
+                    return;
+                }
 
-                    if (ApplicationSettings.Current.AutoDownload[_protoService.NetworkType].HasFlag(AutoDownloadType.Photo))
-                    {
-                        SetSource(photo, photo.Full, PHASE_FULL);
-                    }
+                SetSource(null, photo.Thumb, PHASE_THUMBNAIL);
+
+                if (ApplicationSettings.Current.AutoDownload[_protoService.NetworkType].HasFlag(AutoDownloadType.Photo))
+                {
+                    SetSource(photo, photo.Full, PHASE_FULL);
                 }
             }
         }
@@ -144,28 +141,16 @@ namespace Unigram.Common
                     return;
                 }
 
-                if (TrySetWebPSource(document, PHASE_FULL) == false)
+                if (TrySetWebPSource(document, PHASE_FULL))
                 {
-                    SetWebPSource(null, document.Thumb, PHASE_THUMBNAIL);
-                    SetWebPSource(document, document, document.Size, PHASE_FULL);
+                    return;
                 }
+
+                SetWebPSource(null, document.Thumb, PHASE_THUMBNAIL);
+                SetWebPSource(document, document, document.Size, PHASE_FULL);
             }
             else if (TLMessage.IsGif(document))
             {
-                //if (thumbnail)
-                //{
-                //    SetSource(null, document.Thumb, PHASE_THUMBNAIL);
-                //    return;
-                //}
-
-                //_renderer = _animatedFactory.CreateRenderer(320, 320);
-                //Image = _renderer.ImageSource;
-
-                //if (TrySetAnimatedSource(document, PHASE_FULL) == false && ApplicationSettings.Current.AutoDownload[_protoService.NetworkType].HasFlag(AutoDownloadType.GIF))
-                //{
-                //    SetAnimatedSource(document, document, document.Size, PHASE_FULL);
-                //}
-
                 SetSource(null, document.Thumb, PHASE_THUMBNAIL);
 
                 if (ApplicationSettings.Current.AutoDownload[_protoService.NetworkType].HasFlag(AutoDownloadType.GIF))
@@ -238,7 +223,7 @@ namespace Unigram.Common
                 }
                 else if (TLMessage.IsGif(document))
                 {
-                    SetAnimatedSource(document, document, document.Size, PHASE_FULL);
+                    SetDownloadSource(document, document, document.Size, PHASE_FULL);
                 }
             }
         }
@@ -273,19 +258,17 @@ namespace Unigram.Common
 
         private bool TrySetSource(TLPhotoSizeBase photoSizeBase, int phase)
         {
-            var photoSize = photoSizeBase as TLPhotoSize;
-            if (photoSize != null)
+            if (photoSizeBase is TLPhotoSize photoSize)
             {
                 return TrySetSource(photoSize.Location as TLFileLocation, phase);
             }
-
-            var photoCachedSize = photoSizeBase as TLPhotoCachedSize;
-            if (photoCachedSize != null)
+            else if (photoSizeBase is TLPhotoCachedSize photoCachedSize)
             {
                 if (phase >= Phase)
                 {
                     Phase = phase;
                     _bitmapImage.SetSource(photoCachedSize.Bytes);
+
                     return true;
                 }
             }
@@ -295,14 +278,11 @@ namespace Unigram.Common
 
         private void SetSource(ITLTransferable transferable, TLPhotoSizeBase photoSizeBase, int phase)
         {
-            var photoSize = photoSizeBase as TLPhotoSize;
-            if (photoSize != null)
+            if (photoSizeBase is TLPhotoSize photoSize)
             {
                 SetSource(transferable, photoSize.Location as TLFileLocation, photoSize.Size, phase);
             }
-
-            var photoCachedSize = photoSizeBase as TLPhotoCachedSize;
-            if (photoCachedSize != null)
+            else if (photoSizeBase is TLPhotoCachedSize photoCachedSize)
             {
                 if (phase >= Phase)
                 {
@@ -333,8 +313,6 @@ namespace Unigram.Common
         {
             if (phase >= Phase && location != null)
             {
-                //Phase = phase;
-
                 var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
@@ -351,11 +329,6 @@ namespace Unigram.Common
 
                             _bitmapImage.BeginOnUIThread(() =>
                             {
-                                if (transferable != null)
-                                {
-                                    transferable.IsTransferring = false;
-                                }
-
                                 _bitmapImage.UriSource = FileUtils.GetTempFileUri(fileName);
                             });
                         }
@@ -375,7 +348,6 @@ namespace Unigram.Common
                 {
                     Phase = phase;
 
-                    //Image.UriSource = FileUtils.GetTempFileUri(fileName);
                     var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
                     if (decoded != null)
                     {
@@ -397,12 +369,9 @@ namespace Unigram.Common
         {
             if (phase >= Phase && document != null)
             {
-                //Phase = phase;
-
                 var fileName = document.GetFileName();
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    //Image.UriSource = FileUtils.GetTempFileUri(fileName);
                     var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
                     if (decoded != null)
                     {
@@ -424,12 +393,6 @@ namespace Unigram.Common
 
                             _bitmapImage.BeginOnUIThread(() =>
                             {
-                                if (transferable != null)
-                                {
-                                    transferable.IsTransferring = false;
-                                }
-
-                                //Image.UriSource = FileUtils.GetTempFileUri(fileName);
                                 var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
                                 if (decoded != null)
                                 {
@@ -493,11 +456,6 @@ namespace Unigram.Common
                         {
                             _bitmapImage.BeginOnUIThread(() =>
                             {
-                                if (transferable != null)
-                                {
-                                    transferable.IsTransferring = false;
-                                }
-
                                 var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
                                 if (decoded != null)
                                 {
@@ -516,66 +474,6 @@ namespace Unigram.Common
 
         #endregion
 
-        #region Animated
-
-        private bool TrySetAnimatedSource(TLDocument document, int phase)
-        {
-            if (phase >= Phase && document != null)
-            {
-                var fileName = document.GetFileName();
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                {
-                    Phase = phase;
-
-                    //Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                    _renderer.SetSource(FileUtils.GetTempFileUri(fileName));
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private void SetAnimatedSource(ITLTransferable transferable, TLDocument document, int fileSize, int phase)
-        {
-            if (phase >= Phase && document != null)
-            {
-                //Phase = phase;
-
-                var fileName = document.GetFileName();
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                {
-                    //Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                    _renderer.SetSource(FileUtils.GetTempFileUri(fileName));
-                }
-                else
-                {
-                    Execute.BeginOnThreadPool(async () =>
-                    {
-                        var result = await _downloadFileManager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), fileSize).AsTask(transferable?.Download());
-                        if (result != null && Phase <= phase)
-                        {
-                            Phase = phase;
-
-                            Execute.BeginOnUIThread(() =>
-                            {
-                                if (transferable != null)
-                                {
-                                    transferable.IsTransferring = false;
-                                }
-
-                                //Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                                _renderer.SetSource(FileUtils.GetTempFileUri(fileName));
-                            });
-                        }
-                    });
-                }
-            }
-        }
-
-        #endregion
-
-
         private void SetDownloadSource(ITLTransferable transferable, TLDocument document, int fileSize, int phase)
         {
             if (phase >= Phase && document != null)
@@ -593,15 +491,7 @@ namespace Unigram.Common
                         var result = await _downloadFileManager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), fileSize).AsTask(transferable?.Download());
                         if (result != null && Phase <= phase)
                         {
-                            Phase = phase;
-
-                            Execute.BeginOnUIThread(() =>
-                            {
-                                if (transferable != null)
-                                {
-                                    transferable.IsTransferring = false;
-                                }
-                            });
+                            //Phase = phase;
                         }
                     });
                 }

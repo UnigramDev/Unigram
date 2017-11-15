@@ -191,13 +191,23 @@ namespace Unigram.Controls.Messages
                 hyperlink.Foreground = Convert.Bubble(message.ToId.Id);
                 hyperlink.Click += (s, args) => From_Click(message);
 
-                    paragraph.Inlines.Add(hyperlink);
-                }
+                paragraph.Inlines.Add(hyperlink);
+            }
+            else if (!light && message.IsFirst && message.IsSaved())
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.Inlines.Add(new Run { Text = message.FwdFromUser?.FullName ?? message.FwdFromChannel?.DisplayName ?? string.Empty });
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Foreground = Convert.Bubble(message.FwdFrom?.FromId ?? message.FwdFrom?.ChannelId ?? 0);
+                hyperlink.Click += (s, args) => FwdFrom_Click(message);
 
-                if (message.HasFwdFrom)
-                {
-                    if (paragraph.Inlines.Count > 0)
-                        paragraph.Inlines.Add(new LineBreak());
+                paragraph.Inlines.Add(hyperlink);
+            }
+
+            if (message.HasFwdFrom && !sticker && !message.IsSaved())
+            {
+                if (paragraph.Inlines.Count > 0)
+                    paragraph.Inlines.Add(new LineBreak());
 
                 paragraph.Inlines.Add(new Run { Text = "Forwarded from " });
 
@@ -337,7 +347,7 @@ namespace Unigram.Controls.Messages
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
 
-        private FrameworkElement _statusBar;
+        private FrameworkElement _footer;
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -471,12 +481,12 @@ namespace Unigram.Controls.Messages
 
             Calculate:
 
-            if (_statusBar == null)
-                _statusBar = FindName("StatusBar") as FrameworkElement;
-            if (_statusBar.DesiredSize.IsEmpty)
-                _statusBar.Measure(availableSize);
+            if (_footer == null)
+                _footer = FindName("Footer") as FrameworkElement;
+            if (_footer.DesiredSize.IsEmpty)
+                _footer.Measure(availableSize);
 
-            width = Math.Max(_statusBar.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96) + sumWidth);
+            width = Math.Max(_footer.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96) + sumWidth);
 
             if (width > availableWidth || height > availableHeight)
             {
