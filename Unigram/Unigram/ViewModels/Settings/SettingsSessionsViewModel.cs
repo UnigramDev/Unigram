@@ -115,7 +115,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<TLAuthorization> TerminateCommand { get; }
         private async void TerminateExecute(TLAuthorization session)
         {
-            var terminate = await TLMessageDialog.ShowAsync("Terminate this session?", "Telegram", "Yes", "No");
+            var terminate = await TLMessageDialog.ShowAsync(Strings.Android.TerminateSessionQuestion, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.ResetAuthorizationAsync(session.Hash);
@@ -133,7 +133,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand TerminateOthersCommand { get; }
         private async void TerminateOtherExecute()
         {
-            var terminate = await TLMessageDialog.ShowAsync("Are you sure you want to terminate all other sessions?", "Telegram", "Yes", "No");
+            var terminate = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureSessions, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.ResetAuthorizationsAsync();

@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Active sessions"/>
+        <controls:PageHeader Text="{CustomResource SessionsTitle}"/>
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
                   Header="{x:Bind ViewModel.Current, Mode=OneWay, TargetNullValue={x:Null}, FallbackValue={x:Null}}"
@@ -24,37 +24,58 @@
                   Grid.Row="1">
             <ListView.HeaderTemplate>
                 <DataTemplate x:DataType="tl:TLAuthorization">
-                    <StackPanel Margin="12,12,12,12">
-                        <TextBlock Text="Current session" FontWeight="SemiBold" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                        <Grid Margin="0,4,0,16">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}">
-                                <Run Text="{x:Bind AppName, Mode=OneWay}"/>
-                                <Run Text="{x:Bind AppVersion, Mode=OneWay}"/>
-                            </TextBlock>
-                            <TextBlock TextTrimming="CharacterEllipsis" Grid.ColumnSpan="2" Grid.Row="1">
-                                <Run Text="{x:Bind DeviceModel, Mode=OneWay}"/><Run Text=","/>
-                                <Run Text="{x:Bind Platform, Mode=OneWay}"/>
-                                <Run Text="{x:Bind SystemVersion, Mode=OneWay}"/>
-                            </TextBlock>
-                            <TextBlock TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Grid.ColumnSpan="2" Grid.Row="2">
-                                <Run Text="{x:Bind Ip, Mode=OneWay}"/>
-                                <Run Text="—"/>
-                                <Run Text="{x:Bind Country, Mode=OneWay}"/>
-                            </TextBlock>
+                    <StackPanel>
+                        <StackPanel Margin="0,12,0,24">
+                            <TextBlock Text="{CustomResource CurrentSession}"
+                                       Foreground="{ThemeResource TelegramForegroundAccentBrush}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       FontWeight="SemiBold"
+                                       Margin="12,0,12,0"/>
+                            <Grid Margin="12,8,12,16">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}">
+                                    <Run Text="{x:Bind AppName, Mode=OneWay}"/>
+                                    <Run Text="{x:Bind AppVersion, Mode=OneWay}"/>
+                                </TextBlock>
+                                <TextBlock TextTrimming="CharacterEllipsis" Grid.ColumnSpan="2" Grid.Row="1">
+                                    <Run Text="{x:Bind DeviceModel, Mode=OneWay}"/><Run Text=","/>
+                                    <Run Text="{x:Bind Platform, Mode=OneWay}"/>
+                                    <Run Text="{x:Bind SystemVersion, Mode=OneWay}"/>
+                                </TextBlock>
+                                <TextBlock TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Grid.ColumnSpan="2" Grid.Row="2">
+                                    <Run Text="{x:Bind Ip, Mode=OneWay}"/>
+                                    <Run Text="—"/>
+                                    <Run Text="{x:Bind Country, Mode=OneWay}"/>
+                                </TextBlock>
 
-                            <TextBlock Text="online" Margin="12,0,0,0" VerticalAlignment="Bottom" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
-                        </Grid>
+                                <TextBlock Text="{CustomResource Online}" Margin="12,0,0,0" VerticalAlignment="Bottom" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
+                            </Grid>
 
-                        <HyperlinkButton Click="TerminateOthers_Click" Content="Terminate all other sessions" Foreground="Red"/>
+                            <controls:BadgeButton
+                                Content="{CustomResource TerminateAllSessions}"
+                                Foreground="Red"
+                                Click="TerminateOthers_Click"
+                                Style="{StaticResource BadgeButtonStyle}"/>
+                            <TextBlock 
+                                Text="{CustomResource ClearOtherSessionsHelp}"
+                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Margin="12,8,12,0"/>
+                        </StackPanel>
+
+                        <TextBlock Text="{CustomResource OtherSessions}"
+                                   Foreground="{ThemeResource TelegramForegroundAccentBrush}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   FontWeight="SemiBold"
+                                   Margin="12,0,12,0"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.HeaderTemplate>
@@ -94,6 +115,13 @@
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.Footer>
+                <TextBlock
+                    Text="{CustomResource TerminateSessionInfo}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="12"/>
+            </ListView.Footer>
         </ListView>
     </Grid>
 </Page>
