@@ -1407,45 +1407,45 @@ namespace Unigram.ViewModels
                         HasBotCommands = BotCommands.Count > 0;
 
                         Stickers.SyncGroup(full);
-
-                        if (full.HasPinnedMsgId)
-                        {
-                            var update = true;
-
-                            var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
-                            if (appData.Values.TryGetValue("Pinned" + channel.Id, out object pinnedObj))
-                            {
-                                var pinnedId = (int)pinnedObj;
-                                if (pinnedId == full.PinnedMsgId)
-                                {
-                                    update = false;
-                                }
-                            }
-
-                            var pinned = CacheService.GetMessage(full.PinnedMsgId, channel.Id);
-                            if (pinned == null && update)
-                            {
-                                var y = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int>() { full.PinnedMsgId ?? 0 });
-                                if (y.IsSucceeded)
-                                {
-                                    pinned = y.Result.Messages.FirstOrDefault();
-                                }
-                            }
-
-                            if (pinned != null && update)
-                            {
-                                PinnedMessage = pinned;
-                            }
-                            else
-                            {
-                                PinnedMessage = null;
-                            }
-                        }
                     }
                     else
                     {
                         BotCommands = null;
                         HasBotCommands = false;
+                    }
+
+                    if (full.HasPinnedMsgId)
+                    {
+                        var update = true;
+
+                        var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
+                        if (appData.Values.TryGetValue("Pinned" + channel.Id, out object pinnedObj))
+                        {
+                            var pinnedId = (int)pinnedObj;
+                            if (pinnedId == full.PinnedMsgId)
+                            {
+                                update = false;
+                            }
+                        }
+
+                        var pinned = CacheService.GetMessage(full.PinnedMsgId, channel.Id);
+                        if (pinned == null && update)
+                        {
+                            var y = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int>() { full.PinnedMsgId ?? 0 });
+                            if (y.IsSucceeded)
+                            {
+                                pinned = y.Result.Messages.FirstOrDefault();
+                            }
+                        }
+
+                        if (pinned != null && update)
+                        {
+                            PinnedMessage = pinned;
+                        }
+                        else
+                        {
+                            PinnedMessage = null;
+                        }
                     }
                 }
 
@@ -2609,7 +2609,7 @@ namespace Unigram.ViewModels
                 }
             }
         }
-        
+
         #endregion
 
         #region Toggle mute

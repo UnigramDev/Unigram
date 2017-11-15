@@ -21,6 +21,7 @@ using static Unigram.ViewModels.DialogViewModel;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Resources;
 using Unigram.Converters;
+using Unigram.Views.Channels;
 
 namespace Unigram.Common
 {
@@ -218,6 +219,7 @@ namespace Unigram.Common
         }
 
         #region Message
+
         public static TLMessageBase GetMessage(DependencyObject obj)
         {
             return (TLMessageBase)obj.GetValue(MessageProperty);
@@ -237,6 +239,8 @@ namespace Unigram.Common
 
         public static readonly DependencyProperty MessageProperty =
             DependencyProperty.RegisterAttached("Message", typeof(TLMessageBase), typeof(ServiceHelper), new PropertyMetadata(null, OnMessageChanged));
+
+        #endregion
 
         private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -317,11 +321,19 @@ namespace Unigram.Common
             var fromId = serviceMessage.FromId;
             var user = InMemoryCacheService.Current.GetUser(fromId ?? 0);
             var userFullName = user != null ? user.FullName : Strings.Resources.UserNominativeSingular;
+            var scheme = "tg-user://";
             var action = serviceMessage.Action;
 
             if (serviceMessage.ToId is TLPeerChannel)
             {
                 var channel = InMemoryCacheService.Current.GetChat(serviceMessage.ToId.Id) as TLChannel;
+                if (channel != null && channel.IsBroadcast)
+                {
+                    fromId = channel.Id;
+                    userFullName = channel.Title;
+                    scheme = "tg-channel://";
+                }
+
                 var flag = channel != null && channel.IsMegaGroup;
 
                 var pinMessageAction = action as TLMessageActionPinMessage;
@@ -336,13 +348,13 @@ namespace Unigram.Common
                             var gameMedia = repliedMessage.Media as TLMessageMediaGame;
                             if (gameMedia != null)
                             {
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinGame }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinGame }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                             }
 
                             var photoMedia = repliedMessage.Media as TLMessageMediaPhoto;
                             if (photoMedia != null)
                             {
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinPhoto }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinPhoto }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                             }
 
                             var documentMedia = repliedMessage.Media as TLMessageMediaDocument;
@@ -362,60 +374,60 @@ namespace Unigram.Common
                                         }
                                     }
 
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, string.Format(Strings.Resources.MessageActionPinSticker, emoji) }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, string.Format(Strings.Resources.MessageActionPinSticker, emoji) }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                                 }
                                 if (TLMessage.IsVoice(documentMedia.Document))
                                 {
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinVoiceMessage }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinVoiceMessage }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                                 }
                                 if (TLMessage.IsMusic(documentMedia.Document))
                                 {
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinTrack }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinTrack }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                                 }
                                 if (TLMessage.IsVideo(documentMedia.Document))
                                 {
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinVideo }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinVideo }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                                 }
                                 if (TLMessage.IsGif(documentMedia.Document))
                                 {
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinGif }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinGif }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                                 }
 
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinFile }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinFile }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                             }
 
                             var contactMedia = repliedMessage.Media as TLMessageMediaContact;
                             if (contactMedia != null)
                             {
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinContact }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinContact }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                             }
 
                             var geoMedia = repliedMessage.Media as TLMessageMediaGeo;
                             if (geoMedia != null)
                             {
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMap }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMap }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                             }
 
                             var venueMedia = repliedMessage.Media as TLMessageMediaVenue;
                             if (venueMedia != null)
                             {
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMap }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMap }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                             }
 
                             if (repliedMessage.Message.Length > 0)
                             {
                                 if (repliedMessage.Message.Length > 20)
                                 {
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPinText, new[] { userFullName, repliedMessage.Message.Substring(0, 20).Replace("\r\n", "\n").Replace("\n", " ") + "…" }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPinText, new[] { userFullName, repliedMessage.Message.Substring(0, 20).Replace("\r\n", "\n").Replace("\n", " ") + "…" }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                                 }
 
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPinText, new[] { userFullName, repliedMessage.Message.Replace("\r\n", "\n").Replace("\n", " ") }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPinText, new[] { userFullName, repliedMessage.Message.Replace("\r\n", "\n").Replace("\n", " ") }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                             }
 
-                            return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMessage }, new[] { "tg-user://" + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
+                            return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMessage }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
                         }
 
-                        return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMessage }, new[] { "tg-user://" + fromId, "tg-message://" + serviceMessage.ReplyToMsgId }, useActiveLinks);
+                        return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMessage }, new[] { scheme + fromId, "tg-message://" + serviceMessage.ReplyToMsgId }, useActiveLinks);
                     }
                 }
 
@@ -473,7 +485,6 @@ namespace Unigram.Common
             paragraph.Inlines.Add(new Run { Text = Strings.Resources.MessageActionEmpty });
             return paragraph;
         }
-        #endregion
 
         private static Paragraph ReplaceLinks(TLMessageCommonBase message, string text, string[] users = null, string[] identifiers = null, bool useActiveLinks = true)
         {
@@ -551,6 +562,14 @@ namespace Unigram.Common
                 if (navigationService != null)
                 {
                     navigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = int.Parse(currentId.Replace("tg-user://", string.Empty)) });
+                }
+            }
+            if (currentId.StartsWith("tg-channel://"))
+            {
+                var navigationService = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                if (navigationService != null)
+                {
+                    navigationService.Navigate(typeof(ChannelDetailsPage), new TLPeerChannel { ChannelId = int.Parse(currentId.Replace("tg-channel://", string.Empty)) });
                 }
             }
             else if (currentId.StartsWith("tg-message://"))
