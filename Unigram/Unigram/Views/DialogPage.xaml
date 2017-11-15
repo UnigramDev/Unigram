@@ -854,7 +854,6 @@
                                      ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                                      ItemContainerTransitions="{x:Null}"
                                      ShowsScrollingPlaceholders="False"
-                                     UpdatingScrollMode="{x:Bind ViewModel.UpdatingScrollMode, Mode=TwoWay}"
                                      SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                                      SelectionChanged="List_SelectionChanged"
                                      Grid.ColumnSpan="2">
