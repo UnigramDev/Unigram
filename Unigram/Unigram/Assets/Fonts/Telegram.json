@@ -756,7 +756,7 @@
     {
       "selection": [
         {
-          "order": 67,
+          "order": 71,
           "id": 4,
           "name": "MultiMulti",
           "prevSize": 32,
@@ -810,7 +810,7 @@
         {
           "id": 4,
           "paths": [
-            "M0 0v1024h1024v-1024h-1024zM102.4 102.4h358.4v358.4h-358.4v-358.4zM102.4 921.6v-358.4h358.4v358.4h-358.4zM921.6 921.6h-358.4v-358.4h358.4v358.4zM563.2 460.8v-358.4h358.4v358.4h-358.4z"
+            "M0 0v1024h1024v-1024h-1024zM460.8 921.6h-358.4v-819.2h358.4v819.2zM921.6 921.6h-358.4v-358.4h358.4v358.4zM921.6 460.8h-358.4v-358.4h358.4v358.4z"
           ],
           "attrs": [
             {}
@@ -1063,7 +1063,7 @@
       "metadata": {
         "fontFamily": "Telegram",
         "majorVersion": 1,
-        "minorVersion": 44
+        "minorVersion": 45
       },
       "metrics": {
         "emSize": 1024,
