@@ -25,7 +25,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Your phone number" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+            <TextBlock x:Uid="SignInPage_HeaderLabel" Text="Your phone number" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
             <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE10B;" Grid.Column="1"/>
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
@@ -40,13 +40,14 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="TitleLabel" Text="Your phone number" Visibility="Collapsed" Style="{ThemeResource TitleTextBlockStyle}"/>
-            <TextBlock Text="Please select the country you live in and enter your phone number"
+            <TextBlock x:Uid="SignInPage_TitleLabel" x:Name="TitleLabel" Text="Your phone number" Visibility="Collapsed" Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock x:Uid="SignInPage_DetailsLabel" Text="Please select the country you live in and enter your phone number"
                        Style="{StaticResource BodyTextBlockStyle}"
                        Padding="0,8,0,16"
                        Grid.Row="1"/>
 
-            <ComboBox ItemsSource="{Binding Countries}"
+            <ComboBox x:Uid="SignInPage_CountriesList"
+                      ItemsSource="{Binding Countries}"
                       SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
                       Header="Country:"
                       MinWidth="280"
@@ -56,7 +57,7 @@
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="models:Country">
                         <TextBlock Style="{StaticResource BodyTextBlockStyle}">
-                            <Run Text="{x:Bind Name}"/>
+                            <Run Text="{x:Bind DisplayName}"/>
                             <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                         </TextBlock>
                     </DataTemplate>
@@ -70,14 +71,16 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- The user can enter their phone number here -->
-                <controls:UpdateTextBox Text="{Binding PhoneCode, Mode=TwoWay}"
+                <controls:UpdateTextBox x:Uid="SignInPage_PhoneCodeTextBox"
+                                        Text="{Binding PhoneCode, Mode=TwoWay}"
                                         Margin="0,0,8,0"
                                         Width="30"
                                         Header="Code:"
                                         InputScope="TelephoneNumber"
                                         PlaceholderText="+"
                                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
-                <controls:UpdateTextBox x:Name="PrimaryInput"
+                <controls:UpdateTextBox x:Uid="SignInPage_PhoneNumberTextBox"
+                                        x:Name="PrimaryInput"
                                         Text="{Binding PhoneNumber, Mode=TwoWay}"
                                         MinWidth="200"
                                         InputScope="TelephoneNumber"
@@ -92,6 +95,7 @@
             <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
 
             <Button x:Name="NextButton"
+                    x:Uid="SignInPage_NextButton"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     Foreground="White"
@@ -101,7 +105,8 @@
                     Grid.Row="5"
                     Visibility="Collapsed"/>
 
-            <HyperlinkButton Command="{x:Bind ViewModel.ProxyCommand}"
+            <HyperlinkButton x:Uid="SignInPage_ProxySettingsButton"
+                             Command="{x:Bind ViewModel.ProxyCommand}"
                              Content="Proxy Settings"
                              Grid.Row="6"/>
         </Grid>

@@ -65,11 +65,6 @@ namespace Unigram.Controls.Views
             //TopBar.Visibility = Visibility.Collapsed;
             //BotBar.Visibility = Visibility.Collapsed;
 
-            _mediaPlayerElement = new MediaPlayerElement { Style = Resources["yolo"] as Style };
-            _mediaPlayerElement.AreTransportControlsEnabled = true;
-            _mediaPlayerElement.TransportControls = Transport;
-            _mediaPlayerElement.Tapped += MediaPlayer_Tapped;
-
             _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
             //_topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
             //_botBarVisual = ElementCompositionPreview.GetElementVisual(BotBar);
@@ -341,7 +336,7 @@ namespace Unigram.Controls.Views
         {
             try
             {
-                if (_surface != null)
+                if (_surface != null && _mediaPlayerElement != null)
                 {
                     _surface.Children.Remove(_mediaPlayerElement);
                 }
@@ -360,6 +355,10 @@ namespace Unigram.Controls.Views
                         _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
                     }
 
+                    _mediaPlayerElement = new MediaPlayerElement { Style = Resources["yolo"] as Style };
+                    _mediaPlayerElement.AreTransportControlsEnabled = true;
+                    _mediaPlayerElement.TransportControls = Transport;
+                    _mediaPlayerElement.Tapped += MediaPlayer_Tapped;
                     _mediaPlayerElement.Tag = item.Source;
                     _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
 
@@ -393,6 +392,10 @@ namespace Unigram.Controls.Views
                 _mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
 
                 _mediaPlayerElement.SetMediaPlayer(null);
+                _mediaPlayerElement.AreTransportControlsEnabled = false;
+                _mediaPlayerElement.TransportControls = null;
+                _mediaPlayerElement.Tapped -= MediaPlayer_Tapped;
+                _mediaPlayerElement = null;
 
                 _mediaPlayer.Dispose();
                 _mediaPlayer = null;

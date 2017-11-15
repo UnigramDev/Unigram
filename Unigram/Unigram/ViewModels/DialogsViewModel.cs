@@ -588,7 +588,7 @@ namespace Unigram.ViewModels
             //{
             //    BeginOnUIThread(delegate
             //    {
-            //        //MessageBox.Show(serviceNotification.Message.ToString(), AppResources.AppName, 0);
+            //        //MessageBox.Show(serviceNotification.Message.ToString(), Strings.Resources.AppName, 0);
             //    });
             //    return;
             //}

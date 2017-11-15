@@ -359,6 +359,6 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
 
-        <Button Click="Start_Click" Content="Start Messaging" Style="{StaticResource StartButtonStyle}"/>
+        <Button x:Uid="IntroPage_StartButton" Click="Start_Click" Content="Start Messaging" Style="{StaticResource StartButtonStyle}"/>
     </Grid>
 </Page>

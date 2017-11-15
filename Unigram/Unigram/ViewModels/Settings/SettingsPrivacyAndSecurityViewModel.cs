@@ -153,10 +153,10 @@ namespace Unigram.ViewModels.Settings
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 30,  Content = Language.Declension(1, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });
-            stack.Children.Add(new RadioButton { Tag = 90,  Content = Language.Declension(3, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });
-            stack.Children.Add(new RadioButton { Tag = 180, Content = Language.Declension(6, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });
-            stack.Children.Add(new RadioButton { Tag = 365, Content = Language.Declension(1, AppResources.YearNominativeSingular,  AppResources.YearNominativePlural,  AppResources.YearGenitiveSingular,  AppResources.YearGenitivePlural,  null, null) });
+            stack.Children.Add(new RadioButton { Tag = 30,  Content = Language.Declension(1, Strings.Resources.MonthNominativeSingular, Strings.Resources.MonthNominativePlural, Strings.Resources.MonthGenitiveSingular, Strings.Resources.MonthGenitivePlural, null, null) });
+            stack.Children.Add(new RadioButton { Tag = 90,  Content = Language.Declension(3, Strings.Resources.MonthNominativeSingular, Strings.Resources.MonthNominativePlural, Strings.Resources.MonthGenitiveSingular, Strings.Resources.MonthGenitivePlural, null, null) });
+            stack.Children.Add(new RadioButton { Tag = 180, Content = Language.Declension(6, Strings.Resources.MonthNominativeSingular, Strings.Resources.MonthNominativePlural, Strings.Resources.MonthGenitiveSingular, Strings.Resources.MonthGenitivePlural, null, null) });
+            stack.Children.Add(new RadioButton { Tag = 365, Content = Language.Declension(1, Strings.Resources.YearNominativeSingular,  Strings.Resources.YearNominativePlural,  Strings.Resources.YearGenitiveSingular,  Strings.Resources.YearGenitivePlural,  null, null) });
 
             RadioButton GetSelectedPeriod(UIElementCollection periods, RadioButton defaultPeriod)
             {

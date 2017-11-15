@@ -320,6 +320,11 @@
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Strings\en\Branding.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Branding.resw</DependentUpon>
+    </Compile>
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1123,13 +1128,19 @@
     </AppxManifest>
     <PRIResource Include="Strings\en\Resources.resw">
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>ReswFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
+      <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Resources.cs</LastGenOutput>
     </PRIResource>
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
     <None Include="Assets\Fonts\Telegram.json" />
+    <PRIResource Include="Strings\en\Branding.resw">
+      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+      <Generator>ReswFileCodeGenerator</Generator>
+      <LastGenOutput>Branding.cs</LastGenOutput>
+    </PRIResource>
+    <PRIResource Include="Strings\ja\Branding.resw" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1810,7 +1821,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Unigram.Api\Telegram.Api.csproj">
       <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
-      <Name>Unigram.Api</Name>
+      <Name>Telegram.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\Unigram.Core\Unigram.Core.csproj">
       <Project>{580d2885-8129-499e-9ffd-39ff1b586f18}</Project>

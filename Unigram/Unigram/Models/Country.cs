@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Windows.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace Unigram.Core.Models
 
         public string Name { get; set; }
 
+        public string DisplayName { get; set; }
+
         public string GetKey()
         {
             return Name.Substring(0, 1).ToLowerInvariant();
@@ -24,6 +27,36 @@ namespace Unigram.Core.Models
 
         static Country()
         {
+
+            foreach (Country c in Countries)
+            {
+                try
+                {
+                    switch (c.Code)
+                    {
+                        case "ic":
+                            {
+                                c.DisplayName = new GeographicRegion("IS").DisplayName;
+                                break;
+                            }
+                        default:
+                            {
+                                c.DisplayName = new GeographicRegion(c.Code.ToUpper()).DisplayName;
+                                break;
+                            }
+                    }
+                }
+                catch
+                {
+                    
+                }
+                
+                if (string.IsNullOrWhiteSpace(c.DisplayName))
+                {
+                    c.DisplayName = c.Name;
+                }
+            }
+
             var alphabet = "abcdefghijklmnopqrstuvwxyz";
             var list = new List<KeyedList<string, Country>>(alphabet.Length);
             var dictionary = new Dictionary<string, KeyedList<string, Country>>();
