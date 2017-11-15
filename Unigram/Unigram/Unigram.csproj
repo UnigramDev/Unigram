@@ -115,6 +115,7 @@
     <Compile Include="Common\UniqueList.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
+    <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\ChannelStickersButton.cs" />
     <Compile Include="Controls\DialogBackgroundPresenter.cs" />
@@ -299,6 +300,7 @@
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\ProportionsToLabelConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
+    <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
     <Compile Include="Helpers\TLFileHelper.cs" />
@@ -320,6 +322,11 @@
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Strings\en\Android.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Android.resw</DependentUpon>
+    </Compile>
     <Compile Include="Strings\en\Branding.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1140,7 +1147,11 @@
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Branding.cs</LastGenOutput>
     </PRIResource>
-    <PRIResource Include="Strings\ja\Branding.resw" />
+    <PRIResource Include="Strings\en\Android.resw">
+      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+      <Generator>ReswFileCodeGenerator</Generator>
+      <LastGenOutput>Android.cs</LastGenOutput>
+    </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
