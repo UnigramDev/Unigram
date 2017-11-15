@@ -38,7 +38,7 @@
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="Normal"/>
-                    <VisualState x:Name="LightMedia">
+                    <VisualState x:Name="LightState">
                         <VisualState.Setters>
                             <Setter Target="Label.Foreground" Value="#FFFFFF"/>
                             <Setter Target="TitleLabel.Foreground" Value="#FFFFFF"/>

@@ -308,7 +308,7 @@ namespace Unigram.Controls.Views
 
         private string ConvertFrom(ITLDialogWith with)
         {
-            return with is TLUser user && user.IsSelf ? user.FullName : with?.DisplayName;
+            return with is TLUser user && user.IsSelf ? "You" : with?.DisplayName;
         }
 
         private string ConvertDate(int value)

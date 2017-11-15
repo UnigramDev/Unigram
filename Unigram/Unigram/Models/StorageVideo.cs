@@ -21,7 +21,7 @@ namespace Unigram.Models
         private BasicProperties _basic;
 
         public StorageVideo(StorageFile file, BasicProperties basic, VideoProperties props, MediaEncodingProfile profile)
-            : base(file)
+            : base(file, basic)
         {
             _fullRectangle = new Rect(0, 0, props.Width, props.Height);
 

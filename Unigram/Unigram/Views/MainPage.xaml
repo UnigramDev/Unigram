@@ -201,24 +201,25 @@
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Grid.Row="1">
         <controls:NavigationView x:Name="Navigation" ItemClick="NavigationView_ItemClick">
             <controls:NavigationView.MenuItems>
-                <controls:NavigationViewItem x:Name="NavigationNewChat" Content="New Group" Glyph="&#xE125;" />
+                <controls:NavigationViewItem x:Uid="MainPage_NavigationNewChat" x:Name="NavigationNewChat" Content="New Group" Glyph="&#xE125;" />
                 <!--<controls:NavigationViewItem Text="New Secret Chat" Glyph="&#xE125;" />-->
-                <controls:NavigationViewItem x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
+                <controls:NavigationViewItem x:Uid="MainPage_NavigationNewChannel" x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
                 <controls:NavigationViewItemSeparator/>
 
-                <controls:NavigationViewItem x:Name="NavigationChats" Content="Chats" IsChecked="True" Glyph="&#xE8BD;" />
+                <controls:NavigationViewItem x:Uid="MainPage_NavigationChats" x:Name="NavigationChats" Content="Chats" IsChecked="True" Glyph="&#xE8BD;" />
                 <controls:NavigationViewItem x:Name="NavigationContacts" Content="Contacts" Glyph="&#xE8D4;" />
                 <controls:NavigationViewItem x:Name="NavigationCalls" Content="Calls" Glyph="&#xE717;" />
                 <!--<controls:NavigationViewItem Text="Invite Friends" Glyph="&#xE789;" />-->
                 <controls:NavigationViewItem x:Name="NavigationSettings" Content="Settings" Glyph="&#xE115;" />
                 <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
                 <controls:NavigationViewItemSeparator/>
+                <controls:NavigationViewItem x:Name="NavigationSavedMessages" Content="Saved Messages" Glyph="&#xE907;" FontFamily="{StaticResource TelegramThemeFontFamily}" />
                 <controls:NavigationViewItem x:Name="NavigationOfficialChannel" Content="News" Glyph="&#xE789;" />
             </controls:NavigationView.MenuItems>
             <controls:NavigationView.PaneFooter>
                 <StackPanel>
                     <controls:GlyphButton Click="About_Click" Content="About" Glyph="&#xE946;" Style="{StaticResource NavigationGlyphButtonStyle}"/>
-                    <controls:GlyphButton Click="Self_Click" Content="{x:Bind ViewModel.Contacts.Self.FullName, Mode=OneWay}" Tag="{x:Bind ViewModel.Contacts.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Style="{StaticResource NavigationImageGlyphButtonStyle}"/>
+                    <!--<controls:GlyphButton Click="Self_Click" Content="{x:Bind ViewModel.Contacts.Self.FullName, Mode=OneWay}" Tag="{x:Bind ViewModel.Contacts.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Style="{StaticResource NavigationImageGlyphButtonStyle}"/>-->
                 </StackPanel>
             </controls:NavigationView.PaneFooter>
 
@@ -261,8 +262,9 @@
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>
+                        <controls:GlyphButton x:Name="NewContact" Glyph="&#xE109;" Click="NewContact_Click" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
 
-                        <controls:SearchTextBox x:Name="SearchDialogs"
+                        <controls:SearchTextBox x:Uid="MainPage_SearchDialogs" x:Name="SearchDialogs"
                                                     Padding="60,3,6,5"
                                                     Background="{x:Null}"
                                                     BorderBrush="{x:Null}"
@@ -374,7 +376,7 @@
                                                             <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
                                                         </Grid>
                                                     </Grid>
-                                                    <TextBlock Text="{x:Bind Username}"
+                                                    <TextBlock Text="{x:Bind Converter={StaticResource ChannelToSummaryConverter}}"
                                                                VerticalAlignment="Top"
                                                                Style="{StaticResource CaptionTextBlockStyle}"
                                                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
@@ -483,12 +485,12 @@
                                     Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                                     ScrollingHost="{x:Bind DialogsListView}"
                                     VerticalAlignment="Top"/>
-                                <controls:DialogsListView x:Name="DialogsListView"
-                                                          ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
-                                                          IsItemClickEnabled="True"
-                                                          SelectionMode="None"
-                                                          ItemClick="ListView_ItemClick"
-                                                          SelectionChanged="ListView_SelectionChanged">
+                                <controls:DialogListView x:Name="DialogsListView"
+                                                         ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
+                                                         IsItemClickEnabled="True"
+                                                         SelectionMode="None"
+                                                         ItemClick="ListView_ItemClick"
+                                                         SelectionChanged="ListView_SelectionChanged">
                                     <!--CanDragItems="True" 
                                          AllowDrop="True"-->
                                     <ListView.ItemContainerStyleSelector>
@@ -519,7 +521,7 @@
                                     <ListView.ItemContainerTransitions>
                                         <TransitionCollection/>
                                     </ListView.ItemContainerTransitions>
-                                </controls:DialogsListView>
+                                </controls:DialogListView>
                             </Grid>
                         </Grid>
                     </PivotItem>

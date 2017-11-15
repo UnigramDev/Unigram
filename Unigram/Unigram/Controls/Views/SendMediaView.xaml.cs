@@ -11,6 +11,7 @@ using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Core.Common;
 using Unigram.Core.Models;
 using Unigram.Models;
 using Unigram.Native;
@@ -36,7 +37,8 @@ namespace Unigram.Controls.Views
     {
         public DialogViewModel ViewModel { get; set; }
 
-        public ObservableCollection<StorageMedia> Items { get; set; }
+        public MvxObservableCollection<StorageMedia> Items { get; } = new MvxObservableCollection<StorageMedia>();
+        public MvxObservableCollection<StorageMedia> SelectedItems { get; } = new MvxObservableCollection<StorageMedia>();
 
         private StorageMedia _selectedItem;
         public StorageMedia SelectedItem
@@ -60,6 +62,20 @@ namespace Unigram.Controls.Views
             }
         }
 
+        public int SelectedIndex
+        {
+            get
+            {
+                var item = SelectedItem;
+                if (item == null)
+                {
+                    return 0;
+                }
+
+                return SelectedItems.IndexOf(item) + 1;
+            }
+        }
+
         private bool _isTtlEnabled;
         public bool IsTTLEnabled
         {
@@ -73,6 +89,31 @@ namespace Unigram.Controls.Views
                 {
                     _isTtlEnabled = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsTTLEnabled"));
+                }
+            }
+        }
+
+        public bool IsGroupingEnabled
+        {
+            get
+            {
+                return SelectedItems.Count > 1 && !SelectedItems.Any(x => x.TTLSeconds.HasValue);
+            }
+        }
+
+        private bool _isGrouped;
+        public bool IsGrouped
+        {
+            get
+            {
+                return _isGrouped;
+            }
+            set
+            {
+                if (_isGrouped != value)
+                {
+                    _isGrouped = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGrouped"));
                 }
             }
         }
@@ -160,6 +201,16 @@ namespace Unigram.Controls.Views
             return null;
         }
 
+        private string ConvertGrouped(bool grouped)
+        {
+            return grouped ? "Show photos as one message" : "Show photos as separate messages";
+        }
+
+        private bool ConvertSelected(StorageMedia media)
+        {
+            return SelectedItems.Contains(media);
+        }
+
         #endregion
 
         public SendMediaView()
@@ -175,9 +226,9 @@ namespace Unigram.Controls.Views
 
             //TTLSeconds.ItemsSource = seconds;
 
-            CroppoBox.SelectionChanged += (s, args) =>
+            ProportionsBox.SelectionChanged += (s, args) =>
             {
-                Cropper.Proportions = (ImageCroppingProportions)CroppoBox.SelectedItem;
+                Cropper.Proportions = (ImageCroppingProportions)ProportionsBox.SelectedItem;
             };
 
             TTLSeconds.RegisterPropertyChangedCallback(GlyphButton.GlyphProperty, OnSecondsChanged);
@@ -209,6 +260,8 @@ namespace Unigram.Controls.Views
         {
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
+
+            IsGrouped = ApplicationSettings.Current.IsSendGrouped;
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
@@ -265,9 +318,14 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            if (SelectedItem != null && Items.All(x => x.IsSelected == false))
+            if (SelectedItem != null && SelectedItems.IsEmpty())
             {
-                SelectedItem.IsSelected = true;
+                SelectedItems.Add(SelectedItem);
+            }
+
+            if (IsGroupingEnabled)
+            {
+                ApplicationSettings.Current.IsSendGrouped = IsGrouped;
             }
 
             Hide(ContentDialogBaseResult.OK);
@@ -357,6 +415,7 @@ namespace Unigram.Controls.Views
             if (confirm == ContentDialogResult.Primary)
             {
                 SelectedItem.TTLSeconds = dialog.TTLSeconds;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
             }
         }
 
@@ -437,8 +496,8 @@ namespace Unigram.Controls.Views
                     Cropper.Proportions = media.CropProportions;
                     Cropper.CropRectangle = media.CropRectangle ?? Rect.Empty;
 
-                    CroppoBox.ItemsSource = ImageCropper.GetProportionsFor(width, height);
-                    CroppoBox.SelectedItem = media.CropProportions;
+                    ProportionsBox.ItemsSource = ImageCropper.GetProportionsFor(width, height);
+                    ProportionsBox.SelectedItem = media.CropProportions;
                 }
             }
         }
@@ -518,5 +577,53 @@ namespace Unigram.Controls.Views
 
             return proportions == ImageCroppingProportions.Custom ? Visibility.Visible : Visibility.Collapsed;
         }
+
+        public void SetItems(ObservableCollection<StorageMedia> storages)
+        {
+            Items.ReplaceWith(storages);
+            SelectedItems.ReplaceWith(storages.Where(x => x.IsSelected));
+        }
+
+        private void Select_Click(object sender, RoutedEventArgs e)
+        {
+            var item = SelectedItem;
+            if (item == null)
+            {
+                return;
+            }
+
+            if (SelectedItems.Contains(item))
+            {
+                SelectedItems.Remove(item);
+            }
+            else
+            {
+                SelectedItems.Add(item);
+            }
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
+        }
+
+        private void Select_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Select_Click(null, null);
+        }
+    }
+
+    public class HeaderFlipView : FlipView
+    {
+        #region Content
+
+        public object Content
+        {
+            get { return (object)GetValue(ContentProperty); }
+            set { SetValue(ContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentProperty =
+            DependencyProperty.Register("Content", typeof(object), typeof(HeaderFlipView), new PropertyMetadata(null));
+
+        #endregion
     }
 }

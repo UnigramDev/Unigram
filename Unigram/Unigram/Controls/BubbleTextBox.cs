@@ -282,10 +282,7 @@ namespace Unigram.Controls
                 }
                 else if (files.Count > 0)
                 {
-                    foreach (var file in files)
-                    {
-                        ViewModel.SendFileCommand.Execute(file);
-                    }
+                    ViewModel.SendFileExecute(files);
                 }
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
@@ -395,8 +392,8 @@ namespace Unigram.Controls
                     var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
                     if (send)
                     {
-                        AcceptsReturn = false;
                         await SendAsync();
+                        AcceptsReturn = false;
                     }
                     else
                     {
@@ -408,8 +405,8 @@ namespace Unigram.Controls
                     var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
                     if (send)
                     {
-                        AcceptsReturn = false;
                         await SendAsync();
+                        AcceptsReturn = false;
                     }
                     else
                     {
@@ -629,6 +626,7 @@ namespace Unigram.Controls
 
         private List<TLUser> GetUsernames(string username, bool inline)
         {
+            var query = LocaleHelper.GetQuery(username);
             bool IsMatch(TLUser user)
             {
                 //if (user.IsSelf)
@@ -636,10 +634,8 @@ namespace Unigram.Controls
                 //    return false;
                 //}
 
-                return (user.FullName.IsLike(username, StringComparison.OrdinalIgnoreCase)) ||
-                       (user.HasUsername && user.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase));
+                return user.IsLike(query, StringComparison.OrdinalIgnoreCase);
             }
-
 
             var results = new List<TLUser>();
 
@@ -841,8 +837,8 @@ namespace Unigram.Controls
                 reader.LoadRtfText(rtf);
                 reader.Parse();
 
-                var messageText = text.Format();
-                var entities = Utils.GetEntities(ref messageText);
+                var message = text.Format();
+                var entities = Markdown.Parse(ref message);
                 if (entities == null)
                 {
                     entities = new List<TLMessageEntityBase>();
@@ -854,19 +850,7 @@ namespace Unigram.Controls
                     entities.Add(entity);
                 }
 
-                var matches = Regex.Matches(messageText, "\\[(.*?)\\]\\((.*?)\\)");
-                var offset = 0;
-
-                foreach (Match match in matches)
-                {
-                    entities.Add(new TLMessageEntityTextUrl { Offset = match.Index + offset, Length = match.Groups[1].Length, Url = match.Groups[2].Value });
-
-                    messageText = messageText.Remove(match.Index + offset, match.Length);
-                    messageText = messageText.Insert(match.Index + offset, match.Groups[1].Value);
-                    offset += match.Length - match.Groups[1].Length;
-                }
-
-                await ViewModel.SendMessageAsync(messageText, entities.OrderBy(x => x.Offset).ToList(), false);
+                await ViewModel.SendMessageAsync(message, entities.OrderBy(x => x.Offset).ToList(), false);
             }
             //else
             //{

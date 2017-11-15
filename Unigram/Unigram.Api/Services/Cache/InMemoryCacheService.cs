@@ -120,7 +120,7 @@ namespace Telegram.Api.Services.Cache
             }
 
             TLUtils.WritePerformance(string.Format("GetCachedDialogs time ({0} from {1}): {2}", dialogs.Count, _database.CountRecords<TLDialog>(), timer.Elapsed));
-            return dialogs.OrderByDescending(x => x.GetDateIndex()).ToList();
+            return dialogs.OrderByDescending(x => x.GetDateIndexWithDraft()).ToList();
         }
 
 
@@ -924,7 +924,7 @@ namespace Telegram.Api.Services.Cache
             return resultMsgs;
         }
 
-        public IList<TLMessageBase> GetHistory(TLPeerBase peer, int limit = Constants.CachedMessagesCount)
+        public IList<TLMessageBase> GetHistory(TLPeerBase peer, int limit = Constants.CachedMessagesCount, Func<TLMessageBase, bool> predicate = null)
         {
             var result = new List<TLMessageBase>();
 
@@ -964,16 +964,21 @@ namespace Telegram.Api.Services.Cache
                 TLUtils.WriteException(e);
             }
 
-           // TLUtils.WritePerformance(string.Format("GetCachedHistory time ({0}): {1}", _database.CountRecords<TLMessageBase>(), timer.Elapsed));
+            if (predicate != null)
+            {
+                return msgs.Where(predicate).OrderByDescending(x => x.Id).Take(limit).ToList();
+            }
+
+            // TLUtils.WritePerformance(string.Format("GetCachedHistory time ({0}): {1}", _database.CountRecords<TLMessageBase>(), timer.Elapsed));
             return msgs.OrderByDescending(x => x.Id).Take(limit).ToList();
         }
 
-        public void GetHistoryAsync(TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount)
+        public void GetHistoryAsync(TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount, Func<TLMessageBase, bool> predicate = null)
         {
             Execute.BeginOnThreadPool(
                 () =>
                 {
-                    var history = GetHistory(peer, limit);
+                    var history = GetHistory(peer, limit, predicate);
                     callback?.Invoke(history);
                 });
         }
@@ -3563,7 +3568,6 @@ namespace Telegram.Api.Services.Cache
                 if (_config == null)
                 {
                     _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
-                    UpdateConfigResources();
                 }
 
                 return _config;
@@ -3575,7 +3579,6 @@ namespace Telegram.Api.Services.Cache
             if (_config == null)
             {
                 _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
-                UpdateConfigResources();
             }
 
             return _config;
@@ -3587,7 +3590,6 @@ namespace Telegram.Api.Services.Cache
             if (_config == null)
             {
                 _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
-                UpdateConfigResources();
             }
 #endif
             callback?.Invoke(_config);
@@ -3598,24 +3600,6 @@ namespace Telegram.Api.Services.Cache
             _config = config;
 #if SILVERLIGHT || WIN_RT
             SettingsHelper.SetValue(Constants.ConfigKey, config);
-#endif
-
-            UpdateConfigResources();
-        }
-
-        private void UpdateConfigResources()
-        {
-#if WIN_RT
-            if (_config != null)
-            {
-                var prefix = _config.MeUrlPrefix ?? "https://t.me/";
-
-                //Execute.BeginOnUIThread(() =>
-                //{
-                //    Windows.UI.Xaml.Application.Current.Resources["MeUrlPrefix"] = prefix;
-                //    Windows.UI.Xaml.Application.Current.Resources["MeUrlPrefixShort"] = prefix.TrimStart("https://");
-                //});
-            }
 #endif
         }
 

@@ -69,8 +69,7 @@ namespace Unigram.Collections
                     return response.Result.Messages.OfType<TLMessage>().GroupBy(x =>
                     {
                         var clientDelta = MTProtoService.Current.ClientTicksDelta;
-                        var utc0SecsLong = x.Date * 4294967296 - clientDelta;
-                        var utc0SecsInt = utc0SecsLong / 4294967296.0;
+                        var utc0SecsInt = x.Date - clientDelta / 4294967296.0;
                         var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
 
                         return new DateTime(dateTime.Year, dateTime.Month, 1);

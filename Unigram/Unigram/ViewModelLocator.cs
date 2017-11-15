@@ -82,6 +82,7 @@ namespace Unigram
             //container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StatsService>().As<IStatsService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
             container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
 
             // Disabled due to crashes on Mobile: 
@@ -109,6 +110,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SignInSentCodeViewModel>();
             container.ContainerBuilder.RegisterType<SignInPasswordViewModel>();
             container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<PlaybackViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<ShareViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<ForwardViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
@@ -116,18 +118,18 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
             container.ContainerBuilder.RegisterType<DialogStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
+            container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
+            container.ContainerBuilder.RegisterType<UserCreateViewModel>();
             container.ContainerBuilder.RegisterType<ChannelManageViewModel>();
             container.ContainerBuilder.RegisterType<ChannelAdminLogViewModel>();
             container.ContainerBuilder.RegisterType<ChannelAdminLogFilterViewModel>();
             container.ContainerBuilder.RegisterType<ChannelAdminRightsViewModel>();
             container.ContainerBuilder.RegisterType<ChannelBannedRightsViewModel>();
-            container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
             container.ContainerBuilder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChatInviteLinkViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelDetailsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelEditViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<ChannelEditTypeViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelEditStickerSetViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelAdminsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelBannedViewModel>();// .SingleInstance();
@@ -326,6 +328,7 @@ namespace Unigram
             ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTimeFavs", 0L);
 
             Debug.WriteLine("!!! UNAUTHORIZED !!!");
+            Telegram.Logs.Log.Write(string.Format("Unauthorized method={0} error={1} authKeyId={2} {3}", e.MethodName, e.Error ?? (object)"null", e.AuthKeyId, Environment.StackTrace));
 
             Execute.BeginOnUIThread(() =>
             {

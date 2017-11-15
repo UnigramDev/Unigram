@@ -80,7 +80,10 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageDeleteCommand { get; }
         private async void MessageDeleteExecute(TLMessageBase messageBase)
         {
-            if (messageBase == null) return;
+            if (messageBase == null)
+            {
+                return;
+            }
 
             var message = messageBase as TLMessage;
             if (message != null && !message.IsOut && !message.IsPost && Peer is TLInputPeerChannel)
@@ -214,6 +217,22 @@ namespace Unigram.ViewModels
 
             BeginOnUIThread(() =>
             {
+                var groups = new Dictionary<long, GroupedMessages>();
+
+                for (int j = 0; j < messages.Count; j++)
+                {
+                    if (messages[j] is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out GroupedMessages group))
+                    {
+                        group.Messages.Remove(grouped);
+                        groups[groupedId] = group;
+                    }
+                }
+
+                foreach (var group in groups.Values)
+                {
+                    group.Calculate();
+                }
+
                 for (int j = 0; j < messages.Count; j++)
                 {
                     if (EditedMessage?.Id == messages[j].Id)
@@ -589,7 +608,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                link = UsernameToLinkConverter.Convert(link);
+                link = MeUrlPrefixConverter.Convert(link);
             }
 
             var dataPackage = new DataPackage();
@@ -637,7 +656,7 @@ namespace Unigram.ViewModels
                     //this.IsWorking = false;
                     //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.MESSAGE_ID_INVALID))
                     //{
-                    //    MessageBox.Show(AppResources.EditMessageError, AppResources.Error, 0);
+                    //    MessageBox.Show(Strings.Resources.EditMessageError, Strings.Resources.Error, 0);
                     //    return;
                     //}
                     Execute.ShowDebugMessage("messages.getMessageEditData error " + response.Error);
@@ -1274,13 +1293,39 @@ namespace Unigram.ViewModels
             var photo = message.GetPhoto();
             if (photo?.Full is TLPhotoSize photoSize)
             {
-                await TLFileHelper.SavePhotoAsync(photoSize, message.Date);
+                await TLFileHelper.SavePhotoAsync(photoSize, message.Date, false);
             }
 
             var document = message.GetDocument();
             if (document != null)
             {
-                await TLFileHelper.SaveDocumentAsync(document, message.Date);
+                await TLFileHelper.SaveDocumentAsync(document, message.Date, false);
+            }
+        }
+
+        #endregion
+
+        #region Save to Downloads
+
+        public RelayCommand<TLMessage> MessageSaveDownloadCommand { get; }
+        private async void MessageSaveDownloadExecute(TLMessage message)
+        {
+            if (message.IsSticker())
+            {
+                MessageSaveStickerExecute(message);
+                return;
+            }
+
+            var photo = message.GetPhoto();
+            if (photo?.Full is TLPhotoSize photoSize)
+            {
+                await TLFileHelper.SavePhotoAsync(photoSize, message.Date, true);
+            }
+
+            var document = message.GetDocument();
+            if (document != null)
+            {
+                await TLFileHelper.SaveDocumentAsync(document, message.Date, true);
             }
         }
 

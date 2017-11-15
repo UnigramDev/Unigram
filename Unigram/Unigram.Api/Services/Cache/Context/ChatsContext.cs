@@ -117,6 +117,13 @@ namespace Telegram.Api.Services.Cache.Context
                         var flags = (TLChannel.Flag)Sqlite3.sqlite3_column_int(statement, 3);
                         var access_hash = Sqlite3.sqlite3_column_int64(statement, 2);
                         var username = Sqlite3.sqlite3_column_text(statement, 5);
+
+                        int? participantsCount = null;
+                        if (flags.HasFlag(TLChannel.Flag.ParticipantsCount))
+                        {
+                            participantsCount = Sqlite3.sqlite3_column_int(statement, 7);
+                        }
+
                         var restriction_reason = Sqlite3.sqlite3_column_text(statement, 9);
 
                         TLChannelAdminRights adminRights = null;
@@ -143,7 +150,8 @@ namespace Telegram.Api.Services.Cache.Context
                             RestrictionReason = restriction_reason,
                             Photo = photo,
                             AdminRights = adminRights,
-                            BannedRights = bannedRights
+                            BannedRights = bannedRights,
+                            ParticipantsCount = participantsCount
                         };
                     }
 
@@ -237,7 +245,16 @@ namespace Telegram.Api.Services.Cache.Context
                     }
 
                     Sqlite3.sqlite3_bind_int(statement, 7, channel.Version);
-                    Sqlite3.sqlite3_bind_null(statement, 8);
+
+                    if (channel.HasParticipantsCount)
+                    {
+                        Sqlite3.sqlite3_bind_int(statement, 8, channel.ParticipantsCount ?? 0);
+                    }
+                    else
+                    {
+                        Sqlite3.sqlite3_bind_null(statement, 8);
+                    }
+
                     Sqlite3.sqlite3_bind_int(statement, 9, channel.Date);
                     Sqlite3.sqlite3_bind_null(statement, 10);
 

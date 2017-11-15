@@ -143,7 +143,7 @@ namespace Telegram.Api.TL
                     var user = this as TLUser;
                     if (user != null && user.IsSelf)
                     {
-                        return "You";
+                        return "Saved Messages";
                     }
 
                     if (userBase.Id == 333000)

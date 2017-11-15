@@ -123,7 +123,88 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesGetPeerDialogs { Peers = peers };
 
             const string caption = "messages.getPeerDialogs";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage<TLMessagesPeerDialogs>(caption, obj, result =>
+            {
+                var dialogsCache = new Dictionary<int, List<TLDialog>>();
+                foreach (var dialogBase in result.Dialogs)
+                {
+                    List<TLDialog> dialogs;
+                    if (dialogsCache.TryGetValue(dialogBase.TopMessage, out dialogs))
+                    {
+                        dialogs.Add(dialogBase);
+                    }
+                    else
+                    {
+                        dialogsCache[dialogBase.TopMessage] = new List<TLDialog> { dialogBase };
+                    }
+                }
+
+                foreach (var messageBase in result.Messages)
+                {
+                    ProcessSelfMessage(messageBase);
+
+                    var messageCommon = messageBase as TLMessage;
+                    if (messageCommon != null)
+                    {
+                        List<TLDialog> dialogs;
+                        if (dialogsCache.TryGetValue(messageBase.Id, out dialogs))
+                        {
+                            TLDialog dialog53 = null;
+                            if (messageCommon.ToId is TLPeerChannel)
+                            {
+                                dialog53 = dialogs.FirstOrDefault(x => x.Peer is TLPeerChannel && x.Peer.Id == messageCommon.ToId.Id) as TLDialog;
+                            }
+                            else if (messageCommon.ToId is TLPeerChat)
+                            {
+                                dialog53 = dialogs.FirstOrDefault(x => x.Peer is TLPeerChat && x.Peer.Id == messageCommon.ToId.Id) as TLDialog;
+                            }
+                            else if (messageCommon.ToId is TLPeerUser)
+                            {
+                                var peer = messageCommon.IsOut ? messageCommon.ToId : new TLPeerUser { Id = messageCommon.FromId ?? 0 };
+                                dialog53 = dialogs.FirstOrDefault(x => x.Peer is TLPeerUser && x.Peer.Id == peer.Id) as TLDialog;
+                            }
+                            if (dialog53 != null)
+                            {
+                                if (messageCommon.IsOut)
+                                {
+                                    if (messageCommon.Id > dialog53.ReadOutboxMaxId)
+                                    {
+                                        messageCommon.SetUnreadSilent(true);
+                                    }
+                                }
+                                else
+                                {
+                                    if (messageCommon.Id > dialog53.ReadInboxMaxId)
+                                    {
+                                        messageCommon.SetUnreadSilent(true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //Debug.WriteLine("messages.getDialogs response elapsed=" + stopwatch.Elapsed);
+
+                var slice = new TLMessagesDialogs();
+                slice.Chats = result.Chats;
+                slice.Dialogs = result.Dialogs;
+                slice.Messages = result.Messages;
+                slice.Users = result.Users;
+
+                var r = obj;
+                _cacheService.SyncDialogs(slice, sync =>
+                {
+                    callback?.Invoke(new TLMessagesPeerDialogs
+                    {
+                        Chats = sync.Chats,
+                        Dialogs = sync.Dialogs,
+                        Messages = sync.Messages,
+                        Users = sync.Users
+                    });
+                });
+            },
+            faultCallback);
         }
 
         public void GetInlineBotResultsAsync(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset, Action<TLMessagesBotResults> callback, Action<TLRPCError> faultCallback = null)
@@ -734,13 +815,11 @@ namespace Telegram.Api.Services
                         // TODO: 24/04/2017 verify if this is really needed
                         if (message.Media is TLMessageMediaPhoto photoMedia)
                         {
-                            photoMedia.Photo.IsTransferring = false;
                             photoMedia.Photo.LastProgress = 0.0;
                             photoMedia.Photo.DownloadingProgress = 0.0;
                         }
                         else if (message.Media is TLMessageMediaDocument documentMedia)
                         {
-                            documentMedia.Document.IsTransferring = false;
                             documentMedia.Document.LastProgress = 0.0;
                             documentMedia.Document.DownloadingProgress = 0.0;
                         }
@@ -766,21 +845,84 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
+        public void UploadMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLMessageMediaBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesUploadMedia { Peer = inputPeer, Media = inputMedia };
+
+            const string caption = "messages.uploadMedia";
+            SendInformativeMessage<TLMessageMediaBase>(caption, obj,
+                result =>
+                {
+                    message.Media = result;
+                    message.RaisePropertyChanged(() => message.Media);
+
+                    callback?.Invoke(result);
+                },
+                faultCallback);
+        }
+
+        public void SendMultiMediaAsync(TLInputPeerBase inputPeer, TLVector<TLInputSingleMedia> multiMedia, IList<TLMessage> messages, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesSendMultiMedia { Peer = inputPeer, MultiMedia = multiMedia };
+
+            var first = messages.FirstOrDefault();
+            if (first != null)
+            {
+                obj.ReplyToMsgId = first.ReplyToMsgId;
+                obj.HasReplyToMsgId = first.HasReplyToMsgId;
+
+                obj.IsSilent = first.IsSilent;
+            }
+
+            const string caption = "messages.sendMultiMedia";
+            SendMultiMediaAsyncInternal(obj,
+                result =>
+                {
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        foreach (var message in messages)
+                        {
+                            message.State = GetMessageStatus(_cacheService, message.ToId);
+
+                            // TODO: 24/04/2017 verify if this is really needed
+                            if (message.Media is TLMessageMediaPhoto photoMedia)
+                            {
+                                photoMedia.Photo.LastProgress = 0.0;
+                                photoMedia.Photo.DownloadingProgress = 0.0;
+                            }
+                            else if (message.Media is TLMessageMediaDocument documentMedia)
+                            {
+                                documentMedia.Document.LastProgress = 0.0;
+                                documentMedia.Document.DownloadingProgress = 0.0;
+                            }
+                        }
+                    });
+
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, messages);
+                    }
+
+                    callback?.Invoke(result);
+                },
+                () =>
+                {
+                    //TLUtils.WriteLine(caption + " fast result " + message.RandomIndex, LogSeverity.Error);
+                    //fastCallback();
+                },
+                faultCallback);
+        }
+
         public void SendMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesSendMedia { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Media = inputMedia, RandomId = message.RandomId.Value };
 
-            // TODO: verify
-            //if (message.IsChannelMessage)
-            //{
-            //    obj.SetChannelMessage();
-            //}
-
-            var message48 = message as TLMessage;
-            if (message48 != null && message48.IsSilent)
-            {
-                obj.IsSilent = true;
-            }
+            obj.IsSilent = message.IsSilent;
 
             const string caption = "messages.sendMedia";
             SendMediaAsyncInternal(obj,

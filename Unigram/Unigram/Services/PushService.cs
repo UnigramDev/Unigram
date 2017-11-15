@@ -70,7 +70,10 @@ namespace Unigram.Core.Services
                             SettingsHelper.ChannelUri = channel.Uri;
                         }
 
-                        await _protoService.UnregisterDeviceAsync(8, oldUri);
+                        if (Uri.TryCreate(oldUri, UriKind.Absolute, out Uri unregister))
+                        {
+                            await _protoService.UnregisterDeviceAsync(8, oldUri);
+                        }
                     }
 
                     channel.PushNotificationReceived += OnPushNotificationReceived;

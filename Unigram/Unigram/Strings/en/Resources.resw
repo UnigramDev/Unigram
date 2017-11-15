@@ -121,649 +121,8 @@
     <value>Type your reply here...</value>
     <comment>Toast notification reply placeholder</comment>
   </data>
-  <data name="MessageActionBroadcastCreate" xml:space="preserve">
-    <value>{0} created the broadcast "{1}"</value>
-  </data>
-  <data name="MessageActionChannelCreate" xml:space="preserve">
-    <value>Channel created</value>
-  </data>
-  <data name="MessageActionChannelDeletePhoto" xml:space="preserve">
-    <value>Channel photo removed</value>
-  </data>
-  <data name="MessageActionChannelEditPhoto" xml:space="preserve">
-    <value>Channel photo updated</value>
-  </data>
-  <data name="MessageActionChannelEditTitle" xml:space="preserve">
-    <value>Channel name changed to "{0}"</value>
-  </data>
-  <data name="MessageActionChannelMigrateFrom" xml:space="preserve">
-    <value>This group was upgraded to a supergroup.</value>
-  </data>
-  <data name="MessageActionChatActivate" xml:space="preserve">
-    <value>Chat was activated</value>
-  </data>
-  <data name="MessageActionChatAddSelf" xml:space="preserve">
-    <value>{0} joined the group</value>
-  </data>
-  <data name="MessageActionChatAddUser" xml:space="preserve">
-    <value>{0} added {1}</value>
-  </data>
-  <data name="MessageActionChatCreate" xml:space="preserve">
-    <value>{0} created the group "{1}"</value>
-  </data>
-  <data name="MessageActionChatDeactivate" xml:space="preserve">
-    <value>Chat was deactivated</value>
-  </data>
-  <data name="MessageActionChatDeletePhoto" xml:space="preserve">
-    <value>{0} removed group photo</value>
-  </data>
-  <data name="MessageActionChatDeleteUser" xml:space="preserve">
-    <value>{0} removed {1}</value>
-  </data>
-  <data name="MessageActionChatEditPhoto" xml:space="preserve">
-    <value>{0} updated group photo</value>
-  </data>
-  <data name="MessageActionChatEditTitle" xml:space="preserve">
-    <value>{0} changed group name to "{1}"</value>
-  </data>
-  <data name="MessageActionChatJoin" xml:space="preserve">
-    <value>{0} joined the group</value>
-  </data>
-  <data name="MessageActionChatJoinedByLink" xml:space="preserve">
-    <value>{0} joined the group via invite link</value>
-  </data>
-  <data name="MessageActionChatJoinSelf" xml:space="preserve">
-    <value>You joined the group</value>
-  </data>
-  <data name="MessageActionChatMigrateTo" xml:space="preserve">
-    <value>Chat migrated to supergroup "{0}"</value>
-  </data>
-  <data name="MessageActionDisableMessageTTL" xml:space="preserve">
-    <value>{0} disabled the self-destruct timer</value>
-  </data>
-  <data name="MessageActionEmpty" xml:space="preserve">
-    <value>Empty service message</value>
-  </data>
-  <data name="MessageActionLeftGroupSelf" xml:space="preserve">
-    <value>You left the group</value>
-  </data>
-  <data name="MessageActionPinContact" xml:space="preserve">
-    <value>a contact</value>
-  </data>
-  <data name="MessageActionPinFile" xml:space="preserve">
-    <value>a file</value>
-  </data>
-  <data name="MessageActionPinGame" xml:space="preserve">
-    <value>a game</value>
-  </data>
-  <data name="MessageActionPinGif" xml:space="preserve">
-    <value>a GIF</value>
-  </data>
-  <data name="MessageActionPinMap" xml:space="preserve">
-    <value>a map</value>
-  </data>
-  <data name="MessageActionPinMessage" xml:space="preserve">
-    <value>a message</value>
-  </data>
-  <data name="MessageActionPinPhoto" xml:space="preserve">
-    <value>a photo</value>
-  </data>
-  <data name="MessageActionPinSticker" xml:space="preserve">
-    <value>a {0}sticker</value>
-  </data>
-  <data name="MessageActionPinText" xml:space="preserve">
-    <value>{0} pinned "{1}"</value>
-  </data>
-  <data name="MessageActionPinTrack" xml:space="preserve">
-    <value>track</value>
-  </data>
-  <data name="MessageActionPinVideo" xml:space="preserve">
-    <value>a video</value>
-  </data>
-  <data name="MessageActionPinVoiceMessage" xml:space="preserve">
-    <value>a voice message</value>
-  </data>
-  <data name="MessageActionScreenshotMessages" xml:space="preserve">
-    <value>{0} took a screenshot!</value>
-  </data>
-  <data name="MessageActionSetMessageTTL" xml:space="preserve">
-    <value>{0} set the self-destruct timer to {1}</value>
-  </data>
-  <data name="MessageActionUserLeftGroup" xml:space="preserve">
-    <value>{0} left the group</value>
-  </data>
-  <data name="MessageActionYouDisableMessageTTL" xml:space="preserve">
-    <value>You disabled the self-destruct timer</value>
-  </data>
-  <data name="MessageActionYouScreenshotMessages" xml:space="preserve">
-    <value>You took a screenshot!</value>
-  </data>
-  <data name="MessageActionYouSetMessageTTL" xml:space="preserve">
-    <value>You set the self-destruct timer to {0}</value>
-  </data>
-  <data name="UserScored" xml:space="preserve">
-    <value>{0} scored {1}</value>
-  </data>
-  <data name="UserScoredAtGame" xml:space="preserve">
-    <value>{0} scored {1} at {2}</value>
-  </data>
-  <data name="UserScoredAtGamePlural" xml:space="preserve">
-    <value>{0} scored {1} at {2}</value>
-  </data>
-  <data name="UserScoredPlural" xml:space="preserve">
-    <value>{0} scored {1}</value>
-  </data>
-  <data name="UserNominativePlural" xml:space="preserve">
-    <value>Users</value>
-  </data>
-  <data name="UserNominativeSingular" xml:space="preserve">
-    <value>User</value>
-  </data>
-  <data name="YourScored" xml:space="preserve">
-    <value>You scored {0}</value>
-  </data>
-  <data name="YourScoredAtGame" xml:space="preserve">
-    <value>You scored {0} at {1}</value>
-  </data>
-  <data name="YourScoredAtGamePlural" xml:space="preserve">
-    <value>You scored {0} at {1}</value>
-  </data>
-  <data name="YourScoredPlural" xml:space="preserve">
-    <value>You scored {0}</value>
-  </data>
-  <data name="AreTyping" xml:space="preserve">
-    <value>{0} are typing</value>
-  </data>
-  <data name="IsPlayingGame" xml:space="preserve">
-    <value>{0} is playing a game</value>
-  </data>
-  <data name="IsRecordingAudio" xml:space="preserve">
-    <value>{0} is recording a voice message</value>
-  </data>
-  <data name="IsRecordingVideo" xml:space="preserve">
-    <value>{0} is recording a video</value>
-  </data>
-  <data name="IsSendingAudio" xml:space="preserve">
-    <value>{0} is sending a audio</value>
-  </data>
-  <data name="IsSendingFile" xml:space="preserve">
-    <value>{0} is sending a file</value>
-  </data>
-  <data name="IsSendingPhoto" xml:space="preserve">
-    <value>{0} is sending a photo</value>
-  </data>
-  <data name="IsSendingVideo" xml:space="preserve">
-    <value>{0} is sending a video</value>
-  </data>
-  <data name="IsTyping" xml:space="preserve">
-    <value>{0} is typing</value>
-  </data>
-  <data name="PlayingGame" xml:space="preserve">
-    <value>Playing a game</value>
-  </data>
-  <data name="RecordingVideo" xml:space="preserve">
-    <value>Recording a video</value>
-  </data>
-  <data name="RecordingVoiceMessage" xml:space="preserve">
-    <value>Recording a voice message</value>
-  </data>
-  <data name="SendingAudio" xml:space="preserve">
-    <value>Sending an audio</value>
-  </data>
-  <data name="SendingFile" xml:space="preserve">
-    <value>Sending a file</value>
-  </data>
-  <data name="SendingPhoto" xml:space="preserve">
-    <value>Sending a photo</value>
-  </data>
-  <data name="SendingVideo" xml:space="preserve">
-    <value>Sending a video</value>
-  </data>
-  <data name="Typing" xml:space="preserve">
-    <value>Typing</value>
-  </data>
-  <data name="CompanyGenitivePlural" xml:space="preserve">
-    <value />
-  </data>
-  <data name="CompanyGenitiveSingular" xml:space="preserve">
-    <value />
-  </data>
-  <data name="CompanyNominativePlural" xml:space="preserve">
-    <value>Members</value>
-  </data>
-  <data name="CompanyNominativeSingular" xml:space="preserve">
-    <value>Member</value>
-  </data>
-  <data name="CallMinutes_1" xml:space="preserve">
-    <value>{0} minute</value>
-  </data>
-  <data name="CallMinutes_2" xml:space="preserve">
-    <value>{0} minutes</value>
-  </data>
-  <data name="CallMinutes_3_10" xml:space="preserve">
-    <value>{0} minutes</value>
-  </data>
-  <data name="CallMinutes_any" xml:space="preserve">
-    <value>{0} minutes</value>
-  </data>
-  <data name="CallSeconds_1" xml:space="preserve">
-    <value>{0} second</value>
-  </data>
-  <data name="CallSeconds_2" xml:space="preserve">
-    <value>{0} seconds</value>
-  </data>
-  <data name="CallSeconds_3_10" xml:space="preserve">
-    <value>{0} seconds</value>
-  </data>
-  <data name="CallSeconds_any" xml:space="preserve">
-    <value>{0} seconds</value>
-  </data>
-  <data name="CallShortMinutes_1" xml:space="preserve">
-    <value>{0} min</value>
-  </data>
-  <data name="CallShortMinutes_2" xml:space="preserve">
-    <value>{0} min</value>
-  </data>
-  <data name="CallShortMinutes_3_10" xml:space="preserve">
-    <value>{0} min</value>
-  </data>
-  <data name="CallShortMinutes_any" xml:space="preserve">
-    <value>{0} min</value>
-  </data>
-  <data name="CallShortSeconds_1" xml:space="preserve">
-    <value>{0} sec</value>
-  </data>
-  <data name="CallShortSeconds_2" xml:space="preserve">
-    <value>{0} sec</value>
-  </data>
-  <data name="CallShortSeconds_3_10" xml:space="preserve">
-    <value>{0} sec</value>
-  </data>
-  <data name="CallShortSeconds_any" xml:space="preserve">
-    <value>{0} sec</value>
-  </data>
-  <data name="CallCanceled" xml:space="preserve">
-    <value>Cancelled Call</value>
-  </data>
-  <data name="CallIncoming" xml:space="preserve">
-    <value>Incoming Call</value>
-  </data>
-  <data name="CallMissed" xml:space="preserve">
-    <value>Missed Call</value>
-  </data>
-  <data name="CallOutgoing" xml:space="preserve">
-    <value>Outgoing Call</value>
-  </data>
-  <data name="CallTimeFormat" xml:space="preserve">
-    <value>{0} ({1})</value>
-  </data>
-  <data name="MessageActionPinInvoice" xml:space="preserve">
-    <value>an invoice</value>
-  </data>
-  <data name="CallCanceledShort" xml:space="preserve">
-    <value>Cancelled</value>
-  </data>
-  <data name="CallIncomingShort" xml:space="preserve">
-    <value>Incoming</value>
-  </data>
-  <data name="CallMissedShort" xml:space="preserve">
-    <value>Missed</value>
-  </data>
-  <data name="CallOutgoingShort" xml:space="preserve">
-    <value>Outgoing</value>
-  </data>
-  <data name="MessageActionChatMigrateToGeneric" xml:space="preserve">
-    <value>Chat migrated to supergroup</value>
-  </data>
-  <data name="RecordingVideoMessage" xml:space="preserve">
-    <value>Recording a video message</value>
-  </data>
-  <data name="SendingVideoMessage" xml:space="preserve">
-    <value>Sending a video message</value>
-  </data>
-  <data name="IsRecordingVideoMessage" xml:space="preserve">
-    <value>{0} is recording a video message</value>
-  </data>
-  <data name="IsSendingVideoMessage" xml:space="preserve">
-    <value>{0} is sending a video message</value>
-  </data>
-  <data name="MonthGenitivePlural" xml:space="preserve">
-    <value>Months</value>
-  </data>
-  <data name="MonthGenitiveSingular" xml:space="preserve">
-    <value>Month</value>
-  </data>
-  <data name="MonthNominativePlural" xml:space="preserve">
-    <value>Months</value>
-  </data>
-  <data name="MonthNominativeSingular" xml:space="preserve">
-    <value>Month</value>
-  </data>
-  <data name="YearGenitivePlural" xml:space="preserve">
-    <value>Years</value>
-  </data>
-  <data name="YearGenitiveSingular" xml:space="preserve">
-    <value>Year</value>
-  </data>
-  <data name="YearNominativePlural" xml:space="preserve">
-    <value>Years</value>
-  </data>
-  <data name="YearNominativeSingular" xml:space="preserve">
-    <value>Year</value>
-  </data>
-  <data name="UserGenitivePlural" xml:space="preserve">
-    <value>Users</value>
-  </data>
-  <data name="UserGenitiveSingular" xml:space="preserve">
-    <value>User</value>
-  </data>
-  <data name="MessageActionPin" xml:space="preserve">
-    <value>{0} pinned {1}</value>
-  </data>
-  <data name="EventLog" xml:space="preserve">
-    <value>Event Log</value>
-  </data>
-  <data name="EventLogAdded" xml:space="preserve">
-    <value>{0} added {1}</value>
-  </data>
-  <data name="EventLogAllAdmins" xml:space="preserve">
-    <value>All admins</value>
-  </data>
-  <data name="EventLogAllEvents" xml:space="preserve">
-    <value>All events</value>
-  </data>
-  <data name="EventLogChangedChannelLink" xml:space="preserve">
-    <value>{0} changed the channel link:</value>
-  </data>
-  <data name="EventLogChangedGroupLink" xml:space="preserve">
-    <value>{0} changed the group link:</value>
-  </data>
-  <data name="EventLogChannelJoined" xml:space="preserve">
-    <value>{0} joined the channel</value>
-  </data>
-  <data name="EventLogChannelRestricted" xml:space="preserve">
-    <value>banned {0}</value>
-  </data>
-  <data name="EventLogChannelUnrestricted" xml:space="preserve">
-    <value>unbanned {0}</value>
-  </data>
-  <data name="EventLogDeletedMessages" xml:space="preserve">
-    <value>{0} deleted this message:</value>
-  </data>
-  <data name="EventLogEditedCaption" xml:space="preserve">
-    <value>{0} edited caption:</value>
-  </data>
-  <data name="EventLogEditedChannelDescription" xml:space="preserve">
-    <value>{0} edited the channel description:</value>
-  </data>
-  <data name="EventLogEditedChannelPhoto" xml:space="preserve">
-    <value>{0} set a new channel photo</value>
-  </data>
-  <data name="EventLogEditedChannelTitle" xml:space="preserve">
-    <value>{0} renamed the channel to "{1}"</value>
-  </data>
-  <data name="EventLogEditedGroupDescription" xml:space="preserve">
-    <value>{0} edited the group description:</value>
-  </data>
-  <data name="EventLogEditedGroupPhoto" xml:space="preserve">
-    <value>{0} set a new group photo</value>
-  </data>
-  <data name="EventLogEditedGroupTitle" xml:space="preserve">
-    <value>{0} renamed the group to "{1}"</value>
-  </data>
-  <data name="EventLogEditedMessages" xml:space="preserve">
-    <value>{0} edited this message:</value>
-  </data>
-  <data name="EventLogEditedYouChannelPhoto" xml:space="preserve">
-    <value>You set new channel photo</value>
-  </data>
-  <data name="EventLogEditedYouChannelTitle" xml:space="preserve">
-    <value>You renamed the channel to "%1$s"</value>
-  </data>
-  <data name="EventLogEditedYouGroupPhoto" xml:space="preserve">
-    <value>You set new group photo</value>
-  </data>
-  <data name="EventLogEditedYouGroupTitle" xml:space="preserve">
-    <value>You renamed the group to "%1$s"</value>
-  </data>
-  <data name="EventLogEmpty" xml:space="preserve">
-    <value>&lt;b&gt;No events here yet&lt;/b&gt;\n\nThe group's members and admins\nhave not taken any service actions\nin the last 48 hours.</value>
-  </data>
-  <data name="EventLogEmptyChannel" xml:space="preserve">
-    <value>&lt;b&gt;No events here yet&lt;/b&gt;\n\nThe channel's admins\nhave not taken any service actions\nin the last 48 hours.</value>
-  </data>
-  <data name="EventLogEmptySearch" xml:space="preserve">
-    <value>&lt;b&gt;No events found&lt;/b&gt;\n\nNo recent events that match your query have been found.</value>
-  </data>
-  <data name="EventLogEmptyTextSearch" xml:space="preserve">
-    <value>No recent events that contain '&lt;b&gt;%1$s&lt;/b&gt;' have been found.</value>
-  </data>
-  <data name="EventLogFilterAll" xml:space="preserve">
-    <value>All events</value>
-  </data>
-  <data name="EventLogFilterChannelInfo" xml:space="preserve">
-    <value>Channel info</value>
-  </data>
-  <data name="EventLogFilterChannelSettings" xml:space="preserve">
-    <value>Channel settings</value>
-  </data>
-  <data name="EventLogFilterDeletedMessages" xml:space="preserve">
-    <value>Deleted messages</value>
-  </data>
-  <data name="EventLogFilterEditedMessages" xml:space="preserve">
-    <value>Edited messages</value>
-  </data>
-  <data name="EventLogFilterGroupInfo" xml:space="preserve">
-    <value>Group info</value>
-  </data>
-  <data name="EventLogFilterGroupSettings" xml:space="preserve">
-    <value>Group settings</value>
-  </data>
-  <data name="EventLogFilterLeavingMembers" xml:space="preserve">
-    <value>Leaving members</value>
-  </data>
-  <data name="EventLogFilterNewAdmins" xml:space="preserve">
-    <value>New admins</value>
-  </data>
-  <data name="EventLogFilterNewMembers" xml:space="preserve">
-    <value>New members</value>
-  </data>
-  <data name="EventLogFilterNewRestrictions" xml:space="preserve">
-    <value>New restrictions</value>
-  </data>
-  <data name="EventLogFilterPinnedMessages" xml:space="preserve">
-    <value>Pinned messages</value>
-  </data>
-  <data name="EventLogGroupJoined" xml:space="preserve">
-    <value>{0} joined the group</value>
-  </data>
-  <data name="EventLogInfoDetail" xml:space="preserve">
-    <value>This is a list of all service actions taken by the group's members and admins in the last 48 hours.</value>
-  </data>
-  <data name="EventLogInfoDetailChannel" xml:space="preserve">
-    <value>This is a list of all service actions taken by the channel's admins in the last 48 hours.</value>
-  </data>
-  <data name="EventLogInfoTitle" xml:space="preserve">
-    <value>What is the Recent Actions?</value>
-  </data>
-  <data name="EventLogLeft" xml:space="preserve">
-    <value>{0} left the group</value>
-  </data>
-  <data name="EventLogLeftChannel" xml:space="preserve">
-    <value>{0} left the channel</value>
-  </data>
-  <data name="EventLogLeftGroup" xml:space="preserve">
-    <value>{0} left the group</value>
-  </data>
-  <data name="EventLogOriginalCaption" xml:space="preserve">
-    <value>Original caption</value>
-  </data>
-  <data name="EventLogOriginalCaptionEmpty" xml:space="preserve">
-    <value>Empty</value>
-  </data>
-  <data name="EventLogOriginalMessages" xml:space="preserve">
-    <value>Original message</value>
-  </data>
-  <data name="EventLogPinnedMessages" xml:space="preserve">
-    <value>{0} pinned this message:</value>
-  </data>
-  <data name="EventLogPreviousChannelLink" xml:space="preserve">
-    <value>Previous channel link</value>
-  </data>
-  <data name="EventLogPreviousGroupDescription" xml:space="preserve">
-    <value>Previous description</value>
-  </data>
-  <data name="EventLogPreviousGroupLink" xml:space="preserve">
-    <value>Previous group link</value>
-  </data>
-  <data name="EventLogPreviousLink" xml:space="preserve">
-    <value>Previous link</value>
-  </data>
-  <data name="EventLogPromoted" xml:space="preserve">
-    <value>changed privileges of {0}</value>
-  </data>
-  <data name="EventLogPromotedAddAdmins" xml:space="preserve">
-    <value>Add admins</value>
-  </data>
-  <data name="EventLogPromotedAddUsers" xml:space="preserve">
-    <value>Add users</value>
-  </data>
-  <data name="EventLogPromotedBanUsers" xml:space="preserve">
-    <value>Ban users</value>
-  </data>
-  <data name="EventLogPromotedChangeChannelInfo" xml:space="preserve">
-    <value>Change channel Info</value>
-  </data>
-  <data name="EventLogPromotedChangeGroupInfo" xml:space="preserve">
-    <value>Change group Info</value>
-  </data>
-  <data name="EventLogPromotedDeleteMessages" xml:space="preserve">
-    <value>Delete messages</value>
-  </data>
-  <data name="EventLogPromotedEditMessages" xml:space="preserve">
-    <value>Edit messages</value>
-  </data>
-  <data name="EventLogPromotedInviteLink" xml:space="preserve">
-    <value>Invite via link</value>
-  </data>
-  <data name="EventLogPromotedPinMessages" xml:space="preserve">
-    <value>Pin messages</value>
-  </data>
-  <data name="EventLogPromotedPostMessages" xml:space="preserve">
-    <value>Post messages</value>
-  </data>
-  <data name="EventLogRemoved" xml:space="preserve">
-    <value>{0} removed {1}</value>
-  </data>
-  <data name="EventLogRemovedChannelLink" xml:space="preserve">
-    <value>{0} removed channel link</value>
-  </data>
-  <data name="EventLogRemovedChannelPhoto" xml:space="preserve">
-    <value>{0} removed the channel photo</value>
-  </data>
-  <data name="EventLogRemovedGroupLink" xml:space="preserve">
-    <value>{0} removed group link</value>
-  </data>
-  <data name="EventLogRemovedGroupPhoto" xml:space="preserve">
-    <value>{0} removed the group photo</value>
-  </data>
-  <data name="EventLogRemovedYouChannelPhoto" xml:space="preserve">
-    <value>You removed channel photo</value>
-  </data>
-  <data name="EventLogRemovedYouGroupPhoto" xml:space="preserve">
-    <value>You removed group photo</value>
-  </data>
-  <data name="EventLogRestricted" xml:space="preserve">
-    <value>changed restrictions for {0} indefinitely</value>
-  </data>
-  <data name="EventLogRestrictedReadMessages" xml:space="preserve">
-    <value>Read messages</value>
-  </data>
-  <data name="EventLogRestrictedSendEmbed" xml:space="preserve">
-    <value>Embed links</value>
-  </data>
-  <data name="EventLogRestrictedSendMedia" xml:space="preserve">
-    <value>Send media</value>
-  </data>
-  <data name="EventLogRestrictedSendMessages" xml:space="preserve">
-    <value>Send messages</value>
-  </data>
-  <data name="EventLogRestrictedSendStickers" xml:space="preserve">
-    <value>Send stickers &amp; GIFs</value>
-  </data>
-  <data name="EventLogRestrictedUntil" xml:space="preserve">
-    <value>changed restrictions for {0}
-
-Duration: {1}</value>
-  </data>
-  <data name="EventLogSelectedEvents" xml:space="preserve">
-    <value>Selected events</value>
-  </data>
-  <data name="EventLogToggledInvitesOff" xml:space="preserve">
-    <value>{0} disabled group invites</value>
-  </data>
-  <data name="EventLogToggledInvitesOn" xml:space="preserve">
-    <value>{0} enabled group invites</value>
-  </data>
-  <data name="EventLogToggledSignaturesOff" xml:space="preserve">
-    <value>{0} disabled signatures</value>
-  </data>
-  <data name="EventLogToggledSignaturesOn" xml:space="preserve">
-    <value>{0} enabled signatures</value>
-  </data>
-  <data name="EventLogUnpinnedMessages" xml:space="preserve">
-    <value>{0} unpinned message</value>
-  </data>
-  <data name="EventLogYouChannelJoined" xml:space="preserve">
-    <value>You joined channel</value>
-  </data>
-  <data name="EventLogYouGroupJoined" xml:space="preserve">
-    <value>You joined group</value>
-  </data>
-  <data name="EventLogYouLeft" xml:space="preserve">
-    <value>You left group</value>
-  </data>
-  <data name="EventLogYouPromoted" xml:space="preserve">
-    <value>You changed privileges of un2 (%1$s)</value>
-  </data>
-  <data name="EventLogYouRestricted" xml:space="preserve">
-    <value>You changed restrictions for un2 (%1$s)</value>
-  </data>
-  <data name="UserRestrictionsUntilForever" xml:space="preserve">
-    <value>Forever</value>
-  </data>
-  <data name="BotsTooMuch" xml:space="preserve">
-    <value>Sorry, too many bots in this group.</value>
-  </data>
-  <data name="PeerFloodAddContact" xml:space="preserve">
-    <value>Sorry, you can only add mutual contacts to groups at the moment.</value>
-  </data>
-  <data name="UserNotMutualContact" xml:space="preserve">
-    <value>Sorry, you can't add this user to groups.</value>
-  </data>
-  <data name="UsersTooMuch" xml:space="preserve">
-    <value>Sorry, this group is full.</value>
-  </data>
-  <data name="EventLogInvited" xml:space="preserve">
-    <value>invited {0}</value>
-  </data>
-  <data name="EventLogChangedStickersSet" xml:space="preserve">
-    <value>{0} changed group {1}</value>
-  </data>
-  <data name="EventLogRemovedStickersSet" xml:space="preserve">
-    <value>{0} removed sticker set</value>
-  </data>
-  <data name="EventLogToggledInvitesHistoryOff" xml:space="preserve">
-    <value>{0} made group history hidden for new members</value>
-  </data>
-  <data name="EventLogToggledInvitesHistoryOn" xml:space="preserve">
-    <value>{0} made group history visible for new members</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Unigram (Alpha)</value>
-  </data>
   <data name="IntroPage_Wizard1_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
-    <value>The world's **fastest** messaging app.
+    <value>The world's **fastest** messaging service.
 It is **free** and **secure**.</value>
   </data>
   <data name="IntroPage_Wizard1_Title.Text" xml:space="preserve">
@@ -813,12 +172,9 @@ messages from multiple devices.</value>
   <data name="AboutPage_ThanksLabel.Text" xml:space="preserve">
     <value>Thank you for using Unigram! We wouldn't have been able to get this far without all help of the community.</value>
   </data>
-  <data name="AboutPage_AppNameLabel.Text" xml:space="preserve">
-    <value>Unigram</value>
-    <comment>App name label in AboutPage</comment>
-  </data>
   <data name="AboutPage_ChangelogButton.Content" xml:space="preserve">
     <value>Changelog</value>
+    <comment>C</comment>
   </data>
   <data name="AboutPage_FAQButton.Content" xml:space="preserve">
     <value>Frequently Asked Questions</value>
@@ -894,36 +250,6 @@ messages from multiple devices.</value>
   </data>
   <data name="SettingsPage_WallpaperButton.Content" xml:space="preserve">
     <value>Chat Background</value>
-  </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="Telegram" xml:space="preserve">
-    <value>Telegram</value>
-  </data>
-  <data name="TGLogoutSucceededDialogText" xml:space="preserve">
-    <value>The app will be closed. Relaunch it to login again.</value>
-  </data>
-  <data name="TGLogoutText" xml:space="preserve">
-    <value>Are you sure you want to logout?</value>
-  </data>
-  <data name="TGSupportDisclaimerDetails" xml:space="preserve">
-    <value>Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.</value>
-  </data>
-  <data name="TGSupportDisclaimerPrimaryText" xml:space="preserve">
-    <value>FAQ</value>
-  </data>
-  <data name="No" xml:space="preserve">
-    <value>No</value>
-  </data>
-  <data name="UnblockUserConfirmationDialogText" xml:space="preserve">
-    <value>Are you sure?</value>
-  </data>
-  <data name="UnblockUserConfirmationDialogTitle" xml:space="preserve">
-    <value>Unblock?</value>
-  </data>
-  <data name="Yes" xml:space="preserve">
-    <value>Yes</value>
   </data>
   <data name="SettingsAccountsPage_Header.Text" xml:space="preserve">
     <value>Accounts management</value>
@@ -1036,15 +362,6 @@ messages from multiple devices.</value>
   <data name="SettingsDownloadView_SaveButton.Content" xml:space="preserve">
     <value>Save</value>
   </data>
-  <data name="WhenOnMobileData" xml:space="preserve">
-    <value>When using mobile data</value>
-  </data>
-  <data name="WhenOnWiFi" xml:space="preserve">
-    <value>When connected to Wi-Fi</value>
-  </data>
-  <data name="WhenRoaming" xml:space="preserve">
-    <value>When roaming</value>
-  </data>
   <data name="ProxyView_FieldCalls.Content" xml:space="preserve">
     <value>Use proxy for calls</value>
   </data>
@@ -1078,244 +395,11 @@ messages from multiple devices.</value>
   <data name="ProxyView_Title.Text" xml:space="preserve">
     <value>Proxy Settings</value>
   </data>
-  <data name="ProxySettingsShareTitle" xml:space="preserve">
-    <value>Proxy Settings</value>
-  </data>
   <data name="ProxyView_Dialog.PrimaryButtonText" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="ProxyView_Dialog.SecondaryButtonText" xml:space="preserve">
     <value>Cancel</value>
-  </data>
-  <data name="AutoDownload_Audio" xml:space="preserve">
-    <value>Audio messages</value>
-  </data>
-  <data name="AutoDownload_Document" xml:space="preserve">
-    <value>Files</value>
-  </data>
-  <data name="AutoDownload_GIF" xml:space="preserve">
-    <value>GIFs</value>
-  </data>
-  <data name="AutoDownload_Music" xml:space="preserve">
-    <value>Music</value>
-  </data>
-  <data name="AutoDownload_None" xml:space="preserve">
-    <value>No media</value>
-  </data>
-  <data name="AutoDownload_Photo" xml:space="preserve">
-    <value>Photos</value>
-  </data>
-  <data name="AutoDownload_Round" xml:space="preserve">
-    <value>Video messages</value>
-  </data>
-  <data name="AutoDownload_Video" xml:space="preserve">
-    <value>Videos</value>
-  </data>
-  <data name="AddAdminErrorBlacklisted" xml:space="preserve">
-    <value>Sorry, you can't add this user as an admin because they are in the blacklist and you can't unban them.</value>
-    <comment>android</comment>
-  </data>
-  <data name="AddAdminErrorNotAMember" xml:space="preserve">
-    <value>Sorry, you can't add this user as an admin because they are not a member of this group and you are not allowed to invite them.</value>
-    <comment>android</comment>
-  </data>
-  <data name="AddBannedErrorAdmin" xml:space="preserve">
-    <value>Sorry, you can't ban this user because they are an admin in this group and you are not allowed to demote them.</value>
-    <comment>android</comment>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Telegram</value>
-    <comment>android</comment>
-  </data>
-  <data name="CancelLinkExpired" xml:space="preserve">
-    <value>Link is invalid or expired.</value>
-    <comment>android</comment>
-  </data>
-  <data name="ChangePhoneNumberOccupied" xml:space="preserve">
-    <value>The number {0} is already connected to a Telegram account. Please delete that account before migrating to the new number.</value>
-    <comment>android</comment>
-  </data>
-  <data name="ChannelUserAddLimit" xml:space="preserve">
-    <value>Sorry, you can only add the first 200 members to a channel. Note that an unlimited number of people may join via the channel's link.</value>
-    <comment>android</comment>
-  </data>
-  <data name="ChannelUserCantAdd" xml:space="preserve">
-    <value>Sorry, you can't add this user to channels.</value>
-    <comment>android</comment>
-  </data>
-  <data name="ChannelUserCantAdmin" xml:space="preserve">
-    <value>Sorry, too many admins in this channel.</value>
-    <comment>android</comment>
-  </data>
-  <data name="ChannelUserCantBot" xml:space="preserve">
-    <value>Sorry, too many bots in this channel.</value>
-    <comment>android</comment>
-  </data>
-  <data name="ChannelUserLeftError" xml:space="preserve">
-    <value>Sorry, this user decided to leave this channel, so you cannot invite them back here.</value>
-    <comment>android</comment>
-  </data>
-  <data name="CodeExpired" xml:space="preserve">
-    <value>Code expired, please login again</value>
-    <comment>android</comment>
-  </data>
-  <data name="CreateGroupError" xml:space="preserve">
-    <value>Sorry, you can't create a group with these users because of their privacy settings.</value>
-    <comment>android</comment>
-  </data>
-  <data name="EditMessageError" xml:space="preserve">
-    <value>Sorry, you can't edit this message.</value>
-    <comment>android</comment>
-  </data>
-  <data name="ErrorOccurred" xml:space="preserve">
-    <value>An error occurred.</value>
-    <comment>android</comment>
-  </data>
-  <data name="FloodWait" xml:space="preserve">
-    <value>Too many attempts, please try again later</value>
-    <comment>android</comment>
-  </data>
-  <data name="GroupUserAddLimit" xml:space="preserve">
-    <value>Sorry, this group is full.</value>
-    <comment>android</comment>
-  </data>
-  <data name="GroupUserCantAdd" xml:space="preserve">
-    <value>Sorry, you can't add this user to groups.</value>
-    <comment>android</comment>
-  </data>
-  <data name="GroupUserCantAdmin" xml:space="preserve">
-    <value>Sorry, too many administrators in this group.</value>
-    <comment>android</comment>
-  </data>
-  <data name="GroupUserCantBot" xml:space="preserve">
-    <value>Sorry, too many bots in this group.</value>
-    <comment>android</comment>
-  </data>
-  <data name="GroupUserLeftError" xml:space="preserve">
-    <value>Sorry, this user decided to leave this group, so you cannot invite them back here.</value>
-    <comment>android</comment>
-  </data>
-  <data name="InvalidCode" xml:space="preserve">
-    <value>Invalid code</value>
-    <comment>android</comment>
-  </data>
-  <data name="InvalidPhoneNumber" xml:space="preserve">
-    <value>Invalid phone number</value>
-    <comment>android</comment>
-  </data>
-  <data name="InviteToChannelError" xml:space="preserve">
-    <value>Sorry, you can't add this user to channels because of user's privacy settings.</value>
-    <comment>android</comment>
-  </data>
-  <data name="InviteToGroupError" xml:space="preserve">
-    <value>Sorry, you can't add this user to groups because of user's privacy settings.</value>
-    <comment>android</comment>
-  </data>
-  <data name="JoinToGroupErrorFull" xml:space="preserve">
-    <value>Sorry, this group is already full.</value>
-    <comment>android</comment>
-  </data>
-  <data name="JoinToGroupErrorNotExist" xml:space="preserve">
-    <value>Sorry, this chat does not seem to exist.</value>
-    <comment>android</comment>
-  </data>
-  <data name="MoreInfo" xml:space="preserve">
-    <value>More info</value>
-    <comment>android</comment>
-  </data>
-  <data name="OK" xml:space="preserve">
-    <value>OK</value>
-    <comment>android</comment>
-  </data>
-  <data name="PaymentFailed" xml:space="preserve">
-    <value>Sorry, the payment was declined.</value>
-    <comment>android</comment>
-  </data>
-  <data name="PaymentNoShippingMethod" xml:space="preserve">
-    <value>Sorry, it is not possible to deliver to your address.</value>
-    <comment>android</comment>
-  </data>
-  <data name="PaymentPrecheckoutFailed" xml:space="preserve">
-    <value>Sorry, the payment was cancelled by the bot.</value>
-    <comment>android</comment>
-  </data>
-  <data name="UsernameInUse" xml:space="preserve">
-    <value>Sorry, this username is already taken.</value>
-    <comment>android</comment>
-  </data>
-  <data name="UsernameInvalid" xml:space="preserve">
-    <value>Sorry, this username is invalid.</value>
-    <comment>android</comment>
-  </data>
-  <data name="UserRestricted" xml:space="preserve">
-    <value>Sorry, you are not allowed to do this.</value>
-    <comment>android</comment>
-  </data>
-  <data name="YouBlockedUser" xml:space="preserve">
-    <value>Sorry, you can't add this user or bot to groups because you've blocked them. Please unblock to proceed.</value>
-    <comment>android</comment>
-  </data>
-  <data name="ResetNotificationsDialogBody" xml:space="preserve">
-    <value>Reset all notifications?</value>
-  </data>
-  <data name="ResetNotificationsDialogTitle" xml:space="preserve">
-    <value>Confirm</value>
-  </data>
-  <data name="FloodWaitTime" xml:space="preserve">
-    <value>Too many attempts, please try again in {0}</value>
-  </data>
-  <data name="NobodyLikesSpam1" xml:space="preserve">
-    <value>Sorry, you can only send messages to mutual contacts at the moment.</value>
-    <comment>android</comment>
-  </data>
-  <data name="NobodyLikesSpam2" xml:space="preserve">
-    <value>Sorry, you can only add mutual contacts to groups at the moment.</value>
-    <comment>android</comment>
-  </data>
-  <data name="MessageAddSticker" xml:space="preserve">
-    <value>Add to Stickers</value>
-  </data>
-  <data name="MessageCopy" xml:space="preserve">
-    <value>Copy text</value>
-  </data>
-  <data name="MessageCopyLinkBroadcast" xml:space="preserve">
-    <value>Copy post link</value>
-  </data>
-  <data name="MessageCopyLinkMegaGroup" xml:space="preserve">
-    <value>Copy message link</value>
-  </data>
-  <data name="MessageDelete" xml:space="preserve">
-    <value>Delete message</value>
-  </data>
-  <data name="MessageEdit" xml:space="preserve">
-    <value>Edit message</value>
-  </data>
-  <data name="MessageFaveSticker" xml:space="preserve">
-    <value>Add to Favorites</value>
-  </data>
-  <data name="MessageForward" xml:space="preserve">
-    <value>Forward message</value>
-  </data>
-  <data name="MessagePin" xml:space="preserve">
-    <value>Pin message</value>
-  </data>
-  <data name="MessageReply" xml:space="preserve">
-    <value>Reply</value>
-  </data>
-  <data name="MessageSaveGIF" xml:space="preserve">
-    <value>Save to GIFs</value>
-  </data>
-  <data name="MessageSaveMedia" xml:space="preserve">
-    <value>Save file as...</value>
-  </data>
-  <data name="MessageSelect" xml:space="preserve">
-    <value>Select message</value>
-  </data>
-  <data name="MessageUnfaveSticker" xml:space="preserve">
-    <value>Remove from Favorites</value>
-  </data>
-  <data name="MessageUnpin" xml:space="preserve">
-    <value>Unpin message</value>
   </data>
   <data name="SettingsMasksArchivedPage_Footer.Text" xml:space="preserve">
     <value>You can have up to 200 sets of masks.
@@ -1373,17 +457,226 @@ Tap on a sticker to view and add the whole set.</value>
     <value>Masks</value>
     <comment>MaskStickerSettings.Title</comment>
   </data>
-  <data name="MessageCopyMedia" xml:space="preserve">
-    <value>Copy image</value>
+  <data name="SettingsGeneralPage_AutoPlayToggle.Header" xml:space="preserve">
+    <value>Autoplay GIFs</value>
+    <comment>ChatSettings.AutoPlayAnimations</comment>
   </data>
-  <data name="ParticipantEdit" xml:space="preserve">
-    <value>Edit permissions</value>
+  <data name="AboutPage_FacebookLikeButton.Content" xml:space="preserve">
+    <value>Like Unigram on Facebook</value>
   </data>
-  <data name="ParticipantPromote" xml:space="preserve">
-    <value>Promote</value>
+  <data name="AboutPage_TwitterFollowButton.Content" xml:space="preserve">
+    <value>Follow Unigram on Twitter</value>
   </data>
-  <data name="ParticipantRestrict" xml:space="preserve">
-    <value>Restrict</value>
+  <data name="IntroPage_StartButton.Content" xml:space="preserve">
+    <value>Start messaging</value>
+  </data>
+  <data name="SignInPage_CountriesList.Header" xml:space="preserve">
+    <value>Country:</value>
+  </data>
+  <data name="SignInPage_CountriesList.PlaceholderText" xml:space="preserve">
+    <value>Select your country...</value>
+  </data>
+  <data name="SignInPage_DetailsLabel.Text" xml:space="preserve">
+    <value>Please select the country you live in and enter your phone number</value>
+  </data>
+  <data name="SignInPage_HeaderLabel.Text" xml:space="preserve">
+    <value>Your phone number</value>
+  </data>
+  <data name="SignInPage_PhoneCodeTextBox.Header" xml:space="preserve">
+    <value>Code:</value>
+  </data>
+  <data name="SignInPage_PhoneNumberTextBox.Header" xml:space="preserve">
+    <value>Phone number:</value>
+  </data>
+  <data name="SignInPage_PhoneNumberTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter your phone number</value>
+  </data>
+  <data name="SignInPage_TitleLabel.Text" xml:space="preserve">
+    <value>Your phone number</value>
+  </data>
+  <data name="SignInPasswordPage_TitleLabel.Text" xml:space="preserve">
+    <value>Your password</value>
+  </data>
+  <data name="MainPage_NavigationChats.Content" xml:space="preserve">
+    <value>Chats</value>
+  </data>
+  <data name="MainPage_NavigationNewChannel.Content" xml:space="preserve">
+    <value>New Channel</value>
+  </data>
+  <data name="MainPage_NavigationNewChat.Content" xml:space="preserve">
+    <value>New Group</value>
+  </data>
+  <data name="MainPage_SearchDialogs.PlaceholderText" xml:space="preserve">
+    <value>Search for chats and messages</value>
+  </data>
+  <data name="AddAdminErrorBlacklisted" xml:space="preserve">
+    <value>Sorry, you can't add this user as an admin because they are in the blacklist and you can't unban them.</value>
+  </data>
+  <data name="AddAdminErrorNotAMember" xml:space="preserve">
+    <value>Sorry, you can't add this user as an admin because they are not a member of this group and you are not allowed to invite them.</value>
+  </data>
+  <data name="AddBannedErrorAdmin" xml:space="preserve">
+    <value>Sorry, you can't ban this user because they are an admin in this group and you are not allowed to demote them.</value>
+  </data>
+  <data name="AreTyping" xml:space="preserve">
+    <value>{0} are typing</value>
+  </data>
+  <data name="AutoDownload_Audio" xml:space="preserve">
+    <value>Audio messages</value>
+  </data>
+  <data name="AutoDownload_Document" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="AutoDownload_GIF" xml:space="preserve">
+    <value>GIFs</value>
+  </data>
+  <data name="AutoDownload_Music" xml:space="preserve">
+    <value>Music</value>
+  </data>
+  <data name="AutoDownload_None" xml:space="preserve">
+    <value>No media</value>
+  </data>
+  <data name="AutoDownload_Photo" xml:space="preserve">
+    <value>Photos</value>
+  </data>
+  <data name="AutoDownload_Round" xml:space="preserve">
+    <value>Video messages</value>
+  </data>
+  <data name="AutoDownload_Video" xml:space="preserve">
+    <value>Videos</value>
+  </data>
+  <data name="BotsTooMuch" xml:space="preserve">
+    <value>Sorry, too many bots in this group.</value>
+  </data>
+  <data name="CallCanceled" xml:space="preserve">
+    <value>Cancelled Call</value>
+  </data>
+  <data name="CallCanceledShort" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="CallIncoming" xml:space="preserve">
+    <value>Incoming Call</value>
+  </data>
+  <data name="CallIncomingShort" xml:space="preserve">
+    <value>Incoming</value>
+  </data>
+  <data name="CallMinutes_1" xml:space="preserve">
+    <value>{0} minute</value>
+  </data>
+  <data name="CallMinutes_2" xml:space="preserve">
+    <value>{0} minutes</value>
+  </data>
+  <data name="CallMinutes_3_10" xml:space="preserve">
+    <value>{0} minutes</value>
+  </data>
+  <data name="CallMinutes_any" xml:space="preserve">
+    <value>{0} minutes</value>
+  </data>
+  <data name="CallMissed" xml:space="preserve">
+    <value>Missed Call</value>
+  </data>
+  <data name="CallMissedShort" xml:space="preserve">
+    <value>Missed</value>
+  </data>
+  <data name="CallOutgoing" xml:space="preserve">
+    <value>Outgoing Call</value>
+  </data>
+  <data name="CallOutgoingShort" xml:space="preserve">
+    <value>Outgoing</value>
+  </data>
+  <data name="CallSeconds_1" xml:space="preserve">
+    <value>{0} second</value>
+  </data>
+  <data name="CallSeconds_2" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="CallSeconds_3_10" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="CallSeconds_any" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="CallShortMinutes_1" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="CallShortMinutes_2" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="CallShortMinutes_3_10" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="CallShortMinutes_any" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="CallShortSeconds_1" xml:space="preserve">
+    <value>{0} sec</value>
+  </data>
+  <data name="CallShortSeconds_2" xml:space="preserve">
+    <value>{0} sec</value>
+  </data>
+  <data name="CallShortSeconds_3_10" xml:space="preserve">
+    <value>{0} sec</value>
+  </data>
+  <data name="CallShortSeconds_any" xml:space="preserve">
+    <value>{0} sec</value>
+  </data>
+  <data name="CallTimeFormat" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Cancel button text resource</comment>
+  </data>
+  <data name="CancelLinkExpired" xml:space="preserve">
+    <value>Link is invalid or expired.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChangePhoneNumberOccupied" xml:space="preserve">
+    <value>The number {0} is already connected to a Telegram account. Please delete that account before migrating to the new number.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChannelUserAddLimit" xml:space="preserve">
+    <value>Sorry, you can only add the first 200 members to a channel. Note that an unlimited number of people may join via the channel's link.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChannelUserCantAdd" xml:space="preserve">
+    <value>Sorry, you can't add this user to channels.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChannelUserCantAdmin" xml:space="preserve">
+    <value>Sorry, too many admins in this channel.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChannelUserCantBot" xml:space="preserve">
+    <value>Sorry, too many bots in this channel.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChannelUserLeftError" xml:space="preserve">
+    <value>Sorry, this user decided to leave this channel, so you cannot invite them back here.</value>
+    <comment>android</comment>
+  </data>
+  <data name="CodeExpired" xml:space="preserve">
+    <value>Code expired, please login again</value>
+    <comment>android</comment>
+  </data>
+  <data name="CompanyGenitivePlural" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CompanyGenitiveSingular" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CompanyNominativePlural" xml:space="preserve">
+    <value>Members</value>
+  </data>
+  <data name="CompanyNominativeSingular" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="ConfirmLogoutDialogText" xml:space="preserve">
+    <value>Are you sure you want to logout?</value>
+  </data>
+  <data name="CreateGroupError" xml:space="preserve">
+    <value>Sorry, you can't create a group with these users because of their privacy settings.</value>
+    <comment>android</comment>
   </data>
   <data name="DialogClearHistory" xml:space="preserve">
     <value>Clear history</value>
@@ -1421,11 +714,881 @@ Tap on a sticker to view and add the whole set.</value>
   <data name="DialogUnpin" xml:space="preserve">
     <value>Unpin from top</value>
   </data>
-  <data name="SettingsGeneralPage_AutoPlayToggle.Header" xml:space="preserve">
-    <value>Autoplay GIFs</value>
-    <comment>ChatSettings.AutoPlayAnimations</comment>
+  <data name="EditMessageError" xml:space="preserve">
+    <value>Sorry, you can't edit this message.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>An error occurred.</value>
+    <comment>android</comment>
+  </data>
+  <data name="EventLog" xml:space="preserve">
+    <value>Event Log</value>
+  </data>
+  <data name="EventLogAdded" xml:space="preserve">
+    <value>{0} added {1}</value>
+  </data>
+  <data name="EventLogAllAdmins" xml:space="preserve">
+    <value>All admins</value>
+  </data>
+  <data name="EventLogAllEvents" xml:space="preserve">
+    <value>All events</value>
+  </data>
+  <data name="EventLogChangedChannelLink" xml:space="preserve">
+    <value>{0} changed the channel link:</value>
+  </data>
+  <data name="EventLogChangedGroupLink" xml:space="preserve">
+    <value>{0} changed the group link:</value>
+  </data>
+  <data name="EventLogChangedStickersSet" xml:space="preserve">
+    <value>{0} changed group {1}</value>
+  </data>
+  <data name="EventLogChannelJoined" xml:space="preserve">
+    <value>{0} joined the channel</value>
+  </data>
+  <data name="EventLogChannelRestricted" xml:space="preserve">
+    <value>banned {0}</value>
+  </data>
+  <data name="EventLogChannelUnrestricted" xml:space="preserve">
+    <value>unbanned {0}</value>
+  </data>
+  <data name="EventLogDeletedMessages" xml:space="preserve">
+    <value>{0} deleted this message:</value>
+  </data>
+  <data name="EventLogEditedCaption" xml:space="preserve">
+    <value>{0} edited caption:</value>
+  </data>
+  <data name="EventLogEditedChannelDescription" xml:space="preserve">
+    <value>{0} edited the channel description:</value>
+  </data>
+  <data name="EventLogEditedChannelPhoto" xml:space="preserve">
+    <value>{0} set a new channel photo</value>
+  </data>
+  <data name="EventLogEditedChannelTitle" xml:space="preserve">
+    <value>{0} renamed the channel to "{1}"</value>
+  </data>
+  <data name="EventLogEditedGroupDescription" xml:space="preserve">
+    <value>{0} edited the group description:</value>
+  </data>
+  <data name="EventLogEditedGroupPhoto" xml:space="preserve">
+    <value>{0} set a new group photo</value>
+  </data>
+  <data name="EventLogEditedGroupTitle" xml:space="preserve">
+    <value>{0} renamed the group to "{1}"</value>
+  </data>
+  <data name="EventLogEditedMessages" xml:space="preserve">
+    <value>{0} edited this message:</value>
+  </data>
+  <data name="EventLogEditedYouChannelPhoto" xml:space="preserve">
+    <value>You set new channel photo</value>
+  </data>
+  <data name="EventLogEditedYouChannelTitle" xml:space="preserve">
+    <value>You renamed the channel to "%1$s"</value>
+  </data>
+  <data name="EventLogEditedYouGroupPhoto" xml:space="preserve">
+    <value>You set new group photo</value>
+  </data>
+  <data name="EventLogEditedYouGroupTitle" xml:space="preserve">
+    <value>You renamed the group to "%1$s"</value>
+  </data>
+  <data name="EventLogEmpty" xml:space="preserve">
+    <value>&lt;b&gt;No events here yet&lt;/b&gt;\n\nThe group's members and admins\nhave not taken any service actions\nin the last 48 hours.</value>
+  </data>
+  <data name="EventLogEmptyChannel" xml:space="preserve">
+    <value>&lt;b&gt;No events here yet&lt;/b&gt;\n\nThe channel's admins\nhave not taken any service actions\nin the last 48 hours.</value>
+  </data>
+  <data name="EventLogEmptySearch" xml:space="preserve">
+    <value>&lt;b&gt;No events found&lt;/b&gt;\n\nNo recent events that match your query have been found.</value>
+  </data>
+  <data name="EventLogEmptyTextSearch" xml:space="preserve">
+    <value>No recent events that contain '&lt;b&gt;%1$s&lt;/b&gt;' have been found.</value>
+  </data>
+  <data name="EventLogFilterAll" xml:space="preserve">
+    <value>All events</value>
+  </data>
+  <data name="EventLogFilterChannelInfo" xml:space="preserve">
+    <value>Channel info</value>
+  </data>
+  <data name="EventLogFilterChannelSettings" xml:space="preserve">
+    <value>Channel settings</value>
+  </data>
+  <data name="EventLogFilterDeletedMessages" xml:space="preserve">
+    <value>Deleted messages</value>
+  </data>
+  <data name="EventLogFilterEditedMessages" xml:space="preserve">
+    <value>Edited messages</value>
+  </data>
+  <data name="EventLogFilterGroupInfo" xml:space="preserve">
+    <value>Group info</value>
+  </data>
+  <data name="EventLogFilterGroupSettings" xml:space="preserve">
+    <value>Group settings</value>
+  </data>
+  <data name="EventLogFilterLeavingMembers" xml:space="preserve">
+    <value>Leaving members</value>
+  </data>
+  <data name="EventLogFilterNewAdmins" xml:space="preserve">
+    <value>New admins</value>
+  </data>
+  <data name="EventLogFilterNewMembers" xml:space="preserve">
+    <value>New members</value>
+  </data>
+  <data name="EventLogFilterNewRestrictions" xml:space="preserve">
+    <value>New restrictions</value>
+  </data>
+  <data name="EventLogFilterPinnedMessages" xml:space="preserve">
+    <value>Pinned messages</value>
+  </data>
+  <data name="EventLogGroupJoined" xml:space="preserve">
+    <value>{0} joined the group</value>
+  </data>
+  <data name="EventLogInfoDetail" xml:space="preserve">
+    <value>This is a list of all service actions taken by the group's members and admins in the last 48 hours.</value>
+  </data>
+  <data name="EventLogInfoDetailChannel" xml:space="preserve">
+    <value>This is a list of all service actions taken by the channel's admins in the last 48 hours.</value>
+  </data>
+  <data name="EventLogInfoTitle" xml:space="preserve">
+    <value>What is the Recent Actions?</value>
+  </data>
+  <data name="EventLogInvited" xml:space="preserve">
+    <value>invited {0}</value>
+  </data>
+  <data name="EventLogLeft" xml:space="preserve">
+    <value>{0} left the group</value>
+  </data>
+  <data name="EventLogLeftChannel" xml:space="preserve">
+    <value>{0} left the channel</value>
+  </data>
+  <data name="EventLogLeftGroup" xml:space="preserve">
+    <value>{0} left the group</value>
+  </data>
+  <data name="EventLogOriginalCaption" xml:space="preserve">
+    <value>Original caption</value>
+  </data>
+  <data name="EventLogOriginalCaptionEmpty" xml:space="preserve">
+    <value>Empty</value>
+  </data>
+  <data name="EventLogOriginalMessages" xml:space="preserve">
+    <value>Original message</value>
+  </data>
+  <data name="EventLogPinnedMessages" xml:space="preserve">
+    <value>{0} pinned this message:</value>
+  </data>
+  <data name="EventLogPreviousChannelLink" xml:space="preserve">
+    <value>Previous channel link</value>
+  </data>
+  <data name="EventLogPreviousGroupDescription" xml:space="preserve">
+    <value>Previous description</value>
+  </data>
+  <data name="EventLogPreviousGroupLink" xml:space="preserve">
+    <value>Previous group link</value>
+  </data>
+  <data name="EventLogPreviousLink" xml:space="preserve">
+    <value>Previous link</value>
+  </data>
+  <data name="EventLogPromoted" xml:space="preserve">
+    <value>changed privileges of {0}</value>
+  </data>
+  <data name="EventLogPromotedAddAdmins" xml:space="preserve">
+    <value>Add admins</value>
+  </data>
+  <data name="EventLogPromotedAddUsers" xml:space="preserve">
+    <value>Add users</value>
+  </data>
+  <data name="EventLogPromotedBanUsers" xml:space="preserve">
+    <value>Ban users</value>
+  </data>
+  <data name="EventLogPromotedChangeChannelInfo" xml:space="preserve">
+    <value>Change channel Info</value>
+  </data>
+  <data name="EventLogPromotedChangeGroupInfo" xml:space="preserve">
+    <value>Change group Info</value>
+  </data>
+  <data name="EventLogPromotedDeleteMessages" xml:space="preserve">
+    <value>Delete messages</value>
+  </data>
+  <data name="EventLogPromotedEditMessages" xml:space="preserve">
+    <value>Edit messages</value>
+  </data>
+  <data name="EventLogPromotedInviteLink" xml:space="preserve">
+    <value>Invite via link</value>
+  </data>
+  <data name="EventLogPromotedPinMessages" xml:space="preserve">
+    <value>Pin messages</value>
+  </data>
+  <data name="EventLogPromotedPostMessages" xml:space="preserve">
+    <value>Post messages</value>
+  </data>
+  <data name="EventLogRemoved" xml:space="preserve">
+    <value>{0} removed {1}</value>
+  </data>
+  <data name="EventLogRemovedChannelLink" xml:space="preserve">
+    <value>{0} removed channel link</value>
+  </data>
+  <data name="EventLogRemovedChannelPhoto" xml:space="preserve">
+    <value>{0} removed the channel photo</value>
+  </data>
+  <data name="EventLogRemovedGroupLink" xml:space="preserve">
+    <value>{0} removed group link</value>
+  </data>
+  <data name="EventLogRemovedGroupPhoto" xml:space="preserve">
+    <value>{0} removed the group photo</value>
+  </data>
+  <data name="EventLogRemovedStickersSet" xml:space="preserve">
+    <value>{0} removed sticker set</value>
+  </data>
+  <data name="EventLogRemovedYouChannelPhoto" xml:space="preserve">
+    <value>You removed channel photo</value>
+  </data>
+  <data name="EventLogRemovedYouGroupPhoto" xml:space="preserve">
+    <value>You removed group photo</value>
+  </data>
+  <data name="EventLogRestricted" xml:space="preserve">
+    <value>changed restrictions for {0} indefinitely</value>
+  </data>
+  <data name="EventLogRestrictedReadMessages" xml:space="preserve">
+    <value>Read messages</value>
+  </data>
+  <data name="EventLogRestrictedSendEmbed" xml:space="preserve">
+    <value>Embed links</value>
+  </data>
+  <data name="EventLogRestrictedSendMedia" xml:space="preserve">
+    <value>Send media</value>
+  </data>
+  <data name="EventLogRestrictedSendMessages" xml:space="preserve">
+    <value>Send messages</value>
+  </data>
+  <data name="EventLogRestrictedSendStickers" xml:space="preserve">
+    <value>Send stickers &amp; GIFs</value>
+  </data>
+  <data name="EventLogRestrictedUntil" xml:space="preserve">
+    <value>changed restrictions for {0}
+
+Duration: {1}</value>
+  </data>
+  <data name="EventLogSelectedEvents" xml:space="preserve">
+    <value>Selected events</value>
+  </data>
+  <data name="EventLogToggledInvitesHistoryOff" xml:space="preserve">
+    <value>{0} made group history hidden for new members</value>
+  </data>
+  <data name="EventLogToggledInvitesHistoryOn" xml:space="preserve">
+    <value>{0} made group history visible for new members</value>
+  </data>
+  <data name="EventLogToggledInvitesOff" xml:space="preserve">
+    <value>{0} disabled group invites</value>
+  </data>
+  <data name="EventLogToggledInvitesOn" xml:space="preserve">
+    <value>{0} enabled group invites</value>
+  </data>
+  <data name="EventLogToggledSignaturesOff" xml:space="preserve">
+    <value>{0} disabled signatures</value>
+  </data>
+  <data name="EventLogToggledSignaturesOn" xml:space="preserve">
+    <value>{0} enabled signatures</value>
+  </data>
+  <data name="EventLogUnpinnedMessages" xml:space="preserve">
+    <value>{0} unpinned message</value>
+  </data>
+  <data name="EventLogYouChannelJoined" xml:space="preserve">
+    <value>You joined channel</value>
+  </data>
+  <data name="EventLogYouGroupJoined" xml:space="preserve">
+    <value>You joined group</value>
+  </data>
+  <data name="EventLogYouLeft" xml:space="preserve">
+    <value>You left group</value>
+  </data>
+  <data name="EventLogYouPromoted" xml:space="preserve">
+    <value>You changed privileges of un2 (%1$s)</value>
+  </data>
+  <data name="EventLogYouRestricted" xml:space="preserve">
+    <value>You changed restrictions for un2 (%1$s)</value>
+  </data>
+  <data name="FloodWait" xml:space="preserve">
+    <value>Too many attempts, please try again later</value>
+    <comment>android</comment>
+  </data>
+  <data name="FloodWaitTime" xml:space="preserve">
+    <value>Too many attempts, please try again in {0}</value>
+  </data>
+  <data name="GroupUserAddLimit" xml:space="preserve">
+    <value>Sorry, this group is full.</value>
+    <comment>android</comment>
+  </data>
+  <data name="GroupUserCantAdd" xml:space="preserve">
+    <value>Sorry, you can't add this user to groups.</value>
+    <comment>android</comment>
+  </data>
+  <data name="GroupUserCantAdmin" xml:space="preserve">
+    <value>Sorry, too many administrators in this group.</value>
+    <comment>android</comment>
+  </data>
+  <data name="GroupUserCantBot" xml:space="preserve">
+    <value>Sorry, too many bots in this group.</value>
+    <comment>android</comment>
+  </data>
+  <data name="GroupUserLeftError" xml:space="preserve">
+    <value>Sorry, this user decided to leave this group, so you cannot invite them back here.</value>
+    <comment>android</comment>
+  </data>
+  <data name="InvalidCode" xml:space="preserve">
+    <value>Invalid code</value>
+    <comment>android</comment>
+  </data>
+  <data name="InvalidPhoneNumber" xml:space="preserve">
+    <value>Invalid phone number</value>
+    <comment>android</comment>
+  </data>
+  <data name="InviteToChannelError" xml:space="preserve">
+    <value>Sorry, you can't add this user to channels because of user's privacy settings.</value>
+    <comment>android</comment>
+  </data>
+  <data name="InviteToGroupError" xml:space="preserve">
+    <value>Sorry, you can't add this user to groups because of user's privacy settings.</value>
+    <comment>android</comment>
+  </data>
+  <data name="IsPlayingGame" xml:space="preserve">
+    <value>{0} is playing a game</value>
+  </data>
+  <data name="IsRecordingAudio" xml:space="preserve">
+    <value>{0} is recording a voice message</value>
+  </data>
+  <data name="IsRecordingVideo" xml:space="preserve">
+    <value>{0} is recording a video</value>
+  </data>
+  <data name="IsRecordingVideoMessage" xml:space="preserve">
+    <value>{0} is recording a video message</value>
+  </data>
+  <data name="IsSendingAudio" xml:space="preserve">
+    <value>{0} is sending a audio</value>
+  </data>
+  <data name="IsSendingFile" xml:space="preserve">
+    <value>{0} is sending a file</value>
+  </data>
+  <data name="IsSendingPhoto" xml:space="preserve">
+    <value>{0} is sending a photo</value>
+  </data>
+  <data name="IsSendingVideo" xml:space="preserve">
+    <value>{0} is sending a video</value>
+  </data>
+  <data name="IsSendingVideoMessage" xml:space="preserve">
+    <value>{0} is sending a video message</value>
+  </data>
+  <data name="IsTyping" xml:space="preserve">
+    <value>{0} is typing</value>
+  </data>
+  <data name="JoinToGroupErrorFull" xml:space="preserve">
+    <value>Sorry, this group is already full.</value>
+    <comment>android</comment>
+  </data>
+  <data name="JoinToGroupErrorNotExist" xml:space="preserve">
+    <value>Sorry, this chat does not seem to exist.</value>
+    <comment>android</comment>
+  </data>
+  <data name="LoggedOutDialogText" xml:space="preserve">
+    <value>The app will be closed. Relaunch it to login again.</value>
+  </data>
+  <data name="MessageActionBroadcastCreate" xml:space="preserve">
+    <value>{0} created the broadcast "{1}"</value>
+  </data>
+  <data name="MessageActionChannelCreate" xml:space="preserve">
+    <value>Channel created</value>
+  </data>
+  <data name="MessageActionChannelDeletePhoto" xml:space="preserve">
+    <value>Channel photo removed</value>
+  </data>
+  <data name="MessageActionChannelEditPhoto" xml:space="preserve">
+    <value>Channel photo updated</value>
+  </data>
+  <data name="MessageActionChannelEditTitle" xml:space="preserve">
+    <value>Channel name changed to "{0}"</value>
+  </data>
+  <data name="MessageActionChannelMigrateFrom" xml:space="preserve">
+    <value>This group was upgraded to a supergroup.</value>
+  </data>
+  <data name="MessageActionChatActivate" xml:space="preserve">
+    <value>Chat was activated</value>
+  </data>
+  <data name="MessageActionChatAddSelf" xml:space="preserve">
+    <value>{0} joined the group</value>
+  </data>
+  <data name="MessageActionChatAddUser" xml:space="preserve">
+    <value>{0} added {1}</value>
+  </data>
+  <data name="MessageActionChatCreate" xml:space="preserve">
+    <value>{0} created the group "{1}"</value>
+  </data>
+  <data name="MessageActionChatDeactivate" xml:space="preserve">
+    <value>Chat was deactivated</value>
+  </data>
+  <data name="MessageActionChatDeletePhoto" xml:space="preserve">
+    <value>{0} removed group photo</value>
+  </data>
+  <data name="MessageActionChatDeleteUser" xml:space="preserve">
+    <value>{0} removed {1}</value>
+  </data>
+  <data name="MessageActionChatEditPhoto" xml:space="preserve">
+    <value>{0} updated group photo</value>
+  </data>
+  <data name="MessageActionChatEditTitle" xml:space="preserve">
+    <value>{0} changed group name to "{1}"</value>
+  </data>
+  <data name="MessageActionChatJoin" xml:space="preserve">
+    <value>{0} joined the group</value>
+  </data>
+  <data name="MessageActionChatJoinedByLink" xml:space="preserve">
+    <value>{0} joined the group via invite link</value>
+  </data>
+  <data name="MessageActionChatJoinSelf" xml:space="preserve">
+    <value>You joined the group</value>
+  </data>
+  <data name="MessageActionChatMigrateTo" xml:space="preserve">
+    <value>Chat migrated to supergroup "{0}"</value>
+  </data>
+  <data name="MessageActionChatMigrateToGeneric" xml:space="preserve">
+    <value>Chat migrated to supergroup</value>
+  </data>
+  <data name="MessageActionDisableMessageTTL" xml:space="preserve">
+    <value>{0} disabled the self-destruct timer</value>
+  </data>
+  <data name="MessageActionEmpty" xml:space="preserve">
+    <value>Empty service message</value>
+  </data>
+  <data name="MessageActionLeftGroupSelf" xml:space="preserve">
+    <value>You left the group</value>
+  </data>
+  <data name="MessageActionPin" xml:space="preserve">
+    <value>{0} pinned {1}</value>
+  </data>
+  <data name="MessageActionPinContact" xml:space="preserve">
+    <value>a contact</value>
+  </data>
+  <data name="MessageActionPinFile" xml:space="preserve">
+    <value>a file</value>
+  </data>
+  <data name="MessageActionPinGame" xml:space="preserve">
+    <value>a game</value>
+  </data>
+  <data name="MessageActionPinGif" xml:space="preserve">
+    <value>a GIF</value>
+  </data>
+  <data name="MessageActionPinInvoice" xml:space="preserve">
+    <value>an invoice</value>
+  </data>
+  <data name="MessageActionPinMap" xml:space="preserve">
+    <value>a map</value>
+  </data>
+  <data name="MessageActionPinMessage" xml:space="preserve">
+    <value>a message</value>
+  </data>
+  <data name="MessageActionPinPhoto" xml:space="preserve">
+    <value>a photo</value>
+  </data>
+  <data name="MessageActionPinSticker" xml:space="preserve">
+    <value>a {0}sticker</value>
+  </data>
+  <data name="MessageActionPinText" xml:space="preserve">
+    <value>{0} pinned "{1}"</value>
+  </data>
+  <data name="MessageActionPinTrack" xml:space="preserve">
+    <value>track</value>
+  </data>
+  <data name="MessageActionPinVideo" xml:space="preserve">
+    <value>a video</value>
+  </data>
+  <data name="MessageActionPinVoiceMessage" xml:space="preserve">
+    <value>a voice message</value>
+  </data>
+  <data name="MessageActionScreenshotMessages" xml:space="preserve">
+    <value>{0} took a screenshot!</value>
+  </data>
+  <data name="MessageActionSetMessageTTL" xml:space="preserve">
+    <value>{0} set the self-destruct timer to {1}</value>
+  </data>
+  <data name="MessageActionUserLeftGroup" xml:space="preserve">
+    <value>{0} left the group</value>
+  </data>
+  <data name="MessageActionYouDisableMessageTTL" xml:space="preserve">
+    <value>You disabled the self-destruct timer</value>
+  </data>
+  <data name="MessageActionYouScreenshotMessages" xml:space="preserve">
+    <value>You took a screenshot!</value>
+  </data>
+  <data name="MessageActionYouSetMessageTTL" xml:space="preserve">
+    <value>You set the self-destruct timer to {0}</value>
+  </data>
+  <data name="MessageAddSticker" xml:space="preserve">
+    <value>Add to Stickers</value>
+  </data>
+  <data name="MessageCopy" xml:space="preserve">
+    <value>Copy text</value>
+  </data>
+  <data name="MessageCopyLinkBroadcast" xml:space="preserve">
+    <value>Copy post link</value>
+  </data>
+  <data name="MessageCopyLinkMegaGroup" xml:space="preserve">
+    <value>Copy message link</value>
+  </data>
+  <data name="MessageCopyMedia" xml:space="preserve">
+    <value>Copy image</value>
+  </data>
+  <data name="MessageDelete" xml:space="preserve">
+    <value>Delete message</value>
+  </data>
+  <data name="MessageEdit" xml:space="preserve">
+    <value>Edit message</value>
+  </data>
+  <data name="MessageFaveSticker" xml:space="preserve">
+    <value>Add to Favorites</value>
+  </data>
+  <data name="MessageForward" xml:space="preserve">
+    <value>Forward message</value>
+  </data>
+  <data name="MessagePin" xml:space="preserve">
+    <value>Pin message</value>
+  </data>
+  <data name="MessageReply" xml:space="preserve">
+    <value>Reply</value>
+  </data>
+  <data name="MessageSaveGIF" xml:space="preserve">
+    <value>Save to GIFs</value>
+  </data>
+  <data name="MessageSaveMedia" xml:space="preserve">
+    <value>Save file as...</value>
+  </data>
+  <data name="MessageSelect" xml:space="preserve">
+    <value>Select message</value>
+  </data>
+  <data name="MessageUnfaveSticker" xml:space="preserve">
+    <value>Remove from Favorites</value>
+  </data>
+  <data name="MessageUnpin" xml:space="preserve">
+    <value>Unpin message</value>
   </data>
   <data name="MessageView" xml:space="preserve">
     <value>View in chat</value>
+  </data>
+  <data name="MonthGenitivePlural" xml:space="preserve">
+    <value>Months</value>
+  </data>
+  <data name="MonthGenitiveSingular" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="MonthNominativePlural" xml:space="preserve">
+    <value>Months</value>
+  </data>
+  <data name="MonthNominativeSingular" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="MoreInfo" xml:space="preserve">
+    <value>More info</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+    <comment>No button text resource</comment>
+  </data>
+  <data name="NobodyLikesSpam1" xml:space="preserve">
+    <value>Sorry, you can only send messages to mutual contacts at the moment.</value>
+    <comment>android</comment>
+  </data>
+  <data name="NobodyLikesSpam2" xml:space="preserve">
+    <value>Sorry, you can only add mutual contacts to groups at the moment.</value>
+    <comment>android</comment>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ParticipantEdit" xml:space="preserve">
+    <value>Edit permissions</value>
+  </data>
+  <data name="ParticipantPromote" xml:space="preserve">
+    <value>Promote</value>
+  </data>
+  <data name="ParticipantRestrict" xml:space="preserve">
+    <value>Restrict</value>
+  </data>
+  <data name="PaymentFailed" xml:space="preserve">
+    <value>Sorry, the payment was declined.</value>
+    <comment>android</comment>
+  </data>
+  <data name="PaymentNoShippingMethod" xml:space="preserve">
+    <value>Sorry, it is not possible to deliver to your address.</value>
+    <comment>android</comment>
+  </data>
+  <data name="PaymentPrecheckoutFailed" xml:space="preserve">
+    <value>Sorry, the payment was cancelled by the bot.</value>
+    <comment>android</comment>
+  </data>
+  <data name="PeerFloodAddContact" xml:space="preserve">
+    <value>Sorry, you can only add mutual contacts to groups at the moment.</value>
+  </data>
+  <data name="PlayingGame" xml:space="preserve">
+    <value>Playing a game</value>
+  </data>
+  <data name="ProxySettingsShareTitle" xml:space="preserve">
+    <value>Proxy Settings</value>
+  </data>
+  <data name="RecordingVideo" xml:space="preserve">
+    <value>Recording a video</value>
+  </data>
+  <data name="RecordingVideoMessage" xml:space="preserve">
+    <value>Recording a video message</value>
+  </data>
+  <data name="RecordingVoiceMessage" xml:space="preserve">
+    <value>Recording a voice message</value>
+  </data>
+  <data name="ResetNotificationsDialogBody" xml:space="preserve">
+    <value>Reset all notifications?</value>
+  </data>
+  <data name="ResetNotificationsDialogTitle" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="SendingAudio" xml:space="preserve">
+    <value>Sending an audio</value>
+  </data>
+  <data name="SendingFile" xml:space="preserve">
+    <value>Sending a file</value>
+  </data>
+  <data name="SendingPhoto" xml:space="preserve">
+    <value>Sending a photo</value>
+  </data>
+  <data name="SendingVideo" xml:space="preserve">
+    <value>Sending a video</value>
+  </data>
+  <data name="SendingVideoMessage" xml:space="preserve">
+    <value>Sending a video message</value>
+  </data>
+  <data name="SupportDisclaimerDialogText" xml:space="preserve">
+    <value>Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while. Please take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.</value>
+  </data>
+  <data name="SupportDisclaimerPrimaryButtonText" xml:space="preserve">
+    <value>FAQ</value>
+  </data>
+  <data name="Typing" xml:space="preserve">
+    <value>Typing</value>
+  </data>
+  <data name="UserGenitivePlural" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="UserGenitiveSingular" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="UsernameInUse" xml:space="preserve">
+    <value>Sorry, this username is already taken.</value>
+    <comment>android</comment>
+  </data>
+  <data name="UsernameInvalid" xml:space="preserve">
+    <value>Sorry, this username is invalid.</value>
+    <comment>android</comment>
+  </data>
+  <data name="UserNominativePlural" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="UserNominativeSingular" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="UserNotMutualContact" xml:space="preserve">
+    <value>Sorry, you can't add this user to groups.</value>
+  </data>
+  <data name="UserRestricted" xml:space="preserve">
+    <value>Sorry, you are not allowed to do this.</value>
+    <comment>android</comment>
+  </data>
+  <data name="UserRestrictionsUntilForever" xml:space="preserve">
+    <value>Forever</value>
+  </data>
+  <data name="UserScored" xml:space="preserve">
+    <value>{0} scored {1}</value>
+  </data>
+  <data name="UserScoredAtGame" xml:space="preserve">
+    <value>{0} scored {1} at {2}</value>
+  </data>
+  <data name="UserScoredAtGamePlural" xml:space="preserve">
+    <value>{0} scored {1} at {2}</value>
+  </data>
+  <data name="UserScoredPlural" xml:space="preserve">
+    <value>{0} scored {1}</value>
+  </data>
+  <data name="UsersTooMuch" xml:space="preserve">
+    <value>Sorry, this group is full.</value>
+  </data>
+  <data name="UserUnblockConfirmationText" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+  <data name="UserUnblockConfirmationTitle" xml:space="preserve">
+    <value>Unblock?</value>
+  </data>
+  <data name="WhenOnMobileData" xml:space="preserve">
+    <value>When using mobile data</value>
+  </data>
+  <data name="WhenOnWiFi" xml:space="preserve">
+    <value>When connected to Wi-Fi</value>
+  </data>
+  <data name="WhenRoaming" xml:space="preserve">
+    <value>When roaming</value>
+  </data>
+  <data name="YearGenitivePlural" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="YearGenitiveSingular" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="YearNominativePlural" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="YearNominativeSingular" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="YouBlockedUser" xml:space="preserve">
+    <value>Sorry, you can't add this user or bot to groups because you've blocked them. Please unblock to proceed.</value>
+    <comment>android</comment>
+  </data>
+  <data name="YourScored" xml:space="preserve">
+    <value>You scored {0}</value>
+  </data>
+  <data name="YourScoredAtGame" xml:space="preserve">
+    <value>You scored {0} at {1}</value>
+  </data>
+  <data name="YourScoredAtGamePlural" xml:space="preserve">
+    <value>You scored {0} at {1}</value>
+  </data>
+  <data name="YourScoredPlural" xml:space="preserve">
+    <value>You scored {0}</value>
+  </data>
+  <data name="ServiceNotificationsLabel" xml:space="preserve">
+    <value>Service Notifications</value>
+    <comment>Core.ServiceUserStatus</comment>
+  </data>
+  <data name="BotStatusDoesNotReadGroupHistory" xml:space="preserve">
+    <value>has no access to messages</value>
+    <comment>Bot.GroupStatusDoesNotReadHistory</comment>
+  </data>
+  <data name="BotStatusReadsGroupHistory" xml:space="preserve">
+    <value>has access to messages</value>
+    <comment>Bot.GroupStatusReadsHistory</comment>
+  </data>
+  <data name="CloudStorageChatStatus" xml:space="preserve">
+    <value>chat with yourself</value>
+    <comment>Conversation.CloudStorage.ChatStatus</comment>
+  </data>
+  <data name="DialogPage_AddToContactsFlyoutItem.Text" xml:space="preserve">
+    <value>Add to contacts</value>
+  </data>
+  <data name="DialogPage_btnPinnedMessage.Title" xml:space="preserve">
+    <value>Pinned message</value>
+  </data>
+  <data name="DialogPage_ManageFlyoutItem.Text" xml:space="preserve">
+    <value>Manage</value>
+  </data>
+  <data name="DialogPage_PinChatFlyoutItem.Text" xml:space="preserve">
+    <value>Pin to Start</value>
+  </data>
+  <data name="DialogPage_ReportSpamTextBlock.Text" xml:space="preserve">
+    <value>Report spam</value>
+  </data>
+  <data name="DialogPage_SearchFlyoutItem.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="DialogPage_SendContactFlyoutItem.Text" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="DialogPage_SendLocationFlyoutItem.Text" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="DialogPage_SendShrugFlyoutItem.Text" xml:space="preserve">
+    <value>¯\_(ツ)_/¯</value>
+  </data>
+  <data name="DialogPage_ShareContactFlyoutItem.Text" xml:space="preserve">
+    <value>Share my contact</value>
+  </data>
+  <data name="DialogPage_TextField.PlaceholderText" xml:space="preserve">
+    <value>Enter your message...</value>
+  </data>
+  <data name="DialogPage_UnpinChatFlyoutItem.Text" xml:space="preserve">
+    <value>Unpin from Start</value>
+  </data>
+  <data name="GenericBotStatus" xml:space="preserve">
+    <value>bot</value>
+    <comment>Bot.GenericBotStatus</comment>
+  </data>
+  <data name="StatusMembers" xml:space="preserve">
+    <value>{0} members</value>
+    <comment>Conversation.StatusMembers</comment>
+  </data>
+  <data name="StatusOnline" xml:space="preserve">
+    <value>{0} members, {1} online</value>
+    <comment>Conversation.StatusMembers</comment>
+  </data>
+  <data name="UserOnline" xml:space="preserve">
+    <value>online</value>
+    <comment>Presence.online</comment>
+  </data>
+  <data name="SendAsFile" xml:space="preserve">
+    <value>Send as File</value>
+  </data>
+  <data name="SendAsFiles" xml:space="preserve">
+    <value>Send as Files</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="SendMultipleMedias" xml:space="preserve">
+    <value>Send {0} items</value>
+  </data>
+  <data name="SendOneItem" xml:space="preserve">
+    <value>Send 1 item</value>
+  </data>
+  <data name="SendPhotoVideo" xml:space="preserve">
+    <value>Photo or Video</value>
+  </data>
+  <data name="ALongTimeAgo" xml:space="preserve">
+    <value>a long time ago</value>
+  </data>
+  <data name="LastSeen1" xml:space="preserve">
+    <value>Last seen {0}</value>
+  </data>
+  <data name="Recently" xml:space="preserve">
+    <value>recently</value>
+  </data>
+  <data name="WithinAMonth" xml:space="preserve">
+    <value>within a month ago</value>
+  </data>
+  <data name="WithinAWeek" xml:space="preserve">
+    <value>within a week ago</value>
+  </data>
+  <data name="HourPlural" xml:space="preserve">
+    <value>{0} hours</value>
+  </data>
+  <data name="HourSingular" xml:space="preserve">
+    <value>{0} hour</value>
+  </data>
+  <data name="LastSeen2" xml:space="preserve">
+    <value>Last seen {0} at {1}</value>
+  </data>
+  <data name="LastSeen3" xml:space="preserve">
+    <value>Last seen {0} ago</value>
+  </data>
+  <data name="MinutePlural" xml:space="preserve">
+    <value>{0} minutes</value>
+  </data>
+  <data name="MinuteSingular" xml:space="preserve">
+    <value>{0} minute</value>
+  </data>
+  <data name="MomentsAgo" xml:space="preserve">
+    <value>moments ago</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>today</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>yesterday</value>
+  </data>
+  <data name="MessageSaveDownload" xml:space="preserve">
+    <value>Save to Downloads</value>
   </data>
 </root>

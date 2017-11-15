@@ -151,8 +151,6 @@
     <Compile Include="Stripe\StripeNetworkUtils.cs" />
     <Compile Include="Stripe\StripeTextUtils.cs" />
     <Compile Include="Stripe\StripeToken.cs" />
-    <Compile Include="Unidecode\Characters.cs" />
-    <Compile Include="Unidecode\Unidecoder.cs" />
     <EmbeddedResource Include="Properties\Unigram.Core.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -178,7 +176,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Unigram.Api\Telegram.Api.csproj">
       <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
-      <Name>Unigram.Api</Name>
+      <Name>Telegram.Api</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

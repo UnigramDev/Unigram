@@ -226,6 +226,7 @@ namespace Telegram.Api.Helpers
                     return (int)ApplicationData.Current.LocalSettings.Values["DatabaseVersion"];
                 }
 
+                DatabaseVersion = Constants.DatabaseVersion;
                 return Constants.DatabaseVersion;
             }
             set

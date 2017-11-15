@@ -278,6 +278,7 @@ namespace Unigram.Common
                 if (found)
                 {
                     service.Frame.BackStack.RemoveAt(i);
+                    i--;
                 }
             }
 

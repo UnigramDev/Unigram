@@ -241,38 +241,38 @@ namespace Unigram.Converters
         {
             if (seconds < 60)
             {
-                var format = AppResources.CallSeconds_any;
+                var format = Strings.Resources.CallSeconds_any;
                 var number = seconds;
                 if (number == 1)
                 {
-                    format = AppResources.CallSeconds_1;
+                    format = Strings.Resources.CallSeconds_1;
                 }
                 else if (number == 2)
                 {
-                    format = AppResources.CallSeconds_2;
+                    format = Strings.Resources.CallSeconds_2;
                 }
                 else if (number == 4)
                 {
-                    format = AppResources.CallSeconds_3_10;
+                    format = Strings.Resources.CallSeconds_3_10;
                 }
 
                 return string.Format(format, number);
             }
             else if (seconds < 60 * 60)
             {
-                var format = AppResources.CallMinutes_any;
+                var format = Strings.Resources.CallMinutes_any;
                 var number = seconds / 60;
                 if (number == 1)
                 {
-                    format = AppResources.CallMinutes_1;
+                    format = Strings.Resources.CallMinutes_1;
                 }
                 else if (number == 2)
                 {
-                    format = AppResources.CallMinutes_2;
+                    format = Strings.Resources.CallMinutes_2;
                 }
                 else if (number == 4)
                 {
-                    format = AppResources.CallMinutes_3_10;
+                    format = Strings.Resources.CallMinutes_3_10;
                 }
 
                 return string.Format(format, number);
@@ -302,38 +302,38 @@ namespace Unigram.Converters
         {
             if (seconds < 60)
             {
-                var format = AppResources.CallShortSeconds_any;
+                var format = Strings.Resources.CallShortSeconds_any;
                 var number = seconds;
                 if (number == 1)
                 {
-                    format = AppResources.CallShortSeconds_1;
+                    format = Strings.Resources.CallShortSeconds_1;
                 }
                 else if (number == 2)
                 {
-                    format = AppResources.CallShortSeconds_2;
+                    format = Strings.Resources.CallShortSeconds_2;
                 }
                 else if (number == 4)
                 {
-                    format = AppResources.CallShortSeconds_3_10;
+                    format = Strings.Resources.CallShortSeconds_3_10;
                 }
 
                 return string.Format(format, number);
             }
             else
             {
-                var format = AppResources.CallShortMinutes_any;
+                var format = Strings.Resources.CallShortMinutes_any;
                 var number = seconds / 60;
                 if (number == 1)
                 {
-                    format = AppResources.CallShortMinutes_1;
+                    format = Strings.Resources.CallShortMinutes_1;
                 }
                 else if (number == 2)
                 {
-                    format = AppResources.CallShortMinutes_2;
+                    format = Strings.Resources.CallShortMinutes_2;
                 }
                 else if (number == 4)
                 {
-                    format = AppResources.CallShortMinutes_3_10;
+                    format = Strings.Resources.CallShortMinutes_3_10;
                 }
 
                 return string.Format(format, number);
@@ -343,8 +343,7 @@ namespace Unigram.Converters
         public string DateExtended(int value)
         {
             var clientDelta = MTProtoService.Current.ClientTicksDelta;
-            var utc0SecsLong = value * 4294967296 - clientDelta;
-            var utc0SecsInt = utc0SecsLong / 4294967296.0;
+            var utc0SecsInt = value - clientDelta / 4294967296.0;
             var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
 
             //Today
@@ -382,8 +381,7 @@ namespace Unigram.Converters
         public DateTime DateTime(int value)
         {
             var clientDelta = MTProtoService.Current.ClientTicksDelta;
-            var utc0SecsLong = value * 4294967296 - clientDelta;
-            var utc0SecsInt = utc0SecsLong / 4294967296.0;
+            var utc0SecsInt = value - clientDelta / 4294967296.0;
             var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
 
             return dateTime;

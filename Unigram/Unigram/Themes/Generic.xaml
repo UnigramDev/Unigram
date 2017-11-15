@@ -54,6 +54,7 @@
         <Setter Property="Background" Value="{ThemeResource NavigationViewItemBackground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource NavigationViewItemBorderBrush}" />
         <Setter Property="BorderThickness" Value="{StaticResource NavigationViewItemBorderThickness}" />
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Template">
@@ -137,10 +138,11 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Viewbox x:Name="IconBox" Margin="16,12">
-                                <FontIcon Glyph="{TemplateBinding Glyph}"/>
+                                <FontIcon Glyph="{TemplateBinding Glyph}" FontFamily="{TemplateBinding FontFamily}"/>
                             </Viewbox>
                             <ContentPresenter x:Name="ContentPresenter"
                                               Grid.Column="1"
+                                              FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                               ContentTransitions="{TemplateBinding ContentTransitions}"
                                               ContentTemplate="{TemplateBinding ContentTemplate}"
                                               Content="{TemplateBinding Content}"

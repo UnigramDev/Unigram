@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Constants.Secret.cs" />
+    <Compile Include="Helpers\Markdown.cs" />
     <Compile Include="Helpers\PhoneNumber.cs" />
     <Compile Include="Services\Cache\Context\ChatsContext.cs" />
     <Compile Include="Services\Cache\Context\CreateDatabase.cs" />
@@ -376,6 +377,7 @@
     <Compile Include="TL\Messages\Methods\TLMessagesSendInlineBotResult.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSendMedia.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSendMessage.cs" />
+    <Compile Include="TL\Messages\Methods\TLMessagesSendMultiMedia.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSendScreenshotNotification.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSetBotCallbackAnswer.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSetBotPrecheckoutResults.cs" />
@@ -474,7 +476,6 @@
     <Compile Include="TL\Partial\TLPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannel.Partial.cs" />
     <Compile Include="TL\Partial\TLChat.Partial.cs" />
-    <Compile Include="TL\Partial\TLChatPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLChatPhotoBase.Partial.cs" />
     <Compile Include="TL\Partial\TLConfig.Partial.cs" />
     <Compile Include="TL\Partial\TLContactsContactsBase.Partial.cs" />
@@ -884,6 +885,7 @@
     <Compile Include="TL\TLInputReportReasonPornography.cs" />
     <Compile Include="TL\TLInputReportReasonSpam.cs" />
     <Compile Include="TL\TLInputReportReasonViolence.cs" />
+    <Compile Include="TL\TLInputSingleMedia.cs" />
     <Compile Include="TL\TLInputStickeredMediaBase.cs" />
     <Compile Include="TL\TLInputStickeredMediaDocument.cs" />
     <Compile Include="TL\TLInputStickeredMediaPhoto.cs" />

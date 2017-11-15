@@ -93,7 +93,7 @@ namespace Unigram.ViewModels.Users
                 Item = user;
                 RaisePropertyChanged(() => IsEditEnabled);
                 RaisePropertyChanged(() => IsAddEnabled);
-                RaisePropertyChanged(() => AreNotificationsEnabled);
+                RaisePropertyChanged(() => IsMuted);
                 RaisePropertyChanged(() => PhoneVisibility);
                 RaisePropertyChanged(() => AddToGroupVisibility);
                 RaisePropertyChanged(() => HelpVisibility);
@@ -164,7 +164,7 @@ namespace Unigram.ViewModels.Users
                     {
                         Full.NotifySettings = message.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);
-                        RaisePropertyChanged(() => AreNotificationsEnabled);
+                        RaisePropertyChanged(() => IsMuted);
 
                         //var notifySettings = updateNotifySettings.NotifySettings as TLPeerNotifySettings;
                         //if (notifySettings != null)
@@ -294,8 +294,9 @@ namespace Unigram.ViewModels.Users
                 stack.Children.Add(opt2);
                 stack.Children.Add(opt3);
                 stack.Children.Add(opt4);
-                stack.Margin = new Thickness(0, 16, 0, 0);
-                var dialog = new ContentDialog();
+                stack.Margin = new Thickness(12, 16, 12, 0);
+
+                var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
                 dialog.Content = stack;
                 dialog.Title = "Resources.Report";
                 dialog.IsPrimaryButtonEnabled = true;
@@ -344,17 +345,21 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public bool AreNotificationsEnabled
+        public bool IsMuted
         {
             get
             {
-                var settings = _full?.NotifySettings as TLPeerNotifySettings;
-                if (settings != null)
+                var notifySettings = _full?.NotifySettings as TLPeerNotifySettings;
+                if (notifySettings == null)
                 {
-                    return settings.MuteUntil == 0;
+                    return false;
                 }
 
-                return false;
+                var clientDelta = MTProtoService.Current.ClientTicksDelta;
+                var utc0SecsInt = notifySettings.MuteUntil - clientDelta / 4294967296.0;
+
+                var muteUntilDateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
+                return muteUntilDateTime > DateTime.Now;
             }
         }
 
@@ -561,7 +566,7 @@ namespace Unigram.ViewModels.Users
                     }
 
                     notifySettings.MuteUntil = muteUntil;
-                    RaisePropertyChanged(() => AreNotificationsEnabled);
+                    RaisePropertyChanged(() => IsMuted);
                     Full.RaisePropertyChanged(() => Full.NotifySettings);
 
                     var dialog = CacheService.GetDialog(_item.ToPeer());
