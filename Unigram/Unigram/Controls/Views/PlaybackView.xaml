@@ -597,12 +597,12 @@
                                 </Button>
                             </Grid>
 
-                            <TextBlock x:Name="PositionLabel" Text="00:00" VerticalAlignment="Bottom" Foreground="{ThemeResource MessageSubtleForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}" Margin="12,0,0,0" Grid.Row="1"/>
-                            <TextBlock x:Name="DurationLabel" Text="00:00" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="{ThemeResource MessageSubtleForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}" Margin="0,0,12,0" Grid.Row="1"/>
+                            <TextBlock x:Name="PositionLabel" Text="00:00" VerticalAlignment="Bottom" Foreground="{ThemeResource MessageSubtleForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}" Margin="12,0,0,5" Grid.Row="1"/>
+                            <TextBlock x:Name="DurationLabel" Text="00:00" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="{ThemeResource MessageSubtleForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}" Margin="0,0,12,5" Grid.Row="1"/>
 
                             <Slider x:Name="ProgressSlider"
                                     Style="{StaticResource MediaSliderStyle}"
-                                    Margin="12,0,12,8"
+                                    Margin="12,0,12,13"
                                     MinWidth="80"
                                     Height="33"
                                     VerticalAlignment="Center"

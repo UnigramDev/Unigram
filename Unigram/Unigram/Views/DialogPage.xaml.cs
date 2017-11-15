@@ -1795,6 +1795,7 @@ namespace Unigram.Views
                 var header = sender.FindName("Header") as FrameworkElement;
                 var footer = sender.FindName("Footer") as FrameworkElement;
                 var media = sender.FindName("Media") as FrameworkElement;
+                var photo = sender.FindName("PhotoBubble") as FrameworkElement;
 
                 var width = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 320);
                 var height = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 420);
@@ -1848,10 +1849,12 @@ namespace Unigram.Views
 
                 if (position.IsLast)
                 {
+                    photo.Height = message.IsOut && !message.IsSaved() ? 0 : 32;
                     footer.Visibility = Visibility.Visible;
                 }
                 else
                 {
+                    photo.Height = 0;
                     footer.Visibility = Visibility.Collapsed;
                 }
             }
