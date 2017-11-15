@@ -25,14 +25,11 @@ namespace Unigram.Controls.Media
     public sealed partial class MusicPlaybackItem : UserControl
     {
         public TLMessage ViewModel => DataContext as TLMessage;
+        public IPlaybackService Playback { get; } = UnigramContainer.Current.ResolveType<IPlaybackService>();
 
         public MusicPlaybackItem()
         {
             InitializeComponent();
-
-            _playbackService = UnigramContainer.Current.ResolveType<IPlaybackService>();
-            _playbackService.PropertyChanged += OnCurrentItemChanged;
-            _playbackService.Session.PlaybackStateChanged += OnPlaybackStateChanged;
 
             DataContextChanged += (s, args) =>
             {
@@ -46,13 +43,25 @@ namespace Unigram.Controls.Media
             };
         }
 
-        private readonly IPlaybackService _playbackService;
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Playback.PropertyChanged += OnCurrentItemChanged;
+            Playback.Session.PlaybackStateChanged += OnPlaybackStateChanged;
+
+            UpdateGlyph();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Playback.PropertyChanged -= OnCurrentItemChanged;
+            Playback.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
+        }
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
             if (DataContext is TLMessage message)
             {
-                _playbackService.Enqueue(message);
+                Playback.Enqueue(message);
             }
         }
 
@@ -69,10 +78,10 @@ namespace Unigram.Controls.Media
 
         private void UpdateGlyph()
         {
-            if (DataContext is TLMessage message && Equals(_playbackService.CurrentItem, message))
+            if (DataContext is TLMessage message && Equals(Playback.CurrentItem, message))
             {
                 PlaybackPanel.Visibility = Visibility.Visible;
-                PlaybackButton.Glyph = _playbackService.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
+                PlaybackButton.Glyph = Playback.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
                 UpdateDuration();
             }
             else
@@ -114,13 +123,13 @@ namespace Unigram.Controls.Media
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
-            if (_playbackService.Session.PlaybackState == MediaPlaybackState.Playing)
+            if (Playback.Session.PlaybackState == MediaPlaybackState.Playing)
             {
-                _playbackService.Pause();
+                Playback.Pause();
             }
             else
             {
-                _playbackService.Play();
+                Playback.Play();
             }
         }
 
