@@ -51,6 +51,7 @@ using Windows.Media.Playback;
 using Windows.UI.StartScreen;
 using Windows.System;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Xaml.Resources;
 
 namespace Unigram
 {
@@ -95,6 +96,8 @@ namespace Unigram
             {
                 RequestedTheme = ApplicationSettings.Current.RequestedTheme == ElementTheme.Dark ? ApplicationTheme.Dark : ApplicationTheme.Light;
             }
+
+            CustomXamlResourceLoader.Current = new XamlResourceLoader();
 
             InitializeComponent();
 

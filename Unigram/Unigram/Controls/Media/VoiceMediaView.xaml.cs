@@ -17,14 +17,11 @@ namespace Unigram.Controls.Media
     public sealed partial class VoiceMediaView : UserControl
     {
         public TLMessage ViewModel => DataContext as TLMessage;
+        public IPlaybackService Playback { get; } = UnigramContainer.Current.ResolveType<IPlaybackService>();
 
         public VoiceMediaView()
         {
             InitializeComponent();
-
-            _playbackService = UnigramContainer.Current.ResolveType<IPlaybackService>();
-            _playbackService.PropertyChanged += OnCurrentItemChanged;
-            _playbackService.Session.PlaybackStateChanged += OnPlaybackStateChanged;
 
             DataContextChanged += (s, args) =>
             {
@@ -38,13 +35,26 @@ namespace Unigram.Controls.Media
             };
         }
 
-        private readonly IPlaybackService _playbackService;
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Playback.PropertyChanged += OnCurrentItemChanged;
+            Playback.Session.PlaybackStateChanged += OnPlaybackStateChanged;
+
+            UpdateGlyph();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Playback.PropertyChanged -= OnCurrentItemChanged;
+            Playback.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
+            Playback.Session.PositionChanged -= OnPositionChanged;
+        }
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
             if (DataContext is TLMessage message)
             {
-                _playbackService.Enqueue(message);
+                Playback.Enqueue(message);
             }
         }
 
@@ -66,15 +76,15 @@ namespace Unigram.Controls.Media
 
         private void UpdateGlyph()
         {
-            _playbackService.Session.PositionChanged -= OnPositionChanged;
+            Playback.Session.PositionChanged -= OnPositionChanged;
 
-            if (DataContext is TLMessage message && Equals(_playbackService.CurrentItem, message))
+            if (DataContext is TLMessage message && Equals(Playback.CurrentItem, message))
             {
                 PlaybackPanel.Visibility = Visibility.Visible;
-                PlaybackButton.Glyph = _playbackService.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
+                PlaybackButton.Glyph = Playback.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
                 UpdatePosition();
 
-                _playbackService.Session.PositionChanged += OnPositionChanged;
+                Playback.Session.PositionChanged += OnPositionChanged;
             }
             else
             {
@@ -85,11 +95,11 @@ namespace Unigram.Controls.Media
 
         private void UpdatePosition()
         {
-            if (DataContext is TLMessage message && Equals(_playbackService.CurrentItem, message))
+            if (DataContext is TLMessage message && Equals(Playback.CurrentItem, message))
             {
-                DurationLabel.Text = _playbackService.Session.Position.ToString("mm\\:ss") + " / " + _playbackService.Session.NaturalDuration.ToString("mm\\:ss");
-                Slide.Maximum = _playbackService.Session.NaturalDuration.TotalMilliseconds;
-                Slide.Value = _playbackService.Session.Position.TotalMilliseconds;
+                DurationLabel.Text = Playback.Session.Position.ToString("mm\\:ss") + " / " + Playback.Session.NaturalDuration.ToString("mm\\:ss");
+                Slide.Maximum = Playback.Session.NaturalDuration.TotalMilliseconds;
+                Slide.Value = Playback.Session.Position.TotalMilliseconds;
             }
         }
 
@@ -109,13 +119,13 @@ namespace Unigram.Controls.Media
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
-            if (_playbackService.Session.PlaybackState == MediaPlaybackState.Playing)
+            if (Playback.Session.PlaybackState == MediaPlaybackState.Playing)
             {
-                _playbackService.Pause();
+                Playback.Pause();
             }
             else
             {
-                _playbackService.Play();
+                Playback.Play();
             }
         }
 

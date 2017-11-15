@@ -3,23 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Strings;
+using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Resources;
 
 namespace Unigram.Converters
 {
-    public class AccountTTLConverter : IValueConverter
+    public class StringFormatConverter : IValueConverter
     {
+        private readonly ResourceLoader _loader;
+
+        public StringFormatConverter()
+        {
+            _loader = ResourceLoader.GetForViewIndependentUse("Android");
+        }
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var days = System.Convert.ToInt32(value);
-            if (days >= 365)
+            if (parameter is string format)
             {
-                return LocaleHelper.Declension("Years", days / 365);
+                return string.Format(_loader.GetString(format), value);
             }
 
-            return LocaleHelper.Declension("Months", days / 30);
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -150,12 +150,8 @@ namespace Unigram.ViewModels
         public RelayCommand AskCommand { get; }
         private async void AskExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.SupportDisclaimerDialogText, Strings.Branding.ServiceName, Strings.Resources.SupportDisclaimerPrimaryButtonText, Strings.Resources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AskAQuestionInfo, Strings.Android.AskAQuestion, Strings.Android.AskButton, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
-            {
-                await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
-            }
-            else
             {
                 var response = await ProtoService.GetSupportAsync();
                 if (response.IsSucceeded)
@@ -163,12 +159,16 @@ namespace Unigram.ViewModels
                     NavigationService.NavigateToDialog(response.Result.User);
                 }
             }
+            else
+            {
+                await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
+            }
         }
 
         public RelayCommand LogoutCommand { get; }
         private async void LogoutExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ConfirmLogoutDialogText, Strings.Branding.ApplicationName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureLogout, Strings.Android.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

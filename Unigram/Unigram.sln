@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27102.0
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram", "Unigram\Unigram.csproj", "{2235E8EE-374A-4E49-8050-9B701467775D}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -42,6 +42,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnigramHost", "UnigramHost\UnigramHost.vcxproj", "{0DBCF059-2952-4809-9003-193CA0C6D499}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtgvoip", "Libraries\libtgvoip\libtgvoip.UWP.vcxproj", "{88803693-7606-484B-9D2F-4BB789D57C29}"
+	ProjectSection(ProjectDependencies) = postProject
+		{904AC506-51A0-474E-9F55-EC3FEBBCCCD9} = {904AC506-51A0-474E-9F55-EC3FEBBCCCD9}
+		{6766A2C0-AB30-43CC-9EF3-7DDC13736A38} = {6766A2C0-AB30-43CC-9EF3-7DDC13736A38}
+		{3520C5E6-F0C2-468F-8970-372414C233DC} = {3520C5E6-F0C2-468F-8970-372414C233DC}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Api.Native.Test", "Telegram.Api.Native.Test\Telegram.Api.Native.Test.csproj", "{798E4404-1626-44AB-97F5-862867FE51EB}"
 EndProject
@@ -50,7 +55,6 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{1b521e77-46bd-4d60-89f6-d68e9bb9abff}*SharedItemsImports = 4
-		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{6a7d27d0-36e8-4364-ac69-740b75ee653c}*SharedItemsImports = 4
 		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{c50f57b3-33e1-4235-9d02-0c9f1c4176a8}*SharedItemsImports = 9
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

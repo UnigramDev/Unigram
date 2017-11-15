@@ -135,6 +135,9 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:PeerToPeerModeConverter x:Key="PeerToPeerModeConverter"/>
+            <converters:StringPluralConverter x:Key="StringPluralConverter"/>
+            <converters:StringFormatConverter x:Key="StringFormatConverter"/>
             <converters:ChannelToSummaryConverter x:Key="ChannelToSummaryConverter"/>
             <converters:MeUrlPrefixConverter x:Key="MeUrlPrefixConverter"/>
             <converters:GeoLivePeriodConverter x:Key="GeoLivePeriodConverter"/>

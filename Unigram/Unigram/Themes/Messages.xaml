@@ -28,10 +28,7 @@
             <Image x:Phase="3" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
 
             <TextBlock Text="{x:Bind Set.Title}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
-            <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1">
-                <Run Text="{x:Bind Set.Count}"/>
-                <Run Text="stickers"/>
-            </TextBlock>
+            <TextBlock Text="{x:Bind Set.Count, Converter={StaticResource StringPluralConverter}, ConverterParameter=Stickers}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
         </Grid>
     </DataTemplate>
 

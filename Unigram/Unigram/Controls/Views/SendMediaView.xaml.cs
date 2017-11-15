@@ -203,7 +203,7 @@ namespace Unigram.Controls.Views
 
         private string ConvertGrouped(bool grouped)
         {
-            return grouped ? "Show photos as one message" : "Show photos as separate messages";
+            return grouped ? "Group media into one message" : "Show media as separate messages";
         }
 
         private bool ConvertSelected(StorageMedia media)

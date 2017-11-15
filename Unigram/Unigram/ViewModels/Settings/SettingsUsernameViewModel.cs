@@ -121,7 +121,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = "Sorry, this username is already taken";
+                    ErrorMessage = Strings.Android.UsernameInUse;
                 }
             }
             else
@@ -130,13 +130,13 @@ namespace Unigram.ViewModels.Settings
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = "Sorry, this username is invalid";
+                    ErrorMessage = Strings.Android.UsernameInvalid;
                 }
                 else if (response.Error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = "Sorry, this username is already taken";
+                    ErrorMessage = Strings.Android.UsernameInUse;
                 }
             }
         }
@@ -155,11 +155,15 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (_username.Length < 5)
                 {
-                    ErrorMessage = "A username must have at least 5 characters";
+                    ErrorMessage = Strings.Android.UsernameInvalidShort;
+                }
+                else if (_username.Length > 32)
+                {
+                    ErrorMessage = Strings.Android.UsernameInvalidLong;
                 }
                 else
                 {
-                    ErrorMessage = "Sorry, this username is invalid";
+                    ErrorMessage = Strings.Android.UsernameInvalid;
                 }
             }
             else
@@ -283,7 +287,7 @@ namespace Unigram.ViewModels.Settings
             dataPackage.SetText(MeUrlPrefixConverter.Convert(_username));
             ClipboardEx.TrySetContent(dataPackage);
 
-            await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
+            await TLMessageDialog.ShowAsync(Strings.Android.LinkCopied);
         }
     }
 }

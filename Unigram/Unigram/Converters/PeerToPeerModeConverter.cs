@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Unigram.Common;
-using Unigram.Strings;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
 {
-    public class AccountTTLConverter : IValueConverter
+    public class PeerToPeerModeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var days = System.Convert.ToInt32(value);
-            if (days >= 365)
+            switch (System.Convert.ToInt32(value))
             {
-                return LocaleHelper.Declension("Years", days / 365);
+                case 0:
+                default:
+                    return Strings.Android.LastSeenEverybody;
+                case 1:
+                    return Strings.Android.LastSeenContacts;
+                case 2:
+                    return Strings.Android.LastSeenNobody;
             }
-
-            return LocaleHelper.Declension("Months", days / 30);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

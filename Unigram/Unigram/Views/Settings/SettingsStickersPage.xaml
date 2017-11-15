@@ -30,22 +30,19 @@
             <ListView.Header>
                 <StackPanel>
                     <controls:BadgeButton
-                        x:Uid="SettingsStickersPage_FeaturedStickers"
-                        Content="Trending Stickers"
+                        Content="{CustomResource FeaturedStickers}"
                         Click="FeaturedStickers_Click"
                         Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
                         BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource BadgeButtonStyle}"/>
                     <controls:BadgeButton
-                        x:Uid="SettingsStickersPage_ArchivedStickers"
-                        Content="Archived Stickers"
+                        Content="{CustomResource ArchivedStickers}"
                         Click="ArchivedStickers_Click"
                         Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource BadgeButtonStyle}"/>
                     <controls:HyperButton
-                        x:Uid="SettingsStickersPage_Masks"
-                        Content="Masks"
+                        Content="{CustomResource Masks}"
                         Click="Masks_Click"
                         Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                         Style="{StaticResource HyperButtonStyle}"/>
