@@ -301,6 +301,7 @@
     <Compile Include="Converters\ProportionsToLabelConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
+    <Compile Include="Converters\StringPluralConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
     <Compile Include="Helpers\TLFileHelper.cs" />
