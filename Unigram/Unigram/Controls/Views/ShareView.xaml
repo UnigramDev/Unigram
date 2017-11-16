@@ -760,7 +760,7 @@
                     <selectors:DialogTemplateSelector.ItemTemplate>
                         <DataTemplate x:DataType="tl:ITLDialogWith">
                             <StackPanel Margin="0,12">
-                                <controls:ProfilePictureView IsHitTestVisible="False" Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="8,0"/>
+                                <controls:ProfilePicture IsHitTestVisible="False" Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="8,0"/>
                                 <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}" Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </StackPanel>
                         </DataTemplate>

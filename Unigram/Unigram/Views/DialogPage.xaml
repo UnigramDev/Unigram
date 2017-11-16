@@ -201,7 +201,7 @@
                 </Border>
 
                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                    <controls:ProfilePictureView Click="Media_Click" Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                    <controls:ProfilePicture Click="Media_Click" Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                 </Border>
             </StackPanel>
         </DataTemplate>
@@ -260,7 +260,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePictureView x:Phase="3"
+                <controls:ProfilePicture x:Phase="3"
                                              x:Name="PhotoBubble"
                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                              Source="{x:Bind Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
@@ -309,7 +309,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePictureView x:Phase="3"
+                <controls:ProfilePicture x:Phase="3"
                                              x:Name="PhotoBubble"
                                              Margin="12,0,0,2"
                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
@@ -353,7 +353,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePictureView x:Phase="3"
+                <controls:ProfilePicture x:Phase="3"
                                              x:Name="PhotoBubble"
                                              Margin="12,0,0,2"
                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
@@ -816,7 +816,7 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <controls:ProfilePictureView Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
+                                    <controls:ProfilePicture Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
 
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                                         <TextBlock x:Name="tblDialogName"
