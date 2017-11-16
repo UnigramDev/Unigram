@@ -88,7 +88,7 @@ namespace Unigram.ViewModels
             var message = messageBase as TLMessage;
             if (message != null && !message.IsOut && !message.IsPost && Peer is TLInputPeerChannel)
             {
-                var dialog = new DeleteChannelMessageDialog();
+                var dialog = new DeleteChannelMessageDialog(1, message.From?.FullName);
 
                 var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
@@ -97,7 +97,24 @@ namespace Unigram.ViewModels
 
                     if (dialog.DeleteAll)
                     {
-                        // TODO
+                        var response = await DeleteUserHistoryAsync(channel, message.From.ToInputUser());
+                        if (response.IsSucceeded)
+                        {
+                            CacheService.DeleteUserHistory(new TLPeerChannel { ChannelId = channel.Id }, new TLPeerUser { UserId = message.From.Id });
+                        }
+
+                        for (int i = 0; i < Items.Count; i++)
+                        {
+                            if (Items[i] is TLMessageCommonBase messageCommon && messageCommon.ToId is TLPeerChannel && messageCommon.FromId.Value == message.From.Id)
+                            {
+                                if (messageCommon.Id == 1 && messageCommon is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionChannelMigrateFrom)
+                                {
+                                    continue;
+                                }
+
+                                Items.RemoveAt(i--);
+                            }
+                        }
                     }
                     else
                     {
@@ -113,20 +130,19 @@ namespace Unigram.ViewModels
 
                     if (dialog.BanUser)
                     {
-                        // TODO: layer 68
-                        //var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
-                        //if (response.IsSucceeded)
-                        //{
-                        //    var updates = response.Result as TLUpdates;
-                        //    if (updates != null)
-                        //    {
-                        //        var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
-                        //        if (newChannelMessageUpdate != null)
-                        //        {
-                        //            Aggregator.Publish(newChannelMessageUpdate.Message);
-                        //        }
-                        //    }
-                        //}
+                        var response = await ProtoService.EditBannedAsync(channel, message.From.ToInputUser(), new TLChannelBannedRights { IsEmbedLinks = true, IsSendGames = true, IsSendGifs = true, IsSendInline = true, IsSendMedia = true, IsSendMessages = true, IsSendStickers = true, IsViewMessages = true });
+                        if (response.IsSucceeded)
+                        {
+                            var updates = response.Result as TLUpdates;
+                            if (updates != null)
+                            {
+                                var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
+                                if (newChannelMessageUpdate != null)
+                                {
+                                    Aggregator.Publish(newChannelMessageUpdate.Message);
+                                }
+                            }
+                        }
                     }
 
                     if (dialog.ReportSpam)
@@ -194,6 +210,24 @@ namespace Unigram.ViewModels
                     DeleteMessages(null, null, messages, revoke, null, DeleteMessagesInternal);
                 }
             }
+        }
+
+        private async Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteUserHistoryAsync(TLChannel channel, TLInputUserBase userId)
+        {
+            var response = await ProtoService.DeleteUserHistoryAsync(channel, userId);
+            if (response.IsSucceeded)
+            {
+                if (response.Result.Offset > 0)
+                {
+                    return await DeleteUserHistoryAsync(channel, userId);
+                }
+            }
+            else
+            {
+                Telegram.Api.Helpers.Execute.ShowDebugMessage("channels.deleteUserHistory error " + response.Error);
+            }
+
+            return response;
         }
 
         private void DeleteMessagesInternal(TLMessageBase lastMessage, IList<TLMessageBase> messages)

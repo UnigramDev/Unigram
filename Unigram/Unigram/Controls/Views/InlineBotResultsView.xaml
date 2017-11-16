@@ -264,7 +264,7 @@
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
               BorderThickness="0,1,0,0"
-              Visibility="{Binding InlineBotResultsVisibility}">
+              Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}">
             <!--Visibility="{Binding InlineBotResults.Results.Count, Converter={StaticResource BooleanToVisibilityConverter}}"-->
             <!--<Grid.Visibility>
                  <Binding Path="InlineBotResults.Results.Count" Converter="{StaticResource BooleanToVisibilityConverter}">
@@ -319,7 +319,7 @@
             </Grid>
 
             <Border Visibility="{x:Bind ConvertBannedRights(ViewModel.With, x:False), Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <TextBlock Text="The admins of this group restricted you from posting inline content here." VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind ConvertBannedRights(ViewModel.With), Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
             </Border>
         </Grid>
     </Grid>

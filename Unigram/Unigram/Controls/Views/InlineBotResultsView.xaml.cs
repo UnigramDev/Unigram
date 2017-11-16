@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -62,6 +63,23 @@ namespace Unigram.Controls.Views
             }
 
             return invert ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private string ConvertBannedRights(ITLDialogWith with)
+        {
+            if (with is TLChannel channel && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendInline)
+            {
+                if (channel.BannedRights.IsForever())
+                {
+                    return Strings.Android.AttachInlineRestrictedForever;
+                }
+                else
+                {
+                    return string.Format(Strings.Android.AttachInlineRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate));
+                }
+            }
+
+            return null;
         }
 
         #region Gifs

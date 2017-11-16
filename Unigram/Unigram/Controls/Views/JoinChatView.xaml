@@ -24,7 +24,7 @@
 
         <StackPanel Margin="0,8,0,12" Grid.Row="1">
             <TextBlock Text="{x:Bind ViewModel.Title}" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-            <TextBlock Text="{x:Bind ConvertCount(ViewModel.ParticipantsCount, ViewModel.HasParticipants)}" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+            <TextBlock Text="{x:Bind ConvertCount(ViewModel.ParticipantsCount, ViewModel.IsBroadcast)}" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
         </StackPanel>
 
         <ListView ItemsSource="{x:Bind ViewModel.Participants}"
@@ -66,8 +66,8 @@
             </Grid.ColumnDefinitions>
             <Border x:Name="LineBottom" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
 
-            <Button Click="Join_Click" Content="Join" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
-            <Button Click="Cancel_Click" Content="Cancel" HorizontalAlignment="Stretch" Margin="4,8,12,8" Grid.Column="1"/>
+            <Button Click="Join_Click" Content="{CustomResource ChannelJoin}" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
+            <Button Click="Cancel_Click" Content="{CustomResource Cancel}" HorizontalAlignment="Stretch" Margin="4,8,12,8" Grid.Column="1"/>
         </Grid>
     </Grid>
 </controls:BottomSheet>

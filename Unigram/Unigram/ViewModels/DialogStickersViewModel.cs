@@ -47,7 +47,7 @@ namespace Unigram.ViewModels
             {
                 Set = new TLStickerSet
                 {
-                    Title = "Favorites",
+                    Title = Strings.Android.FavoriteStickers,
                     ShortName = "tg/favedStickers"
                 }
             };
@@ -56,7 +56,7 @@ namespace Unigram.ViewModels
             {
                 Set = new TLStickerSet
                 {
-                    Title = "Frequently used",
+                    Title = Strings.Android.RecentStickers,
                     ShortName = "tg/recentlyUsed"
                 }
             };
@@ -65,7 +65,7 @@ namespace Unigram.ViewModels
             {
                 Set = new TLStickerSet
                 {
-                    Title = "Group stickers",
+                    Title = Strings.Android.GroupStickers,
                     ShortName = "tg/groupStickers",
                 },
             };

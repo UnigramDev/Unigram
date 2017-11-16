@@ -22,6 +22,10 @@ namespace Unigram.Controls.Views
         public EditYourAboutView()
         {
             this.InitializeComponent();
+
+            Title = Strings.Android.UserBio;
+            PrimaryButtonText = Strings.Android.OK;
+            SecondaryButtonText = Strings.Android.Cancel;
         }
 
         public string About

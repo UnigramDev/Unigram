@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -27,19 +28,9 @@ namespace Unigram.Controls.Views
             this.InitializeComponent();
         }
 
-        public string ConvertCount(int total, bool hasParticipants)
+        public string ConvertCount(int total, bool broadcast)
         {
-            var key = "{0} members";
-            if (total == 1)
-            {
-                key = hasParticipants ? "{0} member:" : "{0} member";
-            }
-            else
-            {
-                key = hasParticipants ? "{0} members:" : "{0} members";
-            }
-
-            return string.Format(key, total);
+            return LocaleHelper.Declension(broadcast ? "Subscribers" : "Members", total);
         }
 
         public Visibility ConvertMoreVisibility(int total, int count)

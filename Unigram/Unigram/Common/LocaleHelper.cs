@@ -652,12 +652,12 @@ namespace Unigram.Common
             return dst.ToString();
         }
 
-        public abstract class PluralRules
+        private abstract class PluralRules
         {
             public abstract int QuantityForNumber(int n);
         }
 
-        public class PluralRules_Zero : PluralRules
+        private class PluralRules_Zero : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -672,7 +672,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Welsh : PluralRules
+        private class PluralRules_Welsh : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -703,7 +703,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Two : PluralRules
+        private class PluralRules_Two : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -722,7 +722,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Tachelhit : PluralRules
+        private class PluralRules_Tachelhit : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -741,7 +741,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Slovenian : PluralRules
+        private class PluralRules_Slovenian : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -765,7 +765,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Romanian : PluralRules
+        private class PluralRules_Romanian : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -785,7 +785,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Polish : PluralRules
+        private class PluralRules_Polish : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -806,7 +806,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_One : PluralRules
+        private class PluralRules_One : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -814,7 +814,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_None : PluralRules
+        private class PluralRules_None : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -822,7 +822,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Maltese : PluralRules
+        private class PluralRules_Maltese : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -846,7 +846,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Macedonian : PluralRules
+        private class PluralRules_Macedonian : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -861,7 +861,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Lithuanian : PluralRules
+        private class PluralRules_Lithuanian : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -882,7 +882,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Latvian : PluralRules
+        private class PluralRules_Latvian : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -901,7 +901,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Langi : PluralRules
+        private class PluralRules_Langi : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -920,7 +920,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_French : PluralRules
+        private class PluralRules_French : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -935,7 +935,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Czech : PluralRules
+        private class PluralRules_Czech : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -954,7 +954,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Breton : PluralRules
+        private class PluralRules_Breton : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -985,7 +985,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Balkan : PluralRules
+        private class PluralRules_Balkan : PluralRules
         {
             public override int QuantityForNumber(int count)
             {
@@ -1010,7 +1010,7 @@ namespace Unigram.Common
             }
         }
 
-        public class PluralRules_Arabic : PluralRules
+        private class PluralRules_Arabic : PluralRules
         {
             public override int QuantityForNumber(int count)
             {

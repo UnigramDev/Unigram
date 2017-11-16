@@ -14,7 +14,7 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
-        <TextBox x:Name="TextFirstName" TextChanged="OnTextChanged" Header="First name" Margin="12,16,12,12"/>
-        <TextBox x:Name="TextLastName" TextChanged="OnTextChanged" Header="Last name (optional)" Margin="12,0,12,12"/>
+        <TextBox x:Name="TextFirstName" TextChanged="OnTextChanged" Header="{CustomResource FirstName}" Margin="12,16,12,12"/>
+        <TextBox x:Name="TextLastName" TextChanged="OnTextChanged" Header="{CustomResource LastName}" Margin="12,0,12,12"/>
     </StackPanel>
 </ContentDialog>

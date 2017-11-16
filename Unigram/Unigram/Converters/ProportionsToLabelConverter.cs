@@ -22,9 +22,9 @@ namespace Unigram.Converters
                 case ImageCroppingProportions.Custom:
                     return "Custom";
                 case ImageCroppingProportions.Original:
-                    return "Original";
+                    return Strings.Android.CropOriginal;
                 case ImageCroppingProportions.Square:
-                    return "Square";
+                    return Strings.Android.CropSquare;
                 // Portrait
                 case ImageCroppingProportions.TwoOverThree:
                     return "2:3";
