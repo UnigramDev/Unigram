@@ -250,14 +250,12 @@
             </Grid.ColumnDefinitions>
             <Border VerticalAlignment="Center">
                 <StackPanel>
-                    <TextBlock x:Uid="IntroPage_Wizard1_Title"
-                               Text="Telegram"
+                    <TextBlock Text="{CustomResource Page1Title}"
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
                                Style="{ThemeResource TitleTextBlockStyle}"/>
-                    <TextBlock x:Uid="IntroPage_Wizard1_Text"
-                               common:TextBlockHelper.Markdown="The world's **fastest** messaging app.&#x0a;It is **free** and **secure**."
+                    <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page1Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
                                Style="{ThemeResource BodyTextBlockStyle}"/>
@@ -265,14 +263,12 @@
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="1">
                 <StackPanel>
-                    <TextBlock x:Uid="IntroPage_Wizard2_Title"
-                               Text="Fast"
+                    <TextBlock Text="{CustomResource Page2Title}"
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
                                Style="{ThemeResource TitleTextBlockStyle}"/>
-                    <TextBlock x:Uid="IntroPage_Wizard2_Text"
-                               common:TextBlockHelper.Markdown="**Telegram** delivers messages faster&#x0a;than any other application."
+                    <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page2Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
                                Style="{ThemeResource BodyTextBlockStyle}"/>
@@ -280,14 +276,12 @@
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="2">
                 <StackPanel>
-                    <TextBlock x:Uid="IntroPage_Wizard3_Title"
-                               Text="Free"
+                    <TextBlock Text="{CustomResource Page3Title}"
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
                                Style="{ThemeResource TitleTextBlockStyle}"/>
-                    <TextBlock x:Uid="IntroPage_Wizard3_Text"
-                               common:TextBlockHelper.Markdown="**Telegram** is free forever. No ads.&#x0a;No subscription fees."
+                    <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page3Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
                                Style="{ThemeResource BodyTextBlockStyle}"/>
@@ -295,14 +289,12 @@
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="3">
                 <StackPanel>
-                    <TextBlock x:Uid="IntroPage_Wizard4_Title"
-                               Text="Powerful"
+                    <TextBlock Text="{CustomResource Page4Title}"
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
                                Style="{ThemeResource TitleTextBlockStyle}"/>
-                    <TextBlock x:Uid="IntroPage_Wizard4_Text"
-                               common:TextBlockHelper.Markdown="**Telegram** has no limits on&#x0a;the size of your media and chats."
+                    <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page4Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
                                Style="{ThemeResource BodyTextBlockStyle}"/>
@@ -310,14 +302,12 @@
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="4">
                 <StackPanel>
-                    <TextBlock x:Uid="IntroPage_Wizard5_Title"
-                               Text="Secure"
+                    <TextBlock Text="{CustomResource Page5Title}"
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
                                Style="{ThemeResource TitleTextBlockStyle}"/>
-                    <TextBlock x:Uid="IntroPage_Wizard5_Text"
-                               common:TextBlockHelper.Markdown="**Telegram** keeps your messages&#x0a;safe from hacker attacks."
+                    <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page5Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
                                Style="{ThemeResource BodyTextBlockStyle}"/>
@@ -325,14 +315,12 @@
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="5">
                 <StackPanel>
-                    <TextBlock x:Uid="IntroPage_Wizard6_Title"
-                               Text="Cloud-Based"
+                    <TextBlock Text="{CustomResource Page6Title}"
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
                                Style="{ThemeResource TitleTextBlockStyle}"/>
-                    <TextBlock x:Uid="IntroPage_Wizard6_Text"
-                               common:TextBlockHelper.Markdown="**Telegram** lets you access your&#x0a;messages from multiple devices."
+                    <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page6Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
                                Style="{ThemeResource BodyTextBlockStyle}"/>
@@ -359,6 +347,6 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
 
-        <Button x:Uid="IntroPage_StartButton" Click="Start_Click" Content="Start Messaging" Style="{StaticResource StartButtonStyle}"/>
+        <Button Click="Start_Click" Content="{CustomResource StartMessaging}" Style="{StaticResource StartButtonStyle}"/>
     </Grid>
 </Page>

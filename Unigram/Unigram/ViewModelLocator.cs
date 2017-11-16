@@ -104,7 +104,6 @@ namespace Unigram
             }
 
             // ViewModels
-            container.ContainerBuilder.RegisterType<IntroViewModel>();
             container.ContainerBuilder.RegisterType<SignInViewModel>();
             container.ContainerBuilder.RegisterType<SignUpViewModel>();
             container.ContainerBuilder.RegisterType<SignInSentCodeViewModel>();

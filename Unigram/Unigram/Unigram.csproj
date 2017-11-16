@@ -1024,7 +1024,6 @@
     <Compile Include="ViewModels\SignIn\SignInPasswordViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInSentCodeViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInViewModel.cs" />
-    <Compile Include="ViewModels\IntroViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\GalleryViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
