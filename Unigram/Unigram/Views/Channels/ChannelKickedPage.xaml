@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Banned Users"/>
+        <controls:PageHeader Text="{CustomResource ChannelBlockedUsers}"/>
 
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Participants}"
@@ -24,7 +24,7 @@
                   Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="tl:TLChannelParticipantBase">
-                    <Grid Margin="0,6">
+                    <Grid Margin="0,6" Background="Transparent" ContextRequested="Participant_ContextRequested">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -36,7 +36,7 @@
                         <controls:ProfilePicture x:Phase="3" Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
                         <TextBlock Text="{x:Bind User.FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                        <TextBlock Text="{x:Bind User, Converter={StaticResource LastSeenConverter}, ConverterParameter=list}"
+                        <TextBlock Text="{x:Bind Converter={StaticResource ChannelParticipantToTypeConverter}}"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                    VerticalAlignment="Top"
@@ -54,6 +54,13 @@
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.Footer>
+                <TextBlock
+                    Text="{x:Bind ConvertType('NoBlockedChannel', 'NoBlockedGroup')}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="12"/>
+            </ListView.Footer>
         </ListView>
     </Grid>
 </Page>

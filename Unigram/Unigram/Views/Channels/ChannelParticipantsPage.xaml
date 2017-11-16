@@ -15,9 +15,9 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="Members"
-            Glyph="&#xE109;"
-            CommandVisibility="{x:Bind (Visibility)ViewModel.Item.IsCreator, Mode=OneWay}"/>
+            CommandVisibility="{x:Bind (Visibility)ViewModel.Item.IsCreator, Mode=OneWay}"
+            Text="{CustomResource ChannelMembers}"
+            Glyph="&#xE109;"/>
 
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Participants}"

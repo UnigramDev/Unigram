@@ -14,7 +14,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="Edit Admin"
+            Text="{CustomResource EditAdmin}"
             Glyph="&#xE10B;"
             Command="{x:Bind ViewModel.SendCommand}"
             CommandVisibility="{x:Bind ViewModel.Item.IsCanEdit, Converter={StaticResource BooleanToVisibilityConverter}}"/>
@@ -58,26 +58,26 @@
                 <UserControl IsEnabled="{x:Bind ViewModel.Item.IsCanEdit, FallbackValue=False}">
                     <StackPanel Visibility="{x:Bind ViewModel.Channel.IsMegaGroup, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" Margin="0,24,0,0">
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsChangeInfo, Mode=TwoWay}"
-                                      Header="Change Group Info"
+                                      Header="{CustomResource EditAdminChangeGroupInfo}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
-                                      Header="Delete Messages"
+                                      Header="{CustomResource EditAdminGroupDeleteMessages}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsBanUsers, Mode=TwoWay}"
-                                      Header="Ban Users"
+                                      Header="{CustomResource EditAdminBanUSers}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteUsers, Mode=TwoWay}"
                                       Visibility="{x:Bind ViewModel.Channel.IsDemocracy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                      Header="Add Users"
+                                      Header="{CustomResource EditAdminAddUsersViaLink}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
                         <!--<ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteLink, Mode=TwoWay}"
                                       Header="Invite Users Via Link"
                                       Style="{ThemeResource CheckButtonStyle}"/>-->
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsPinMessages, Mode=TwoWay}"
-                                      Header="Pin Messages"
+                                      Header="{CustomResource EditAdminPinMessages}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsAddAdmins, Mode=TwoWay}"
-                                      Header="Add New Admins"
+                                      Header="{CustomResource EditAdminAddAdmins}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
                     </StackPanel>
                 </UserControl>
@@ -85,23 +85,23 @@
                 <UserControl IsEnabled="{x:Bind ViewModel.Item.IsCanEdit, FallbackValue=False}">
                     <StackPanel Visibility="{x:Bind ViewModel.Channel.IsBroadcast, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" Margin="0,24,0,0">
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsChangeInfo, Mode=TwoWay}"
-                                      Header="Change Channel Info"
+                                      Header="{CustomResource EditAdminChangeChannelInfo}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
-                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
-                                      Header="Post Messages"
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsPostMessages, Mode=TwoWay}"
+                                      Header="{CustomResource EditAdminPostMessages}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsEditMessages, Mode=TwoWay}"
-                                      Header="Edit Messages of Others"
+                                      Header="{CustomResource EditAdminEditMessages}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
-                                      Header="Delete Messages of Others"
+                                      Header="{CustomResource EditAdminDeleteMessages}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteUsers, Mode=TwoWay}"
                                       Visibility="{x:Bind ViewModel.Channel.IsDemocracy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                      Header="Add Users"
+                                      Header="{CustomResource EditAdminAddUsers}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsAddAdmins, Mode=TwoWay}"
-                                      Header="Add New Admins"
+                                      Header="{CustomResource EditAdminAddAdmins}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
                     </StackPanel>
                 </UserControl>
@@ -109,7 +109,7 @@
                 <StackPanel Visibility="{x:Bind ViewModel.IsAdminAlready, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" Margin="0,24">
                     <controls:HyperButton Command="{x:Bind ViewModel.DismissCommand}"
                                           IsEnabled="{x:Bind ViewModel.Item.IsCanEdit, FallbackValue=False}"
-                                          Content="Dismiss Admin"
+                                          Content="{CustomResource EditAdminRemoveAdmin}"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Foreground="Red"/>
                 </StackPanel>

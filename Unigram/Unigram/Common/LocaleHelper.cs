@@ -58,6 +58,11 @@ namespace Unigram.Common
             }
         }
 
+        public static string GetString(string key)
+        {
+            return _loader.GetString(key);
+        }
+
         public static string Declension(string key, int count)
         {
             if (_currentRules == null)

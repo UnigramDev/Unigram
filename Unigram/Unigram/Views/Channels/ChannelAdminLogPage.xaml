@@ -93,7 +93,7 @@
                            MaxLines="1"/>
                 <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                            Style="{StaticResource CaptionTextBlockStyle}"
-                           Text="All events"/>
+                           Text="{CustomResource EventLogAllEvents}"/>
             </StackPanel>
 
             <!--<controls:GlyphButton Glyph="&#xE11A;" Grid.Column="2"/>-->
@@ -296,16 +296,9 @@
             </ListView.Footer>
         </controls:PaddedListView>
 
-        <StackPanel Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.Row="1">
-            <TextBlock Text="No events yet" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>
-            <TextBlock Foreground="White" Style="{ThemeResource BodyTextBlockStyle}">
-                <Run Text="There where no service actions"/>
-                <LineBreak/>
-                <Run Text="taken by the group's members"/>
-                <LineBreak/>
-                <Run Text="and admins in the last 48 hours."/>
-            </TextBlock>
-        </StackPanel>
+        <Border Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,8,12,8" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.Row="1">
+            <TextBlock common:TextBlockHelper.Markdown="{CustomResource EventLogEmpty}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
+        </Border>
 
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="{ThemeResource AppBarThemeCompactHeight}" Grid.Row="2">
             <Grid.ColumnDefinitions>

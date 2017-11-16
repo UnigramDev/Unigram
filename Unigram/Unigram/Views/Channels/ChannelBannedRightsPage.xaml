@@ -13,7 +13,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Text="User Restrictions" Glyph="&#xE10B;" Command="{x:Bind ViewModel.SendCommand}"/>
+        <controls:ButtonPageHeader
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource UserRestrictions}"
+            Glyph="&#xE10B;"/>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
@@ -53,30 +56,30 @@
 
                 <StackPanel Margin="0,24">
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsViewMessages, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
-                                  Header="Can Read Messages"
+                                  Header="{CustomResource UserRestrictionsRead}"
                                   Style="{ThemeResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsSendMessages, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
-                                  Header="Can Send Messages"
+                                  Header="{CustomResource UserRestrictionsSend}"
                                   Style="{ThemeResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsSendMedia, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
-                                  Header="Can Send Media"
+                                  Header="{CustomResource UserRestrictionsSendMedia}"
                                   Style="{ThemeResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsSendStickers, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
-                                  Header="Can Send Stickers &amp; GIFs"
+                                  Header="{CustomResource UserRestrictionsSendStickers}"
                                   Style="{ThemeResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsEmbedLinks, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
-                                  Header="Can Embed Links"
+                                  Header="{CustomResource UserRestrictionsEmbedLinks}"
                                   Style="{ThemeResource CheckButtonStyle}"/>
                 </StackPanel>
 
                 <StackPanel Margin="0,24">
-                    <DatePicker Header="Banned until"/>
+                    <DatePicker Header="{CustomResource UserRestrictionsUntil}"/>
                     <TimePicker/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind ViewModel.IsBannedAlready, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,24">
                     <controls:HyperButton Command="{x:Bind ViewModel.DismissCommand}"
-                                          Content="Ban User"
+                                          Content="{CustomResource ChannelBlockUser}"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Foreground="Red"/>
                 </StackPanel>

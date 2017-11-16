@@ -15,7 +15,8 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="New channel"
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource ChannelSettings}"
             Glyph="&#xE10B;"/>
 
         <Grid Grid.Row="1">
@@ -24,18 +25,24 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid Padding="12" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <RadioButton IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}" Content="Public"/>
-                <TextBlock Text="Anyone can find the channel in search and join." Margin="28,-6,0,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1"/>
-                <RadioButton Content="Private" Margin="0,8,0,0" Grid.Row="2"/>
-                <TextBlock Text="Only people with a special invite link may join." Margin="28,-6,0,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="3"/>
-            </Grid>
+            <StackPanel Padding="12" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                <RadioButton
+                    IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}"
+                    Content="{CustomResource ChannelPublic}"/>
+                <TextBlock
+                    Text="{CustomResource ChannelPublicInfo}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="28,-6,0,8"/>
+                <RadioButton
+                    IsChecked="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                    Content="{CustomResource ChannelPrivate}"/>
+                <TextBlock
+                    Text="{CustomResource ChannelPrivateInfo}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="28,-6,0,0"/>
+            </StackPanel>
 
             <Grid Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1">
                 <Grid.RowDefinitions>
@@ -43,8 +50,35 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
-                    <TextBox Header="Link" PlaceholderText="t.me/" Margin="12,12,12,8" Style="{StaticResource InlinePlaceholderTextBoxStyle}" Grid.Row="1"/>
-                    <TextBlock Text="People can share this link with others and find your channel using Telegram search." Margin="12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+                    <controls:UpdateTextBox
+                        x:Name="Username"
+                        Text="{Binding Username, Mode=TwoWay}"
+                        Header="{CustomResource ChannelLinkType}"
+                        PlaceholderText="{x:Bind Converter={StaticResource MeUrlPrefixConverter}}"
+                        Style="{StaticResource InlinePlaceholderTextBoxStyle}"
+                        Margin="0,12,12,8"/>
+
+                    <TextBlock
+                        Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.Username, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=LinkAvailable}"
+                        Foreground="Green"
+                        Margin="0,0,0,8"/>
+                    <TextBlock
+                        Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                        Text="{CustomResource LinkChecking}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Margin="0,0,0,8"/>
+                    <TextBlock
+                        Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                        Foreground="Red"
+                        Margin="0,0,0,8"/>
+
+                    <TextBlock
+                        Text="{CustomResource ChannelUsernameHelp}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="0,0,12,12"/>
                 </StackPanel>
 
                 <ListView Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -54,7 +88,7 @@
                           SelectionMode="None"
                           Grid.Row="1">
                     <ListView.Header>
-                        <TextBlock Text="Sorry, you have reserved too many public usernames.&#x0a;You can revoke the link from one of your older groups or channels, or create a private entity instead." Foreground="#FF0000" Margin="12,12,12,6" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <TextBlock Text="{CustomResource ChangePublicLimitReached}" Foreground="#FF0000" Margin="12,12,12,6" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </ListView.Header>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="tl:TLChannel">
@@ -86,8 +120,16 @@
             </Grid>
 
             <StackPanel Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Grid.Row="2">
-                <TextBox Text="{x:Bind ViewModel.InviteLink, Mode=OneWay}" Header="Link" IsReadOnly="True" Margin="12,12,12,8" Grid.Row="1"/>
-                <TextBlock Text="People can join your channel by following this link. You can revoke the link at any time." Margin="12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+                <TextBox
+                    Text="{x:Bind ViewModel.InviteLink, Mode=OneWay}"
+                    Header="{CustomResource ChannelInviteLinkTitle}"
+                    IsReadOnly="True"
+                    Margin="12,12,12,8"/>
+                <TextBlock
+                    Text="{CustomResource ChannelPrivateLinkHelp}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="12,0"/>
             </StackPanel>
         </Grid>
     </Grid>
