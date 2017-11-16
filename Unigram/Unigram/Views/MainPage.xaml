@@ -201,20 +201,46 @@
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Grid.Row="1">
         <controls:NavigationView x:Name="Navigation" ItemClick="NavigationView_ItemClick">
             <controls:NavigationView.MenuItems>
-                <controls:NavigationViewItem x:Uid="MainPage_NavigationNewChat" x:Name="NavigationNewChat" Content="New Group" Glyph="&#xE125;" />
+                <controls:NavigationViewItem
+                    x:Name="NavigationNewChat"
+                    Content="{CustomResource NewGroup}"
+                    Glyph="&#xE125;" />
                 <!--<controls:NavigationViewItem Text="New Secret Chat" Glyph="&#xE125;" />-->
-                <controls:NavigationViewItem x:Uid="MainPage_NavigationNewChannel" x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
+                <controls:NavigationViewItem
+                    x:Name="NavigationNewChannel"
+                    Content="{CustomResource NewChannel}"
+                    Glyph="&#xE789;" />
                 <controls:NavigationViewItemSeparator/>
 
-                <controls:NavigationViewItem x:Uid="MainPage_NavigationChats" x:Name="NavigationChats" Content="Chats" IsChecked="True" Glyph="&#xE8BD;" />
-                <controls:NavigationViewItem x:Name="NavigationContacts" Content="Contacts" Glyph="&#xE8D4;" />
-                <controls:NavigationViewItem x:Name="NavigationCalls" Content="Calls" Glyph="&#xE717;" />
-                <!--<controls:NavigationViewItem Text="Invite Friends" Glyph="&#xE789;" />-->
-                <controls:NavigationViewItem x:Name="NavigationSettings" Content="Settings" Glyph="&#xE115;" />
+                <controls:NavigationViewItem
+                    x:Name="NavigationChats"
+                    Content="Chats"
+                    IsChecked="True"
+                    Glyph="&#xE8BD;" />
+                <controls:NavigationViewItem
+                    x:Name="NavigationContacts"
+                    Content="{CustomResource Contacts}"
+                    Glyph="&#xE8D4;" />
+                <controls:NavigationViewItem
+                    x:Name="NavigationCalls"
+                    Content="{CustomResource Calls}"
+                    Glyph="&#xE717;" />
+                <!--<controls:NavigationViewItem Text="{CustomResource InviteFriends}" Glyph="&#xE789;" />-->
+                <controls:NavigationViewItem
+                    x:Name="NavigationSettings"
+                    Content="{CustomResource Settings}"
+                    Glyph="&#xE115;" />
                 <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
                 <controls:NavigationViewItemSeparator/>
-                <controls:NavigationViewItem x:Name="NavigationSavedMessages" Content="Saved Messages" Glyph="&#xE907;" FontFamily="{StaticResource TelegramThemeFontFamily}" />
-                <controls:NavigationViewItem x:Name="NavigationOfficialChannel" Content="News" Glyph="&#xE789;" />
+                <controls:NavigationViewItem
+                    x:Name="NavigationSavedMessages"
+                    Content="{CustomResource SavedMessages}"
+                    Glyph="&#xE907;"
+                    FontFamily="{StaticResource TelegramThemeFontFamily}" />
+                <controls:NavigationViewItem
+                    x:Name="NavigationOfficialChannel"
+                    Content="News"
+                    Glyph="&#xE789;" />
             </controls:NavigationView.MenuItems>
             <controls:NavigationView.PaneFooter>
                 <StackPanel>
@@ -252,12 +278,12 @@
                                     <MenuFlyoutItem x:Name="EditNameItem"
                                                         Click="{x:Bind SettingsView.EditName_Click}"
                                                         Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                        Text="Edit name"
+                                                        Text="{CustomResource EditName}"
                                                         Tag="&#xE104;"/>
                                     <MenuFlyoutItem x:Name="LogoutItem"
                                                         Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
                                                         Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                        Text="Logout"
+                                                        Text="{CustomResource LogOut}"
                                                         Tag="&#xE10A;"/>
                                 </MenuFlyout>
                             </Button.Flyout>
@@ -299,7 +325,7 @@
 
                     <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
                         <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
-                            <Run Text="Live Location" FontWeight="SemiBold"/>
+                            <Run Text="{CustomResource AttachLiveLocation}" FontWeight="SemiBold"/>
                             <Run Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}"/>
                         </TextBlock>
                     </Button>

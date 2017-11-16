@@ -380,17 +380,17 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = string.Empty;
-            ServiceLabel.Text = $"{messages.Count} forwarded messages";
+            ServiceLabel.Text = LocaleHelper.Declension("ForwardedMessageCount",  messages.Count);
             MessageLabel.Text = string.Empty;
 
             var users = messages.Select(x => x.From).Distinct(new EqualityComparerDelegate<TLUser>((x, y) => x.Id == y.Id)).ToList();
             if (users.Count > 2)
             {
-                TitleLabel.Text = $"{users[0].FullName} and {users.Count - 1} others";
+                TitleLabel.Text = users[0].FullName + LocaleHelper.Declension("AndOther", users.Count);
             }
             else if (users.Count == 2)
             {
-                TitleLabel.Text = $"{users[0].FullName} and {users[1].FullName}";
+                TitleLabel.Text = $"{users[0].FullName}, {users[1].FullName}";
             }
             else if (users.Count == 1)
             {
@@ -421,7 +421,7 @@ namespace Unigram.Controls.Messages
             // 🖼
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Photo";
+            ServiceLabel.Text = Strings.Android.AttachPhoto;
             MessageLabel.Text = string.Empty;
 
             if (message.Media is TLMessageMediaPhoto photoMedia)
@@ -459,7 +459,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Location";
+            ServiceLabel.Text = Strings.Android.AttachLocation;
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -473,7 +473,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Live Location";
+            ServiceLabel.Text = Strings.Android.AttachLiveLocation;
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -487,7 +487,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Location";
+            ServiceLabel.Text = Strings.Android.AttachLocation;
             MessageLabel.Text = string.Empty;
 
             var venueMedia = message.Media as TLMessageMediaVenue;
@@ -509,7 +509,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "🎮 Game";
+            ServiceLabel.Text = $"🎮 {Strings.Android.AttachGame}";
             MessageLabel.Text = string.Empty;
 
             var gameMedia = message.Media as TLMessageMediaGame;
@@ -532,7 +532,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Contact";
+            ServiceLabel.Text = Strings.Android.AttachContact;
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -546,7 +546,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Audio";
+            ServiceLabel.Text = Strings.Android.AttachAudio;
             MessageLabel.Text = string.Empty;
 
             var documentMedia = message.Media as TLMessageMediaDocument;
@@ -576,7 +576,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Voice message";
+            ServiceLabel.Text = Strings.Android.AttachAudio;
             MessageLabel.Text = string.Empty;
 
             var documentMedia = message.Media as TLMessageMediaDocument;
@@ -627,7 +627,7 @@ namespace Unigram.Controls.Messages
             Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Video";
+            ServiceLabel.Text = Strings.Android.AttachVideo;
             MessageLabel.Text = string.Empty;
 
             if (message.Media is TLMessageMediaDocument documentMedia)
@@ -666,7 +666,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Video message";
+            ServiceLabel.Text = Strings.Android.AttachRound;
             MessageLabel.Text = string.Empty;
 
             var documentMedia = message.Media as TLMessageMediaDocument;
@@ -694,7 +694,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "GIF";
+            ServiceLabel.Text = Strings.Android.AttachGif;
             MessageLabel.Text = string.Empty;
 
             var documentMedia = message.Media as TLMessageMediaDocument;
@@ -721,7 +721,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Sticker";
+            ServiceLabel.Text = Strings.Android.AttachSticker;
             MessageLabel.Text = string.Empty;
 
             var documentMedia = message.Media as TLMessageMediaDocument;
@@ -735,7 +735,7 @@ namespace Unigram.Controls.Messages
                     {
                         if (!string.IsNullOrEmpty(attribute.Alt))
                         {
-                            ServiceLabel.Text = $"{attribute.Alt} Sticker";
+                            ServiceLabel.Text = $"{attribute.Alt} {Strings.Android.AttachSticker}";
                         }
                     }
                 }
@@ -844,7 +844,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Unsupported media";
+            ServiceLabel.Text = Strings.Android.UnsupportedAttachment;
             MessageLabel.Text = string.Empty;
 
             return true;

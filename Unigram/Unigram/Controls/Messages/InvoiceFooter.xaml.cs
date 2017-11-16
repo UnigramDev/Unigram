@@ -45,10 +45,10 @@ namespace Unigram.Controls.Messages
         {
             if (receipt)
             {
-                return test ? "  TEST RECEIPT" : "  RECEIPT";
+                return "  " + Strings.Android.PaymentReceipt.ToUpper();
             }
 
-            return test ? "  TEST INVOICE" : "  INVOICE";
+            return "  " + (test ? Strings.Android.PaymentTestInvoice : Strings.Android.PaymentInvoice).ToUpper();
         }
     }
 }

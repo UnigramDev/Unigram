@@ -73,6 +73,38 @@ namespace Unigram.Converters
             return Telegram.Helpers.PhoneNumber.Format(number);
         }
 
+        public string BannedUntil(long date)
+        {
+            var banned = Utils.UnixTimestampToDateTime(date);
+            return ShortDate.Format(banned) + ", " + ShortTime.Format(banned);
+
+            //try
+            //{
+            //    date *= 1000;
+            //    var rightNow = System.DateTime.Now;
+            //    var year = rightNow.Year;
+            //    var banned = Utils.UnixTimestampToDateTime(date);
+            //    int dateYear = banned.Year;
+
+            //    if (year == dateYear)
+            //    {
+            //        //formatterBannedUntil = createFormatter(locale, is24HourFormat ? getStringInternal("formatterBannedUntil24H", R.string.formatterBannedUntil24H) : getStringInternal("formatterBannedUntil12H", R.string.formatterBannedUntil12H), is24HourFormat ? "MMM dd yyyy, HH:mm" : "MMM dd yyyy, h:mm a");
+            //        //formatterBannedUntilThisYear = createFormatter(locale, is24HourFormat ? getStringInternal("formatterBannedUntilThisYear24H", R.string.formatterBannedUntilThisYear24H) : getStringInternal("formatterBannedUntilThisYear12H", R.string.formatterBannedUntilThisYear12H), is24HourFormat ? "MMM dd, HH:mm" : "MMM dd, h:mm a");
+
+            //        return getInstance().formatterBannedUntilThisYear.format(new Date(date));
+            //    }
+            //    else
+            //    {
+            //        return getInstance().formatterBannedUntil.format(new Date(date));
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    //FileLog.e(e);
+            //}
+
+            //return "LOC_ERR";
+        }
 
         //private SolidColorBrush BubbleInternal(int? value)
         //{
