@@ -203,7 +203,7 @@ namespace Unigram.Controls.Views
 
         private string ConvertGrouped(bool grouped)
         {
-            return grouped ? "Show photos as one message" : "Show photos as separate messages";
+            return grouped ? Strings.Android.GroupPhotosHelp : Strings.Android.SinglePhotosHelp;
         }
 
         private bool ConvertSelected(StorageMedia media)
@@ -408,7 +408,7 @@ namespace Unigram.Controls.Views
 
         private async void TTLSeconds_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new SelectTTLSecondsView();
+            var dialog = new SelectTTLSecondsView(SelectedItem.IsPhoto);
             dialog.TTLSeconds = SelectedItem.TTLSeconds;
 
             var confirm = await dialog.ShowQueuedAsync();

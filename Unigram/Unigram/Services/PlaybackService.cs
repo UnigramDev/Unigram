@@ -45,7 +45,7 @@ namespace Unigram.Services
         private readonly IDownloadAudioFileManager _downloadManager;
         private readonly ITelegramEventAggregator _aggregator;
 
-        private readonly MediaSource _silence;
+        private readonly MediaPlaybackItem _silence;
 
         private MediaPlayer _mediaPlayer;
         private MediaPlaybackList _playlist;
@@ -63,11 +63,10 @@ namespace Unigram.Services
             _downloadManager = downloadManager;
             _aggregator = aggregator;
 
-            _silence = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/silence.mp3"));
+            _silence = new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/silence.mp3")));
 
             _mediaPlayer = new MediaPlayer();
             _mediaPlayer.CommandManager.IsEnabled = false;
-            _mediaPlayer.MediaEnded += OnMediaEnded;
 
             _mapping = new Dictionary<MediaPlaybackItem, TLMessage>();
             _inverse = new Dictionary<TLMessage, MediaPlaybackItem>();
@@ -188,8 +187,13 @@ namespace Unigram.Services
 
             Dispose();
 
-            var voice = message.IsVoice();
             var peer = message.Parent?.ToInputPeer();
+            var voice = message.IsVoice();
+
+            _mediaPlayer.CommandManager.IsEnabled = !voice;
+            _mediaPlayer.AudioDeviceType = voice ? MediaPlayerAudioDeviceType.Communications : MediaPlayerAudioDeviceType.Multimedia;
+            _mediaPlayer.AudioCategory = voice ? MediaPlayerAudioCategory.Communications : MediaPlayerAudioCategory.Media;
+
             if (peer != null)
             {
                 var filter = voice
@@ -213,19 +217,15 @@ namespace Unigram.Services
                     _queue = new Queue<TLMessage>(result.OfType<TLMessage>().Reverse());
                     _items = new List<TLMessage>(new[] { message }.Union(items));
 
+                    Enqueue(message, true);
+
                 }, predicate: filter);
             }
-
-            _mediaPlayer.CommandManager.IsEnabled = !voice;
-            _mediaPlayer.AudioDeviceType = voice ? MediaPlayerAudioDeviceType.Communications : MediaPlayerAudioDeviceType.Multimedia;
-            _mediaPlayer.AudioCategory = voice ? MediaPlayerAudioCategory.Communications : MediaPlayerAudioCategory.Media;
 
             //if (voice)
             //{
             //    await AttachAsync();
             //}
-
-            Enqueue(message, true);
         }
 
         private void Enqueue(TLMessage message, bool play)
@@ -244,7 +244,7 @@ namespace Unigram.Services
                         _playlist = new MediaPlaybackList();
                         _playlist.CurrentItemChanged += OnCurrentItemChanged;
                         _playlist.Items.Add(item);
-                        _playlist.Items.Add(new MediaPlaybackItem(_silence));
+                        _playlist.Items.Add(_silence);
 
                         _mediaPlayer.Source = _playlist;
                         _mediaPlayer.Play();
@@ -267,8 +267,8 @@ namespace Unigram.Services
 
             if (_playlist != null)
             {
-                _playlist.Items.Clear();
                 _playlist.CurrentItemChanged -= OnCurrentItemChanged;
+                _playlist.Items.Clear();
                 _playlist = null;
             }
 
@@ -277,6 +277,15 @@ namespace Unigram.Services
                 _queue.Clear();
                 _queue = null;
             }
+
+            if (_items != null)
+            {
+                // TODO: anything else?
+                _items = null;
+            }
+
+            _mapping.Clear();
+            _inverse.Clear();
 
             //if (_controller != null)
             //{

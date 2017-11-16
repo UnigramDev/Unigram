@@ -322,33 +322,20 @@ namespace Unigram.Common
             }
         }
 
-        //private bool? _isPeerToPeer;
-        //public bool IsPeerToPeer
-        //{
-        //    get
-        //    {
-        //        if (_isPeerToPeer == null)
-        //            _isPeerToPeer = GetValueOrDefault("IsPeerToPeer", true);
-
-        //        return _isPeerToPeer ?? true;
-        //    }
-        //    set
-        //    {
-        //        _isPeerToPeer = value;
-        //        AddOrUpdateValue("IsPeerToPeer", value);
-        //    }
-        //}
-
-        // This setting should not be cached or changes will be not be reflected during the session
-        public bool IsPeerToPeer
+        private int? _peerToPeerMode;
+        public int PeerToPeerMode
         {
             get
             {
-                return GetValueOrDefault("IsPeerToPeer", true);
+                if (_peerToPeerMode == null)
+                    _peerToPeerMode = GetValueOrDefault("PeerToPeerMode", 1);
+
+                return _peerToPeerMode ?? 1;
             }
             set
             {
-                AddOrUpdateValue("IsPeerToPeer", value);
+                _peerToPeerMode = value;
+                AddOrUpdateValue("PeerToPeerMode", value);
             }
         }
 

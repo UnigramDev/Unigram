@@ -14,8 +14,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader x:Uid="SettingsBlockedUsersPage_Header"
-            Text="Blocked users"
+        <controls:ButtonPageHeader
+            Text="{CustomResource BlockedUsers}"
             Glyph="&#xE109;"
             Command="{x:Bind ViewModel.BlockCommand}"/>
 
@@ -31,7 +31,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <controls:ProfilePictureView x:Phase="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" IsEnabled="False" Grid.RowSpan="2"/>
+                        <controls:ProfilePicture x:Phase="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" IsEnabled="False" Grid.RowSpan="2"/>
 
                         <StackPanel VerticalAlignment="Center" Grid.Column="1">
                             <TextBlock Text="{x:Bind FullName}"/>
@@ -50,7 +50,11 @@
 
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <TextBlock x:Uid="SettingsBlockedUsersPage_ListFooter" Text="Blocked users can't send you messages or add you to groups. They will not see your profile pictures, online and last seen status." Margin="12,24" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+                <TextBlock
+                    Text="{CustomResource UnblockText}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="12"/>
             </ListView.Footer>
         </ListView>
     </Grid>

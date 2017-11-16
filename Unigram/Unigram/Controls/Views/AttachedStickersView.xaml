@@ -161,7 +161,7 @@
                  </StackPanel>
                  </Button>-->
 
-            <Button Click="Close_Click" Content="Close" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
+            <Button Click="Close_Click" Content="{CustomResource Close}" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
         </Grid>
     </Grid>
 </controls:ContentDialogBase>

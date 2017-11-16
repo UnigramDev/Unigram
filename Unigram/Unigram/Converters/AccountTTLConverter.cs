@@ -16,12 +16,10 @@ namespace Unigram.Converters
             var days = System.Convert.ToInt32(value);
             if (days >= 365)
             {
-                var years = days / 365;
-                return Language.Declension(years, Strings.Resources.YearNominativeSingular, Strings.Resources.YearNominativePlural, Strings.Resources.YearGenitiveSingular, Strings.Resources.YearGenitivePlural, null, null);
+                return LocaleHelper.Declension("Years", days / 365);
             }
 
-            var months = days / 30;
-            return Language.Declension(months, Strings.Resources.MonthNominativeSingular, Strings.Resources.MonthNominativePlural, Strings.Resources.MonthGenitiveSingular, Strings.Resources.MonthGenitivePlural, null, null);
+            return LocaleHelper.Declension("Months", days / 30);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

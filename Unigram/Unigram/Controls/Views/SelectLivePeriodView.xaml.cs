@@ -19,9 +19,16 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class SelectLivePeriodView : ContentDialog
     {
-        public SelectLivePeriodView()
+        public SelectLivePeriodView(bool single, string name)
         {
             this.InitializeComponent();
+
+            Title = Strings.Android.SendLiveLocation;
+            PrimaryButtonText = Strings.Android.ShareFile;
+            SecondaryButtonText = Strings.Android.Cancel;
+            Footer.Text = single
+                ? string.Format(Strings.Android.LiveLocationAlertPrivate, name)
+                : Strings.Android.LiveLocationAlertGroup;
 
             FieldSeconds.ItemsSource = new int[] { 15 * 60, 1 * 60 * 60, 8 * 60 * 60 };
         }

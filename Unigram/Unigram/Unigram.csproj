@@ -115,6 +115,7 @@
     <Compile Include="Common\UniqueList.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
+    <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\ChannelStickersButton.cs" />
     <Compile Include="Controls\DialogBackgroundPresenter.cs" />
@@ -183,6 +184,7 @@
     </Compile>
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
+    <Compile Include="Controls\ProfilePicture.cs" />
     <Compile Include="Controls\SelectGridView.cs" />
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
@@ -220,7 +222,6 @@
     </Compile>
     <Compile Include="Controls\RatingBar.cs" />
     <Compile Include="Controls\ScrollViewerBackground.cs" />
-    <Compile Include="Controls\StickerView.cs" />
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\Views\AttachedStickersView.xaml.cs">
@@ -285,7 +286,6 @@
     <Compile Include="Converters\ChannelJoinedToVisibilityConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\ChannelToSummaryConverter.cs" />
-    <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
     <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\GeoLivePeriodConverter.cs" />
@@ -296,9 +296,12 @@
     <Compile Include="Converters\MessageToShareConverter.cs" />
     <Compile Include="Converters\MessageTTLConverter.cs" />
     <Compile Include="Converters\MeUrlPrefixConverter.cs" />
+    <Compile Include="Converters\PeerToPeerModeConverter.cs" />
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\ProportionsToLabelConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
+    <Compile Include="Converters\StringFormatConverter.cs" />
+    <Compile Include="Converters\StringPluralConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
     <Compile Include="Helpers\TLFileHelper.cs" />
@@ -320,6 +323,11 @@
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Strings\en\Android.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Android.resw</DependentUpon>
+    </Compile>
     <Compile Include="Strings\en\Branding.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -475,9 +483,6 @@
     </Compile>
     <Compile Include="Views\PhoneCallPage.xaml.cs">
       <DependentUpon>PhoneCallPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PlaygroundPage2.xaml.cs">
-      <DependentUpon>PlaygroundPage2.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsGeneralPage.xaml.cs">
       <DependentUpon>SettingsGeneralPage.xaml</DependentUpon>
@@ -876,7 +881,6 @@
     <Compile Include="Controls\ProgressShape.cs" />
     <Compile Include="Controls\ProgressVoice.cs" />
     <Compile Include="Controls\TransferButton.cs" />
-    <Compile Include="Controls\ProfilePictureView.cs" />
     <Compile Include="Controls\Views\DeleteChannelMessageDialog.xaml.cs">
       <DependentUpon>DeleteChannelMessageDialog.xaml</DependentUpon>
     </Compile>
@@ -970,14 +974,10 @@
       <DependentUpon>MessageReference.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SearchTextBox.cs" />
-    <Compile Include="Controls\Items\SimpleDialogListViewItem.xaml.cs">
-      <DependentUpon>SimpleDialogListViewItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Common\StickerBitmapSource.cs" />
     <Compile Include="Controls\TabHeaderStyle.xaml.cs">
       <DependentUpon>TabHeaderStyle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\UnigramLogo.cs" />
     <Compile Include="Controls\UpdateTextBox.cs" />
     <Compile Include="Converters\BindConvert.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
@@ -1019,7 +1019,6 @@
     <Compile Include="ViewModels\SignIn\SignInPasswordViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInSentCodeViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInViewModel.cs" />
-    <Compile Include="ViewModels\IntroViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\GalleryViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -1079,9 +1078,6 @@
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PlaygroundPage.xaml.cs">
-      <DependentUpon>PlaygroundPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
@@ -1140,7 +1136,11 @@
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Branding.cs</LastGenOutput>
     </PRIResource>
-    <PRIResource Include="Strings\ja\Branding.resw" />
+    <PRIResource Include="Strings\en\Android.resw">
+      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+      <Generator>ReswFileCodeGenerator</Generator>
+      <LastGenOutput>Android.cs</LastGenOutput>
+    </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1393,10 +1393,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Items\SimpleDialogListViewItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\Messages\MessageReference.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1629,10 +1625,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PlaygroundPage2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Settings\SettingsGeneralPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1694,10 +1686,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PlaygroundPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

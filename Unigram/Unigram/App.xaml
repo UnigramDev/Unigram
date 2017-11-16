@@ -135,6 +135,9 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:PeerToPeerModeConverter x:Key="PeerToPeerModeConverter"/>
+            <converters:StringPluralConverter x:Key="StringPluralConverter"/>
+            <converters:StringFormatConverter x:Key="StringFormatConverter"/>
             <converters:ChannelToSummaryConverter x:Key="ChannelToSummaryConverter"/>
             <converters:MeUrlPrefixConverter x:Key="MeUrlPrefixConverter"/>
             <converters:GeoLivePeriodConverter x:Key="GeoLivePeriodConverter"/>
@@ -151,7 +154,6 @@
             <converters:AutoDownloadConverter x:Key="AutoDownloadConverter"/>
             <converters:AccountTTLConverter x:Key="AccountTTLConverter"/>
             <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>
-            <converters:ChannelTypeToStringConverter x:Key="ChannelTypeToStringConverter"/>
             <converters:BooleanToIndexConverter x:Key="BooleanToIndexConverter"/>
             <converters:UsernameConverter x:Key="UsernameConverter"/>
             <converters:ChannelJoinedToVisibilityConverter x:Key="ChannelJoinedToVisibilityConverter"/>

@@ -27,6 +27,10 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<SettingsEditNameViewModel>();
+
+            Title = Strings.Android.EditName;
+            PrimaryButtonText = Strings.Android.OK;
+            SecondaryButtonText = Strings.Android.Cancel;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

@@ -798,13 +798,16 @@ namespace Unigram.Views
             var control = sender as FrameworkElement;
             var message = control.DataContext as TLMessage;
 
-            if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasFromId)
+            if (message != null && message.IsSaved())
             {
-                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFrom.FromId.Value });
-            }
-            else if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasChannelId)
-            {
-                ViewModel.NavigationService.NavigateToDialog(message.FwdFromChannel);
+                if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasFromId)
+                {
+                    ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFrom.FromId.Value });
+                }
+                else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasChannelId)
+                {
+                    ViewModel.NavigationService.NavigateToDialog(message.FwdFromChannel);
+                }
             }
             else if (message != null && message.HasFromId)
             {
@@ -1869,10 +1872,13 @@ namespace Unigram.Views
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
     {
-        public StorageLibrary Library { get; private set; }
-        public StorageFileQueryResult Query { get; private set; }
+        public StorageLibrary Library => _library;
+        public StorageFileQueryResult Query => _query;
 
         private readonly StorageMediaComparer _comparer;
+
+        private StorageLibrary _library;
+        private StorageFileQueryResult _query;
 
         private uint _startIndex;
 
@@ -1884,18 +1890,6 @@ namespace Unigram.Views
             }
 
             _comparer = new StorageMediaComparer();
-
-            Task.Run(async () =>
-            {
-                Library = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
-                Library.ChangeTracker.Enable();
-
-                var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
-                queryOptions.FolderDepth = FolderDepth.Deep;
-
-                Query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
-                Query.ContentsChanged += OnContentsChanged;
-            });
         }
 
         private int _selectedCount;
@@ -1909,7 +1903,7 @@ namespace Unigram.Views
 
         private async void OnContentsChanged(IStorageQueryResultBase sender, object args)
         {
-            var reader = Library.ChangeTracker.GetChangeReader();
+            var reader = _library.ChangeTracker.GetChangeReader();
             var changes = await reader.ReadBatchAsync();
 
             foreach (StorageLibraryChange change in changes)
@@ -2015,8 +2009,20 @@ namespace Unigram.Views
 
         public override async Task<IList<StorageMedia>> LoadDataAsync()
         {
+            if (_library == null)
+            {
+                _library = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
+                _library.ChangeTracker.Enable();
+
+                var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
+                queryOptions.FolderDepth = FolderDepth.Deep;
+
+                _query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
+                _query.ContentsChanged += OnContentsChanged;
+            }
+
             var items = new List<StorageMedia>();
-            var result = await Query.GetFilesAsync(_startIndex, 10);
+            var result = await _query.GetFilesAsync(_startIndex, 10);
 
             _startIndex += (uint)result.Count;
 

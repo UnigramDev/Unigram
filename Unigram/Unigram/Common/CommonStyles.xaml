@@ -1249,7 +1249,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="MessageBubbleProfilePictureStyle" TargetType="controls:ProfilePictureView">
+    <Style x:Key="MessageBubbleProfilePictureStyle" TargetType="controls:ProfilePicture">
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="Margin" Value="12,0,0,4"/>

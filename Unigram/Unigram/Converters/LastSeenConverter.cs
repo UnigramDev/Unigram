@@ -70,6 +70,11 @@ namespace Unigram.Converters
 
         public static string GetLabel(TLUser user, bool details)
         {
+            if (user == null)
+            {
+                return null;
+            }
+
             if (user.Id == 777000)
             {
                 return Strings.Resources.ServiceNotificationsLabel;

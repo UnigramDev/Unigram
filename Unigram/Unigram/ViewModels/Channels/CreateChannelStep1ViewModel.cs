@@ -74,7 +74,7 @@ namespace Unigram.ViewModels.Channels
                         //}
                         //this.ContinueNextStep(channel);
 
-                        NavigationService.Navigate(typeof(CreateChannelStep2Page), channel);
+                        NavigationService.Navigate(typeof(CreateChannelStep2Page), channel.ToPeer());
                     }
                 }
             }

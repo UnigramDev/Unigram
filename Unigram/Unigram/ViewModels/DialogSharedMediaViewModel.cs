@@ -151,7 +151,7 @@ namespace Unigram.ViewModels
             var message = messageBase as TLMessage;
             if (message != null && !message.IsOut && !message.IsPost && Peer is TLInputPeerChannel)
             {
-                var dialog = new DeleteChannelMessageDialog();
+                var dialog = new DeleteChannelMessageDialog(1, message.From?.FullName);
 
                 var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)

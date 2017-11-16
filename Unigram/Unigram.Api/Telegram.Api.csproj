@@ -459,6 +459,7 @@
     <Compile Include="TL\Partial\TLBadServerSalt.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelAdminLogEvent.Partial.cs" />
+    <Compile Include="TL\Partial\TLChannelBannedRights.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelFull.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelParticipantBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChatParticipantBase.Partial.cs" />

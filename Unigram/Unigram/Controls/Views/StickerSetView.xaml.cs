@@ -114,7 +114,7 @@ namespace Unigram.Controls.Views
         {
             if (installed && !archived)
             {
-                return official 
+                return official
                     ? string.Format(masks ? "Archive {0} masks" : "Archive {0} stickers", ViewModel.StickerSet.Count)
                     : string.Format(masks ? "Remove {0} masks" : "Remove {0} stickers", ViewModel.StickerSet.Count);
             }

@@ -38,9 +38,9 @@ namespace Unigram.ViewModels.Channels
             AdminLogCommand = new RelayCommand(AdminLogExecute);
             ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
             UsernameCommand = new RelayCommand(UsernameExecute);
-            ParticipantEditCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantEditExecute);
             ParticipantPromoteCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantPromoteExecute);
             ParticipantRestrictCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantRestrictExecute);
+            ParticipantRemoveCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantRemoveExecute);
         }
 
         protected TLChannelFull _full;
@@ -341,24 +341,6 @@ namespace Unigram.ViewModels.Channels
 
         #region Context menu
 
-        public RelayCommand<TLChannelParticipantBase> ParticipantEditCommand { get; }
-        private void ParticipantEditExecute(TLChannelParticipantBase participant)
-        {
-            if (_item == null)
-            {
-                return;
-            }
-
-            if (participant is TLChannelParticipantAdmin)
-            {
-                NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(_item.ToPeer(), participant));
-            }
-            else if (participant is TLChannelParticipantBanned)
-            {
-                NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(_item.ToPeer(), participant));
-            }
-        }
-
         public RelayCommand<TLChannelParticipantBase> ParticipantPromoteCommand { get; }
         private void ParticipantPromoteExecute(TLChannelParticipantBase participant)
         {
@@ -379,6 +361,28 @@ namespace Unigram.ViewModels.Channels
             }
 
             NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+        }
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantRemoveCommand { get; }
+        private async void ParticipantRemoveExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            if (participant.User == null)
+            {
+                return;
+            }
+
+            var rights = new TLChannelBannedRights { IsEmbedLinks = true, IsSendGames = true, IsSendGifs = true, IsSendInline = true, IsSendMedia = true, IsSendMessages = true, IsSendStickers = true, IsViewMessages = true };
+
+            var response = await ProtoService.EditBannedAsync(_item, participant.User.ToInputUser(), rights);
+            if (response.IsSucceeded)
+            {
+                Participants.Remove(participant);
+            }
         }
 
         #endregion

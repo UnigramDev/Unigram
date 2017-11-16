@@ -580,62 +580,60 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                if (storages.Count > 1)
-                {
-                    SendMediaExecute(storages, storages[0]);
-                }
+                SendMediaExecute(storages, storages[0]);
             }
         }
 
         public async void SendMediaExecute(ObservableCollection<StorageMedia> media, StorageMedia selectedItem)
         {
-            var storages = media;
-            if (storages != null && storages.Count > 0)
+            if (media == null || media.IsEmpty())
             {
-                var dialog = new SendMediaView { ViewModel = this, IsTTLEnabled = _peer is TLInputPeerUser };
-                dialog.SetItems(storages);
-                dialog.SelectedItem = selectedItem;
+                return;
+            }
 
-                var dialogResult = await dialog.ShowAsync();
+            var dialog = new SendMediaView { ViewModel = this, IsTTLEnabled = _peer is TLInputPeerUser };
+            dialog.SetItems(media);
+            dialog.SelectedItem = selectedItem;
 
-                TextField.FocusMaybe(FocusState.Keyboard);
+            var dialogResult = await dialog.ShowAsync();
 
-                if (dialogResult == ContentDialogBaseResult.OK)
+            TextField.FocusMaybe(FocusState.Keyboard);
+
+            if (dialogResult == ContentDialogBaseResult.OK)
+            {
+                var items = dialog.SelectedItems.ToList();
+                if (items.Count > 1 && dialog.IsGrouped)
                 {
-                    var items = dialog.SelectedItems.ToList();
-                    if (items.Count > 1 && dialog.IsGrouped)
+                    var group = new List<StorageMedia>(Math.Min(items.Count, 10));
+
+                    foreach (var item in items)
                     {
-                        var group = new List<StorageMedia>(Math.Min(items.Count, 10));
+                        group.Add(item);
 
-                        foreach (var item in items)
-                        {
-                            group.Add(item);
-
-                            if (group.Count == 10)
-                            {
-                                await SendGroupedAsync(group);
-                                group = new List<StorageMedia>(Math.Min(items.Count, 10));
-                            }
-                        }
-
-                        if (group.Count > 0)
+                        if (group.Count == 10)
                         {
                             await SendGroupedAsync(group);
+                            group = new List<StorageMedia>(Math.Min(items.Count, 10));
                         }
                     }
-                    else
+
+                    if (group.Count > 0)
                     {
-                        foreach (var storage in items)
+                        await SendGroupedAsync(group);
+                    }
+                }
+                else
+                {
+                    foreach (var storage in items)
+                    {
+                        if (storage is StoragePhoto photo)
                         {
-                            if (storage is StoragePhoto photo)
-                            {
-                                var storageFile = await photo.GetFileAsync();
-                                await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
-                            }
-                            else if (storage is StorageVideo video)
-                            {
-                                await SendVideoAsync(storage.File, storage.Caption, false, video.IsMuted, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
-                            }
+                            var storageFile = await photo.GetFileAsync();
+                            await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
+                        }
+                        else if (storage is StorageVideo video)
+                        {
+                            await SendVideoAsync(storage.File, storage.Caption, false, video.IsMuted, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
                         }
                     }
                 }

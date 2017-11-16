@@ -18,7 +18,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBox x:Name="FieldAbout" Header="Bio" MaxLength="70" Margin="12,16,12,12"/>
-        <TextBlock Text="You can add a few lines about yourself. Anyone who opens your profile will see this text." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,0,12,12" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1"/>
+        <TextBox x:Name="FieldAbout" Header="{CustomResource UserBio}" MaxLength="70" Margin="12,16,12,12"/>
+        <TextBlock Text="{CustomResource UserBioInfo}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,0,12,12" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1"/>
     </Grid>
 </ContentDialog>

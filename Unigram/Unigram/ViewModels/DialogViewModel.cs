@@ -2466,14 +2466,14 @@ namespace Unigram.ViewModels
 
                 if (channel.IsBroadcast && full.HasParticipantsCount)
                 {
-                    return string.Format("{0} subscribers", full.ParticipantsCount ?? 0);
+                    return LocaleHelper.Declension("Subscribers",  full.ParticipantsCount ?? 0);
                 }
                 else if (full.HasParticipantsCount)
                 {
                     var config = CacheService.GetConfig();
                     if (config == null)
                     {
-                        return string.Format("{0} members", full.ParticipantsCount ?? 0);
+                        return LocaleHelper.Declension("Members", full.ParticipantsCount ?? 0);
                     }
 
                     var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax, 0);
@@ -2824,7 +2824,7 @@ namespace Unigram.ViewModels
 
             if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages))
             {
-                var confirm = await TLMessageDialog.ShowAsync("Would you like to unpin this message?", "Unigram", "Yes", "No");
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.UnpinMessageAlert, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var response = await ProtoService.UpdatePinnedMessageAsync(false, channel.ToInputChannel(), 0);
@@ -2860,7 +2860,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to unblock this contact?", "Telegram", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureUnblockContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

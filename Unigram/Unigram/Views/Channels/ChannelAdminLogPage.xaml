@@ -83,7 +83,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <controls:ProfilePictureView Source="{x:Bind ViewModel.Item.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
+            <controls:ProfilePicture Source="{x:Bind ViewModel.Item.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
 
             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                 <TextBlock Text="{x:Bind ViewModel.Item.Title, Mode=OneWay}"
@@ -93,7 +93,7 @@
                            MaxLines="1"/>
                 <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                            Style="{StaticResource CaptionTextBlockStyle}"
-                           Text="All events"/>
+                           Text="{CustomResource EventLogAllEvents}"/>
             </StackPanel>
 
             <!--<controls:GlyphButton Glyph="&#xE11A;" Grid.Column="2"/>-->
@@ -122,7 +122,7 @@
                                     <ColumnDefinition Width="52"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <controls:ProfilePictureView x:Phase="3"
+                                <controls:ProfilePicture x:Phase="3"
                                                              x:Name="PhotoBubble"
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
@@ -139,7 +139,7 @@
                                     <ColumnDefinition Width="52"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <controls:ProfilePictureView x:Phase="3"
+                                <controls:ProfilePicture x:Phase="3"
                                                              x:Name="PhotoBubble"
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
@@ -164,7 +164,7 @@
                                 </Border>
 
                                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                                    <controls:ProfilePictureView Source="{Binding Action.Event.Action.NewPhoto, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                                    <controls:ProfilePicture Source="{Binding Action.Event.Action.NewPhoto, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                                 </Border>
                             </StackPanel>
                         </DataTemplate>
@@ -184,7 +184,7 @@
                                 </Border>
 
                                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                                    <controls:ProfilePictureView Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                                    <controls:ProfilePicture Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                                 </Border>
                             </StackPanel>
                         </DataTemplate>
@@ -296,16 +296,9 @@
             </ListView.Footer>
         </controls:PaddedListView>
 
-        <StackPanel Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.Row="1">
-            <TextBlock Text="No events yet" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>
-            <TextBlock Foreground="White" Style="{ThemeResource BodyTextBlockStyle}">
-                <Run Text="There where no service actions"/>
-                <LineBreak/>
-                <Run Text="taken by the group's members"/>
-                <LineBreak/>
-                <Run Text="and admins in the last 48 hours."/>
-            </TextBlock>
-        </StackPanel>
+        <Border Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,8,12,8" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.Row="1">
+            <TextBlock common:TextBlockHelper.Markdown="{CustomResource EventLogEmpty}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
+        </Border>
 
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="{ThemeResource AppBarThemeCompactHeight}" Grid.Row="2">
             <Grid.ColumnDefinitions>

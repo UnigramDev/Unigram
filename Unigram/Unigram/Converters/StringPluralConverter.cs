@@ -4,22 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Strings;
+using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
 {
-    public class PrivacyRuleToUsersConverter : IValueConverter
+    public class StringPluralConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var count = System.Convert.ToInt32(value);
-            if (count > 0)
+            if (parameter is string format)
             {
-                return LocaleHelper.Declension("Users", count);
+                // TODO: declesion
+
+                return LocaleHelper.Declension(format, System.Convert.ToInt32(value));
             }
 
-            return Strings.Android.EmpryUsersPlaceholder;
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
