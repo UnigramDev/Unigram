@@ -13,12 +13,16 @@ namespace Telegram.Api.TL
 			ChannelId = (1 << 1),
 			ChannelPost = (1 << 2),
 			PostAuthor = (1 << 3),
+			SavedFromPeer = (1 << 4),
+			SavedFromMsgId = (1 << 4),
 		}
 
 		public bool HasFromId { get { return Flags.HasFlag(Flag.FromId); } set { Flags = value ? (Flags | Flag.FromId) : (Flags & ~Flag.FromId); } }
 		public bool HasChannelId { get { return Flags.HasFlag(Flag.ChannelId); } set { Flags = value ? (Flags | Flag.ChannelId) : (Flags & ~Flag.ChannelId); } }
 		public bool HasChannelPost { get { return Flags.HasFlag(Flag.ChannelPost); } set { Flags = value ? (Flags | Flag.ChannelPost) : (Flags & ~Flag.ChannelPost); } }
 		public bool HasPostAuthor { get { return Flags.HasFlag(Flag.PostAuthor); } set { Flags = value ? (Flags | Flag.PostAuthor) : (Flags & ~Flag.PostAuthor); } }
+		public bool HasSavedFromPeer { get { return Flags.HasFlag(Flag.SavedFromPeer); } set { Flags = value ? (Flags | Flag.SavedFromPeer) : (Flags & ~Flag.SavedFromPeer); } }
+		public bool HasSavedFromMsgId { get { return Flags.HasFlag(Flag.SavedFromMsgId); } set { Flags = value ? (Flags | Flag.SavedFromMsgId) : (Flags & ~Flag.SavedFromMsgId); } }
 
 		public Flag Flags { get; set; }
 		public Int32? FromId { get; set; }
@@ -26,6 +30,8 @@ namespace Telegram.Api.TL
 		public Int32? ChannelId { get; set; }
 		public Int32? ChannelPost { get; set; }
 		public String PostAuthor { get; set; }
+		public TLPeerBase SavedFromPeer { get; set; }
+		public Int32? SavedFromMsgId { get; set; }
 
 		public TLMessageFwdHeader() { }
 		public TLMessageFwdHeader(TLBinaryReader from)
@@ -43,6 +49,8 @@ namespace Telegram.Api.TL
 			if (HasChannelId) ChannelId = from.ReadInt32();
 			if (HasChannelPost) ChannelPost = from.ReadInt32();
 			if (HasPostAuthor) PostAuthor = from.ReadString();
+			if (HasSavedFromPeer) SavedFromPeer = TLFactory.Read<TLPeerBase>(from);
+			if (HasSavedFromMsgId) SavedFromMsgId = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -55,6 +63,8 @@ namespace Telegram.Api.TL
 			if (HasChannelId) to.WriteInt32(ChannelId.Value);
 			if (HasChannelPost) to.WriteInt32(ChannelPost.Value);
 			if (HasPostAuthor) to.WriteString(PostAuthor ?? string.Empty);
+			if (HasSavedFromPeer) to.WriteObject(SavedFromPeer);
+			if (HasSavedFromMsgId) to.WriteInt32(SavedFromMsgId.Value);
 		}
 
 		private void UpdateFlags()
@@ -63,6 +73,8 @@ namespace Telegram.Api.TL
 			HasChannelId = ChannelId != null;
 			HasChannelPost = ChannelPost != null;
 			HasPostAuthor = PostAuthor != null;
+			HasSavedFromPeer = SavedFromPeer != null;
+			HasSavedFromMsgId = SavedFromMsgId != null;
 		}
 	}
 }

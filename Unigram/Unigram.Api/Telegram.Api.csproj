@@ -375,6 +375,7 @@
     <Compile Include="TL\Messages\Methods\TLMessagesSendInlineBotResult.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSendMedia.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSendMessage.cs" />
+    <Compile Include="TL\Messages\Methods\TLMessagesSendMultiMedia.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSendScreenshotNotification.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSetBotCallbackAnswer.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSetBotPrecheckoutResults.cs" />
@@ -771,6 +772,7 @@
     <Compile Include="TL\TLInputReportReasonPornography.cs" />
     <Compile Include="TL\TLInputReportReasonSpam.cs" />
     <Compile Include="TL\TLInputReportReasonViolence.cs" />
+    <Compile Include="TL\TLInputSingleMedia.cs" />
     <Compile Include="TL\TLInputStickeredMediaBase.cs" />
     <Compile Include="TL\TLInputStickeredMediaDocument.cs" />
     <Compile Include="TL\TLInputStickeredMediaPhoto.cs" />

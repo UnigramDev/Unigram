@@ -24,6 +24,7 @@ namespace Telegram.Api.TL
 			RestrictionReason = (1 << 9),
 			AdminRights = (1 << 14),
 			BannedRights = (1 << 15),
+			ParticipantsCount = (1 << 17),
 		}
 
 		public bool IsCreator { get { return Flags.HasFlag(Flag.Creator); } set { Flags = value ? (Flags | Flag.Creator) : (Flags & ~Flag.Creator); } }
@@ -41,6 +42,7 @@ namespace Telegram.Api.TL
 		public bool HasRestrictionReason { get { return Flags.HasFlag(Flag.RestrictionReason); } set { Flags = value ? (Flags | Flag.RestrictionReason) : (Flags & ~Flag.RestrictionReason); } }
 		public bool HasAdminRights { get { return Flags.HasFlag(Flag.AdminRights); } set { Flags = value ? (Flags | Flag.AdminRights) : (Flags & ~Flag.AdminRights); } }
 		public bool HasBannedRights { get { return Flags.HasFlag(Flag.BannedRights); } set { Flags = value ? (Flags | Flag.BannedRights) : (Flags & ~Flag.BannedRights); } }
+		public bool HasParticipantsCount { get { return Flags.HasFlag(Flag.ParticipantsCount); } set { Flags = value ? (Flags | Flag.ParticipantsCount) : (Flags & ~Flag.ParticipantsCount); } }
 
 		public Flag Flags { get; set; }
 		public Int64? AccessHash { get; set; }
@@ -52,6 +54,7 @@ namespace Telegram.Api.TL
 		public String RestrictionReason { get; set; }
 		public TLChannelAdminRights AdminRights { get; set; }
 		public TLChannelBannedRights BannedRights { get; set; }
+		public Int32? ParticipantsCount { get; set; }
 
 		public TLChannel() { }
 		public TLChannel(TLBinaryReader from)
@@ -74,6 +77,7 @@ namespace Telegram.Api.TL
 			if (HasRestrictionReason) RestrictionReason = from.ReadString();
 			if (HasAdminRights) AdminRights = TLFactory.Read<TLChannelAdminRights>(from);
 			if (HasBannedRights) BannedRights = TLFactory.Read<TLChannelBannedRights>(from);
+			if (HasParticipantsCount) ParticipantsCount = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -91,6 +95,7 @@ namespace Telegram.Api.TL
 			if (HasRestrictionReason) to.WriteString(RestrictionReason ?? string.Empty);
 			if (HasAdminRights) to.WriteObject(AdminRights);
 			if (HasBannedRights) to.WriteObject(BannedRights);
+			if (HasParticipantsCount) to.WriteInt32(ParticipantsCount.Value);
 		}
 
 		private void UpdateFlags()
@@ -100,6 +105,7 @@ namespace Telegram.Api.TL
 			HasRestrictionReason = RestrictionReason != null;
 			HasAdminRights = AdminRights != null;
 			HasBannedRights = BannedRights != null;
+			HasParticipantsCount = ParticipantsCount != null;
 		}
 	}
 }

@@ -9,11 +9,13 @@ namespace Telegram.Api.TL
 		[Flags]
 		public enum Flag : Int32
 		{
+			NoSoundVideo = (1 << 3),
 			Thumb = (1 << 2),
 			Stickers = (1 << 0),
 			TTLSeconds = (1 << 1),
 		}
 
+		public bool IsNoSoundVideo { get { return Flags.HasFlag(Flag.NoSoundVideo); } set { Flags = value ? (Flags | Flag.NoSoundVideo) : (Flags & ~Flag.NoSoundVideo); } }
 		public bool HasThumb { get { return Flags.HasFlag(Flag.Thumb); } set { Flags = value ? (Flags | Flag.Thumb) : (Flags & ~Flag.Thumb); } }
 		public bool HasStickers { get { return Flags.HasFlag(Flag.Stickers); } set { Flags = value ? (Flags | Flag.Stickers) : (Flags & ~Flag.Stickers); } }
 		public bool HasTTLSeconds { get { return Flags.HasFlag(Flag.TTLSeconds); } set { Flags = value ? (Flags | Flag.TTLSeconds) : (Flags & ~Flag.TTLSeconds); } }

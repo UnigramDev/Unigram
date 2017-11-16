@@ -24,6 +24,7 @@ namespace Telegram.Api.TL
 			Views = (1 << 10),
 			EditDate = (1 << 15),
 			PostAuthor = (1 << 16),
+			GroupedId = (1 << 17),
 		}
 
 		public override bool IsOut { get { return Flags.HasFlag(Flag.Out); } set { Flags = value ? (Flags | Flag.Out) : (Flags & ~Flag.Out); } }
@@ -41,6 +42,7 @@ namespace Telegram.Api.TL
 		public bool HasViews { get { return Flags.HasFlag(Flag.Views); } set { Flags = value ? (Flags | Flag.Views) : (Flags & ~Flag.Views); } }
 		public bool HasEditDate { get { return Flags.HasFlag(Flag.EditDate); } set { Flags = value ? (Flags | Flag.EditDate) : (Flags & ~Flag.EditDate); } }
 		public bool HasPostAuthor { get { return Flags.HasFlag(Flag.PostAuthor); } set { Flags = value ? (Flags | Flag.PostAuthor) : (Flags & ~Flag.PostAuthor); } }
+		public bool HasGroupedId { get { return Flags.HasFlag(Flag.GroupedId); } set { Flags = value ? (Flags | Flag.GroupedId) : (Flags & ~Flag.GroupedId); } }
 
 		public Flag Flags { get; set; }
 		public TLMessageFwdHeader FwdFrom { get; set; }
@@ -52,6 +54,7 @@ namespace Telegram.Api.TL
 		public Int32? Views { get; set; }
 		public Int32? EditDate { get; set; }
 		public String PostAuthor { get; set; }
+		public Int64? GroupedId { get; set; }
 
 		public TLMessage() { }
 		public TLMessage(TLBinaryReader from)
@@ -78,6 +81,7 @@ namespace Telegram.Api.TL
 			if (HasViews) Views = from.ReadInt32();
 			if (HasEditDate) EditDate = from.ReadInt32();
 			if (HasPostAuthor) PostAuthor = from.ReadString();
+			if (HasGroupedId) GroupedId = from.ReadInt64();
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -99,6 +103,7 @@ namespace Telegram.Api.TL
 			if (HasViews) to.WriteInt32(Views.Value);
 			if (HasEditDate) to.WriteInt32(EditDate.Value);
 			if (HasPostAuthor) to.WriteString(PostAuthor ?? string.Empty);
+			if (HasGroupedId) to.WriteInt64(GroupedId.Value);
 		}
 
 		private void UpdateFlags()
@@ -113,6 +118,7 @@ namespace Telegram.Api.TL
 			HasViews = Views != null;
 			HasEditDate = EditDate != null;
 			HasPostAuthor = PostAuthor != null;
+			HasGroupedId = GroupedId != null;
 		}
 	}
 }
