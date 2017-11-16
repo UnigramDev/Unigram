@@ -149,13 +149,13 @@ namespace Unigram.ViewModels
             var contacts = CacheService.GetContacts().Where(x => CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.FullName, query, CompareOptions.IgnoreCase) >= 0).ToList();
             if (contacts.Count > 0)
             {
-                Search.Add(new KeyedList<string, TLObject>("Contacts", contacts));
+                Search.Add(new KeyedList<string, TLObject>(null, contacts));
             }
 
             var result = await ProtoService.SearchAsync(query, 100);
             if (result.IsSucceeded)
             {
-                Search.Add(new KeyedList<string, TLObject>("Global search", result.Result.Users));
+                Search.Add(new KeyedList<string, TLObject>(Strings.Android.GlobalSearch, result.Result.Users));
             }
         }
 

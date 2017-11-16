@@ -551,7 +551,7 @@
                             </Grid>
                         </Grid>
                     </PivotItem>
-                    <PivotItem Loaded="PivotItem_Loaded" Header="Contacts">
+                    <PivotItem Loaded="PivotItem_Loaded" Header="{CustomResource Contacts}">
                         <Grid>
                             <controls:ScrollViewerBackground
                                 Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
@@ -628,7 +628,7 @@
                             </ListView>
                         </Grid>
                     </PivotItem>
-                    <PivotItem x:Name="Calls" Header="Calls">
+                    <PivotItem x:Name="Calls" Header="{CustomResource Calls}">
                         <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
                                   ItemClick="ListView_ItemClick"
                                   IsItemClickEnabled="True"
@@ -649,7 +649,7 @@
                             </ListView.ItemContainerTransitions>-->
                         </ListView>
                     </PivotItem>
-                    <PivotItem Header="Settings">
+                    <PivotItem Header="{CustomResource Settings}">
                         <local:SettingsPage x:Name="SettingsView" MasterDetail="{x:Bind MasterDetail}"/>
                     </PivotItem>
                 </Pivot>

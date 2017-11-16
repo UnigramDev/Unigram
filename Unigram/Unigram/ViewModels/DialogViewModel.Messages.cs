@@ -12,6 +12,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
+using Telegram.Helpers;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
@@ -860,10 +861,10 @@ namespace Unigram.ViewModels
             if (PinnedMessage?.Id == message.Id)
             {
                 var dialog = new TLMessageDialog();
-                dialog.Title = "Unpin message";
-                dialog.Message = "Would you like to unpin this message?";
-                dialog.PrimaryButtonText = "Yes";
-                dialog.SecondaryButtonText = "No";
+                dialog.Title = Strings.Android.AppName;
+                dialog.Message = Strings.Android.UnpinMessageAlert;
+                dialog.PrimaryButtonText = Strings.Android.OK;
+                dialog.SecondaryButtonText = Strings.Android.Cancel;
 
                 var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
@@ -880,19 +881,19 @@ namespace Unigram.ViewModels
             }
             else
             {
+                var channel = With as TLChannel;
                 var dialog = new TLMessageDialog();
-                dialog.Title = "Pin message";
-                dialog.Message = "Would you like to pin this message?";
-                dialog.CheckBoxLabel = "Notify all members";
+                dialog.Title = Strings.Android.AppName;
+                dialog.Message = channel.IsBroadcast ? Strings.Android.PinMessageAlertChannel : Strings.Android.PinMessageAlert;
+                dialog.CheckBoxLabel = Strings.Android.PinNotify;
                 dialog.IsChecked = true;
-                dialog.PrimaryButtonText = "Yes";
-                dialog.SecondaryButtonText = "No";
+                dialog.PrimaryButtonText = Strings.Android.OK;
+                dialog.SecondaryButtonText = Strings.Android.Cancel;
 
                 var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
                 {
-                    var channel = Peer as TLInputPeerChannel;
-                    var inputChannel = new TLInputChannel { ChannelId = channel.ChannelId, AccessHash = channel.AccessHash };
+                    var inputChannel = channel.ToInputChannel();
 
                     var silent = dialog.IsChecked == false;
                     var result = await ProtoService.UpdatePinnedMessageAsync(silent, inputChannel, message.Id);
@@ -1080,12 +1081,8 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var dialog = new TLMessageDialog(urlButton.Url, "Open this link?");
-                        dialog.PrimaryButtonText = "OK";
-                        dialog.SecondaryButtonText = "Cancel";
-
-                        var result = await dialog.ShowQueuedAsync();
-                        if (result != ContentDialogResult.Primary)
+                        var confirm = await TLMessageDialog.ShowAsync(urlButton.Url, Strings.Android.OpenUrlAlert, Strings.Android.OK, Strings.Android.Cancel);
+                        if (confirm != ContentDialogResult.Primary)
                         {
                             return;
                         }
@@ -1175,7 +1172,13 @@ namespace Unigram.ViewModels
             {
                 if (CacheService.GetUser(SettingsHelper.UserId) is TLUser cached)
                 {
-                    var confirm = await TLMessageDialog.ShowAsync("The bot will know your phone number. This can be useful for integration with other services.", "Share your phone number?", "OK", "Cancel");
+                    var content = Strings.Android.AreYouSureShareMyContactInfo;
+                    if (With is TLUser withUser)
+                    {
+                        content = withUser.IsBot ? Strings.Android.AreYouSureShareMyContactInfoBot : string.Format(Strings.Android.AreYouSureShareMyContactInfoUser, PhoneNumber.Format(cached.Phone), withUser.FullName);
+                    }
+
+                    var confirm = await TLMessageDialog.ShowAsync(content, Strings.Android.ShareYouPhoneNumberTitle, Strings.Android.OK, Strings.Android.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await SendContactAsync(cached);
@@ -1184,7 +1187,7 @@ namespace Unigram.ViewModels
             }
             else if (button is TLKeyboardButtonRequestGeoLocation requestGeoButton)
             {
-                var confirm = await TLMessageDialog.ShowAsync("This will send your current location to the bot.", "Share your location?", "OK", "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ShareYouLocationInfo, Strings.Android.ShareYouLocationTitle, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var location = await _locationService.GetPositionAsync();
