@@ -796,13 +796,16 @@ namespace Unigram.Views
             var control = sender as FrameworkElement;
             var message = control.DataContext as TLMessage;
 
-            if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasFromId)
+            if (message != null && message.IsSaved())
             {
-                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFrom.FromId.Value });
-            }
-            else if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasChannelId)
-            {
-                ViewModel.NavigationService.NavigateToDialog(message.FwdFromChannel);
+                if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasFromId)
+                {
+                    ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFrom.FromId.Value });
+                }
+                else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasChannelId)
+                {
+                    ViewModel.NavigationService.NavigateToDialog(message.FwdFromChannel);
+                }
             }
             else if (message != null && message.HasFromId)
             {
