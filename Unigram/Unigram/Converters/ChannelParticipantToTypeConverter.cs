@@ -15,11 +15,11 @@ namespace Unigram.Converters
             switch (value)
             {
                 case TLChannelParticipantCreator creator:
-                    return "Creator";
+                    return Strings.Android.ChannelCreator;
                 case TLChannelParticipantAdmin admin:
-                    return string.Format("Promoted by {0}", admin.PromotedByUser.FullName);
+                    return string.Format(Strings.Android.EditAdminPromotedBy, admin.PromotedByUser.FullName);
                 case TLChannelParticipantBanned banned:
-                    return string.Format("Restricted by {0}", banned.KickedByUser.FullName);
+                    return string.Format(Strings.Android.UserRestrictionsBy, banned.KickedByUser.FullName);
                 case TLChannelParticipant participant:
                 default:
                     return "User";

@@ -154,7 +154,6 @@
             <converters:AutoDownloadConverter x:Key="AutoDownloadConverter"/>
             <converters:AccountTTLConverter x:Key="AccountTTLConverter"/>
             <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>
-            <converters:ChannelTypeToStringConverter x:Key="ChannelTypeToStringConverter"/>
             <converters:BooleanToIndexConverter x:Key="BooleanToIndexConverter"/>
             <converters:UsernameConverter x:Key="UsernameConverter"/>
             <converters:ChannelJoinedToVisibilityConverter x:Key="ChannelJoinedToVisibilityConverter"/>
