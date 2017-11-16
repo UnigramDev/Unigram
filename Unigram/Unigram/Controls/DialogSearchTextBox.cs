@@ -156,17 +156,11 @@ namespace Unigram.Controls
 
         private List<TLUser> GetUsernames(string username)
         {
+            var query = LocaleHelper.GetQuery(username);
             bool IsMatch(TLUser user)
             {
-                if (user.Username == null)
-                {
-                    return false;
-                }
-
-                return (user.FullName.IsLike(username, StringComparison.OrdinalIgnoreCase)) ||
-                       (user.HasUsername && user.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase));
+                return user.IsLike(query, StringComparison.OrdinalIgnoreCase);
             }
-
 
             var results = new List<TLUser>();
 

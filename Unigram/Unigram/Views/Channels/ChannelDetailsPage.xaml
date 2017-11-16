@@ -57,7 +57,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <controls:ProfilePictureView x:Name="Picture" Click="Photo_Click" Source="{x:Bind ViewModel.Item.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
+                        <controls:ProfilePicture x:Name="Picture" Click="Photo_Click" Source="{x:Bind ViewModel.Item.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
 
                         <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
                             <Grid.ColumnDefinitions>
@@ -77,31 +77,31 @@
                                 BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                 BorderThickness="0,0,0,1"
                                 Margin="12,0,0,0">
-                        <TextBlock Text="About" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="0,11,0,0"/>
                         <RichTextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.About, Mode=OneWay}"
                                        ContextRequested="About_ContextRequested"
                                        ContextMenuOpening="About_ContextMenuOpening"
-                                       Padding="0,0,12,12"
+                                       Padding="12,12,12,12"
+                                       Margin="-12,0,0,0"
                                        Style="{StaticResource BodyRichTextBlockStyle}"/>
                     </StackPanel>
 
                     <controls:HyperButton Tag="Link"
                                           Command="{x:Bind ViewModel.UsernameCommand}"
-                                          Content="{x:Bind ViewModel.Item.Username, Mode=OneWay, Converter={StaticResource UsernameToLinkConverter}}"
+                                          Content="{x:Bind ViewModel.Item.Username, Mode=OneWay, Converter={StaticResource MeUrlPrefixConverter}}"
                                           Visibility="{x:Bind ViewModel.Item.Username, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                           Style="{StaticResource SubtitleButtonStyle}"/>
 
                     <StackPanel Margin="0,24,0,0">
-                        <controls:BadgeButton Content="Shared Media"
-                                              Command="{x:Bind ViewModel.MediaCommand}"
-                                              Style="{StaticResource BadgeButtonStyle}"/>
-
-                        <ToggleSwitch Header="Notifications"
-                                      IsOn="{x:Bind ViewModel.AreNotificationsEnabled, Mode=OneWay}"
+                        <ToggleSwitch Header="{CustomResource Notifications}"
+                                      IsOn="{x:Bind ViewModel.IsMuted, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                       Style="{ThemeResource CheckButtonStyle}"
                                       Toggled="Notifications_Toggled"/>
 
-                        <controls:HyperButton Content="Add members"
+                        <controls:BadgeButton Content="{CustomResource SharedMedia}"
+                                              Command="{x:Bind ViewModel.MediaCommand}"
+                                              Style="{StaticResource BadgeButtonStyle}"/>
+
+                        <controls:HyperButton Content="{CustomResource AddMember}"
                                               Command="{x:Bind ViewModel.InviteCommand}"
                                               Visibility="{x:Bind ViewModel.IsInviteUsers, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Style="{StaticResource HyperButtonStyle}"
@@ -109,27 +109,27 @@
                     </StackPanel>
 
                     <StackPanel Margin="0,24,0,18">
-                        <controls:HyperButton Content="Recent Actions"
+                        <controls:HyperButton Content="{CustomResource EventLog}"
                                               Command="{x:Bind ViewModel.AdminLogCommand}"
                                               Visibility="{x:Bind ViewModel.IsAdminLog, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-                        <controls:BadgeButton Content="Admins"
+                        <controls:BadgeButton Content="{CustomResource ChannelAdministrators}"
                                               Command="{x:Bind ViewModel.AdminsCommand}"
                                               Badge="{x:Bind ViewModel.Full.AdminsCount, Mode=OneWay}"
                                               Visibility="{x:Bind ConvertBooleans(ViewModel.Full.AdminsCount, ViewModel.IsAdminLog, x:True), Mode=OneWay, FallbackValue=Collapsed}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
-                        <controls:BadgeButton Content="Restricted Users"
+                        <controls:BadgeButton Content="{CustomResource ChannelRestrictedUsers}"
                                               Command="{x:Bind ViewModel.BannedCommand}"
                                               Badge="{x:Bind ViewModel.Full.BannedCount, Mode=OneWay}"
                                               Visibility="{x:Bind ConvertBooleans(ViewModel.Full.BannedCount, ViewModel.IsAdminLog, x:True), Mode=OneWay, FallbackValue=Collapsed}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
-                        <controls:BadgeButton Content="Banned Users"
+                        <controls:BadgeButton Content="{CustomResource ChannelBlockedUsers}"
                                               Command="{x:Bind ViewModel.KickedCommand}"
                                               Badge="{x:Bind ViewModel.Full.KickedCount, Mode=OneWay}"
                                               Visibility="{x:Bind ConvertBooleans(ViewModel.Full.KickedCount, ViewModel.IsAdminLog, x:True), Mode=OneWay, FallbackValue=Collapsed}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
-                        <controls:BadgeButton Content="Members"
+                        <controls:BadgeButton Content="{CustomResource ChannelMembers}"
                                               Command="{x:Bind ViewModel.ParticipantsCommand}"
                                               Badge="{x:Bind ViewModel.Full.ParticipantsCount, Mode=OneWay}"
                                               Visibility="{x:Bind ConvertBooleans(ViewModel.Full.ParticipantsCount, ViewModel.IsAdminLog, ViewModel.Item.IsBroadcast), Mode=OneWay, FallbackValue=Collapsed}"
@@ -149,7 +149,7 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <controls:ProfilePictureView x:Phase="3" Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                        <controls:ProfilePicture x:Phase="3" Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
                         <TextBlock Text="{x:Bind User.FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                         <TextBlock Text="{x:Bind User, Converter={StaticResource LastSeenConverter}, ConverterParameter=list}"

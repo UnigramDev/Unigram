@@ -107,10 +107,10 @@ namespace Unigram.ViewModels.Settings
         private async void UnblockExecute(TLUser user)
         {
             var dialog = new TLMessageDialog();
-            dialog.Title = AppResources.UnblockUserConfirmationDialogTitle;
-            dialog.Message = AppResources.UnblockUserConfirmationDialogText;
-            dialog.PrimaryButtonText = AppResources.Yes;
-            dialog.SecondaryButtonText = AppResources.No;
+            dialog.Title = Strings.Android.AppName;
+            dialog.Message = Strings.Android.AreYouSureUnblockContact;
+            dialog.PrimaryButtonText = Strings.Android.OK;
+            dialog.SecondaryButtonText = Strings.Android.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)

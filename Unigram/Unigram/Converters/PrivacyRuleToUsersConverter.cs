@@ -16,10 +16,10 @@ namespace Unigram.Converters
             var count = System.Convert.ToInt32(value);
             if (count > 0)
             {
-                return Language.Declension(count, AppResources.UserNominativeSingular, AppResources.UserNominativePlural, AppResources.UserGenitiveSingular, AppResources.UserGenitivePlural, null, null);
+                return LocaleHelper.Declension("Users", count);
             }
 
-            return "Add Users";
+            return Strings.Android.EmpryUsersPlaceholder;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

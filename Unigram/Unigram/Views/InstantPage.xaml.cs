@@ -501,26 +501,20 @@ namespace Unigram.Views
                 transferBinding.Path = new PropertyPath("IsTransferring");
                 transferBinding.Source = photo;
 
+                var progressBinding = new Binding();
+                progressBinding.Path = new PropertyPath("Progress");
+                progressBinding.Source = photo;
+
                 var transfer = new TransferButton();
                 transfer.Completed += (s, args) => Image_Click(child, null);
                 transfer.Transferable = photo;
                 transfer.Style = Application.Current.Resources["MediaTransferButtonStyle"] as Style;
                 transfer.SetBinding(TransferButton.IsTransferringProperty, transferBinding);
-
-                var progressBinding = new Binding();
-                progressBinding.Path = new PropertyPath("Progress");
-                progressBinding.Source = photo;
-
-                var progress = new ProgressBarRing();
-                progress.Background = new SolidColorBrush(Colors.Transparent);
-                progress.Foreground = new SolidColorBrush(Colors.White);
-                progress.IsHitTestVisible = false;
-                progress.SetBinding(ProgressBarRing.ValueProperty, progressBinding);
+                transfer.SetBinding(TransferButton.ProgressProperty, progressBinding);
 
                 var grid = new Grid();
                 grid.Children.Add(child);
                 grid.Children.Add(transfer);
-                grid.Children.Add(progress);
 
                 element.Children.Add(grid);
 
@@ -558,26 +552,20 @@ namespace Unigram.Views
                 transferBinding.Path = new PropertyPath("IsTransferring");
                 transferBinding.Source = video;
 
+                var progressBinding = new Binding();
+                progressBinding.Path = new PropertyPath("Progress");
+                progressBinding.Source = video;
+
                 var transfer = new TransferButton();
                 transfer.Completed += (s, args) => Image_Click(child, null);
                 transfer.Transferable = video;
                 transfer.Style = Application.Current.Resources["MediaTransferButtonStyle"] as Style;
                 transfer.SetBinding(TransferButton.IsTransferringProperty, transferBinding);
-
-                var progressBinding = new Binding();
-                progressBinding.Path = new PropertyPath("Progress");
-                progressBinding.Source = video;
-
-                var progress = new ProgressBarRing();
-                progress.Background = new SolidColorBrush(Colors.Transparent);
-                progress.Foreground = new SolidColorBrush(Colors.White);
-                progress.IsHitTestVisible = false;
-                progress.SetBinding(ProgressBarRing.ValueProperty, progressBinding);
+                transfer.SetBinding(TransferButton.ProgressProperty, progressBinding);
 
                 var grid = new Grid();
                 grid.Children.Add(child);
                 grid.Children.Add(transfer);
-                grid.Children.Add(progress);
 
                 element.Children.Add(grid);
 

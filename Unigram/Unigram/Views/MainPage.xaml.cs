@@ -671,12 +671,12 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var dialog = element.DataContext as TLDialog;
 
-            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Dialogs.DialogPinCommand, dialog, dialog.IsPinned ? AppResources.DialogUnpin : AppResources.DialogPin);
-            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Dialogs.DialogNotifyCommand, dialog, dialog.IsMuted ? AppResources.DialogNotificationsEnable : AppResources.DialogNotificationsDisable);
-            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Dialogs.DialogClearCommand, dialog, AppResources.DialogClearHistory);
+            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Dialogs.DialogPinCommand, dialog, dialog.IsPinned ? Strings.Resources.DialogUnpin : Strings.Resources.DialogPin);
+            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Dialogs.DialogNotifyCommand, dialog, dialog.IsMuted ? Strings.Resources.DialogNotificationsEnable : Strings.Resources.DialogNotificationsDisable);
+            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Dialogs.DialogClearCommand, dialog, Strings.Resources.DialogClearHistory);
             CreateFlyoutItem(ref flyout, DialogDelete_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, DialogDelete_Text(dialog));
-            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Dialogs.DialogDeleteAndStopCommand, dialog, AppResources.DialogDeleteAndStop);
-            CreateFlyoutItem(ref flyout, DialogDeleteAndExit_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, AppResources.DialogDeleteAndExit);
+            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Dialogs.DialogDeleteAndStopCommand, dialog, Strings.Resources.DialogDeleteAndStop);
+            CreateFlyoutItem(ref flyout, DialogDeleteAndExit_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, Strings.Resources.DialogDeleteAndExit);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -752,11 +752,11 @@ namespace Unigram.Views
                 {
                     //if (channel.IsCreator)
                     //{
-                    //    return channel.IsMegaGroup ? AppResources.DialogDeleteGroup : AppResources.DialogDeleteChannel;;
+                    //    return channel.IsMegaGroup ? Strings.Resources.DialogDeleteGroup : Strings.Resources.DialogDeleteChannel;;
                     //}
                     //else
                     {
-                        return channel.IsMegaGroup ? AppResources.DialogLeaveGroup : AppResources.DialogLeaveChannel;
+                        return channel.IsMegaGroup ? Strings.Resources.DialogLeaveGroup : Strings.Resources.DialogLeaveChannel;
                     }
                 }
             }
@@ -764,13 +764,13 @@ namespace Unigram.Views
             var userPeer = dialog.Peer as TLPeerUser;
             if (userPeer != null)
             {
-                return AppResources.DialogDelete;
+                return Strings.Resources.DialogDelete;
             }
 
             var chatPeer = dialog.Peer as TLPeerChat;
             if (chatPeer != null)
             {
-                return AppResources.DialogDelete;
+                return Strings.Resources.DialogDelete;
             }
 
             return null;
@@ -833,6 +833,11 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(CreateChannelStep1Page));
         }
 
+        private void NewContact_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(UserCreatePage));
+        }
+
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             NavigationChats.IsChecked = rpMasterTitlebar.SelectedIndex == 0;
@@ -845,6 +850,7 @@ namespace Unigram.Views
             ButtonOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
             //DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex == 0 || rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Collapsed : Visibility.Visible;
             DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
+            NewContact.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void NavigationView_ItemClick(object sender, NavigationViewItemClickEventArgs args)
@@ -872,6 +878,10 @@ namespace Unigram.Views
             else if (args.ClickedItem == NavigationSettings)
             {
                 rpMasterTitlebar.SelectedIndex = 3;
+            }
+            else if (args.ClickedItem == NavigationSavedMessages && ViewModel.Contacts.Self != null)
+            {
+                MasterDetail.NavigationService.NavigateToDialog(ViewModel.Contacts.Self);
             }
             else if (args.ClickedItem == NavigationOfficialChannel)
             {

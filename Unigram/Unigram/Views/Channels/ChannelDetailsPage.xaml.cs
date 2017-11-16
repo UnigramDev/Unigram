@@ -89,9 +89,9 @@ namespace Unigram.Views.Channels
             var element = sender as FrameworkElement;
             var participant = element.DataContext as TLChannelParticipantBase;
 
-            CreateFlyoutItem(ref flyout, ParticipantEdit_Loaded, ViewModel.ParticipantEditCommand, participant, AppResources.ParticipantEdit);
-            CreateFlyoutItem(ref flyout, ParticipantPromote_Loaded, ViewModel.ParticipantPromoteCommand, participant, AppResources.ParticipantPromote);
-            CreateFlyoutItem(ref flyout, ParticipantRestrict_Loaded, ViewModel.ParticipantRestrictCommand, participant, AppResources.ParticipantRestrict);
+            CreateFlyoutItem(ref flyout, ParticipantPromote_Loaded, ViewModel.ParticipantPromoteCommand, participant, Strings.Android.SetAsAdmin);
+            CreateFlyoutItem(ref flyout, ParticipantRestrict_Loaded, ViewModel.ParticipantRestrictCommand, participant, Strings.Android.KickFromSupergroup);
+            CreateFlyoutItem(ref flyout, ParticipantRemove_Loaded, ViewModel.ParticipantRemoveCommand, participant, Strings.Android.KickFromGroup);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -119,22 +119,6 @@ namespace Unigram.Views.Channels
             }
         }
 
-        private Visibility ParticipantEdit_Loaded(TLChannelParticipantBase participant)
-        {
-            var channel = ViewModel.Item as TLChannel;
-            if (channel == null)
-            {
-                return Visibility.Collapsed;
-            }
-
-            if ((channel.IsCreator || (channel.HasAdminRights && (channel.AdminRights.IsAddAdmins || channel.AdminRights.IsBanUsers))) && ((participant is TLChannelParticipantAdmin admin && admin.IsCanEdit) || participant is TLChannelParticipantBanned))
-            {
-                return participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
-            }
-
-            return Visibility.Collapsed;
-        }
-
         private Visibility ParticipantPromote_Loaded(TLChannelParticipantBase participant)
         {
             var channel = ViewModel.Item as TLChannel;
@@ -152,6 +136,22 @@ namespace Unigram.Views.Channels
         }
 
         private Visibility ParticipantRestrict_Loaded(TLChannelParticipantBase participant)
+        {
+            var channel = ViewModel.Item as TLChannel;
+            if (channel == null)
+            {
+                return Visibility.Collapsed;
+            }
+
+            if ((channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsBanUsers)) && ((participant is TLChannelParticipantAdmin admin && admin.IsCanEdit) || (!(participant is TLChannelParticipantBanned) && !(participant is TLChannelParticipantAdmin))))
+            {
+                return participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility ParticipantRemove_Loaded(TLChannelParticipantBase participant)
         {
             var channel = ViewModel.Item as TLChannel;
             if (channel == null)

@@ -212,7 +212,7 @@ namespace Unigram.Views
         {
             if (LiveLocation == true)
             {
-                var dialog = new SelectLivePeriodView();
+                var dialog = new SelectLivePeriodView(false, null);
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary && _lastPosition != null)
                 {

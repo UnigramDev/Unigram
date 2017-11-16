@@ -35,6 +35,7 @@ using Unigram.Views.Users;
 using Unigram.ViewModels.Users;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Aggregator;
+using Unigram.ViewModels.Chats;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -87,7 +88,7 @@ namespace Unigram.Themes
                 if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
                 {
                     var page = element.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
-                    if (page == null)
+                    if (page != null)
                     {
                         await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet, page.Stickers_ItemClick);
                     }
@@ -125,6 +126,30 @@ namespace Unigram.Themes
         public static async void Download_Click(FrameworkElement sender, TransferCompletedEventArgs e)
         {
             var element = sender as FrameworkElement;
+            if (element.DataContext is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionChatEditPhoto editPhotoAction)
+            {
+                var media = element.Parent as FrameworkElement;
+                if (media == null)
+                {
+                    media = element;
+                }
+
+                var chat = serviceMessage.Parent as TLChatBase;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                var chatFull = InMemoryCacheService.Current.GetFullChat(chat.Id);
+                if (chatFull != null && chatFull.ChatPhoto is TLPhoto && chat != null)
+                {
+                    var viewModel = new ChatPhotosViewModel(MTProtoService.Current, chatFull, chat, serviceMessage);
+                    await GalleryView.Current.ShowAsync(viewModel, () => media);
+                }
+
+                return;
+            }
+
             var message = element.DataContext as TLMessage;
 
             if (message == null)
@@ -141,7 +166,7 @@ namespace Unigram.Themes
                     return;
                 }
 
-                var page = bubble.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
+                var page = bubble.Ancestors<IGifPlayback>().FirstOrDefault() as IGifPlayback;
                 if (page == null)
                 {
                     return;

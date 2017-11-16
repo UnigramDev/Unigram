@@ -58,5 +58,9 @@ namespace Unigram.Views.Settings
         {
             Frame.Navigate(typeof(SettingsPrivacyChatInvitePage));
         }
+
+        private void Passcode_Click(object sender, RoutedEventArgs e)
+        {
+        }
     }
 }

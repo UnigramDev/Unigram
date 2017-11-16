@@ -16,10 +16,6 @@
     Background="Transparent"
     mc:Ignorable="d">
 
-    <controls:ContentDialogBase.Resources>
-        <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.Items}" ItemsPath="Documents" IsSourceGrouped="True"/>
-    </controls:ContentDialogBase.Resources>
-    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -29,7 +25,7 @@
 
         <controls:ZoomableGridView
             x:Name="List"
-            ItemsSource="{x:Bind ViewSource.View}"
+            ItemsSource="{x:Bind ViewModel.Items}"
             ItemClick="List_ItemClick"
             IsItemClickEnabled="True"
             SelectionMode="None"
@@ -60,64 +56,29 @@
                 </selectors:StickerSetItemTemplateSelector>
             </GridView.ItemTemplateSelector>
             <GridView.Header>
-                <Border x:Name="Header" Background="Transparent" Tapped="LightDismiss_Tapped"/>
+                <StackPanel>
+                    <Border x:Name="Header" Background="Transparent" Tapped="LightDismiss_Tapped"/>
+                    <Border Margin="-12,0">
+                        <Grid x:Name="GroupHeader"
+                              Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                              Height="{ThemeResource AppBarThemeCompactHeight}" 
+                              Loaded="GroupHeader_Loaded">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Grid.Column="1"/>
+
+                            <Border x:Name="LineAccent" BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                            <Border x:Name="LineTop" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                            <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.StickerSet.Title, Mode=OneWay}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
             </GridView.Header>
             <GridView.Footer>
                 <Border Height="12"/>
             </GridView.Footer>
-            <GridView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate x:DataType="messages:TLMessagesStickerSet">
-                            <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-                                  Height="{ThemeResource AppBarThemeCompactHeight}" 
-                                  Loaded="GroupHeader_Loaded"
-                                  VerticalAlignment="Bottom" 
-                                  Margin="-12,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Grid.Column="1"/>
-
-                                <Border x:Name="LineAccent" BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                                <Border x:Name="LineTop" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                                <TextBlock common:MessageHelper.Text="{x:Bind Set.Title}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
-                    <GroupStyle.HeaderContainerStyle>
-                        <Style TargetType="GridViewHeaderItem">
-                            <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
-                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                            <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                            <Setter Property="Margin" Value="0,0,0,0"/>
-                            <Setter Property="Padding" Value="0,0,0,0"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="VerticalContentAlignment" Value="Top" />
-                            <Setter Property="MinHeight" Value="0"/>
-                            <Setter Property="UseSystemFocusVisuals" Value="True" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="GridViewHeaderItem">
-                                        <Border Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}">
-                                            <ContentPresenter x:Name="ContentPresenter"
-                                                              Margin="{TemplateBinding Padding}"
-                                                              Content="{TemplateBinding Content}"
-                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.HeaderContainerStyle>
-                </GroupStyle>
-            </GridView.GroupStyle>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
                     <Setter Property="Margin" Value="0"/>
@@ -131,7 +92,7 @@
             </GridView.ItemContainerTransitions>
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsWrapGrid Orientation="Horizontal"  Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
+                    <ItemsWrapGrid Orientation="Horizontal"  Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" Canvas.ZIndex="-1"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </controls:ZoomableGridView>
@@ -174,7 +135,7 @@
                  </StackPanel>
                  </Button>-->
 
-            <Button Click="Close_Click" Content="Close" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
+            <Button Click="Close_Click" Content="{CustomResource Close}" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
         </Grid>
     </Grid>
 </controls:ContentDialogBase>

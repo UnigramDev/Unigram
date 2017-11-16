@@ -209,11 +209,11 @@ namespace Unigram.ViewModels
 
             if (value is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
             {
-                await TLFileHelper.SavePhotoAsync(photoSize, photo.Date);
+                await TLFileHelper.SavePhotoAsync(photoSize, photo.Date, false);
             }
             else if (value is TLDocument document)
             {
-                await TLFileHelper.SaveDocumentAsync(document, document.Date);
+                await TLFileHelper.SaveDocumentAsync(document, document.Date, false);
             }
         }
 

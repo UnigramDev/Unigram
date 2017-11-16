@@ -17,6 +17,33 @@ namespace Unigram.ViewModels.Channels
         public ChannelBannedViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator, new TLChannelParticipantsBanned())
         {
+            ParticipantDismissCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantDismissExecute);
         }
+
+        #region Context menu
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantDismissCommand { get; }
+        private async void ParticipantDismissExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            if (participant.User == null)
+            {
+                return;
+            }
+
+            var rights = new TLChannelBannedRights();
+
+            var response = await ProtoService.EditBannedAsync(_item, participant.User.ToInputUser(), rights);
+            if (response.IsSucceeded)
+            {
+                Participants.Remove(participant);
+            }
+        }
+
+        #endregion
     }
 }

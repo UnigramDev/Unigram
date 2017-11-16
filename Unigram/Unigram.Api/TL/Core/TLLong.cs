@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Linq;
 
 namespace Telegram.Api.TL
 {
@@ -21,6 +22,18 @@ namespace Telegram.Api.TL
             }
 
             return BitConverter.ToInt64(randomNumber, 0);
+        }
+
+        public static long[] Random(int count)
+        {
+            var ids = new long[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                ids[i] = Random();
+            }
+
+            return ids.OrderBy(x => x).ToArray();
         }
 
         #region TLLong

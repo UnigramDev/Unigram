@@ -1,0 +1,34 @@
+﻿<UserControl
+    x:Class="Unigram.Controls.Media.MusicMediaView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Media"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
+
+    <Grid Background="{ThemeResource MessageBackgroundBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid Background="{ThemeResource MessageMediaBackgroundBrush}" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top">
+            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
+        </Grid>
+
+        <Grid x:Name="PlaybackPanel" Visibility="Collapsed" Background="{ThemeResource MessageMediaBackgroundBrush}" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top">
+            <controls:GlyphHyperlinkButton x:Name="PlaybackButton" Click="Toggle_Click" Glyph="&#xE118;" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+        </Grid>
+
+        <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
+            <TextBlock Text="{Binding Media.Document.Title}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
+            <TextBlock x:Name="DurationLabel" Text="00:01" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

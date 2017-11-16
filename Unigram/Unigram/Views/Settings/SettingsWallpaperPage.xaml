@@ -25,7 +25,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="Chat Background"
+            Text="{CustomResource ChatBackground}"
             Glyph="&#xE10B;"
             Command="{x:Bind ViewModel.DoneCommand}"
             Canvas.ZIndex="1"/>

@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
-using Unigram.Core.Unidecode;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -98,30 +97,77 @@ namespace Unigram.Common
             return source.IndexOf(toCheck, comp) >= 0;
         }
 
-        public static bool IsLike(this string source, string query, StringComparison comp)
+        public static bool StartsWith(this string source, string[] toCheck, StringComparison comp)
         {
-            var result = query.Split(' ').All(x =>
+            foreach (var item in toCheck)
             {
-                var index = source.IndexOf(x, comp);
-                if (index > -1)
+                if (source.StartsWith(item, comp))
                 {
-                    return index == 0 || char.IsSeparator(source[index - 1]) || !char.IsLetterOrDigit(source[index - 1]);
+                    return true;
                 }
+            }
 
-                return false;
-            });
+            return false;
+        }
 
-            source = Unidecoder.Unidecode(source);
-            return result || query.Split(' ').All(x =>
+        public static bool IsLike(this TLUser user, string[] query, StringComparison comp)
+        {
+            return IsLike(user.FullName, user.Username, query, comp);
+        }
+
+        public static bool IsLike(this TLChannel channel, string[] query, StringComparison comp)
+        {
+            return IsLike(channel.Title, channel.Username, query, comp);
+        }
+
+        public static bool IsLike(this TLChat chat, string[] query, StringComparison comp)
+        {
+            return IsLike(chat.Title, null, query, comp);
+        }
+
+        public static bool IsLike(string name, string username, string[] query, StringComparison comp)
+        {
+            var translit = LocaleHelper.Transliterate(name);
+            if (translit.Equals(name, StringComparison.OrdinalIgnoreCase))
             {
-                var index = source.IndexOf(x, comp);
-                if (index > -1)
-                {
-                    return index == 0 || char.IsSeparator(source[index - 1]) || !char.IsLetterOrDigit(source[index - 1]);
-                }
+                translit = null;
+            }
 
-                return false;
-            });
+            foreach (var q in query)
+            {
+                if (name.StartsWith(q, comp) || name.Contains(" " + q, comp) || translit != null && (translit.StartsWith(q, comp) || translit.Contains(" " + q, comp)))
+                {
+                    return true;
+                }
+                else if (username != null && username.StartsWith(q, comp))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsLike(this string source, string[] queries, StringComparison comp)
+        {
+            foreach (var query in queries)
+            {
+                if (query.Split(' ').All(x =>
+                {
+                    var index = source.IndexOf(x, comp);
+                    if (index > -1)
+                    {
+                        return index == 0 || char.IsSeparator(source[index - 1]) || !char.IsLetterOrDigit(source[index - 1]);
+                    }
+
+                    return false;
+                }))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static string Format(this string input)

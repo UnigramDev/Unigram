@@ -68,6 +68,16 @@ namespace Telegram.Api.Services
             SendAsyncInternal("messages.sendInlineBotResult", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, RequestFlag.CanCompress | RequestFlag.InvokeAfter);
         }
 
+        private void UploadMediaAsyncInternal(TLMessagesUploadMedia message, Action<TLMessageMediaBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
+        {
+            SendAsyncInternal("messages.uploadMedia", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
+        }
+
+        private void SendMultiMediaAsyncInternal(TLMessagesSendMultiMedia message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
+        {
+            SendAsyncInternal("messages.sendMultiMedia", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
+        }
+
         private void SendMediaAsyncInternal(TLMessagesSendMedia message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
             SendAsyncInternal("messages.sendMedia", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, RequestFlag.CanCompress | RequestFlag.InvokeAfter);

@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Constants.Secret.cs" />
+    <Compile Include="Helpers\Markdown.cs" />
     <Compile Include="Helpers\PhoneNumber.cs" />
     <Compile Include="Services\Cache\Context\ChatsContext.cs" />
     <Compile Include="Services\Cache\Context\CreateDatabase.cs" />
@@ -446,6 +447,7 @@
     <Compile Include="TL\Partial\TLAuthorization.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelAdminLogEvent.Partial.cs" />
+    <Compile Include="TL\Partial\TLChannelBannedRights.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelFull.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelParticipantBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChatParticipantBase.Partial.cs" />
@@ -463,7 +465,6 @@
     <Compile Include="TL\Partial\TLPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannel.Partial.cs" />
     <Compile Include="TL\Partial\TLChat.Partial.cs" />
-    <Compile Include="TL\Partial\TLChatPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLChatPhotoBase.Partial.cs" />
     <Compile Include="TL\Partial\TLContactsContactsBase.Partial.cs" />
     <Compile Include="TL\Partial\TLContactsImportedContacts.Partial.cs" />

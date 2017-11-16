@@ -10,6 +10,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Account;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.Strings;
 using Unigram.Views.Settings;
@@ -35,6 +36,7 @@ namespace Unigram.ViewModels.Settings
             PasswordCommand = new RelayCommand(PasswordExecute);
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
             AccountTTLCommand = new RelayCommand(AccountTTLExecute);
+            PeerToPeerCommand = new RelayCommand(PeerToPeerExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -66,15 +68,15 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public bool IsPeerToPeer
+        public int PeerToPeerMode
         {
             get
             {
-                return ApplicationSettings.Current.IsPeerToPeer;
+                return ApplicationSettings.Current.PeerToPeerMode;
             }
             set
             {
-                ApplicationSettings.Current.IsPeerToPeer = value;
+                ApplicationSettings.Current.PeerToPeerMode = value;
                 RaisePropertyChanged();
             }
         }
@@ -105,10 +107,10 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ClearPaymentsCommand { get; }
         private async void ClearPaymentsExecute()
         {
-            var dialog = new ContentDialog();
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
-            var checkShipping = new CheckBox { Content = "Shipping info", IsChecked = true };
-            var checkPayment = new CheckBox { Content = "Payment info", IsChecked = true };
+            var checkShipping = new CheckBox { Content = Strings.Android.PrivacyClearShipping, IsChecked = true };
+            var checkPayment = new CheckBox { Content = Strings.Android.PrivacyClearPayment, IsChecked = true };
 
             var toggle = new RoutedEventHandler((s, args) =>
             {
@@ -120,14 +122,14 @@ namespace Unigram.ViewModels.Settings
             checkPayment.Checked += toggle;
             checkPayment.Unchecked += toggle;
 
-            stack.Margin = new Thickness(0, 16, 0, 0);
+            stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(checkShipping);
             stack.Children.Add(checkPayment);
 
-            dialog.Title = "Payments";
+            dialog.Title = Strings.Android.PrivacyPayments;
             dialog.Content = stack;
-            dialog.PrimaryButtonText = "Clear";
-            dialog.SecondaryButtonText = "Cancel";
+            dialog.PrimaryButtonText = Strings.Android.ClearButton;
+            dialog.SecondaryButtonText = Strings.Android.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -149,13 +151,13 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand AccountTTLCommand { get; }
         private async void AccountTTLExecute()
         {
-            var dialog = new ContentDialog();
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
-            stack.Margin = new Thickness(0, 16, 0, 0);
-            stack.Children.Add(new RadioButton { Tag = 30,  Content = Language.Declension(1, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });
-            stack.Children.Add(new RadioButton { Tag = 90,  Content = Language.Declension(3, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });
-            stack.Children.Add(new RadioButton { Tag = 180, Content = Language.Declension(6, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });
-            stack.Children.Add(new RadioButton { Tag = 365, Content = Language.Declension(1, AppResources.YearNominativeSingular,  AppResources.YearNominativePlural,  AppResources.YearGenitiveSingular,  AppResources.YearGenitivePlural,  null, null) });
+            stack.Margin = new Thickness(12, 16, 12, 0);
+            stack.Children.Add(new RadioButton { Tag = 30, Content = LocaleHelper.Declension("Months", 1) });
+            stack.Children.Add(new RadioButton { Tag = 90, Content = LocaleHelper.Declension("Months", 3) });
+            stack.Children.Add(new RadioButton { Tag = 180, Content = LocaleHelper.Declension("Months", 6) });
+            stack.Children.Add(new RadioButton { Tag = 365, Content = LocaleHelper.Declension("Years", 1) });
 
             RadioButton GetSelectedPeriod(UIElementCollection periods, RadioButton defaultPeriod)
             {
@@ -187,10 +189,10 @@ namespace Unigram.ViewModels.Settings
                 selected.IsChecked = true;
             }
 
-            dialog.Title = "Account self-destructs";
+            dialog.Title = Strings.Android.DeleteAccountTitle;
             dialog.Content = stack;
-            dialog.PrimaryButtonText = "OK";
-            dialog.SecondaryButtonText = "Cancel";
+            dialog.PrimaryButtonText = Strings.Android.OK;
+            dialog.SecondaryButtonText = Strings.Android.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -214,6 +216,38 @@ namespace Unigram.ViewModels.Settings
                 {
 
                 }
+            }
+        }
+
+        public RelayCommand PeerToPeerCommand { get; }
+        private async void PeerToPeerExecute()
+        {
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var stack = new StackPanel();
+            stack.Margin = new Thickness(12, 16, 12, 0);
+            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Android.LastSeenEverybody, IsChecked = PeerToPeerMode == 0 });
+            stack.Children.Add(new RadioButton { Tag = 1, Content = Strings.Android.LastSeenContacts, IsChecked = PeerToPeerMode == 1 });
+            stack.Children.Add(new RadioButton { Tag = 2, Content = Strings.Android.LastSeenNobody, IsChecked = PeerToPeerMode == 2 });
+
+            dialog.Title = Strings.Android.PrivacyCallsP2PTitle;
+            dialog.Content = stack;
+            dialog.PrimaryButtonText = Strings.Android.OK;
+            dialog.SecondaryButtonText = Strings.Android.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var mode = 1;
+                foreach (RadioButton current in stack.Children)
+                {
+                    if (current.IsChecked == true)
+                    {
+                        mode = (int)current.Tag;
+                        break;
+                    }
+                }
+
+                PeerToPeerMode = mode;
             }
         }
     }

@@ -76,7 +76,7 @@
 
                 <!-- The user can enter their phone number here -->
                 <controls:UpdateTextBox Text="{Binding PhoneCode, Mode=TwoWay}"
-                                        Margin="0,0,12,0"
+                                        Margin="0,0,8,0"
                                         Width="30"
                                         Header="Code:"
                                         InputScope="TelephoneNumber"

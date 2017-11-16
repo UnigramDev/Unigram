@@ -10,6 +10,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Core.Services;
 using Unigram.Tasks;
@@ -177,7 +178,15 @@ namespace Unigram.Common
             //                        {
             //                            newView.SetCall(tuple);
             //                            newView.Dispose();
-            //                            Window.Current.Close();
+
+            //                            if (newView.Dialog != null)
+            //                            {
+            //                                newView.Dialog.Hide();
+            //                            }
+            //                            else
+            //                            {
+            //                                Window.Current.Close();
+            //                            }
             //                        });
             //                    }
 
@@ -190,24 +199,24 @@ namespace Unigram.Common
 
             //                    _phoneViewExists = true;
 
-            //                    PhoneCallPage newPlayer = null;
-            //                    CoreApplicationView newView = CoreApplication.CreateNewView();
-            //                    var newViewId = 0;
-            //                    await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            //                    {
-            //                        newPlayer = new PhoneCallPage();
-            //                        Window.Current.Content = newPlayer;
-            //                        Window.Current.Activate();
-            //                        newViewId = ApplicationView.GetForCurrentView().Id;
-
-            //                        newPlayer.SetCall(tuple);
-            //                        _phoneView = newPlayer;
-            //                    });
-
             //                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             //                    {
             //                        if (ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
             //                        {
+            //                            var newView = CoreApplication.CreateNewView();
+            //                            var newViewId = 0;
+            //                            await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //                            {
+            //                                var newPlayer = new PhoneCallPage(true);
+            //                                Window.Current.Content = newPlayer;
+            //                                Window.Current.Activate();
+            //                                newViewId = ApplicationView.GetForCurrentView().Id;
+
+            //                                newPlayer.Dialog = null;
+            //                                newPlayer.SetCall(tuple);
+            //                                _phoneView = newPlayer;
+            //                            });
+
             //                            var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
             //                            preferences.CustomSize = new Size(340, 200);
 
@@ -215,8 +224,17 @@ namespace Unigram.Common
             //                        }
             //                        else
             //                        {
-            //                            //await ApplicationViewSwitcher.SwitchAsync(newViewId);
-            //                            await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
+            //                            var dialog = new ContentDialogBase();
+            //                            dialog.VerticalAlignment = VerticalAlignment.Stretch;
+            //                            dialog.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            //                            var newPlayer = new PhoneCallPage(false);
+            //                            newPlayer.Dialog = dialog;
+            //                            newPlayer.SetCall(tuple);
+            //                            _phoneView = newPlayer;
+
+            //                            dialog.Content = newPlayer;
+            //                            await dialog.ShowAsync();
             //                        }
             //                    });
             //                }

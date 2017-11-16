@@ -45,7 +45,7 @@
             <Run Text="Important:" FontWeight="SemiBold"/>
             <Run Text="all your Telegram contacts will get your"/>
             <Run Text="new number" FontWeight="SemiBold"/>
-            <Run Text="added to their address book, provided they had your old number and you hanven't blocked them in Telegram"/>
+            <Run Text="added to their address book, provided they had your old number and you haven't blocked them in Telegram"/>
         </TextBlock>
 
         <Button Click="Change_Click" Content="CHANGE NUMBER" HorizontalAlignment="Center" Margin="24" Style="{StaticResource TextBlockButtonStyle}" Grid.Row="3"/>

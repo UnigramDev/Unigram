@@ -21,7 +21,7 @@ namespace Unigram.Models
         private BasicProperties _basic;
 
         public StorageVideo(StorageFile file, BasicProperties basic, VideoProperties props, MediaEncodingProfile profile)
-            : base(file)
+            : base(file, basic)
         {
             _fullRectangle = new Rect(0, 0, props.Width, props.Height);
 
@@ -60,7 +60,12 @@ namespace Unigram.Models
                 var basic = await file.GetBasicPropertiesAsync();
                 var video = await file.Properties.GetVideoPropertiesAsync();
 
-                return new StorageVideo(file, basic, video, profile) { IsSelected = selected };
+                if (video.Width > 0 && video.Height > 0)
+                {
+                    return new StorageVideo(file, basic, video, profile) { IsSelected = selected };
+                }
+
+                return null;
             }
             catch
             {

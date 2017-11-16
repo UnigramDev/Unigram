@@ -1324,7 +1324,7 @@ namespace Unigram.Common
                     //                return;
                     //            }
                     //        }
-                    //        MessageBox.Show(string.Format(AppResources.CantFindContactWithUsername, username), AppResources.Error, 0);
+                    //        MessageBox.Show(string.Format(Strings.Resources.CantFindContactWithUsername, username), Strings.Resources.Error, 0);
                     //    });
                     //}, delegate (TLRPCError error)
                     //{
@@ -1336,7 +1336,7 @@ namespace Unigram.Common
                     //        }
                     //        if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
                     //        {
-                    //            MessageBox.Show(string.Format(AppResources.CantFindContactWithUsername, username), AppResources.Error, 0);
+                    //            MessageBox.Show(string.Format(Strings.Resources.CantFindContactWithUsername, username), Strings.Resources.Error, 0);
                     //            return;
                     //        }
                     //        Telegram.Api.Helpers.Execute.ShowDebugMessage(string.Format("contacts.resolveUsername {0} error {1}", username, error));
@@ -1399,17 +1399,17 @@ namespace Unigram.Common
                             }
                             if (import.Error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || import.Error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || import.Error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
                             {
-                                //MessageBox.Show(AppResources.GroupNotExistsError, AppResources.Error, 0);
+                                //MessageBox.Show(Strings.Resources.GroupNotExistsError, Strings.Resources.Error, 0);
                                 return;
                             }
                             else if (import.Error.TypeEquals(TLErrorType.USERS_TOO_MUCH))
                             {
-                                //MessageBox.Show(AppResources.UsersTooMuch, AppResources.Error, 0);
+                                //MessageBox.Show(Strings.Resources.UsersTooMuch, Strings.Resources.Error, 0);
                                 return;
                             }
                             else if (import.Error.TypeEquals(TLErrorType.BOTS_TOO_MUCH))
                             {
-                                //MessageBox.Show(AppResources.BotsTooMuch, AppResources.Error, 0);
+                                //MessageBox.Show(Strings.Resources.BotsTooMuch, Strings.Resources.Error, 0);
                                 return;
                             }
                             else if (import.Error.TypeEquals(TLErrorType.USER_ALREADY_PARTICIPANT))
@@ -1432,7 +1432,7 @@ namespace Unigram.Common
                 }
                 if (response.Error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || response.Error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || response.Error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
                 {
-                    //MessageBox.Show(AppResources.GroupNotExistsError, AppResources.Error, 0);
+                    //MessageBox.Show(Strings.Resources.GroupNotExistsError, Strings.Resources.Error, 0);
                     await TLMessageDialog.ShowAsync("This invite link is broken or has expired.", "Warning", "OK");
                     return;
                 }

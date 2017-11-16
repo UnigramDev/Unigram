@@ -57,6 +57,10 @@ namespace Unigram.Controls
             {
                 IsChecked = true;
             }
+            else
+            {
+                ClearValue(IsCheckedProperty);
+            }
         }
     }
 }

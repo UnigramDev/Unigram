@@ -111,12 +111,7 @@
                     <ListView x:Name="GifsView"
                               ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
                               SelectionMode="None"
-                              Padding="10,0,10,10">
-                        <ListView.Header>
-                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12,8,0,8" Height="32" Margin="-10,0">
-                                <TextBlock Text="Saved GIFs" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                            </Border>
-                        </ListView.Header>
+                              Padding="10,10,10,10">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <GridView ItemsSource="{Binding}"
@@ -177,15 +172,10 @@
                         IsItemClickEnabled="True"
                         SelectionMode="None"
                         ItemClick="Featured_ItemClick"
-                        Padding="12,0">
+                        Padding="12,8,12,0">
                         <common:FluidGridView.Triggers>
                             <common:FluidGridViewTrigger RowsOrColumns="5"/>
                         </common:FluidGridView.Triggers>
-                        <GridView.Header>
-                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="0,8,0,8" Height="32">
-                                <TextBlock Text="Trending stickers" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                            </Border>
-                        </GridView.Header>
                         <GridView.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.HeaderTemplate>
@@ -419,7 +409,7 @@
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
                             <DataTemplate x:DataType="viewModels:TLChannelStickerSet">
-                                <controls:ProfilePictureView Margin="6" Source="{x:Bind With, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}" IsHitTestVisible="False"/>
+                                <controls:ProfilePicture Margin="6" Source="{x:Bind With, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}" IsHitTestVisible="False"/>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.GroupTemplate>
                         <selectors:StickerSetTemplateSelector.RecentsTemplate>
@@ -441,9 +431,8 @@
                 <ListView.Header>
                     <StackPanel Orientation="Horizontal">
                         <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.SavedGifs.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="0" Glyph="&#xE608;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-                        <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Padding="4">
-                            <Grid Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                                  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                        <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Padding="4">
+                            <Grid Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
                                   CornerRadius="10"
                                   MinWidth="20"
                                   Height="20">
@@ -461,8 +450,8 @@
                 </ListView.Header>
                 <ListView.Footer>
                     <StackPanel Orientation="Horizontal">
-                        <controls:GlyphButton Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-                        <controls:GlyphButton Glyph="&#xE115;"/>
+                        <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                        <controls:GlyphButton Click="Settings_Click" Glyph="&#xE115;"/>
                     </StackPanel>
                 </ListView.Footer>
                 <ListView.ItemContainerTransitions>

@@ -157,6 +157,8 @@ namespace Telegram.Api.Services
         void GetMessagesAsync(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
 
         // messages
+        void SendMultiMediaAsync(TLInputPeerBase inputPeer, TLVector<TLInputSingleMedia> multiMedia, IList<TLMessage> messages, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+        void UploadMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLMessageMediaBase> callback, Action<TLRPCError> faultCallback = null);
         void ReadMentionsAsync(TLInputPeerBase inputPeer, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null);
         void GetUnreadMentionsAsync(TLInputPeerBase inputPeer, int offsetId, int addOffset, int limit, int maxId, int minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void FaveStickerAsync(TLInputDocumentBase id, bool unfave, Action<bool> callback, Action<TLRPCError> faultCallback = null);

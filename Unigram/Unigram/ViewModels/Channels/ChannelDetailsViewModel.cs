@@ -38,9 +38,9 @@ namespace Unigram.ViewModels.Channels
             AdminLogCommand = new RelayCommand(AdminLogExecute);
             ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
             UsernameCommand = new RelayCommand(UsernameExecute);
-            ParticipantEditCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantEditExecute);
             ParticipantPromoteCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantPromoteExecute);
             ParticipantRestrictCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantRestrictExecute);
+            ParticipantRemoveCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantRemoveExecute);
         }
 
         protected TLChannelFull _full;
@@ -90,10 +90,10 @@ namespace Unigram.ViewModels.Channels
 
                     if (_item.IsMegaGroup)
                     {
-                        Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), null);
+                        Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), null, full.ParticipantsCount);
                     }
 
-                    RaisePropertyChanged(() => AreNotificationsEnabled);
+                    RaisePropertyChanged(() => IsMuted);
                     RaisePropertyChanged(() => Participants);
 
                     Aggregator.Subscribe(this);
@@ -131,17 +131,21 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public bool AreNotificationsEnabled
+        public bool IsMuted
         {
             get
             {
-                var settings = _full?.NotifySettings as TLPeerNotifySettings;
-                if (settings != null)
+                var notifySettings = _full?.NotifySettings as TLPeerNotifySettings;
+                if (notifySettings == null)
                 {
-                    return settings.MuteUntil == 0;
+                    return false;
                 }
 
-                return false;
+                var clientDelta = MTProtoService.Current.ClientTicksDelta;
+                var utc0SecsInt = notifySettings.MuteUntil - clientDelta / 4294967296.0;
+
+                var muteUntilDateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
+                return muteUntilDateTime > DateTime.Now;
             }
         }
 
@@ -156,7 +160,7 @@ namespace Unigram.ViewModels.Channels
             {
                 RaisePropertyChanged(() => Item);
                 RaisePropertyChanged(() => Full);
-                RaisePropertyChanged(() => AreNotificationsEnabled);
+                RaisePropertyChanged(() => IsMuted);
 
                 RaisePropertyChanged(() => IsInviteUsers);
                 RaisePropertyChanged(() => IsEditEnabled);
@@ -176,7 +180,7 @@ namespace Unigram.ViewModels.Channels
                     {
                         Full.NotifySettings = update.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);
-                        RaisePropertyChanged(() => AreNotificationsEnabled);
+                        RaisePropertyChanged(() => IsMuted);
 
                         //var notifySettings = updateNotifySettings.NotifySettings as TLPeerNotifySettings;
                         //if (notifySettings != null)
@@ -303,7 +307,7 @@ namespace Unigram.ViewModels.Channels
                 if (response.IsSucceeded)
                 {
                     notifySettings.MuteUntil = muteUntil;
-                    RaisePropertyChanged(() => AreNotificationsEnabled);
+                    RaisePropertyChanged(() => IsMuted);
                     Full.RaisePropertyChanged(() => Full.NotifySettings);
 
                     var dialog = CacheService.GetDialog(_item.ToPeer());
@@ -330,30 +334,12 @@ namespace Unigram.ViewModels.Channels
             }
 
             var title = item.Title;
-            var link = new Uri(UsernameToLinkConverter.Convert(item.Username));
+            var link = new Uri(MeUrlPrefixConverter.Convert(item.Username));
 
             await ShareView.Current.ShowAsync(link, title);
         }
 
         #region Context menu
-
-        public RelayCommand<TLChannelParticipantBase> ParticipantEditCommand { get; }
-        private void ParticipantEditExecute(TLChannelParticipantBase participant)
-        {
-            if (_item == null)
-            {
-                return;
-            }
-
-            if (participant is TLChannelParticipantAdmin)
-            {
-                NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(_item.ToPeer(), participant));
-            }
-            else if (participant is TLChannelParticipantBanned)
-            {
-                NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(_item.ToPeer(), participant));
-            }
-        }
 
         public RelayCommand<TLChannelParticipantBase> ParticipantPromoteCommand { get; }
         private void ParticipantPromoteExecute(TLChannelParticipantBase participant)
@@ -375,6 +361,28 @@ namespace Unigram.ViewModels.Channels
             }
 
             NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+        }
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantRemoveCommand { get; }
+        private async void ParticipantRemoveExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            if (participant.User == null)
+            {
+                return;
+            }
+
+            var rights = new TLChannelBannedRights { IsEmbedLinks = true, IsSendGames = true, IsSendGifs = true, IsSendInline = true, IsSendMedia = true, IsSendMessages = true, IsSendStickers = true, IsViewMessages = true };
+
+            var response = await ProtoService.EditBannedAsync(_item, participant.User.ToInputUser(), rights);
+            if (response.IsSucceeded)
+            {
+                Participants.Remove(participant);
+            }
         }
 
         #endregion

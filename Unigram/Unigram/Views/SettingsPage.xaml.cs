@@ -163,7 +163,7 @@ namespace Unigram.Views
         private async void Questions_Click(object sender, RoutedEventArgs e)
         {
             var response = await ViewModel.ProtoService.GetWebPageAsync("https://telegram.org/faq", 0);
-            if (response.IsSucceeded && response.Result is TLWebPage)
+            if (response.IsSucceeded && response.Result is TLWebPage webPage && webPage.HasCachedPage)
             {
                 MasterDetail.NavigationService.Navigate(typeof(InstantPage), response.Result);
             }

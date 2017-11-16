@@ -4,10 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Channels;
+using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
@@ -45,11 +47,6 @@ namespace Unigram.Views.Channels
             });
         }
 
-        private void Photo_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
@@ -76,7 +73,21 @@ namespace Unigram.Views.Channels
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            //ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
+            ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
         }
+
+        #region Binding
+
+        private string ConvertType(string broadcast, string mega)
+        {
+            if (ViewModel.Item is TLChannel channel)
+            {
+                return LocaleHelper.GetString(channel.IsBroadcast ? broadcast : mega);
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

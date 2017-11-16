@@ -439,7 +439,13 @@ namespace Unigram.Tasks
                             endpoints[i + 1] = connection.ToEndpoint();
                         }
 
-                        _controller.SetPublicEndpoints(endpoints, call.Protocol.IsUdpP2p && ApplicationSettings.Current.IsPeerToPeer);
+                        var p2p = ApplicationSettings.Current.PeerToPeerMode == 0;
+                        if (_user is TLUser p2pUser)
+                        {
+                            p2p = ApplicationSettings.Current.PeerToPeerMode == 0 || (ApplicationSettings.Current.PeerToPeerMode == 1 && p2pUser.IsContact);
+                        }
+
+                        _controller.SetPublicEndpoints(endpoints, call.Protocol.IsUdpP2p && p2p);
                         _controller.Start();
                         _controller.Connect();
                     }

@@ -56,7 +56,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <controls:ProfilePictureView x:Name="Picture" Click="Photo_Click" Source="{x:Bind ViewModel.Item.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
+                        <controls:ProfilePicture x:Name="Picture" Click="Photo_Click" Source="{x:Bind ViewModel.Item.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
 
                         <TextBlock Text="{x:Bind ViewModel.Item.DisplayName, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
                         <TextBlock Text="{x:Bind ViewModel.Item, Converter={StaticResource LastSeenConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
@@ -73,7 +73,7 @@
                                               Style="{StaticResource BadgeButtonStyle}"/>
 
                         <ToggleSwitch Header="Notifications"
-                                      IsOn="{x:Bind ViewModel.AreNotificationsEnabled, Mode=OneWay}"
+                                      IsOn="{x:Bind ViewModel.IsMuted, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                       Style="{ThemeResource CheckButtonStyle}"
                                       Toggled="Notifications_Toggled"/>
 
@@ -103,7 +103,7 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <controls:ProfilePictureView x:Phase="3" Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                        <controls:ProfilePicture x:Phase="3" Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
                         <TextBlock Text="{x:Bind User.FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                         <TextBlock Text="{x:Bind User, Converter={StaticResource LastSeenConverter}, ConverterParameter=list}"

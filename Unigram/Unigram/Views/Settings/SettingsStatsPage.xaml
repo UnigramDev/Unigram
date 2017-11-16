@@ -56,8 +56,8 @@
                                                 <RowDefinition/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <TextBlock Text="Bytes sent" Margin="0,4"/>
-                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="1"/>
+                                            <TextBlock Text="{CustomResource BytesSent}" Margin="0,4"/>
+                                            <TextBlock Text="{CustomResource BytesReceived}" Margin="0,4" Grid.Row="1"/>
 
                                             <TextBlock Text="{x:Bind SentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                                             <TextBlock Text="{x:Bind ReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
@@ -76,10 +76,10 @@
                                                 <RowDefinition/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <TextBlock Text="Sent" Margin="0,0,0,4"/>
-                                            <TextBlock Text="Received" Margin="0,4" Grid.Row="1"/>
-                                            <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
-                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
+                                            <TextBlock Text="{CustomResource CountSent}" Margin="0,0,0,4"/>
+                                            <TextBlock Text="{CustomResource CountReceived}" Margin="0,4" Grid.Row="1"/>
+                                            <TextBlock Text="{CustomResource BytesSent}" Margin="0,4" Grid.Row="2"/>
+                                            <TextBlock Text="{CustomResource BytesReceived}" Margin="0,4" Grid.Row="3"/>
 
                                             <TextBlock Text="{x:Bind SentItems, Mode=OneWay}" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                                             <TextBlock Text="{x:Bind ReceivedItems, Mode=OneWay}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
@@ -101,11 +101,11 @@
                                                 <RowDefinition/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <TextBlock Text="Outgoing calls" Margin="0,0,0,4"/>
-                                            <TextBlock Text="Incoming calls" Margin="0,4" Grid.Row="1"/>
-                                            <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
-                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
-                                            <TextBlock Text="Total time" Margin="0,4" Grid.Row="5"/>
+                                            <TextBlock Text="{CustomResource OutgoingCalls}" Margin="0,0,0,4"/>
+                                            <TextBlock Text="{CustomResource IncomingCalls}" Margin="0,4" Grid.Row="1"/>
+                                            <TextBlock Text="{CustomResource BytesSent}" Margin="0,4" Grid.Row="2"/>
+                                            <TextBlock Text="{CustomResource BytesReceived}" Margin="0,4" Grid.Row="3"/>
+                                            <TextBlock Text="{CustomResource CallsTotalTime}" Margin="0,4" Grid.Row="5"/>
 
                                             <TextBlock Text="{x:Bind SentItems, Mode=OneWay}" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                                             <TextBlock Text="{x:Bind ReceivedItems, Mode=OneWay}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
@@ -120,9 +120,12 @@
                     </ItemsControl.ItemTemplateSelector>
                 </ItemsControl>
                 <StackPanel Padding="12,8,12,72">
-                    <HyperlinkButton Command="{x:Bind ViewModel.SelectedItem.ResetCommand, Mode=OneWay}" Content="Reset Statistics" Foreground="Red"/>
+                    <HyperlinkButton
+                        Command="{x:Bind ViewModel.SelectedItem.ResetCommand, Mode=OneWay}"
+                        Content="{CustomResource ResetStatistics}" 
+                        Foreground="Red"/>
                     <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
-                        <Run Text="Network usage since"/>
+                        <Run Text="{CustomResource NetworkUsageSince}"/>
                         <Run Text="{x:Bind ViewModel.SelectedItem.ResetDate, Mode=OneWay, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter=shortdate}"/><Run Text=","/>
                         <Run Text="{x:Bind ViewModel.SelectedItem.ResetDate, Mode=OneWay, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter=shorttime}"/>
                     </TextBlock>

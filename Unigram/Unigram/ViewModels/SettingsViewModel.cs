@@ -150,12 +150,8 @@ namespace Unigram.ViewModels
         public RelayCommand AskCommand { get; }
         private async void AskExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(AppResources.TGSupportDisclaimerDetails, AppResources.Telegram, AppResources.TGSupportDisclaimerPrimaryText, AppResources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AskAQuestionInfo, Strings.Android.AskAQuestion, Strings.Android.AskButton, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
-            {
-                await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
-            }
-            else
             {
                 var response = await ProtoService.GetSupportAsync();
                 if (response.IsSucceeded)
@@ -163,12 +159,16 @@ namespace Unigram.ViewModels
                     NavigationService.NavigateToDialog(response.Result.User);
                 }
             }
+            else
+            {
+                await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
+            }
         }
 
         public RelayCommand LogoutCommand { get; }
         private async void LogoutExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(AppResources.TGLogoutText, AppResources.AppDisplayName, AppResources.OK, AppResources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureLogout, Strings.Android.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -189,7 +189,7 @@ namespace Unigram.ViewModels
                 CacheService.ClearAsync();
                 CacheService.ClearConfigImportAsync();
 
-                await TLMessageDialog.ShowAsync(AppResources.TGLogoutSucceededDialogText, AppResources.AppDisplayName, AppResources.OK);
+                await TLMessageDialog.ShowAsync(Strings.Resources.LoggedOutDialogText, Strings.Branding.ApplicationName, Strings.Resources.OK);
                 App.Current.Exit();
             }
             else

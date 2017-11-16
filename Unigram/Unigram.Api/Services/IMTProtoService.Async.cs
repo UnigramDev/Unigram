@@ -25,6 +25,10 @@ namespace Telegram.Api.Services
     {
         Task<MTProtoResponse<bool>> ResetSavedAsync();
 
+        Task<MTProtoResponse<TLUpdatesBase>> SendMultiMediaAsync(TLInputPeerBase inputPeer, TLVector<TLInputSingleMedia> multiMedia, IList<TLMessage> messages);
+
+        Task<MTProtoResponse<TLMessageMediaBase>> UploadMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message);
+
         Task<MTProtoResponse<TLMessagesAffectedHistory>> ReadMentionsAsync(TLInputPeerBase inputPeer);
 
         Task<MTProtoResponse<TLUpdatesBase>> TogglePreHistoryHiddenAsync(TLInputChannelBase channel, bool enabled);

@@ -129,13 +129,13 @@ namespace Unigram.ViewModels
             var photo = messageBase.GetPhoto();
             if (photo?.Full is TLPhotoSize photoSize)
             {
-                await TLFileHelper.SavePhotoAsync(photoSize, messageBase.Date);
+                await TLFileHelper.SavePhotoAsync(photoSize, messageBase.Date, false);
             }
 
             var document = messageBase.GetDocument();
             if (document != null)
             {
-                await TLFileHelper.SaveDocumentAsync(document, messageBase.Date);
+                await TLFileHelper.SaveDocumentAsync(document, messageBase.Date, false);
             }
         }
 
@@ -151,7 +151,7 @@ namespace Unigram.ViewModels
             var message = messageBase as TLMessage;
             if (message != null && !message.IsOut && !message.IsPost && Peer is TLInputPeerChannel)
             {
-                var dialog = new DeleteChannelMessageDialog();
+                var dialog = new DeleteChannelMessageDialog(1, message.From?.FullName);
 
                 var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)

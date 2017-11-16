@@ -868,9 +868,6 @@ namespace Telegram.Api.TL
 				case TLType.RecentMeUrlUnknown: return (T)(Object)new TLRecentMeUrlUnknown(from);
 				case TLType.Message: return (T)(Object)new TLMessage(from);
 				case TLType.MessageService: return (T)(Object)new TLMessageService(from);
-				case TLType.RPCResult: return (T)(Object)new TLRPCResult(from);
-				case TLType.MsgContainer: return (T)(Object)new TLMsgContainer(from);
-				case TLType.GzipPacked: return (T)(Object)new TLGzipPacked(from);
 				case TLType.Null: return (T)(Object)null;
 				default: throw new InvalidOperationException();
 			}

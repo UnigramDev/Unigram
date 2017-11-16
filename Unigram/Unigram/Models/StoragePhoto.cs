@@ -19,7 +19,7 @@ namespace Unigram.Models
         private BasicProperties _basic;
 
         public StoragePhoto(StorageFile file, BasicProperties basic, ImageProperties props)
-            : base(file)
+            : base(file, basic)
         {
             _fullRectangle = new Rect(0, 0, props.Width, props.Height);
             _basic = basic;
@@ -49,7 +49,12 @@ namespace Unigram.Models
                 var basic = await file.GetBasicPropertiesAsync();
                 var image = await file.Properties.GetImagePropertiesAsync();
 
-                return new StoragePhoto(file, basic, image) { IsSelected = selected };
+                if (image.Width > 0 && image.Height > 0)
+                {
+                    return new StoragePhoto(file, basic, image) { IsSelected = selected };
+                }
+
+                return null;
             }
             catch
             {

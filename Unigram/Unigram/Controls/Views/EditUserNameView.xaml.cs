@@ -24,6 +24,10 @@ namespace Unigram.Controls.Views
         private EditUserNameView()
         {
             InitializeComponent();
+
+            Title = Strings.Android.EditName;
+            PrimaryButtonText = Strings.Android.OK;
+            SecondaryButtonText = Strings.Android.Cancel;
         }
 
         public string FirstName

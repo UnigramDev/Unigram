@@ -10,8 +10,16 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}">
-            <Setter Property="Margin" Value="-12,0"/>
+        <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}"/>
+
+        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
+            <Setter Property="Padding" Value="0,8,0,8"/>
+        </Style>
+
+        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
+            <Setter Property="Margin" Value="12,8,12,0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
     </Page.Resources>
     
@@ -20,68 +28,105 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Privacy and Security"/>
+        <controls:PageHeader Text="{CustomResource PrivacySettings}"/>
 
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
         <ScrollViewer x:Name="ScrollingHost"
-                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Padding="0,0,0,72" Grid.Row="1">
+            <StackPanel Margin="0,0,0,48">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="PRIVACY" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PrivacyTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton
-                        Content="Blocked Users"
+                        Content="{CustomResource BlockedUsers}"
                         Click="BlockedUsers_Click"/>
                     <controls:BadgeButton
                         IsEnabled="False"
-                        Content="Last Seen"
+                        Content="{CustomResource PrivacyLastSeen}"
                         Badge="{x:Bind ViewModel.StatusTimestampRules.Badge, Mode=OneWay}"
                         Click="StatusTimestamp_Click"/>
                     <controls:BadgeButton
                         IsEnabled="False"
-                        Content="Calls"
+                        Content="{CustomResource Calls}"
                         Badge="{x:Bind ViewModel.PhoneCallRules.Badge, Mode=OneWay}"
                         Click="PhoneCall_Click"/>
                     <controls:BadgeButton
                         IsEnabled="False"
-                        Content="Groups"
+                        Content="{CustomResource GroupsAndChannels}"
                         Badge="{x:Bind ViewModel.ChatInviteRules.Badge, Mode=OneWay}"
-                        Click="ChatInvite_Click"
-                        Margin="-12,0,-12,-12"
-                        BorderBrush="Transparent"/>
+                        Click="ChatInvite_Click"/>
+
+                    <TextBlock
+                        Text="{CustomResource GroupsAndChannelsHelp}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,0"/>
                 </StackPanel>
+
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="SECURITY" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton IsEnabled="False" Tag="Passcode Lock" Click="Sessions_Click" Margin="-12,0" Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton IsEnabled="False" Tag="Two-Step Verification" Click="Sessions_Click" Margin="-12,0" Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton Tag="Active Sessions" Click="Sessions_Click" Margin="-12,0,-12,-12" BorderBrush="Transparent" Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <TextBlock Text="{CustomResource SecurityTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:HyperButton
+                        IsEnabled="False"
+                        Tag="{CustomResource Passcode}"
+                        Click="Passcode_Click"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton
+                        IsEnabled="False"
+                        Tag="{CustomResource TwoStepVerification}"
+                        Click="Sessions_Click"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton
+                        Tag="{CustomResource SessionsTitle}" 
+                        Click="Sessions_Click"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+
+                    <TextBlock
+                        Text="{CustomResource SessionsInfo}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,0"/>
                 </StackPanel>
+
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="DELETE MY ACCOUNT" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource DeleteAccountTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton
-                        Content="If Away For"
+                        Content="{CustomResource DeleteAccountIfAwayFor}"
                         Badge="{x:Bind ViewModel.AccountTTL, Mode=OneWay, Converter={StaticResource AccountTTLConverter}}"
                         Command="{x:Bind ViewModel.AccountTTLCommand}"/>
 
-                    <TextBlock Text="If you do not come online at least once within this period, your account will be deleted along with all groups, messages and contacts." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock
+                        Text="{CustomResource DeleteAccountHelp}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,0"/>
                 </StackPanel>
+                
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="PAYMENTS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton Command="{x:Bind ViewModel.ClearPaymentsCommand}" Tag="Clear Payment and Shipping Info" Margin="-12,0,-12,-0" Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <TextBlock Text="{CustomResource PrivacyPayments}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:HyperButton
+                        Command="{x:Bind ViewModel.ClearPaymentsCommand}"
+                        Tag="{CustomResource PrivacyPaymentsClear}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
 
-                    <TextBlock Text="You can delete your shipping info and instruct all payment providers to remove your saved credit cards. Note that Telegram never stores your credit card data." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock
+                        Text="{CustomResource PrivacyPaymentsClearInfo}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,0"/>
                 </StackPanel>
+                
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="CALLS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsPeerToPeer, Mode=TwoWay}" Header="Peer-to-Peer" Margin="-12,0,-12,-0" Style="{StaticResource CheckButtonStyle}"/>
+                    <TextBlock Text="{CustomResource Calls}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource PrivacyCallsP2PTitle}"
+                        Badge="{x:Bind ViewModel.PeerToPeerMode, Mode=OneWay, Converter={StaticResource PeerToPeerModeConverter}}"
+                        Command="{x:Bind ViewModel.PeerToPeerCommand}"/>
 
-                    <TextBlock Text="Disabling peer-to-peer will relay all calls through Telegram servers to avoid revealing your IP address, but may slightly decrease audio quality." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock
+                        Text="{CustomResource PrivacyCallsP2PHelp}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,0"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

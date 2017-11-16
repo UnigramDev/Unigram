@@ -31,7 +31,23 @@ namespace Unigram.ViewModels.Chats
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
-            Initialize();
+            //Initialize();
+        }
+
+        public ChatPhotosViewModel(IMTProtoService protoService, TLChatFullBase chatFull, TLChatBase chat, TLMessageService serviceMessage)
+            : base(protoService, null, null)
+        {
+            _peer = chat.ToInputPeer();
+            _lastMaxId = serviceMessage.Id;
+
+            if (serviceMessage.Action is TLMessageActionChatEditPhoto editPhotoAction)
+            {
+                Items = new MvxObservableCollection<GalleryItem> { new GalleryPhotoItem(editPhotoAction.Photo as TLPhoto, chat) };
+                SelectedItem = Items[0];
+                FirstItem = Items[0];
+            }
+
+            //Initialize();
         }
 
         private async void Initialize()

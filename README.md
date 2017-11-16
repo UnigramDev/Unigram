@@ -1,6 +1,6 @@
 <p align="center">
   <a href="http://unigram.me">
-    <img src="https://github.com/UnigramDev/Unigram/blob/develop/Unigram/Unigram/Assets/Logos/Placeholder/Placeholder-2.png?raw=true" width=80 height=80>
+    <img src="https://raw.githubusercontent.com/UnigramDev/Unigram/develop/Unigram/Assets/StoreLogo/Release/StoreLogo.scale-200.png" width=80 height=80>
   </a>
 
   <h3 align="center">Unigram</h3>

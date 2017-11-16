@@ -26,6 +26,23 @@ namespace Telegram.Api.Services.Cache.Context
         {
             _database = database;
             _settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+
+            using (Transaction())
+            {
+                Statement statement;
+                Sqlite3.sqlite3_prepare_v2(_database, $"SELECT {_fields} FROM `Dialogs`", out statement);
+
+                while (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
+                {
+                    var item = GetItemFromStatement(ref statement);
+                    if (item != null)
+                    {
+                        base[item.Id] = item;
+                    }
+                }
+
+                Sqlite3.sqlite3_finalize(statement);
+            }
         }
 
         public IDisposable Transaction()
@@ -48,97 +65,7 @@ namespace Telegram.Api.Services.Cache.Context
                 TLDialog result = null;
                 if (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
                 {
-                    var flags = (TLDialog.Flag)Sqlite3.sqlite3_column_int(statement, 0);
-                    var id = Sqlite3.sqlite3_column_int64(statement, 1);
-
-                    TLPeerBase peer = null;
-                    if (((ulong)id & PeerIdTypeMask) == PeerIdUserShift)
-                    {
-                        peer = new TLPeerUser { UserId = (int)(uint)((ulong)id & PeerIdMask) };
-                    }
-                    else if (((ulong)id & PeerIdTypeMask) == PeerIdChatShift)
-                    {
-                        peer = new TLPeerChat { ChatId = (int)(uint)((ulong)id & PeerIdMask) };
-                    }
-                    else if (((ulong)id & PeerIdTypeMask) == PeerIdChannelShift)
-                    {
-                        peer = new TLPeerChannel { ChannelId = (int)(uint)((ulong)id & PeerIdMask) };
-                    }
-
-                    var top_message = Sqlite3.sqlite3_column_int(statement, 3);
-                    var read_inbox_max_id = Sqlite3.sqlite3_column_int(statement, 4);
-                    var read_outbox_max_id = Sqlite3.sqlite3_column_int(statement, 5);
-                    var unread_count = Sqlite3.sqlite3_column_int(statement, 6);
-
-                    TLPeerNotifySettingsBase notifySettings;
-
-                    var notifyType = Sqlite3.sqlite3_column_type(statement, 7);
-                    if (notifyType == 1)
-                    {
-                        notifySettings = new TLPeerNotifySettings
-                        {
-                            Flags = (TLPeerNotifySettings.Flag)Sqlite3.sqlite3_column_int(statement, 7),
-                            MuteUntil = Sqlite3.sqlite3_column_int(statement, 8),
-                            Sound = Sqlite3.sqlite3_column_text(statement, 9)
-                        };
-                    }
-                    else
-                    {
-                        notifySettings = new TLPeerNotifySettingsEmpty();
-                    }
-
-                    int? pts = null;
-                    if (flags.HasFlag(TLDialog.Flag.Pts))
-                    {
-                        pts = Sqlite3.sqlite3_column_int(statement, 10);
-                    }
-
-                    //TLDraftMessageBase draft = null;
-                    //if (flags.HasFlag(TLDialog.Flag.Draft))
-                    //{
-                    //    var draftFlags = (TLDraftMessage.Flag)Sqlite3.sqlite3_column_int(statement, 11);
-
-                    //    int? replyToMsgId = null;
-                    //    if (draftFlags.HasFlag(TLDraftMessage.Flag.ReplyToMsgId))
-                    //    {
-                    //        replyToMsgId = Sqlite3.sqlite3_column_int(statement, 12);
-                    //    }
-
-                    //    var message = Sqlite3.sqlite3_column_text(statement, 13);
-
-                    //    TLVector<TLMessageEntityBase> entities = null;
-                    //    if (draftFlags.HasFlag(TLDraftMessage.Flag.Entities))
-                    //    {
-                    //        entities = JsonConvert.DeserializeObject<TLVector<TLMessageEntityBase>>(Sqlite3.sqlite3_column_text(statement, 14), _settings);
-                    //    }
-
-                    //    draft = new TLDraftMessage
-                    //    {
-                    //        Flags = draftFlags,
-                    //        ReplyToMsgId = replyToMsgId,
-                    //        Message = message,
-                    //        Entities = entities,
-                    //        Date = Sqlite3.sqlite3_column_int(statement, 15)
-                    //    };
-                    //}
-
-                    var message = JsonConvert.DeserializeObject<TLMessageBase>(Sqlite3.sqlite3_column_text(statement, 14), _settings);
-
-                    result = new TLDialog
-                    {
-                        Flags = flags,
-                        Peer = peer,
-                        TopMessage = top_message,
-                        ReadInboxMaxId = read_inbox_max_id,
-                        ReadOutboxMaxId = read_outbox_max_id,
-                        UnreadCount = unread_count,
-                        NotifySettings = notifySettings,
-                        Pts = pts,
-                        //Draft = draft
-                        TopMessageItem = message
-                    };
-
-                    base[index] = result;
+                    base[index] = GetItemFromStatement(ref statement);
                 }
 
                 Sqlite3.sqlite3_finalize(statement);
@@ -196,42 +123,40 @@ namespace Telegram.Api.Services.Cache.Context
                         Sqlite3.sqlite3_bind_null(statement, 11);
                     }
 
-                    //if (dialog.HasDraft && dialog.Draft is TLDraftMessage draft)
-                    //{
-                    //    Sqlite3.sqlite3_bind_int(statement, 12, (int)dialog.Flags);
+                    if (dialog.HasDraft && dialog.Draft is TLDraftMessage draft)
+                    {
+                        Sqlite3.sqlite3_bind_int(statement, 12, (int)dialog.Flags);
 
-                    //    if (draft.HasReplyToMsgId && draft.ReplyToMsgId.HasValue)
-                    //    {
-                    //        Sqlite3.sqlite3_bind_int(statement, 13, draft.ReplyToMsgId.Value);
-                    //    }
-                    //    else
-                    //    {
-                    //        Sqlite3.sqlite3_bind_null(statement, 13);
-                    //    }
+                        if (draft.HasReplyToMsgId && draft.ReplyToMsgId.HasValue)
+                        {
+                            Sqlite3.sqlite3_bind_int(statement, 13, draft.ReplyToMsgId.Value);
+                        }
+                        else
+                        {
+                            Sqlite3.sqlite3_bind_null(statement, 13);
+                        }
 
-                    //    Sqlite3.sqlite3_bind_text(statement, 14, draft.Message, -1);
+                        Sqlite3.sqlite3_bind_text(statement, 14, draft.Message, -1);
 
-                    //    if (draft.HasEntities && draft.Entities != null)
-                    //    {
-                    //        Sqlite3.sqlite3_bind_text(statement, 15, JsonConvert.SerializeObject(draft.Entities, _settings), -1);
-                    //    }
-                    //    else
-                    //    {
-                    //        Sqlite3.sqlite3_bind_null(statement, 15);
-                    //    }
+                        if (draft.HasEntities && draft.Entities != null)
+                        {
+                            Sqlite3.sqlite3_bind_text(statement, 15, JsonConvert.SerializeObject(draft.Entities, _settings), -1);
+                        }
+                        else
+                        {
+                            Sqlite3.sqlite3_bind_null(statement, 15);
+                        }
 
-                    //    Sqlite3.sqlite3_bind_int(statement, 16, draft.Date);
-                    //}
-                    //else
-                    //{
-                    //    Sqlite3.sqlite3_bind_null(statement, 12);
-                    //    Sqlite3.sqlite3_bind_null(statement, 13);
-                    //    Sqlite3.sqlite3_bind_null(statement, 14);
-                    //    Sqlite3.sqlite3_bind_null(statement, 15);
-                    //    Sqlite3.sqlite3_bind_null(statement, 16);
-                    //}
-
-                    Sqlite3.sqlite3_bind_text(statement, 15, JsonConvert.SerializeObject(dialog.TopMessageItem, _settings), -1);
+                        Sqlite3.sqlite3_bind_int(statement, 16, draft.Date);
+                    }
+                    else
+                    {
+                        Sqlite3.sqlite3_bind_null(statement, 12);
+                        Sqlite3.sqlite3_bind_null(statement, 13);
+                        Sqlite3.sqlite3_bind_null(statement, 14);
+                        Sqlite3.sqlite3_bind_null(statement, 15);
+                        Sqlite3.sqlite3_bind_null(statement, 16);
+                    }
 
                     Sqlite3.sqlite3_step(statement);
                     Sqlite3.sqlite3_reset(statement);
@@ -241,107 +166,94 @@ namespace Telegram.Api.Services.Cache.Context
             }
         }
 
-        public void Load()
+        private TLDialog GetItemFromStatement(ref Statement statement)
         {
-            Statement statement;
-            Sqlite3.sqlite3_prepare_v2(_database, $"SELECT {_fields} FROM `Dialogs`", out statement);
+            var flags = (TLDialog.Flag)Sqlite3.sqlite3_column_int(statement, 0);
+            var id = Sqlite3.sqlite3_column_int64(statement, 1);
 
-            while (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
+            TLPeerBase peer = null;
+            if (((ulong)id & PeerIdTypeMask) == PeerIdUserShift)
             {
-                var flags = (TLDialog.Flag)Sqlite3.sqlite3_column_int(statement, 0);
-                var id = Sqlite3.sqlite3_column_int64(statement, 1);
-
-                TLPeerBase peer = null;
-                if (((ulong)id & PeerIdTypeMask) == PeerIdUserShift)
-                {
-                    peer = new TLPeerUser { UserId = (int)(uint)((ulong)id & PeerIdMask) };
-                }
-                else if (((ulong)id & PeerIdTypeMask) == PeerIdChatShift)
-                {
-                    peer = new TLPeerChat { ChatId = (int)(uint)((ulong)id & PeerIdMask) };
-                }
-                else if (((ulong)id & PeerIdTypeMask) == PeerIdChannelShift)
-                {
-                    peer = new TLPeerChannel { ChannelId = (int)(uint)((ulong)id & PeerIdMask) };
-                }
-
-                var top_message = Sqlite3.sqlite3_column_int(statement, 3);
-                var read_inbox_max_id = Sqlite3.sqlite3_column_int(statement, 4);
-                var read_outbox_max_id = Sqlite3.sqlite3_column_int(statement, 5);
-                var unread_count = Sqlite3.sqlite3_column_int(statement, 6);
-
-                TLPeerNotifySettingsBase notifySettings;
-
-                var notifyType = Sqlite3.sqlite3_column_type(statement, 7);
-                if (notifyType == 1)
-                {
-                    notifySettings = new TLPeerNotifySettings
-                    {
-                        Flags = (TLPeerNotifySettings.Flag)Sqlite3.sqlite3_column_int(statement, 7),
-                        MuteUntil = Sqlite3.sqlite3_column_int(statement, 8),
-                        Sound = Sqlite3.sqlite3_column_text(statement, 9)
-                    };
-                }
-                else
-                {
-                    notifySettings = new TLPeerNotifySettingsEmpty();
-                }
-
-                int? pts = null;
-                if (flags.HasFlag(TLDialog.Flag.Pts))
-                {
-                    pts = Sqlite3.sqlite3_column_int(statement, 10);
-                }
-
-                //TLDraftMessageBase draft = null;
-                //if (flags.HasFlag(TLDialog.Flag.Draft))
-                //{
-                //    var draftFlags = (TLDraftMessage.Flag)Sqlite3.sqlite3_column_int(statement, 11);
-
-                //    int? replyToMsgId = null;
-                //    if (draftFlags.HasFlag(TLDraftMessage.Flag.ReplyToMsgId))
-                //    {
-                //        replyToMsgId = Sqlite3.sqlite3_column_int(statement, 12);
-                //    }
-
-                //    var message = Sqlite3.sqlite3_column_text(statement, 13);
-
-                //    TLVector<TLMessageEntityBase> entities = null;
-                //    if (draftFlags.HasFlag(TLDraftMessage.Flag.Entities))
-                //    {
-                //        entities = JsonConvert.DeserializeObject<TLVector<TLMessageEntityBase>>(Sqlite3.sqlite3_column_text(statement, 14), _settings);
-                //    }
-
-                //    draft = new TLDraftMessage
-                //    {
-                //        Flags = draftFlags,
-                //        ReplyToMsgId = replyToMsgId,
-                //        Message = message,
-                //        Entities = entities,
-                //        Date = Sqlite3.sqlite3_column_int(statement, 15)
-                //    };
-                //}
-
-                var message = JsonConvert.DeserializeObject<TLMessageBase>(Sqlite3.sqlite3_column_text(statement, 14), _settings);
-
-                var result = new TLDialog
-                {
-                    Flags = flags,
-                    Peer = peer,
-                    TopMessage = top_message,
-                    ReadInboxMaxId = read_inbox_max_id,
-                    ReadOutboxMaxId = read_outbox_max_id,
-                    UnreadCount = unread_count,
-                    NotifySettings = notifySettings,
-                    Pts = pts,
-                    //Draft = draft
-                    TopMessageItem = message
-                };
-
-                base[result.Id] = result;
+                peer = new TLPeerUser { UserId = (int)(uint)((ulong)id & PeerIdMask) };
+            }
+            else if (((ulong)id & PeerIdTypeMask) == PeerIdChatShift)
+            {
+                peer = new TLPeerChat { ChatId = (int)(uint)((ulong)id & PeerIdMask) };
+            }
+            else if (((ulong)id & PeerIdTypeMask) == PeerIdChannelShift)
+            {
+                peer = new TLPeerChannel { ChannelId = (int)(uint)((ulong)id & PeerIdMask) };
             }
 
-            Sqlite3.sqlite3_finalize(statement);
+            var top_message = Sqlite3.sqlite3_column_int(statement, 3);
+            var read_inbox_max_id = Sqlite3.sqlite3_column_int(statement, 4);
+            var read_outbox_max_id = Sqlite3.sqlite3_column_int(statement, 5);
+            var unread_count = Sqlite3.sqlite3_column_int(statement, 6);
+
+            TLPeerNotifySettingsBase notifySettings;
+
+            var notifyType = Sqlite3.sqlite3_column_type(statement, 7);
+            if (notifyType == 1)
+            {
+                notifySettings = new TLPeerNotifySettings
+                {
+                    Flags = (TLPeerNotifySettings.Flag)Sqlite3.sqlite3_column_int(statement, 7),
+                    MuteUntil = Sqlite3.sqlite3_column_int(statement, 8),
+                    Sound = Sqlite3.sqlite3_column_text(statement, 9)
+                };
+            }
+            else
+            {
+                notifySettings = new TLPeerNotifySettingsEmpty();
+            }
+
+            int? pts = null;
+            if (flags.HasFlag(TLDialog.Flag.Pts))
+            {
+                pts = Sqlite3.sqlite3_column_int(statement, 10);
+            }
+
+            TLDraftMessageBase draft = null;
+            if (flags.HasFlag(TLDialog.Flag.Draft))
+            {
+                var draftFlags = (TLDraftMessage.Flag)Sqlite3.sqlite3_column_int(statement, 11);
+
+                int? replyToMsgId = null;
+                if (draftFlags.HasFlag(TLDraftMessage.Flag.ReplyToMsgId))
+                {
+                    replyToMsgId = Sqlite3.sqlite3_column_int(statement, 12);
+                }
+
+                var message = Sqlite3.sqlite3_column_text(statement, 13);
+
+                TLVector<TLMessageEntityBase> entities = null;
+                if (draftFlags.HasFlag(TLDraftMessage.Flag.Entities))
+                {
+                    entities = JsonConvert.DeserializeObject<TLVector<TLMessageEntityBase>>(Sqlite3.sqlite3_column_text(statement, 14), _settings);
+                }
+
+                draft = new TLDraftMessage
+                {
+                    Flags = draftFlags,
+                    ReplyToMsgId = replyToMsgId,
+                    Message = message,
+                    Entities = entities,
+                    Date = Sqlite3.sqlite3_column_int(statement, 15)
+                };
+            }
+
+            return new TLDialog
+            {
+                Flags = flags,
+                Peer = peer,
+                TopMessage = top_message,
+                ReadInboxMaxId = read_inbox_max_id,
+                ReadOutboxMaxId = read_outbox_max_id,
+                UnreadCount = unread_count,
+                NotifySettings = notifySettings,
+                Pts = pts,
+                Draft = draft
+            };
         }
     }
 }

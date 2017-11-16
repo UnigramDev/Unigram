@@ -481,15 +481,15 @@ namespace Unigram.ViewModels
                 TLDialog dialog = null;
                 if (toId is TLPeerChat && activeDialog is TLChat && toId.Id == ((TLChat)activeDialog).Id)
                 {
-                    suppress = true;
+                    suppress = App.IsActive && App.IsVisible;
                 }
                 if (toId is TLPeerChannel && activeDialog is TLChannel && toId.Id == ((TLChannel)activeDialog).Id)
                 {
-                    suppress = true;
+                    suppress = App.IsActive && App.IsVisible;
                 }
                 else if (toId is TLPeerUser && activeDialog is TLUserBase && ((from != null && from.IsSelf) || fromId.Value == ((TLUserBase)activeDialog).Id))
                 {
-                    suppress = true;
+                    suppress = App.IsActive && App.IsVisible;
                 }
 
                 if (!suppress)

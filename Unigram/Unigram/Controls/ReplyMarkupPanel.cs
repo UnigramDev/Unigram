@@ -177,7 +177,7 @@ namespace Unigram.Controls
                         }
                         else if (row.Buttons[i] is TLKeyboardButtonBuy && receipt)
                         {
-                            button.Content = "Receipt";
+                            button.Content = Strings.Android.PaymentReceipt;
                         }
 
                         SetColumn(button, i);

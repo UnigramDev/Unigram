@@ -66,8 +66,11 @@
                                     Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
                                     Constraint="{x:Bind Source}"
                                     IsHitTestVisible="False"/>
-                                <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-                                <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
+                                <local:TransferButton Completed="Download_Click"
+                                                      Transferable="{Binding Source}" 
+                                                      IsTransferring="{Binding Source.IsTransferring}"
+                                                      Progress="{Binding Source.Progress}"
+                                                      Style="{StaticResource MediaTransferButtonStyle}"/>
                             </Grid>
                         </DataTemplate>
                     </FlipView.ItemTemplate>
@@ -82,8 +85,11 @@
 
                     <!--<local:TransferButton Completed="Download_Click" Transferable="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}" IsTransferring="{x:Bind ViewModel.FirstItem.Source.IsTransferring, Mode=OneWay}" Style="{StaticResource MediaTransferButtonStyle}"/>
                          <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{x:Bind ViewModel.FirstItem.Source.Progress, Mode=OneWay}" IsHitTestVisible="False"/>-->
-                    <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-                    <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
+                    <local:TransferButton Completed="Download_Click"
+                                          Transferable="{Binding Source}"
+                                          IsTransferring="{Binding Source.IsTransferring}"
+                                          Progress="{Binding Source.Progress}"
+                                          Style="{StaticResource MediaTransferButtonStyle}"/>
                 </Grid>
             </Grid>
         </controls:GalleryTransportControls.Content>
