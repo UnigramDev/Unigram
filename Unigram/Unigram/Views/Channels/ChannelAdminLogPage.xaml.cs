@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using LinqToVisualTree;
+using Unigram.Common;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -100,5 +101,19 @@ namespace Unigram.Views.Channels
 
             await ChannelAdminLogFilterView.Current.ShowAsync(channel.ToPeer());
         }
+
+        #region Binding
+
+        private string ConvertType(string broadcast, string mega)
+        {
+            if (ViewModel.Item is TLChannel channel)
+            {
+                return LocaleHelper.GetString(channel.IsBroadcast ? broadcast : mega);
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

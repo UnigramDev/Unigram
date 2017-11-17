@@ -84,7 +84,7 @@ namespace Unigram.Controls.Messages
                 bot = message.From.IsBot;
             }
 
-            return hasEditDate && !hasViaBotId && !bot && !(replyMarkup is TLReplyInlineMarkup) ? "edited\u00A0\u2009" : string.Empty;
+            return hasEditDate && !hasViaBotId && !bot && !(replyMarkup is TLReplyInlineMarkup) ? $"{Strings.Android.EditedMessage}\u00A0\u2009" : string.Empty;
         }
 
         private string ConvertState(bool isOut, bool isPost, bool isSaved, TLMessageState value)
