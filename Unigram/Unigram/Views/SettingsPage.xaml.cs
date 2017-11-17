@@ -58,7 +58,7 @@ namespace Unigram.Views
 
         private void Phone_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneWelcomePage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneIntroPage));
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)
@@ -124,6 +124,11 @@ namespace Unigram.Views
         private void Wallpaper_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsWallPaperPage));
+        }
+
+        private void Language_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)

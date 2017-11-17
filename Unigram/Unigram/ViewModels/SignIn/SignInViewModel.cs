@@ -141,13 +141,13 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (_phoneCode == null)
+            if (string.IsNullOrEmpty(_phoneCode))
             {
                 RaisePropertyChanged("PHONE_CODE_INVALID");
                 return;
             }
 
-            if (_phoneCode == null)
+            if (string.IsNullOrEmpty(_phoneNumber))
             {
                 RaisePropertyChanged("PHONE_NUMBER_INVALID");
                 return;

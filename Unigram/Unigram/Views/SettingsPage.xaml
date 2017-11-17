@@ -90,9 +90,11 @@
                     <controls:HyperButton Content="{CustomResource StickersName}"
                                           Click="Stickers_Click"
                                           Style="{StaticResource HyperButtonStyle}"/>
-                    <!-- Manually hidden -->
                     <controls:HyperButton Content="{CustomResource ChatBackground}"
                                           Click="Wallpaper_Click"
+                                          Style="{StaticResource HyperButtonStyle}"/>
+                    <controls:HyperButton Content="{CustomResource Language}"
+                                          Click="Language_Click"
                                           Style="{StaticResource HyperButtonStyle}"/>
                 </local:TableStackPanel>
                 

@@ -98,7 +98,7 @@ namespace Unigram.ViewModels.SignIn
                 return;
             }
 
-            if (_password == null)
+            if (string.IsNullOrEmpty(_password))
             {
                 RaisePropertyChanged("PASSWORD_INVALID");
                 return;

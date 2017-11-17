@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Controls;
+using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -14,27 +15,25 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views.Settings
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class SettingsPhoneWelcomePage : Page
+    public sealed partial class SettingsPhoneIntroPage : Page
     {
-        public SettingsPhoneWelcomePage()
+        public SettingsPhoneIntroViewModel ViewModel => DataContext as SettingsPhoneIntroViewModel;
+
+        public SettingsPhoneIntroPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsPhoneIntroViewModel>();
         }
 
         private async void Change_Click(object sender, RoutedEventArgs e)
         {
-            var confirm = await TLMessageDialog.ShowAsync("All your Telegram contacts will get your new number added to their address book, provided they had your old number and you haven't blocked them in Telegram.", "Telegram", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.PhoneNumberAlert, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 Frame.Navigate(typeof(SettingsPhonePage));
-                Frame.BackStack.RemoveAt(1);
+                Frame.BackStack.Remove(Frame.BackStack.Last());
             }
         }
     }

@@ -50,7 +50,7 @@
             <ComboBox x:Uid="SignInPage_CountriesList"
                       ItemsSource="{Binding Countries}"
                       SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
-                      Header="{CustomResource ChooseCountry}"
+                      PlaceholderText="{CustomResource ChooseCountry}"
                       MinWidth="280"
                       HorizontalAlignment="Stretch"
                       Grid.Row="2">
@@ -92,19 +92,17 @@
             <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
 
             <Button x:Name="NextButton"
-                    x:Uid="SignInPage_NextButton"
+                    Content="{CustomResource OK}"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     Foreground="White"
                     HorizontalAlignment="Stretch"
-                    Content="Next"
                     Margin="0,4,0,8"
                     Grid.Row="5"
                     Visibility="Collapsed"/>
 
-            <HyperlinkButton x:Uid="SignInPage_ProxySettingsButton"
-                             Command="{x:Bind ViewModel.ProxyCommand}"
-                             Content="Proxy Settings"
+            <HyperlinkButton Command="{x:Bind ViewModel.ProxyCommand}"
+                             Content="{CustomResource ProxySettings}"
                              Grid.Row="6"/>
         </Grid>
 

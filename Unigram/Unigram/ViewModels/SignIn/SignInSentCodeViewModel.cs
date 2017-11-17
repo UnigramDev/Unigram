@@ -96,7 +96,7 @@ namespace Unigram.ViewModels.SignIn
                 return;
             }
 
-            if (_phoneCode == null)
+            if (string.IsNullOrEmpty(_phoneCode))
             {
                 RaisePropertyChanged("SENT_CODE_INVALID");
                 return;

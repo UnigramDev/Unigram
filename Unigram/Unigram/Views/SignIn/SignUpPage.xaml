@@ -60,11 +60,11 @@
             <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="5"/>
 
             <Button x:Name="NextButton"
+                    Content="{CustomResource OK}"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     Foreground="White"
                     HorizontalAlignment="Stretch"
-                    Content="Next"
                     Margin="0,4,0,0"
                     Grid.Row="6"
                     Visibility="Collapsed"/>

@@ -132,6 +132,8 @@
             <x:Int32 x:Key="ChatTitleMaxLength">255</x:Int32>
             <x:Int32 x:Key="ChannelTitleMaxLength">255</x:Int32>
             <x:Int32 x:Key="ChannelAboutMaxLength">255</x:Int32>
+            <x:Int32 x:Key="UserFirstNameMaxLength">255</x:Int32>
+            <x:Int32 x:Key="UserLastNameMaxLength">255</x:Int32>
 
             <MediaElement x:Key="AudioPlayer"/>
 
