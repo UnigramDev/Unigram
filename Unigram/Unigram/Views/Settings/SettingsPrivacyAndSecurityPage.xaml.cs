@@ -61,7 +61,7 @@ namespace Unigram.Views.Settings
 
         private void Passcode_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsSecurityPasscodePage));
+            //Frame.Navigate(typeof(SettingsSecurityPasscodePage));
         }
     }
 }
