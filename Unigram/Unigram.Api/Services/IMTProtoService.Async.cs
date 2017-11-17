@@ -23,6 +23,11 @@ namespace Telegram.Api.Services
 {
     public partial interface IMTProtoService
     {
+        Task<MTProtoResponse<TLLangPackDifference>> GetDifferenceAsync(int fromVersion);
+        Task<MTProtoResponse<TLLangPackDifference>> GetLangPackAsync(string langCode);
+        Task<MTProtoResponse<TLVector<TLLangPackLanguage>>> GetLanguagesAsync();
+        Task<MTProtoResponse<TLVector<TLLangPackStringBase>>> GetStringsAsync(string langCode, TLVector<string> keys);
+
         Task<MTProtoResponse<bool>> ResetSavedAsync();
 
         Task<MTProtoResponse<TLUpdatesBase>> SendMultiMediaAsync(TLInputPeerBase inputPeer, TLVector<TLInputSingleMedia> multiMedia, IList<TLMessage> messages);
