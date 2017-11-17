@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
+using Windows.Globalization.NumberFormatting;
+using Windows.System.UserProfile;
 
 namespace Unigram.Common
 {
@@ -15,6 +17,8 @@ namespace Unigram.Common
         private const int QUANTITY_TWO = 0x0004;
         private const int QUANTITY_FEW = 0x0008;
         private const int QUANTITY_MANY = 0x0010;
+
+        private static readonly Dictionary<string, CurrencyFormatter> _currencyCache = new Dictionary<string, CurrencyFormatter>();
 
         private static readonly Dictionary<string, PluralRules> _allRules = new Dictionary<string, PluralRules>();
         private static readonly ResourceLoader _loader;
@@ -89,6 +93,115 @@ namespace Unigram.Common
                     return "Many";
                 default:
                     return "Other";
+            }
+        }
+
+        public static string FormatCurrency(long amount, string currency)
+        {
+            if (currency == null)
+            {
+                return string.Empty;
+            }
+
+            bool discount;
+            string customFormat;
+            double doubleAmount;
+
+            currency = currency.ToUpper();
+
+            if (amount < 0)
+            {
+                discount = true;
+            }
+            else
+            {
+                discount = false;
+            }
+
+            amount = Math.Abs(amount);
+
+            switch (currency)
+            {
+                case "CLF":
+                    customFormat = " {0:N4}";
+                    doubleAmount = ((double)amount) / 10000.0d;
+                    break;
+                case "BHD":
+                case "IQD":
+                case "JOD":
+                case "KWD":
+                case "LYD":
+                case "OMR":
+                case "TND":
+                    customFormat = " {0:N3}";
+                    doubleAmount = ((double)amount) / 1000.0d;
+                    break;
+                case "BIF":
+                case "BYR":
+                case "CLP":
+                case "CVE":
+                case "DJF":
+                case "GNF":
+                case "ISK":
+                case "JPY":
+                case "KMF":
+                case "KRW":
+                case "MGA":
+                case "PYG":
+                case "RWF":
+                case "UGX":
+                case "UYI":
+                case "VND":
+                case "VUV":
+                case "XAF":
+                case "XOF":
+                case "XPF":
+                    customFormat = " {0:N0}";
+                    doubleAmount = (double)amount;
+                    break;
+                case "MRO":
+                    customFormat = " {0:N1}";
+                    doubleAmount = ((double)amount) / 10.0d;
+                    break;
+                default:
+                    customFormat = " {0:N2}";
+                    doubleAmount = ((double)amount) / 100.0d;
+                    break;
+            }
+
+            if (_currencyCache.TryGetValue(currency, out CurrencyFormatter formatter) == false)
+            {
+                formatter = new CurrencyFormatter(currency, GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion);
+                _currencyCache[currency] = formatter;
+            }
+
+            if (formatter != null)
+            {
+                return (discount ? "-" : string.Empty) + formatter.Format(doubleAmount);
+            }
+
+            return (discount ? "-" : string.Empty) + string.Format(currency + customFormat, doubleAmount);
+        }
+
+        public static string FormatCallDuration(int duration)
+        {
+            if (duration > 3600)
+            {
+                var result = Declension("Hours", duration / 3600);
+                var minutes = duration % 3600 / 60;
+                if (minutes > 0)
+                {
+                    result += ", " + Declension("Minutes", minutes);
+                }
+                return result;
+            }
+            else if (duration > 60)
+            {
+                return Declension("Minutes", duration / 60);
+            }
+            else
+            {
+                return Declension("Seconds", duration);
             }
         }
 
