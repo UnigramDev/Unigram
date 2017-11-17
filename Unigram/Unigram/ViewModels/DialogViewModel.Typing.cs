@@ -117,31 +117,30 @@ namespace Unigram.ViewModels
                         //case TLSendMessageChooseContactAction chooseContact:
                         //    return "";
                         case TLSendMessageGamePlayAction gamePlay:
+                            return Strings.Android.SendingGame;
                             return Strings.Resources.PlayingGame;
                         //case TLSendMessageGeoLocationAction geoLocation:
                         //    return "";
                         case TLSendMessageRecordAudioAction recordAudio:
-                            return Strings.Resources.RecordingVoiceMessage;
+                            return Strings.Android.RecordingAudio;
                         case TLSendMessageRecordRoundAction recordRound:
-                            return Strings.Resources.RecordingVideoMessage;
-                        case TLSendMessageRecordVideoAction recordVideo:
-                            return Strings.Resources.RecordingVideo;
-                        //case TLSendMessageTypingAction typing:
-                        //    return Strings.Resources.Typing;
-                        case TLSendMessageUploadAudioAction uploadAudio:
-                            return Strings.Resources.SendingAudio;
-                        case TLSendMessageUploadDocumentAction uploadDocument:
-                            return Strings.Resources.SendingFile;
-                        case TLSendMessageUploadPhotoAction uploadPhoto:
-                            return Strings.Resources.SendingPhoto;
                         case TLSendMessageUploadRoundAction uploadRound:
-                            return Strings.Resources.SendingVideoMessage;
+                            return Strings.Android.RecordingRound;
+                        //case TLSendMessageTypingAction typing:
+                        //    return Strings.Android.Typing;
+                        case TLSendMessageUploadAudioAction uploadAudio:
+                            return Strings.Android.SendingAudio;
+                        case TLSendMessageUploadDocumentAction uploadDocument:
+                            return Strings.Android.SendingFile;
+                        case TLSendMessageUploadPhotoAction uploadPhoto:
+                            return Strings.Android.SendingPhoto;
+                        case TLSendMessageRecordVideoAction recordVideo:
                         case TLSendMessageUploadVideoAction uploadVideo:
-                            return Strings.Resources.SendingVideo;
+                            return Strings.Android.SendingVideoStatus;
                     }
                 }
 
-                return Strings.Resources.Typing;
+                return Strings.Android.Typing;
             }
 
             if (typingUsers.Count == 1)
@@ -164,63 +163,78 @@ namespace Unigram.ViewModels
                         //case TLSendMessageChooseContactAction chooseContact:
                         //    return "";
                         case TLSendMessageGamePlayAction gamePlay:
-                            return string.Format(Strings.Resources.IsPlayingGame, userName);
+                            return string.Format(Strings.Android.IsSendingGame, userName);
                         //case TLSendMessageGeoLocationAction geoLocation:
                         //    return "";
                         case TLSendMessageRecordAudioAction recordAudio:
-                            return string.Format(Strings.Resources.IsRecordingAudio, userName);
+                            return string.Format(Strings.Android.IsRecordingAudio, userName);
                         case TLSendMessageRecordRoundAction recordRound:
-                            return string.Format(Strings.Resources.IsRecordingVideoMessage, userName);
-                        case TLSendMessageRecordVideoAction recordVideo:
-                            return string.Format(Strings.Resources.IsRecordingVideo, userName);
-                        //case TLSendMessageTypingAction typing:
-                        //    return string.Format(Strings.Resources.IsTyping, userName);
-                        case TLSendMessageUploadAudioAction uploadAudio:
-                            return string.Format(Strings.Resources.IsSendingAudio, userName);
-                        case TLSendMessageUploadDocumentAction uploadDocument:
-                            return string.Format(Strings.Resources.IsSendingFile, userName);
-                        case TLSendMessageUploadPhotoAction uploadPhoto:
-                            return string.Format(Strings.Resources.IsSendingPhoto, userName);
                         case TLSendMessageUploadRoundAction uploadRound:
-                            return string.Format(Strings.Resources.IsSendingVideoMessage, userName);
+                            return string.Format(Strings.Android.IsSendingVideo, userName);
+                        //case TLSendMessageTypingAction typing:
+                        //    return string.Format(Strings.Android.IsTyping, userName);
+                        case TLSendMessageUploadAudioAction uploadAudio:
+                            return string.Format(Strings.Android.IsSendingAudio, userName);
+                        case TLSendMessageUploadDocumentAction uploadDocument:
+                            return string.Format(Strings.Android.IsSendingFile, userName);
+                        case TLSendMessageUploadPhotoAction uploadPhoto:
+                            return string.Format(Strings.Android.IsSendingPhoto, userName);
+                        case TLSendMessageRecordVideoAction recordVideo:
                         case TLSendMessageUploadVideoAction uploadVideo:
-                            return string.Format(Strings.Resources.IsSendingVideo, userName);
+                            return string.Format(Strings.Android.IsSendingVideo, userName);
                     }
                 }
 
-                return string.Format(Strings.Resources.IsTyping, userName);
+                return string.Format("{0} {1}", Strings.Android.IsTyping, userName);
             }
             else
             {
-                if (typingUsers.Count > 3)
-                {
-                    return string.Format(Strings.Resources.AreTyping, Language.Declension(typingUsers.Count, Strings.Resources.CompanyNominativeSingular, Strings.Resources.CompanyNominativePlural, Strings.Resources.CompanyGenitiveSingular, Strings.Resources.CompanyGenitivePlural, null, null));
-                }
 
-                var names = new List<string>(typingUsers.Count);
-                var missing = new List<int>();
-
-				foreach (var current in typingUsers)
+                var count = 0;
+                var label = string.Empty;
+                foreach (var pu in typingUsers)
                 {
-                    var user = getUser.Invoke(current.Item1) as TLUser;
+                    var user = getUser.Invoke(typingUsers[0].Item1) as TLUser;
+                    if (user == null)
+                    {
+                        getFullInfoAction?.Invoke(peer);
+                    }
+
                     if (user != null)
                     {
-                        names.Add(string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName);
+                        if (label.Length > 0)
+                        {
+                            label += ", ";
+                        }
+                        label += string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
+                        count++;
+                    }
+                    if (count == 2)
+                    {
+                        break;
+                    }
+                }
+
+                if (label.Length > 0)
+                {
+                    if (count == 1)
+                    {
+                        return string.Format("{0} {1}", label, Strings.Android.IsTyping);
                     }
                     else
                     {
-                        missing.Add(current.Item1);
+                        if (typingUsers.Count > 2)
+                        {
+                            return string.Format("{0} {1}", label, LocaleHelper.Declension("AndMoreTyping", typingUsers.Count - 2));
+                        }
+                        else
+                        {
+                            return string.Format("{0} {1}", label, Strings.Android.AreTyping);
+                        }
                     }
-
                 }
 
-                if (missing.Count > 0)
-                {
-                    getFullInfoAction?.Invoke(peer);
-                    return null;
-                }
-
-                return string.Format(Strings.Resources.AreTyping, string.Join(", ", names));
+                return null;
             }
         }
     }

@@ -39,12 +39,10 @@ namespace Unigram.Controls.Messages
         {
             if (message.Action is TLMessageActionPhoneCall phoneCallAction)
             {
-                var loader = ResourceLoader.GetForViewIndependentUse("Resources");
-
                 var outgoing = message.IsOut;
                 var missed = phoneCallAction.Reason is TLPhoneCallDiscardReasonMissed || phoneCallAction.Reason is TLPhoneCallDiscardReasonBusy;
 
-                return loader.GetString(missed ? (outgoing ? "CallCanceled" : "CallMissed") : (outgoing ? "CallOutgoing" : "CallIncoming"));
+                return missed ? (outgoing ? Strings.Android.CallMessageOutgoingMissed : Strings.Android.CallMessageIncomingMissed) : (outgoing ? Strings.Android.CallMessageOutgoing : Strings.Android.CallMessageIncoming);
             }
 
             return string.Empty;

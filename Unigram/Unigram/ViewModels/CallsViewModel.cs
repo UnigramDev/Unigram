@@ -165,7 +165,7 @@ namespace Unigram.ViewModels
         {
             if (Failed)
             {
-                return Strings.Resources.CallMissedShort;
+                return Strings.Android.CallMessageIncomingMissed;
             }
 
             var finalType = string.Empty;
@@ -228,13 +228,13 @@ namespace Unigram.ViewModels
             switch (type)
             {
                 case TLCallDisplayType.Outgoing:
-                    return Strings.Resources.CallOutgoingShort;
+                    return Strings.Android.CallMessageOutgoing;
                 case TLCallDisplayType.Incoming:
-                    return Strings.Resources.CallIncomingShort;
+                    return Strings.Android.CallMessageIncoming;
                 case TLCallDisplayType.Cancelled:
-                    return Strings.Resources.CallCanceledShort;
+                    return Strings.Android.CallMessageOutgoingMissed;
                 case TLCallDisplayType.Missed:
-                    return Strings.Resources.CallMissedShort;
+                    return Strings.Android.CallMessageIncomingMissed;
                 default:
                     return null;
             }
