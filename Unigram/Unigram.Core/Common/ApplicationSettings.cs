@@ -339,6 +339,23 @@ namespace Unigram.Common
             }
         }
 
+        private libtgvoip.DataSavingMode? _useLessData;
+        public libtgvoip.DataSavingMode UseLessData
+        {
+            get
+            {
+                if (_useLessData == null)
+                    _useLessData = (libtgvoip.DataSavingMode)GetValueOrDefault("UseLessData", 0);
+
+                return _useLessData ?? libtgvoip.DataSavingMode.Never;
+            }
+            set
+            {
+                _useLessData = value;
+                AddOrUpdateValue("UseLessData", (int)value);
+            }
+        }
+
         private TLAccountTmpPassword _tmpPassword;
         public TLAccountTmpPassword TmpPassword
         {
@@ -364,6 +381,13 @@ namespace Unigram.Common
         }
 
         public ApplicationSettingsDownload AutoDownload => new ApplicationSettingsDownload();
+
+        public void CleanUp()
+        {
+            // Here should be cleaned up all the settings that are shared with background tasks.
+            _peerToPeerMode = null;
+            _useLessData = null;
+        }
     }
 
     public class ApplicationSettingsDownload

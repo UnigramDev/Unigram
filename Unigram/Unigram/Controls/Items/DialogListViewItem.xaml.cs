@@ -200,8 +200,7 @@ namespace Unigram.Controls.Items
                         return result + message.Message.Replace("\r\n", "\n").Replace("\n", " ");
                     }
 
-                    //return text + Resources.Message;
-                    return result + "Message";
+                    return result + Strings.Android.Message;
                 }
             }
 
@@ -212,7 +211,7 @@ namespace Unigram.Controls.Items
         {
             if (dialog.Draft is TLDraftMessage draft && !string.IsNullOrWhiteSpace(draft.Message))
             {
-                return "Draft: ";
+                return $"{Strings.Android.Draft}: ";
             }
 
             return string.Empty;
@@ -239,7 +238,7 @@ namespace Unigram.Controls.Items
                         {
                             if (dialog.Id != from && !message.IsPost)
                             {
-                                result = "You: ";
+                                result = $"{Strings.Android.FromYou}: ";
                             }
                         }
                         else if (message.From is TLUser user)
@@ -334,11 +333,11 @@ namespace Unigram.Controls.Items
                                     }
                                     else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
                                     {
-                                        return $"{result}{audioAttribute.Performer} - Unknown Track" + caption;
+                                        return $"{result}{audioAttribute.Performer} - {Strings.Android.AudioUnknownTitle}" + caption;
                                     }
                                     else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
                                     {
-                                        return $"{result}{audioAttribute.Title}" + caption;
+                                        return $"{result}{Strings.Android.AudioUnknownArtist} - {audioAttribute.Title}" + caption;
                                     }
                                 }
                             }

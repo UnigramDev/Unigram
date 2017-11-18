@@ -114,14 +114,14 @@ namespace Unigram.ViewModels
         {
             Items = new ObservableCollection<TLMessageService>(messages);
             Peer = peer;
-            Failed = failed;
+            IsFailed = failed;
         }
 
         public ObservableCollection<TLMessageService> Items { get; private set; }
 
         public TLUser Peer { get; private set; }
 
-        public bool Failed { get; private set; }
+        public bool IsFailed { get; private set; }
 
         public override string ToString()
         {
@@ -163,9 +163,9 @@ namespace Unigram.ViewModels
 
         private string GetDisplayType()
         {
-            if (Failed)
+            if (IsFailed)
             {
-                return Strings.Resources.CallMissedShort;
+                return Strings.Android.CallMessageIncomingMissed;
             }
 
             var finalType = string.Empty;
@@ -228,13 +228,13 @@ namespace Unigram.ViewModels
             switch (type)
             {
                 case TLCallDisplayType.Outgoing:
-                    return Strings.Resources.CallOutgoingShort;
+                    return Strings.Android.CallMessageOutgoing;
                 case TLCallDisplayType.Incoming:
-                    return Strings.Resources.CallIncomingShort;
+                    return Strings.Android.CallMessageIncoming;
                 case TLCallDisplayType.Cancelled:
-                    return Strings.Resources.CallCanceledShort;
+                    return Strings.Android.CallMessageOutgoingMissed;
                 case TLCallDisplayType.Missed:
-                    return Strings.Resources.CallMissedShort;
+                    return Strings.Android.CallMessageIncomingMissed;
                 default:
                     return null;
             }

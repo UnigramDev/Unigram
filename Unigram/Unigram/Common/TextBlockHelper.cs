@@ -38,17 +38,13 @@ namespace Unigram.Common
             var sender = d as TextBlock;
             var type = e.NewValue as TLAuthSentCodeTypeBase;
 
-            sender.Inlines.Clear();
-
             switch (type)
             {
                 case TLAuthSentCodeTypeApp appType:
-                    sender.Inlines.Add(new Run { Text = "We've sent the code to the " });
-                    sender.Inlines.Add(new Run { Text = "Telegram", FontWeight = FontWeights.SemiBold });
-                    sender.Inlines.Add(new Run { Text = " app on your other device." });
+                    SetMarkdown(sender, Strings.Android.SentAppCode);
                     break;
                 case TLAuthSentCodeTypeSms smsType:
-                    sender.Inlines.Add(new Run { Text = "We've sent you an SMS with the code." });
+                    SetMarkdown(sender, Strings.Android.SentSmsCode);
                     break;
             }
         }
@@ -215,16 +211,16 @@ namespace Unigram.Common
 
             if (newMessage.Media == null || (newMessage.Media is TLMessageMediaEmpty) || (newMessage.Media is TLMessageMediaWebPage) || !string.IsNullOrEmpty(newMessage.Message))
             {
-                siteName.Text = Strings.Resources.EventLogOriginalMessages;
+                siteName.Text = Strings.Android.EventLogOriginalMessages;
                 description.Text = oldMessage.Message;
             }
             else if (oldMessage.Media is ITLMessageMediaCaption captionMedia)
             {
-                siteName.Text = Strings.Resources.EventLogOriginalCaption;
+                siteName.Text = Strings.Android.EventLogOriginalCaption;
 
                 if (string.IsNullOrEmpty(captionMedia.Caption))
                 {
-                    description.Text = Strings.Resources.EventLogOriginalCaptionEmpty;
+                    description.Text = Strings.Android.EventLogOriginalCaptionEmpty;
                 }
                 else
                 {

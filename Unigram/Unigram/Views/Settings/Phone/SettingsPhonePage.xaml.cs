@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
+using Unigram.Common;
 
 namespace Unigram.Views.Settings
 {
@@ -27,6 +28,21 @@ namespace Unigram.Views.Settings
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<SettingsPhoneViewModel>();
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "PHONE_CODE_INVALID":
+                    VisualUtilities.ShakeView(PhoneCode);
+                    break;
+                case "PHONE_NUMBER_INVALID":
+                    VisualUtilities.ShakeView(PrimaryInput);
+                    break;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

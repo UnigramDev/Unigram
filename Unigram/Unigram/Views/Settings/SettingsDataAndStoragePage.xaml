@@ -93,7 +93,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Data and Storage"/>
+        <controls:PageHeader Text="{CustomResource DataSettings}"/>
 
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
@@ -137,9 +137,9 @@
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource Calls}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton
-                        IsEnabled="False"
-                        Content="{CustomResource VoipUseLessData}"
-                        Badge="{CustomResource UseLessDataNever}"/>
+                        Badge="{x:Bind ConvertUseLessData(ViewModel.UseLessData), Mode=OneWay}"
+                        Command="{x:Bind ViewModel.UseLessDataCommand}"
+                        Content="{CustomResource VoipUseLessData}"/>
                 </StackPanel>
                 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">

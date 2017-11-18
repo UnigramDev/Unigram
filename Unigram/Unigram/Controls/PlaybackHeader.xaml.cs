@@ -75,13 +75,18 @@ namespace Unigram.Controls
                     }
                     else if (audio.HasPerformer && !audio.HasTitle)
                     {
-                        TitleLabel.Text = "Unknown Track";
+                        TitleLabel.Text = Strings.Android.AudioUnknownTitle;
                         SubtitleLabel.Text = "- " + audio.Performer;
                     }
                     else if (audio.HasTitle && !audio.HasPerformer)
                     {
-                        TitleLabel.Text = "Unknown Track";
-                        SubtitleLabel.Text = string.Empty;
+                        TitleLabel.Text = audio.Title;
+                        SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
+                    }
+                    else
+                    {
+                        TitleLabel.Text = Strings.Android.AudioUnknownTitle;
+                        SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
                     }
                 }
             }

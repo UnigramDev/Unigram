@@ -117,7 +117,9 @@
     <Compile Include="Services\FileManager\UploadManager.cs" />
     <Compile Include="Services\FileManager\Worker.cs" />
     <Compile Include="Services\IMTProtoService.Async.cs" />
+    <Compile Include="Services\Locale\LocaleService.cs" />
     <Compile Include="Services\MTProtoService.Async.cs" />
+    <Compile Include="Services\MTProtoService.LangPack.cs" />
     <Compile Include="Services\MTProtoService.Payments.cs" />
     <Compile Include="Services\MTProtoService.Phone.cs" />
     <Compile Include="Services\Stats\StatsService.cs" />
@@ -1298,6 +1300,7 @@
       <Name>libtgvoip</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

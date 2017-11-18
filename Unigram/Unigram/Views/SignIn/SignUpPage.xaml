@@ -13,15 +13,11 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid x:Name="Header" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Your name" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-            <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE10B;" Grid.Column="1"/>
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-        </Grid>
+        <controls:ButtonPageHeader
+            x:Name="Header"
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource YourName}"
+            Glyph="&#xE10B;"/>
 
         <Grid x:Name="ContentPanel" Padding="12,20" MaxWidth="360" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -33,36 +29,42 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="TitleLabel" Text="Your name" Style="{ThemeResource TitleTextBlockStyle}"/>
-            <TextBlock Text="Set up your first and last name"
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       Padding="0,8,0,16"
-                       Grid.Row="1"/>
+            <TextBlock
+                x:Name="TitleLabel"
+                Visibility="Collapsed"
+                Text="{CustomResource YourName}"
+                Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock
+                Text="{CustomResource RegisterText}"
+                Style="{StaticResource BodyTextBlockStyle}"
+                Padding="0,8,0,16"
+                Grid.Row="1"/>
 
-            <controls:UpdateTextBox x:Name="PrimaryInput"
-                                    Text="{Binding FirstName, Mode=TwoWay}"
-                                    Margin="0,12,0,8"
-                                    InputScope="PersonalFullName"
-                                    IsTextPredictionEnabled="False"
-                                    Header="Enter your name:"
-                                    PlaceholderText="First name (required)"
-                                    Grid.Row="3"/>
+            <controls:UpdateTextBox
+                x:Name="PrimaryInput"
+                Text="{Binding FirstName, Mode=TwoWay}"
+                Margin="0,12,0,8"
+                InputScope="PersonalFullName"
+                IsTextPredictionEnabled="False"
+                PlaceholderText="{CustomResource FirstName}"
+                Grid.Row="3"/>
 
-            <controls:UpdateTextBox Text="{Binding LastName, Mode=TwoWay}"
-                                    Margin="0,0,0,4"
-                                    InputScope="PersonalFullName"
-                                    IsTextPredictionEnabled="False"
-                                    PlaceholderText="Last name (optional)"
-                                    Grid.Row="4"/>
+            <controls:UpdateTextBox
+                Text="{Binding LastName, Mode=TwoWay}"
+                Margin="0,0,0,4"
+                InputScope="PersonalFullName"
+                IsTextPredictionEnabled="False"
+                PlaceholderText="{CustomResource LastName}"
+                Grid.Row="4"/>
 
             <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="5"/>
 
             <Button x:Name="NextButton"
+                    Content="{CustomResource OK}"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     Foreground="White"
                     HorizontalAlignment="Stretch"
-                    Content="Next"
                     Margin="0,4,0,0"
                     Grid.Row="6"
                     Visibility="Collapsed"/>
@@ -77,7 +79,6 @@
                     <VisualState.Setters>
                         <Setter Target="ContentPanel.VerticalAlignment" Value="Center" />
                         <Setter Target="Header.Visibility" Value="Collapsed"/>
-                        <Setter Target="NextGlyph.Visibility" Value="Collapsed"/>
                         <Setter Target="NextButton.Visibility" Value="Visible"/>
                         <Setter Target="TitleLabel.Visibility" Value="Visible"/>
                     </VisualState.Setters>

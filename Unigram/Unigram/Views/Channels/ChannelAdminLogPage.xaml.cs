@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using LinqToVisualTree;
+using Unigram.Common;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -87,7 +88,7 @@ namespace Unigram.Views.Channels
                 return;
             }
 
-            await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? Strings.Resources.EventLogInfoDetail : Strings.Resources.EventLogInfoDetailChannel, Strings.Resources.EventLogInfoTitle, "OK");
+            await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? Strings.Android.EventLogInfoDetail : Strings.Android.EventLogInfoDetailChannel, Strings.Android.EventLogInfoTitle, Strings.Android.OK);
         }
 
         private async void Settings_Click(object sender, RoutedEventArgs e)
@@ -100,5 +101,19 @@ namespace Unigram.Views.Channels
 
             await ChannelAdminLogFilterView.Current.ShowAsync(channel.ToPeer());
         }
+
+        #region Binding
+
+        private string ConvertType(string broadcast, string mega)
+        {
+            if (ViewModel.Item is TLChannel channel)
+            {
+                return LocaleHelper.GetString(channel.IsBroadcast ? broadcast : mega);
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

@@ -25,12 +25,6 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Common
 {
-    public class AdminLogEvent
-    {
-        public TLChannel Channel { get; set; }
-        public TLChannelAdminLogEvent Event { get; set; }
-    }
-
     public class AdminLogHelper
     {
         public static bool IsBannedForever(int time)
@@ -38,193 +32,264 @@ namespace Unigram.Common
             return Math.Abs(((long)time) - (Utils.CurrentTimestamp / 1000)) > 157680000;
         }
 
-        private static readonly Dictionary<Type, Func<TLMessageService, TLChannelAdminLogEventActionBase, int, string, bool, Paragraph>> _actionsCache;
+        private static readonly Dictionary<Type, Func<TLMessageService, TLChannelAdminLogEventActionBase, TLUser, bool, (string content, IList<TLMessageEntityBase> entities)>> _actionsCache;
 
         static AdminLogHelper()
         {
-            _actionsCache = new Dictionary<Type, Func<TLMessageService, TLChannelAdminLogEventActionBase, int, string, bool, Paragraph>>();
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeTitle), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache = new Dictionary<Type, Func<TLMessageService, TLChannelAdminLogEventActionBase, TLUser, bool, (string content, IList<TLMessageEntityBase> entities)>>();
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeTitle), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var changeTitleAction = action as TLChannelAdminLogEventActionChangeTitle;
 
                 var channel = InMemoryCacheService.Current.GetChat(message.ToId.Id) as TLChannel;
                 if (channel.IsMegaGroup)
                 {
-                    return ReplaceLinks(message, string.Format(Strings.Resources.EventLogEditedGroupTitle, "{0}", changeTitleAction.NewValue), new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(string.Format(Strings.Android.EventLogEditedGroupTitle, changeTitleAction.NewValue), "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    return ReplaceLinks(message, string.Format(Strings.Resources.EventLogEditedChannelTitle, "{0}", changeTitleAction.NewValue), new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(string.Format(Strings.Android.EventLogEditedChannelTitle, changeTitleAction.NewValue), "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeAbout), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeAbout), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var changeAboutAction = action as TLChannelAdminLogEventActionChangeAbout;
 
                 var channel = InMemoryCacheService.Current.GetChat(message.ToId.Id) as TLChannel;
                 if (channel.IsMegaGroup)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogEditedGroupDescription, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogEditedGroupDescription, "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogEditedChannelDescription, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogEditedChannelDescription, "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeUsername), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeUsername), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var changeUsernameAction = action as TLChannelAdminLogEventActionChangeUsername;
                 if (string.IsNullOrEmpty(changeUsernameAction.NewValue))
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogRemovedGroupLink, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogRemovedGroupLink, "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogChangedGroupLink, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogChangedGroupLink, "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangePhoto), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangePhoto), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var changePhotoAction = action as TLChannelAdminLogEventActionChangePhoto;
                 var empty = changePhotoAction.NewPhoto is TLChatPhotoEmpty;
 
                 var channel = InMemoryCacheService.Current.GetChat(message.ToId.Id) as TLChannel;
                 if (channel.IsMegaGroup)
                 {
-                    return ReplaceLinks(message, empty ? Strings.Resources.EventLogRemovedGroupPhoto : Strings.Resources.EventLogEditedGroupPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(empty ? Strings.Android.EventLogRemovedWGroupPhoto : Strings.Android.EventLogEditedGroupPhoto, "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    return ReplaceLinks(message, empty ? Strings.Resources.EventLogRemovedChannelPhoto : Strings.Resources.EventLogEditedChannelPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(empty ? Strings.Android.EventLogRemovedChannelPhoto : Strings.Android.EventLogEditedChannelPhoto, "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeStickerSet), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeStickerSet), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var changeStickerSetAction = action as TLChannelAdminLogEventActionChangeStickerSet;
 
                 var newStickerset = changeStickerSetAction.NewStickerSet;
                 var oldStickerset = changeStickerSetAction.PrevStickerSet;
                 if (newStickerset == null || newStickerset is TLInputStickerSetEmpty)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogRemovedStickersSet, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogRemovedStickersSet, "un1", fromUser, ref entities);
                 }
-                else if (newStickerset is TLInputStickerSetShortName shortName)
+                else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-stickers://" + shortName.ShortName }, useActiveLinks);
-                }
-                else if (newStickerset is TLInputStickerSetID id)
-                {
-                    return ReplaceLinks(message, Strings.Resources.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-stickers://" + id.Id + "?" + id.AccessHash }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogChangedStickersSet, "un1", fromUser, ref entities);
                 }
 
-                return ReplaceLinks(message, Strings.Resources.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-bold://" }, useActiveLinks);
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionToggleInvites), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionToggleInvites), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var toggleInvitesAction = action as TLChannelAdminLogEventActionToggleInvites;
                 if (toggleInvitesAction.NewValue)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledInvitesOn, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogToggledInvitesOn, "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledInvitesOff, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogToggledInvitesOff, "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionToggleSignatures), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionToggleSignatures), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var toggleSignaturesAction = action as TLChannelAdminLogEventActionToggleSignatures;
                 if (toggleSignaturesAction.NewValue)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledSignaturesOn, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogToggledSignaturesOn, "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledSignaturesOff, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogToggledSignaturesOff, "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionTogglePreHistoryHidden), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionTogglePreHistoryHidden), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var togglePreHistoryHiddenAction = action as TLChannelAdminLogEventActionTogglePreHistoryHidden;
                 if (togglePreHistoryHiddenAction.NewValue)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledInvitesHistoryOn, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogToggledInvitesHistoryOn, "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledInvitesHistoryOff, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogToggledInvitesHistoryOff, "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionUpdatePinned), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionUpdatePinned), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var updatePinnedAction = action as TLChannelAdminLogEventActionUpdatePinned;
                 if (updatePinnedAction.Message is TLMessageEmpty)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogUnpinnedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogUnpinnedMessages, "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogPinnedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogPinnedMessages, "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionEditMessage), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionEditMessage), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var editMessageAction = action as TLChannelAdminLogEventActionEditMessage;
 
                 var newMessage = editMessageAction.NewMessage as TLMessage;
                 if (newMessage.Media == null || (newMessage.Media is TLMessageMediaEmpty) || (newMessage.Media is TLMessageMediaWebPage) || !string.IsNullOrEmpty(newMessage.Message))
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogEditedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogEditedMessages, "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogEditedCaption, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogEditedCaption, "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionDeleteMessage), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.EventLogDeletedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionParticipantJoin), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionDeleteMessage), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
+                content = ReplaceWithLink(Strings.Android.EventLogDeletedMessages, "un1", fromUser, ref entities);
+
+                return (content, entities);
+            });
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionParticipantJoin), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
+            {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var channel = InMemoryCacheService.Current.GetChat(message.ToId.Id) as TLChannel;
                 if (channel.IsMegaGroup)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogGroupJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogGroupJoined, "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogChannelJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogChannelJoined, "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionParticipantLeave), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionParticipantLeave), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var channel = InMemoryCacheService.Current.GetChat(message.ToId.Id) as TLChannel;
                 if (channel.IsMegaGroup)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogLeftGroup, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogLeftGroup, "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogLeftChannel, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogLeftChannel, "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionParticipantInvite), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionParticipantInvite), (TLMessageService message, TLChannelAdminLogEventActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
                 var participantInviteAction = action as TLChannelAdminLogEventActionParticipantInvite;
 
                 var channel = InMemoryCacheService.Current.GetChat(message.ToId.Id) as TLChannel;
 
                 var whoUser = participantInviteAction.Participant.User;
-                if (whoUser.Id != fromUserId)
+                if (participantInviteAction.Participant.UserId == message.FromId)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogAdded, new[] { fromUserFullName, whoUser.FullName }, new[] { "tg-user://" + fromUserId, "tg-user://" + whoUser.Id }, useActiveLinks);
-                }
-                else if (channel.IsMegaGroup)
-                {
-                    return ReplaceLinks(message, Strings.Resources.EventLogGroupJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    if (channel.IsMegaGroup)
+                    {
+                        content = ReplaceWithLink(Strings.Android.EventLogGroupJoined, "un1", fromUser, ref entities);
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.Android.EventLogChannelJoined, "un1", fromUser, ref entities);
+                    }
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogChannelJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    content = ReplaceWithLink(Strings.Android.EventLogAdded, "un2", whoUser, ref entities);
+                    content = ReplaceWithLink(content, "un1", fromUser, ref entities);
                 }
+
+                return (content, entities);
             });
         }
 
@@ -270,120 +335,68 @@ namespace Unigram.Common
             }
 
             var paragraph = new Paragraph();
-            paragraph.Inlines.Add(new Run { Text = Strings.Resources.MessageActionEmpty });
+            paragraph.Inlines.Add(new Run { Text = "Empty" });
             sender.Blocks.Add(paragraph);
         }
 
         public static string Convert(TLMessageService serviceMessage)
         {
-            var paragraph = Convert(serviceMessage, false);
-            if (paragraph != null && paragraph.Inlines.Count > 0)
-            {
-                var run = paragraph.Inlines[0] as Run;
-                if (run != null)
-                {
-                    return run.Text;
-                }
-            }
-
-            return Strings.Resources.MessageActionEmpty;
-        }
-
-        public static Paragraph Convert(TLMessageService serviceMessage, bool useActiveLinks)
-        {
-            var fromId = serviceMessage.FromId;
-            var user = InMemoryCacheService.Current.GetUser(fromId ?? 0);
-            var userFullName = user != null ? user.FullName : Strings.Resources.UserNominativeSingular;
             var action = serviceMessage.Action;
 
             if (serviceMessage.ToId is TLPeerChannel)
             {
                 var channel = InMemoryCacheService.Current.GetChat(serviceMessage.ToId.Id) as TLChannel;
 
-                if (action is TLMessageActionAdminLogEvent eventAction && _actionsCache.TryGetValue(eventAction.Event.Action.GetType(), out Func<TLMessageService, TLChannelAdminLogEventActionBase, int, string, bool, Paragraph> func))
+                if (action is TLMessageActionAdminLogEvent eventAction && _actionsCache.TryGetValue(eventAction.Event.Action.GetType(), out Func<TLMessageService, TLChannelAdminLogEventActionBase, TLUser, bool, (string content, IList<TLMessageEntityBase> entities)> func))
                 {
-                    return func.Invoke(serviceMessage, eventAction.Event.Action, fromId.Value, userFullName, useActiveLinks);
+                    return func.Invoke(serviceMessage, eventAction.Event.Action, serviceMessage.From, false).content;
                 }
             }
 
             if (action is TLMessageActionDate dateAction)
             {
-                return ReplaceLinks(serviceMessage, DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(dateAction.Date)));
+                return DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(dateAction.Date));
+            }
+
+            return "Empty";
+        }
+
+        public static Paragraph Convert(TLMessageService serviceMessage, bool useActiveLinks)
+        {
+            var action = serviceMessage.Action;
+
+            if (serviceMessage.ToId is TLPeerChannel)
+            {
+                var channel = InMemoryCacheService.Current.GetChat(serviceMessage.ToId.Id) as TLChannel;
+
+                if (action is TLMessageActionAdminLogEvent eventAction && _actionsCache.TryGetValue(eventAction.Event.Action.GetType(), out Func<TLMessageService, TLChannelAdminLogEventActionBase, TLUser, bool, (string content, IList<TLMessageEntityBase> entities)> func))
+                {
+                    var result = func.Invoke(serviceMessage, eventAction.Event.Action, serviceMessage.From, true);
+                    if (useActiveLinks && result.entities != null)
+                    {
+                        return ServiceHelper.ReplaceEntities(serviceMessage, result.content, result.entities);
+                    }
+                    else
+                    {
+                        var paragraphAction = new Paragraph();
+                        paragraphAction.Inlines.Add(new Run { Text = result.content });
+                        return paragraphAction;
+                    }
+                }
+            }
+
+            if (action is TLMessageActionDate dateAction)
+            {
+                var paragraphDate = new Paragraph();
+                paragraphDate.Inlines.Add(new Run { Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(dateAction.Date)) });
+                return paragraphDate;
             }
 
             var paragraph = new Paragraph();
-            paragraph.Inlines.Add(new Run { Text = Strings.Resources.MessageActionEmpty });
+            paragraph.Inlines.Add(new Run { Text = "Empty" });
             return paragraph;
         }
         #endregion
-
-        private static Paragraph ReplaceLinks(TLMessageCommonBase message, string text, string[] users = null, string[] identifiers = null, bool useActiveLinks = true)
-        {
-            var paragraph = new Paragraph();
-
-            if (users == null)
-            {
-                paragraph.Inlines.Add(new Run { Text = text });
-                return paragraph;
-            }
-
-            if (!useActiveLinks)
-            {
-                paragraph.Inlines.Add(new Run { Text = string.Format(text, users) });
-                return paragraph;
-            }
-
-            var regex = new Regex("({[0-9]?})");
-            var matches = regex.Matches(text);
-            if (matches.Count > 0)
-            {
-                var lastIndex = 0;
-                for (int i = 0; i < matches.Count; i++)
-                {
-                    var match = matches[i];
-
-                    if (match.Index - lastIndex > 0)
-                    {
-                        paragraph.Inlines.Add(new Run { Text = text.Substring(lastIndex, match.Index - lastIndex) });
-                    }
-
-                    lastIndex = match.Index + match.Length;
-
-                    if (users?.Length > i && identifiers?.Length > i)
-                    {
-                        var currentId = identifiers[i];
-                        if (currentId.Equals("tg-bold://"))
-                        {
-                            paragraph.Inlines.Add(new Run { Text = users[i], FontWeight = FontWeights.SemiBold });
-                        }
-                        else
-                        {
-                            var hyperlink = new Hyperlink();
-                            hyperlink.Click += (s, args) => Hyperlink_Navigate(message, currentId);
-                            hyperlink.UnderlineStyle = UnderlineStyle.None;
-                            hyperlink.Foreground = new SolidColorBrush(Colors.White);
-                            hyperlink.Inlines.Add(new Run { Text = users[i], FontWeight = FontWeights.SemiBold });
-                            paragraph.Inlines.Add(hyperlink);
-                        }
-                    }
-                    else if (users?.Length > i)
-                    {
-                        paragraph.Inlines.Add(new Run { Text = users[i] });
-                    }
-                }
-
-                if (lastIndex < text.Length)
-                {
-                    paragraph.Inlines.Add(new Run { Text = text.Substring(lastIndex, text.Length - lastIndex) });
-                }
-            }
-            else
-            {
-                paragraph.Inlines.Add(new Run { Text = text });
-            }
-
-            return paragraph;
-        }
 
         private static async void Hyperlink_Navigate(TLMessageCommonBase message, string currentId)
         {
@@ -419,6 +432,11 @@ namespace Unigram.Common
 
                 await StickerSetView.Current.ShowAsync(input);
             }
+        }
+
+        private static string ReplaceWithLink(string source, string param, TLObject obj, ref List<TLMessageEntityBase> entities)
+        {
+            return ServiceHelper.ReplaceWithLink(source, param, obj, ref entities);
         }
     }
 }

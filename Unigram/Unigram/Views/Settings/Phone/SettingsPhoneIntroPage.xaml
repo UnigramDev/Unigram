@@ -1,8 +1,9 @@
 ﻿<Page
-    x:Class="Unigram.Views.Settings.SettingsPhoneWelcomePage"
+    x:Class="Unigram.Views.Settings.SettingsPhoneIntroPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
+    xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -15,7 +16,7 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <controls:PageHeader/>
+        <controls:PageHeader Text="{x:Bind ViewModel.Self.Phone, Converter={StaticResource PhoneNumberFormatConverter}}"/>
 
         <Viewbox Width="240" Margin="0,24,0,48" Grid.Row="1">
             <Canvas x:Name="Layer_1" Width="150" Height="64">
@@ -38,16 +39,19 @@
             </Canvas>
         </Viewbox>
 
-        <TextBlock Margin="12,0" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="2">
-            <Run Text="You can change your Telegram number here. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number."/>
-            <LineBreak/>
-            <LineBreak/>
-            <Run Text="Important:" FontWeight="SemiBold"/>
-            <Run Text="all your Telegram contacts will get your"/>
-            <Run Text="new number" FontWeight="SemiBold"/>
-            <Run Text="added to their address book, provided they had your old number and you haven't blocked them in Telegram"/>
-        </TextBlock>
+        <TextBlock
+            common:TextBlockHelper.Markdown="{CustomResource PhoneNumberHelp}"
+            Style="{StaticResource BodyTextBlockStyle}"
+            TextAlignment="Center"
+            Margin="12,0"
+            Grid.Row="2"/>
 
-        <Button Click="Change_Click" Content="CHANGE NUMBER" HorizontalAlignment="Center" Margin="24" Style="{StaticResource TextBlockButtonStyle}" Grid.Row="3"/>
+        <Button
+            Click="Change_Click"
+            Content="{CustomResource PhoneNumberChange}"
+            Style="{StaticResource TextBlockButtonStyle}"
+            HorizontalAlignment="Center"
+            Margin="24"
+            Grid.Row="3"/>
     </Grid>
 </Page>

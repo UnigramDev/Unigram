@@ -187,13 +187,12 @@
             </TextBlock>
 
             <TextBlock x:Name="TypingLabel"
+                       Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
                        Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}"
                        Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                        Style="{StaticResource BodyTextBlockStyle}"
                        TextWrapping="NoWrap"
-                       MaxLines="1">
-                    <Run Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"/><Run Text="..."/>
-            </TextBlock>
+                       MaxLines="1"/>
 
             <Border Visibility="{x:Bind UpdateIsPinned(ViewModel.IsPinned, ViewModel.UnreadCount), Mode=OneWay, FallbackValue=Collapsed}"
                     Width="20"

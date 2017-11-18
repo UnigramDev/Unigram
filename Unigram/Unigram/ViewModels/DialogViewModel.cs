@@ -2494,12 +2494,12 @@ namespace Unigram.ViewModels
 
                             if (count > 1)
                             {
-                                return string.Format(Strings.Resources.StatusOnline, full.ParticipantsCount ?? 0, count);
+                                return string.Format("{0}, {1}", LocaleHelper.Declension("Members", full.ParticipantsCount ?? 0), LocaleHelper.Declension("OnlineCount", count));
                             }
                         }
                     }
 
-                    return string.Format(Strings.Resources.StatusMembers, full.ParticipantsCount ?? 0);
+                    return LocaleHelper.Declension("Members", full.ParticipantsCount ?? 0);
                 }
             }
             else if (With is TLChat chat)
@@ -2538,10 +2538,10 @@ namespace Unigram.ViewModels
 
                     if (count > 1)
                     {
-                        return string.Format(Strings.Resources.StatusOnline, participants.Participants.Count, count);
+                        return string.Format("{0}, {1}", LocaleHelper.Declension("Members", participants.Participants.Count), LocaleHelper.Declension("OnlineCount", count));
                     }
 
-                    return string.Format(Strings.Resources.StatusMembers, participants.Participants.Count);
+                    return LocaleHelper.Declension("Members", participants.Participants.Count);
                 }
             }
 

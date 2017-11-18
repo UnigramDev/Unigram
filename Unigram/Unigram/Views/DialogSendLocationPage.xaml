@@ -81,7 +81,7 @@
                                     <StackPanel Orientation="Vertical"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center">
-                                        <TextBlock Text="Send current location" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                                        <TextBlock Text="{CustomResource SendLocation}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
                                         <TextBlock x:Name="tblCurrentLocation" Text="Getting your location..." TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                                     </StackPanel>
                                 </StackPanel>
@@ -107,8 +107,8 @@
                                     <StackPanel Orientation="Vertical"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center">
-                                        <TextBlock x:Name="LiveLocationLabel" Text="Share My Live Location for..." TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
-                                        <TextBlock Text="Updated in real time as you move" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                        <TextBlock x:Name="LiveLocationLabel" Text="{CustomResource SendLiveLocation}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                                        <TextBlock Text="{CustomResource SendLiveLocationInfo}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Button.Content>
@@ -117,7 +117,7 @@
 
                         <!-- Nearby header -->
                         <Border Height="32" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-                            <TextBlock Text="Nearby Places" Margin="12,5,0,0"/>
+                            <TextBlock Text="{CustomResource NearbyPlaces}" Margin="12,5,0,0"/>
                         </Border>
                     </StackPanel>
                 </StackPanel>

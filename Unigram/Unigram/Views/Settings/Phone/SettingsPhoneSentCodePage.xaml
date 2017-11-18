@@ -10,26 +10,16 @@
     Loaded="OnLoaded"
     mc:Ignorable="d">
     
-    <Page.Transitions>
-        <TransitionCollection>
-            <EntranceThemeTransition FromHorizontalOffset="75"/>
-        </TransitionCollection>
-    </Page.Transitions>
-
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid x:Name="Header" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Your code" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-            <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE10B;" Grid.Column="1"/>
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-        </Grid>
+        <controls:ButtonPageHeader
+            x:Name="Header"
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource YourCode}"
+            Glyph="&#xE10B;"/>
 
         <Grid x:Name="ContentPanel" Padding="12,20" MaxWidth="360" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -41,36 +31,42 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="TitleLabel" Text="Your code" Style="{ThemeResource TitleTextBlockStyle}"/>
-            <TextBlock common:TextBlockHelper.SentCodeType="{x:Bind ViewModel.SentCode.Type}"
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       Padding="0,8,0,16"
-                       Grid.Row="1"/>
+            <TextBlock
+                x:Name="TitleLabel"
+                Visibility="Collapsed"
+                Text="{CustomResource YourCode}"
+                Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock
+                common:TextBlockHelper.SentCodeType="{x:Bind ViewModel.SentCode.Type}"
+                Style="{StaticResource BodyTextBlockStyle}"
+                Padding="0,8,0,16"
+                Grid.Row="1"/>
 
-            <controls:UpdateTextBox x:Name="PrimaryInput"
-                                    Text="{Binding PhoneCode, Mode=TwoWay}"
-                                    Margin="0,12,0,8"
-                                    InputScope="Digits"
-                                    IsTextPredictionEnabled="False"
-                                    Header="Enter your code:"
-                                    PlaceholderText="Your code"
-                                    Grid.Row="3"/>
+            <controls:UpdateTextBox
+                x:Name="PrimaryInput"
+                Text="{Binding PhoneCode, Mode=TwoWay}"
+                Margin="0,12,0,4"
+                InputScope="Digits"
+                IsTextPredictionEnabled="False"
+                PlaceholderText="{CustomResource Code}"
+                Grid.Row="3"/>
+
+            <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
+
+            <Button x:Name="NextButton"
+                    Content="{CustomResource OK}"
+                    Command="{x:Bind ViewModel.SendCommand}"
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                    Foreground="White"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,4,0,8"
+                    Grid.Row="5"
+                    Visibility="Collapsed"/>
 
             <HyperlinkButton Command="{x:Bind ViewModel.ResendCommand}"
                              Visibility="{x:Bind (Visibility)ViewModel.SentCode.HasNextType}"
-                             Content="Haven't received the code?"
-                             Grid.Row="4"/>
-
-            <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="5"/>
-
-            <Button x:Name="NextButton"
-                    Command="{x:Bind ViewModel.SendCommand}"
-                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                    HorizontalAlignment="Stretch"
-                    Content="Next"
-                    Margin="0,8,0,0"
-                    Grid.Row="6"
-                    Visibility="Collapsed"/>
+                             Content="{CustomResource DidNotGetTheCode}"
+                             Grid.Row="6"/>
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
@@ -82,7 +78,6 @@
                     <VisualState.Setters>
                         <Setter Target="ContentPanel.VerticalAlignment" Value="Center" />
                         <Setter Target="Header.Visibility" Value="Collapsed"/>
-                        <Setter Target="NextGlyph.Visibility" Value="Collapsed"/>
                         <Setter Target="NextButton.Visibility" Value="Visible"/>
                         <Setter Target="TitleLabel.Visibility" Value="Visible"/>
                     </VisualState.Setters>
