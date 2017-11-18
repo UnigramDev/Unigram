@@ -114,14 +114,14 @@ namespace Unigram.ViewModels
         {
             Items = new ObservableCollection<TLMessageService>(messages);
             Peer = peer;
-            Failed = failed;
+            IsFailed = failed;
         }
 
         public ObservableCollection<TLMessageService> Items { get; private set; }
 
         public TLUser Peer { get; private set; }
 
-        public bool Failed { get; private set; }
+        public bool IsFailed { get; private set; }
 
         public override string ToString()
         {
@@ -163,7 +163,7 @@ namespace Unigram.ViewModels
 
         private string GetDisplayType()
         {
-            if (Failed)
+            if (IsFailed)
             {
                 return Strings.Android.CallMessageIncomingMissed;
             }

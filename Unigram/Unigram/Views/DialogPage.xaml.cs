@@ -501,10 +501,17 @@ namespace Unigram.Views
 
         private async void Attach_Click(object sender, RoutedEventArgs e)
         {
-            var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendMedia)
+            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendMedia)
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting media content here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachMediaRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -703,7 +710,15 @@ namespace Unigram.Views
             var channel = ViewModel.With as TLChannel;
             if (channel != null && channel.HasBannedRights && (channel.BannedRights.IsSendStickers || channel.BannedRights.IsSendGifs))
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -1206,10 +1221,17 @@ namespace Unigram.Views
 
         public async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendStickers)
+            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendStickers)
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -1223,10 +1245,17 @@ namespace Unigram.Views
 
         public async void Gifs_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendGifs)
+            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendGifs)
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting GIFs here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -1543,7 +1572,7 @@ namespace Unigram.Views
 
         public string ConvertEmptyText(int userId)
         {
-            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? "Got a question about Telegram?" : "No messages here yet...";
+            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? Strings.Android.GotAQuestion : Strings.Android.NoMessages;
         }
 
         public string ConvertSelectedCount(int count, bool items)
@@ -1551,12 +1580,32 @@ namespace Unigram.Views
             if (items)
             {
                 // TODO: Send 1 Photo/Video
-                return count > 0 ? count > 1 ? string.Format(Strings.Resources.SendMultipleMedias, count) : Strings.Resources.SendOneItem : Strings.Resources.SendPhotoVideo;
+                return count > 0 ? string.Format(Strings.Android.SendItems, count) : Strings.Android.ChatGallery;
             }
             else
             {
-                return count > 0 ? count > 1 ? Strings.Resources.SendAsFiles : Strings.Resources.SendAsFile : Strings.Resources.SendFile;
+                return count > 0 ? count > 1 ? Strings.Android.SendAsFiles : Strings.Android.SendAsFile : Strings.Android.ChatDocument;
             }
+        }
+
+        private string ConvertPlaceholder(ITLDialogWith with)
+        {
+            if (with is TLChannel channel && channel.IsBroadcast)
+            {
+                return Strings.Android.ChannelBroadcast;
+            }
+
+            return Strings.Android.TypeMessage;
+        }
+
+        private string ConvertReportSpam(ITLDialogWith with)
+        {
+            if (with is TLUser)
+            {
+                return Strings.Android.ReportSpam;
+            }
+
+            return Strings.Android.ReportSpamAndLeave;
         }
 
         #endregion

@@ -30,7 +30,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Shared Media"/>
+        <controls:PageHeader Text="{CustomResource SharedMedia}"/>
 
         <Pivot x:Name="ScrollingHost" IsLocked="{x:Bind ConvertSelectionMode(ViewModel.SelectionMode), Mode=OneWay}" Style="{StaticResource TabStylePivotStyle}" Grid.RowSpan="2">
             <PivotItem>
@@ -156,7 +156,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Header>
-                        <controls:SearchTextBox Text="{Binding Files.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                        <controls:SearchTextBox Text="{Binding Files.Query, Mode=TwoWay}" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
                         <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
                              Text="{Binding Files.Query, Mode=TwoWay}"
                              PlaceholderText="Search..."
@@ -241,7 +241,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Header>
-                        <controls:SearchTextBox Text="{Binding Links.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                        <controls:SearchTextBox Text="{Binding Links.Query, Mode=TwoWay}" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
                         <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
                              Text="{Binding Links.Query, Mode=TwoWay}"
                              PlaceholderText="Search..."
@@ -324,7 +324,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Header>
-                        <controls:SearchTextBox Text="{Binding Music.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                        <controls:SearchTextBox Text="{Binding Music.Query, Mode=TwoWay}" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
                         <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
                              Text="{Binding Music.Query, Mode=TwoWay}"
                              PlaceholderText="Search..."

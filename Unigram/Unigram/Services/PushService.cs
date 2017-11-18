@@ -474,11 +474,11 @@ namespace Unigram.Core.Services
                                     }
                                     else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
                                     {
-                                        return $"{result}{audioAttribute.Performer} - Unknown Track" + caption;
+                                        return $"{result}{audioAttribute.Performer} - {Strings.Android.AudioUnknownTitle}" + caption;
                                     }
                                     else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
                                     {
-                                        return $"{result}{audioAttribute.Title}" + caption;
+                                        return $"{result}{Strings.Android.AudioUnknownArtist} - {audioAttribute.Title}" + caption;
                                     }
                                 }
                             }
