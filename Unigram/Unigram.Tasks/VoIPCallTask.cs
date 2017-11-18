@@ -397,6 +397,8 @@ namespace Unigram.Tasks
                         var responseConfig = await SendRequestAsync<TLConfig>("voip.getConfig", new TLPeerUser());
                         var config = responseConfig.Result;
 
+                        SettingsHelper.CleanUp();
+                        ApplicationSettings.Current.CleanUp();
                         VoIPControllerWrapper.UpdateServerConfig(response.Result.Data);
 
                         var logFile = ApplicationData.Current.LocalFolder.Path + "\\tgvoip.logFile.txt";
@@ -409,9 +411,8 @@ namespace Unigram.Tasks
                         }
 
                         _controller = new VoIPControllerWrapper();
-                        _controller.SetConfig(config.CallPacketTimeoutMs / 1000.0, config.CallConnectTimeoutMs / 1000.0, DataSavingMode.Never, true, true, true, logFile, statsDumpFile);
+                        _controller.SetConfig(config.CallPacketTimeoutMs / 1000.0, config.CallConnectTimeoutMs / 1000.0, ApplicationSettings.Current.UseLessData, true, true, true, logFile, statsDumpFile);
 
-                        SettingsHelper.CleanUp();
                         if (SettingsHelper.IsCallsProxyEnabled)
                         {
                             var server = SettingsHelper.ProxyServer ?? string.Empty;
