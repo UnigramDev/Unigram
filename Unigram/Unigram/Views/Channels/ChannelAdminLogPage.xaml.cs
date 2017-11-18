@@ -88,7 +88,7 @@ namespace Unigram.Views.Channels
                 return;
             }
 
-            await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? Strings.Resources.EventLogInfoDetail : Strings.Resources.EventLogInfoDetailChannel, Strings.Resources.EventLogInfoTitle, "OK");
+            await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? Strings.Android.EventLogInfoDetail : Strings.Android.EventLogInfoDetailChannel, Strings.Android.EventLogInfoTitle, Strings.Android.OK);
         }
 
         private async void Settings_Click(object sender, RoutedEventArgs e)

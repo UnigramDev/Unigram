@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -55,7 +56,7 @@ namespace Unigram.Controls.Messages
                 var missed = phoneCallAction.Reason is TLPhoneCallDiscardReasonMissed || phoneCallAction.Reason is TLPhoneCallDiscardReasonBusy;
                 if (!missed && (phoneCallAction.Duration ?? 0) > 0)
                 {
-                    var duration = Convert.CallDuration(phoneCallAction.Duration ?? 0);
+                    var duration = LocaleHelper.FormatCallDuration(phoneCallAction.Duration ?? 0);
                     return $", {duration}";
                 }
             }

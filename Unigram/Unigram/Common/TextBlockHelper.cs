@@ -211,16 +211,16 @@ namespace Unigram.Common
 
             if (newMessage.Media == null || (newMessage.Media is TLMessageMediaEmpty) || (newMessage.Media is TLMessageMediaWebPage) || !string.IsNullOrEmpty(newMessage.Message))
             {
-                siteName.Text = Strings.Resources.EventLogOriginalMessages;
+                siteName.Text = Strings.Android.EventLogOriginalMessages;
                 description.Text = oldMessage.Message;
             }
             else if (oldMessage.Media is ITLMessageMediaCaption captionMedia)
             {
-                siteName.Text = Strings.Resources.EventLogOriginalCaption;
+                siteName.Text = Strings.Android.EventLogOriginalCaption;
 
                 if (string.IsNullOrEmpty(captionMedia.Caption))
                 {
-                    description.Text = Strings.Resources.EventLogOriginalCaptionEmpty;
+                    description.Text = Strings.Android.EventLogOriginalCaptionEmpty;
                 }
                 else
                 {

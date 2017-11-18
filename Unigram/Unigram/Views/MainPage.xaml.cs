@@ -671,12 +671,12 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var dialog = element.DataContext as TLDialog;
 
-            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Dialogs.DialogPinCommand, dialog, dialog.IsPinned ? Strings.Resources.DialogUnpin : Strings.Resources.DialogPin);
-            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Dialogs.DialogNotifyCommand, dialog, dialog.IsMuted ? Strings.Resources.DialogNotificationsEnable : Strings.Resources.DialogNotificationsDisable);
-            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Dialogs.DialogClearCommand, dialog, Strings.Resources.DialogClearHistory);
+            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Dialogs.DialogPinCommand, dialog, dialog.IsPinned ? Strings.Android.UnpinFromTop : Strings.Android.PinToTop);
+            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Dialogs.DialogNotifyCommand, dialog, dialog.IsMuted ? Strings.Android.UnmuteNotifications : Strings.Android.MuteNotifications);
+            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Dialogs.DialogClearCommand, dialog, Strings.Android.ClearHistory);
             CreateFlyoutItem(ref flyout, DialogDelete_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, DialogDelete_Text(dialog));
-            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Dialogs.DialogDeleteAndStopCommand, dialog, Strings.Resources.DialogDeleteAndStop);
-            CreateFlyoutItem(ref flyout, DialogDeleteAndExit_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, Strings.Resources.DialogDeleteAndExit);
+            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Dialogs.DialogDeleteAndStopCommand, dialog, Strings.Android.DeleteAndStop);
+            CreateFlyoutItem(ref flyout, DialogDeleteAndExit_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, Strings.Android.DeleteAndExit);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -721,20 +721,15 @@ namespace Unigram.Views
 
         private Visibility DialogDelete_Loaded(TLDialog dialog)
         {
-            var channelPeer = dialog.Peer as TLPeerChannel;
-            if (channelPeer != null)
+            if (dialog.With is TLChannel channel)
             {
                 return Visibility.Visible;
             }
-
-            var userPeer = dialog.Peer as TLPeerUser;
-            if (userPeer != null)
+            else if (dialog.Peer is TLPeerUser userPeer)
             {
                 return Visibility.Visible;
             }
-
-            var chatPeer = dialog.Peer as TLPeerChat;
-            if (chatPeer != null)
+            else if (dialog.Peer is TLPeerChat chatPeer)
             {
                 return dialog.With is TLChatForbidden || dialog.With is TLChatEmpty ? Visibility.Visible : Visibility.Collapsed;
             }
@@ -744,33 +739,17 @@ namespace Unigram.Views
 
         private string DialogDelete_Text(TLDialog dialog)
         {
-            var channelPeer = dialog.Peer as TLPeerChannel;
-            if (channelPeer != null)
+            if (dialog.With is TLChannel channel)
             {
-                var channel = dialog.With as TLChannel;
-                if (channel != null)
-                {
-                    //if (channel.IsCreator)
-                    //{
-                    //    return channel.IsMegaGroup ? Strings.Resources.DialogDeleteGroup : Strings.Resources.DialogDeleteChannel;;
-                    //}
-                    //else
-                    {
-                        return channel.IsMegaGroup ? Strings.Resources.DialogLeaveGroup : Strings.Resources.DialogLeaveChannel;
-                    }
-                }
+                return channel.IsMegaGroup ? Strings.Android.LeaveMegaMenu : Strings.Android.LeaveChannelMenu;
             }
-
-            var userPeer = dialog.Peer as TLPeerUser;
-            if (userPeer != null)
+            else if (dialog.Peer is TLPeerUser userPeer)
             {
-                return Strings.Resources.DialogDelete;
+                return Strings.Android.Delete;
             }
-
-            var chatPeer = dialog.Peer as TLPeerChat;
-            if (chatPeer != null)
+            else if (dialog.Peer is TLPeerChat chatPeer)
             {
-                return Strings.Resources.DialogDelete;
+                return Strings.Android.Delete;
             }
 
             return null;

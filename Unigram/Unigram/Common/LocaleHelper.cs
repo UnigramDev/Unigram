@@ -205,6 +205,38 @@ namespace Unigram.Common
             }
         }
 
+        public static string FormatTTLString(int ttl)
+        {
+            if (ttl < 60)
+            {
+                return Declension("Seconds", ttl);
+            }
+            else if (ttl < 60 * 60)
+            {
+                return Declension("Minutes", ttl / 60);
+            }
+            else if (ttl < 60 * 60 * 24)
+            {
+                return Declension("Hours", ttl / 60 / 60);
+            }
+            else if (ttl < 60 * 60 * 24 * 7)
+            {
+                return Declension("Days", ttl / 60 / 60 / 24);
+            }
+            else
+            {
+                int days = ttl / 60 / 60 / 24;
+                if (ttl % 7 == 0)
+                {
+                    return Declension("Weeks", days / 7);
+                }
+                else
+                {
+                    return string.Format("{0} {1}", Declension("Weeks", days / 7), Declension("Days", days % 7));
+                }
+            }
+        }
+
         private static Dictionary<string, string> _translitChars;
         public static string[] GetQuery(string src)
         {

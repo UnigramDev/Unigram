@@ -118,7 +118,6 @@ namespace Unigram.ViewModels
                         //    return "";
                         case TLSendMessageGamePlayAction gamePlay:
                             return Strings.Android.SendingGame;
-                            return Strings.Resources.PlayingGame;
                         //case TLSendMessageGeoLocationAction geoLocation:
                         //    return "";
                         case TLSendMessageRecordAudioAction recordAudio:
