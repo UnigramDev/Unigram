@@ -185,7 +185,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                return string.Format("{0} {1}", Strings.Android.IsTyping, userName);
+                return string.Format("{0} {1}", userName, Strings.Android.IsTyping);
             }
             else
             {
