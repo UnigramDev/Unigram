@@ -1286,6 +1286,19 @@ namespace Unigram.ViewModels
 
                         ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Items.AddRange(history.Reverse());
+
+                        foreach (var item in history.OrderByDescending(x => x.Date))
+                        {
+                            var message = item as TLMessage;
+                            if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                            {
+                                var bot = CacheService.GetUser(message.FromId) as TLUser;
+                                if (bot != null && bot.IsBot)
+                                {
+                                    SetReplyMarkup(message);
+                                }
+                            }
+                        }
                     }
                 }
                 else
