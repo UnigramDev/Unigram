@@ -808,7 +808,7 @@
                             Grid.ColumnSpan="3">
                         <Button.Content>
                             <Grid>
-                                <TextBlock Text="Saved Messages" VerticalAlignment="Center" Margin="12,0" Visibility="{x:Bind ViewModel.WithUser.IsSelf, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <TextBlock Text="{CustomResource SavedMessages}" VerticalAlignment="Center" Margin="12,0" Visibility="{x:Bind ViewModel.WithUser.IsSelf, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" Style="{StaticResource BaseTextBlockStyle}"/>
 
                                 <Grid Visibility="{x:Bind ViewModel.WithUser.IsSelf, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert, FallbackValue=Visible}">
                                     <Grid.ColumnDefinitions>
@@ -1521,7 +1521,7 @@
                 <Border HorizontalAlignment="Right" Margin="0,0,84,0" Grid.ColumnSpan="4" Grid.Row="1">
                     <StackPanel x:Name="SlidePanel" SizeChanged="SlidePanel_SizeChanged" Orientation="Horizontal">
                         <FontIcon Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Glyph="&#xE00E;" FontSize="12" Margin="0,1,4,0"/>
-                        <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Text="Slide to cancel" VerticalAlignment="Center" Margin="0,0,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Text="{CustomResource SlideToCancel}" VerticalAlignment="Center" Margin="0,0,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </StackPanel>
                 </Border>
 

@@ -349,39 +349,30 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button Command="{x:Bind ViewModel.MessagesForwardCommand}" Margin="12,0,4,0" Style="{StaticResource AccentButtonStyle}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Forward" VerticalAlignment="Center"/>
-                        <ContentControl Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
-                            <ContentControl.ContentTransitions>
-                                <TransitionCollection>
-                                    <EntranceThemeTransition/>
-                                </TransitionCollection>
-                            </ContentControl.ContentTransitions>
-                            <ContentControl.Clip>
-                                <RectangleGeometry Rect="0,0,200,32"/>
-                            </ContentControl.Clip>
-                        </ContentControl>
-                    </StackPanel>
-                </Button>
-                <Button Command="{x:Bind ViewModel.MessagesDeleteCommand}" Margin="4,0,12,0" Style="{StaticResource AccentButtonStyle}" Grid.Column="1">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Delete" VerticalAlignment="Center"/>
-                        <ContentControl Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
-                            <ContentControl.ContentTransitions>
-                                <TransitionCollection>
-                                    <EntranceThemeTransition/>
-                                </TransitionCollection>
-                            </ContentControl.ContentTransitions>
-                            <ContentControl.Clip>
-                                <RectangleGeometry Rect="0,0,200,32"/>
-                            </ContentControl.Clip>
-                        </ContentControl>
-                    </StackPanel>
-                </Button>
+                <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                <controls:GlyphButton Glyph="&#xE111;" Command="{x:Bind ViewModel.MessagesForwardCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
 
-                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Grid.Column="3"/>
+                <ContentControl
+                        Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        FontWeight="SemiBold"
+                        MinWidth="48"
+                        Height="48"
+                        Grid.Column="3">
+                    <ContentControl.ContentTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition/>
+                        </TransitionCollection>
+                    </ContentControl.ContentTransitions>
+                    <ContentControl.Clip>
+                        <RectangleGeometry Rect="0,0,200,48"/>
+                    </ContentControl.Clip>
+                </ContentControl>
+
+                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Grid.Column="4"/>
             </Grid>
         </controls:ContentPageHeader>
     </Grid>

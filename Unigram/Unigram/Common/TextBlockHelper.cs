@@ -162,28 +162,75 @@ namespace Unigram.Common
 
             sender.Inlines.Clear();
 
-            var previous = 0;
-            var index = markdown.IndexOf("**");
-            var next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
-
-            while (index > -1 && next > -1)
+            if (markdown.Contains("</a>"))
             {
-                if (index - previous > 0)
+                markdown = Regex.Replace(markdown, "<a href=\"(.*?)\">(.*?)<\\/a>", "[$2]($1)");
+            }
+
+            var entities = Markdown.Parse(ref markdown);
+            var text = markdown;
+            var previous = 0;
+
+            foreach (var entity in entities.OrderBy(x => x.Offset))
+            {
+                if (entity.Offset > previous)
                 {
-                    sender.Inlines.Add(new Run { Text = markdown.Substring(previous, index - previous) });
+                    sender.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
                 }
 
-                sender.Inlines.Add(new Run { Text = markdown.Substring(index + 2, next - index - 2), FontWeight = FontWeights.SemiBold });
+                if (entity.Length + entity.Offset > text.Length)
+                {
+                    previous = entity.Offset + entity.Length;
+                    continue;
+                }
 
-                previous = next + 2;
-                index = markdown.IndexOf("**", next + 2);
-                next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
+                var type = entity.TypeId;
+                if (type == TLType.MessageEntityBold)
+                {
+                    sender.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontWeight = FontWeights.SemiBold });
+                }
+                else if (type == TLType.MessageEntityItalic)
+                {
+                    sender.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontStyle = FontStyle.Italic });
+                }
+                else if (entity is TLMessageEntityTextUrl textUrl)
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.NavigateUri = new Uri(textUrl.Url);
+                    hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    sender.Inlines.Add(hyperlink);
+                }
+
+                previous = entity.Offset + entity.Length;
             }
 
-            if (markdown.Length - previous > 0)
+            if (text.Length > previous)
             {
-                sender.Inlines.Add(new Run { Text = markdown.Substring(previous, markdown.Length - previous) });
+                sender.Inlines.Add(new Run { Text = text.Substring(previous) });
             }
+
+            //var previous = 0;
+            //var index = markdown.IndexOf("**");
+            //var next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
+
+            //while (index > -1 && next > -1)
+            //{
+            //    if (index - previous > 0)
+            //    {
+            //        sender.Inlines.Add(new Run { Text = markdown.Substring(previous, index - previous) });
+            //    }
+
+            //    sender.Inlines.Add(new Run { Text = markdown.Substring(index + 2, next - index - 2), FontWeight = FontWeights.SemiBold });
+
+            //    previous = next + 2;
+            //    index = markdown.IndexOf("**", next + 2);
+            //    next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
+            //}
+
+            //if (markdown.Length - previous > 0)
+            //{
+            //    sender.Inlines.Add(new Run { Text = markdown.Substring(previous, markdown.Length - previous) });
+            //}
         }
         #endregion
 
