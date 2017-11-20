@@ -10,8 +10,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <CollectionViewSource x:Name="Countries" Source="{Binding Countries}" IsSourceGrouped="True"/>
-
         <Style TargetType="TextBox">
             <Setter Property="Margin" Value="12,8,12,4"/>
         </Style>
@@ -40,7 +38,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="Payment info" 
+            Text="{CustomResource PaymentCardInfo}" 
             Command="{x:Bind ViewModel.SendCommand}"
             CommandVisibility="{x:Bind ViewModel.IsNativeUsed, Converter={StaticResource BooleanToVisibilityConverter}}"
             IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
@@ -52,45 +50,48 @@
                       Grid.Row="1">
             <StackPanel>
                 <StackPanel>
-                    <TextBlock Text="Payment card" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    <TextBlock Text="{CustomResource PaymentCardTitle}" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                     <payments:CardTextBox x:Name="FieldCard"
                                           Text="{x:Bind ViewModel.Card, Mode=TwoWay}"
-                                          PlaceholderText="Card Number"
+                                          PlaceholderText="{CustomResource PaymentCardNumber}"
                                           InputScope="Number"/>
                     <payments:DateTextBox x:Name="FieldDate"
                                           Text="{x:Bind ViewModel.Date, Mode=TwoWay}"
-                                          PlaceholderText="MM/YY"
+                                          PlaceholderText="{CustomResource PaymentCardExpireDate}"
                                           InputScope="Number"/>
                     <TextBox x:Name="FieldCardName"
                              Text="{x:Bind ViewModel.CardName, Mode=TwoWay}"
                              Visibility="{x:Bind (Visibility)ViewModel.NeedCardholderName}"
-                             PlaceholderText="Name Surname"
+                             PlaceholderText="{CustomResource PaymentCardName}"
                              InputScope="PersonalFullName"/>
                     <PasswordBox x:Name="FieldCVC"
                                  Password="{x:Bind ViewModel.CVC, Mode=TwoWay}" 
-                                 PlaceholderText="Security Code (CVC)"
+                                 PlaceholderText="{CustomResource PaymentCardCvv}"
                                  InputScope="Number"
                                  MaxLength="3"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.NeedZipOrCountry}">
-                    <TextBlock Text="Billing address" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    <TextBlock Text="{CustomResource PaymentBillingAddress}" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                     <ComboBox x:Name="FieldCountry"
-                              ItemsSource="{x:Bind Countries.View}"
+                              ItemsSource="{x:Bind ViewModel.Countries}"
                               SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
                               Visibility="{x:Bind (Visibility)ViewModel.NeedCountry}"
-                              DisplayMemberPath="Name"
-                              PlaceholderText="Country"/>
+                              DisplayMemberPath="DisplayName"
+                              PlaceholderText="{CustomResource PaymentShippingCountry}"/>
                     <TextBox x:Name="FieldPostcode"
                              Text="{x:Bind ViewModel.Postcode, Mode=TwoWay}"
                              Visibility="{x:Bind (Visibility)ViewModel.NeedZip}"
-                             PlaceholderText="Postcode"
+                             PlaceholderText="{CustomResource PaymentShippingZipPlaceholder}"
                              InputScope="Number"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.IsCanSaveCredentials, FallbackValue=Collapsed}" Padding="12,12,12,24">
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsSave, Mode=TwoWay}" Content="Save Payment Information"/>
-                    <TextBlock Text="You can save your payment info for future use." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsSave, Mode=TwoWay}"
+                              Content="{CustomResource PaymentCardSavePaymentInformation}"/>
+                    <TextBlock Text="{CustomResource PaymentCardSavePaymentInformationInfoLine1}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

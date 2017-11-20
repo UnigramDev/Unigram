@@ -29,7 +29,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="Payment info" 
+            Text="{CustomResource PaymentCardInfo}" 
             Command="{x:Bind ViewModel.SendCommand}"
             IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
             Glyph="&#xE10B;"/>
@@ -39,20 +39,21 @@
                       Grid.Row="1">
             <StackPanel>
                 <StackPanel>
-                    <TextBlock Text="Payment card" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    <TextBlock Text="{CustomResource PaymentCardTitle}" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                     <TextBox Text="{x:Bind ViewModel.CredentialsTitle}" 
                              IsReadOnly="True"/>
                     <PasswordBox x:Name="FieldPassword"
                                  Password="{x:Bind ViewModel.Password, Mode=TwoWay}" 
                                  PlaceholderText="{x:Bind ViewModel.PasswordHint}"/>
-                    <TextBlock Margin="12,4,12,24" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
-                        <Run Text="Your card"/>
-                        <Run Text="{x:Bind ViewModel.CredentialsTitle}"/>
-                        <Run Text="is on file. To pay with this card please enter your 2-Step-Verification password."/>
-                    </TextBlock>
+                    <TextBlock Text="{x:Bind ViewModel.CredentialsTitle, Converter={StaticResource StringFormatConverter}, ConverterParameter=PaymentConfirmationMessage}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Margin="12,4,12,24"/>
                 </StackPanel>
 
-                <HyperlinkButton Command="{x:Bind ViewModel.ChooseCommand}" Content="Choose a different card" Margin="12,0"/>
+                <HyperlinkButton Command="{x:Bind ViewModel.ChooseCommand}"
+                                 Content="{CustomResource PaymentConfirmationNewCard}"
+                                 Margin="12,0"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

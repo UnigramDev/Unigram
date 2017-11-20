@@ -14,7 +14,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="Shipping methods" 
+            Text="{CustomResource PaymentShippingMethod}" 
             Command="{x:Bind ViewModel.SendCommand}"
             IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
             Glyph="&#xE10B;"/>
