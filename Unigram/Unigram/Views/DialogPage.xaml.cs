@@ -241,15 +241,14 @@ namespace Unigram.Views
             {
                 ManagePanel.Visibility = Visibility.Collapsed;
                 InfoPanel.Visibility = Visibility.Visible;
+
+                ViewModel.SelectedItems = new List<TLMessageCommonBase>();
             }
             else
             {
                 ManagePanel.Visibility = Visibility.Visible;
                 InfoPanel.Visibility = Visibility.Collapsed;
             }
-
-            ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
-            ViewModel.MessagesDeleteCommand.RaiseCanExecuteChanged();
         }
 
         private void Manage_Click(object sender, RoutedEventArgs e)

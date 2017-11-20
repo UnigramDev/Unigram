@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -155,10 +156,10 @@ namespace Unigram.ViewModels
             else
             {
                 var dialog = new TLMessageDialog();
-                dialog.Title = "Delete";
-                dialog.Message = "Do you want to delete this message?";
-                dialog.PrimaryButtonText = "Yes";
-                dialog.SecondaryButtonText = "No";
+                dialog.Title = Strings.Android.Message;
+                dialog.Message = string.Format(Strings.Android.AreYouSureDeleteMessages, LocaleHelper.Declension("Messages", 1));
+                dialog.PrimaryButtonText = Strings.Android.OK;
+                dialog.SecondaryButtonText = Strings.Android.Cancel;
 
                 var chat = With as TLChat;
 
@@ -171,28 +172,28 @@ namespace Unigram.ViewModels
                         var user = With as TLUser;
                         if (user != null && !user.IsBot)
                         {
-                            dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
+                            dialog.CheckBoxLabel = string.Format(Strings.Android.DeleteForUser, user.FullName);
                         }
 
                         //var chat = With as TLChat;
                         if (chat != null)
                         {
-                            dialog.CheckBoxLabel = "Delete for everyone";
+                            dialog.CheckBoxLabel = Strings.Android.DeleteForAll;
                         }
                     }
                 }
-                else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it just for you.";
-                }
-                else if (Peer is TLInputPeerChat)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
-                }
-                else if (Peer is TLInputPeerChannel)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
-                }
+                //else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it just for you.";
+                //}
+                //else if (Peer is TLInputPeerChat)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
+                //}
+                //else if (Peer is TLInputPeerChannel)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
+                //}
 
                 var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
@@ -349,28 +350,7 @@ namespace Unigram.ViewModels
 
         #region Multiple Delete
 
-        private RelayCommand _messagesDeleteCommand;
-        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedItems.Count > 0 && SelectedItems.All(messageCommon =>
-        {
-            var channel = _with as TLChannel;
-            if (channel != null)
-            {
-                if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
-                {
-                    return false;
-                }
-
-                if (messageCommon.IsOut || channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsDeleteMessages))
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return true;
-        })));
-
+        public RelayCommand MessagesDeleteCommand { get; }
         private async void MessagesDeleteExecute()
         {
             //if (messageBase == null) return;
@@ -429,10 +409,10 @@ namespace Unigram.ViewModels
                 var messages = new List<TLMessageCommonBase>(SelectedItems);
 
                 var dialog = new TLMessageDialog();
-                dialog.Title = "Delete";
-                dialog.Message = messages.Count > 1 ? string.Format("Do you want to delete this {0} messages?", messages.Count) : "Do you want to delete this message?";
-                dialog.PrimaryButtonText = "Yes";
-                dialog.SecondaryButtonText = "No";
+                dialog.Title = Strings.Android.Message;
+                dialog.Message = string.Format(Strings.Android.AreYouSureDeleteMessages, LocaleHelper.Declension("Messages", messages.Count));
+                dialog.PrimaryButtonText = Strings.Android.OK;
+                dialog.SecondaryButtonText = Strings.Android.Cancel;
 
                 var chat = With as TLChat;
 
@@ -450,28 +430,28 @@ namespace Unigram.ViewModels
                         var user = With as TLUser;
                         if (user != null && !user.IsBot)
                         {
-                            dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
+                            dialog.CheckBoxLabel = string.Format(Strings.Android.DeleteForUser, user.FullName);
                         }
 
                         //var chat = With as TLChat;
                         if (chat != null)
                         {
-                            dialog.CheckBoxLabel = "Delete for everyone";
+                            dialog.CheckBoxLabel = Strings.Android.DeleteForAll;
                         }
                     }
                 }
-                else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it just for you.";
-                }
-                else if (Peer is TLInputPeerChat)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
-                }
-                else if (Peer is TLInputPeerChannel)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
-                }
+                //else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it just for you.";
+                //}
+                //else if (Peer is TLInputPeerChat)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
+                //}
+                //else if (Peer is TLInputPeerChannel)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
+                //}
 
                 var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
@@ -498,30 +478,35 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool MessagesDeleteCanExecute()
+        {
+            return SelectedItems.Count > 0 && SelectedItems.All(messageCommon =>
+            {
+                var channel = _with as TLChannel;
+                if (channel != null)
+                {
+                    if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
+                    {
+                        return false;
+                    }
+
+                    if (messageCommon.IsOut || channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsDeleteMessages))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                return true;
+            });
+        }
+
         #endregion
 
         #region Multiple Forward
 
-        private RelayCommand _messagesForwardCommand;
-        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedItems.Count > 0 && SelectedItems.All(x =>
-        {
-            if (x is TLMessage message)
-            {
-                if (message.Media is TLMessageMediaPhoto photoMedia)
-                {
-                    return !photoMedia.HasTTLSeconds;
-                }
-                else if (message.Media is TLMessageMediaDocument documentMedia)
-                {
-                    return !documentMedia.HasTTLSeconds;
-                }
-
-                return true;
-            }
-
-            return false;
-        })));
-
+        public RelayCommand MessagesForwardCommand { get; }
         private async void MessagesForwardExecute()
         {
             var messages = SelectedItems.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
@@ -532,6 +517,159 @@ namespace Unigram.ViewModels
 
                 await ShareView.Current.ShowAsync(messages);
             }
+        }
+
+        private bool MessagesForwardCanExecute()
+        {
+            return SelectedItems.Count > 0 && SelectedItems.All(x =>
+            {
+                if (x is TLMessage message)
+                {
+                    if (message.Media is TLMessageMediaPhoto photoMedia)
+                    {
+                        return !photoMedia.HasTTLSeconds;
+                    }
+                    else if (message.Media is TLMessageMediaDocument documentMedia)
+                    {
+                        return !documentMedia.HasTTLSeconds;
+                    }
+
+                    return true;
+                }
+
+                return false;
+            });
+        }
+
+        #endregion
+
+        #region Multiple Copy
+
+        public RelayCommand MessagesCopyCommand { get; }
+        private void MessagesCopyExecute()
+        {
+            var messages = SelectedItems.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
+            if (messages.Count > 0)
+            {
+                var builder = new StringBuilder();
+                SelectionMode = ListViewSelectionMode.None;
+
+                var broadcast = With is TLChannel check && check.IsBroadcast;
+
+                foreach (var message in messages)
+                {
+                    var date = BindConvert.Current.DateTime(message.Date);
+                    builder.AppendLine(string.Format("{0}, [{1} {2}]", broadcast ? message.Parent.DisplayName : message.From.FullName, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date)));
+
+                    if (message.HasFwdFrom && message.FwdFrom != null)
+                    {
+                        if (message.FwdFromChannel is TLChannel channel)
+                        {
+                            builder.AppendLine($"[{Strings.Android.ForwardedMessage}]");
+                            builder.AppendLine($"[{Strings.Android.From} {channel.Title}]");
+                        }
+                        else if (message.FwdFromUser is TLUser user)
+                        {
+                            builder.AppendLine($"[{Strings.Android.ForwardedMessage}]");
+                            builder.AppendLine($"[{Strings.Android.From} {user.FullName}]");
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(message.Message))
+                    {
+                        if (message.Media is TLMessageMediaPhoto photoMedia)
+                        {
+                            builder.Append($"[{Strings.Android.AttachPhoto}]");
+
+                            if (string.IsNullOrEmpty(photoMedia.Caption)) { }
+                            else
+                            {
+                                builder.AppendLine();
+                                builder.Append(photoMedia.Caption);
+                            }
+                        }
+                        else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                        {
+                            if (TLMessage.IsVoice(document))
+                            {
+                                builder.Append($"[{Strings.Android.AttachAudio}]");
+                            }
+                            else if (TLMessage.IsVideo(document))
+                            {
+                                builder.Append($"[{Strings.Android.AttachVideo}]");
+                            }
+                            else if (TLMessage.IsRoundVideo(document))
+                            {
+                                builder.Append($"[{Strings.Android.AttachRound}]");
+                            }
+                            else if (TLMessage.IsGif(document))
+                            {
+                                builder.Append($"[{Strings.Android.AttachGif}]");
+                            }
+                            else if (TLMessage.IsSticker(document))
+                            {
+                                var attribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                                if (attribute != null)
+                                {
+                                    builder.Append($"[{attribute.Alt} {Strings.Android.AttachSticker}]");
+                                }
+                                else
+                                {
+                                    builder.Append($"[{Strings.Android.AttachSticker}]");
+                                }
+                            }
+                            else if (TLMessage.IsMusic(document))
+                            {
+                                builder.Append($"[{Strings.Android.AttachMusic}]");
+                            }
+
+                            if (string.IsNullOrEmpty(documentMedia.Caption)) { }
+                            else
+                            {
+                                builder.AppendLine();
+                                builder.Append(documentMedia.Caption);
+                            }
+                        }
+                        else if (message.Media is TLMessageMediaGeo geoMedia)
+                        {
+                            if (geoMedia.Geo is TLGeoPoint geo)
+                            {
+                                builder.AppendLine($"[{Strings.Android.AttachLocation}]");
+                                builder.Append(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", geo.Lat, geo.Long));
+                            }
+                        }
+                        else if (message.Media is TLMessageMediaVenue venueMedia)
+                        {
+                            if (venueMedia.Geo is TLGeoPoint geo)
+                            {
+                                builder.AppendLine($"[{Strings.Android.AttachLocation}]");
+                                builder.AppendLine(venueMedia.Title);
+                                builder.AppendLine(venueMedia.Address);
+                                builder.Append(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", geo.Lat, geo.Long));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        builder.Append(message.Message);
+                    }
+
+                    if (message != messages.Last())
+                    {
+                        builder.AppendLine();
+                        builder.AppendLine();
+                    }
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(builder.ToString());
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+        }
+
+        private bool MessagesCopyCanExecute()
+        {
+            return SelectedItems.Count > 0;
         }
 
         #endregion

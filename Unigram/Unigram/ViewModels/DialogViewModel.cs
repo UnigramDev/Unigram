@@ -62,6 +62,7 @@ using Telegram.Api.TL.Channels;
 using Windows.UI.StartScreen;
 using Unigram.Models;
 using Newtonsoft.Json;
+using Unigram.Core.Common;
 
 namespace Unigram.ViewModels
 {
@@ -81,6 +82,7 @@ namespace Unigram.ViewModels
                 Set(ref _selectedItems, value);
                 MessagesForwardCommand.RaiseCanExecuteChanged();
                 MessagesDeleteCommand.RaiseCanExecuteChanged();
+                MessagesCopyCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -159,6 +161,10 @@ namespace Unigram.ViewModels
             ReadMentionsCommand = new RelayCommand(ReadMentionsExecute);
             SendCommand = new RelayCommand<string>(SendMessage);
             SwitchCommand = new RelayCommand<TLInlineBotSwitchPM>(SwitchExecute);
+
+            MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
+            MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
+            MessagesCopyCommand = new RelayCommand(MessagesCopyExecute, MessagesCopyCanExecute);
 
             MessageReplyCommand = new RelayCommand<TLMessageBase>(MessageReplyExecute);
             MessageDeleteCommand = new RelayCommand<TLMessageBase>(MessageDeleteExecute);
