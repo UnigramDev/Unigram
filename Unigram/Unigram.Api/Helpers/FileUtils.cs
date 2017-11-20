@@ -37,6 +37,11 @@ namespace Telegram.Api.Helpers
             return Path.Combine(SettingsHelper.SessionGuid, "temp", fileName);
         }
 
+        public static string GetFilePath(string fileName)
+        {
+            return Path.Combine(SettingsHelper.SessionGuid, fileName);
+        }
+
         public static Uri GetTempFileUri(string fileName)
         {
             return new Uri(GetTempFileUrl(fileName));
@@ -45,6 +50,11 @@ namespace Telegram.Api.Helpers
         public static string GetTempFileUrl(string fileName)
         {
             return $"ms-appdata:///local/{SettingsHelper.SessionGuid}/temp/{fileName}";
+        }
+
+        public static IAsyncOperation<StorageFile> CreateFileAsync(string fileName)
+        {
+            return ApplicationData.Current.LocalFolder.CreateFileAsync($"{SettingsHelper.SessionGuid}\\{fileName}", CreationCollisionOption.ReplaceExisting);
         }
 
         public static IAsyncOperation<StorageFile> CreateTempFileAsync(string fileName)
