@@ -14,15 +14,9 @@ int64 NativeUtils::GetDirectorySize(String^ path, String^ filter)
 	return GetDirectorySizeInternal(path->Data(), filter->Data(), 0);
 }
 
-void NativeUtils::CleanDirectory(String^ path, const Array<String^>^ filters)
+void NativeUtils::CleanDirectory(String^ path, int days)
 {
-	std::vector<std::wstring> array;
-	for each (auto var in filters)
-	{
-		array.push_back(var->Data());
-	}
-
-	CleanDirectoryInternal(path->Data(), array);
+	CleanDirectoryInternal(path->Data(), days);
 }
 
 void NativeUtils::Delete(String^ path)
@@ -30,8 +24,14 @@ void NativeUtils::Delete(String^ path)
 	DeleteFile(path->Data());
 }
 
-void NativeUtils::CleanDirectoryInternal(const std::wstring &path, std::vector<std::wstring> filters)
+void NativeUtils::CleanDirectoryInternal(const std::wstring &path, int days)
 {
+	long diff = 60 * 60 * 1000 * 24 * days;
+
+	FILETIME ft;
+	GetSystemTimeAsFileTime(&ft);
+	auto currentTime = FileTimeToSeconds(ft);
+
 	WIN32_FIND_DATA data;
 	HANDLE sh = NULL;
 	sh = FindFirstFile((path + L"\\*").c_str(), &data);
@@ -50,16 +50,30 @@ void NativeUtils::CleanDirectoryInternal(const std::wstring &path, std::vector<s
 
 		if ((data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
 		{
-			CleanDirectoryInternal(path + L"\\" + data.cFileName, filters);
+			CleanDirectoryInternal(path + L"\\" + data.cFileName, days);
 		}
 		else
 		{
-			if (std::find(filters.begin(), filters.end(), data.cFileName) != filters.end())
-			{
-				continue;
-			}
+			//auto lastAccess = static_cast<double>(*(__int64*)&data.ftLastAccessTime) / 10000000.0 - 11644473600.0;
+			//auto lastWrite = static_cast<double>(*(__int64*)&data.ftLastWriteTime) / 10000000.0 - 11644473600.0;
+			auto lastAccess = FileTimeToSeconds(data.ftLastAccessTime);
+			auto lastWrite = FileTimeToSeconds(data.ftLastWriteTime);
 
-			DeleteFile((path + L"\\" + data.cFileName).c_str());
+			if (days == 0)
+			{
+				DeleteFile((path + L"\\" + data.cFileName).c_str());
+			}
+			//else if (lastAccess != 0)
+			//{
+			//	if (lastAccess + diff < currentTime)
+			//	{
+			//		DeleteFile((path + L"\\" + data.cFileName).c_str());
+			//	}
+			//}
+			else if (lastWrite + diff < currentTime)
+			{
+				DeleteFile((path + L"\\" + data.cFileName).c_str());
+			}
 		}
 
 	} while (FindNextFile(sh, &data)); // do
@@ -104,4 +118,13 @@ uint64_t NativeUtils::GetDirectorySizeInternal(const std::wstring &path, const s
 bool NativeUtils::IsBrowsePath(const std::wstring& path)
 {
 	return (path.find(L".") == 0 || path.find(L"..") == 0);
+}
+
+ULONGLONG NativeUtils::FileTimeToSeconds(FILETIME& ft)
+{
+	ULARGE_INTEGER uli;
+	uli.HighPart = ft.dwHighDateTime;
+	uli.LowPart = ft.dwLowDateTime;
+
+	return uli.QuadPart / 10000;
 }
