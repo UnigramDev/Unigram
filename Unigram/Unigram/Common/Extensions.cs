@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;

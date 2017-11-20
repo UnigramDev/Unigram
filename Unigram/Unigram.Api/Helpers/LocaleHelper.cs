@@ -7,7 +7,7 @@ using Windows.ApplicationModel.Resources;
 using Windows.Globalization.NumberFormatting;
 using Windows.System.UserProfile;
 
-namespace Unigram.Common
+namespace Telegram.Api.Helpers
 {
     public static class LocaleHelper
     {

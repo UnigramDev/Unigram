@@ -159,10 +159,6 @@ namespace Unigram.ViewModels
                     NavigationService.NavigateToDialog(response.Result.User);
                 }
             }
-            else
-            {
-                await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
-            }
         }
 
         public RelayCommand LogoutCommand { get; }

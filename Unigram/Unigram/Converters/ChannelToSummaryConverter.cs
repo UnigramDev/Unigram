@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Windows.UI.Xaml.Data;
