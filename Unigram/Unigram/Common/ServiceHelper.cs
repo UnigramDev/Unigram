@@ -445,7 +445,7 @@ namespace Unigram.Common
                 }
                 if (message.Reply is TLMessage reply && reply.Media is TLMessageMediaInvoice invoice)
                 {
-                    content = string.Format(Strings.Android.PaymentSuccessfullyPaid, LocaleHelper.FormatCurrency(action.TotalAmount, action.Currency), name, invoice);
+                    content = string.Format(Strings.Android.PaymentSuccessfullyPaid, LocaleHelper.FormatCurrency(action.TotalAmount, action.Currency), name, invoice.Title);
                 }
                 else
                 {

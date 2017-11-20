@@ -287,7 +287,7 @@ namespace Unigram.ViewModels.Settings
             dataPackage.SetText(MeUrlPrefixConverter.Convert(_username));
             ClipboardEx.TrySetContent(dataPackage);
 
-            await TLMessageDialog.ShowAsync(Strings.Android.LinkCopied);
+            await TLMessageDialog.ShowAsync(Strings.Android.LinkCopied, Strings.Android.AppName, Strings.Android.OK);
         }
     }
 }
