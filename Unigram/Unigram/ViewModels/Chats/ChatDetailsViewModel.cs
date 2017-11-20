@@ -233,13 +233,13 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync("**In supergroups:**\n• New members can see the full message history\n• Deleted messages will disappear for all members\n• Admins can pin important messages\n• Creator can set a public link for the group\n\n**Note:** this action can't be undone.", "Convert to Supergroup", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ConvertGroupInfo2 + "\n\n" + Strings.Android.ConvertGroupInfo3, Strings.Android.ConvertGroup, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var warning = await TLMessageDialog.ShowAsync("This action is irreversible. It is not possible to downgrade a supergroup to a regular group.", "Warning", "OK", "Cancel");
+            var warning = await TLMessageDialog.ShowAsync(Strings.Android.ConvertGroupAlert, Strings.Android.ConvertGroupAlertWarning, Strings.Android.OK, Strings.Android.Cancel);
             if (warning != ContentDialogResult.Primary)
             {
                 return;

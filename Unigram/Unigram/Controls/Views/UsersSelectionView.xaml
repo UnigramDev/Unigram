@@ -42,7 +42,7 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       MaxHeight="76">
-            <controls:TagsTextBox x:Name="SearchField" Text="{Binding SearchQuery, Mode=TwoWay}" TextChanged="SearchField_TextChanged" ItemsSource="{x:Bind ViewModel.SelectedItems}" VerticalAlignment="Stretch" PlaceholderText="Search" Margin="0,8" SizeChanged="TagsTextBox_SizeChanged"/>
+            <controls:TagsTextBox x:Name="SearchField" Text="{Binding SearchQuery, Mode=TwoWay}" TextChanged="SearchField_TextChanged" ItemsSource="{x:Bind ViewModel.SelectedItems}" VerticalAlignment="Stretch" PlaceholderText="{CustomResource Search}" Margin="0,8" SizeChanged="TagsTextBox_SizeChanged"/>
         </ScrollViewer>
         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
     </Grid>

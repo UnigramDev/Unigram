@@ -53,6 +53,8 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
+        public override string Title => Strings.Android.SelectContact;
+
         public override int Maximum => 1;
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
