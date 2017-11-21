@@ -824,12 +824,20 @@ namespace Unigram.Views
             NavigationCalls.IsChecked = rpMasterTitlebar.SelectedIndex == 2;
             NavigationSettings.IsChecked = rpMasterTitlebar.SelectedIndex == 3;
 
-            SearchDialogs.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+            //SearchDialogs.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+            SearchDialogs.Visibility = Visibility.Collapsed;
             //SearchContacts.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
-            ButtonOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
+            SettingsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
             //DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex == 0 || rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Collapsed : Visibility.Visible;
-            DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
-            NewContact.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
+            //DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
+            ChatsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+            ContactsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
+
+            SearchDialogs.Text = string.Empty;
+            SearchDialogs.Visibility = Visibility.Collapsed;
+
+            DialogsPanel.Visibility = Visibility.Visible;
+            MainHeader.Visibility = Visibility.Visible;
         }
 
         private void NavigationView_ItemClick(object sender, NavigationViewItemClickEventArgs args)
@@ -866,6 +874,45 @@ namespace Unigram.Views
             {
                 MessageHelper.NavigateToUsername(ViewModel.ProtoService, "unigram", null, null, null);
             }
+        }
+
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            MainHeader.Visibility = Visibility.Collapsed;
+
+            SearchDialogs.Visibility = Visibility.Visible;
+            SearchDialogs.Focus(FocusState.Keyboard);
+        }
+
+        private void Search_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(SearchDialogs.Text))
+            {
+                MainHeader.Visibility = Visibility.Visible;
+                rpMasterTitlebar.Focus(FocusState.Programmatic);
+
+                SearchDialogs.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void Lock_Click(object sender, RoutedEventArgs e)
+        {
+            Lock.IsChecked = !Lock.IsChecked;
+
+            if (Lock.IsChecked == true)
+            {
+                ViewModel.Passcode.Lock();
+
+                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                {
+                    App.ShowPasscode();
+                }
+            }
+        }
+
+        private void EditPhoto_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsView.EditPhoto_Click(sender, e);
         }
     }
 }

@@ -142,7 +142,7 @@ namespace Unigram.Views
             }
         }
 
-        private async void EditPhoto_Click(object sender, RoutedEventArgs e)
+        public async void EditPhoto_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
             picker.ViewMode = PickerViewMode.Thumbnail;

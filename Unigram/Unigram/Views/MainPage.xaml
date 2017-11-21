@@ -10,7 +10,6 @@
     xmlns:models="using:Telegram.Api.TL"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:behaviors="using:Unigram.Behaviors"
-    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:vms="using:Unigram.ViewModels"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -257,51 +256,82 @@
                 </Grid.RowDefinitions>
                 <controls:ContentPageHeader>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="DefaultHeader" Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}" VerticalAlignment="Center" Margin="60,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <Grid x:Name="MainHeader">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="DefaultHeader" Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}" VerticalAlignment="Center" Margin="60,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
 
-                        <Button x:Name="ButtonOptions"
-                                    Padding="16,23,16,0"
-                                    Style="{StaticResource EllipsisButton}"
-                                    Grid.Column="1">
-                            <FontIcon x:Name="EllipsisIcon"
-                                            VerticalAlignment="Center"
-                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                            FontSize="16"
-                                            Glyph="&#xE10C;"
-                                            Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                            <Button.Flyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem x:Name="EditNameItem"
-                                                        Click="{x:Bind SettingsView.EditName_Click}"
-                                                        Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                        Text="{CustomResource EditName}"
-                                                        Tag="&#xE104;"/>
-                                    <MenuFlyoutItem x:Name="LogoutItem"
-                                                        Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
-                                                        Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                        Text="{CustomResource LogOut}"
-                                                        Tag="&#xE10A;"/>
-                                </MenuFlyout>
-                            </Button.Flyout>
-                        </Button>
-                        <controls:GlyphButton x:Name="NewContact" Glyph="&#xE109;" Click="NewContact_Click" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
+                            <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
+                                <controls:GlyphButton
+                                    Glyph="&#xE114;"
+                                    Click="EditPhoto_Click"
+                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                <Button Padding="16,23,16,0"
+                                        Style="{StaticResource EllipsisButton}">
+                                    <FontIcon x:Name="EllipsisIcon"
+                                                VerticalAlignment="Center"
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                FontSize="16"
+                                                Glyph="&#xE10C;"
+                                                Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                                    <Button.Flyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem x:Name="EditNameItem"
+                                                            Click="{x:Bind SettingsView.EditName_Click}"
+                                                            Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                            Text="{CustomResource EditName}"
+                                                            Tag="&#xE104;"/>
+                                            <MenuFlyoutItem x:Name="LogoutItem"
+                                                            Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
+                                                            Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                            Text="{CustomResource LogOut}"
+                                                            Tag="&#xE10A;"/>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </StackPanel>
+                            <StackPanel x:Name="ChatsOptions" Orientation="Horizontal" Grid.Column="1">
+                                <controls:GlyphToggleButton
+                                    x:Name="Lock"
+                                    Visibility="{x:Bind ViewModel.Passcode.IsEnabled, Mode=OneWay}"
+                                    IsChecked="{x:Bind ViewModel.Passcode.IsLocked, Mode=OneWay}"
+                                    UncheckedGlyph="&#xE1F7;"
+                                    CheckedGlyph="&#xE1F6;"
+                                    Click="Lock_Click"
+                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                <controls:GlyphButton
+                                    Glyph="&#xE11A;"
+                                    Click="Search_Click"
+                                    FontSize="18"
+                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                            </StackPanel>
+                            <StackPanel x:Name="ContactsOptions" Orientation="Horizontal" Grid.Column="1">
+                                <controls:GlyphButton
+                                    Glyph="&#xE109;"
+                                    Click="NewContact_Click"
+                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                <controls:GlyphButton
+                                    Glyph="&#xE11A;"
+                                    Click="Search_Click"
+                                    FontSize="18"
+                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                            </StackPanel>
+                        </Grid>
 
-                        <controls:SearchTextBox x:Uid="MainPage_SearchDialogs" x:Name="SearchDialogs"
-                                                    Padding="60,3,6,5"
-                                                    Background="{x:Null}"
-                                                    BorderBrush="{x:Null}"
-                                                    Style="{StaticResource SearchTextBoxStyle}"
-                                                    Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
-                                                    PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                                    PlaceholderText="Search for chats and messages"
-                                                    TextChanged="txtSearch_TextChanged"
-                                                    KeyDown="txtSearch_KeyDown"
-                                                    Grid.ColumnSpan="2"
-                                                    Canvas.ZIndex="1"/>
+                        <controls:SearchTextBox x:Name="SearchDialogs"
+                                                Padding="60,4,6,4"
+                                                Background="{x:Null}"
+                                                BorderBrush="{x:Null}"
+                                                Style="{StaticResource SearchTextBoxStyle}"
+                                                Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
+                                                PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                                PlaceholderText="{CustomResource Search}"
+                                                LostFocus="Search_LostFocus"
+                                                TextChanged="txtSearch_TextChanged"
+                                                KeyDown="txtSearch_KeyDown"
+                                                Canvas.ZIndex="1"/>
                         <!--<controls:SearchTextBox x:Name="SearchContacts"
                                                     Padding="60,3,6,5"
                                                     Background="{x:Null}"

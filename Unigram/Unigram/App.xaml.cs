@@ -52,6 +52,7 @@ using Windows.UI.StartScreen;
 using Windows.System;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Resources;
+using Unigram.Services;
 
 namespace Unigram
 {
@@ -115,6 +116,8 @@ namespace Unigram
 
             FileUtils.CreateTemporaryFolder();
 
+            InactivityHelper.Detected += Inactivity_Detected;
+
             UnhandledException += async (s, args) =>
             {
                 args.Handled = true;
@@ -138,6 +141,30 @@ namespace Unigram
                 });
 
 #endif
+        }
+
+        private void Inactivity_Detected(object sender, EventArgs e)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                var passcode = UnigramContainer.Current.ResolveType<IPasscodeService>();
+                if (passcode != null && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                {
+                    passcode.Lock();
+                    ShowPasscode();
+                }
+            });
+        }
+
+        public static void ShowPasscode()
+        {
+            if (Current.ModalDialog.IsModal == false)
+            {
+                Current.ModalContent = new PasscodePage();
+                Current.ModalDialog.CanBackButtonDismiss = false;
+                Current.ModalDialog.DisableBackButtonWhenModal = true;
+                Current.ModalDialog.IsModal = true;
+            }
         }
 
         public static bool IsActive { get; private set; }
@@ -175,6 +202,26 @@ namespace Unigram
             //        updatesService.CancelUpdating();
             //    }
             //}
+
+            var passcode = UnigramContainer.Current.ResolveType<IPasscodeService>();
+            if (passcode != null)
+            {
+                if (e.Visible && passcode.IsLockscreenRequired)
+                {
+                    ShowPasscode();
+                }
+                else
+                {
+                    if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Touch)
+                    {
+                        passcode.CloseTime = DateTime.Now;
+                    }
+                    else
+                    {
+                        passcode.CloseTime = DateTime.Now.AddYears(1);
+                    }
+                }
+            }
         }
 
         private void HandleActivated(bool active)
@@ -226,11 +273,7 @@ namespace Unigram
             var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame) as NavigationService;
             navigationService.SerializationService = TLSerializationService.Current;
 
-            //return new ModalDialog
-            //{
-            //    DisableBackButtonWhenModal = false,
-            //    Content = navigationFrame
-            //};
+            return new ModalDialog { Content = navigationFrame };
 
             return navigationFrame;
         }
@@ -238,6 +281,13 @@ namespace Unigram
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             Locator.Configure();
+
+            var passcode = UnigramContainer.Current.ResolveType<IPasscodeService>();
+            if (passcode != null && passcode.IsEnabled)
+            {
+                passcode.Lock();
+                InactivityHelper.Initialize(passcode.AutolockTimeout);
+            }
 
             if (Window.Current != null)
             {

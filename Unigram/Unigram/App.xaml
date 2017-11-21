@@ -137,6 +137,7 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:AutolockTimeoutConverter x:Key="AutolockTimeoutConverter"/>
             <converters:PeerToPeerModeConverter x:Key="PeerToPeerModeConverter"/>
             <converters:StringPluralConverter x:Key="StringPluralConverter"/>
             <converters:StringFormatConverter x:Key="StringFormatConverter"/>

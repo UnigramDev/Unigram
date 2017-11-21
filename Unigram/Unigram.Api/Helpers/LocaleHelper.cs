@@ -237,6 +237,22 @@ namespace Telegram.Api.Helpers
             }
         }
 
+        public static string FormatAutoLock(int timeout)
+        {
+            if (timeout == 0)
+            {
+                return GetString("AutoLockDisabled");
+            }
+            else if (timeout < 60 * 60)
+            {
+                return string.Format(GetString("AutoLockInTime"), Declension("Minutes", timeout / 60));
+            }
+            else /*if (timeout < 60 * 60 * 24)*/
+            {
+                return string.Format(GetString("AutoLockInTime"), Declension("Hours", timeout / 60 / 60));
+            }
+        }
+
         private static Dictionary<string, string> _translitChars;
         public static string[] GetQuery(string src)
         {

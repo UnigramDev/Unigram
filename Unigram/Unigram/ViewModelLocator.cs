@@ -83,6 +83,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StatsService>().As<IStatsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<PasscodeService>().As<IPasscodeService>().SingleInstance();
             container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
 
             // Disabled due to crashes on Mobile: 
@@ -161,6 +162,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsPrivacyPhoneCallViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsPrivacyChatInviteViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsSecurityChangePasswordViewModel>(); //.SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsSecurityPasscodeViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsAccountsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersFeaturedViewModel>().SingleInstance();
