@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Windows.UI.Xaml.Data;
+using Telegram.Api.Helpers;
 
 namespace Unigram.Converters
 {
@@ -43,10 +45,10 @@ namespace Unigram.Converters
 
             if (seconds >= 1 && seconds < 21)
             {
-                return BindConvert.Current.FormatTTLString(seconds);
+                return LocaleHelper.FormatTTLString(seconds);
             }
 
-            return BindConvert.Current.FormatTTLString((seconds - 16) * 5);
+            return LocaleHelper.FormatTTLString((seconds - 16) * 5);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -16,6 +16,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.System.UserProfile;
 using Windows.Globalization;
+using Unigram.Common;
 
 namespace Unigram.Converters
 {
@@ -133,129 +134,12 @@ namespace Unigram.Converters
         //    }
         //}
 
-        public string FormatTTLString(int ttl)
-        {
-            return CallDuration(ttl);
 
-            // TODO:
-            //if (ttl < 60)
-            //{
-            //    return LocaleController.formatPluralString("Seconds", ttl);
-            //}
-            //else if (ttl < 60 * 60)
-            //{
-            //    return LocaleController.formatPluralString("Minutes", ttl / 60);
-            //}
-            //else if (ttl < 60 * 60 * 24)
-            //{
-            //    return LocaleController.formatPluralString("Hours", ttl / 60 / 60);
-            //}
-            //else if (ttl < 60 * 60 * 24 * 7)
-            //{
-            //    return LocaleController.formatPluralString("Days", ttl / 60 / 60 / 24);
-            //}
-            //else
-            //{
-            //    int days = ttl / 60 / 60 / 24;
-            //    if (ttl % 7 == 0)
-            //    {
-            //        return LocaleController.formatPluralString("Weeks", days / 7);
-            //    }
-            //    else
-            //    {
-            //        return String.format("%s %s", LocaleController.formatPluralString("Weeks", days / 7), LocaleController.formatPluralString("Days", days % 7));
-            //    }
-            //}
-        }
-
-        private Dictionary<string, CurrencyFormatter> _currencyCache = new Dictionary<string, CurrencyFormatter>();
         private Dictionary<string, DateTimeFormatter> _formatterCache = new Dictionary<string, DateTimeFormatter>();
 
         public string FormatAmount(long amount, string currency)
         {
-            if (currency == null)
-            {
-                return string.Empty;
-            }
-
-            bool discount;
-            string customFormat;
-            double doubleAmount;
-
-            currency = currency.ToUpper();
-
-            if (amount < 0)
-            {
-                discount = true;
-            }
-            else
-            {
-                discount = false;
-            }
-
-            amount = Math.Abs(amount);
-
-            switch (currency)
-            {
-                case "CLF":
-                    customFormat = " {0:N4}";
-                    doubleAmount = ((double)amount) / 10000.0d;
-                    break;
-                case "BHD":
-                case "IQD":
-                case "JOD":
-                case "KWD":
-                case "LYD":
-                case "OMR":
-                case "TND":
-                    customFormat = " {0:N3}";
-                    doubleAmount = ((double)amount) / 1000.0d;
-                    break;
-                case "BIF":
-                case "BYR":
-                case "CLP":
-                case "CVE":
-                case "DJF":
-                case "GNF":
-                case "ISK":
-                case "JPY":
-                case "KMF":
-                case "KRW":
-                case "MGA":
-                case "PYG":
-                case "RWF":
-                case "UGX":
-                case "UYI":
-                case "VND":
-                case "VUV":
-                case "XAF":
-                case "XOF":
-                case "XPF":
-                    customFormat = " {0:N0}";
-                    doubleAmount = (double)amount;
-                    break;
-                case "MRO":
-                    customFormat = " {0:N1}";
-                    doubleAmount = ((double)amount) / 10.0d;
-                    break;
-                default:
-                    customFormat = " {0:N2}";
-                    doubleAmount = ((double)amount) / 100.0d;
-                    break;
-            }
-
-            if (_currencyCache.TryGetValue(currency, out CurrencyFormatter formatter) == false)
-            {
-                formatter = new CurrencyFormatter(currency, GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion);
-                _currencyCache[currency] = formatter;
-            }
-
-            if (formatter != null)
-            {
-                return (discount ? "-" : string.Empty) + formatter.Format(doubleAmount);
-            }
-
-            return (discount ? "-" : string.Empty) + string.Format(currency + customFormat, doubleAmount);
+            return LocaleHelper.FormatCurrency(amount, currency);
         }
 
         public string ShippingOption(TLShippingOption option, string currency)
@@ -267,67 +151,6 @@ namespace Unigram.Converters
             }
 
             return $"{FormatAmount(amount, currency)} - {option.Title}";
-        }
-
-        public string CallDuration(int seconds)
-        {
-            if (seconds < 60)
-            {
-                var format = Strings.Resources.CallSeconds_any;
-                var number = seconds;
-                if (number == 1)
-                {
-                    format = Strings.Resources.CallSeconds_1;
-                }
-                else if (number == 2)
-                {
-                    format = Strings.Resources.CallSeconds_2;
-                }
-                else if (number == 4)
-                {
-                    format = Strings.Resources.CallSeconds_3_10;
-                }
-
-                return string.Format(format, number);
-            }
-            else if (seconds < 60 * 60)
-            {
-                var format = Strings.Resources.CallMinutes_any;
-                var number = seconds / 60;
-                if (number == 1)
-                {
-                    format = Strings.Resources.CallMinutes_1;
-                }
-                else if (number == 2)
-                {
-                    format = Strings.Resources.CallMinutes_2;
-                }
-                else if (number == 4)
-                {
-                    format = Strings.Resources.CallMinutes_3_10;
-                }
-
-                return string.Format(format, number);
-            }
-            else
-            {
-                var format = "{0} hours";
-                var number = seconds / (60 * 60);
-                if (number == 1)
-                {
-                    format = "{0} hours";
-                }
-                else if (number == 2)
-                {
-                    format = "{0} hours";
-                }
-                else if (number == 4)
-                {
-                    format = "{0} hours";
-                }
-
-                return string.Format(format, number);
-            }
         }
 
         public string CallShortDuration(int seconds)

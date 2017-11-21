@@ -134,6 +134,7 @@ namespace Unigram.Controls.Views
             {
                 Transport.TransportVisibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Collapsed : Visibility.Visible;
                 Details.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
+                Surface.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
             });
         }
 
@@ -308,13 +309,18 @@ namespace Unigram.Controls.Views
 
         private string ConvertFrom(ITLDialogWith with)
         {
-            return with is TLUser user && user.IsSelf ? "You" : with?.DisplayName;
+            return with is TLUser user && user.IsSelf ? user.FullName : with?.DisplayName;
         }
 
         private string ConvertDate(int value)
         {
             var date = Convert.DateTime(value);
-            return string.Format("{0} at {1}", date.Date == DateTime.Now.Date ? "Today" : Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
+            return string.Format(Strings.Android.FormatDateAtTime, Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
+        }
+
+        private string ConvertOf(int index, int count)
+        {
+            return string.Format(Strings.Android.Of, index + 1, count);
         }
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
@@ -357,8 +363,7 @@ namespace Unigram.Controls.Views
 
                     _mediaPlayerElement = new MediaPlayerElement { Style = Resources["yolo"] as Style };
                     _mediaPlayerElement.AreTransportControlsEnabled = true;
-                    _mediaPlayerElement.TransportControls = Transport;
-                    _mediaPlayerElement.Tapped += MediaPlayer_Tapped;
+                    //_mediaPlayerElement.TransportControls = Transport;
                     _mediaPlayerElement.Tag = item.Source;
                     _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
 
@@ -394,7 +399,6 @@ namespace Unigram.Controls.Views
                 _mediaPlayerElement.SetMediaPlayer(null);
                 _mediaPlayerElement.AreTransportControlsEnabled = false;
                 _mediaPlayerElement.TransportControls = null;
-                _mediaPlayerElement.Tapped -= MediaPlayer_Tapped;
                 _mediaPlayerElement = null;
 
                 _mediaPlayer.Dispose();
@@ -414,20 +418,6 @@ namespace Unigram.Controls.Views
             {
                 Transport.Show();
             }
-        }
-
-        private void MediaPlayer_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            if (Transport.IsVisible)
-            {
-                Transport.Hide();
-            }
-            else
-            {
-                Transport.Show();
-            }
-
-            e.Handled = true;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

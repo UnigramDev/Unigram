@@ -67,7 +67,7 @@ namespace Unigram.ViewModels.Settings
                 IsLocal = true;
                 SelectedItem = null;
 
-                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath(Constants.WallpaperFileName));
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetFilePath(Constants.WallpaperFileName));
                 if (item is StorageFile file)
                 {
                     using (var stream = await file.OpenReadAsync())
@@ -171,7 +171,7 @@ namespace Unigram.ViewModels.Settings
                     var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath(fileName));
                     if (item is StorageFile file)
                     {
-                        var result = await FileUtils.CreateTempFileAsync(Constants.WallpaperFileName);
+                        var result = await FileUtils.CreateFileAsync(Constants.WallpaperFileName);
                         await file.CopyAndReplaceAsync(result);
 
                         var accent = await ImageHelper.GetAccentAsync(result);
@@ -202,7 +202,7 @@ namespace Unigram.ViewModels.Settings
                 var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath(TempWallpaperFileName));
                 if (item is StorageFile file)
                 {
-                    var result = await FileUtils.CreateTempFileAsync(Constants.WallpaperFileName);
+                    var result = await FileUtils.CreateFileAsync(Constants.WallpaperFileName);
                     await file.CopyAndReplaceAsync(result);
 
                     var accent = await ImageHelper.GetAccentAsync(result);

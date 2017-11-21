@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
@@ -14,14 +16,13 @@ namespace Unigram.Converters
         {
             if (value is TLChannel channel)
             {
-                var result = channel.IsMegaGroup ? "Group" : "Channel";
                 if (channel.HasUsername && channel.HasParticipantsCount)
                 {
-                    return string.Format("{0}, {1}, {2} members", channel.Username, channel.IsMegaGroup ? "group" : "channel", channel.ParticipantsCount);
+                    return string.Format("{0}, {1}", channel.Username, LocaleHelper.Declension(channel.IsMegaGroup ? "Members" : "Subscribers", channel.ParticipantsCount ?? 0));
                 }
                 else if (channel.HasUsername)
                 {
-                    return string.Format("{0}, {1}", channel.Username, channel.IsMegaGroup ? "group" : "channel");
+                    return channel.Username;
                 }
             }
 

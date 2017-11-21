@@ -530,16 +530,18 @@ namespace Telegram.Api.TL
             {
                 lock (syncRoot)
                 {
-                    using (var fileStream = FileUtils.GetLocalFileStreamForRead(fileName))
-                    {
-                        //if (fileStream.Length > 0)
-                        //{
-                        //    using (var from = new TLBinaryReader(fileStream))
-                        //    {
-                        //        return TLFactory.Read<T>(from);
-                        //    }
-                        //}
-                    }
+                    //using (var fileStream = FileUtils.GetLocalFileStreamForRead(fileName))
+                    //{
+                    //    if (fileStream.Length > 0)
+                    //    {
+                            using (var from = TLObjectSerializer.CreateReader(FileUtils.GetFileName(fileName)))
+                            {
+                                from.ReadUInt32();
+                                return (T)Activator.CreateInstance(typeof(T), from);
+                                //return TLFactory.Read<T>(from);
+                            }
+                    //    }
+                    //}
                 }
             }
             catch (Exception e)

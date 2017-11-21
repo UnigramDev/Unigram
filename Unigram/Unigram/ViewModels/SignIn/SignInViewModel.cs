@@ -140,9 +140,15 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (PhoneCode == null || PhoneNumber == null)
+            if (string.IsNullOrEmpty(_phoneCode))
             {
-                await TLMessageDialog.ShowAsync("Please enter your phone number.", "Warning", "OK");
+                RaisePropertyChanged("PHONE_CODE_INVALID");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(_phoneNumber))
+            {
+                RaisePropertyChanged("PHONE_NUMBER_INVALID");
                 return;
             }
 
@@ -163,13 +169,33 @@ namespace Unigram.ViewModels.SignIn
             {
                 IsLoading = false;
 
-                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
+                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
+                    //needShowInvalidAlert(req.phone_number, false);
                 }
-                else
+                else if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await TLMessageDialog.ShowAsync(Strings.Android.PhoneNumberFlood, Strings.Android.AppName, Strings.Android.OK);
+                }
+                //else if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_BANNED))
+                //{
+                //    needShowInvalidAlert(req.phone_number, true);
+                //}
+                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || response.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.InvalidCode, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.CodeExpired, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else if (response.Error.ErrorMessage.StartsWith("FLOOD_WAIT"))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.FloodWait, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else if (response.Error.ErrorCode != -1000)
+                {
+                    await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Android.AppName, Strings.Android.OK);
                 }
             }
         }

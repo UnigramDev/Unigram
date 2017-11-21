@@ -31,16 +31,16 @@ namespace Unigram.ViewModels.Settings
         {
             ProtoService.GotUserCountry += GotUserCountry;
 
-            if (!string.IsNullOrEmpty(ProtoService.Country))
-            {
-                GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
-            }
-
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            if (!string.IsNullOrEmpty(ProtoService.Country))
+            {
+                GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
+            }
+
             IsLoading = false;
             return Task.CompletedTask;
         }
@@ -133,14 +133,20 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public List<KeyedList<string, Country>> Countries { get; } = Country.GroupedCountries;
+        public IList<Country> Countries { get; } = Country.Countries;
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (PhoneCode == null || PhoneNumber == null)
+            if (string.IsNullOrEmpty(_phoneCode))
             {
-                await new TLMessageDialog("Please enter your phone number.").ShowQueuedAsync();
+                RaisePropertyChanged("PHONE_CODE_INVALID");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(_phoneNumber))
+            {
+                RaisePropertyChanged("PHONE_NUMBER_INVALID");
                 return;
             }
 

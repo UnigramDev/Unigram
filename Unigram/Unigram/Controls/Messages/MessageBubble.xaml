@@ -118,13 +118,13 @@
                            Visibility="Collapsed"/>
 
                 <TextBlock x:Name="AdminLabel"
-                           Text="admin"
-                           Margin="0,0,0,2"
+                           Text="{CustomResource ChatAdmin}"
                            Foreground="{ThemeResource MessageSubtleLabelBrush}"
                            RequestedTheme="{ThemeResource MessageTextBlockTheme}"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            HorizontalAlignment="Right"
-                           Visibility="Collapsed"/>
+                           Visibility="Collapsed"
+                           Margin="0,0,0,2"/>
 
                 <local:MessageReference
                     x:Name="Reply"

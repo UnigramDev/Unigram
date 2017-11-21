@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Constants.Secret.cs" />
+    <Compile Include="Helpers\LocaleHelper.cs" />
     <Compile Include="Helpers\Markdown.cs" />
     <Compile Include="Helpers\PhoneNumber.cs" />
     <Compile Include="Services\Cache\Context\ChatsContext.cs" />
@@ -117,7 +118,9 @@
     <Compile Include="Services\FileManager\UploadManager.cs" />
     <Compile Include="Services\FileManager\Worker.cs" />
     <Compile Include="Services\IMTProtoService.Async.cs" />
+    <Compile Include="Services\Locale\LocaleService.cs" />
     <Compile Include="Services\MTProtoService.Async.cs" />
+    <Compile Include="Services\MTProtoService.LangPack.cs" />
     <Compile Include="Services\MTProtoService.Payments.cs" />
     <Compile Include="Services\MTProtoService.Phone.cs" />
     <Compile Include="Services\Stats\StatsService.cs" />
@@ -1216,6 +1219,7 @@
       <Name>Telegram.Api.Native</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

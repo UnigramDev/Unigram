@@ -24,16 +24,32 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <!--<controls:ButtonPageHeader
-            Text="Info"
-            Glyph="&#xE115;"
-            Command="{x:Bind ViewModel.EditCommand}"
-            CommandVisibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"/>-->
-        <controls:ButtonPageHeader
-            Text="Info"
-            Glyph="&#xE104;"
-            Command="{x:Bind ViewModel.EditCommand}"
-            CommandVisibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"/>
+        <controls:ContentPageHeader>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Info" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+
+                <controls:GlyphButton
+                    Glyph="&#xE104;"
+                    Command="{x:Bind ViewModel.EditCommand}"
+                    Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
+                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                    Grid.Column="1"/>
+
+                <Button Click="Menu_ContextRequested" Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="2">
+                    <FontIcon x:Name="EllipsisIcon"
+                              VerticalAlignment="Center"
+                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              FontSize="16"
+                              Glyph="&#xE10C;"
+                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                </Button>
+            </Grid>
+        </controls:ContentPageHeader>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
@@ -137,22 +153,23 @@
                     </StackPanel>
                 </StackPanel>
             </ListView.Header>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="models:TLChannelParticipantBase">
-                    <Grid Padding="0,6" Background="Transparent" ContextRequested="Participant_ContextRequested">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <controls:ProfilePicture x:Phase="3" Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+            <ListView.ItemTemplateSelector>
+                <selectors:ParticipantTemplateSelector>
+                    <selectors:ParticipantTemplateSelector.ItemTemplate>
+                        <DataTemplate x:DataType="models:TLChannelParticipantBase">
+                            <Grid Padding="0,6" Background="Transparent" ContextRequested="Participant_ContextRequested">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <controls:ProfilePicture x:Phase="3" Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
-                        <TextBlock Text="{x:Bind User.FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                        <TextBlock Text="{x:Bind User, Converter={StaticResource LastSeenConverter}, ConverterParameter=list}"
+                                <TextBlock Text="{x:Bind User.FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                <TextBlock Text="{x:Bind User, Converter={StaticResource LastSeenConverter}, ConverterParameter=list}"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                    VerticalAlignment="Top"
@@ -162,16 +179,46 @@
                                    Grid.Row="1"
                                    MaxLines="1"
                                    x:Phase="1"/>
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:ParticipantTemplateSelector.ItemTemplate>
+                    <selectors:ParticipantTemplateSelector.AdminTemplate>
+                        <DataTemplate x:DataType="models:TLChannelParticipantBase">
+                            <Grid Padding="0,6" Background="Transparent" ContextRequested="Participant_ContextRequested">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <controls:ProfilePicture x:Phase="3" Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
-                        <TextBlock Text="admin"
+                                <TextBlock Text="{x:Bind User.FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                <TextBlock Text="{x:Bind User, Converter={StaticResource LastSeenConverter}, ConverterParameter=list}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                           VerticalAlignment="Top"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap"
+                                           Grid.Column="1"
+                                           Grid.Row="1"
+                                           MaxLines="1"
+                                           x:Phase="1"/>
+
+                                <TextBlock Text="{CustomResource ChatAdmin}"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                    Visibility="{x:Bind (Visibility)IsAdmin}"
                                    Grid.Column="2"
                                    Grid.RowSpan="2"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:ParticipantTemplateSelector.AdminTemplate>
+                </selectors:ParticipantTemplateSelector>
+            </ListView.ItemTemplateSelector>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

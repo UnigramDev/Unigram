@@ -1,11 +1,24 @@
-﻿using Telegram.Api.Helpers;
+﻿using libtgvoip;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Settings;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
@@ -57,5 +70,24 @@ namespace Unigram.Views.Settings
                 }
             }
         }
+
+        #region Binding
+
+        private string ConvertUseLessData(DataSavingMode value)
+        {
+            switch (value)
+            {
+                default:
+                case DataSavingMode.Never:
+                    return Strings.Android.UseLessDataNever;
+                case DataSavingMode.MobileOnly:
+                    return Strings.Android.UseLessDataOnMobile;
+                case DataSavingMode.Always:
+                    return Strings.Android.UseLessDataAlways;
+            }
+        }
+
+        #endregion
+
     }
 }

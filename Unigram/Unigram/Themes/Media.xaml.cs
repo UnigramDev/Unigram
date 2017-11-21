@@ -172,7 +172,10 @@ namespace Unigram.Themes
                     return;
                 }
 
-                page.Play(bubble.ViewModel);
+                if (bubble.ViewModel is TLMessage inner)
+                {
+                    page.Play(inner);
+                }
             }
             else if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document) || TLMessage.IsGif(document) || message.IsPhoto())
             {

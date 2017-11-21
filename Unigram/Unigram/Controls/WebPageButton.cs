@@ -48,14 +48,22 @@ namespace Unigram.Controls
 
                 if (webPage.HasCachedPage)
                 {
-                    if (run1 != null)
+                    //if (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) || string.Equals(webPage.SiteName, "instagram", StringComparison.OrdinalIgnoreCase))
+                    //{
+                    //    // Instant gallery
+                    //    Visibility = Visibility.Collapsed;
+                    //}
+                    //else
                     {
-                        run1.Text = run3.Text = "\uE611";
-                        run2.Text = "  INSTANT VIEW  ";
-                        run3.Foreground = null;
-                    }
+                        if (run1 != null)
+                        {
+                            run1.Text = run3.Text = "\uE611";
+                            run2.Text = "  INSTANT VIEW  ";
+                            run3.Foreground = null;
+                        }
 
-                    Visibility = Visibility.Visible;
+                        Visibility = Visibility.Visible;
+                    }
                 }
                 else if (webPage.HasType && webPage.Type.Equals("telegram_megagroup", StringComparison.OrdinalIgnoreCase))
                 {

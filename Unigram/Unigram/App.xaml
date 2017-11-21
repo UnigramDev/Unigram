@@ -132,9 +132,12 @@
             <x:Int32 x:Key="ChatTitleMaxLength">255</x:Int32>
             <x:Int32 x:Key="ChannelTitleMaxLength">255</x:Int32>
             <x:Int32 x:Key="ChannelAboutMaxLength">255</x:Int32>
+            <x:Int32 x:Key="UserFirstNameMaxLength">255</x:Int32>
+            <x:Int32 x:Key="UserLastNameMaxLength">255</x:Int32>
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:AutolockTimeoutConverter x:Key="AutolockTimeoutConverter"/>
             <converters:PeerToPeerModeConverter x:Key="PeerToPeerModeConverter"/>
             <converters:StringPluralConverter x:Key="StringPluralConverter"/>
             <converters:StringFormatConverter x:Key="StringFormatConverter"/>

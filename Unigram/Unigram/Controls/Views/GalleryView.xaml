@@ -48,7 +48,8 @@
         <controls:GalleryTransportControls.Content>
             <Grid>
                 <Border x:Name="Layer" Background="Black" Grid.RowSpan="3"/>
-                    
+                <Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}"/>
+
                 <FlipView x:Name="Flip"
                           x:DeferLoadStrategy="Lazy"
                           Opacity="0"
@@ -81,7 +82,7 @@
                         Loaded="ImageView_ImageOpened"
                         Source="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                         Constraint="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}"
-                        Click="ImageView_Click" />
+                        IsHitTestVisible="False"/>
 
                     <!--<local:TransferButton Completed="Download_Click" Transferable="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}" IsTransferring="{x:Bind ViewModel.FirstItem.Source.IsTransferring, Mode=OneWay}" Style="{StaticResource MediaTransferButtonStyle}"/>
                          <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{x:Bind ViewModel.FirstItem.Source.Progress, Mode=OneWay}" IsHitTestVisible="False"/>-->
@@ -95,22 +96,12 @@
         </controls:GalleryTransportControls.Content>
         <controls:GalleryTransportControls.Header>
             <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
-                <Grid Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}"/>
-                    <TextBlock VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1">
-                        <Run/>
-                        <Run Text="of"/>
-                    </TextBlock>
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="2">
-                        <Run/>
-                        <Run Text="{x:Bind ViewModel.TotalItems, Mode=OneWay}"/>
-                    </TextBlock>
-                </Grid>
+                <TextBlock
+                    Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.TotalItems), Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource BaseTextBlockStyle}"/>
 
                 <local:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
                                    Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"

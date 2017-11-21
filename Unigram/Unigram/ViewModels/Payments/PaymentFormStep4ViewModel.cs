@@ -48,8 +48,8 @@ namespace Unigram.ViewModels.Payments
                 Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
                 PaymentForm = tuple.Item2;
 
-                // TODO: real hint
-                PasswordHint = "Password";
+                    // TODO: real hint
+                    PasswordHint = Strings.Android.LoginPassword;
 
                 if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
                 {

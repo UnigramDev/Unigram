@@ -20,15 +20,11 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid x:Name="Header" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock x:Uid="SignInPage_HeaderLabel" Text="Your phone number" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-            <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE10B;" Grid.Column="1"/>
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-        </Grid>
+        <controls:ButtonPageHeader
+            x:Name="Header"
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource YourPhone}"
+            Glyph="&#xE10B;"/>
 
         <Grid x:Name="ContentPanel" Padding="12,20" MaxWidth="360" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -40,18 +36,22 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Uid="SignInPage_TitleLabel" x:Name="TitleLabel" Text="Your phone number" Visibility="Collapsed" Style="{ThemeResource TitleTextBlockStyle}"/>
-            <TextBlock x:Uid="SignInPage_DetailsLabel" Text="Please select the country you live in and enter your phone number"
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       Padding="0,8,0,16"
-                       Grid.Row="1"/>
+            <TextBlock
+                x:Name="TitleLabel"
+                Visibility="Collapsed"
+                Text="{CustomResource YourPhone}"
+                Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock
+                Text="{CustomResource StartText}"
+                Style="{StaticResource BodyTextBlockStyle}"
+                Padding="0,8,0,16"
+                Grid.Row="1"/>
 
             <ComboBox x:Uid="SignInPage_CountriesList"
                       ItemsSource="{Binding Countries}"
                       SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
-                      Header="Country:"
+                      PlaceholderText="{CustomResource ChooseCountry}"
                       MinWidth="280"
-                      PlaceholderText="Select your country..."
                       HorizontalAlignment="Stretch"
                       Grid.Row="2">
                 <ComboBox.ItemTemplate>
@@ -71,22 +71,19 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- The user can enter their phone number here -->
-                <controls:UpdateTextBox x:Uid="SignInPage_PhoneCodeTextBox"
+                <controls:UpdateTextBox x:Name="PhoneCode"
                                         Text="{Binding PhoneCode, Mode=TwoWay}"
                                         Margin="0,0,8,0"
                                         Width="30"
-                                        Header="Code:"
                                         InputScope="TelephoneNumber"
                                         PlaceholderText="+"
                                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
-                <controls:UpdateTextBox x:Uid="SignInPage_PhoneNumberTextBox"
-                                        x:Name="PrimaryInput"
+                <controls:UpdateTextBox x:Name="PrimaryInput"
                                         Text="{Binding PhoneNumber, Mode=TwoWay}"
                                         MinWidth="200"
                                         InputScope="TelephoneNumber"
                                         IsTextPredictionEnabled="False"
                                         KeyDown="PhoneNumber_KeyDown"
-                                        Header="Phone number:"
                                         PlaceholderText="Enter your phone number"
                                         Grid.Column="1"/>
 
@@ -95,19 +92,17 @@
             <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
 
             <Button x:Name="NextButton"
-                    x:Uid="SignInPage_NextButton"
+                    Content="{CustomResource OK}"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     Foreground="White"
                     HorizontalAlignment="Stretch"
-                    Content="Next"
                     Margin="0,4,0,8"
                     Grid.Row="5"
                     Visibility="Collapsed"/>
 
-            <HyperlinkButton x:Uid="SignInPage_ProxySettingsButton"
-                             Command="{x:Bind ViewModel.ProxyCommand}"
-                             Content="Proxy Settings"
+            <HyperlinkButton Command="{x:Bind ViewModel.ProxyCommand}"
+                             Content="{CustomResource ProxySettings}"
                              Grid.Row="6"/>
         </Grid>
 
@@ -120,7 +115,6 @@
                     <VisualState.Setters>
                         <Setter Target="ContentPanel.VerticalAlignment" Value="Center" />
                         <Setter Target="Header.Visibility" Value="Collapsed"/>
-                        <Setter Target="NextGlyph.Visibility" Value="Collapsed"/>
                         <Setter Target="NextButton.Visibility" Value="Visible"/>
                         <Setter Target="TitleLabel.Visibility" Value="Visible"/>
                     </VisualState.Setters>

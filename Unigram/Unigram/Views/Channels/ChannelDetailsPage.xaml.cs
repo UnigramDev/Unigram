@@ -82,6 +82,47 @@ namespace Unigram.Views.Channels
             e.Handled = true;
         }
 
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            var channel = ViewModel.Item as TLChannel;
+            var full = ViewModel.Full as TLChannelFull;
+            if (full == null || channel == null)
+            {
+                return;
+            }
+
+            if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null))
+            {
+                if (channel.IsMegaGroup)
+                {
+                    CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.ManageGroupMenu);
+                }
+                else
+                {
+                    CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.ManageChannelMenu);
+                }
+            }
+
+            if (channel.IsMegaGroup)
+            {
+                CreateFlyoutItem(ref flyout, null, Strings.Android.SearchMembers);
+
+                if (!channel.IsCreator && !channel.IsLeft /*&& !channel.IsKicked*/)
+                {
+                    CreateFlyoutItem(ref flyout, null, Strings.Android.LeaveMegaMenu);
+                }
+            }
+
+            CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
+
+            if (flyout.Items.Count > 0)
+            {
+                flyout.ShowAt((Button)sender);
+            }
+        }
+
         private void Participant_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
@@ -117,6 +158,16 @@ namespace Unigram.Views.Channels
 
                 flyout.Items.Add(flyoutItem);
             }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, ICommand command, string text)
+        {
+            var flyoutItem = new MenuFlyoutItem();
+            flyoutItem.IsEnabled = command != null;
+            flyoutItem.Command = command;
+            flyoutItem.Text = text;
+
+            flyout.Items.Add(flyoutItem);
         }
 
         private Visibility ParticipantPromote_Loaded(TLChannelParticipantBase participant)

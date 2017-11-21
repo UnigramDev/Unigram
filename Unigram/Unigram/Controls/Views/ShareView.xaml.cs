@@ -27,6 +27,8 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
 using Unigram.Common;
 using Unigram.Converters;
+using Windows.System;
+using Windows.UI.Core;
 
 namespace Unigram.Controls.Views
 {
@@ -42,6 +44,8 @@ namespace Unigram.Controls.Views
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
         }
+
+        #region Share
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -101,6 +105,10 @@ namespace Unigram.Controls.Views
             package.SetText(ViewModel.ShareLink.ToString());
             package.SetWebLink(ViewModel.ShareLink);
         }
+
+        #endregion
+
+        #region Show
 
         private static ShareView _current;
         public static ShareView Current
@@ -220,7 +228,9 @@ namespace Unigram.Controls.Views
             return base.ShowAsync();
         }
 
+        #endregion
 
+        #region Header
 
         private ScrollViewer _scrollingHost;
 
@@ -401,6 +411,8 @@ namespace Unigram.Controls.Views
             }
         }
 
+        #endregion
+
         //protected override void UpdateView(Rect bounds)
         //{
         //    if (BackgroundElement == null) return;
@@ -426,9 +438,7 @@ namespace Unigram.Controls.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //ViewModel.SelectedItems = new List<ITLDialogWith>(List.SelectedItems.Cast<ITLDialogWith>());
-
-            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
             {
                 foreach (var item in ViewModel.SelectedItems)
                 {
@@ -440,6 +450,10 @@ namespace Unigram.Controls.Views
                 }
 
                 ViewModel.SelectionMode = ListViewSelectionMode.Multiple;
+            }
+
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
                 return;
             }
 

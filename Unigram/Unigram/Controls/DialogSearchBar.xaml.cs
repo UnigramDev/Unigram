@@ -26,5 +26,14 @@ namespace Unigram.Controls
         {
             this.InitializeComponent();
         }
+
+        #region Binding
+
+        private string ConvertOf(int index, int count)
+        {
+            return string.Format(Strings.Android.Of, index + 1, count);
+        }
+
+        #endregion
     }
 }

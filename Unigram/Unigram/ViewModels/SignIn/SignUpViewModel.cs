@@ -79,6 +79,12 @@ namespace Unigram.ViewModels.SignIn
                 return;
             }
 
+            if (_firstName == null)
+            {
+                RaisePropertyChanged("FIRSTNAME_INVALID");
+                return;
+            }
+
             var phoneNumber = _phoneNumber;
             var phoneCodeHash = _sentCode.PhoneCodeHash;
 
@@ -100,13 +106,29 @@ namespace Unigram.ViewModels.SignIn
             {
                 IsLoading = false;
 
-                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
+                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
+                    await TLMessageDialog.ShowAsync(Strings.Android.InvalidPhoneNumber, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || response.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.InvalidCode, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.CodeExpired, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else if (response.Error.TypeEquals(TLErrorType.FIRSTNAME_INVALID))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.InvalidFirstName, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else if (response.Error.TypeEquals(TLErrorType.LASTNAME_INVALID))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.InvalidLastName, Strings.Android.AppName, Strings.Android.OK);
                 }
                 else
                 {
-                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Android.AppName, Strings.Android.OK);
                 }
             }
         }

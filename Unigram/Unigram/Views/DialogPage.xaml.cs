@@ -241,15 +241,14 @@ namespace Unigram.Views
             {
                 ManagePanel.Visibility = Visibility.Collapsed;
                 InfoPanel.Visibility = Visibility.Visible;
+
+                ViewModel.SelectedItems = new List<TLMessageCommonBase>();
             }
             else
             {
                 ManagePanel.Visibility = Visibility.Visible;
                 InfoPanel.Visibility = Visibility.Collapsed;
             }
-
-            ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
-            ViewModel.MessagesDeleteCommand.RaiseCanExecuteChanged();
         }
 
         private void Manage_Click(object sender, RoutedEventArgs e)
@@ -501,10 +500,17 @@ namespace Unigram.Views
 
         private async void Attach_Click(object sender, RoutedEventArgs e)
         {
-            var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendMedia)
+            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendMedia)
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting media content here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachMediaRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -703,7 +709,15 @@ namespace Unigram.Views
             var channel = ViewModel.With as TLChannel;
             if (channel != null && channel.HasBannedRights && (channel.BannedRights.IsSendStickers || channel.BannedRights.IsSendGifs))
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -854,22 +868,22 @@ namespace Unigram.Views
             var channel = messageCommon.Parent as TLChannel;
 
             // Generic
-            CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, Strings.Resources.MessageReply);
-            CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? Strings.Resources.MessageUnpin : Strings.Resources.MessagePin);
-            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, Strings.Resources.MessageEdit);
-            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Resources.MessageForward);
-            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Resources.MessageDelete);
+            CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, Strings.Android.Reply);
+            CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? Strings.Android.UnpinMessage : Strings.Android.PinMessage);
+            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, Strings.Android.Edit);
+            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Android.Forward);
+            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Android.Delete);
             CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.MessageSelect);
-            CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, Strings.Resources.MessageCopy);
+            CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, Strings.Android.Copy);
             CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, messageCommon, Strings.Resources.MessageCopyMedia);
             CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? Strings.Resources.MessageCopyLinkBroadcast : Strings.Resources.MessageCopyLinkMegaGroup);
 
             // Stickers
-            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), messageCommon, Strings.Resources.MessageAddSticker);
-            CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, Strings.Resources.MessageFaveSticker);
-            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, Strings.Resources.MessageUnfaveSticker);
+            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), messageCommon, Strings.Android.AddToStickers);
+            CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, Strings.Android.AddToFavorites);
+            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, Strings.Android.RemovedFromFavorites);
 
-            CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, Strings.Resources.MessageSaveGIF);
+            CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, Strings.Android.SaveToGIFs);
             CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.MessageSaveMedia);
             //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, AppResources.MessageSaveDownload);
 
@@ -1206,10 +1220,17 @@ namespace Unigram.Views
 
         public async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendStickers)
+            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendStickers)
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -1223,10 +1244,17 @@ namespace Unigram.Views
 
         public async void Gifs_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendGifs)
+            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendGifs)
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting GIFs here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -1543,7 +1571,7 @@ namespace Unigram.Views
 
         public string ConvertEmptyText(int userId)
         {
-            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? "Got a question about Telegram?" : "No messages here yet...";
+            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? Strings.Android.GotAQuestion : Strings.Android.NoMessages;
         }
 
         public string ConvertSelectedCount(int count, bool items)
@@ -1551,12 +1579,32 @@ namespace Unigram.Views
             if (items)
             {
                 // TODO: Send 1 Photo/Video
-                return count > 0 ? count > 1 ? string.Format(Strings.Resources.SendMultipleMedias, count) : Strings.Resources.SendOneItem : Strings.Resources.SendPhotoVideo;
+                return count > 0 ? string.Format(Strings.Android.SendItems, count) : Strings.Android.ChatGallery;
             }
             else
             {
-                return count > 0 ? count > 1 ? Strings.Resources.SendAsFiles : Strings.Resources.SendAsFile : Strings.Resources.SendFile;
+                return count > 0 ? count > 1 ? Strings.Android.SendAsFiles : Strings.Android.SendAsFile : Strings.Android.ChatDocument;
             }
+        }
+
+        private string ConvertPlaceholder(ITLDialogWith with)
+        {
+            if (with is TLChannel channel && channel.IsBroadcast)
+            {
+                return Strings.Android.ChannelBroadcast;
+            }
+
+            return Strings.Android.TypeMessage;
+        }
+
+        private string ConvertReportSpam(ITLDialogWith with)
+        {
+            if (with is TLUser)
+            {
+                return Strings.Android.ReportSpam;
+            }
+
+            return Strings.Android.ReportSpamAndLeave;
         }
 
         #endregion

@@ -45,7 +45,6 @@
 
         <TextBox
             x:Name="FieldServer"
-            Header="Connection"
             PlaceholderText="{CustomResource UseProxyAddress}"
             Margin="12,12,12,12"
             Grid.Row="1"/>
@@ -57,20 +56,21 @@
             Grid.Row="2"/>
         <TextBox
             x:Name="FieldUsername"
-            Header="Credentials (optional)"
             PlaceholderText="{CustomResource UseProxyUsername}"
-            Margin="12,12,12,12"
+            Margin="12,0,12,12"
             Grid.Row="3"/>
-        <PasswordBox x:Name="FieldPassword"
-                     PlaceholderText="{CustomResource UseProxyPassword}"
-                     Margin="12,0,12,12"
-                     Grid.Row="4"/>
+        <PasswordBox
+            x:Name="FieldPassword"
+            PlaceholderText="{CustomResource UseProxyPassword}"
+            Margin="12,0,12,12"
+            Grid.Row="4"/>
 
-        <TextBlock Text="{CustomResource UseProxyInfo}" 
-                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                   Margin="12,0,12,12"
-                   Style="{StaticResource CaptionTextBlockStyle}"
-                   Grid.Row="6"/>
+        <TextBlock
+            Text="{CustomResource UseProxyInfo}" 
+            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+            Margin="12,0,12,12"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Grid.Row="6"/>
 
         <CheckBox
             x:Name="FieldCalls"

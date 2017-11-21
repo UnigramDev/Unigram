@@ -58,7 +58,7 @@ namespace Unigram.Views
 
         private void Phone_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneWelcomePage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneIntroPage));
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)
@@ -126,6 +126,11 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(SettingsWallPaperPage));
         }
 
+        private void Language_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
+        }
+
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
             var user = ViewModel.Self;
@@ -137,7 +142,7 @@ namespace Unigram.Views
             }
         }
 
-        private async void EditPhoto_Click(object sender, RoutedEventArgs e)
+        public async void EditPhoto_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
             picker.ViewMode = PickerViewMode.Thumbnail;

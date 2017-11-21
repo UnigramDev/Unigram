@@ -159,16 +159,12 @@ namespace Unigram.ViewModels
                     NavigationService.NavigateToDialog(response.Result.User);
                 }
             }
-            else
-            {
-                await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
-            }
         }
 
         public RelayCommand LogoutCommand { get; }
         private async void LogoutExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureLogout, Strings.Android.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureLogout, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

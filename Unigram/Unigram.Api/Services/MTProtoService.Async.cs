@@ -24,6 +24,62 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLLangPackDifference>> GetDifferenceAsync(int fromVersion)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLLangPackDifference>>();
+            GetDifferenceAsync(fromVersion, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLLangPackDifference>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLLangPackDifference>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLLangPackDifference>> GetLangPackAsync(string langCode)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLLangPackDifference>>();
+            GetLangPackAsync(langCode, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLLangPackDifference>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLLangPackDifference>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLVector<TLLangPackLanguage>>> GetLanguagesAsync()
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLLangPackLanguage>>>();
+            GetLanguagesAsync((callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<TLLangPackLanguage>>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<TLLangPackLanguage>>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLVector<TLLangPackStringBase>>> GetStringsAsync(string langCode, TLVector<string> keys)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLLangPackStringBase>>>();
+            GetStringsAsync(langCode, keys, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<TLLangPackStringBase>>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<TLLangPackStringBase>>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ResetSavedAsync()
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();

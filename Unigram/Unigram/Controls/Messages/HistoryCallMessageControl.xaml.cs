@@ -39,7 +39,7 @@ namespace Unigram.Controls.Messages
 
         private string ConvertCount(TLCallGroup call, int count)
         {
-            VisualStateManager.GoToState(LayoutRoot, call.Failed ? "Missed" : "Default", false);
+            VisualStateManager.GoToState(LayoutRoot, call.IsFailed ? "Missed" : "Default", false);
 
             if (count > 1)
             {

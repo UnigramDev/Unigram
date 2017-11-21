@@ -154,13 +154,13 @@ namespace Unigram.ViewModels.Chats
             dataPackage.SetText(_inviteLink);
             ClipboardEx.TrySetContent(dataPackage);
 
-            await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
+            await TLMessageDialog.ShowAsync(Strings.Android.LinkCopied, Strings.Android.AppName, Strings.Android.OK);
         }
 
         public RelayCommand RevokeCommand { get; }
         private async void RevokeExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to revoke this link? Once you do, no one will be able to join the group using it.", "Telegram", "Revoke", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.RevokeAlert, Strings.Android.RevokeLink, Strings.Android.RevokeButton, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 Task<MTProtoResponse<TLExportedChatInviteBase>> task = null;
@@ -194,7 +194,7 @@ namespace Unigram.ViewModels.Chats
                         {
                             InviteLink = invite.Link;
 
-                            await TLMessageDialog.ShowAsync("The previous invite link is now inactive. A new invite link has just been generated.", "Telegram", "OK");
+                            await TLMessageDialog.ShowAsync(Strings.Android.RevokeAlertNewLink, Strings.Android.RevokeLink, Strings.Android.OK);
                         }
                     }
                     else

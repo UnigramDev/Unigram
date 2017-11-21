@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
@@ -218,7 +219,7 @@ namespace Unigram.Controls.Messages
                 {
                     if (!string.IsNullOrEmpty(editMessage.Message) && (editMessage.Media == null || editMessage.Media is TLMessageMediaEmpty || editMessage.Media is TLMessageMediaWebPage))
                     {
-                        return SetTextTemplate(editMessage, "Edit message");
+                        return SetTextTemplate(editMessage, Strings.Android.Edit);
                     }
 
                     var media = editMessage.Media;
@@ -227,56 +228,56 @@ namespace Unigram.Controls.Messages
                         switch (media.TypeId)
                         {
                             case TLType.MessageMediaPhoto:
-                                return SetPhotoTemplate(editMessage, "Edit message");
+                                return SetPhotoTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaGeo:
-                                return SetGeoTemplate(editMessage, "Edit message");
+                                return SetGeoTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaGeoLive:
-                                return SetGeoLiveTemplate(editMessage, "Edit message");
+                                return SetGeoLiveTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaVenue:
-                                return SetVenueTemplate(editMessage, "Edit message");
+                                return SetVenueTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaContact:
-                                return SetContactTemplate(editMessage, "Edit message");
+                                return SetContactTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaGame:
-                                return SetGameTemplate(editMessage, "Edit message");
+                                return SetGameTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaEmpty:
-                                return SetUnsupportedTemplate(editMessage, "Edit message");
+                                return SetUnsupportedTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaDocument:
                                 if (editMessage.IsSticker())
                                 {
-                                    return SetStickerTemplate(editMessage, "Edit message");
+                                    return SetStickerTemplate(editMessage, Strings.Android.Edit);
                                 }
                                 else if (editMessage.IsGif())
                                 {
-                                    return SetGifTemplate(editMessage, "Edit message");
+                                    return SetGifTemplate(editMessage, Strings.Android.Edit);
                                 }
                                 else if (editMessage.IsVoice())
                                 {
-                                    return SetVoiceMessageTemplate(editMessage, "Edit message");
+                                    return SetVoiceMessageTemplate(editMessage, Strings.Android.Edit);
                                 }
                                 else if (editMessage.IsVideo())
                                 {
-                                    return SetVideoTemplate(editMessage, "Edit message");
+                                    return SetVideoTemplate(editMessage, Strings.Android.Edit);
                                 }
                                 else if (editMessage.IsRoundVideo())
                                 {
-                                    return SetRoundVideoTemplate(editMessage, "Edit message");
+                                    return SetRoundVideoTemplate(editMessage, Strings.Android.Edit);
                                 }
                                 else if (editMessage.IsAudio())
                                 {
-                                    return SetAudioTemplate(editMessage, "Edit message");
+                                    return SetAudioTemplate(editMessage, Strings.Android.Edit);
                                 }
 
-                                return SetDocumentTemplate(editMessage, "Edit message");
+                                return SetDocumentTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaUnsupported:
-                                return SetUnsupportedMediaTemplate(editMessage, "Edit message");
+                                return SetUnsupportedMediaTemplate(editMessage, Strings.Android.Edit);
                         }
                     }
                 }
 
-                return SetUnsupportedTemplate(editMessage, "Edit message");
+                return SetUnsupportedTemplate(editMessage, Strings.Android.Edit);
             }
 
-            return SetUnsupportedTemplate(null, "Edit message");
+            return SetUnsupportedTemplate(null, Strings.Android.Edit);
         }
 
         #endregion

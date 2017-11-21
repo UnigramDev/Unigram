@@ -237,7 +237,7 @@ namespace Unigram.Views
                 }
 
                 FromLabel.Text = user.FullName;
-                TextBlockHelper.SetMarkdown(DescriptionLabel, string.Format("If these emoji are the same on **{0}**'s screen, this call is 100% secure.", user.FirstName));
+                DescriptionLabel.Text = string.Format(Strings.Android.CallEmojiKeyTooltip, user.FirstName);
             }
 
             if (tuple.Item4.Length > 0)
@@ -259,28 +259,28 @@ namespace Unigram.Views
             switch (state)
             {
                 case TLPhoneCallState.WaitingIncoming:
-                    return "Incoming call";
+                    return Strings.Android.VoipIncoming;
                 case TLPhoneCallState.WaitInit:
                 case TLPhoneCallState.WaitInitAck:
-                    return "Connecting";
+                    return Strings.Android.VoipConnecting;
                 case TLPhoneCallState.ExchangingKeys:
-                    return "Exchanging encryption keys";
+                    return Strings.Android.VoipExchangingKeys;
                 case TLPhoneCallState.Waiting:
-                    return "Waiting";
+                    return Strings.Android.VoipWaiting;
                 case TLPhoneCallState.Ringing:
-                    return "Ringing";
+                    return Strings.Android.VoipRinging;
                 case TLPhoneCallState.Requesting:
-                    return "Requesting";
+                    return Strings.Android.VoipRequesting;
                 case TLPhoneCallState.HangingUp:
-                    return "Hanging up";
+                    return Strings.Android.VoipHangingUp;
                 case TLPhoneCallState.Ended:
-                    return "Call ended";
+                    return Strings.Android.VoipCallEnded;
                 case TLPhoneCallState.Busy:
-                    return "Line busy";
+                    return Strings.Android.VoipBusy;
+                case TLPhoneCallState.Failed:
+                    return Strings.Android.VoipFailed;
                 case TLPhoneCallState.Established:
                     return "00:00";
-                case TLPhoneCallState.Failed:
-                    return "Failed to connect";
             }
 
             return null;

@@ -158,9 +158,9 @@ namespace Unigram.Views
             var messageCommon = element.DataContext as TLMessageCommonBase;
             var channel = messageCommon.Parent as TLChannel;
 
-            CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, messageCommon, Strings.Resources.MessageView);
-            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Resources.MessageDelete);
-            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Resources.MessageForward);
+            CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, messageCommon, Strings.Android.ShowInChat);
+            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Android.Delete);
+            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Android.Forward);
             CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.MessageSelect);
             CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, messageCommon, Strings.Resources.MessageSaveMedia);
 

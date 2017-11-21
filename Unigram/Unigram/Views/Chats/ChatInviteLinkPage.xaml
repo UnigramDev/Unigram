@@ -13,7 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Invite Link"/>
+        <controls:PageHeader Text="{CustomResource InviteLink}"/>
 
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
@@ -21,11 +21,20 @@
                       Grid.Row="1">
             <StackPanel>
                 <TextBox Text="{x:Bind ViewModel.InviteLink, Mode=OneWay}" Header="Link" IsReadOnly="True" Margin="12,12,12,8" Grid.Row="1"/>
-                <TextBlock Text="People can join your channel by following this link. You can revoke the link at any time." Margin="12,0,12,24" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+                <TextBlock Text="{x:Bind ConvertType('ChannelLinkInfo', 'LinkInfo')}" Margin="12,0,12,24" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
 
-                <controls:HyperButton Command="{x:Bind ViewModel.CopyCommand}" Content="Copy Link" Style="{StaticResource HyperButtonStyle}"/>
-                <controls:HyperButton Command="{x:Bind ViewModel.RevokeCommand}" Content="Revoke Link" Style="{StaticResource HyperButtonStyle}"/>
-                <controls:HyperButton Click="Share_Click" Content="Share Link" Style="{StaticResource HyperButtonStyle}"/>
+                <controls:HyperButton
+                    Command="{x:Bind ViewModel.CopyCommand}"
+                    Content="{CustomResource CopyLink}"
+                    Style="{StaticResource HyperButtonStyle}"/>
+                <controls:HyperButton
+                    Command="{x:Bind ViewModel.RevokeCommand}"
+                    Content="{CustomResource RevokeLink}" 
+                    Style="{StaticResource HyperButtonStyle}"/>
+                <controls:HyperButton
+                    Click="Share_Click"
+                    Content="{CustomResource ShareLink}"
+                    Style="{StaticResource HyperButtonStyle}"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

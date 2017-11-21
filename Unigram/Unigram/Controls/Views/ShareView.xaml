@@ -771,7 +771,7 @@
                                 <Border Background="{ThemeResource SystemControlBackgroundAccentBrush}" Width="48" Height="48" CornerRadius="24" Margin="8,0">
                                     <FontIcon Glyph="&#xE907;" Foreground="White" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
                                 </Border>
-                                <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}" Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                <TextBlock Text="{CustomResource SavedMessages}" Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </StackPanel>
                         </DataTemplate>
                     </selectors:DialogTemplateSelector.SelfTemplate>
@@ -790,7 +790,12 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <controls:SearchTextBox TextChanged="Query_Changed" PlaceholderText="{CustomResource ShareSendTo}" Style="{StaticResource DialogTextBoxStyle}" Grid.ColumnSpan="3"/>
+                            <controls:SearchTextBox
+                                TextChanged="Query_Changed"
+                                PlaceholderText="{CustomResource ShareSendTo}"
+                                Style="{StaticResource DialogTextBoxStyle}"
+                                PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                Grid.ColumnSpan="3"/>
 
                             <controls:GlyphButton Click="CopyLink_Click" Glyph="&#xE167;" Visibility="{x:Bind (Visibility)ViewModel.IsCopyLinkEnabled, Mode=OneWay}" Grid.Column="2"/>
                             <!--<controls:GlyphButton Click="CopyLink_Click" Glyph="&#xE72D;" Visibility="{x:Bind (Visibility)IsCopyLinkEnabled, Mode=OneWay}" Grid.Column="2"/>-->

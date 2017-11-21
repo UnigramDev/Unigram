@@ -151,14 +151,14 @@
                     </selectors:AdminLogTemplateSelector.EditedTemplate>
                     <selectors:AdminLogTemplateSelector.EventMessageTemplate>
                         <DataTemplate>
-                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,4,0,4" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                                 <RichTextBlock common:AdminLogHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                             </Border>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.EventMessageTemplate>
                     <selectors:AdminLogTemplateSelector.EventMessagePhotoTemplate>
                         <DataTemplate>
-                            <StackPanel Margin="0,8,0,2">
+                            <StackPanel Margin="0,4,0,4">
                                 <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                                     <RichTextBlock common:AdminLogHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                                 </Border>
@@ -171,14 +171,14 @@
                     </selectors:AdminLogTemplateSelector.EventMessagePhotoTemplate>
                     <selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
                         <DataTemplate>
-                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,4,0,4" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                             </Border>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
                     <selectors:AdminLogTemplateSelector.ServiceMessagePhotoTemplate>
                         <DataTemplate>
-                            <StackPanel Margin="0,8,0,2">
+                            <StackPanel Margin="0,4,0,4">
                                 <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                                 </Border>
@@ -297,7 +297,7 @@
         </controls:PaddedListView>
 
         <Border Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,8,12,8" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.Row="1">
-            <TextBlock common:TextBlockHelper.Markdown="{CustomResource EventLogEmpty}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
+            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertType('EventLogEmptyChannel', 'EventLogEmpty')}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
         </Border>
 
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="{ThemeResource AppBarThemeCompactHeight}" Grid.Row="2">

@@ -30,6 +30,7 @@ using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Core;
 using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.Views;
 using Windows.Media.Playback;
 using Windows.UI.Xaml.Navigation;
@@ -49,19 +50,21 @@ namespace Unigram.ViewModels
         private readonly IPushService _pushService;
         private readonly IVibrationService _vibrationService;
         private readonly ILiveLocationService _liveLocationService;
+        private readonly IPasscodeService _passcodeService;
 
         private readonly ConcurrentDictionary<int, InputTypingManager> _typingManagers;
         private readonly ConcurrentDictionary<int, InputTypingManager> _chatTypingManagers;
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUpdatesService updatesService, IPushService pushService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IContactsService contactsService, DialogsViewModel dialogs)
+        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUpdatesService updatesService, IPushService pushService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IContactsService contactsService, IPasscodeService passcodeService, DialogsViewModel dialogs)
             : base(protoService, cacheService, aggregator)
         {
             _updatesService = updatesService;
             _pushService = pushService;
             _vibrationService = vibrationService;
             _liveLocationService = liveLocationService;
+            _passcodeService = passcodeService;
 
             _typingManagers = new ConcurrentDictionary<int, InputTypingManager>();
             _chatTypingManagers = new ConcurrentDictionary<int, InputTypingManager>();
@@ -93,13 +96,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public ILiveLocationService LiveLocation
-        {
-            get
-            {
-                return _liveLocationService;
-            }
-        }
+        public ILiveLocationService LiveLocation => _liveLocationService;
+        public IPasscodeService Passcode => _passcodeService;
 
         public RelayCommand LiveLocationCommand { get; }
         private async void LiveLocationExecute()

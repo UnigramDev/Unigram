@@ -76,6 +76,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StatsService>().As<IStatsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<PasscodeService>().As<IPasscodeService>().SingleInstance();
             container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
 
             // Disabled due to crashes on Mobile: 
@@ -136,6 +137,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<InstantViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsGeneralViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsPhoneIntroViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsPhoneViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsPhoneSentCodeViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStorageViewModel>().SingleInstance();
@@ -153,6 +155,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsPrivacyPhoneCallViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsPrivacyChatInviteViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsSecurityChangePasswordViewModel>(); //.SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsSecurityPasscodeViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsAccountsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersFeaturedViewModel>().SingleInstance();
@@ -160,6 +163,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsMasksViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsWallPaperViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsLanguageViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<AttachedStickersViewModel>();
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
             container.ContainerBuilder.RegisterType<AboutViewModel>().SingleInstance();

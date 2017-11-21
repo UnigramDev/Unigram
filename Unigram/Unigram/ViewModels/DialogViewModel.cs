@@ -62,6 +62,7 @@ using Windows.UI.StartScreen;
 using Unigram.Models;
 using Telegram.Api.Native;
 using Newtonsoft.Json;
+using Unigram.Core.Common;
 
 namespace Unigram.ViewModels
 {
@@ -81,6 +82,7 @@ namespace Unigram.ViewModels
                 Set(ref _selectedItems, value);
                 MessagesForwardCommand.RaiseCanExecuteChanged();
                 MessagesDeleteCommand.RaiseCanExecuteChanged();
+                MessagesCopyCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -159,6 +161,10 @@ namespace Unigram.ViewModels
             ReadMentionsCommand = new RelayCommand(ReadMentionsExecute);
             SendCommand = new RelayCommand<string>(SendMessage);
             SwitchCommand = new RelayCommand<TLInlineBotSwitchPM>(SwitchExecute);
+
+            MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
+            MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
+            MessagesCopyCommand = new RelayCommand(MessagesCopyExecute, MessagesCopyCanExecute);
 
             MessageReplyCommand = new RelayCommand<TLMessageBase>(MessageReplyExecute);
             MessageDeleteCommand = new RelayCommand<TLMessageBase>(MessageDeleteExecute);
@@ -712,7 +718,8 @@ namespace Unigram.ViewModels
             {
                 if (response.Result.Messages.Count > 0)
                 {
-                    ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
+                    //ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
+                    ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                 }
 
                 ProcessReplies(response.Result.Messages);
@@ -1286,6 +1293,19 @@ namespace Unigram.ViewModels
 
                         ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Items.AddRange(history.Reverse());
+
+                        foreach (var item in history.OrderByDescending(x => x.Date))
+                        {
+                            var message = item as TLMessage;
+                            if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                            {
+                                var bot = CacheService.GetUser(message.FromId) as TLUser;
+                                if (bot != null && bot.IsBot)
+                                {
+                                    SetReplyMarkup(message);
+                                }
+                            }
+                        }
                     }
                 }
                 else
@@ -2494,12 +2514,12 @@ namespace Unigram.ViewModels
 
                             if (count > 1)
                             {
-                                return string.Format(Strings.Resources.StatusOnline, full.ParticipantsCount ?? 0, count);
+                                return string.Format("{0}, {1}", LocaleHelper.Declension("Members", full.ParticipantsCount ?? 0), LocaleHelper.Declension("OnlineCount", count));
                             }
                         }
                     }
 
-                    return string.Format(Strings.Resources.StatusMembers, full.ParticipantsCount ?? 0);
+                    return LocaleHelper.Declension("Members", full.ParticipantsCount ?? 0);
                 }
             }
             else if (With is TLChat chat)
@@ -2538,10 +2558,10 @@ namespace Unigram.ViewModels
 
                     if (count > 1)
                     {
-                        return string.Format(Strings.Resources.StatusOnline, participants.Participants.Count, count);
+                        return string.Format("{0}, {1}", LocaleHelper.Declension("Members", participants.Participants.Count), LocaleHelper.Declension("OnlineCount", count));
                     }
 
-                    return string.Format(Strings.Resources.StatusMembers, participants.Participants.Count);
+                    return LocaleHelper.Declension("Members", participants.Participants.Count);
                 }
             }
 

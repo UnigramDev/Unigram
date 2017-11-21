@@ -101,7 +101,7 @@
     <Compile Include="Common\AdminLogHelper.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\Dialogs\OutputTypingManager.cs" />
-    <Compile Include="Common\LocaleHelper.cs" />
+    <Compile Include="Common\InactivityHelper.cs" />
     <Compile Include="Common\MosaicMedia.cs" />
     <Compile Include="Common\GroupedMessages.cs" />
     <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
@@ -257,6 +257,12 @@
     <Compile Include="Controls\Views\ForwardView.xaml.cs">
       <DependentUpon>ForwardView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\SettingsSecurityPasscodeConfirmView.xaml.cs">
+      <DependentUpon>SettingsSecurityPasscodeConfirmView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\SettingsSecurityPasscodeEditView.xaml.cs">
+      <DependentUpon>SettingsSecurityPasscodeEditView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\ShareView.xaml.cs">
       <DependentUpon>ShareView.xaml</DependentUpon>
     </Compile>
@@ -281,6 +287,7 @@
     </Compile>
     <Compile Include="Converters\AccountTTLConverter.cs" />
     <Compile Include="Converters\AutoDownloadConverter.cs" />
+    <Compile Include="Converters\AutolockTimeoutConverter.cs" />
     <Compile Include="Converters\BooleanNegationConverter.cs" />
     <Compile Include="Converters\BooleanToIndexConverter.cs" />
     <Compile Include="Converters\ChannelJoinedToVisibilityConverter.cs" />
@@ -314,6 +321,7 @@
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
     <Compile Include="Selectors\DialogTemplateSelector.cs" />
     <Compile Include="Selectors\GalleryTemplateSelector.cs" />
+    <Compile Include="Selectors\ParticipantTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
@@ -321,6 +329,7 @@
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
+    <Compile Include="Services\PasscodeService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\PushService.cs" />
     <Compile Include="Strings\en\Android.cs">
@@ -377,8 +386,12 @@
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
     <Compile Include="ViewModels\PlaybackViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Phone\SettingsPhoneIntroViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Phone\SettingsPhoneSentCodeViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Phone\SettingsPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsDataAndStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsGeneralViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsLanguageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyPhoneCallViewModel.cs" />
@@ -388,8 +401,6 @@
     <Compile Include="ViewModels\Settings\SettingsSecurityPasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWallPaperViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsPhoneSentCodeViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSecurityEnterPasswordViewModel.cs" />
     <Compile Include="ViewModels\ForwardViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
@@ -463,6 +474,9 @@
     <Compile Include="Views\InvitePage.xaml.cs">
       <DependentUpon>InvitePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PasscodePage.xaml.cs">
+      <DependentUpon>PasscodePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Payments\PaymentFormStep1Page.xaml.cs">
       <DependentUpon>PaymentFormStep1Page.xaml</DependentUpon>
     </Compile>
@@ -484,11 +498,20 @@
     <Compile Include="Views\PhoneCallPage.xaml.cs">
       <DependentUpon>PhoneCallPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\Phone\SettingsPhoneIntroPage.xaml.cs">
+      <DependentUpon>SettingsPhoneIntroPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Phone\SettingsPhonePage.xaml.cs">
+      <DependentUpon>SettingsPhonePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Phone\SettingsPhoneSentCodePage.xaml.cs">
+      <DependentUpon>SettingsPhoneSentCodePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsGeneralPage.xaml.cs">
       <DependentUpon>SettingsGeneralPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsPhoneWelcomePage.xaml.cs">
-      <DependentUpon>SettingsPhoneWelcomePage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsLanguagePage.xaml.cs">
+      <DependentUpon>SettingsLanguagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsPrivacyChatInvitePage.xaml.cs">
       <DependentUpon>SettingsPrivacyChatInvitePage.xaml</DependentUpon>
@@ -505,14 +528,12 @@
     <Compile Include="Views\Settings\SettingsSecurityEnterPasswordPage.xaml.cs">
       <DependentUpon>SettingsSecurityEnterPasswordPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsSecurityPasscodePage.xaml.cs">
+      <DependentUpon>SettingsSecurityPasscodePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Settings\SettingsSecurityPasscodeViewModel.cs" />
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsPhonePage.xaml.cs">
-      <DependentUpon>SettingsPhonePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsPhoneSentCodePage.xaml.cs">
-      <DependentUpon>SettingsPhoneSentCodePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
@@ -1140,6 +1161,19 @@
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Android.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\it\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\fr\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\de\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\es\Android.resw">
+      <SubType>Designer</SubType>
     </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
@@ -1433,6 +1467,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Views\SettingsSecurityPasscodeConfirmView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SettingsSecurityPasscodeEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\ShareView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1597,6 +1639,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\PasscodePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Payments\PaymentFormStep1Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1625,11 +1671,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\Phone\SettingsPhoneIntroPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Phone\SettingsPhonePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Phone\SettingsPhoneSentCodePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\SettingsGeneralPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\SettingsPhoneWelcomePage.xaml">
+    <Page Include="Views\Settings\SettingsLanguagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1653,17 +1711,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\SettingsSecurityPasscodePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsStatsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsPhonePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\SettingsPhoneSentCodePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SignIn\SignInPasswordPage.xaml">
       <SubType>Designer</SubType>

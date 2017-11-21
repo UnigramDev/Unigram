@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Telegram.Api.TL.Auth;
+using Unigram.Common;
 
 namespace Unigram.Views.SignIn
 {
@@ -28,13 +29,17 @@ namespace Unigram.Views.SignIn
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<SignInSentCodeViewModel>();
 
-            // Used to hide the app gray bar on desktop.
-            // Currently this is always hidden on both family devices.
-            //
-            //if (!Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            //{
-            //    rpMasterTitlebar.Visibility = Visibility.Collapsed;
-            //}
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "SENT_CODE_INVALID":
+                    VisualUtilities.ShakeView(PrimaryInput);
+                    break;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
