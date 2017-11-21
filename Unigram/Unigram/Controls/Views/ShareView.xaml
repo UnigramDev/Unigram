@@ -790,7 +790,12 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <controls:SearchTextBox TextChanged="Query_Changed" PlaceholderText="{CustomResource ShareSendTo}" Style="{StaticResource DialogTextBoxStyle}" Grid.ColumnSpan="3"/>
+                            <controls:SearchTextBox
+                                TextChanged="Query_Changed"
+                                PlaceholderText="{CustomResource ShareSendTo}"
+                                Style="{StaticResource DialogTextBoxStyle}"
+                                PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                Grid.ColumnSpan="3"/>
 
                             <controls:GlyphButton Click="CopyLink_Click" Glyph="&#xE167;" Visibility="{x:Bind (Visibility)ViewModel.IsCopyLinkEnabled, Mode=OneWay}" Grid.Column="2"/>
                             <!--<controls:GlyphButton Click="CopyLink_Click" Glyph="&#xE72D;" Visibility="{x:Bind (Visibility)IsCopyLinkEnabled, Mode=OneWay}" Grid.Column="2"/>-->

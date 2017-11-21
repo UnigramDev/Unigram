@@ -718,7 +718,8 @@ namespace Unigram.ViewModels
             {
                 if (response.Result.Messages.Count > 0)
                 {
-                    ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
+                    //ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
+                    ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                 }
 
                 ProcessReplies(response.Result.Messages);
