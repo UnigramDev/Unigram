@@ -644,12 +644,6 @@ namespace Unigram.ViewModels
 
             if (messageCommon != null && !messageCommon.IsOut && messageCommon.IsUnread)
             {
-                //base.StateService.GetNotifySettingsAsync(delegate (Settings settings)
-                //{
-                //    if (settings.InvisibleMode)
-                //    {
-                //        return;
-                //    }
                 _dialog = (_dialog ?? CacheService.GetDialog(Peer.ToPeer()));
 
                 var dialog = _dialog;
@@ -668,7 +662,6 @@ namespace Unigram.ViewModels
                 {
                     ProtoService.ReadHistoryAsync(Peer, messageCommon.Id, 0);
                 }
-                //});
 
                 RemoveNotifications();
             }

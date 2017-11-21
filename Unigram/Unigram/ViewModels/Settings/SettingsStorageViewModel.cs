@@ -181,7 +181,7 @@ namespace Unigram.ViewModels.Settings
 
             await Task.Run(() =>
             {
-                NativeUtils.CleanDirectory(FileUtils.GetTempFileName(string.Empty), ExcludedFileNames);
+                NativeUtils.CleanDirectory(FileUtils.GetTempFileName(string.Empty), 0);
             });
 
             IsLoading = false;

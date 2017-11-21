@@ -307,8 +307,6 @@ namespace Unigram.Services
                 message.IsMediaUnread = false;
                 message.RaisePropertyChanged(() => message.IsMediaUnread);
 
-                return;
-
                 var vector = new TLVector<int> { message.Id };
                 if (message.Parent is TLChannel channel)
                 {

@@ -54,8 +54,6 @@ void NativeUtils::CleanDirectoryInternal(const std::wstring &path, int days)
 		}
 		else
 		{
-			//auto lastAccess = static_cast<double>(*(__int64*)&data.ftLastAccessTime) / 10000000.0 - 11644473600.0;
-			//auto lastWrite = static_cast<double>(*(__int64*)&data.ftLastWriteTime) / 10000000.0 - 11644473600.0;
 			auto lastAccess = FileTimeToSeconds(data.ftLastAccessTime);
 			auto lastWrite = FileTimeToSeconds(data.ftLastWriteTime);
 
@@ -63,13 +61,13 @@ void NativeUtils::CleanDirectoryInternal(const std::wstring &path, int days)
 			{
 				DeleteFile((path + L"\\" + data.cFileName).c_str());
 			}
-			//else if (lastAccess != 0)
-			//{
-			//	if (lastAccess + diff < currentTime)
-			//	{
-			//		DeleteFile((path + L"\\" + data.cFileName).c_str());
-			//	}
-			//}
+			else if (lastAccess > lastWrite)
+			{
+				if (lastAccess + diff < currentTime)
+				{
+					DeleteFile((path + L"\\" + data.cFileName).c_str());
+				}
+			}
 			else if (lastWrite + diff < currentTime)
 			{
 				DeleteFile((path + L"\\" + data.cFileName).c_str());
