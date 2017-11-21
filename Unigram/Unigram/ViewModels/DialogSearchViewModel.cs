@@ -140,7 +140,7 @@ namespace Unigram.ViewModels
                 //    LoadPrevious();
                 //}
 
-                return index + 1;
+                return index;
             }
         }
 
@@ -221,12 +221,12 @@ namespace Unigram.ViewModels
         public RelayCommand NextCommand { get; }
         private async void NextExecute()
         {
-            if (Items == null || SelectedIndex <= 1)
+            if (Items == null || SelectedIndex <= 0)
             {
                 return;
             }
 
-            SelectedItem = Items[SelectedIndex - 2];
+            SelectedItem = Items[SelectedIndex - 1];
 
             if (_selectedItem != null)
             {
@@ -241,7 +241,7 @@ namespace Unigram.ViewModels
                 return false;
             }
 
-            return SelectedIndex > 1;
+            return SelectedIndex > 0;
         }
 
         public RelayCommand PreviousCommand { get; }

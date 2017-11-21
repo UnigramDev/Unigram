@@ -519,7 +519,7 @@ namespace Unigram
                 current.SystemGroupKind = JumpListSystemGroupKind.None;
                 current.Items.Clear();
 
-                var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", SettingsHelper.UserId), "Saved Messages");
+                var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", SettingsHelper.UserId), Strings.Android.SavedMessages);
                 cloud.Logo = new Uri("ms-appx:///Assets/JumpList/SavedMessages/SavedMessages.png");
 
                 current.Items.Add(cloud);

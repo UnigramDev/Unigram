@@ -56,7 +56,7 @@ namespace Unigram.ViewModels
                     LoadPrevious();
                 }
 
-                return index + 1;
+                return index;
             }
         }
 

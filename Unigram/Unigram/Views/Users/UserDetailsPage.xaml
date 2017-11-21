@@ -28,6 +28,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Info" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
 
@@ -37,14 +38,12 @@
                     Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable, Mode=OneWay}"
                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                     Grid.Column="1"/>
-                <!--<controls:GlyphButton
-                     Glyph="&#xE104;"
-                     Command="{x:Bind ViewModel.CallCommand}"
-                     Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
-                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                     Grid.Column="2"/>-->
-
-                <Button Click="Menu_ContextRequested" Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="2">
+                <controls:GlyphButton
+                    Glyph="&#xE8BD;"
+                    Command="{x:Bind ViewModel.SendMessageCommand}"
+                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                    Grid.Column="2"/>
+                <Button Click="Menu_ContextRequested" Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="3">
                     <FontIcon x:Name="EllipsisIcon"
                               VerticalAlignment="Center"
                               FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -115,7 +114,6 @@
                                           Style="{StaticResource SubtitleButtonStyle}"/>
 
                 </StackPanel>
-
 
                 <StackPanel Margin="0,24">
                     <ToggleSwitch Header="{CustomResource Notifications}"

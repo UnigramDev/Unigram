@@ -117,11 +117,6 @@
                                Grid.Row="1"
                                Grid.Column="1"/>
                 </Grid>
-                <controls:HyperButton x:Uid="SettingsPage_EditPhotoButton"
-                                      Content="Set profile photo"
-                                      Click="EditPhoto_Click"
-                                      Style="{StaticResource HyperButtonStyle}"
-                                      Grid.Row="1"/>
 
                 <local:TableStackPanel>
                     <controls:HyperButton Tag="{CustomResource Phone}"
