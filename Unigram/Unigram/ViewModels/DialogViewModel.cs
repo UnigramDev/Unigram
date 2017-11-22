@@ -64,6 +64,7 @@ using Unigram.Models;
 using Newtonsoft.Json;
 using Unigram.Core.Common;
 using Unigram.ViewModels.Dialogs;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
@@ -842,7 +843,8 @@ namespace Unigram.ViewModels
             var already = Items.FirstOrDefault(x => x.Id == maxId);
             if (already != null)
             {
-                ListField.ScrollIntoView(already);
+                //ListField.ScrollIntoView(already);
+                await ListField.ScrollToItem(already, SnapPointsAlignment.Center);
                 return;
             }
 
@@ -861,7 +863,7 @@ namespace Unigram.ViewModels
 
             Items.Clear();
 
-            var offset = -50;
+            var offset = -25;
             var limit = 50;
 
             var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
@@ -912,8 +914,9 @@ namespace Unigram.ViewModels
             _isLoadingPreviousSlice = false;
             IsLoading = false;
 
-            await Task.Delay(200);
-            await LoadNextSliceAsync(true);
+            //await Task.Delay(200);
+            //await LoadNextSliceAsync(true);
+            await LoadMessageSliceAsync(null, maxId);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
