@@ -844,14 +844,8 @@ namespace Unigram.Common
 
                             if (type == TLType.MessageEntityTextUrl)
                             {
-                                var dialog = new TLMessageDialog(navigation, "Open this link?");
-                                dialog.Title = "Open this link?";
-                                dialog.Message = navigation;
-                                dialog.PrimaryButtonText = "Open";
-                                dialog.SecondaryButtonText = "Cancel";
-
-                                var result = await dialog.ShowQueuedAsync();
-                                if (result != ContentDialogResult.Primary)
+                                var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.OpenUrlAlert, navigation), Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                                if (confirm != ContentDialogResult.Primary)
                                 {
                                     return;
                                 }
@@ -1113,9 +1107,9 @@ namespace Unigram.Common
 
         public static async void NavigateToSocks(string server, int port, string user, string pass)
         {
-            var userText = user != null ? string.Format("Username: {0}\n", user) : string.Empty;
-            var passText = pass != null ? string.Format("Password: {0}\n", pass) : string.Empty;
-            var confirm = await TLMessageDialog.ShowAsync(string.Format("Are you sure you want to enable this proxy?\n\nServer: {0}\nPort: {1}\n{2}{3}\nYou can change your proxy server later in the Settings (Data and Storage).", server, port, userText, passText), "Proxy", "Enable", "Cancel");
+            var userText = user != null ? string.Format($"{Strings.Android.UseProxyUsername}: {user}\n", user) : string.Empty;
+            var passText = pass != null ? string.Format($"{Strings.Android.UseProxyPassword}: {pass}\n", pass) : string.Empty;
+            var confirm = await TLMessageDialog.ShowAsync($"{Strings.Android.EnableProxyAlert}\n\n{Strings.Android.UseProxyAddress}: {server}\n{Strings.Android.UseProxyPort}: {port}\n{userText}{passText}\n{Strings.Android.EnableProxyAlert2}", Strings.Android.Proxy, Strings.Android.ConnectingToProxyEnable, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 SettingsHelper.ProxyServer = server;
@@ -1679,7 +1673,7 @@ namespace Unigram.Common
                 {
                     var link = text.SelectedText;
 
-                    var copy = new MenuFlyoutItem { Text = "Copy", DataContext = link };
+                    var copy = new MenuFlyoutItem { Text = Strings.Android.Copy, DataContext = link };
 
                     copy.Click += LinkCopy_Click;
 
@@ -1703,8 +1697,8 @@ namespace Unigram.Common
                         return;
                     }
 
-                    var open = new MenuFlyoutItem { Text = "Open link", DataContext = link };
-                    var copy = new MenuFlyoutItem { Text = "Copy link", DataContext = link };
+                    var open = new MenuFlyoutItem { Text = Strings.Android.Open, DataContext = link };
+                    var copy = new MenuFlyoutItem { Text = Strings.Android.Copy, DataContext = link };
 
                     open.Click += LinkOpen_Click;
                     copy.Click += LinkCopy_Click;
