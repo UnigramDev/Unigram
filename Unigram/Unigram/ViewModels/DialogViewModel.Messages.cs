@@ -1023,10 +1023,14 @@ namespace Unigram.ViewModels
                 var dialog = new TLMessageDialog();
                 dialog.Title = Strings.Android.AppName;
                 dialog.Message = channel.IsBroadcast ? Strings.Android.PinMessageAlertChannel : Strings.Android.PinMessageAlert;
-                dialog.CheckBoxLabel = Strings.Android.PinNotify;
-                dialog.IsChecked = true;
                 dialog.PrimaryButtonText = Strings.Android.OK;
                 dialog.SecondaryButtonText = Strings.Android.Cancel;
+
+                if (channel.IsMegaGroup)
+                {
+                    dialog.CheckBoxLabel = Strings.Android.PinNotify;
+                    dialog.IsChecked = true;
+                }
 
                 var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
