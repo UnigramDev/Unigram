@@ -3690,7 +3690,7 @@
     <value>죄송합니다. 이 주소로 배송이 가능하지 않습니다.</value>
   </data>
   <data name="PaymentPassword" xml:space="preserve">
-    <value>비밀번호 & 이메일</value>
+    <value>비밀번호 &amp; 이메일</value>
   </data>
   <data name="PaymentPasswordEmail" xml:space="preserve">
     <value>회원님 이메일</value>
@@ -5350,6 +5350,15 @@
   </data>
   <data name="MessagesTwo" xml:space="preserve">
     <value></value>
+  </data>
+  <data name="MessagesFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MessagesMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MessagesOther" xml:space="preserve">
+    <value>메시지 {0}개</value>
   </data>
   <data name="MessagesFew" xml:space="preserve">
     <value></value>
