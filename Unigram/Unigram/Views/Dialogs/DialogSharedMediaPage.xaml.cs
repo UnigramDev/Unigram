@@ -25,8 +25,9 @@ using Windows.UI.Core;
 using Windows.System;
 using System.Windows.Input;
 using Unigram.Strings;
+using Unigram.ViewModels.Dialogs;
 
-namespace Unigram.Views
+namespace Unigram.Views.Dialogs
 {
     public sealed partial class DialogSharedMediaPage : Page, IMasterDetailPage
     {

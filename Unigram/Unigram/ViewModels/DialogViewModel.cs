@@ -63,6 +63,7 @@ using Windows.UI.StartScreen;
 using Unigram.Models;
 using Newtonsoft.Json;
 using Unigram.Core.Common;
+using Unigram.ViewModels.Dialogs;
 
 namespace Unigram.ViewModels
 {

@@ -33,6 +33,7 @@ using Windows.Foundation.Metadata;
 using Unigram.Common;
 using Windows.UI.Xaml;
 using Windows.UI.ViewManagement;
+using Unigram.ViewModels.Dialogs;
 
 namespace Unigram
 {
@@ -113,10 +114,9 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<PlaybackViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<ShareViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<ForwardViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<DialogShareLocationViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
-            container.ContainerBuilder.RegisterType<DialogStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
             container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
             container.ContainerBuilder.RegisterType<UserCreateViewModel>();

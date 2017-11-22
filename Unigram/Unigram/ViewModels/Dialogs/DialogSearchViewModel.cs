@@ -12,7 +12,7 @@ using Telegram.Api.TL.Messages;
 using Unigram.Common;
 using Unigram.Core.Common;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Dialogs
 {
     public class DialogSearchViewModel : UnigramViewModelBase
     {
