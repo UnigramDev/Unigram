@@ -17,7 +17,9 @@
         <controls:PageHeader Text="{CustomResource Language}" />
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
-                  SelectionChanged="ListView_SelectionChanged"
+                  ItemClick="List_ItemClick"
+                  IsItemClickEnabled="True"
+                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                   Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="tl:TLLangPackLanguage">

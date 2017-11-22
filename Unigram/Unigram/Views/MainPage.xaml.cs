@@ -65,7 +65,7 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
 
-            NavigationCacheMode = NavigationCacheMode.Required;
+            NavigationCacheMode = NavigationCacheMode.Enabled;
 
             ViewModel.Aggregator.Subscribe(this);
             Loaded += OnLoaded;

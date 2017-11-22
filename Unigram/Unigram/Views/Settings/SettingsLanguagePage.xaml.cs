@@ -5,9 +5,13 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Services.Locale;
 using Telegram.Api.TL;
+using Template10.Common;
+using Unigram.Common;
 using Unigram.ViewModels.Settings;
+using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Globalization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -33,12 +37,27 @@ namespace Unigram.Views.Settings
             DataContext = UnigramContainer.Current.ResolveType<SettingsLanguageViewModel>();
         }
 
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.AddedItems != null && e.AddedItems.Count > 0)
+            var lang = e.ClickedItem as TLLangPackLanguage;
+            if (lang == null)
             {
-                new LocaleService(ViewModel.ProtoService).applyRemoteLanguage(e.AddedItems[0] as TLLangPackLanguage, true);
+                return;
             }
+
+            ApplicationLanguages.PrimaryLanguageOverride = lang.LangCode;
+            ResourceContext.GetForCurrentView().Reset();
+            ResourceContext.GetForViewIndependentUse().Reset();
+
+            var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+            if (service != null)
+            {
+                WindowWrapper.Current().NavigationServices.Remove(service);
+            }
+
+            App.Current.NavigationService.Reset();
+
+            //new LocaleService(ViewModel.ProtoService).applyRemoteLanguage(e.ClickedItem as TLLangPackLanguage, true);
         }
     }
 }

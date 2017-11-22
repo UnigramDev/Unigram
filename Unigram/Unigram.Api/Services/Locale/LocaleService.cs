@@ -113,7 +113,7 @@ namespace Telegram.Api.Services.Locale
                 {
                     //writer.Write($"<string name=\"{entry.Key}\">{entry.Value}</string>\n");
                     writer.Write($"  <data name=\"{entry.Key}\" xml:space=\"preserve\">\n");
-                    writer.Write($"    <value>{entry.Value}</value>\n");
+                    writer.Write($"    <value>{entry.Value.Replace("&", "&amp;")}</value>\n");
                     writer.Write($"  </data>\n");
                 }
 
