@@ -5,6 +5,7 @@ using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
 
@@ -29,6 +30,63 @@ namespace Unigram.Common
         }
 
         public Uri Uri
+        {
+            get { return _uri; }
+        }
+
+        public override async Task Draw(CompositionGraphicsDevice device, Object drawingLock, CompositionDrawingSurface surface, Size size)
+        {
+            var canvasDevice = CanvasComposition.GetCanvasDevice(device);
+            using (var canvasBitmap = await CanvasBitmap.LoadAsync(canvasDevice, _uri))
+            {
+                var bitmapSize = canvasBitmap.Size;
+
+                //
+                // Because the drawing is done asynchronously and multiple threads could
+                // be trying to get access to the device/surface at the same time, we need
+                // to do any device/surface work under a lock.
+                //
+                lock (drawingLock)
+                {
+                    Size surfaceSize = size;
+                    if (surface.Size != size || surface.Size == new Size(0, 0))
+                    {
+                        // Resize the surface to the size of the image
+                        CanvasComposition.Resize(surface, bitmapSize);
+                        surfaceSize = bitmapSize;
+                    }
+
+                    // Allow the app to process the bitmap if requested
+                    if (_handler != null)
+                    {
+                        _handler(surface, canvasBitmap, device);
+                    }
+                    else
+                    {
+                        // Draw the image to the surface
+                        using (var session = CanvasComposition.CreateDrawingSession(surface))
+                        {
+                            session.Clear(Windows.UI.Color.FromArgb(0, 0, 0, 0));
+                            session.DrawImage(canvasBitmap, new Rect(0, 0, surfaceSize.Width, surfaceSize.Height), new Rect(0, 0, bitmapSize.Width, bitmapSize.Height));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public class StreamDrawer : ContentDrawer
+    {
+        IRandomAccessStream _uri;
+        LoadTimeEffectHandler _handler;
+
+        public StreamDrawer(IRandomAccessStream uri, LoadTimeEffectHandler handler)
+        {
+            _uri = uri;
+            _handler = handler;
+        }
+
+        public IRandomAccessStream Uri
         {
             get { return _uri; }
         }
