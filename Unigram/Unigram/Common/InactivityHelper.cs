@@ -12,7 +12,7 @@ namespace Unigram.Common
 {
     public static class InactivityHelper
     {
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", ExactSpelling = true)]
         public static extern Boolean GetLastInputInfo(ref LASTINPUTINFO plii);
         public struct LASTINPUTINFO
         {

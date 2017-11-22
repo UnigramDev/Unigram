@@ -1047,6 +1047,11 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = false;
             _isLoadingPreviousSlice = false;
             IsLoading = false;
+
+            //if (maxId < int.MaxValue)
+            //{
+            //    await LoadMessageSliceAsync(null, maxId);
+            //}
         }
 
         public void ScrollToBottom()

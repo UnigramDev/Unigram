@@ -1130,7 +1130,7 @@
                     </Grid>
                 </ListView.Header>
                 <ListView.Footer>
-                    <Border Height="8"/>
+                    <Border Height="2"/>
                 </ListView.Footer>
                 <!--<ListView.GroupStyle>
                      <GroupStyle>
