@@ -6,8 +6,11 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.ViewModels;
+using Unigram.Views;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,6 +27,30 @@ namespace Unigram.Controls.Items
     public sealed partial class SharedLinkListViewItem : UserControl
     {
         public TLMessage ViewModel => DataContext as TLMessage;
+
+        private UnigramViewModelBase _context;
+        public UnigramViewModelBase Context
+        {
+            get
+            {
+                if (_context == null)
+                {
+                    var parent = VisualTreeHelper.GetParent(this);
+                    while (parent as ListView == null && parent != null)
+                    {
+                        parent = VisualTreeHelper.GetParent(parent);
+                    }
+
+                    var item = parent as ListView;
+                    if (item != null)
+                    {
+                        _context = item.DataContext as UnigramViewModelBase;
+                    }
+                }
+
+                return _context;
+            }
+        }
 
         private TLMessage _oldViewModel;
 
@@ -54,6 +81,7 @@ namespace Unigram.Controls.Items
                 string description = null;
                 string description2 = null;
                 string webPageLink = null;
+                bool webPageCached = false;
 
                 if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
                 {
@@ -65,6 +93,7 @@ namespace Unigram.Controls.Items
 
                     description = string.IsNullOrEmpty(webPage.Description) ? null : webPage.Description;
                     webPageLink = webPage.Url;
+                    webPageCached = webPage.HasCachedPage;
 
                     hasThumb = webPage.HasPhoto && webPage.Photo is TLPhoto photo && photo.Thumb != null;
                 }
@@ -235,6 +264,12 @@ namespace Unigram.Controls.Items
                     {
                         var paragraph = new TextBlock { TextTrimming = TextTrimming.CharacterEllipsis };
                         var hyperlink = new Hyperlink { NavigateUri = uri, UnderlineStyle = UnderlineStyle.None };
+
+                        if (link == webPageLink && webPageCached)
+                        {
+                            hyperlink.Inlines.Add(new Run { Text = "\uE611 ", FontSize = 12, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+                        }
+
                         hyperlink.Inlines.Add(new Run { Text = link });
                         paragraph.Inlines.Add(hyperlink);
                         paragraph.Inlines.Add(new Run { Text = " " });
@@ -243,6 +278,37 @@ namespace Unigram.Controls.Items
                         LinksPanel.Children.Add(paragraph);
 
                         Grid.SetRow(paragraph, i);
+                    }
+                }
+            }
+        }
+
+        private async void Thumbnail_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is TLMessage message && message.Media is TLMessageMediaWebPage webpageMedia && webpageMedia.WebPage is TLWebPage webpage)
+            {
+                if (webpage.HasCachedPage)
+                {
+                    Context.NavigationService.Navigate(typeof(InstantPage), message.Media);
+                }
+                else
+                {
+                    var url = webpage.Url;
+                    if (url.StartsWith("http") == false)
+                    {
+                        url = "http://" + url;
+                    }
+
+                    if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                    {
+                        if (MessageHelper.IsTelegramUrl(uri))
+                        {
+                            MessageHelper.HandleTelegramUrl(webpage.Url);
+                        }
+                        else
+                        {
+                            await Launcher.LaunchUriAsync(uri);
+                        }
                     }
                 }
             }
