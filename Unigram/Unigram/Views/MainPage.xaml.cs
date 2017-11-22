@@ -460,6 +460,8 @@ namespace Unigram.Views
                 //DialogsSearchListView.IsItemClickEnabled = true;
                 DialogsSearchListView.SelectionMode = ListViewSelectionMode.None;
                 DialogsSearchListView.SelectedItem = null;
+                ContactsSearchListView.SelectionMode = ListViewSelectionMode.None;
+                ContactsSearchListView.SelectedItem = null;
                 //UsersListView.IsItemClickEnabled = true;
                 UsersListView.SelectionMode = ListViewSelectionMode.None;
                 UsersListView.SelectedItem = null;
@@ -474,6 +476,8 @@ namespace Unigram.Views
                 //DialogsSearchListView.IsItemClickEnabled = false;
                 DialogsSearchListView.SelectionMode = ListViewSelectionMode.Single;
                 DialogsSearchListView.SelectedItem = _lastSelected;
+                ContactsSearchListView.SelectionMode = ListViewSelectionMode.Single;
+                ContactsSearchListView.SelectedItem = _lastSelected;
                 //UsersListView.IsItemClickEnabled = false;
                 UsersListView.SelectionMode = ListViewSelectionMode.Single;
                 UsersListView.SelectedItem = _lastSelected;
@@ -561,15 +565,29 @@ namespace Unigram.Views
         private void searchInit()
         {
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchDialogs, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(async x =>
             {
                 if (string.IsNullOrWhiteSpace(SearchDialogs.Text))
                 {
-                    ViewModel.Dialogs.Search.Clear();
+                    if (rpMasterTitlebar.SelectedIndex == 0)
+                    {
+                        ViewModel.Dialogs.Search.Clear();
+                    }
+                    else
+                    {
+                        ViewModel.Contacts.Search.Clear();
+                    }
                     return;
                 }
 
-                ViewModel.Dialogs.SearchAsync(SearchDialogs.Text);
+                if (rpMasterTitlebar.SelectedIndex == 0)
+                {
+                    await ViewModel.Dialogs.SearchAsync(SearchDialogs.Text);
+                }
+                else
+                {
+                    await ViewModel.Contacts.SearchAsync(SearchDialogs.Text);
+                }
             });
         }
 
@@ -601,28 +619,37 @@ namespace Unigram.Views
             }
         }
 
-        private async void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPage));
-        }
-
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (SearchDialogs.Text != "")
+            var activePanel = rpMasterTitlebar.SelectedIndex == 0 ? DialogsPanel : ContactsPanel;
+
+            if (string.IsNullOrEmpty(SearchDialogs.Text))
             {
-                DialogsPanel.Visibility = Visibility.Collapsed;
+                activePanel.Visibility = Visibility.Visible;
             }
             else
             {
-                //  lvMasterChats.Visibility = Visibility.Visible;
-                DialogsPanel.Visibility = Visibility.Visible;
-                // lvMasterChats.ItemsSource = ViewModel.Dialogs;
+                activePanel.Visibility = Visibility.Collapsed;
+            }
+
+            if (rpMasterTitlebar.SelectedIndex == 0)
+            {
+                ViewModel.Dialogs.SearchQuery = SearchDialogs.Text;
+            }
+            else
+            {
+                //ViewModel.Contacts.SearchAsync = SearchDialogs.Text;
+                ViewModel.Contacts.Search.Clear();
             }
         }
 
         private void txtSearch_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (DialogsPanel.Visibility == Visibility.Visible)
+            var activePanel = rpMasterTitlebar.SelectedIndex == 0 ? DialogsPanel : ContactsPanel;
+            var activeList = rpMasterTitlebar.SelectedIndex == 0 ? DialogsSearchListView : ContactsSearchListView;
+            var activeResults = rpMasterTitlebar.SelectedIndex == 0 ? DialogsResults : ContactsResults;
+
+            if (activePanel.Visibility == Visibility.Visible)
             {
                 return;
             }
@@ -630,27 +657,19 @@ namespace Unigram.Views
             if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
             {
                 var index = e.Key == VirtualKey.Up ? -1 : 1;
-                var next = DialogsSearchListView.SelectedIndex + index;
-                if (next >= 0 && next < SearchResults.View.Count)
+                var next = activeList.SelectedIndex + index;
+                if (next >= 0 && next < activeResults.View.Count)
                 {
-                    DialogsSearchListView.SelectedIndex = next;
-                    DialogsSearchListView.ScrollIntoView(DialogsSearchListView.SelectedItem);
+                    activeList.SelectedIndex = next;
+                    activeList.ScrollIntoView(activeList.SelectedItem);
                 }
-
-                //var index = Math.Max(DialogsSearchListView.SelectedIndex, 0);
-                //var container = DialogsSearchListView.ContainerFromIndex(index) as ListViewItem;
-                //if (container != null)
-                //{
-                //    DialogsSearchListView.SelectedIndex = index;
-                //    container.Focus(FocusState.Keyboard);
-                //}
 
                 e.Handled = true;
             }
             else if (e.Key == VirtualKey.Enter)
             {
-                var index = Math.Max(DialogsSearchListView.SelectedIndex, 0);
-                var container = DialogsSearchListView.ContainerFromIndex(index) as ListViewItem;
+                var index = Math.Max(activeList.SelectedIndex, 0);
+                var container = activeList.ContainerFromIndex(index) as ListViewItem;
                 if (container != null)
                 {
                     var peer = new ListViewItemAutomationPeer(container);
@@ -824,12 +843,8 @@ namespace Unigram.Views
             NavigationCalls.IsChecked = rpMasterTitlebar.SelectedIndex == 2;
             NavigationSettings.IsChecked = rpMasterTitlebar.SelectedIndex == 3;
 
-            //SearchDialogs.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
             SearchDialogs.Visibility = Visibility.Collapsed;
-            //SearchContacts.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
             SettingsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
-            //DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex == 0 || rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Collapsed : Visibility.Visible;
-            //DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
             ChatsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
             ContactsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
 
@@ -838,6 +853,9 @@ namespace Unigram.Views
 
             DialogsPanel.Visibility = Visibility.Visible;
             MainHeader.Visibility = Visibility.Visible;
+
+            ViewModel.Dialogs.Search.Clear();
+            ViewModel.Contacts.Search.Clear();
         }
 
         private void NavigationView_ItemClick(object sender, NavigationViewItemClickEventArgs args)
