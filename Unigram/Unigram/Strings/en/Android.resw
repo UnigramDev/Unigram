@@ -570,7 +570,7 @@ Remember, logging out kills all your Secret Chats.</value>
   <data name="AskAQuestionInfo" xml:space="preserve">
     <value>Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.
 
-Please take a look at the &lt;a href=\"https://telegram.org/faq#general\"&gt;Telegram FAQ&lt;/a&gt;: it has answers to most questions and important tips for &lt;a href=\"https://telegram.org/faq#troubleshooting\"&gt;troubleshooting&lt;/a&gt;.</value>
+Please take a look at the &lt;a href="https://telegram.org/faq#general"&gt;Telegram FAQ&lt;/a&gt;: it has answers to most questions and important tips for &lt;a href="https://telegram.org/faq#troubleshooting"&gt;troubleshooting&lt;/a&gt;.</value>
   </data>
   <data name="AskButton" xml:space="preserve">
     <value>Ask a volunteer</value>

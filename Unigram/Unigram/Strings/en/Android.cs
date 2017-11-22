@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/15/2017 22:07:32
+// 	Generated: 11/22/2017 21:54:27
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -1698,7 +1698,7 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.
         ///
-        ///Please take a look at the <a href=\"https://telegram.org/faq#general\">Telegram FAQ</a>: it has answers to most questions and important tips for <a href=\"https://telegram.org/faq#troubleshooting\">troubleshooting</a>."
+        ///Please take a look at the <a href="https://telegram.org/faq#general">Telegram FAQ</a>: it has answers to most questions and important tips for <a href="https://telegram.org/faq#troubleshooting">troubleshooting</a>."
         /// </summary>
         public static string AskAQuestionInfo
         {
