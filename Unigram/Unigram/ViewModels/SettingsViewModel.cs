@@ -185,7 +185,6 @@ namespace Unigram.ViewModels
                 CacheService.ClearAsync();
                 CacheService.ClearConfigImportAsync();
 
-                await TLMessageDialog.ShowAsync(Strings.Resources.LoggedOutDialogText, Strings.Branding.ApplicationName, Strings.Resources.OK);
                 App.Current.Exit();
             }
             else

@@ -153,48 +153,6 @@ namespace Unigram.Converters
             return $"{FormatAmount(amount, currency)} - {option.Title}";
         }
 
-        public string CallShortDuration(int seconds)
-        {
-            if (seconds < 60)
-            {
-                var format = Strings.Resources.CallShortSeconds_any;
-                var number = seconds;
-                if (number == 1)
-                {
-                    format = Strings.Resources.CallShortSeconds_1;
-                }
-                else if (number == 2)
-                {
-                    format = Strings.Resources.CallShortSeconds_2;
-                }
-                else if (number == 4)
-                {
-                    format = Strings.Resources.CallShortSeconds_3_10;
-                }
-
-                return string.Format(format, number);
-            }
-            else
-            {
-                var format = Strings.Resources.CallShortMinutes_any;
-                var number = seconds / 60;
-                if (number == 1)
-                {
-                    format = Strings.Resources.CallShortMinutes_1;
-                }
-                else if (number == 2)
-                {
-                    format = Strings.Resources.CallShortMinutes_2;
-                }
-                else if (number == 4)
-                {
-                    format = Strings.Resources.CallShortMinutes_3_10;
-                }
-
-                return string.Format(format, number);
-            }
-        }
-
         public string DateExtended(int value)
         {
             var clientDelta = MTProtoService.Current.ClientTicksDelta;
