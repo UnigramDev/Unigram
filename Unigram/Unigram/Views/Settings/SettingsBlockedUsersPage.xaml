@@ -27,24 +27,27 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="tl:TLUser">
                     <Grid Margin="0,6">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePicture x:Phase="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" IsEnabled="False" Grid.RowSpan="2"/>
 
-                        <StackPanel VerticalAlignment="Center" Grid.Column="1">
-                            <TextBlock Text="{x:Bind FullName}"/>
-                            <TextBlock Visibility="{x:Bind (Visibility)HasUsername}"
-                                       VerticalAlignment="Top"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap"
-                                       MaxLines="1">
-                                <Run Text="@"/><Run Text="{x:Bind Username}"/>
-                            </TextBlock>
-                        </StackPanel>
+                        <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                        <TextBlock Text="{x:Bind Phone, Converter={StaticResource PhoneNumberFormatConverter}, ConverterParameter=blocked}"
+                                   x:Phase="1"
+                                   VerticalAlignment="Top"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   Grid.Column="1"
+                                   Grid.Row="1"
+                                   MaxLines="1"/>
                     </Grid>
                 </DataTemplate>
 
