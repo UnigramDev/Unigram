@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/22/2017 11:54:28
+// 	Generated: 11/22/2017 12:00:52
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -82,6 +82,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CopyPostLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Deleted message"
+        /// </summary>
+        public static string DeletedMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("DeletedMessage");
             }
         }
         

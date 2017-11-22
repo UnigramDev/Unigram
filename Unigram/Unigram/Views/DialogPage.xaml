@@ -920,7 +920,7 @@
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
                         FontWeight="SemiBold"
-                        MinWidth="48"
+                        Padding="12,0"
                         Height="48"
                         Grid.Column="4">
                         <ContentControl.ContentTransitions>

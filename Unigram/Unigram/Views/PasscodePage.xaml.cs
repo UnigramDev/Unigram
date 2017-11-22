@@ -48,15 +48,16 @@ namespace Unigram.Views
 
         private void Field_TextChanged(object sender, RoutedEventArgs e)
         {
-            if (Field.Password.Length == 4 && Field.Password.All(x => x >= '0' && x <= '9'))
+            if (Field.Password.Length == 4)
             {
-                if (_passcodeService.Check(Field.Password))
+                if (Field.Password.All(x => x >= '0' && x <= '9') && _passcodeService.Check(Field.Password))
                 {
                     Unlock();
                 }
                 else
                 {
                     VisualUtilities.ShakeView(Field);
+                    Field.Password = string.Empty;
                 }
             }
         }

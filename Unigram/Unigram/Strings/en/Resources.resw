@@ -129,6 +129,10 @@
     <value>Copy post link</value>
     <comment>Copy post link</comment>
   </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Deleted message</value>
+    <comment>Deleted message</comment>
+  </data>
   <data name="SaveFileAs" xml:space="preserve">
     <value>Save file as...</value>
     <comment>Save file as...</comment>

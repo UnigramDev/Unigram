@@ -59,6 +59,7 @@ using LinqToVisualTree;
 using Unigram.Models;
 using System.Windows.Input;
 using Unigram.Strings;
+using Unigram.Views.Dialogs;
 
 namespace Unigram.Views
 {
@@ -859,6 +860,16 @@ namespace Unigram.Views
 
         #region Context menu
 
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            if (flyout.Items.Count > 0)
+            {
+                flyout.ShowAt((Button)sender);
+            }
+        }
+
         private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
@@ -913,6 +924,16 @@ namespace Unigram.Views
 
                 flyout.Items.Add(flyoutItem);
             }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, ICommand command, string text)
+        {
+            var flyoutItem = new MenuFlyoutItem();
+            flyoutItem.IsEnabled = command != null;
+            flyoutItem.Command = command;
+            flyoutItem.Text = text;
+
+            flyout.Items.Add(flyoutItem);
         }
 
         private Visibility MessageReply_Loaded(TLMessageCommonBase messageCommon)
