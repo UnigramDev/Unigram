@@ -1175,6 +1175,9 @@
     <PRIResource Include="Strings\es\Android.resw">
       <SubType>Designer</SubType>
     </PRIResource>
+    <PRIResource Include="Strings\ko\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <PRIResource Include="Strings\nl\Android.resw">
       <SubType>Designer</SubType>
     </PRIResource>
@@ -1190,7 +1193,6 @@
     <PRIResource Include="Strings\ms\Android.resw">
       <SubType>Designer</SubType>
     </PRIResource>
-    <PRIResource Include="Strings\ko\Android.resw" />
     <PRIResource Include="Strings\id\Android.resw">
       <SubType>Designer</SubType>
     </PRIResource>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
@@ -13,6 +14,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -28,7 +30,7 @@ namespace Unigram.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class PasscodePage : Page
+    public sealed partial class PasscodePage : ContentDialog
     {
         private readonly IPasscodeService _passcodeService;
 
@@ -38,6 +40,10 @@ namespace Unigram.Views
 
             _passcodeService = UnigramContainer.Current.ResolveType<IPasscodeService>();
 
+            _applicationView = ApplicationView.GetForCurrentView();
+            _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
+            OnVisibleBoundsChanged(_applicationView, null);
+
             var user = InMemoryCacheService.Current.GetUser(SettingsHelper.UserId);
             if (user != null)
             {
@@ -45,6 +51,43 @@ namespace Unigram.Views
                 FullName.Text = user.FullName;
             }
         }
+
+        #region Bounds
+
+        private ApplicationView _applicationView;
+
+        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
+        {
+            if (sender == null)
+            {
+                return;
+            }
+
+            if (/*BackgroundElement != null &&*/ Window.Current?.Bounds is Rect bounds && sender.VisibleBounds != bounds)
+            {
+                Margin = new Thickness(sender.VisibleBounds.X - bounds.Left, sender.VisibleBounds.Y - bounds.Top, bounds.Width - (sender.VisibleBounds.Right - bounds.Left), bounds.Height - (sender.VisibleBounds.Bottom - bounds.Top));
+                UpdateViewBase();
+            }
+            else
+            {
+                Margin = new Thickness();
+                UpdateViewBase();
+            }
+        }
+
+        private void UpdateViewBase()
+        {
+            var bounds = _applicationView.VisibleBounds;
+            MinWidth = bounds.Width;
+            MinHeight = bounds.Height;
+            MaxWidth = bounds.Width;
+            MaxHeight = bounds.Height;
+
+            LayoutRoot.Width = bounds.Width;
+            LayoutRoot.Height = bounds.Height;
+        }
+
+        #endregion
 
         private void Field_TextChanged(object sender, RoutedEventArgs e)
         {
@@ -62,8 +105,16 @@ namespace Unigram.Views
             }
         }
 
+        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            args.Cancel = _passcodeService.IsLockscreenRequired;
+        }
+
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            InputPane.GetForCurrentView().Showing += InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
+
             if (!_passcodeService.IsBiometricsEnabled)
             {
                 return;
@@ -91,11 +142,31 @@ namespace Unigram.Views
             }
         }
 
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+        }
+
+        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            args.EnsuredFocusedElementInView = true;
+            Field.Margin = new Thickness(0, 0, 0, Math.Max(args.OccludedRect.Height + 8, 120));
+        }
+
+        private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            args.EnsuredFocusedElementInView = true;
+            Field.Margin = new Thickness(0, 0, 0, 120);
+        }
+
         private void Unlock()
         {
             _passcodeService.Unlock();
-            App.Current.ModalDialog.IsModal = false;
-            App.Current.ModalContent = null;
+
+            BootStrapper.Current.ModalDialog.IsModal = false;
+            BootStrapper.Current.ModalContent = null;
+            Hide();
         }
     }
 }

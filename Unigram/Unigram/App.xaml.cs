@@ -156,14 +156,19 @@ namespace Unigram
             });
         }
 
-        public static void ShowPasscode()
+        public static async void ShowPasscode()
         {
             if (Current.ModalDialog.IsModal == false)
             {
-                Current.ModalContent = new PasscodePage();
-                Current.ModalDialog.CanBackButtonDismiss = false;
-                Current.ModalDialog.DisableBackButtonWhenModal = true;
+                //Current.ModalContent = new PasscodePage();
+                //Current.ModalDialog.CanBackButtonDismiss = false;
+                //Current.ModalDialog.DisableBackButtonWhenModal = true;
+                Current.ModalContent = new Border();
                 Current.ModalDialog.IsModal = true;
+
+                var dialog = new PasscodePage();
+                var result = await dialog.ShowQueuedAsync();
+                //await new PasscodePage().ShowQueuedAsync();
             }
         }
 

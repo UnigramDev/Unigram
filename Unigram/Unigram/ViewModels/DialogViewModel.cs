@@ -1032,7 +1032,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                if (response.Result.Messages.Count < limit && maxId == int.MaxValue)
+                if (response.Result.Messages.Count < limit)
                 {
                     IsFirstSliceLoaded = true;
                     IsLastSliceLoaded = true;

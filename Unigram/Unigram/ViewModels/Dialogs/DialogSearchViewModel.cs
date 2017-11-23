@@ -252,7 +252,7 @@ namespace Unigram.ViewModels.Dialogs
                 return;
             }
 
-            SelectedItem = Items[SelectedIndex];
+            SelectedItem = Items[SelectedIndex + 1];
 
             if (_selectedItem != null)
             {

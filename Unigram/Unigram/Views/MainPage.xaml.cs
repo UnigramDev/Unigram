@@ -856,6 +856,11 @@ namespace Unigram.Views
 
             ViewModel.Dialogs.Search.Clear();
             ViewModel.Contacts.Search.Clear();
+
+            if (rpMasterTitlebar.SelectedIndex > 0)
+            {
+                MasterDetail.Push(true);
+            }
         }
 
         private void NavigationView_ItemClick(object sender, NavigationViewItemClickEventArgs args)
