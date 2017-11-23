@@ -85,7 +85,7 @@ namespace Unigram.Services
                 if (devices.Count > 0)
                 {
                     _sensor = ProximitySensor.FromId(devices[0].Id);
-                    _sensor.ReadingChanged += OnReadingChanged;
+                    //_sensor.ReadingChanged += OnReadingChanged;
 
                     _controller = _sensor.CreateDisplayOnOffController();
                 }
@@ -173,7 +173,7 @@ namespace Unigram.Services
             Dispose();
         }
 
-        public void Enqueue(TLMessage message)
+        public async void Enqueue(TLMessage message)
         {
             if (_mediaPlayer.Source == _playlist && _mediaPlayer.Source != null && _inverse.TryGetValue(message, out MediaPlaybackItem item) && _playlist.Items.Contains(item))
             {
@@ -222,10 +222,10 @@ namespace Unigram.Services
                 }, predicate: filter);
             }
 
-            //if (voice)
-            //{
-            //    await AttachAsync();
-            //}
+            if (voice)
+            {
+                await AttachAsync();
+            }
         }
 
         private void Enqueue(TLMessage message, bool play)
@@ -287,17 +287,17 @@ namespace Unigram.Services
             _mapping.Clear();
             _inverse.Clear();
 
-            //if (_controller != null)
-            //{
-            //    _controller.Dispose();
-            //    _controller = null;
-            //}
+            if (_controller != null)
+            {
+                _controller.Dispose();
+                _controller = null;
+            }
 
-            //if (_sensor != null)
-            //{
-            //    _sensor.ReadingChanged -= OnReadingChanged;
-            //    _sensor = null;
-            //}
+            if (_sensor != null)
+            {
+                _sensor.ReadingChanged -= OnReadingChanged;
+                _sensor = null;
+            }
         }
 
         private void MarkAsRead(TLMessage message)
