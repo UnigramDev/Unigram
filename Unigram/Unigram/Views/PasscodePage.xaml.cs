@@ -107,7 +107,7 @@ namespace Unigram.Views
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
-            args.Cancel = _passcodeService.IsLockscreenRequired;
+            args.Cancel = _passcodeService.IsLocked;
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
