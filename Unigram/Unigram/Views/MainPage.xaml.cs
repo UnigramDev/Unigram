@@ -638,8 +638,7 @@ namespace Unigram.Views
             }
             else
             {
-                //ViewModel.Contacts.SearchAsync = SearchDialogs.Text;
-                ViewModel.Contacts.Search.Clear();
+                ViewModel.Contacts.SearchQuery = SearchDialogs.Text;
             }
         }
 

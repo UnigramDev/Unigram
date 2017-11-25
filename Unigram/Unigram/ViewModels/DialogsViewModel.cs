@@ -57,7 +57,6 @@ namespace Unigram.ViewModels
         {
             Items = new MvxObservableCollection<TLDialog>();
             Search = new ObservableCollection<KeyedList<string, TLObject>>();
-            SearchTokens = new Dictionary<string, CancellationTokenSource>();
 
             Execute.BeginOnThreadPool(() => LoadFirstSlice());
 
@@ -952,8 +951,6 @@ namespace Unigram.ViewModels
         #region Search
 
         public ObservableCollection<KeyedList<string, TLObject>> Search { get; private set; }
-
-        public Dictionary<string, CancellationTokenSource> SearchTokens { get; private set; }
 
         private string _searchQuery;
         public string SearchQuery
