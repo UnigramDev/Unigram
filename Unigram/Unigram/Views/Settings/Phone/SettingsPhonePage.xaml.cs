@@ -57,6 +57,12 @@ namespace Unigram.Views.Settings
                 ViewModel.SendCommand.Execute(sender);
                 e.Handled = true;
             }
+            else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(PrimaryInput.Text))
+            {
+                PhoneCode.Focus(FocusState.Keyboard);
+                PhoneCode.SelectionStart = PhoneCode.Text.Length;
+                e.Handled = true;
+            }
         }
     }
 }
