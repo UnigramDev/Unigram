@@ -11,6 +11,8 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
+        <x:String x:Key="Empty"></x:String>
+        
         <Style x:Key="TypingProgressRingStyle" TargetType="ProgressRing">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
@@ -149,7 +151,7 @@
                           Grid.Column="3"/>
             </Grid>
             <FontIcon x:Name="StateIcon"
-                      Glyph="{x:Bind UpdateStateIcon(ViewModel.Draft, ViewModel.TopMessageItem, ViewModel.TopMessageItem.State), Mode=OneWay}"
+                      Glyph="{x:Bind UpdateStateIcon(ViewModel.Draft, ViewModel.TopMessageItem, ViewModel.TopMessageItem.State), Mode=OneWay, FallbackValue=''}"
                       FontFamily="{StaticResource TelegramThemeFontFamily}"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Bottom"
