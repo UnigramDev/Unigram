@@ -100,6 +100,9 @@
                                       Visibility="{x:Bind ViewModel.Channel.IsDemocracy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                                       Header="{CustomResource EditAdminAddUsers}"
                                       Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsPinMessages, Mode=TwoWay}"
+                                      Header="{CustomResource EditAdminPinMessages}"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
                         <ToggleSwitch IsOn="{x:Bind ViewModel.IsAddAdmins, Mode=TwoWay}"
                                       Header="{CustomResource EditAdminAddAdmins}"
                                       Style="{ThemeResource CheckButtonStyle}"/>

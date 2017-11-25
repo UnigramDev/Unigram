@@ -19,11 +19,6 @@
             Text="{CustomResource ChannelAdministrators}"
             Glyph="&#xE109;"/>
 
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Participants}"
                   ItemClick="ListView_ItemClick"
