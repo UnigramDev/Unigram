@@ -139,8 +139,9 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<UsersSelectionViewModel>(); //.SingleInstance();
             container.ContainerBuilder.RegisterType<CreateChannelStep1ViewModel>(); //.SingleInstance();
             container.ContainerBuilder.RegisterType<CreateChannelStep2ViewModel>(); //.SingleInstance();
-            container.ContainerBuilder.RegisterType<CreateChatStep1ViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<CreateChatStep2ViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<CreateChannelStep3ViewModel>(); //.SingleInstance();
+            container.ContainerBuilder.RegisterType<CreateChatStep1ViewModel>(); //.SingleInstance();
+            container.ContainerBuilder.RegisterType<CreateChatStep2ViewModel>(); //.SingleInstance();
             container.ContainerBuilder.RegisterType<InstantViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsGeneralViewModel>().SingleInstance();
@@ -331,7 +332,7 @@ namespace Unigram
             ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTimeFavs", 0L);
 
             Debug.WriteLine("!!! UNAUTHORIZED !!!");
-            Telegram.Logs.Log.Write(string.Format("Unauthorized method={0} error={1} authKeyId={2} {3}", e.MethodName, e.Error ?? (object)"null", e.AuthKeyId, Environment.StackTrace));
+            Telegram.Logs.Log.Write(string.Format("Unauthorized method={0} error={1} authKeyId={2}", e.MethodName, e.Error ?? (object)"null", e.AuthKeyId));
 
             Execute.BeginOnUIThread(() =>
             {
