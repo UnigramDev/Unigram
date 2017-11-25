@@ -371,6 +371,24 @@ namespace Unigram.Common
 
             return transform;
         }
+
+
+        public static async Task UpdateLayoutAsync(this FrameworkElement element)
+        {
+            var tcs = new TaskCompletionSource<object>();
+
+            EventHandler<object> layoutUpdated = (s1, e1) => tcs.TrySetResult(null);
+            try
+            {
+                element.LayoutUpdated += layoutUpdated;
+                element.UpdateLayout();
+                await tcs.Task;
+            }
+            finally
+            {
+                element.LayoutUpdated -= layoutUpdated;
+            }
+        }
     }
 
     public static class ClipboardEx

@@ -36,6 +36,7 @@ using Unigram.ViewModels.Users;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Aggregator;
 using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Dialogs;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -194,7 +195,7 @@ namespace Unigram.Themes
                 }
                 else
                 {
-                    viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                    viewModel = new DialogGalleryViewModel(MTProtoService.Current, InMemoryCacheService.Current, message.Parent.ToInputPeer(), message);
                 }
 
                 await GalleryView.Current.ShowAsync(viewModel, () => media);
