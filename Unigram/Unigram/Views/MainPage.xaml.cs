@@ -937,5 +937,10 @@ namespace Unigram.Views
         {
             SettingsView.EditPhoto_Click(sender, e);
         }
+
+        private void OnUpdate(object sender, EventArgs e)
+        {
+            Bindings.Update();
+        }
     }
 }

@@ -198,7 +198,7 @@
         </Style>
     </Page.Resources>
 
-    <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Grid.Row="1">
+    <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Grid.Row="1">
         <controls:NavigationView x:Name="Navigation" ItemClick="NavigationView_ItemClick">
             <controls:NavigationView.MenuItems>
                 <controls:NavigationViewItem

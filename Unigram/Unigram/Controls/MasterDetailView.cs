@@ -179,6 +179,8 @@ namespace Unigram.Controls
             AdaptiveStates = (VisualStateGroup)GetTemplateChild("AdaptiveStates");
             AdaptiveStates.CurrentStateChanged += OnCurrentStateChanged;
 
+            MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
+
             if (DetailFrame != null)
             {
                 var parent = VisualTreeHelper.GetParent(DetailFrame) as UIElement;
@@ -208,6 +210,14 @@ namespace Unigram.Controls
                 {
                     ViewStateChanged(this, EventArgs.Empty);
                 }
+            }
+        }
+
+        private void OnVisibilityChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (MasterPresenter.Visibility == Visibility.Visible)
+            {
+                Update?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -431,6 +441,7 @@ namespace Unigram.Controls
         }
 
         public event EventHandler ViewStateChanged;
+        public event EventHandler Update;
         #endregion
 
         #region BlankType
