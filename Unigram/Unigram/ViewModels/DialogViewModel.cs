@@ -1054,11 +1054,19 @@ namespace Unigram.ViewModels
             //}
         }
 
-        public void ScrollToBottom()
+        public void ScrollToBottom(object item)
         {
             //if (IsFirstSliceLoaded)
             {
-                ListField.ScrollToBottom();
+                if (item == null)
+                {
+                    ListField.ScrollToBottom();
+                }
+                else
+                {
+                    ListField.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+                }
+
                 ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
             }
         }
@@ -2326,7 +2334,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                ScrollToBottom();
+                ScrollToBottom(message);
             }
             else
             {
