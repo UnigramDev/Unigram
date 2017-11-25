@@ -62,6 +62,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<UpdatesService>().As<IUpdatesService>().SingleInstance();
             container.ContainerBuilder.RegisterType<TransportService>().As<ITransportService>().SingleInstance();
             container.ContainerBuilder.RegisterType<ConnectionService>().As<IConnectionService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<PublicConfigService>().As<IPublicConfigService>().SingleInstance();
 
             // Files
             container.ContainerBuilder.RegisterType<DownloadFileManager>().As<IDownloadFileManager>().SingleInstance();

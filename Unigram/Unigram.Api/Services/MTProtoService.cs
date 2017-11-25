@@ -169,7 +169,7 @@ namespace Telegram.Api.Services
 
         private Timer _checkTransportTimer;
 
-        public MTProtoService(IDeviceInfoService deviceInfo,IUpdatesService updatesService, ICacheService cacheService, ITransportService transportService, IConnectionService connectionService, IStatsService statsService)
+        public MTProtoService(IDeviceInfoService deviceInfo,IUpdatesService updatesService, ICacheService cacheService, ITransportService transportService, IConnectionService connectionService, IStatsService statsService, IPublicConfigService publicConfigService)
         {
             var isBackground = deviceInfo != null && deviceInfo.IsBackground;
 
@@ -187,6 +187,8 @@ namespace Telegram.Api.Services
             _connectionService = connectionService;
             _connectionService.Initialize(this);
             _connectionService.ConnectionLost += OnConnectionLost;
+
+            _publicConfigService = publicConfigService;
 
             var sendStatusEvents = Observable.FromEventPattern<EventHandler<bool>, bool>(
                 keh => { SendStatus += keh; },
@@ -223,6 +225,7 @@ namespace Telegram.Api.Services
             _transportService = transportService;
             _transportService.ConnectionLost += OnConnectionLost;
             _transportService.FileConnectionLost += OnFileConnectionLost;
+            _transportService.CheckConfig += OnCheckConfig;
 
             lock (_activeTransportRoot)
             {
@@ -1348,6 +1351,7 @@ namespace Telegram.Api.Services
                         }
                     }
 
+                    // pong
                     foreach (var pong in TLUtils.FindInnerObjects<TLPong>(transportMessage))
                     {
                         HistoryItem item;

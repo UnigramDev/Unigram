@@ -80,6 +80,7 @@ namespace Telegram.Api.TL
 		DestroySessionNone = 0x62D350C9,
 		NewSessionCreated = 0x9EC20908,
 		HttpWait = 0x9299359F,
+		HelpConfigSimple = 0xD997C3C5,
 		RPCDropAnswer = 0x58E4A740,
 		GetFutureSalts = 0xB921BD04,
 		Ping = 0x7ABE77EC,
