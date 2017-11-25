@@ -97,7 +97,9 @@ namespace Unigram.Controls.Views
             {
                 Transport.TransportVisibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Collapsed : Visibility.Visible;
                 Details.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
-                //Surface.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
+                Element0.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
+                Element1.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
+                Element2.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
             });
         }
 
@@ -405,6 +407,11 @@ namespace Unigram.Controls.Views
 
         private void ImageView_Click(object sender, RoutedEventArgs e)
         {
+            if (_selecting)
+            {
+                return;
+            }
+
             if (Transport.IsVisible)
             {
                 Transport.Hide();
@@ -486,6 +493,8 @@ namespace Unigram.Controls.Views
             offset.X = Math.Max(maximum, Math.Min(minimum, offset.X + delta));
 
             _layout.Offset = offset;
+
+            e.Handled = true;
         }
 
         private void LayoutRoot_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
@@ -497,6 +506,8 @@ namespace Unigram.Controls.Views
             var delta = -(offset.X - current) / width;
 
             Scroll(delta, e.Velocities.Linear.X, true);
+
+            e.Handled = true;
         }
 
         private void Scroll(double delta, double velocity = double.NaN, bool force = false)

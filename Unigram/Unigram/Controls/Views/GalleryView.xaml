@@ -52,7 +52,8 @@
                         Loaded="ImageView_ImageOpened"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Stretch="UniformToFill"/>
+                        Stretch="UniformToFill"
+                       IsHitTestVisible="False"/>
                 <local:TransferButton
                     Completed="Download_Click"
                     Transferable="{x:Bind Source, Mode=OneWay}" 
@@ -67,7 +68,6 @@
         <controls:GalleryTransportControls.Content>
             <Grid>
                 <Border x:Name="Layer" Background="Black" Grid.RowSpan="3"/>
-                <Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}"/>
 
                 <Grid x:Name="LayoutRoot">
                     <Grid.ColumnDefinitions>
@@ -75,6 +75,8 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
+                    <Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>
+
                     <ContentControl x:Name="Element2" ContentTemplate="{StaticResource GalleryItemTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                     <ContentControl x:Name="Element0" ContentTemplate="{StaticResource GalleryItemTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="1"/>
                     <ContentControl x:Name="Element1" ContentTemplate="{StaticResource GalleryItemTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="2"/>
