@@ -37,6 +37,14 @@ namespace Unigram.ViewModels
             OpenWithCommand = new RelayCommand(OpenWithExecute);
         }
 
+        public virtual int Position
+        {
+            get
+            {
+                return SelectedIndex + 1;
+            }
+        }
+
         public int SelectedIndex
         {
             get
@@ -83,7 +91,8 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _selectedItem, value);
-                RaisePropertyChanged(() => SelectedIndex);
+                //RaisePropertyChanged(() => SelectedIndex);
+                RaisePropertyChanged(() => Position);
             }
         }
 

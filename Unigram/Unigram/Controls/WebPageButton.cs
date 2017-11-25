@@ -48,12 +48,11 @@ namespace Unigram.Controls
 
                 if (webPage.HasCachedPage)
                 {
-                    //if (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) || string.Equals(webPage.SiteName, "instagram", StringComparison.OrdinalIgnoreCase))
-                    //{
-                    //    // Instant gallery
-                    //    Visibility = Visibility.Collapsed;
-                    //}
-                    //else
+                    if (webPage.IsInstantGallery())
+                    {
+                        Visibility = Visibility.Collapsed;
+                    }
+                    else
                     {
                         if (run1 != null)
                         {

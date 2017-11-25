@@ -83,59 +83,59 @@ namespace Unigram.Common
             var webPage = newValue as TLWebPage;
             if (webPage != null)
             {
-                var paragraph = new Paragraph();
+                var empty = true;
+
+                var paragraph = sender.Blocks[0] as Paragraph;
+                var title = paragraph.Inlines[0] as Run;
+                var subtitle = paragraph.Inlines[1] as Run;
+                var content = paragraph.Inlines[2] as Run;
+
+                title.Text = string.Empty;
+                content.Text = string.Empty;
 
                 if (webPage.HasSiteName && !string.IsNullOrWhiteSpace(webPage.SiteName))
                 {
-                    var foreground = sender.Resources["MessageHeaderForegroundBrush"] as SolidColorBrush;
-
-                    paragraph.Inlines.Add(new Run { Text = webPage.SiteName, FontWeight = FontWeights.SemiBold, Foreground = foreground });
+                    empty = false;
+                    title.Text = webPage.SiteName;
                 }
 
                 if (webPage.HasTitle && !string.IsNullOrWhiteSpace(webPage.Title))
                 {
-                    if (paragraph.Inlines.Count > 0)
+                    if (title.Text.Length > 0)
                     {
-                        paragraph.Inlines.Add(new LineBreak());
+                        subtitle.Text = Environment.NewLine;
                     }
 
-                    paragraph.Inlines.Add(new Run { Text = webPage.Title, FontWeight = FontWeights.SemiBold });
+                    empty = false;
+                    subtitle.Text += webPage.Title;
                 }
                 else if (webPage.HasAuthor && !string.IsNullOrWhiteSpace(webPage.Author))
                 {
-                    if (paragraph.Inlines.Count > 0)
+                    if (title.Text.Length > 0)
                     {
-                        paragraph.Inlines.Add(new LineBreak());
+                        subtitle.Text = Environment.NewLine;
                     }
 
-                    paragraph.Inlines.Add(new Run { Text = webPage.Author, FontWeight = FontWeights.SemiBold });
+                    empty = false;
+                    subtitle.Text += webPage.Author;
                 }
 
                 if (webPage.HasDescription && !string.IsNullOrWhiteSpace(webPage.Description))
                 {
-                    if (paragraph.Inlines.Count > 0)
+                    if (title.Text.Length > 0 || subtitle.Text.Length > 0)
                     {
-                        paragraph.Inlines.Add(new LineBreak());
+                        content.Text = Environment.NewLine;
                     }
 
-                    paragraph.Inlines.Add(new Run { Text = webPage.Description });
+                    empty = false;
+                    content.Text += webPage.Description;
                 }
 
-                sender.Blocks.Clear();
-                sender.Blocks.Add(paragraph);
-
-                if (paragraph.Inlines.Count > 0)
-                {
-                    sender.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    sender.Visibility = Visibility.Collapsed;
-                }
+                sender.Visibility = empty ? Visibility.Collapsed : Visibility.Visible;
             }
             else
             {
-                sender.Blocks.Clear();
+                sender.Visibility = Visibility.Collapsed;
             }
         }
 

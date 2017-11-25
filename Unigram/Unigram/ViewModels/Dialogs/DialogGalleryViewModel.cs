@@ -53,7 +53,6 @@ namespace Unigram.ViewModels.Dialogs
             using (await _loadMoreLock.WaitAsync())
             {
                 var limit = 20;
-
                 var req = new TLMessagesSearch
                 {
                     Peer = _peer,
@@ -61,7 +60,6 @@ namespace Unigram.ViewModels.Dialogs
                     FromId = null,
                     OffsetId = offset,
                     AddOffset = -limit / 2,
-                    //AddOffset = 0,
                     Limit = limit,
                 };
 
@@ -71,41 +69,19 @@ namespace Unigram.ViewModels.Dialogs
                 {
                     CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
 
+                    var current = 1;
                     if (response.Result is TLMessagesMessagesSlice slice)
                     {
-                        TotalItems = slice.Count;
+                        TotalItems = slice.Count + current;
                     }
                     else if (response.Result is TLMessagesChannelMessages channelMessages)
                     {
-                        TotalItems = channelMessages.Count;
+                        TotalItems = channelMessages.Count + current;
                     }
                     else
                     {
-                        TotalItems = response.Result.Messages.Count + Items.Count;
+                        TotalItems = response.Result.Messages.Count + current;
                     }
-
-                    //Items.Clear();
-
-                    //foreach (var photo in response.Result.Messages)
-                    //{
-                    //    if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
-                    //    {
-                    //        if (photo.Id < offset)
-                    //        {
-                    //            Items.Insert(0, new GalleryMessageItem(message));
-                    //        }
-                    //        else if (photo.Id > offset)
-                    //        {
-                    //            Items.Add(new GalleryMessageItem(message));
-                    //        }
-
-                    //        _lastMaxId = message.Id;
-                    //    }
-                    //    else
-                    //    {
-                    //        TotalItems--;
-                    //    }
-                    //}
 
                     foreach (var photo in response.Result.Messages.Where(x => x.Id < offset))
                     {
@@ -132,9 +108,6 @@ namespace Unigram.ViewModels.Dialogs
                             TotalItems--;
                         }
                     }
-
-                    //Items.ReplaceWith(items);
-                    //SelectedItem = Items.LastOrDefault();
                 }
             }
         }
@@ -156,6 +129,8 @@ namespace Unigram.ViewModels.Dialogs
         //        }
         //    }
         //}
+
+        public override int Position => TotalItems - (Items.Count - base.Position);
 
         public override bool CanView => true;
     }

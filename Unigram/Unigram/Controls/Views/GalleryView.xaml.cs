@@ -169,7 +169,7 @@ namespace Unigram.Controls.Views
             DataContext = parameter;
             Bindings.Update();
 
-            PrepareFirst();
+            PrepareNext(0);
 
             RoutedEventHandler handler = null;
             handler = new RoutedEventHandler(async (s, args) =>
@@ -300,9 +300,9 @@ namespace Unigram.Controls.Views
             return string.Format(Strings.Android.FormatDateAtTime, Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
         }
 
-        private string ConvertOf(int index, int count, int total)
+        private string ConvertOf(int index, int count)
         {
-            return string.Format(Strings.Android.Of, total - (count - (index + 1)), total);
+            return string.Format(Strings.Android.Of, index, count);
         }
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
@@ -551,16 +551,11 @@ namespace Unigram.Controls.Views
                 animation.InsertKeyFrame(1, current);
             }
 
+            ViewModel.SelectedItem = ViewModel.Items[ViewModel.SelectedIndex + direction];
+
             _layout.StartAnimation("Offset.X", animation);
             batch.Completed += (s, args) =>
             {
-                if (ViewModel == null)
-                {
-                    _selecting = false;
-                    return;
-                }
-
-                ViewModel.SelectedItem = ViewModel.Items[ViewModel.SelectedIndex + direction];
                 PrepareNext(direction);
 
                 _layout.Offset = new Vector3(-width, 0, 0);
@@ -572,6 +567,11 @@ namespace Unigram.Controls.Views
 
         private void PrepareNext(int direction)
         {
+            if (ViewModel == null)
+            {
+                return;
+            }
+
             ContentControl previous = null;
             ContentControl target = null;
             ContentControl next = null;
@@ -601,43 +601,6 @@ namespace Unigram.Controls.Views
             target.Content = ViewModel.Items[ViewModel.SelectedIndex];
             previous.Content = ViewModel.SelectedIndex > 0 ? ViewModel.Items[ViewModel.SelectedIndex - 1] : null;
             next.Content = ViewModel.SelectedIndex < ViewModel.Items.Count - 1 ? ViewModel.Items[ViewModel.SelectedIndex + 1] : null;
-
-            Dispose();
-
-            _selecting = false;
-        }
-
-        private void PrepareFirst()
-        {
-            ContentControl previous = null;
-            ContentControl target = null;
-            ContentControl next = null;
-            if (Grid.GetColumn(Element1) == 1)
-            {
-                previous = Element0;
-                target = Element1;
-                next = Element2;
-            }
-            else if (Grid.GetColumn(Element0) == 1)
-            {
-                previous = Element2;
-                target = Element0;
-                next = Element1;
-            }
-            else if (Grid.GetColumn(Element2) == 1)
-            {
-                previous = Element1;
-                target = Element2;
-                next = Element0;
-            }
-
-            Grid.SetColumn(target, 1);
-            Grid.SetColumn(previous, 0);
-            Grid.SetColumn(next, 2);
-
-            target.Content = ViewModel.FirstItem;
-            previous.Content = null;
-            next.Content = null;
 
             Dispose();
 

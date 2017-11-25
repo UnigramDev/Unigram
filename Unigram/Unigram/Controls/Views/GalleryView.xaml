@@ -84,7 +84,7 @@
         <controls:GalleryTransportControls.Header>
             <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
                 <TextBlock
-                    Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.Count, ViewModel.TotalItems), Mode=OneWay}"
+                    Text="{x:Bind ConvertOf(ViewModel.Position, ViewModel.TotalItems), Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
