@@ -217,7 +217,7 @@ namespace Unigram.Services
 
         private void Save()
         {
-            if (_cachedParams != null)
+            if (_cachedParams != null && _cachedParams.Hash != null && _cachedParams.Salt != null)
             {
                 TLUtils.SaveObjectToMTProtoFile(_passcodeParamsFileSyncRoot, "passcode_params.dat", _cachedParams.ToTuple());
             }
