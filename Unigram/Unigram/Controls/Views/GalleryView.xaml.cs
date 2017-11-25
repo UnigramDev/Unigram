@@ -441,7 +441,12 @@ namespace Unigram.Controls.Views
         {
             _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
 
-            LayoutRoot.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateRailsX | ManipulationModes.TranslateInertia;
+            LayoutRoot.ManipulationMode =
+                ManipulationModes.TranslateX |
+                ManipulationModes.TranslateY |
+                ManipulationModes.TranslateRailsX |
+                ManipulationModes.TranslateRailsY |
+                ManipulationModes.TranslateInertia;
             LayoutRoot.ManipulationStarted += LayoutRoot_ManipulationStarted;
             LayoutRoot.ManipulationDelta += LayoutRoot_ManipulationDelta;
             LayoutRoot.ManipulationCompleted += LayoutRoot_ManipulationCompleted;
@@ -471,41 +476,108 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            var delta = (float)e.Delta.Translation.X;
             var width = (float)ActualWidth;
-
-            var current = -width;
-
-            var maximum = current - width;
-            var minimum = current + width;
-
-            var index = ViewModel.SelectedIndex;
-            if (index == 0)
-            {
-                minimum = current;
-            }
-            if (index == ViewModel.Items.Count - 1)
-            {
-                maximum = current;
-            }
+            var height = (float)ActualHeight;
 
             var offset = _layout.Offset;
-            offset.X = Math.Max(maximum, Math.Min(minimum, offset.X + delta));
+
+            if (Math.Abs(e.Cumulative.Translation.X) > Math.Abs(e.Cumulative.Translation.Y))
+            {
+                var delta = (float)e.Delta.Translation.X;
+
+                var current = -width;
+
+                var maximum = current - width;
+                var minimum = current + width;
+
+                var index = ViewModel.SelectedIndex;
+                if (index == 0)
+                {
+                    minimum = current;
+                }
+                if (index == ViewModel.Items.Count - 1)
+                {
+                    maximum = current;
+                }
+
+                offset.Y = 0;
+                offset.X = Math.Max(maximum, Math.Min(minimum, offset.X + delta));
+            }
+            else
+            {
+                offset.X = -width;
+                offset.Y = Math.Max(-height, Math.Min(height, offset.Y + (float)e.Delta.Translation.Y));
+
+                //_layer.Opacity = 1 + -(offset.Y - -height) / height;
+            }
 
             _layout.Offset = offset;
-
             e.Handled = true;
         }
 
         private void LayoutRoot_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
             var width = (float)ActualWidth;
-            var current = -width;
+            var height = (float)ActualHeight;
 
             var offset = _layout.Offset;
-            var delta = -(offset.X - current) / width;
 
-            Scroll(delta, e.Velocities.Linear.X, true);
+            if (Math.Abs(e.Cumulative.Translation.X) > Math.Abs(e.Cumulative.Translation.Y))
+            {
+                var current = -width;
+                var delta = -(offset.X - current) / width;
+
+                Scroll(delta, e.Velocities.Linear.X, true);
+            }
+            else
+            {
+                var current = 0;
+                var delta = -(offset.Y - current) / height;
+
+                var maximum = current - height;
+                var minimum = current + height;
+
+                var direction = 0;
+
+                var animation = _layout.Compositor.CreateScalarKeyFrameAnimation();
+                animation.InsertKeyFrame(0, offset.Y);
+
+                if (delta < 0 && e.Velocities.Linear.Y > 1.5)
+                {
+                    // previous
+                    direction--;
+                    animation.InsertKeyFrame(1, minimum);
+                }
+                else if (delta > 0 && e.Velocities.Linear.Y < -1.5)
+                {
+                    // next
+                    direction++;
+                    animation.InsertKeyFrame(1, maximum);
+                }
+                else
+                {
+                    // back
+                    animation.InsertKeyFrame(1, current);
+                }
+
+                if (direction != 0)
+                {
+                    Layer.Visibility = Visibility.Collapsed;
+
+                    if (Transport.IsVisible)
+                    {
+                        Transport.Hide();
+                    }
+
+                    DataContext = null;
+                    Bindings.StopTracking();
+
+                    Dispose();
+                    Hide();
+                }
+
+                _layout.StartAnimation("Offset.Y", animation);
+            }
 
             e.Handled = true;
         }
@@ -562,13 +634,12 @@ namespace Unigram.Controls.Views
                 animation.InsertKeyFrame(1, current);
             }
 
-            ViewModel.SelectedItem = ViewModel.Items[ViewModel.SelectedIndex + direction];
-
             _layout.StartAnimation("Offset.X", animation);
             batch.Completed += (s, args) =>
             {
                 if (direction != 0)
                 {
+                    ViewModel.SelectedItem = ViewModel.Items[ViewModel.SelectedIndex + direction];
                     PrepareNext(direction);
                 }
 
