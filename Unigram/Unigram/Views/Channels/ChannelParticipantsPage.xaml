@@ -27,7 +27,7 @@
                   Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="tl:TLChannelParticipantBase">
-                    <Grid Margin="0,6">
+                    <Grid Margin="0,6" Background="Transparent" ContextRequested="Participant_ContextRequested">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
