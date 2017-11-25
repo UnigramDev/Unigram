@@ -26,8 +26,6 @@ namespace Unigram.ViewModels.Dialogs
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly TLInputPeerBase _peer;
 
-        private int _lastMaxId;
-
         public DialogGalleryViewModel(IMTProtoService protoService, ICacheService cacheService, TLInputPeerBase peer, TLMessage selected)
             : base(protoService, cacheService, null)
         {
@@ -43,8 +41,6 @@ namespace Unigram.ViewModels.Dialogs
             }
 
             _peer = peer;
-            _lastMaxId = selected.Id;
-
             Initialize(selected.Id);
         }
 
@@ -57,7 +53,6 @@ namespace Unigram.ViewModels.Dialogs
                 {
                     Peer = _peer,
                     Filter = new TLInputMessagesFilterPhotoVideo(),
-                    FromId = null,
                     OffsetId = offset,
                     AddOffset = -limit / 2,
                     Limit = limit,
@@ -88,7 +83,6 @@ namespace Unigram.ViewModels.Dialogs
                         if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
                         {
                             Items.Insert(0, new GalleryMessageItem(message));
-                            _lastMaxId = message.Id;
                         }
                         else
                         {
@@ -101,7 +95,6 @@ namespace Unigram.ViewModels.Dialogs
                         if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
                         {
                             Items.Add(new GalleryMessageItem(message));
-                            _lastMaxId = message.Id;
                         }
                         else
                         {
@@ -112,23 +105,91 @@ namespace Unigram.ViewModels.Dialogs
             }
         }
 
-        //protected override async void LoadNext()
-        //{
-        //    if (User != null)
-        //    {
-        //        using (await _loadMoreLock.WaitAsync())
-        //        {
-        //            var result = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), Items.Count, 0, 0);
-        //            if (result.IsSucceeded)
-        //            {
-        //                foreach (var photo in result.Value.Photos)
-        //                {
-        //                    Items.Add(photo);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+        protected override async void LoadPrevious()
+        {
+            using (await _loadMoreLock.WaitAsync())
+            {
+                var item = Items.FirstOrDefault() as GalleryMessageItem;
+                if (item == null)
+                {
+                    return;
+                }
+
+                var offset = item.Message.Id;
+
+                var limit = 20;
+                var req = new TLMessagesSearch
+                {
+                    Peer = _peer,
+                    Filter = new TLInputMessagesFilterPhotoVideo(),
+                    OffsetId = offset,
+                    AddOffset = 0,
+                    Limit = limit,
+                };
+
+                //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
+                var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
+                if (response.IsSucceeded)
+                {
+                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+
+                    foreach (var photo in response.Result.Messages.Where(x => x.Id < offset))
+                    {
+                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
+                        {
+                            Items.Insert(0, new GalleryMessageItem(message));
+                        }
+                        else
+                        {
+                            TotalItems--;
+                        }
+                    }
+                }
+            }
+        }
+
+        protected override async void LoadNext()
+        {
+            using (await _loadMoreLock.WaitAsync())
+            {
+                var item = Items.LastOrDefault() as GalleryMessageItem;
+                if (item == null)
+                {
+                    return;
+                }
+
+                var offset = item.Message.Id;
+
+                var limit = 20;
+                var req = new TLMessagesSearch
+                {
+                    Peer = _peer,
+                    Filter = new TLInputMessagesFilterPhotoVideo(),
+                    OffsetId = offset + 1,
+                    AddOffset = -limit,
+                    Limit = limit,
+                };
+
+                //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
+                var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
+                if (response.IsSucceeded)
+                {
+                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+
+                    foreach (var photo in response.Result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
+                    {
+                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
+                        {
+                            Items.Add(new GalleryMessageItem(message));
+                        }
+                        else
+                        {
+                            TotalItems--;
+                        }
+                    }
+                }
+            }
+        }
 
         public override int Position => TotalItems - (Items.Count - base.Position);
 
