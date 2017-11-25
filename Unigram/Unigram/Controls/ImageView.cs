@@ -242,11 +242,11 @@ namespace Unigram.Controls
                 //    Holder.Height = height * ratio;
                 //}
 
-                return new Size(width * ratio, height * ratio);
+                return base.MeasureOverride(new Size(width * ratio, height * ratio));
             }
             else
             {
-                return new Size(width, height);
+                return base.MeasureOverride(new Size(width, height));
             }
         }
 
