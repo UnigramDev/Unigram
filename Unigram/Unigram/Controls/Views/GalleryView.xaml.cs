@@ -550,7 +550,7 @@ namespace Unigram.Controls.Views
                 direction--;
                 animation.InsertKeyFrame(1, minimum);
             }
-            else if (delta > 0 && (velocity < 1.5 || double.IsNaN(velocity)))
+            else if (delta > 0 && (velocity < -1.5 || double.IsNaN(velocity)))
             {
                 // next
                 direction++;
@@ -567,7 +567,10 @@ namespace Unigram.Controls.Views
             _layout.StartAnimation("Offset.X", animation);
             batch.Completed += (s, args) =>
             {
-                PrepareNext(direction);
+                if (direction != 0)
+                {
+                    PrepareNext(direction);
+                }
 
                 _layout.Offset = new Vector3(-width, 0, 0);
                 _selecting = false;
@@ -609,9 +612,10 @@ namespace Unigram.Controls.Views
             Grid.SetColumn(previous, 0);
             Grid.SetColumn(next, 2);
 
-            target.Content = ViewModel.Items[ViewModel.SelectedIndex];
-            previous.Content = ViewModel.SelectedIndex > 0 ? ViewModel.Items[ViewModel.SelectedIndex - 1] : null;
-            next.Content = ViewModel.SelectedIndex < ViewModel.Items.Count - 1 ? ViewModel.Items[ViewModel.SelectedIndex + 1] : null;
+            var index = ViewModel.SelectedIndex;
+            TrySet(target, ViewModel.Items[index]);
+            TrySet(previous, ViewModel.SelectedIndex > 0 ? ViewModel.Items[index - 1] : null);
+            TrySet(next, ViewModel.SelectedIndex < ViewModel.Items.Count - 1 ? ViewModel.Items[index + 1] : null);
 
             Dispose();
 
@@ -634,6 +638,16 @@ namespace Unigram.Controls.Views
             }
 
             return null;
+        }
+
+        private void TrySet(ContentControl element, object content)
+        {
+            if (object.Equals(element, content))
+            {
+                return;
+            }
+
+            element.Content = content;
         }
 
         protected override Size MeasureOverride(Size availableSize)
