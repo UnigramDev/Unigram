@@ -59,6 +59,7 @@ using LinqToVisualTree;
 using Unigram.Models;
 using System.Windows.Input;
 using Unigram.Strings;
+using Unigram.Views.Dialogs;
 
 namespace Unigram.Views
 {
@@ -241,15 +242,14 @@ namespace Unigram.Views
             {
                 ManagePanel.Visibility = Visibility.Collapsed;
                 InfoPanel.Visibility = Visibility.Visible;
+
+                ViewModel.SelectedItems = new List<TLMessageCommonBase>();
             }
             else
             {
                 ManagePanel.Visibility = Visibility.Visible;
                 InfoPanel.Visibility = Visibility.Collapsed;
             }
-
-            ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
-            ViewModel.MessagesDeleteCommand.RaiseCanExecuteChanged();
         }
 
         private void Manage_Click(object sender, RoutedEventArgs e)
@@ -501,10 +501,17 @@ namespace Unigram.Views
 
         private async void Attach_Click(object sender, RoutedEventArgs e)
         {
-            var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendMedia)
+            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendMedia)
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting media content here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachMediaRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -703,7 +710,15 @@ namespace Unigram.Views
             var channel = ViewModel.With as TLChannel;
             if (channel != null && channel.HasBannedRights && (channel.BannedRights.IsSendStickers || channel.BannedRights.IsSendGifs))
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -796,13 +811,16 @@ namespace Unigram.Views
             var control = sender as FrameworkElement;
             var message = control.DataContext as TLMessage;
 
-            if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasFromId)
+            if (message != null && message.IsSaved())
             {
-                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFrom.FromId.Value });
-            }
-            else if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasChannelId)
-            {
-                ViewModel.NavigationService.NavigateToDialog(message.FwdFromChannel);
+                if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasFromId)
+                {
+                    ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFrom.FromId.Value });
+                }
+                else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasChannelId)
+                {
+                    ViewModel.NavigationService.NavigateToDialog(message.FwdFromChannel);
+                }
             }
             else if (message != null && message.HasFromId)
             {
@@ -842,6 +860,16 @@ namespace Unigram.Views
 
         #region Context menu
 
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            if (flyout.Items.Count > 0)
+            {
+                flyout.ShowAt((Button)sender);
+            }
+        }
+
         private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
@@ -851,23 +879,23 @@ namespace Unigram.Views
             var channel = messageCommon.Parent as TLChannel;
 
             // Generic
-            CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, Strings.Resources.MessageReply);
-            CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? Strings.Resources.MessageUnpin : Strings.Resources.MessagePin);
-            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, Strings.Resources.MessageEdit);
-            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Resources.MessageForward);
-            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Resources.MessageDelete);
-            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.MessageSelect);
-            CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, Strings.Resources.MessageCopy);
-            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, messageCommon, Strings.Resources.MessageCopyMedia);
-            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? Strings.Resources.MessageCopyLinkBroadcast : Strings.Resources.MessageCopyLinkMegaGroup);
+            CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, Strings.Android.Reply);
+            CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? Strings.Android.UnpinMessage : Strings.Android.PinMessage);
+            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, Strings.Android.Edit);
+            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Android.Forward);
+            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Android.Delete);
+            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.Select);
+            CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, Strings.Android.Copy);
+            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, messageCommon, Strings.Resources.CopyImage);
+            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? Strings.Resources.CopyPostLink : Strings.Resources.CopyMessageLink);
 
             // Stickers
-            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), messageCommon, Strings.Resources.MessageAddSticker);
-            CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, Strings.Resources.MessageFaveSticker);
-            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, Strings.Resources.MessageUnfaveSticker);
+            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), messageCommon, Strings.Android.AddToStickers);
+            CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, Strings.Android.AddToFavorites);
+            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, Strings.Android.RemovedFromFavorites);
 
-            CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, Strings.Resources.MessageSaveGIF);
-            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.MessageSaveMedia);
+            CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, Strings.Android.SaveToGIFs);
+            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.SaveFileAs);
             //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, AppResources.MessageSaveDownload);
 
             //sender.ContextFlyout = menu;
@@ -896,6 +924,16 @@ namespace Unigram.Views
 
                 flyout.Items.Add(flyoutItem);
             }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, ICommand command, string text)
+        {
+            var flyoutItem = new MenuFlyoutItem();
+            flyoutItem.IsEnabled = command != null;
+            flyoutItem.Command = command;
+            flyoutItem.Text = text;
+
+            flyout.Items.Add(flyoutItem);
         }
 
         private Visibility MessageReply_Loaded(TLMessageCommonBase messageCommon)
@@ -1203,10 +1241,17 @@ namespace Unigram.Views
 
         public async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendStickers)
+            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendStickers)
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -1220,10 +1265,17 @@ namespace Unigram.Views
 
         public async void Gifs_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendGifs)
+            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendGifs)
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting GIFs here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 
@@ -1540,7 +1592,7 @@ namespace Unigram.Views
 
         public string ConvertEmptyText(int userId)
         {
-            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? "Got a question about Telegram?" : "No messages here yet...";
+            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? Strings.Android.GotAQuestion : Strings.Android.NoMessages;
         }
 
         public string ConvertSelectedCount(int count, bool items)
@@ -1548,12 +1600,32 @@ namespace Unigram.Views
             if (items)
             {
                 // TODO: Send 1 Photo/Video
-                return count > 0 ? count > 1 ? string.Format(Strings.Resources.SendMultipleMedias, count) : Strings.Resources.SendOneItem : Strings.Resources.SendPhotoVideo;
+                return count > 0 ? string.Format(Strings.Android.SendItems, count) : Strings.Android.ChatGallery;
             }
             else
             {
-                return count > 0 ? count > 1 ? Strings.Resources.SendAsFiles : Strings.Resources.SendAsFile : Strings.Resources.SendFile;
+                return count > 0 ? count > 1 ? Strings.Android.SendAsFiles : Strings.Android.SendAsFile : Strings.Android.ChatDocument;
             }
+        }
+
+        private string ConvertPlaceholder(ITLDialogWith with)
+        {
+            if (with is TLChannel channel && channel.IsBroadcast)
+            {
+                return Strings.Android.ChannelBroadcast;
+            }
+
+            return Strings.Android.TypeMessage;
+        }
+
+        private string ConvertReportSpam(ITLDialogWith with)
+        {
+            if (with is TLUser)
+            {
+                return Strings.Android.ReportSpam;
+            }
+
+            return Strings.Android.ReportSpamAndLeave;
         }
 
         #endregion
@@ -1867,15 +1939,8 @@ namespace Unigram.Views
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
     {
-        public StorageLibrary Library => _library;
-        public StorageFileQueryResult Query => _query;
-
-        private readonly StorageMediaComparer _comparer;
-
-        private StorageLibrary _library;
-        private StorageFileQueryResult _query;
-
-        private uint _startIndex;
+        public StorageFileQueryResult Query { get; private set; }
+        public uint StartIndex { get; private set; }
 
         public MediaLibraryCollection()
         {
@@ -1884,7 +1949,12 @@ namespace Unigram.Views
                 return;
             }
 
-            _comparer = new StorageMediaComparer();
+            var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
+            queryOptions.FolderDepth = FolderDepth.Deep;
+
+            Query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
+            Query.ContentsChanged += OnContentsChanged;
+            StartIndex = 0;
         }
 
         private int _selectedCount;
@@ -1896,130 +1966,24 @@ namespace Unigram.Views
             }
         }
 
-        private async void OnContentsChanged(IStorageQueryResultBase sender, object args)
+        private void OnContentsChanged(IStorageQueryResultBase sender, object args)
         {
-            var reader = _library.ChangeTracker.GetChangeReader();
-            var changes = await reader.ReadBatchAsync();
-
-            foreach (StorageLibraryChange change in changes)
+            Execute.BeginOnUIThread(() =>
             {
-                if (change.ChangeType == StorageLibraryChangeType.ChangeTrackingLost)
-                {
-                    // Change tracker is in an invalid state and must be reset
-                    // This should be a very rare case, but must be handled
-                    Library.ChangeTracker.Reset();
-                    return;
-                }
-                if (change.IsOfType(StorageItemTypes.File))
-                {
-                    await ProcessFileChange(change);
-                }
-                else if (change.IsOfType(StorageItemTypes.Folder))
-                {
-                    // No-op; not interested in folders
-                }
-                else
-                {
-                    if (change.ChangeType == StorageLibraryChangeType.Deleted)
-                    {
-                        //UnknownItemRemoved(change.Path);
-                    }
-                }
-            }
-
-            // Mark that all the changes have been seen and for the change tracker
-            // to never return these changes again
-            await reader.AcceptChangesAsync();
-        }
-
-        private async Task ProcessFileChange(StorageLibraryChange change)
-        {
-            switch (change.ChangeType)
-            {
-                // New File in the Library
-                case StorageLibraryChangeType.Created:
-                case StorageLibraryChangeType.MovedIntoLibrary:
-                case StorageLibraryChangeType.MovedOrRenamed:
-                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        var file = (StorageFile)(await change.GetStorageItemAsync());
-
-                        Execute.BeginOnUIThread(async () =>
-                        {
-                            var storage = await StorageMedia.CreateAsync(file, false);
-                            if (storage != null)
-                            {
-                                var array = this.ToArray();
-                                var index = Array.BinarySearch(array, storage, _comparer);
-                                if (index < 0) index = ~index;
-
-                                // Insert only if newer than the last item
-                                if (index < array.Length || !HasMoreItems)
-                                {
-                                    _startIndex++;
-
-                                    Insert(index, storage);
-                                    storage.PropertyChanged += OnPropertyChanged;
-                                }
-                            }
-                        });
-                    }
-                    break;
-                // File Removed From Library
-                case StorageLibraryChangeType.Deleted:
-                case StorageLibraryChangeType.MovedOutOfLibrary:
-                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        Execute.BeginOnUIThread(() =>
-                        {
-                            var already = this.FirstOrDefault(x => x.File.Path.Equals(change.Path));
-                            if (already != null)
-                            {
-                                _startIndex--;
-
-                                Remove(already);
-                                UpdateSelected();
-                            }
-                        });
-                    }
-                    break;
-                // Modified Contents
-                case StorageLibraryChangeType.ContentsChanged:
-                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        var file = (StorageFile)(await change.GetStorageItemAsync());
-
-                        // Update thumbnail maybe
-                    }
-                    break;
-                // Ignored Cases
-                case StorageLibraryChangeType.EncryptionChanged:
-                case StorageLibraryChangeType.ContentsReplaced:
-                case StorageLibraryChangeType.IndexingStatusChanged:
-                default:
-                    // These are safe to ignore in this application
-                    break;
-            }
+                StartIndex = 0;
+                Clear();
+                UpdateCount();
+            });
         }
 
         public override async Task<IList<StorageMedia>> LoadDataAsync()
         {
-            if (_library == null)
-            {
-                _library = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
-                _library.ChangeTracker.Enable();
-
-                var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
-                queryOptions.FolderDepth = FolderDepth.Deep;
-
-                _query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
-                _query.ContentsChanged += OnContentsChanged;
-            }
-
             var items = new List<StorageMedia>();
-            var result = await _query.GetFilesAsync(_startIndex, 10);
+            uint resultCount = 0;
+            var result = await Query.GetFilesAsync(StartIndex, 10);
+            StartIndex += (uint)result.Count;
 
-            _startIndex += (uint)result.Count;
+            resultCount = (uint)result.Count;
 
             foreach (var file in result)
             {
@@ -2038,22 +2002,206 @@ namespace Unigram.Views
         {
             if (e.PropertyName.Equals("IsSelected"))
             {
-                UpdateSelected();
+                UpdateCount();
             }
         }
 
-        private void UpdateSelected()
+        private void UpdateCount()
         {
             _selectedCount = this.Count(x => x.IsSelected);
             OnPropertyChanged(new PropertyChangedEventArgs("SelectedCount"));
         }
-
-        class StorageMediaComparer : IComparer<StorageMedia>
-        {
-            public int Compare(StorageMedia x, StorageMedia y)
-            {
-                return y.Basic.ItemDate.CompareTo(x.Basic.ItemDate);
-            }
-        }
     }
+
+    //public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
+    //{
+    //    public StorageLibrary Library => _library;
+    //    public StorageFileQueryResult Query => _query;
+
+    //    private readonly StorageMediaComparer _comparer;
+
+    //    private StorageLibrary _library;
+    //    private StorageFileQueryResult _query;
+
+    //    private uint _startIndex;
+
+    //    public MediaLibraryCollection()
+    //    {
+    //        if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+    //        {
+    //            return;
+    //        }
+
+    //        _comparer = new StorageMediaComparer();
+    //    }
+
+    //    private int _selectedCount;
+    //    public int SelectedCount
+    //    {
+    //        get
+    //        {
+    //            return _selectedCount;
+    //        }
+    //    }
+
+    //    private async void OnContentsChanged(IStorageQueryResultBase sender, object args)
+    //    {
+    //        var reader = _library.ChangeTracker.GetChangeReader();
+    //        var changes = await reader.ReadBatchAsync();
+
+    //        foreach (StorageLibraryChange change in changes)
+    //        {
+    //            if (change.ChangeType == StorageLibraryChangeType.ChangeTrackingLost)
+    //            {
+    //                // Change tracker is in an invalid state and must be reset
+    //                // This should be a very rare case, but must be handled
+    //                Library.ChangeTracker.Reset();
+    //                return;
+    //            }
+    //            if (change.IsOfType(StorageItemTypes.File))
+    //            {
+    //                await ProcessFileChange(change);
+    //            }
+    //            else if (change.IsOfType(StorageItemTypes.Folder))
+    //            {
+    //                // No-op; not interested in folders
+    //            }
+    //            else
+    //            {
+    //                if (change.ChangeType == StorageLibraryChangeType.Deleted)
+    //                {
+    //                    //UnknownItemRemoved(change.Path);
+    //                }
+    //            }
+    //        }
+
+    //        // Mark that all the changes have been seen and for the change tracker
+    //        // to never return these changes again
+    //        await reader.AcceptChangesAsync();
+    //    }
+
+    //    private async Task ProcessFileChange(StorageLibraryChange change)
+    //    {
+    //        switch (change.ChangeType)
+    //        {
+    //            // New File in the Library
+    //            case StorageLibraryChangeType.Created:
+    //            case StorageLibraryChangeType.MovedIntoLibrary:
+    //            case StorageLibraryChangeType.MovedOrRenamed:
+    //                if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+    //                {
+    //                    var file = (StorageFile)(await change.GetStorageItemAsync());
+
+    //                    Execute.BeginOnUIThread(async () =>
+    //                    {
+    //                        var storage = await StorageMedia.CreateAsync(file, false);
+    //                        if (storage != null)
+    //                        {
+    //                            var array = this.ToArray();
+    //                            var index = Array.BinarySearch(array, storage, _comparer);
+    //                            if (index < 0) index = ~index;
+
+    //                            // Insert only if newer than the last item
+    //                            if (index < array.Length || !HasMoreItems)
+    //                            {
+    //                                _startIndex++;
+
+    //                                Insert(index, storage);
+    //                                storage.PropertyChanged += OnPropertyChanged;
+    //                            }
+    //                        }
+    //                    });
+    //                }
+    //                break;
+    //            // File Removed From Library
+    //            case StorageLibraryChangeType.Deleted:
+    //            case StorageLibraryChangeType.MovedOutOfLibrary:
+    //                if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+    //                {
+    //                    Execute.BeginOnUIThread(() =>
+    //                    {
+    //                        var already = this.FirstOrDefault(x => x.File.Path.Equals(change.Path));
+    //                        if (already != null)
+    //                        {
+    //                            _startIndex--;
+
+    //                            Remove(already);
+    //                            UpdateSelected();
+    //                        }
+    //                    });
+    //                }
+    //                break;
+    //            // Modified Contents
+    //            case StorageLibraryChangeType.ContentsChanged:
+    //                if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+    //                {
+    //                    var file = (StorageFile)(await change.GetStorageItemAsync());
+
+    //                    // Update thumbnail maybe
+    //                }
+    //                break;
+    //            // Ignored Cases
+    //            case StorageLibraryChangeType.EncryptionChanged:
+    //            case StorageLibraryChangeType.ContentsReplaced:
+    //            case StorageLibraryChangeType.IndexingStatusChanged:
+    //            default:
+    //                // These are safe to ignore in this application
+    //                break;
+    //        }
+    //    }
+
+    //    public override async Task<IList<StorageMedia>> LoadDataAsync()
+    //    {
+    //        if (_library == null)
+    //        {
+    //            _library = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
+    //            _library.ChangeTracker.Enable();
+
+    //            var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
+    //            queryOptions.FolderDepth = FolderDepth.Deep;
+
+    //            _query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
+    //            _query.ContentsChanged += OnContentsChanged;
+    //        }
+
+    //        var items = new List<StorageMedia>();
+    //        var result = await _query.GetFilesAsync(_startIndex, 10);
+
+    //        _startIndex += (uint)result.Count;
+
+    //        foreach (var file in result)
+    //        {
+    //            var storage = await StorageMedia.CreateAsync(file, false);
+    //            if (storage != null)
+    //            {
+    //                items.Add(storage);
+    //                storage.PropertyChanged += OnPropertyChanged;
+    //            }
+    //        }
+
+    //        return items;
+    //    }
+
+    //    private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+    //    {
+    //        if (e.PropertyName.Equals("IsSelected"))
+    //        {
+    //            UpdateSelected();
+    //        }
+    //    }
+
+    //    private void UpdateSelected()
+    //    {
+    //        _selectedCount = this.Count(x => x.IsSelected);
+    //        OnPropertyChanged(new PropertyChangedEventArgs("SelectedCount"));
+    //    }
+
+    //    class StorageMediaComparer : IComparer<StorageMedia>
+    //    {
+    //        public int Compare(StorageMedia x, StorageMedia y)
+    //        {
+    //            return y.Basic.ItemDate.CompareTo(x.Basic.ItemDate);
+    //        }
+    //    }
+    //}
 }

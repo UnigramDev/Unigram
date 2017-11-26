@@ -8,9 +8,12 @@ namespace Telegram.Api.Transport
         ITransport GetTransport(string host, int port, TransportType type, out bool isCreated);
         ITransport GetFileTransport(string host, int port, TransportType type, out bool isCreated);
         ITransport GetFileTransport2(string host, int port, TransportType type, out bool isCreated);
+        ITransport GetSpecialTransport(string host, int port, TransportType type, out bool isCreated);
 
         void Close();
         void CloseTransport(ITransport transport);
+
+        event EventHandler CheckConfig;
 
         event EventHandler<TransportEventArgs> TransportConnecting;
         event EventHandler<TransportEventArgs> TransportConnected;

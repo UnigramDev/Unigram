@@ -101,7 +101,7 @@
     <Compile Include="Common\AdminLogHelper.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\Dialogs\OutputTypingManager.cs" />
-    <Compile Include="Common\LocaleHelper.cs" />
+    <Compile Include="Common\InactivityHelper.cs" />
     <Compile Include="Common\MosaicMedia.cs" />
     <Compile Include="Common\GroupedMessages.cs" />
     <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
@@ -184,6 +184,7 @@
     </Compile>
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
+    <Compile Include="Controls\ProfilePicture.cs" />
     <Compile Include="Controls\SelectGridView.cs" />
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
@@ -221,7 +222,6 @@
     </Compile>
     <Compile Include="Controls\RatingBar.cs" />
     <Compile Include="Controls\ScrollViewerBackground.cs" />
-    <Compile Include="Controls\StickerView.cs" />
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\Views\AttachedStickersView.xaml.cs">
@@ -257,6 +257,12 @@
     <Compile Include="Controls\Views\ForwardView.xaml.cs">
       <DependentUpon>ForwardView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\SettingsSecurityPasscodeConfirmView.xaml.cs">
+      <DependentUpon>SettingsSecurityPasscodeConfirmView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\SettingsSecurityPasscodeEditView.xaml.cs">
+      <DependentUpon>SettingsSecurityPasscodeEditView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\ShareView.xaml.cs">
       <DependentUpon>ShareView.xaml</DependentUpon>
     </Compile>
@@ -281,12 +287,12 @@
     </Compile>
     <Compile Include="Converters\AccountTTLConverter.cs" />
     <Compile Include="Converters\AutoDownloadConverter.cs" />
+    <Compile Include="Converters\AutolockTimeoutConverter.cs" />
     <Compile Include="Converters\BooleanNegationConverter.cs" />
     <Compile Include="Converters\BooleanToIndexConverter.cs" />
     <Compile Include="Converters\ChannelJoinedToVisibilityConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\ChannelToSummaryConverter.cs" />
-    <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
     <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\GeoLivePeriodConverter.cs" />
@@ -315,6 +321,7 @@
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
     <Compile Include="Selectors\DialogTemplateSelector.cs" />
     <Compile Include="Selectors\GalleryTemplateSelector.cs" />
+    <Compile Include="Selectors\ParticipantTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
@@ -322,6 +329,7 @@
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
+    <Compile Include="Services\PasscodeService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\PushService.cs" />
     <Compile Include="Strings\en\Android.cs">
@@ -365,8 +373,11 @@
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
-    <Compile Include="ViewModels\DialogSearchViewModel.cs" />
-    <Compile Include="ViewModels\DialogStickersViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\DialogGalleryViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\DialogSearchViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\DialogSharedMediaViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\DialogShareLocationViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Media.cs" />
     <Compile Include="ViewModels\GallerySecretViewModel.cs" />
     <Compile Include="ViewModels\InstantGalleryViewModel.cs" />
@@ -378,8 +389,12 @@
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
     <Compile Include="ViewModels\PlaybackViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Phone\SettingsPhoneIntroViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Phone\SettingsPhoneSentCodeViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Phone\SettingsPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsDataAndStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsGeneralViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsLanguageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyPhoneCallViewModel.cs" />
@@ -389,8 +404,6 @@
     <Compile Include="ViewModels\Settings\SettingsSecurityPasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWallPaperViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsPhoneSentCodeViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSecurityEnterPasswordViewModel.cs" />
     <Compile Include="ViewModels\ForwardViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
@@ -461,8 +474,17 @@
     <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
       <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Dialogs\DialogSharedMediaPage.xaml.cs">
+      <DependentUpon>DialogSharedMediaPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialogs\DialogShareLocationPage.xaml.cs">
+      <DependentUpon>DialogShareLocationPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\InvitePage.xaml.cs">
       <DependentUpon>InvitePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PasscodePage.xaml.cs">
+      <DependentUpon>PasscodePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Payments\PaymentFormStep1Page.xaml.cs">
       <DependentUpon>PaymentFormStep1Page.xaml</DependentUpon>
@@ -485,11 +507,20 @@
     <Compile Include="Views\PhoneCallPage.xaml.cs">
       <DependentUpon>PhoneCallPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\Phone\SettingsPhoneIntroPage.xaml.cs">
+      <DependentUpon>SettingsPhoneIntroPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Phone\SettingsPhonePage.xaml.cs">
+      <DependentUpon>SettingsPhonePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Phone\SettingsPhoneSentCodePage.xaml.cs">
+      <DependentUpon>SettingsPhoneSentCodePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsGeneralPage.xaml.cs">
       <DependentUpon>SettingsGeneralPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsPhoneWelcomePage.xaml.cs">
-      <DependentUpon>SettingsPhoneWelcomePage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsLanguagePage.xaml.cs">
+      <DependentUpon>SettingsLanguagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsPrivacyChatInvitePage.xaml.cs">
       <DependentUpon>SettingsPrivacyChatInvitePage.xaml</DependentUpon>
@@ -506,14 +537,12 @@
     <Compile Include="Views\Settings\SettingsSecurityEnterPasswordPage.xaml.cs">
       <DependentUpon>SettingsSecurityEnterPasswordPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsSecurityPasscodePage.xaml.cs">
+      <DependentUpon>SettingsSecurityPasscodePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Settings\SettingsSecurityPasscodeViewModel.cs" />
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsPhonePage.xaml.cs">
-      <DependentUpon>SettingsPhonePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsPhoneSentCodePage.xaml.cs">
-      <DependentUpon>SettingsPhoneSentCodePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
@@ -882,7 +911,6 @@
     <Compile Include="Controls\ProgressShape.cs" />
     <Compile Include="Controls\ProgressVoice.cs" />
     <Compile Include="Controls\TransferButton.cs" />
-    <Compile Include="Controls\ProfilePictureView.cs" />
     <Compile Include="Controls\Views\DeleteChannelMessageDialog.xaml.cs">
       <DependentUpon>DeleteChannelMessageDialog.xaml</DependentUpon>
     </Compile>
@@ -976,14 +1004,10 @@
       <DependentUpon>MessageReference.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SearchTextBox.cs" />
-    <Compile Include="Controls\Items\SimpleDialogListViewItem.xaml.cs">
-      <DependentUpon>SimpleDialogListViewItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Common\StickerBitmapSource.cs" />
     <Compile Include="Controls\TabHeaderStyle.xaml.cs">
       <DependentUpon>TabHeaderStyle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\UnigramLogo.cs" />
     <Compile Include="Controls\UpdateTextBox.cs" />
     <Compile Include="Converters\BindConvert.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
@@ -1012,11 +1036,8 @@
     </Compile>
     <Compile Include="ViewModels\Chats\ChatDetailsViewModel.cs" />
     <Compile Include="ViewModels\ContactsViewModel.cs" />
-    <Compile Include="ViewModels\DialogGalleryViewModel.cs" />
     <Compile Include="ViewModels\DialogsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
-    <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
-    <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Handle.cs" />
     <Compile Include="ViewModels\DialogViewModel.Info.cs" />
     <Compile Include="ViewModels\DialogViewModel.Inline.cs" />
@@ -1025,7 +1046,6 @@
     <Compile Include="ViewModels\SignIn\SignInPasswordViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInSentCodeViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInViewModel.cs" />
-    <Compile Include="ViewModels\IntroViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\GalleryViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -1060,12 +1080,6 @@
     </Compile>
     <Compile Include="Views\DialogPage.xaml.cs">
       <DependentUpon>DialogPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DialogSendLocationPage.xaml.cs">
-      <DependentUpon>DialogSendLocationPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DialogSharedMediaPage.xaml.cs">
-      <DependentUpon>DialogSharedMediaPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
@@ -1147,6 +1161,43 @@
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Android.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\it\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\fr\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\de\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\es\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ko\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\nl\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\pt-BR\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ru\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\uk\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ms\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\id\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ar\Android.resw">
+      <SubType>Designer</SubType>
     </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
@@ -1400,10 +1451,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Items\SimpleDialogListViewItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\Messages\MessageReference.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1443,6 +1490,14 @@
     <Page Include="Controls\Views\ForwardView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Views\SettingsSecurityPasscodeConfirmView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SettingsSecurityPasscodeEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\ShareView.xaml">
       <SubType>Designer</SubType>
@@ -1540,6 +1595,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Dialogs\DialogSharedMediaPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Dialogs\DialogShareLocationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\InstantPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1592,19 +1655,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DialogSendLocationPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\DialogSharedMediaPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\GamePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\InvitePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PasscodePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1636,11 +1695,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\Phone\SettingsPhoneIntroPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Phone\SettingsPhonePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Phone\SettingsPhoneSentCodePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\SettingsGeneralPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\SettingsPhoneWelcomePage.xaml">
+    <Page Include="Views\Settings\SettingsLanguagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1664,17 +1735,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\SettingsSecurityPasscodePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsStatsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsPhonePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\SettingsPhoneSentCodePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SignIn\SignInPasswordPage.xaml">
       <SubType>Designer</SubType>
@@ -1785,7 +1852,7 @@
       <Version>4.1.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.1</Version>
+      <Version>6.0.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.0</Version>
@@ -1854,9 +1921,7 @@
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Dialog\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

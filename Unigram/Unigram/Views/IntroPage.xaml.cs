@@ -44,8 +44,12 @@ namespace Unigram.Views
         {
             if (_renderer == null)
             {
-                _renderer = new TLIntroRenderer(SwapChain);
-                _renderer.Loaded();
+                try
+                {
+                    _renderer = new TLIntroRenderer(SwapChain);
+                    _renderer.Loaded();
+                }
+                catch { }
             }
         }
 
@@ -53,8 +57,12 @@ namespace Unigram.Views
         {
             if (_renderer != null)
             {
-                _renderer.Dispose();
-                _renderer = null;
+                try
+                {
+                    _renderer.Dispose();
+                    _renderer = null;
+                }
+                catch { }
             }
         }
 

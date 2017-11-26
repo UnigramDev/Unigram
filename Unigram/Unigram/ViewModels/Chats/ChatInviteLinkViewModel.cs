@@ -41,6 +41,19 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
+        private TLChatFullBase _full;
+        public TLChatFullBase Full
+        {
+            get
+            {
+                return _full;
+            }
+            set
+            {
+                Set(ref _full, value);
+            }
+        }
+
         private string _inviteLink;
         public string InviteLink
         {
@@ -79,6 +92,7 @@ namespace Unigram.ViewModels.Chats
 
                     if (full != null)
                     {
+                        _full = full;
                         _exportedInvite = full.ExportedInvite;
 
                         if (full.ExportedInvite is TLChatInviteExported invite)
@@ -134,6 +148,11 @@ namespace Unigram.ViewModels.Chats
                 {
                     _exportedInvite = response.Result;
 
+                    if (_full != null)
+                    {
+                        _full.ExportedInvite = response.Result;
+                    }
+
                     var invite = response.Result as TLChatInviteExported;
                     if (invite != null && !string.IsNullOrEmpty(invite.Link))
                     {
@@ -154,13 +173,13 @@ namespace Unigram.ViewModels.Chats
             dataPackage.SetText(_inviteLink);
             ClipboardEx.TrySetContent(dataPackage);
 
-            await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
+            await TLMessageDialog.ShowAsync(Strings.Android.LinkCopied, Strings.Android.AppName, Strings.Android.OK);
         }
 
         public RelayCommand RevokeCommand { get; }
         private async void RevokeExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to revoke this link? Once you do, no one will be able to join the group using it.", "Telegram", "Revoke", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.RevokeAlert, Strings.Android.RevokeLink, Strings.Android.RevokeButton, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 Task<MTProtoResponse<TLExportedChatInviteBase>> task = null;
@@ -189,12 +208,17 @@ namespace Unigram.ViewModels.Chats
                     {
                         _exportedInvite = response.Result;
 
+                        if (_full != null)
+                        {
+                            _full.ExportedInvite = response.Result;
+                        }
+
                         var invite = response.Result as TLChatInviteExported;
                         if (invite != null && !string.IsNullOrEmpty(invite.Link))
                         {
                             InviteLink = invite.Link;
 
-                            await TLMessageDialog.ShowAsync("The previous invite link is now inactive. A new invite link has just been generated.", "Telegram", "OK");
+                            await TLMessageDialog.ShowAsync(Strings.Android.RevokeAlertNewLink, Strings.Android.RevokeLink, Strings.Android.OK);
                         }
                     }
                     else

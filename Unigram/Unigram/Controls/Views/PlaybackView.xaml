@@ -576,7 +576,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid Background="{ThemeResource ListViewItemPlaceholderBackground}" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top">
                                     <FontIcon Glyph="&#xE8D6;" Foreground="#FFFFFF"/>
-                                    <controls:ProfilePictureView Source="{Binding Playback.CurrentItem.Media.Document.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48"/>
+                                    <controls:ProfilePicture Source="{Binding Playback.CurrentItem.Media.Document.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48"/>
                                 </Grid>
 
                                 <StackPanel Margin="8,0,8,2" VerticalAlignment="Center" Grid.Column="1">

@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Services;
+using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Messages.Methods;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Common;
@@ -21,8 +23,8 @@ namespace Unigram.ViewModels.Chats
 
         private int _lastMaxId;
 
-        public ChatPhotosViewModel(IMTProtoService protoService, TLChatFullBase chatFull, TLChatBase chat)
-            : base(protoService, null, null)
+        public ChatPhotosViewModel(IMTProtoService protoService, ICacheService cacheService, TLChatFullBase chatFull, TLChatBase chat)
+            : base(protoService, cacheService, null)
         {
             _peer = chat.ToInputPeer();
             _lastMaxId = int.MaxValue;
@@ -31,11 +33,11 @@ namespace Unigram.ViewModels.Chats
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
-            //Initialize();
+            Initialize(int.MaxValue);
         }
 
-        public ChatPhotosViewModel(IMTProtoService protoService, TLChatFullBase chatFull, TLChatBase chat, TLMessageService serviceMessage)
-            : base(protoService, null, null)
+        public ChatPhotosViewModel(IMTProtoService protoService, ICacheService cacheService, TLChatFullBase chatFull, TLChatBase chat, TLMessageService serviceMessage)
+            : base(protoService, cacheService, null)
         {
             _peer = chat.ToInputPeer();
             _lastMaxId = serviceMessage.Id;
@@ -47,55 +49,68 @@ namespace Unigram.ViewModels.Chats
                 FirstItem = Items[0];
             }
 
-            //Initialize();
+            Initialize(serviceMessage.Id);
         }
 
-        private async void Initialize()
+        private async void Initialize(int offset)
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterChatPhotos(), 0, 0, 0, _lastMaxId, 15);
+                var limit = 20;
+                var req = new TLMessagesSearch
+                {
+                    Peer = _peer,
+                    Filter = new TLInputMessagesFilterChatPhotos(),
+                    FromId = null,
+                    OffsetId = offset,
+                    AddOffset = -limit / 2,
+                    Limit = limit,
+                };
+
+                //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterChatPhotos(), 0, 0, 0, _lastMaxId, 15);
+                var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
                 if (response.IsSucceeded)
                 {
-                    if (response.Result.Messages.Count > 0)
+                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+
+                    var current = 1;
+                    if (response.Result is TLMessagesMessagesSlice slice)
                     {
-                        if (response.Result is TLMessagesMessagesSlice slice)
-                        {
-                            TotalItems = slice.Count;
-                        }
-                        else if (response.Result is TLMessagesChannelMessages channelMessages)
-                        {
-                            TotalItems = channelMessages.Count;
-                        }
-                        else
-                        {
-                            TotalItems = response.Result.Messages.Count;
-                        }
-
-                        //Items.Clear();
-
-                        var items = new List<GalleryItem>(response.Result.Messages.Count);
-
-                        foreach (var photo in response.Result.Messages)
-                        {
-                            if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
-                            {
-                                items.Insert(0, new GalleryMessageServiceItem(message));
-                                _lastMaxId = message.Id;
-                            }
-                            else
-                            {
-                                TotalItems--;
-                            }
-                        }
-
-                        Items.ReplaceWith(items);
-                        SelectedItem = Items.LastOrDefault();
-                        FirstItem = Items.LastOrDefault();
+                        TotalItems = slice.Count + current;
+                    }
+                    else if (response.Result is TLMessagesChannelMessages channelMessages)
+                    {
+                        TotalItems = channelMessages.Count + current;
                     }
                     else
                     {
-                        TotalItems = 1;
+                        TotalItems = response.Result.Messages.Count + current;
+                    }
+
+                    foreach (var photo in response.Result.Messages.Where(x => x.Id < offset))
+                    {
+                        if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
+                        {
+                            Items.Insert(0, new GalleryMessageServiceItem(message));
+                            _lastMaxId = message.Id;
+                        }
+                        else
+                        {
+                            TotalItems--;
+                        }
+                    }
+
+                    foreach (var photo in response.Result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
+                    {
+                        if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
+                        {
+                            Items.Add(new GalleryMessageServiceItem(message));
+                            _lastMaxId = message.Id;
+                        }
+                        else
+                        {
+                            TotalItems--;
+                        }
                     }
                 }
             }
@@ -128,6 +143,8 @@ namespace Unigram.ViewModels.Chats
                 }
             }
         }
+
+        public override int Position => TotalItems - (Items.Count - base.Position);
 
         public override bool CanView => true;
     }

@@ -9,6 +9,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
@@ -18,6 +19,7 @@ namespace Unigram.ViewModels.Channels
         public ChannelAdminsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator, new TLChannelParticipantsAdmins())
         {
+            ParticipantDismissCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantDismissExecute);
         }
 
         public bool CanEditDemocracy
@@ -40,6 +42,32 @@ namespace Unigram.ViewModels.Channels
                 Set(ref _isDemocracy, value);
             }
         }
+
+        #region Context menu
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantDismissCommand { get; }
+        private async void ParticipantDismissExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            if (participant.User == null)
+            {
+                return;
+            }
+
+            var rights = new TLChannelAdminRights();
+
+            var response = await ProtoService.EditAdminAsync(_item, participant.User.ToInputUser(), rights);
+            if (response.IsSucceeded)
+            {
+                Participants.Remove(participant);
+            }
+        }
+
+        #endregion
 
         public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {

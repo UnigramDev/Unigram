@@ -13,7 +13,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Storage usage" 
+        <controls:PageHeader Text="{CustomResource StorageUsage}" 
                              IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
 
         <StackPanel Grid.Row="1">

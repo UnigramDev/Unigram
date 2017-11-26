@@ -10,14 +10,19 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Common;
+using Unigram.Native;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Composition;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -206,6 +211,69 @@ namespace Unigram.Controls.Messages
             {
                 Placeholder.Width = e.NewSize.Width;
             }
+        }
+
+        public void Highlight()
+        {
+            var message = DataContext as TLMessage;
+            if (message == null)
+            {
+                return;
+            }
+
+            var sticker = message.IsSticker();
+            var round = message.IsRoundVideo();
+            var target = sticker || round ? Media : (FrameworkElement)ContentPanel;
+
+            var overlay = ElementCompositionPreview.GetElementChildVisual(target) as SpriteVisual;
+            if (overlay == null)
+            {
+                overlay = ElementCompositionPreview.GetElementVisual(this).Compositor.CreateSpriteVisual();
+                ElementCompositionPreview.SetElementChildVisual(target, overlay);
+            }
+
+            var settings = new UISettings();
+            var fill = overlay.Compositor.CreateColorBrush(settings.GetColorValue(UIColorType.Accent));
+            var brush = (CompositionBrush)fill;
+
+            if (sticker || round)
+            {
+                ManagedSurface surface = null;
+                if (sticker)
+                {
+                    var document = message.GetDocument();
+                    var fileName = document.GetFileName();
+                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                    {
+                        var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
+                        surface = ImageLoader.Instance.LoadFromStream(decoded);
+                    }
+                }
+                else
+                {
+                    surface = ImageLoader.Instance.LoadCircle(100, Windows.UI.Colors.White);
+                }
+
+                if (surface != null)
+                {
+                    var mask = overlay.Compositor.CreateMaskBrush();
+                    mask.Mask = surface.Brush;
+                    mask.Source = fill;
+                    brush = mask;
+                }
+            }
+
+            overlay.Size = new System.Numerics.Vector2((float)target.ActualWidth, (float)target.ActualHeight);
+            overlay.Opacity = 0f;
+            overlay.Brush = brush;
+
+            var animation = overlay.Compositor.CreateScalarKeyFrameAnimation();
+            animation.Duration = TimeSpan.FromSeconds(2);
+            animation.InsertKeyFrame(300f / 2000f, 0.4f);
+            animation.InsertKeyFrame(1700f / 2000f, 0.4f);
+            animation.InsertKeyFrame(1, 0);
+
+            overlay.StartAnimation("Opacity", animation);
         }
     }
 }

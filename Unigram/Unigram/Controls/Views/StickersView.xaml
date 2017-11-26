@@ -6,7 +6,7 @@
     xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:selectors="using:Unigram.Selectors"
-    xmlns:viewModels="using:Unigram.ViewModels"
+    xmlns:viewModels="using:Unigram.ViewModels.Dialogs"
     xmlns:messages="using:Telegram.Api.TL.Messages"
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
@@ -111,12 +111,7 @@
                     <ListView x:Name="GifsView"
                               ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
                               SelectionMode="None"
-                              Padding="10,0,10,10">
-                        <ListView.Header>
-                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12,8,0,8" Height="32" Margin="-10,0">
-                                <TextBlock Text="Saved GIFs" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                            </Border>
-                        </ListView.Header>
+                              Padding="10,10,10,10">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <GridView ItemsSource="{Binding}"
@@ -177,15 +172,10 @@
                         IsItemClickEnabled="True"
                         SelectionMode="None"
                         ItemClick="Featured_ItemClick"
-                        Padding="12,0">
+                        Padding="12,8,12,0">
                         <common:FluidGridView.Triggers>
                             <common:FluidGridViewTrigger RowsOrColumns="5"/>
                         </common:FluidGridView.Triggers>
-                        <GridView.Header>
-                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="0,8,0,8" Height="32">
-                                <TextBlock Text="Trending stickers" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                            </Border>
-                        </GridView.Header>
                         <GridView.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.HeaderTemplate>
@@ -419,7 +409,7 @@
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
                             <DataTemplate x:DataType="viewModels:TLChannelStickerSet">
-                                <controls:ProfilePictureView Margin="6" Source="{x:Bind With, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}" IsHitTestVisible="False"/>
+                                <controls:ProfilePicture Margin="6" Source="{x:Bind With, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}" IsHitTestVisible="False"/>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.GroupTemplate>
                         <selectors:StickerSetTemplateSelector.RecentsTemplate>

@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
+using Unigram.Common;
 
 namespace Unigram.Views.SignIn
 {
@@ -27,6 +28,21 @@ namespace Unigram.Views.SignIn
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<SignInViewModel>();
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "PHONE_CODE_INVALID":
+                    VisualUtilities.ShakeView(PhoneCode);
+                    break;
+                case "PHONE_NUMBER_INVALID":
+                    VisualUtilities.ShakeView(PrimaryInput);
+                    break;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -39,6 +55,12 @@ namespace Unigram.Views.SignIn
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
                 ViewModel.SendCommand.Execute(sender);
+                e.Handled = true;
+            }
+            else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(PrimaryInput.Text))
+            {
+                PhoneCode.Focus(FocusState.Keyboard);
+                PhoneCode.SelectionStart = PhoneCode.Text.Length;
                 e.Handled = true;
             }
         }

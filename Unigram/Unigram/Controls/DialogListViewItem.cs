@@ -10,8 +10,11 @@ namespace Unigram.Controls
 {
     public class DialogListViewItem : ListViewItem
     {
-        public DialogListViewItem()
+        private DialogListView _list;
+
+        public DialogListViewItem(DialogListView list)
         {
+            _list = list;
             RegisterPropertyChangedCallback(IsSelectedProperty, OnIsSelectedChanged);
         }
 
@@ -20,7 +23,7 @@ namespace Unigram.Controls
             var content = ContentTemplateRoot as UserControl;
             if (content != null)
             {
-                VisualStateManager.GoToState(content, IsSelected ? "Selected" : "Normal", false);
+                VisualStateManager.GoToState(content, IsSelected && _list.SelectionMode == ListViewSelectionMode.Single ? "Selected" : "Normal", false);
             }
         }
     }

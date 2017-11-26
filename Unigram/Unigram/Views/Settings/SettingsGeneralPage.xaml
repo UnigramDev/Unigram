@@ -201,7 +201,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="General"/>
+        <controls:PageHeader Text="{CustomResource General}"/>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
@@ -211,22 +211,22 @@
                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                        Margin="0,0,0,0">
-                    <ToggleSwitch x:Uid="SettingsGeneralPage_SendByEnterToggle"
+                    <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
-                        Header="Send by Enter"
+                        Header="{CustomResource SendByEnter}"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
-                    <ToggleSwitch x:Uid="SettingsGeneralPage_ReplaceEmojiToggle"
+                    <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
                         Header="Replace emojis"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
-                    <ToggleSwitch x:Uid="SettingsGeneralPage_AutoPlayToggle"
+                    <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsAutoPlayEnabled, Mode=TwoWay}"
-                        Header="Autoplay GIFs"
+                        Header="{CustomResource AutoplayGifs}"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
-                    <ToggleSwitch x:Uid="SettingsGeneralPage_ContactSyncToggle"
+                    <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                         Header="Sync contacts"
                         Style="{ThemeResource CheckButtonStyle}"/>
@@ -234,7 +234,7 @@
                     <controls:StartupSwitch Margin="0,24,0,0"/>
 
                     <StackPanel Padding="12" Margin="0,24,0,0">
-                        <TextBlock x:Uid="SettingsGeneralPage_ThemeLabel" Text="Theme" Margin="0,0,0,4"/>
+                        <TextBlock Text="{CustomResource Theme}" Margin="0,0,0,4"/>
                         <controls:PivotRadioButton x:Uid="SettingsGeneralPage_LightRadio" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="1" Content="Light"/>
                         <controls:PivotRadioButton x:Uid="SettingsGeneralPage_DarkRadio" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="2" Content="Dark"/>
                         <controls:PivotRadioButton x:Uid="SettingsGeneralPage_SystemRadio" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="0" Content="Use system setting"/>

@@ -27,113 +27,295 @@ namespace Unigram.Common
 {
     public class ServiceHelper
     {
-        private static readonly Dictionary<Type, Func<TLMessageService, TLMessageActionBase, int, string, bool, Paragraph>> _actionsCache;
+        private static readonly Dictionary<Type, Func<TLMessageService, TLMessageActionBase, TLUser, bool, (string content, IList<TLMessageEntityBase> entities)>> _actionsCache;
 
         static ServiceHelper()
         {
-            _actionsCache = new Dictionary<Type, Func<TLMessageService, TLMessageActionBase, int, string, bool, Paragraph>>();
-            _actionsCache.Add(typeof(TLMessageActionDate), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(((TLMessageActionDate)action).Date))));
-            _actionsCache.Add(typeof(TLMessageActionEmpty), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.MessageActionEmpty));
-            _actionsCache.Add(typeof(TLMessageActionGameScore), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache = new Dictionary<Type, Func<TLMessageService, TLMessageActionBase, TLUser, bool, (string, IList<TLMessageEntityBase>)>>();
+            _actionsCache.Add(typeof(TLMessageActionDate), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
+            {
+                return (DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(((TLMessageActionDate)action).Date)), null);
+            });
+            _actionsCache.Add(typeof(TLMessageActionGameScore), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
                 var value = ((TLMessageActionGameScore)action).Score;
-                var won = value == 0 || value > 0;
-                var serviceMessage = message as TLMessageService;
-                if (serviceMessage != null)
-                {
-                    var game = GetGame(serviceMessage);
-                    if (game != null)
-                    {
-                        var text = game.Title.ToString();
-                        //TLMessageCommon tLMessageCommon = serviceMessage.Reply as TLMessageCommonBase;
-                        //if (tLMessageCommon != null)
-                        //{
-                        //    text = ServiceMessageToTextConverter.GetGameFullNameString(text, serviceMessage.Index, serviceMessage.ToId, useActiveLinks);
-                        //}
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
 
-                        if (fromUserId == SettingsHelper.UserId)
+                var game = GetGame(message);
+                if (game == null)
+                {
+                    if (fromUser != null && fromUser.Id == SettingsHelper.UserId)
+                    {
+                        content = string.Format(Strings.Android.ActionYouScored, LocaleHelper.Declension("Points", value));
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(string.Format(Strings.Android.ActionUserScored, LocaleHelper.Declension("Points", value)), "un1", fromUser, ref entities);
+                    }
+                }
+                else
+                {
+                    if (fromUser != null && fromUser.Id == SettingsHelper.UserId)
+                    {
+                        content = string.Format(Strings.Android.ActionYouScoredInGame, LocaleHelper.Declension("Points", value));
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(string.Format(Strings.Android.ActionUserScoredInGame, LocaleHelper.Declension("Points", value)), "un1", fromUser, ref entities);
+                    }
+
+                    content = ReplaceWithLink(content, "un2", game, ref entities);
+                }
+
+                return (content, entities);
+            });
+            _actionsCache.Add(typeof(TLMessageActionChannelCreate), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
+            {
+                var content = string.Empty;
+
+                if (message.Parent is TLChannel channel && channel.IsMegaGroup)
+                {
+                    content = Strings.Android.ActionCreateMega;
+                }
+                else
+                {
+                    content = Strings.Android.ActionCreateChannel;
+                }
+
+                return (content, null);
+            });
+            _actionsCache.Add(typeof(TLMessageActionChatCreate), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
+            {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
+                if (message.IsOut)
+                {
+                    content = Strings.Android.ActionYouCreateGroup;
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Android.ActionCreateGroup, "un1", fromUser, ref entities);
+                }
+
+                return (content, entities);
+            });
+            _actionsCache.Add(typeof(TLMessageActionChatEditPhoto), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
+            {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
+                if (message.Parent is TLChannel channel && channel.IsBroadcast)
+                {
+                    content = Strings.Android.ActionChannelChangedPhoto;
+                }
+                else
+                {
+                    if (message.IsOut)
+                    {
+                        content = Strings.Android.ActionYouChangedPhoto;
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionChangedPhoto, "un1", fromUser, ref entities);
+                    }
+                }
+
+                return (content, entities);
+            });
+            _actionsCache.Add(typeof(TLMessageActionChatEditTitle), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
+            {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
+                if (message.Parent is TLChannel channel && channel.IsBroadcast)
+                {
+                    content = Strings.Android.ActionChannelChangedTitle;
+                }
+                else
+                {
+                    if (message.IsOut)
+                    {
+                        content = Strings.Android.ActionYouChangedTitle;
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionChangedTitle, "un1", fromUser, ref entities);
+                    }
+                }
+
+                return (content, entities);
+            });
+            _actionsCache.Add(typeof(TLMessageActionChatDeletePhoto), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
+            {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
+                if (message.Parent is TLChannel channel && channel.IsBroadcast)
+                {
+                    content = Strings.Android.ActionChannelRemovedPhoto;
+                }
+                else
+                {
+                    if (message.IsOut)
+                    {
+                        content = Strings.Android.ActionYouRemovedPhoto;
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionRemovedPhoto, "un1", fromUser, ref entities);
+                    }
+                }
+
+                return (content, entities);
+            });
+            _actionsCache.Add(typeof(TLMessageActionChatAddUser), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
+            {
+                var action = actionBase as TLMessageActionChatAddUser;
+
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
+                int singleUserId = 0;
+                if (singleUserId == 0 && action.Users.Count == 1)
+                {
+                    singleUserId = action.Users[0];
+                }
+
+                if (singleUserId != 0)
+                {
+                    var whoUser = InMemoryCacheService.Current.GetUser(singleUserId);
+                    if (singleUserId == message.FromId)
+                    {
+                        var channel = message.Parent as TLChannel;
+                        if (channel != null && channel.IsBroadcast)
                         {
-                            return ReplaceLinks(serviceMessage, won ? Strings.Resources.YourScoredAtGamePlural : Strings.Resources.YourScoredAtGame, new[] { value.ToString(), game.Title }, new[] { "tg-bold://", "tg-game://" }, useActiveLinks);
+                            content = Strings.Android.ChannelJoined;
                         }
-
-                        return ReplaceLinks(serviceMessage, won ? Strings.Resources.UserScoredAtGamePlural : Strings.Resources.UserScoredAtGame, new[] { fromUserFullName, value.ToString(), game.Title }, new[] { "tg-user://" + fromUserId, "tg-bold://", "tg-game://" }, useActiveLinks);
+                        else
+                        {
+                            if (channel != null && channel.IsMegaGroup)
+                            {
+                                if (singleUserId == SettingsHelper.UserId)
+                                {
+                                    content = Strings.Android.ChannelMegaJoined;
+                                }
+                                else
+                                {
+                                    content = ReplaceWithLink(Strings.Android.ActionAddUserSelfMega, "un1", fromUser, ref entities);
+                                }
+                            }
+                            else if (message.IsOut)
+                            {
+                                content = Strings.Android.ActionAddUserSelfYou;
+                            }
+                            else
+                            {
+                                content = ReplaceWithLink(Strings.Android.ActionAddUserSelf, "un1", fromUser, ref entities);
+                            }
+                        }
                     }
-
-                    if (fromUserId == SettingsHelper.UserId)
+                    else
                     {
-                        return ReplaceLinks(serviceMessage, string.Format(won ? Strings.Resources.YourScoredPlural : Strings.Resources.YourScored, value));
+                        if (message.IsOut)
+                        {
+                            content = ReplaceWithLink(Strings.Android.ActionYouAddUser, "un2", whoUser, ref entities);
+                        }
+                        else if (singleUserId == SettingsHelper.UserId)
+                        {
+                            var channel = message.Parent as TLChannel;
+                            if (channel != null)
+                            {
+                                if (channel.IsMegaGroup)
+                                {
+                                    content = ReplaceWithLink(Strings.Android.MegaAddedBy, "un1", fromUser, ref entities);
+                                }
+                                else
+                                {
+                                    content = ReplaceWithLink(Strings.Android.ChannelAddedBy, "un1", fromUser, ref entities);
+                                }
+                            }
+                            else
+                            {
+                                content = ReplaceWithLink(Strings.Android.ActionAddUserYou, "un1", fromUser, ref entities);
+                            }
+                        }
+                        else
+                        {
+                            content = ReplaceWithLink(Strings.Android.ActionAddUser, "un2", whoUser, ref entities);
+                            content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                        }
                     }
-
-                    return ReplaceLinks(serviceMessage, won ? Strings.Resources.UserScoredPlural : Strings.Resources.UserScored, new[] { fromUserFullName, value.ToString() }, new[] { "tg-user://" + fromUserId, "tg-bold://" }, useActiveLinks);
                 }
-
-                return ReplaceLinks(serviceMessage, won ? Strings.Resources.UserScoredPlural : Strings.Resources.UserScored, new[] { Strings.Resources.UserNominativeSingular, value.ToString() }, new[] { "tg-bold://", "tg-bold://" }, useActiveLinks);
-            });
-            _actionsCache.Add(typeof(TLMessageActionChatCreate), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.MessageActionChatCreate, new[] { fromUserFullName, ((TLMessageActionChatCreate)action).Title }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
-            _actionsCache.Add(typeof(TLMessageActionChatEditPhoto), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.MessageActionChatEditPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
-            _actionsCache.Add(typeof(TLMessageActionChatEditTitle), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.MessageActionChatEditTitle, new[] { fromUserFullName, ((TLMessageActionChatEditTitle)action).Title }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
-            _actionsCache.Add(typeof(TLMessageActionChatDeletePhoto), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.MessageActionChatDeletePhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
-            _actionsCache.Add(typeof(TLMessageActionChatAddUser), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
-            {
-                var users = ((TLMessageActionChatAddUser)action).Users;
-                var names = new List<string>();
-                var codes = new List<string>();
-
-                for (int i = 0; i < users.Count; i++)
+                else
                 {
-                    var item = users[i];
-                    var user = InMemoryCacheService.Current.GetUser(item);
-                    if (user != null)
+                    if (message.IsOut)
                     {
-                        names.Add(user.FullName);
-                        codes.Add($"{{{i + 1}}}");
+                        content = ReplaceWithLink(Strings.Android.ActionYouAddUser, "un2", action.Users, null, ref entities);
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionAddUser, "un2", action.Users, null, ref entities);
+                        content = ReplaceWithLink(content, "un1", fromUser, ref entities);
                     }
                 }
 
-                if (users.Count == 1 && users[0] == fromUserId)
-                {
-                    return ReplaceLinks(message, Strings.Resources.MessageActionChatAddSelf, new[] { names[0] }, new[] { "tg-user://" + users[0] }, useActiveLinks);
-                }
-
-                // TODO: replace last ", " with "and "
-
-                var codesReplace = "{1}";
-                if (codes.Count > 1)
-                {
-                    codesReplace = string.Concat(string.Join(", ", codes.Take(codes.Count - 1)), " and ", codes.Last());
-                }
-
-                var tags = users.Select(x => "tg-user://" + x).ToList();
-                names.Insert(0, fromUserFullName);
-                tags.Insert(0, "tg-user://" + fromUserId);
-
-                return ReplaceLinks(message, string.Format(Strings.Resources.MessageActionChatAddUser, "{0}", codesReplace), names.ToArray(), tags.ToArray(), useActiveLinks);
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLMessageActionChatDeleteUser), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLMessageActionChatDeleteUser), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
             {
-                var userId = ((TLMessageActionChatDeleteUser)action).UserId;
-                var user = InMemoryCacheService.Current.GetUser(userId);
-                var userFullName = user.FullName;
-                if (userId != fromUserId)
+                var action = actionBase as TLMessageActionChatDeleteUser;
+
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
+                if (action.UserId == message.FromId)
                 {
-                    return ReplaceLinks(message, Strings.Resources.MessageActionChatDeleteUser, new[] { fromUserFullName, userFullName }, new[] { "tg-user://" + fromUserId, "tg-user://" + userId }, useActiveLinks);
+                    if (message.IsOut)
+                    {
+                        content = Strings.Android.ActionYouLeftUser;
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionLeftUser, "un1", fromUser, ref entities);
+                    }
+                }
+                else
+                {
+                    var whoUser = InMemoryCacheService.Current.GetUser(action.UserId);
+                    if (message.IsOut)
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionYouKickUser, "un2", whoUser, ref entities);
+                    }
+                    else if (action.UserId == SettingsHelper.UserId)
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionKickUserYou, "un1", fromUser, ref entities);
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionKickUser, "un2", whoUser, ref entities);
+                        content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                    }
                 }
 
-                if (fromUserId == SettingsHelper.UserId)
-                {
-                    return ReplaceLinks(message, Strings.Resources.MessageActionLeftGroupSelf);
-                }
-
-                return ReplaceLinks(message, Strings.Resources.MessageActionUserLeftGroup, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                return (content, entities);
             });
-            _actionsCache.Add(typeof(TLMessageActionScreenshotTaken), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLMessageActionScreenshotTaken), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
-                if (fromUserId == SettingsHelper.UserId)
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
+                if (message.IsOut)
                 {
-                    return ReplaceLinks(message, Strings.Resources.MessageActionYouScreenshotMessages);
+                    content = Strings.Android.ActionTakeScreenshootYou;
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Android.ActionTakeScreenshoot, "un1", fromUser, ref entities);
                 }
 
-                return ReplaceLinks(message, Strings.Resources.MessageActionScreenshotMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                return (content, entities);
             });
             //_actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => Strings.Resources.UnreadMessages.ToLowerInvariant());
             //_actionsCache.Add(typeof(TLMessageActionContactRegistered), delegate (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks)
@@ -147,74 +329,210 @@ namespace Unigram.Common
             //    }
             //    return string.Format(Strings.Resources.ContactRegistered, text);
             //});
-            _actionsCache.Add(typeof(TLMessageActionChatJoinedByLink), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.MessageActionChatJoinedByLink, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
+            _actionsCache.Add(typeof(TLMessageActionChatJoinedByLink), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
+            {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
+                if (message.IsOut)
+                {
+                    content = Strings.Android.ActionInviteYou;
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Android.ActionInviteUser, "un1", fromUser, ref entities);
+                }
+
+                return (content, entities);
+            });
             //_actionsCache.Add(typeof(TLMessageActionMessageGroup), delegate (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks)
             //{
             //    int value = ((TLMessageActionMessageGroup)action).Group.Count.Value;
             //    return Language.Declension(value, Strings.Resources.CommentNominativeSingular, Strings.Resources.CommentNominativePlural, Strings.Resources.CommentGenitiveSingular, Strings.Resources.CommentGenitivePlural, null, null).ToLower(CultureInfo.get_CurrentUICulture());
             //});
-            _actionsCache.Add(typeof(TLMessageActionChatMigrateTo), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLMessageActionChatMigrateTo), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
             {
-                var channelId = ((TLMessageActionChatMigrateTo)action).ChannelId;
-                var channel = InMemoryCacheService.Current.GetChat(channelId) as TLChannel;
-                var fullName = channel != null ? channel.DisplayName : string.Empty;
-                if (string.IsNullOrWhiteSpace(fullName))
-                {
-                    return ReplaceLinks(message, Strings.Resources.MessageActionChatMigrateToGeneric);
-                }
-
-                return ReplaceLinks(message, Strings.Resources.MessageActionChatMigrateTo, new[] { fullName }, new[] { "tg-channel://" + channelId }, useActiveLinks);
+                return (Strings.Android.ActionMigrateFromGroup, null);
             });
-            _actionsCache.Add(typeof(TLMessageActionCustomAction), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, ((TLMessageActionCustomAction)action).Message));
-            _actionsCache.Add(typeof(TLMessageActionChannelMigrateFrom), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.MessageActionChannelMigrateFrom));
-            _actionsCache.Add(typeof(TLMessageActionHistoryClear), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, "History was cleared"));
-            _actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, "Unread messages"));
-            _actionsCache.Add(typeof(TLMessageActionPhoneCall), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLMessageActionChannelMigrateFrom), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
             {
-                if (message is TLMessageService serviceMessage && action is TLMessageActionPhoneCall phoneCallAction)
-                {
-                    var loader = ResourceLoader.GetForViewIndependentUse("Resources");
-                    var text = string.Empty;
-
-                    var outgoing = serviceMessage.IsOut;
-                    var missed = phoneCallAction.Reason is TLPhoneCallDiscardReasonMissed || phoneCallAction.Reason is TLPhoneCallDiscardReasonBusy;
-
-                    var type = loader.GetString(missed ? (outgoing ? "CallCanceled" : "CallMissed") : (outgoing ? "CallOutgoing" : "CallIncoming"));
-                    var duration = string.Empty;
-
-                    if (!missed && (phoneCallAction.Duration ?? 0) > 0)
-                    {
-                        duration = BindConvert.Current.CallDuration(phoneCallAction.Duration ?? 0);
-                    }
-
-                    return ReplaceLinks(serviceMessage, missed || (phoneCallAction.Duration ?? 0) < 1 ? type : string.Format(Strings.Resources.CallTimeFormat, type, duration));
-                }
-
-                return null;
+                return (Strings.Android.ActionMigrateFromGroup, null);
             });
-            _actionsCache.Add(typeof(TLMessageActionPaymentSent), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLMessageActionCustomAction), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
             {
-                if (message is TLMessageService serviceMessage && action is TLMessageActionPaymentSent paymentSentAction)
+                return (((TLMessageActionCustomAction)actionBase).Message, null);
+            });
+            _actionsCache.Add(typeof(TLMessageActionHistoryClear), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
+            {
+                return (Strings.Android.HistoryCleared, null);
+            });
+            _actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
+            {
+                return (LocaleHelper.Declension("NewMessages", 0), null);
+            });
+            _actionsCache.Add(typeof(TLMessageActionPhoneCall), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
+            {
+                var action = actionBase as TLMessageActionPhoneCall;
+                var isMissed = action.Reason is TLPhoneCallDiscardReasonMissed;
+
+                var content = string.Empty;
+
+                if (message.FromId == SettingsHelper.UserId)
                 {
-                    if (serviceMessage.Reply is TLMessage replied && replied.Media is TLMessageMediaInvoice invoiceMedia)
+                    if (isMissed)
                     {
-                        var amount = BindConvert.Current.FormatAmount(paymentSentAction.TotalAmount, paymentSentAction.Currency);
-                        var userName = replied.From?.FullName ?? "User";
-                        var userId = replied.FromId ?? fromUserId;
-
-                        return ReplaceLinks(serviceMessage, "You have just successfully transferred {0} to {1} for {2}", new[] { amount, userName, invoiceMedia.Title }, new[] { "tg-bold://", "tg-user://" + userId, "tg-message://" + replied.Id }, useActiveLinks);
+                        content = Strings.Android.CallMessageOutgoingMissed;
                     }
-                    else if (serviceMessage.Parent is TLUser user)
+                    else
                     {
-                        var amount = BindConvert.Current.FormatAmount(paymentSentAction.TotalAmount, paymentSentAction.Currency);
-                        var userName = user?.FullName ?? "User";
-                        var userId = user?.Id ?? fromUserId;
+                        content = Strings.Android.CallMessageOutgoing;
+                    }
+                }
+                else
+                {
+                    if (isMissed)
+                    {
+                        content = Strings.Android.CallMessageIncomingMissed;
+                    }
+                    else if (action.Reason is TLPhoneCallDiscardReasonBusy)
+                    {
+                        content = Strings.Android.CallMessageIncomingDeclined;
+                    }
+                    else
+                    {
+                        content = Strings.Android.CallMessageIncoming;
+                    }
+                }
+                if (action.Duration > 0)
+                {
+                    String duration = LocaleHelper.FormatCallDuration(action.Duration ?? 0);
+                    content = string.Format(Strings.Android.CallMessageWithDuration, content, duration);
+                    //String _messageText = messageText.toString();
+                    //int start = _messageText.indexOf(duration);
+                    //if (start != -1)
+                    //{
+                    //    SpannableString sp = new SpannableString(messageText);
+                    //    int end = start + duration.length();
+                    //    if (start > 0 && _messageText.charAt(start - 1) == '(')
+                    //    {
+                    //        start--;
+                    //    }
+                    //    if (end < _messageText.length() && _messageText.charAt(end) == ')')
+                    //    {
+                    //        end++;
+                    //    }
+                    //    sp.setSpan(new TypefaceSpan(Typeface.DEFAULT), start, end, 0);
+                    //    messageText = sp;
+                    //}
+                }
 
-                        return ReplaceLinks(serviceMessage, "You have just successfully transferred {0} to {1}", new[] { amount, userName }, new[] { "tg-bold://", "tg-user://" + userId }, useActiveLinks);
+                return (content, null);
+            });
+            _actionsCache.Add(typeof(TLMessageActionPaymentSent), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
+            {
+                var action = actionBase as TLMessageActionPaymentSent;
+
+                var content = string.Empty;
+
+                String name;
+                if (message.Reply is TLMessage replied)
+                {
+                    name = replied.From?.FullName ?? string.Empty;
+                }
+                else
+                {
+                    name = string.Empty;
+                }
+                if (message.Reply is TLMessage reply && reply.Media is TLMessageMediaInvoice invoice)
+                {
+                    content = string.Format(Strings.Android.PaymentSuccessfullyPaid, LocaleHelper.FormatCurrency(action.TotalAmount, action.Currency), name, invoice.Title);
+                }
+                else
+                {
+                    content = string.Format(Strings.Android.PaymentSuccessfullyPaidNoItem, LocaleHelper.FormatCurrency(action.TotalAmount, action.Currency), name);
+                }
+
+                return (content, null);
+            });
+            _actionsCache.Add(typeof(TLMessageActionPinMessage), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
+            {
+                var content = string.Empty;
+                var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
+
+                var channel = message.Parent;
+                var reply = message.Reply as TLMessage;
+
+                if (reply == null)
+                {
+                    content = ReplaceWithLink(Strings.Android.ActionPinnedNoText, "un1", fromUser ?? (TLObject)channel, ref entities);
+                }
+                else
+                {
+                    if (reply.IsMusic())
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedMusic, "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (reply.IsVideo())
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedVideo, "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (reply.IsGif())
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedGif, "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (reply.IsVoice())
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedVoice, "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (reply.IsRoundVideo())
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedRound, "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (reply.IsSticker())
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedSticker, "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (reply.Media is TLMessageMediaDocument)
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedFile, "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (reply.Media is TLMessageMediaGeo)
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedGeo, "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (reply.Media is TLMessageMediaGeoLive)
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedGeoLive, "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (reply.Media is TLMessageMediaContact)
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedContact, "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (reply.Media is TLMessageMediaPhoto)
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedPhoto, "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (reply.Media is TLMessageMediaGame gameMedia)
+                    {
+                        content = ReplaceWithLink(string.Format(Strings.Android.ActionPinnedGame, "\uD83C\uDFAE " + gameMedia.Game.Title), "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else if (!string.IsNullOrEmpty(reply.Message))
+                    {
+                        var mess = reply.Message;
+                        if (mess.Length > 20)
+                        {
+                            mess = mess.Substring(0, Math.Min(mess.Length, 20)) + "...";
+                        }
+
+                        content = ReplaceWithLink(string.Format(Strings.Android.ActionPinnedText, mess), "un1", fromUser ?? (TLObject)channel, ref entities);
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.Android.ActionPinnedNoText, "un1", fromUser ?? (TLObject)channel, ref entities);
                     }
                 }
 
-                return null;
+                return (content, entities);
             });
         }
 
@@ -266,292 +584,111 @@ namespace Unigram.Common
             if (message != null && message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
             {
                 var paragraph = new Paragraph();
-                paragraph.Inlines.Add(new Run { Text = "Photo has expired" });
+                paragraph.Inlines.Add(new Run { Text = Strings.Android.AttachPhotoExpired });
                 sender.Blocks.Add(paragraph);
                 return;
             }
             else if (message != null && message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
             {
                 var paragraph = new Paragraph();
-                paragraph.Inlines.Add(new Run { Text = "Video has expired" });
+                paragraph.Inlines.Add(new Run { Text = Strings.Android.AttachVideoExpired });
                 sender.Blocks.Add(paragraph);
                 return;
             }
 
             {
                 var paragraph = new Paragraph();
-                paragraph.Inlines.Add(new Run { Text = Strings.Resources.MessageActionEmpty });
+                paragraph.Inlines.Add(new Run { Text = "Empty" });
                 sender.Blocks.Add(paragraph);
             }
         }
 
         public static string Convert(TLMessageService serviceMessage)
         {
-            var paragraph = Convert(serviceMessage, false);
-            if (paragraph != null && paragraph.Inlines.Count > 0)
-            {
-                var run = paragraph.Inlines[0] as Run;
-                if (run != null)
-                {
-                    return run.Text;
-                }
-            }
-
-            return Strings.Resources.MessageActionEmpty;
-        }
-
-        public static Paragraph ConvertOld(TLMessageService serviceMessage, bool useActiveLinks)
-        {
-            var fromId = serviceMessage.FromId;
-            var user = InMemoryCacheService.Current.GetUser(fromId) as TLUser;
-            var username = user != null ? user.FullName : Strings.Resources.UserNominativeSingular;
             var action = serviceMessage.Action;
             if (action != null && _actionsCache.ContainsKey(action.GetType()))
             {
-                return _actionsCache[action.GetType()].Invoke(serviceMessage, action, fromId.Value, username, useActiveLinks);
+                return _actionsCache[action.GetType()].Invoke(serviceMessage, action, serviceMessage.From, false).content;
             }
 
-            var paragraph = new Paragraph();
-            paragraph.Inlines.Add(new Run { Text = Strings.Resources.MessageActionEmpty });
-            return paragraph;
+            return "Empty";
         }
 
         public static Paragraph Convert(TLMessageService serviceMessage, bool useActiveLinks)
         {
-            var fromId = serviceMessage.FromId;
-            var user = InMemoryCacheService.Current.GetUser(fromId ?? 0);
-            var userFullName = user != null ? user.FullName : Strings.Resources.UserNominativeSingular;
-            var scheme = "tg-user://";
             var action = serviceMessage.Action;
-
-            if (serviceMessage.ToId is TLPeerChannel)
-            {
-                var channel = InMemoryCacheService.Current.GetChat(serviceMessage.ToId.Id) as TLChannel;
-                if (channel != null && channel.IsBroadcast)
-                {
-                    fromId = channel.Id;
-                    userFullName = channel.Title;
-                    scheme = "tg-channel://";
-                }
-
-                var flag = channel != null && channel.IsMegaGroup;
-
-                var pinMessageAction = action as TLMessageActionPinMessage;
-                if (pinMessageAction != null)
-                {
-                    var replyToMsgId = serviceMessage.ReplyToMsgId;
-                    if (replyToMsgId != null && channel != null)
-                    {
-                        var repliedMessage = InMemoryCacheService.Current.GetMessage(replyToMsgId, channel.Id) as TLMessage;
-                        if (repliedMessage != null)
-                        {
-                            var gameMedia = repliedMessage.Media as TLMessageMediaGame;
-                            if (gameMedia != null)
-                            {
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinGame }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                            }
-
-                            var photoMedia = repliedMessage.Media as TLMessageMediaPhoto;
-                            if (photoMedia != null)
-                            {
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinPhoto }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                            }
-
-                            var documentMedia = repliedMessage.Media as TLMessageMediaDocument;
-                            if (documentMedia != null)
-                            {
-                                if (TLMessage.IsSticker(documentMedia.Document))
-                                {
-                                    var emoji = string.Empty;
-
-                                    var documentSticker = documentMedia.Document as TLDocument;
-                                    if (documentSticker != null)
-                                    {
-                                        var attribute = documentSticker.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
-                                        if (attribute != null)
-                                        {
-                                            emoji = $"{attribute.Alt} ";
-                                        }
-                                    }
-
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, string.Format(Strings.Resources.MessageActionPinSticker, emoji) }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                                }
-                                if (TLMessage.IsVoice(documentMedia.Document))
-                                {
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinVoiceMessage }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                                }
-                                if (TLMessage.IsMusic(documentMedia.Document))
-                                {
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinTrack }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                                }
-                                if (TLMessage.IsVideo(documentMedia.Document))
-                                {
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinVideo }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                                }
-                                if (TLMessage.IsGif(documentMedia.Document))
-                                {
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinGif }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                                }
-
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinFile }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                            }
-
-                            var contactMedia = repliedMessage.Media as TLMessageMediaContact;
-                            if (contactMedia != null)
-                            {
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinContact }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                            }
-
-                            var geoMedia = repliedMessage.Media as TLMessageMediaGeo;
-                            if (geoMedia != null)
-                            {
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMap }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                            }
-
-                            var venueMedia = repliedMessage.Media as TLMessageMediaVenue;
-                            if (venueMedia != null)
-                            {
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMap }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                            }
-
-                            if (repliedMessage.Message.Length > 0)
-                            {
-                                if (repliedMessage.Message.Length > 20)
-                                {
-                                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPinText, new[] { userFullName, repliedMessage.Message.Substring(0, 20).Replace("\r\n", "\n").Replace("\n", " ") + "…" }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                                }
-
-                                return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPinText, new[] { userFullName, repliedMessage.Message.Replace("\r\n", "\n").Replace("\n", " ") }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                            }
-
-                            return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMessage }, new[] { scheme + fromId, "tg-message://" + repliedMessage.Id }, useActiveLinks);
-                        }
-
-                        return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionPin, new[] { userFullName, Strings.Resources.MessageActionPinMessage }, new[] { scheme + fromId, "tg-message://" + serviceMessage.ReplyToMsgId }, useActiveLinks);
-                    }
-                }
-
-                var channelCreateAction = action as TLMessageActionChannelCreate;
-                if (channelCreateAction != null)
-                {
-                    if (!flag)
-                    {
-                        return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionChannelCreate);
-                    }
-
-                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionChatCreate, new[] { userFullName, channelCreateAction.Title }, new[] { "tg-user://" + fromId }, useActiveLinks);
-                }
-
-                var editPhotoAction = action as TLMessageActionChatEditPhoto;
-                if (editPhotoAction != null)
-                {
-                    if (!flag)
-                    {
-                        return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionChannelEditPhoto);
-                    }
-
-                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionChatEditPhoto, new[] { userFullName }, new[] { "tg-user://" + fromId }, useActiveLinks);
-                }
-
-                var deletePhotoAction = action as TLMessageActionChatDeletePhoto;
-                if (deletePhotoAction != null)
-                {
-                    if (!flag)
-                    {
-                        return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionChannelDeletePhoto);
-                    }
-
-                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionChatDeletePhoto, new[] { userFullName }, new[] { "tg-user://" + fromId }, useActiveLinks);
-                }
-
-                var editTitleAction = action as TLMessageActionChatEditTitle;
-                if (editTitleAction != null)
-                {
-                    if (!flag)
-                    {
-                        return ReplaceLinks(serviceMessage, string.Format(Strings.Resources.MessageActionChannelEditTitle, editTitleAction.Title));
-                    }
-
-                    return ReplaceLinks(serviceMessage, Strings.Resources.MessageActionChatEditTitle, new[] { userFullName, editTitleAction.Title }, new[] { "tg-user://" + fromId }, useActiveLinks);
-                }
-            }
-
             if (action != null && _actionsCache.ContainsKey(action.GetType()))
             {
-                return _actionsCache[action.GetType()].Invoke(serviceMessage, action, fromId ?? 0, userFullName, useActiveLinks);
+                var result = _actionsCache[action.GetType()].Invoke(serviceMessage, action, serviceMessage.From, true);
+                if (useActiveLinks && result.entities != null)
+                {
+                    return ReplaceEntities(serviceMessage, result.content, result.entities);
+                }
+                else
+                {
+                    var paragraphAction = new Paragraph();
+                    paragraphAction.Inlines.Add(new Run { Text = result.content });
+                    return paragraphAction;
+                }
             }
 
             var paragraph = new Paragraph();
-            paragraph.Inlines.Add(new Run { Text = Strings.Resources.MessageActionEmpty });
+            paragraph.Inlines.Add(new Run { Text = "Empty" });
             return paragraph;
         }
 
-        private static Paragraph ReplaceLinks(TLMessageCommonBase message, string text, string[] users = null, string[] identifiers = null, bool useActiveLinks = true)
+        public static Paragraph ReplaceEntities(TLMessageCommonBase message, string text, IList<TLMessageEntityBase> entities)
         {
             var paragraph = new Paragraph();
+            var span = new Span();
 
-            if (users == null)
-            {
-                paragraph.Inlines.Add(new Run { Text = text });
-                return paragraph;
-            }
+            ReplaceEntities(message, span, text, entities);
 
-            if (!useActiveLinks)
-            {
-                paragraph.Inlines.Add(new Run { Text = string.Format(text, users) });
-                return paragraph;
-            }
-
-            var regex = new Regex("({[0-9]?})");
-            var matches = regex.Matches(text);
-            if (matches.Count > 0)
-            {
-                var lastIndex = 0;
-                for (int i = 0; i < matches.Count; i++)
-                {
-                    var match = matches[i];
-
-                    if (match.Index - lastIndex > 0)
-                    {
-                        paragraph.Inlines.Add(new Run { Text = text.Substring(lastIndex, match.Index - lastIndex) });
-                    }
-
-                    lastIndex = match.Index + match.Length;
-
-                    if (users?.Length > i && identifiers?.Length > i)
-                    {
-                        var currentId = identifiers[i];
-                        if (currentId.Equals("tg-bold://"))
-                        {
-                            paragraph.Inlines.Add(new Run { Text = users[i], FontWeight = FontWeights.SemiBold });
-                        }
-                        else
-                        {
-                            var hyperlink = new Hyperlink();
-                            hyperlink.Click += (s, args) => Hyperlink_Navigate(message, currentId);
-                            hyperlink.UnderlineStyle = UnderlineStyle.None;
-                            hyperlink.Foreground = new SolidColorBrush(Colors.White);
-                            hyperlink.Inlines.Add(new Run { Text = users[i], FontWeight = FontWeights.SemiBold });
-                            paragraph.Inlines.Add(hyperlink);
-                        }
-                    }
-                    else if (users?.Length > i)
-                    {
-                        paragraph.Inlines.Add(new Run { Text = users[i] });
-                    }
-                }
-
-                if (lastIndex < text.Length)
-                {
-                    paragraph.Inlines.Add(new Run { Text = text.Substring(lastIndex, text.Length - lastIndex) });
-                }
-            }
-            else
-            {
-                paragraph.Inlines.Add(new Run { Text = text });
-            }
-
+            paragraph.Inlines.Add(span);
             return paragraph;
+        }
+
+        public static void ReplaceEntities(TLMessageCommonBase message, Span paragraph, string text, IList<TLMessageEntityBase> entities)
+        {
+            var previous = 0;
+
+            foreach (var entity in entities.OrderBy(x => x.Offset))
+            {
+                if (entity.Offset > previous)
+                {
+                    paragraph.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
+                }
+
+                if (entity.Length + entity.Offset > text.Length)
+                {
+                    previous = entity.Offset + entity.Length;
+                    continue;
+                }
+
+                var type = entity.TypeId;
+                if (entity is TLMessageEntityBold)
+                {
+                    paragraph.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontWeight = FontWeights.SemiBold });
+                }
+                else if (entity is TLMessageEntityTextUrl textUrl)
+                {
+                    var data = textUrl.Url;
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Click += (s, args) => Hyperlink_Navigate(message, data);
+                    hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = new SolidColorBrush(Colors.White);
+                    hyperlink.FontWeight = FontWeights.SemiBold;
+                    paragraph.Inlines.Add(hyperlink);
+                }
+
+                previous = entity.Offset + entity.Length;
+            }
+
+            if (text.Length > previous)
+            {
+                paragraph.Inlines.Add(new Run { Text = text.Substring(previous) });
+            }
         }
 
         private static void Hyperlink_Navigate(TLMessageCommonBase message, string currentId)
@@ -610,6 +747,92 @@ namespace Unigram.Common
             }
 
             return null;
+        }
+
+        public static string ReplaceWithLink(string source, string param, TLObject obj, ref List<TLMessageEntityBase> entities)
+        {
+            var start = source.IndexOf(param);
+            if (start >= 0)
+            {
+                String name;
+                String id;
+                if (obj is TLUser user)
+                {
+                    name = user.FullName;
+                    id = "tg-user://" + user.Id;
+                }
+                else if (obj is TLChat chat)
+                {
+                    name = chat.Title;
+                    id = "tg-chat://" + chat.Id;
+                }
+                else if (obj is TLChannel channel)
+                {
+                    name = channel.Title;
+                    id = "tg-channel://" + channel.Id;
+                }
+                else if (obj is TLGame game)
+                {
+                    name = game.Title;
+                    id = "tg-game://";
+                }
+                else
+                {
+                    name = "";
+                    id = "0";
+                }
+
+                name = name.Replace('\n', ' ');
+                source = source.Replace(param, name);
+
+                if (entities != null)
+                {
+                    entities.Add(new TLMessageEntityTextUrl { Offset = start, Length = name.Length, Url = id });
+                }
+            }
+
+            return source;
+        }
+
+        private static string ReplaceWithLink(string source, string param, IList<int> uids, Dictionary<int, TLUser> usersDict, ref List<TLMessageEntityBase> entities)
+        {
+            int start = source.IndexOf(param);
+            if (start >= 0)
+            {
+                var names = new StringBuilder();
+                for (int a = 0; a < uids.Count; a++)
+                {
+                    TLUser user = null;
+                    if (usersDict != null)
+                    {
+                        user = usersDict[uids[a]];
+                    }
+                    if (user == null)
+                    {
+                        user = InMemoryCacheService.Current.GetUser(uids[a]) as TLUser;
+                    }
+                    if (user != null)
+                    {
+                        var name = user.FullName;
+                        start = names.Length;
+                        if (names.Length != 0)
+                        {
+                            names.Append(", ");
+                        }
+
+                        names.Append(name);
+
+                        if (entities != null)
+                        {
+                            entities.Add(new TLMessageEntityTextUrl { Offset = start, Length = name.Length, Url = "tg-user://" + user.Id });
+                        }
+                    }
+                }
+
+                source = source.Replace(param, names.ToString());
+            }
+
+            return source;
         }
     }
 }

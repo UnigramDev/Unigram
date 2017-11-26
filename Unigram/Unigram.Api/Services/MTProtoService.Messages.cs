@@ -1351,8 +1351,10 @@ namespace Telegram.Api.Services
             const string caption = "messages.search";
             SendInformativeMessage<TLMessagesMessagesBase>(caption, obj, result =>
             {
+                _cacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => callback?.Invoke(result));
+
                 //Execute.ShowDebugMessage("messages.search result " + result.Messages.Count);
-                callback?.Invoke(result);
+                //callback?.Invoke(result);
             }, faultCallback);
         }
 

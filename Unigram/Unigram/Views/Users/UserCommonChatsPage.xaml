@@ -29,7 +29,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <controls:ProfilePictureView x:Phase="2" Source="{x:Bind PhotoSelf, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0"/>
+                        <controls:ProfilePicture x:Phase="2" Source="{x:Bind PhotoSelf, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0"/>
 
                         <TextBlock Text="{x:Bind DisplayName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
                     </Grid>

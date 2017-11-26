@@ -30,13 +30,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public override string Title
-        {
-            get
-            {
-                return "Test!";
-            }
-        }
+        public override string Title => _title;
 
         private int _maximum;
         public override int Maximum { get { return _maximum; } }
@@ -46,6 +40,8 @@ namespace Unigram.ViewModels.Chats
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             _title = (string)parameter;
+
+            RaisePropertyChanged(() => Title);
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 

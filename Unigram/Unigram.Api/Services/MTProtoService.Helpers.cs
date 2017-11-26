@@ -230,9 +230,10 @@ namespace Telegram.Api.Services
                         AppVersion = _deviceInfo.AppVersion,
                         Query = obj,
                         DeviceModel = _deviceInfo.DeviceModel,
-                        LangCode = Utils.CurrentUICulture(),
+                        SystemVersion = _deviceInfo.SystemVersion,
                         SystemLangCode = Utils.CurrentUICulture(),
-                        SystemVersion = _deviceInfo.SystemVersion
+                        LangCode = Utils.CurrentUICulture(),
+                        LangPack = "android"
                     };
 
                     SaveInitConnectionAsync(initConnection);

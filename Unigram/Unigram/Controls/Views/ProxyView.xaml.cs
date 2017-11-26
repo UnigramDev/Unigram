@@ -152,7 +152,7 @@ namespace Unigram.Controls.Views
                 builder.Add("pass=" + Password);
             }
 
-            var title = Strings.Resources.ProxySettingsShareTitle;
+            var title = Strings.Android.ProxySettings;
             var link = new Uri(MeUrlPrefixConverter.Convert($"socks?{string.Join("&", builder)}"));
 
             await ShareView.Current.ShowAsync(link, title);

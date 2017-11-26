@@ -398,10 +398,10 @@ namespace Unigram.ViewModels.Channels
         private async void RevokeLinkExecute(TLChannel channel)
         {
             var dialog = new TLMessageDialog();
-            dialog.Title = "Revoke link";
-            dialog.Message = string.Format("Are you sure you want to revoke the link t.me/{0}?\r\n\r\nThe channel \"{1}\" will become private.", channel.Username, channel.DisplayName);
-            dialog.PrimaryButtonText = "Revoke";
-            dialog.SecondaryButtonText = "Cancel";
+            dialog.Title = Strings.Android.AppName;
+            dialog.Message = string.Format(Strings.Android.RevokeLinkAlert, channel.Username, channel.DisplayName);
+            dialog.PrimaryButtonText = Strings.Android.RevokeButton;
+            dialog.SecondaryButtonText = Strings.Android.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -429,8 +429,8 @@ namespace Unigram.ViewModels.Channels
                 return;
             }
 
-            var message = item.IsMegaGroup ? "Wait! Deleting this group will remove all members and all messages will be lost.\r\n\r\nDelete the group anyway?" : "Wait! Deleting this channel will remove all members and all messages will be lost.\r\n\r\nDelete the channel anyway?";
-            var confirm = await TLMessageDialog.ShowAsync(message, "Delete", "Delete", "Cancel");
+            var message = item.IsMegaGroup ? Strings.Android.MegaDeleteAlert : Strings.Android.ChannelDeleteAlert;
+            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.DeleteChannelAsync(item);
@@ -513,7 +513,7 @@ namespace Unigram.ViewModels.Channels
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = "Sorry, this username is already taken";
+                    ErrorMessage = Strings.Android.UsernameInUse;
                 }
             }
             else
@@ -522,13 +522,13 @@ namespace Unigram.ViewModels.Channels
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = "Sorry, this username is invalid";
+                    ErrorMessage = Strings.Android.UsernameInvalid;
                 }
                 else if (response.Error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = "Sorry, this username is already taken";
+                    ErrorMessage = Strings.Android.UsernameInUse;
                 }
                 else if (response.Error.TypeEquals(TLErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
                 {
@@ -552,11 +552,15 @@ namespace Unigram.ViewModels.Channels
                 }
                 else if (_username.Length < 5)
                 {
-                    ErrorMessage = "A username must have at least 5 characters";
+                    ErrorMessage = Strings.Android.UsernameInvalidShort;
+                }
+                else if (_username.Length > 32)
+                {
+                    ErrorMessage = Strings.Android.UsernameInvalidLong;
                 }
                 else
                 {
-                    ErrorMessage = "Sorry, this username is invalid";
+                    ErrorMessage = Strings.Android.UsernameInvalid;
                 }
             }
             else

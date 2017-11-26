@@ -15,9 +15,9 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="New Contact"
-            Glyph="&#xE10B;"
-            Command="{x:Bind ViewModel.SendCommand}"/>
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource AddContactTitle}"
+            Glyph="&#xE10B;"/>
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
@@ -40,26 +40,31 @@
                 </Grid>
                 <StackPanel VerticalAlignment="Center" Grid.Column="1" Grid.RowSpan="2">
                     <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,0,12,-1">
-                        <controls:UpdateTextBox Text="{Binding FirstName, Mode=TwoWay}" MaxLength="{StaticResource ChannelTitleMaxLength}" PlaceholderText="First name (required)"/>
+                        <controls:UpdateTextBox
+                            Text="{Binding FirstName, Mode=TwoWay}"
+                            MaxLength="{StaticResource UserFirstNameMaxLength}"
+                            PlaceholderText="{CustomResource FirstName}"/>
                     </Border>
                     <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,-1,12,0">
-                        <controls:UpdateTextBox Text="{Binding LastName, Mode=TwoWay}" MaxLength="{StaticResource ChannelTitleMaxLength}" PlaceholderText="Last name (optional)"/>
+                        <controls:UpdateTextBox
+                            Text="{Binding LastName, Mode=TwoWay}"
+                            MaxLength="{StaticResource UserLastNameMaxLength}"
+                            PlaceholderText="{CustomResource LastName}"/>
                     </Border>
                 </StackPanel>
             </Grid>
 
             <ComboBox ItemsSource="{Binding Countries}"
                       SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
-                      Header="Country:"
+                      PlaceholderText="{CustomResource ChooseCountry}"
                       MinWidth="280"
-                      PlaceholderText="Select your country..."
                       HorizontalAlignment="Stretch"
                       Margin="12,12,12,0"
                       Grid.Row="1">
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="models:Country">
                         <TextBlock Style="{StaticResource BodyTextBlockStyle}">
-                            <Run Text="{x:Bind Name}"/>
+                            <Run Text="{x:Bind DisplayName}"/>
                             <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                         </TextBlock>
                     </DataTemplate>
@@ -73,20 +78,19 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- The user can enter their phone number here -->
-                <controls:UpdateTextBox Text="{Binding PhoneCode, Mode=TwoWay}"
+                <controls:UpdateTextBox x:Name="PhoneCode"
+                                        Text="{Binding PhoneCode, Mode=TwoWay}"
                                         Margin="0,0,8,0"
                                         Width="30"
-                                        Header="Code:"
                                         InputScope="TelephoneNumber"
                                         PlaceholderText="+"
                                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
                 <controls:UpdateTextBox x:Name="PrimaryInput"
                                         Text="{Binding PhoneNumber, Mode=TwoWay}"
+                                        KeyDown="PrimaryInput_KeyDown"
                                         MinWidth="200"
                                         InputScope="TelephoneNumber"
                                         IsTextPredictionEnabled="False"
-                                        Header="Phone number:"
-                                        PlaceholderText="Enter your phone number"
                                         Grid.Column="1"/>
 
             </Grid>

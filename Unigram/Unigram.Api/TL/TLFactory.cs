@@ -320,6 +320,7 @@ namespace Telegram.Api.TL
 				case TLType.DestroySessionNone: return (T)(Object)new TLDestroySessionNone(from);
 				case TLType.NewSessionCreated: return (T)(Object)new TLNewSessionCreated(from);
 				case TLType.HttpWait: return (T)(Object)new TLHttpWait(from);
+				case TLType.HelpConfigSimple: return (T)(Object)new TLHelpConfigSimple(from);
 				case TLType.Error: return (T)(Object)new TLError(from);
 				case TLType.InputPeerEmpty: return (T)(Object)new TLInputPeerEmpty(from);
 				case TLType.InputPeerSelf: return (T)(Object)new TLInputPeerSelf(from);

@@ -179,12 +179,12 @@ namespace Unigram.ViewModels.Users
                 }
                 else
                 {
-                    await TLMessageDialog.ShowAsync("ContactNotRegistered", "Telegram", "Invite", "Cancel");
+                    await TLMessageDialog.ShowAsync(Strings.Android.ContactNotRegistered, Strings.Android.AppName, Strings.Android.Invite, Strings.Android.Cancel);
                 }
             }
             else
             {
-                await TLMessageDialog.ShowAsync("ContactNotRegistered", "Telegram", "Invite", "Cancel");
+                await TLMessageDialog.ShowAsync(Strings.Android.ContactNotRegistered, Strings.Android.AppName, Strings.Android.Invite, Strings.Android.Cancel);
             }
         }
     }

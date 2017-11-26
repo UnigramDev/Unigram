@@ -34,34 +34,15 @@ namespace Unigram.ViewModels.Users
             Items = new MvxObservableCollection<GalleryItem> { new GalleryPhotoItem(userFull.ProfilePhoto as TLPhoto, user) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
-            //Initialize();
+
+            Initialize(user, userFull.ProfilePhoto.Id);
         }
 
-        private async void Initialize(TLUser user)
+        private async void Initialize(TLUser user, long maxId)
         {
-            User = user;
-
-            var full = InMemoryCacheService.Current.GetFullUser(user.Id);
-            if (full == null)
-            {
-                var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
-                if (response.IsSucceeded)
-                {
-                    full = response.Result;
-                }
-            }
-
-            if (full != null)
-            {
-                SelectedItem = new GalleryPhotoItem(full.ProfilePhoto as TLPhoto, user);
-                FirstItem = SelectedItem;
-
-                return;
-            }
-
             using (await _loadMoreLock.WaitAsync())
             {
-                var response = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), 0, 0, 0);
+                var response = await ProtoService.GetUserPhotosAsync(user.ToInputUser(), 0, maxId, 0);
                 if (response.IsSucceeded)
                 {
                     if (response.Result is TLPhotosPhotosSlice slice)
@@ -73,10 +54,10 @@ namespace Unigram.ViewModels.Users
                         TotalItems = response.Result.Photos.Count;
                     }
 
-                    Items.ReplaceWith(response.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, user)));
-
-                    SelectedItem = Items.FirstOrDefault();
-                    FirstItem = Items.FirstOrDefault();
+                    foreach (var item in response.Result.Photos.Where(x => x.Id < maxId))
+                    {
+                        Items.Add(new GalleryPhotoItem(item as TLPhoto, user));
+                    }
                 }
             }
         }
@@ -100,7 +81,7 @@ namespace Unigram.ViewModels.Users
 
         protected override async void DeleteExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync("Do you want to delete this photo?", "Delete", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureDeletePhoto, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryPhotoItem item)
             {
                 //var response = await ProtoService.UpdateProfilePhotoAsync(new TLInputPhotoEmpty());

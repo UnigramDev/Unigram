@@ -62,6 +62,9 @@ using Telegram.Api.TL.Channels;
 using Windows.UI.StartScreen;
 using Unigram.Models;
 using Newtonsoft.Json;
+using Unigram.Core.Common;
+using Unigram.ViewModels.Dialogs;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
@@ -81,6 +84,7 @@ namespace Unigram.ViewModels
                 Set(ref _selectedItems, value);
                 MessagesForwardCommand.RaiseCanExecuteChanged();
                 MessagesDeleteCommand.RaiseCanExecuteChanged();
+                MessagesCopyCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -159,6 +163,10 @@ namespace Unigram.ViewModels
             ReadMentionsCommand = new RelayCommand(ReadMentionsExecute);
             SendCommand = new RelayCommand<string>(SendMessage);
             SwitchCommand = new RelayCommand<TLInlineBotSwitchPM>(SwitchExecute);
+
+            MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
+            MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
+            MessagesCopyCommand = new RelayCommand(MessagesCopyExecute, MessagesCopyCanExecute);
 
             MessageReplyCommand = new RelayCommand<TLMessageBase>(MessageReplyExecute);
             MessageDeleteCommand = new RelayCommand<TLMessageBase>(MessageDeleteExecute);
@@ -712,7 +720,8 @@ namespace Unigram.ViewModels
             {
                 if (response.Result.Messages.Count > 0)
                 {
-                    ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
+                    //ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
+                    ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                 }
 
                 ProcessReplies(response.Result.Messages);
@@ -834,7 +843,8 @@ namespace Unigram.ViewModels
             var already = Items.FirstOrDefault(x => x.Id == maxId);
             if (already != null)
             {
-                ListField.ScrollIntoView(already);
+                //ListField.ScrollIntoView(already);
+                await ListField.ScrollToItem(already, SnapPointsAlignment.Center);
                 return;
             }
 
@@ -853,7 +863,7 @@ namespace Unigram.ViewModels
 
             Items.Clear();
 
-            var offset = -50;
+            var offset = -25;
             var limit = 50;
 
             var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
@@ -904,8 +914,9 @@ namespace Unigram.ViewModels
             _isLoadingPreviousSlice = false;
             IsLoading = false;
 
-            await Task.Delay(200);
-            await LoadNextSliceAsync(true);
+            //await Task.Delay(200);
+            //await LoadNextSliceAsync(true);
+            await LoadMessageSliceAsync(null, maxId);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -1021,7 +1032,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                if (response.Result.Messages.Count < limit && maxId == int.MaxValue)
+                if (response.Result.Messages.Count < limit)
                 {
                     IsFirstSliceLoaded = true;
                     IsLastSliceLoaded = true;
@@ -1036,13 +1047,26 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = false;
             _isLoadingPreviousSlice = false;
             IsLoading = false;
+
+            //if (maxId < int.MaxValue)
+            //{
+            //    await LoadMessageSliceAsync(null, maxId);
+            //}
         }
 
-        public void ScrollToBottom()
+        public void ScrollToBottom(object item)
         {
             //if (IsFirstSliceLoaded)
             {
-                ListField.ScrollToBottom();
+                if (item == null)
+                {
+                    ListField.ScrollToBottom();
+                }
+                else
+                {
+                    ListField.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+                }
+
                 ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
             }
         }
@@ -1286,6 +1310,19 @@ namespace Unigram.ViewModels
 
                         ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Items.AddRange(history.Reverse());
+
+                        foreach (var item in history.OrderByDescending(x => x.Date))
+                        {
+                            var message = item as TLMessage;
+                            if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                            {
+                                var bot = CacheService.GetUser(message.FromId) as TLUser;
+                                if (bot != null && bot.IsBot)
+                                {
+                                    SetReplyMarkup(message);
+                                }
+                            }
+                        }
                     }
                 }
                 else
@@ -2297,7 +2334,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                ScrollToBottom();
+                ScrollToBottom(message);
             }
             else
             {
@@ -2466,14 +2503,14 @@ namespace Unigram.ViewModels
 
                 if (channel.IsBroadcast && full.HasParticipantsCount)
                 {
-                    return string.Format("{0} subscribers", full.ParticipantsCount ?? 0);
+                    return LocaleHelper.Declension("Subscribers",  full.ParticipantsCount ?? 0);
                 }
                 else if (full.HasParticipantsCount)
                 {
                     var config = CacheService.GetConfig();
                     if (config == null)
                     {
-                        return string.Format("{0} members", full.ParticipantsCount ?? 0);
+                        return LocaleHelper.Declension("Members", full.ParticipantsCount ?? 0);
                     }
 
                     var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax, 0);
@@ -2494,12 +2531,12 @@ namespace Unigram.ViewModels
 
                             if (count > 1)
                             {
-                                return string.Format(Strings.Resources.StatusOnline, full.ParticipantsCount ?? 0, count);
+                                return string.Format("{0}, {1}", LocaleHelper.Declension("Members", full.ParticipantsCount ?? 0), LocaleHelper.Declension("OnlineCount", count));
                             }
                         }
                     }
 
-                    return string.Format(Strings.Resources.StatusMembers, full.ParticipantsCount ?? 0);
+                    return LocaleHelper.Declension("Members", full.ParticipantsCount ?? 0);
                 }
             }
             else if (With is TLChat chat)
@@ -2538,10 +2575,10 @@ namespace Unigram.ViewModels
 
                     if (count > 1)
                     {
-                        return string.Format(Strings.Resources.StatusOnline, participants.Participants.Count, count);
+                        return string.Format("{0}, {1}", LocaleHelper.Declension("Members", participants.Participants.Count), LocaleHelper.Declension("OnlineCount", count));
                     }
 
-                    return string.Format(Strings.Resources.StatusMembers, participants.Participants.Count);
+                    return LocaleHelper.Declension("Members", participants.Participants.Count);
                 }
             }
 
@@ -2824,7 +2861,7 @@ namespace Unigram.ViewModels
 
             if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages))
             {
-                var confirm = await TLMessageDialog.ShowAsync("Would you like to unpin this message?", "Unigram", "Yes", "No");
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.UnpinMessageAlert, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var response = await ProtoService.UpdatePinnedMessageAsync(false, channel.ToInputChannel(), 0);
@@ -2860,7 +2897,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to unblock this contact?", "Telegram", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureUnblockContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

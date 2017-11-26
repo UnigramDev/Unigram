@@ -21,7 +21,10 @@ namespace Unigram.Controls.Views
     {
         public CalendarView()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+
+            PrimaryButtonText = Strings.Android.OK;
+            SecondaryButtonText = Strings.Android.Cancel;
         }
 
         public DateTimeOffset MinDate

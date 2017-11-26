@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels.Payments;
 using Windows.Foundation;
@@ -32,7 +34,7 @@ namespace Unigram.Views.Payments
 
         private string ConvertTitle(bool test)
         {
-            return test ? "Test checkout" : "Checkout";
+            return (test ? "Test " : string.Empty) +  Strings.Android.PaymentCheckout;
         }
 
         private string ConvertAddress(TLPostAddress address)
@@ -71,5 +73,9 @@ namespace Unigram.Views.Payments
             return result.Trim(',', ' ');
         }
 
+        private string ConvertPay(long amount, string currency)
+        {
+            return string.Format(Strings.Android.PaymentCheckoutPay, LocaleHelper.FormatCurrency(amount, currency));
+        }
     }
 }

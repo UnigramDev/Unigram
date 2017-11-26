@@ -57,7 +57,6 @@ namespace Unigram.ViewModels
         {
             Items = new MvxObservableCollection<TLDialog>();
             Search = new ObservableCollection<KeyedList<string, TLObject>>();
-            SearchTokens = new Dictionary<string, CancellationTokenSource>();
 
             Execute.BeginOnThreadPool(() => LoadFirstSlice());
 
@@ -567,7 +566,7 @@ namespace Unigram.ViewModels
             {
                 BeginOnUIThread(async () =>
                 {
-                    await TLMessageDialog.ShowAsync(update.Message, "Telegram", "OK");
+                    await TLMessageDialog.ShowAsync(update.Message, Strings.Android.AppName, Strings.Android.OK);
                 });
             }
             else
@@ -953,8 +952,6 @@ namespace Unigram.ViewModels
 
         public ObservableCollection<KeyedList<string, TLObject>> Search { get; private set; }
 
-        public Dictionary<string, CancellationTokenSource> SearchTokens { get; private set; }
-
         private string _searchQuery;
         public string SearchQuery
         {
@@ -1074,7 +1071,7 @@ namespace Unigram.ViewModels
             {
                 if (result.Result.Results.Count > 0)
                 {
-                    var parent = new KeyedList<string, TLObject>("Global search results");
+                    var parent = new KeyedList<string, TLObject>(Strings.Android.GlobalSearch);
 
                     CacheService.SyncUsersAndChats(result.Result.Users, result.Result.Chats,
                         tuple =>
@@ -1109,17 +1106,20 @@ namespace Unigram.ViewModels
                 var slice = result.Result as TLMessagesMessagesSlice;
                 if (slice != null)
                 {
-                    parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", slice.Count));
+                    //parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", slice.Count));
+                    parent = new KeyedList<string, TLObject>(Strings.Android.SearchMessages);
                 }
                 else
                 {
                     if (result.Result.Messages.Count > 0)
                     {
-                        parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", result.Result.Messages.Count));
+                        //parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", result.Result.Messages.Count));
+                        parent = new KeyedList<string, TLObject>(Strings.Android.SearchMessages);
                     }
                     else
                     {
-                        parent = new KeyedList<string, TLObject>("No messages found");
+                        //parent = new KeyedList<string, TLObject>("No messages found");
+                        parent = new KeyedList<string, TLObject>(Strings.Android.SearchMessages);
                     }
                 }
 
@@ -1288,10 +1288,9 @@ namespace Unigram.ViewModels
                 //    title = channel.IsCreator ? "Delete" : "Leave";
                 //}
 
-                message = channel.IsBroadcast ? "Are you sure you want to leave this channel?" : "Are you sure you want to leave this group?";
-                title = "Leave";
+                message = channel.IsBroadcast ? Strings.Android.ChannelLeaveAlert : Strings.Android.MegaLeaveAlert;
 
-                var confirm = await TLMessageDialog.ShowAsync(message, title, title, "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync(message, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     //Task<MTProtoResponse<TLUpdatesBase>> task;
@@ -1325,10 +1324,7 @@ namespace Unigram.ViewModels
             }
             else if (dialog.With is TLChannel channel)
             {
-                var message = string.Format("Are you sure, you want to clear history in \"{0}\"?", dialog.With.DisplayName);
-                var title = "Delete";
-
-                var confirm = await TLMessageDialog.ShowAsync(message, title, title, "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureClearHistory, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var response = await ProtoService.DeleteHistoryAsync(channel.ToInputChannel(), int.MaxValue);
@@ -1350,7 +1346,7 @@ namespace Unigram.ViewModels
         {
             if (dialog.With is TLUser user)
             {
-                var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to delete all message history and stop this bot?", "Delete and Stop", "Delete and Stop", "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureDeleteThisChat, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -1391,14 +1387,14 @@ namespace Unigram.ViewModels
             var message = string.Empty;
             if (dialog.With is TLUser)
             {
-                message = string.Format("Are you sure, you want to delete all message history with {0}?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName);
+                message = Strings.Android.AreYouSureDeleteThisChat;
             }
             else if (dialog.With is TLChat || dialog.With is TLChatForbidden)
             {
-                message = justClear ? string.Format("Are you sure, you want to delete all message history in \"{0}\"?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName) : string.Format("Are you sure, you want to delete all message history and leave \"{0}\"?\r\n\r\nThis action cannot be undone.", dialog.With.DisplayName);
+                message = justClear ? Strings.Android.AreYouSureClearHistory : Strings.Android.AreYouSureDeleteAndExit;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(message, "Delete", "Delete", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 if (dialog.With is TLChat chat && !justClear)

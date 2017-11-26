@@ -11,6 +11,8 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
+        <x:String x:Key="Empty"></x:String>
+        
         <Style x:Key="TypingProgressRingStyle" TargetType="ProgressRing">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
@@ -100,7 +102,7 @@
                 <ImageBrush ImageSource="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
             </Ellipse.Fill>
         </Ellipse>-->
-        <controls:ProfilePictureView x:Name="Photo" Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" VerticalAlignment="Top" IsHitTestVisible="False" Grid.RowSpan="2" />
+        <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" VerticalAlignment="Top" IsHitTestVisible="False" Grid.RowSpan="2" />
 
         <Border x:Name="SavedMessages" Visibility="Collapsed" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top" Grid.RowSpan="2">
             <FontIcon Glyph="&#xE907;" Foreground="White" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
@@ -149,7 +151,7 @@
                           Grid.Column="3"/>
             </Grid>
             <FontIcon x:Name="StateIcon"
-                      Glyph="{x:Bind UpdateStateIcon(ViewModel.Draft, ViewModel.TopMessageItem, ViewModel.TopMessageItem.State), Mode=OneWay}"
+                      Glyph="{x:Bind UpdateStateIcon(ViewModel.Draft, ViewModel.TopMessageItem, ViewModel.TopMessageItem.State), Mode=OneWay, FallbackValue=''}"
                       FontFamily="{StaticResource TelegramThemeFontFamily}"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Bottom"
@@ -187,13 +189,12 @@
             </TextBlock>
 
             <TextBlock x:Name="TypingLabel"
+                       Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
                        Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}"
                        Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                        Style="{StaticResource BodyTextBlockStyle}"
                        TextWrapping="NoWrap"
-                       MaxLines="1">
-                    <Run Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"/><Run Text="..."/>
-            </TextBlock>
+                       MaxLines="1"/>
 
             <Border Visibility="{x:Bind UpdateIsPinned(ViewModel.IsPinned, ViewModel.UnreadCount), Mode=OneWay, FallbackValue=Collapsed}"
                     Width="20"

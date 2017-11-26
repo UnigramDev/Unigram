@@ -43,6 +43,8 @@ namespace Telegram.Api
         public const int CachedMessagesCount = 15;
         public const int WorkersNumber = 4;
 
+        public const int CheckConfigTimeout = 20;
+
         public const string ConfigKey = "Config";
         public const string ConfigFileName = "config.xml";
         public static double CheckSendingMesagesInterval = 5.0;     //seconds
@@ -83,5 +85,7 @@ namespace Telegram.Api
         public const double DifferenceMinInterval = 10.0;           //seconds
 
         public const string InitConnectionFileName = "init_connection.dat";
+
+        public const string ProxyConfigFileName = "proxy_config.dat";
     }
 }

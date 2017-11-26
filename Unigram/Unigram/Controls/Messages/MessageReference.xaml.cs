@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
@@ -218,7 +219,7 @@ namespace Unigram.Controls.Messages
                 {
                     if (!string.IsNullOrEmpty(editMessage.Message) && (editMessage.Media == null || editMessage.Media is TLMessageMediaEmpty || editMessage.Media is TLMessageMediaWebPage))
                     {
-                        return SetTextTemplate(editMessage, "Edit message");
+                        return SetTextTemplate(editMessage, Strings.Android.Edit);
                     }
 
                     var media = editMessage.Media;
@@ -227,56 +228,56 @@ namespace Unigram.Controls.Messages
                         switch (media.TypeId)
                         {
                             case TLType.MessageMediaPhoto:
-                                return SetPhotoTemplate(editMessage, "Edit message");
+                                return SetPhotoTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaGeo:
-                                return SetGeoTemplate(editMessage, "Edit message");
+                                return SetGeoTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaGeoLive:
-                                return SetGeoLiveTemplate(editMessage, "Edit message");
+                                return SetGeoLiveTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaVenue:
-                                return SetVenueTemplate(editMessage, "Edit message");
+                                return SetVenueTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaContact:
-                                return SetContactTemplate(editMessage, "Edit message");
+                                return SetContactTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaGame:
-                                return SetGameTemplate(editMessage, "Edit message");
+                                return SetGameTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaEmpty:
-                                return SetUnsupportedTemplate(editMessage, "Edit message");
+                                return SetUnsupportedTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaDocument:
                                 if (editMessage.IsSticker())
                                 {
-                                    return SetStickerTemplate(editMessage, "Edit message");
+                                    return SetStickerTemplate(editMessage, Strings.Android.Edit);
                                 }
                                 else if (editMessage.IsGif())
                                 {
-                                    return SetGifTemplate(editMessage, "Edit message");
+                                    return SetGifTemplate(editMessage, Strings.Android.Edit);
                                 }
                                 else if (editMessage.IsVoice())
                                 {
-                                    return SetVoiceMessageTemplate(editMessage, "Edit message");
+                                    return SetVoiceMessageTemplate(editMessage, Strings.Android.Edit);
                                 }
                                 else if (editMessage.IsVideo())
                                 {
-                                    return SetVideoTemplate(editMessage, "Edit message");
+                                    return SetVideoTemplate(editMessage, Strings.Android.Edit);
                                 }
                                 else if (editMessage.IsRoundVideo())
                                 {
-                                    return SetRoundVideoTemplate(editMessage, "Edit message");
+                                    return SetRoundVideoTemplate(editMessage, Strings.Android.Edit);
                                 }
                                 else if (editMessage.IsAudio())
                                 {
-                                    return SetAudioTemplate(editMessage, "Edit message");
+                                    return SetAudioTemplate(editMessage, Strings.Android.Edit);
                                 }
 
-                                return SetDocumentTemplate(editMessage, "Edit message");
+                                return SetDocumentTemplate(editMessage, Strings.Android.Edit);
                             case TLType.MessageMediaUnsupported:
-                                return SetUnsupportedMediaTemplate(editMessage, "Edit message");
+                                return SetUnsupportedMediaTemplate(editMessage, Strings.Android.Edit);
                         }
                     }
                 }
 
-                return SetUnsupportedTemplate(editMessage, "Edit message");
+                return SetUnsupportedTemplate(editMessage, Strings.Android.Edit);
             }
 
-            return SetUnsupportedTemplate(null, "Edit message");
+            return SetUnsupportedTemplate(null, Strings.Android.Edit);
         }
 
         #endregion
@@ -380,17 +381,17 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = string.Empty;
-            ServiceLabel.Text = $"{messages.Count} forwarded messages";
+            ServiceLabel.Text = LocaleHelper.Declension("ForwardedMessageCount",  messages.Count);
             MessageLabel.Text = string.Empty;
 
             var users = messages.Select(x => x.From).Distinct(new EqualityComparerDelegate<TLUser>((x, y) => x.Id == y.Id)).ToList();
             if (users.Count > 2)
             {
-                TitleLabel.Text = $"{users[0].FullName} and {users.Count - 1} others";
+                TitleLabel.Text = users[0].FullName + LocaleHelper.Declension("AndOther", users.Count);
             }
             else if (users.Count == 2)
             {
-                TitleLabel.Text = $"{users[0].FullName} and {users[1].FullName}";
+                TitleLabel.Text = $"{users[0].FullName}, {users[1].FullName}";
             }
             else if (users.Count == 1)
             {
@@ -421,7 +422,7 @@ namespace Unigram.Controls.Messages
             // 🖼
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Photo";
+            ServiceLabel.Text = Strings.Android.AttachPhoto;
             MessageLabel.Text = string.Empty;
 
             if (message.Media is TLMessageMediaPhoto photoMedia)
@@ -459,7 +460,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Location";
+            ServiceLabel.Text = Strings.Android.AttachLocation;
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -473,7 +474,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Live Location";
+            ServiceLabel.Text = Strings.Android.AttachLiveLocation;
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -487,7 +488,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Location";
+            ServiceLabel.Text = Strings.Android.AttachLocation;
             MessageLabel.Text = string.Empty;
 
             var venueMedia = message.Media as TLMessageMediaVenue;
@@ -509,7 +510,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "🎮 Game";
+            ServiceLabel.Text = $"🎮 {Strings.Android.AttachGame}";
             MessageLabel.Text = string.Empty;
 
             var gameMedia = message.Media as TLMessageMediaGame;
@@ -532,7 +533,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Contact";
+            ServiceLabel.Text = Strings.Android.AttachContact;
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -546,7 +547,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Audio";
+            ServiceLabel.Text = Strings.Android.AttachAudio;
             MessageLabel.Text = string.Empty;
 
             var documentMedia = message.Media as TLMessageMediaDocument;
@@ -576,7 +577,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Voice message";
+            ServiceLabel.Text = Strings.Android.AttachAudio;
             MessageLabel.Text = string.Empty;
 
             var documentMedia = message.Media as TLMessageMediaDocument;
@@ -627,7 +628,7 @@ namespace Unigram.Controls.Messages
             Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Video";
+            ServiceLabel.Text = Strings.Android.AttachVideo;
             MessageLabel.Text = string.Empty;
 
             if (message.Media is TLMessageMediaDocument documentMedia)
@@ -666,7 +667,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Video message";
+            ServiceLabel.Text = Strings.Android.AttachRound;
             MessageLabel.Text = string.Empty;
 
             var documentMedia = message.Media as TLMessageMediaDocument;
@@ -694,7 +695,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "GIF";
+            ServiceLabel.Text = Strings.Android.AttachGif;
             MessageLabel.Text = string.Empty;
 
             var documentMedia = message.Media as TLMessageMediaDocument;
@@ -721,7 +722,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Sticker";
+            ServiceLabel.Text = Strings.Android.AttachSticker;
             MessageLabel.Text = string.Empty;
 
             var documentMedia = message.Media as TLMessageMediaDocument;
@@ -735,7 +736,7 @@ namespace Unigram.Controls.Messages
                     {
                         if (!string.IsNullOrEmpty(attribute.Alt))
                         {
-                            ServiceLabel.Text = $"{attribute.Alt} Sticker";
+                            ServiceLabel.Text = $"{attribute.Alt} {Strings.Android.AttachSticker}";
                         }
                     }
                 }
@@ -831,7 +832,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = string.Empty;
-            ServiceLabel.Text = message is TLMessageEmpty ? "Deleted message" : string.Empty;
+            ServiceLabel.Text = message is TLMessageEmpty ? Strings.Resources.DeletedMessage : string.Empty;
             MessageLabel.Text = string.Empty;
             return true;
         }
@@ -844,7 +845,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = "Unsupported media";
+            ServiceLabel.Text = Strings.Android.UnsupportedAttachment;
             MessageLabel.Text = string.Empty;
 
             return true;

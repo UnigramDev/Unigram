@@ -48,14 +48,21 @@ namespace Unigram.Controls
 
                 if (webPage.HasCachedPage)
                 {
-                    if (run1 != null)
+                    if (webPage.IsInstantGallery())
                     {
-                        run1.Text = run3.Text = "\uE611";
-                        run2.Text = "  INSTANT VIEW  ";
-                        run3.Foreground = null;
+                        Visibility = Visibility.Collapsed;
                     }
+                    else
+                    {
+                        if (run1 != null)
+                        {
+                            run1.Text = run3.Text = "\uE611";
+                            run2.Text = "  INSTANT VIEW  ";
+                            run3.Foreground = null;
+                        }
 
-                    Visibility = Visibility.Visible;
+                        Visibility = Visibility.Visible;
+                    }
                 }
                 else if (webPage.HasType && webPage.Type.Equals("telegram_megagroup", StringComparison.OrdinalIgnoreCase))
                 {

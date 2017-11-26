@@ -25,5 +25,15 @@ namespace Unigram.Views.Users
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<UserCreateViewModel>();
         }
+
+        private void PrimaryInput_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(PrimaryInput.Text))
+            {
+                PhoneCode.Focus(FocusState.Keyboard);
+                PhoneCode.SelectionStart = PhoneCode.Text.Length;
+                e.Handled = true;
+            }
+        }
     }
 }

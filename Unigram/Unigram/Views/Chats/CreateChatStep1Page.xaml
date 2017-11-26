@@ -14,9 +14,9 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="New group"
-            Glyph="&#xE10B;"
-            Command="{x:Bind ViewModel.SendCommand}"/>
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource NewGroup}"
+            Glyph="&#xE10B;"/>
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
@@ -38,7 +38,10 @@
                     <controls:GlyphButton Glyph="&#xE114;" FontSize="16" CornerRadius="32" Width="64" Height="64"/>
                 </Grid>
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                    <controls:UpdateTextBox Text="{Binding Title, Mode=TwoWay}" MaxLength="{StaticResource ChatTitleMaxLength}" PlaceholderText="Group name"/>
+                    <controls:UpdateTextBox
+                        Text="{Binding Title, Mode=TwoWay}"
+                        MaxLength="{StaticResource ChatTitleMaxLength}"
+                        PlaceholderText="{CustomResource EnterGroupNamePlaceholder}"/>
                 </Border>
             </Grid>
         </Grid>

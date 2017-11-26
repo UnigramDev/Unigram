@@ -35,8 +35,8 @@
                             <Setter Target="Footer.Padding" Value="6,4,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
                             <Setter Target="ContentPanel.Background" Value="Transparent"/>
+                            <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
@@ -58,8 +58,8 @@
                             <Setter Target="Footer.Padding" Value="6,4,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
                             <Setter Target="ContentPanel.Background" Value="Transparent"/>
+                            <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
@@ -81,7 +81,7 @@
                             <Setter Target="Footer.Padding" Value="6,4,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
+                            <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="HiddenState">
@@ -118,13 +118,13 @@
                            Visibility="Collapsed"/>
 
                 <TextBlock x:Name="AdminLabel"
-                           Text="admin"
-                           Margin="0,0,0,2"
+                           Text="{CustomResource ChatAdmin}"
                            Foreground="{ThemeResource MessageSubtleLabelBrush}"
                            RequestedTheme="{ThemeResource MessageTextBlockTheme}"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            HorizontalAlignment="Right"
-                           Visibility="Collapsed"/>
+                           Visibility="Collapsed"
+                           Margin="0,0,0,2"/>
 
                 <local:MessageReference
                     x:Name="Reply"

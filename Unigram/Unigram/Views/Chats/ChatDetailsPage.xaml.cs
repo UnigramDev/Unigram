@@ -23,6 +23,7 @@ using Unigram.Controls.Views;
 using Unigram.Controls;
 using Unigram.Common;
 using Windows.UI.Xaml.Media.Animation;
+using System.Windows.Input;
 
 namespace Unigram.Views.Chats
 {
@@ -42,7 +43,7 @@ namespace Unigram.Views.Chats
             var chatFull = ViewModel.Full as TLChatFull;
             if (chatFull != null && chatFull.ChatPhoto is TLPhoto && chat != null)
             {
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, chatFull, chat);
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.CacheService, chatFull, chat);
                 await GalleryView.Current.ShowAsync(viewModel, () => Picture);
             }
         }
@@ -73,33 +74,95 @@ namespace Unigram.Views.Chats
 
         #region Context menu
 
-        private void MenuFlyout_Opening(object sender, object e)
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
-            var flyout = sender as MenuFlyout;
+            var flyout = new MenuFlyout();
 
-            foreach (var item in flyout.Items)
+            var chat = ViewModel.Item as TLChat;
+            var full = ViewModel.Full as TLChatFull;
+            if (full == null || chat == null)
             {
-                item.Visibility = Visibility.Visible;
+                return;
+            }
+
+            if (chat.IsCreator)
+            {
+                CreateFlyoutItem(ref flyout, null, Strings.Android.SetAdmins);
+            }
+            if (!chat.IsAdminsEnabled || chat.IsCreator || chat.IsAdmin)
+            {
+                CreateFlyoutItem(ref flyout, null, Strings.Android.ChannelEdit);
+            }
+            if (chat.IsCreator && (full == null || (full.Participants is TLChatParticipants participants && participants.Participants.Count > 0)))
+            {
+                CreateFlyoutItem(ref flyout, ViewModel.MigrateCommand, Strings.Android.ConvertGroupMenu);
+            }
+            CreateFlyoutItem(ref flyout, null, Strings.Android.DeleteAndExit);
+
+            CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
+
+            if (flyout.Items.Count > 0)
+            {
+                flyout.ShowAt((Button)sender);
             }
         }
 
-        private void ParticipantRemove_Loaded(object sender, RoutedEventArgs e)
+        private void Participant_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var participant = element.DataContext as TLChatParticipantBase;
+
+            CreateFlyoutItem(ref flyout, ParticipantRemove_Loaded, ViewModel.ParticipantRemoveCommand, participant, Strings.Android.KickFromGroup);
+
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
-                switch (element.DataContext)
+                if (point.X < 0 || point.Y < 0)
                 {
-                    case TLChatParticipant participant:
-                        element.Visibility = participant.InviterId == SettingsHelper.UserId ? Visibility.Visible : Visibility.Collapsed;
-                        return;
-                    case TLChatParticipantAdmin admin:
-                        element.Visibility = admin.InviterId == SettingsHelper.UserId ? Visibility.Visible : Visibility.Collapsed;
-                        return;
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                element.Visibility = Visibility.Collapsed;
+                flyout.ShowAt(sender, point);
             }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<TLChatParticipantBase, Visibility> visibility, ICommand command, object parameter, string text)
+        {
+            var value = visibility(parameter as TLChatParticipantBase);
+            if (value == Visibility.Visible)
+            {
+                var flyoutItem = new MenuFlyoutItem();
+                //flyoutItem.Loaded += (s, args) => flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
+                flyoutItem.Command = command;
+                flyoutItem.CommandParameter = parameter;
+                flyoutItem.Text = text;
+
+                flyout.Items.Add(flyoutItem);
+            }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, ICommand command, string text)
+        {
+            var flyoutItem = new MenuFlyoutItem();
+            flyoutItem.IsEnabled = command != null;
+            flyoutItem.Command = command;
+            flyoutItem.Text = text;
+
+            flyout.Items.Add(flyoutItem);
+        }
+
+        private Visibility ParticipantRemove_Loaded(TLChatParticipantBase participantBase)
+        {
+            switch (participantBase)
+            {
+                case TLChatParticipant participant:
+                    return participant.InviterId == SettingsHelper.UserId ? Visibility.Visible : Visibility.Collapsed;
+                case TLChatParticipantAdmin admin:
+                    return admin.InviterId == SettingsHelper.UserId ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return Visibility.Collapsed;
         }
 
         #endregion

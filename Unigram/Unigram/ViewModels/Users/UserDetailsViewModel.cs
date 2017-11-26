@@ -26,6 +26,7 @@ using Unigram.Controls.Views;
 using Unigram.Views.Users;
 using Unigram.Converters;
 using System.Runtime.CompilerServices;
+using Unigram.Views.Dialogs;
 
 namespace Unigram.ViewModels.Users
 {
@@ -181,28 +182,36 @@ namespace Unigram.ViewModels.Users
         public RelayCommand SendMessageCommand { get; }
         private void SendMessageExecute()
         {
-            if (Item is TLUser user)
+            if (_item == null)
             {
-                NavigationService.NavigateToDialog(user);
+                return;
             }
+
+            NavigationService.NavigateToDialog(_item);
         }
 
         public RelayCommand MediaCommand { get; }
         private void MediaExecute()
         {
-            if (Item is TLUser user && user.HasAccessHash)
+            if (_item == null)
             {
-                NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
+                return;
             }
+
+            NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
+
+
         }
 
         public RelayCommand CommonChatsCommand { get; }
         private void CommonChatsExecute()
         {
-            if (Item is TLUser user && user.HasAccessHash)
+            if (_item == null)
             {
-                NavigationService.Navigate(typeof(UserCommonChatsPage), new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
+                return;
             }
+
+            NavigationService.Navigate(typeof(UserCommonChatsPage), _item.ToInputUser());
         }
 
         public RelayCommand SystemCallCommand { get; }
@@ -227,7 +236,7 @@ namespace Unigram.ViewModels.Users
         {
             if (Item is TLUser user)
             {
-                var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to block this contact?", "Telegram", "OK", "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureBlockContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -253,7 +262,7 @@ namespace Unigram.ViewModels.Users
         {
             if (Item is TLUser user)
             {
-                var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to unblock this contact?", "Telegram", "OK", "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureUnblockContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -717,7 +726,7 @@ namespace Unigram.ViewModels.Users
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to delete this contact?", "Telegram", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureDeleteContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

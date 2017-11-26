@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Dialogs;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -26,5 +27,14 @@ namespace Unigram.Controls
         {
             this.InitializeComponent();
         }
+
+        #region Binding
+
+        private string ConvertOf(int index, int count)
+        {
+            return string.Format(Strings.Android.Of, index + 1, count);
+        }
+
+        #endregion
     }
 }

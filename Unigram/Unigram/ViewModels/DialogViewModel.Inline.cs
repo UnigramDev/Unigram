@@ -11,6 +11,7 @@ using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels
@@ -135,7 +136,15 @@ namespace Unigram.ViewModels
             var channel = With as TLChannel;
             if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendGames && result.Type.Equals("game", StringComparison.OrdinalIgnoreCase))
             {
-                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting media content here.", "Warning", "OK");
+                if (channel.BannedRights.IsForever())
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.AttachMediaRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                }
+
                 return;
             }
 

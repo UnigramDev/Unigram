@@ -138,8 +138,8 @@
 
 
 
-            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
-            <SolidColorBrush x:Key="MessageOverlayBackgroundOutBrush" Color="#54000000"/>
+            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#99000000"/>
+            <SolidColorBrush x:Key="MessageOverlayBackgroundOutBrush" Color="#99000000"/>
 
 
 
@@ -166,7 +166,7 @@
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
-            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#C7C7C7"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#BBBBBB"/>
 
             <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-light.png"/>
 

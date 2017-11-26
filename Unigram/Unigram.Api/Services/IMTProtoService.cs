@@ -317,5 +317,11 @@ namespace Telegram.Api.Services
         void RequestCallAsync(TLInputUserBase userId, int randomId, byte[] gaHash, Action<TLPhonePhoneCall> callback, Action<TLRPCError> faultCallback = null);
         void SaveCallDebugAsync(TLInputPhoneCall peer, TLDataJSON debug, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SetCallRatingAsync(TLInputPhoneCall peer, int rating, string comment, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
+
+        // langpack
+        void GetDifferenceAsync(int fromVersion, Action<TLLangPackDifference> callback, Action<TLRPCError> faultCallback = null);
+        void GetLangPackAsync(string langCode, Action<TLLangPackDifference> callback, Action<TLRPCError> faultCallback = null);
+        void GetLanguagesAsync(Action<TLVector<TLLangPackLanguage>> callback, Action<TLRPCError> faultCallback = null);
+        void GetStringsAsync(string langCode, TLVector<string> keys, Action<TLVector<TLLangPackStringBase>> callback, Action<TLRPCError> faultCallback = null);
     }
 }

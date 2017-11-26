@@ -43,7 +43,7 @@
                     <CheckBox
                         IsChecked="{x:Bind ViewModel.PrivatePreview, Mode=TwoWay}"
                         Content="{CustomResource MessagePreview}"
-                        Margin="12,0,12,8"/>
+                        Margin="12,0,12,0"/>
                     <controls:BadgeButton
                         IsEnabled="False"
                         Content="{CustomResource Sound}"
@@ -59,7 +59,7 @@
                     <CheckBox
                         IsChecked="{x:Bind ViewModel.GroupPreview, Mode=TwoWay}"
                         Content="{CustomResource MessagePreview}"
-                        Margin="12,0,12,8"/>
+                        Margin="12,0,12,0"/>
                     <controls:BadgeButton
                         IsEnabled="False"
                         Content="{CustomResource Sound}"
@@ -82,7 +82,7 @@
                         Content="{CustomResource InAppPreview}"
                         Margin="12,0"/>
 
-                    <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" Height="1" Margin="12,0,0,0"/>
+                    <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" Height="1" Margin="12,6,0,0"/>
                 </StackPanel>
 
                 <StackPanel Margin="0,24,0,0">

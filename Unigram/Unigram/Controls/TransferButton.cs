@@ -19,9 +19,14 @@ namespace Unigram.Controls
 {
     public class TransferButton : GlyphHyperlinkButton
     {
+        private bool _unloaded;
+
         public TransferButton()
         {
             Click += OnClick;
+
+            Loaded += (s, args) => _unloaded = false;
+            Unloaded += (s, args) => _unloaded = true;
         }
 
         public event EventHandler<TransferCompletedEventArgs> Completed;
@@ -173,6 +178,11 @@ namespace Unigram.Controls
 
         public void Update()
         {
+            if (_unloaded)
+            {
+                return;
+            }
+
             OnTransferableChanged(Transferable, null);
         }
 

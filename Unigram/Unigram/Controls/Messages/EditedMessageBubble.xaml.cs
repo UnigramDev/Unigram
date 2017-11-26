@@ -45,7 +45,7 @@ namespace Unigram.Controls.Messages
 
         private Visibility UpdateFirst(bool isFirst)
         {
-            OnMessageChanged(HeaderLabel, HeaderLabel, null);
+            OnMessageChanged(HeaderLabel, HeaderLabel, Header);
             return isFirst ? Visibility.Visible : Visibility.Collapsed;
         }
 

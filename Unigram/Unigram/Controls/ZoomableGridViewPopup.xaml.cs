@@ -20,14 +20,37 @@ namespace Unigram.Controls
 {
     public sealed partial class ZoomableGridViewPopup : Grid
     {
+        private ApplicationView _applicationView;
+
         public ZoomableGridViewPopup()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+
+            _applicationView = ApplicationView.GetForCurrentView();
+            _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
+            OnVisibleBoundsChanged(_applicationView, null);
+        }
+
+        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
+        {
+            if (sender == null)
+            {
+                return;
+            }
+
+            if (/*BackgroundElement != null &&*/ Window.Current?.Bounds is Rect bounds && sender.VisibleBounds != bounds)
+            {
+                Margin = new Thickness(sender.VisibleBounds.X - bounds.Left, sender.VisibleBounds.Y - bounds.Top, bounds.Width - (sender.VisibleBounds.Right - bounds.Left), bounds.Height - (sender.VisibleBounds.Bottom - bounds.Top));
+            }
+            else
+            {
+                Margin = new Thickness();
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Margin = new Thickness(0, 0, 0, InputPane.GetForCurrentView().OccludedRect.Bottom);
+            Padding = new Thickness(0, 0, 0, InputPane.GetForCurrentView().OccludedRect.Height);
 
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
@@ -41,12 +64,12 @@ namespace Unigram.Controls
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
-            Margin = new Thickness(0, 0, 0, args.OccludedRect.Bottom);
+            Padding = new Thickness(0, 0, 0, args.OccludedRect.Height);
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
         {
-            Margin = new Thickness();
+            Padding = new Thickness();
         }
     }
 }

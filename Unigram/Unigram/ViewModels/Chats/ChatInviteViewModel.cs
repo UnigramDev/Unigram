@@ -11,6 +11,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Services;
 using Unigram.Strings;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -53,6 +54,8 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
+        public override string Title => Strings.Android.SelectContact;
+
         public override int Maximum => 1;
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -84,9 +87,11 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
+            TLType type = 0;
             Task<MTProtoResponse<TLUpdatesBase>> task = null;
             if (_item is TLChannel channel)
             {
+                type = TLType.ChannelsInviteToChannel;
                 task = ProtoService.InviteToChannelAsync(channel.ToInputChannel(), new TLVector<TLInputUserBase> { user.ToInputUser() });
             }
             else if (_item is TLChat chat)
@@ -98,6 +103,7 @@ namespace Unigram.ViewModels.Chats
                     count = config.ForwardedCountMax;
                 }
 
+                type = TLType.MessagesAddChatUser;
                 task = ProtoService.AddChatUserAsync(chat.Id, user.ToInputUser(), count);
             }
 
@@ -129,34 +135,7 @@ namespace Unigram.ViewModels.Chats
             }
             else
             {
-                if (response.Error.TypeEquals(TLErrorType.PEER_FLOOD))
-                {
-                    var dialog = new TLMessageDialog();
-                    dialog.Title = "Telegram";
-                    dialog.Message = Strings.Resources.PeerFloodAddContact;
-                    dialog.PrimaryButtonText = "More info";
-                    dialog.SecondaryButtonText = "OK";
-
-                    var confirm = await dialog.ShowQueuedAsync();
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        MessageHelper.HandleTelegramUrl("t.me/SpamBot");
-                    }
-                }
-                else if (response.Error.TypeEquals(TLErrorType.USERS_TOO_MUCH))
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.UsersTooMuch, "Telegram", "OK");
-                }
-                else if (response.Error.TypeEquals(TLErrorType.BOTS_TOO_MUCH))
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.BotsTooMuch, "Telegram", "OK");
-                }
-                else if (response.Error.TypeEquals(TLErrorType.USER_NOT_MUTUAL_CONTACT))
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.UserNotMutualContact, "Telegram", "OK");
-                }
-
-                Execute.ShowDebugMessage("channels.inviteToChannel error " + response.Error);
+                AlertsService.ProcessError(response.Error, type, _item is TLChannel inner && inner.IsBroadcast);
             }
         }
     }

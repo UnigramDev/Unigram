@@ -20,11 +20,11 @@
         <Border Width="72" Height="72" CornerRadius="36" Background="{ThemeResource Placeholder0Brush}">
             <TextBlock Text="{x:Bind ViewModel.Title, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center" Foreground="White" />
         </Border>
-        <controls:ProfilePictureView Source="{x:Bind ViewModel.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="72" Height="72"/>
+        <controls:ProfilePicture Source="{x:Bind ViewModel.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="72" Height="72"/>
 
         <StackPanel Margin="0,8,0,12" Grid.Row="1">
             <TextBlock Text="{x:Bind ViewModel.Title}" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-            <TextBlock Text="{x:Bind ConvertCount(ViewModel.ParticipantsCount, ViewModel.HasParticipants)}" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+            <TextBlock Text="{x:Bind ConvertCount(ViewModel.ParticipantsCount, ViewModel.IsBroadcast)}" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
         </StackPanel>
 
         <ListView ItemsSource="{x:Bind ViewModel.Participants}"
@@ -44,7 +44,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="tl:TLUser">
                     <StackPanel>
-                        <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsHitTestVisible="False" Width="48" Height="48" Margin="8,0"/>
+                        <controls:ProfilePicture Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsHitTestVisible="False" Width="48" Height="48" Margin="8,0"/>
                         <TextBlock Text="{x:Bind FullName, Mode=OneWay}" Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </StackPanel>
                 </DataTemplate>
@@ -66,8 +66,8 @@
             </Grid.ColumnDefinitions>
             <Border x:Name="LineBottom" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
 
-            <Button Click="Join_Click" Content="Join" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
-            <Button Click="Cancel_Click" Content="Cancel" HorizontalAlignment="Stretch" Margin="4,8,12,8" Grid.Column="1"/>
+            <Button Click="Join_Click" Content="{CustomResource ChannelJoin}" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
+            <Button Click="Cancel_Click" Content="{CustomResource Cancel}" HorizontalAlignment="Stretch" Margin="4,8,12,8" Grid.Column="1"/>
         </Grid>
     </Grid>
 </controls:BottomSheet>

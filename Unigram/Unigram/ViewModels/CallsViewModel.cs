@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -114,14 +115,14 @@ namespace Unigram.ViewModels
         {
             Items = new ObservableCollection<TLMessageService>(messages);
             Peer = peer;
-            Failed = failed;
+            IsFailed = failed;
         }
 
         public ObservableCollection<TLMessageService> Items { get; private set; }
 
         public TLUser Peer { get; private set; }
 
-        public bool Failed { get; private set; }
+        public bool IsFailed { get; private set; }
 
         public override string ToString()
         {
@@ -163,9 +164,9 @@ namespace Unigram.ViewModels
 
         private string GetDisplayType()
         {
-            if (Failed)
+            if (IsFailed)
             {
-                return Strings.Resources.CallMissedShort;
+                return Strings.Android.CallMessageIncomingMissed;
             }
 
             var finalType = string.Empty;
@@ -216,8 +217,8 @@ namespace Unigram.ViewModels
                 var missed = reason is TLPhoneCallDiscardReasonMissed || reason is TLPhoneCallDiscardReasonBusy;
 
                 var callDuration = action.Duration ?? 0;
-                var duration = missed || callDuration < 1 ? null : BindConvert.Current.CallShortDuration(callDuration);
-                finalType = duration != null ? string.Format(Strings.Resources.CallTimeFormat, finalType, duration) : finalType;
+                var duration = missed || callDuration < 1 ? null : LocaleHelper.FormatCallDuration(callDuration);
+                finalType = duration != null ? string.Format("{0} ({1})", finalType, duration) : finalType;
             }
 
             return finalType;
@@ -228,13 +229,13 @@ namespace Unigram.ViewModels
             switch (type)
             {
                 case TLCallDisplayType.Outgoing:
-                    return Strings.Resources.CallOutgoingShort;
+                    return Strings.Android.CallMessageOutgoing;
                 case TLCallDisplayType.Incoming:
-                    return Strings.Resources.CallIncomingShort;
+                    return Strings.Android.CallMessageIncoming;
                 case TLCallDisplayType.Cancelled:
-                    return Strings.Resources.CallCanceledShort;
+                    return Strings.Android.CallMessageOutgoingMissed;
                 case TLCallDisplayType.Missed:
-                    return Strings.Resources.CallMissedShort;
+                    return Strings.Android.CallMessageIncomingMissed;
                 default:
                     return null;
             }

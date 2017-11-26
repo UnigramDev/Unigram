@@ -25,6 +25,6 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <TextBlock Text="If you set a timer, the photo will self-destruct after it was viewed." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,0,12,12" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1"/>
+        <TextBlock x:Name="Footer" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,0,12,12" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1"/>
     </Grid>
 </ContentDialog>

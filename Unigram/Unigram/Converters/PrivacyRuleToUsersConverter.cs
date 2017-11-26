@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Unigram.Common;
 using Unigram.Strings;
 using Windows.UI.Xaml.Data;
@@ -16,10 +17,10 @@ namespace Unigram.Converters
             var count = System.Convert.ToInt32(value);
             if (count > 0)
             {
-                return Language.Declension(count, Strings.Resources.UserNominativeSingular, Strings.Resources.UserNominativePlural, Strings.Resources.UserGenitiveSingular, Strings.Resources.UserGenitivePlural, null, null);
+                return LocaleHelper.Declension("Users", count);
             }
 
-            return "Add Users";
+            return Strings.Android.EmpryUsersPlaceholder;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

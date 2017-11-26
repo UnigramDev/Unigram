@@ -64,7 +64,7 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        public List<KeyedList<string, Country>> Countries { get; } = Country.GroupedCountries;
+        public IList<Country> Countries { get; } = Country.Countries;
 
         private Country _selectedCountry = Country.Countries[0];
         public Country SelectedCountry

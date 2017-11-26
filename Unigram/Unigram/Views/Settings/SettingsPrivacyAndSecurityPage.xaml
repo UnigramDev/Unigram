@@ -66,7 +66,6 @@
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource SecurityTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:HyperButton
-                        IsEnabled="False"
                         Tag="{CustomResource Passcode}"
                         Click="Passcode_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>

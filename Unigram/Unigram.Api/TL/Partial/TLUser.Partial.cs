@@ -17,7 +17,7 @@ namespace Telegram.Api.TL
             {
                 if (IsDeleted)
                 {
-                    return "Deleted Account";
+                    return LocaleHelper.GetString("HiddenName");
                 }
 
                 //if (this is TLUserEmpty)

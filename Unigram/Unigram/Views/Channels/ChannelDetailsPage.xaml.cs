@@ -43,7 +43,7 @@ namespace Unigram.Views.Channels
             var channelFull = ViewModel.Full as TLChannelFull;
             if (channelFull != null && channelFull.ChatPhoto is TLPhoto && channel != null)
             {
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, channelFull, channel);
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.CacheService, channelFull, channel);
                 await GalleryView.Current.ShowAsync(viewModel, () => Picture);
             }
         }
@@ -82,6 +82,47 @@ namespace Unigram.Views.Channels
             e.Handled = true;
         }
 
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            var channel = ViewModel.Item as TLChannel;
+            var full = ViewModel.Full as TLChannelFull;
+            if (full == null || channel == null)
+            {
+                return;
+            }
+
+            if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null))
+            {
+                if (channel.IsMegaGroup)
+                {
+                    CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.ManageGroupMenu);
+                }
+                else
+                {
+                    CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.ManageChannelMenu);
+                }
+            }
+
+            if (channel.IsMegaGroup)
+            {
+                CreateFlyoutItem(ref flyout, null, Strings.Android.SearchMembers);
+
+                if (!channel.IsCreator && !channel.IsLeft /*&& !channel.IsKicked*/)
+                {
+                    CreateFlyoutItem(ref flyout, null, Strings.Android.LeaveMegaMenu);
+                }
+            }
+
+            CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
+
+            if (flyout.Items.Count > 0)
+            {
+                flyout.ShowAt((Button)sender);
+            }
+        }
+
         private void Participant_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
@@ -89,9 +130,9 @@ namespace Unigram.Views.Channels
             var element = sender as FrameworkElement;
             var participant = element.DataContext as TLChannelParticipantBase;
 
-            CreateFlyoutItem(ref flyout, ParticipantEdit_Loaded, ViewModel.ParticipantEditCommand, participant, Strings.Resources.ParticipantEdit);
-            CreateFlyoutItem(ref flyout, ParticipantPromote_Loaded, ViewModel.ParticipantPromoteCommand, participant, Strings.Resources.ParticipantPromote);
-            CreateFlyoutItem(ref flyout, ParticipantRestrict_Loaded, ViewModel.ParticipantRestrictCommand, participant, Strings.Resources.ParticipantRestrict);
+            CreateFlyoutItem(ref flyout, ParticipantPromote_Loaded, ViewModel.ParticipantPromoteCommand, participant, Strings.Android.SetAsAdmin);
+            CreateFlyoutItem(ref flyout, ParticipantRestrict_Loaded, ViewModel.ParticipantRestrictCommand, participant, Strings.Android.KickFromSupergroup);
+            CreateFlyoutItem(ref flyout, ParticipantRemove_Loaded, ViewModel.ParticipantRemoveCommand, participant, Strings.Android.KickFromGroup);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -119,20 +160,14 @@ namespace Unigram.Views.Channels
             }
         }
 
-        private Visibility ParticipantEdit_Loaded(TLChannelParticipantBase participant)
+        private void CreateFlyoutItem(ref MenuFlyout flyout, ICommand command, string text)
         {
-            var channel = ViewModel.Item as TLChannel;
-            if (channel == null)
-            {
-                return Visibility.Collapsed;
-            }
+            var flyoutItem = new MenuFlyoutItem();
+            flyoutItem.IsEnabled = command != null;
+            flyoutItem.Command = command;
+            flyoutItem.Text = text;
 
-            if ((channel.IsCreator || (channel.HasAdminRights && (channel.AdminRights.IsAddAdmins || channel.AdminRights.IsBanUsers))) && ((participant is TLChannelParticipantAdmin admin && admin.IsCanEdit) || participant is TLChannelParticipantBanned))
-            {
-                return participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
-            }
-
-            return Visibility.Collapsed;
+            flyout.Items.Add(flyoutItem);
         }
 
         private Visibility ParticipantPromote_Loaded(TLChannelParticipantBase participant)
@@ -152,6 +187,22 @@ namespace Unigram.Views.Channels
         }
 
         private Visibility ParticipantRestrict_Loaded(TLChannelParticipantBase participant)
+        {
+            var channel = ViewModel.Item as TLChannel;
+            if (channel == null)
+            {
+                return Visibility.Collapsed;
+            }
+
+            if ((channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsBanUsers)) && ((participant is TLChannelParticipantAdmin admin && admin.IsCanEdit) || (!(participant is TLChannelParticipantBanned) && !(participant is TLChannelParticipantAdmin))))
+            {
+                return participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility ParticipantRemove_Loaded(TLChannelParticipantBase participant)
         {
             var channel = ViewModel.Item as TLChannel;
             if (channel == null)

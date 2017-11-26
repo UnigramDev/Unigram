@@ -25,6 +25,7 @@ namespace Unigram.Controls
         public DialogListView()
         {
             ContainerContentChanging += OnContainerContentChanging;
+            RegisterPropertyChangedCallback(SelectionModeProperty, OnSelectionModeChanged);
 
             DragItemsStarting += OnDragItemsStarting;
             DragItemsCompleted += OnDragItemsCompleted;
@@ -43,13 +44,37 @@ namespace Unigram.Controls
             var content = args.ItemContainer.ContentTemplateRoot as UserControl;
             if (content != null)
             {
-                VisualStateManager.GoToState(content, args.ItemContainer.IsSelected ? "Selected" : "Normal", false);
+                VisualStateManager.GoToState(content, args.ItemContainer.IsSelected && SelectionMode == ListViewSelectionMode.Single ? "Selected" : "Normal", false);
+            }
+        }
+
+        private void OnSelectionModeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var panel = ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null)
+            {
+                return;
+            }
+
+            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
+            {
+                var container = ContainerFromIndex(i) as ListViewItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
+                var content = container.ContentTemplateRoot as UserControl;
+                if (content != null)
+                {
+                    VisualStateManager.GoToState(content, container.IsSelected && SelectionMode == ListViewSelectionMode.Single ? "Selected" : "Normal", false);
+                }
             }
         }
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new DialogListViewItem();
+            return new DialogListViewItem(this);
         }
 
         #region Drag & Drop

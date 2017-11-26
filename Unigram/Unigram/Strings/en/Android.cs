@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/15/2017 22:07:32
+// 	Generated: 11/23/2017 17:35:36
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -449,7 +449,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 pinned \"{0}\""
+        /// Localized resource similar to "un1 pinned "{0}""
         /// </summary>
         public static string ActionPinnedText
         {
@@ -1698,7 +1698,7 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.
         ///
-        ///Please take a look at the <a href=\"https://telegram.org/faq#general\">Telegram FAQ</a>: it has answers to most questions and important tips for <a href=\"https://telegram.org/faq#troubleshooting\">troubleshooting</a>."
+        ///Please take a look at the <a href="https://telegram.org/faq#general">Telegram FAQ</a>: it has answers to most questions and important tips for <a href="https://telegram.org/faq#troubleshooting">troubleshooting</a>."
         /// </summary>
         public static string AskAQuestionInfo
         {
@@ -6294,7 +6294,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 renamed the channel to \"{0}\""
+        /// Localized resource similar to "un1 renamed the channel to "{0}""
         /// </summary>
         public static string EventLogEditedChannelTitle
         {
@@ -6327,7 +6327,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 renamed the group to \"{0}\""
+        /// Localized resource similar to "un1 renamed the group to "{0}""
         /// </summary>
         public static string EventLogEditedGroupTitle
         {
@@ -11385,7 +11385,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned \"{1}\" in the group {2}"
+        /// Localized resource similar to "{0} pinned "{1}" in the group {2}"
         /// </summary>
         public static string NotificationActionPinnedText
         {
@@ -11396,7 +11396,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned \"{1}\""
+        /// Localized resource similar to "{0} pinned "{1}""
         /// </summary>
         public static string NotificationActionPinnedTextChannel
         {
@@ -12309,7 +12309,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Only when screen \"off\""
+        /// Localized resource similar to "Only when screen "off""
         /// </summary>
         public static string OnlyWhenScreenOff
         {
@@ -12320,7 +12320,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Only when screen \"on\""
+        /// Localized resource similar to "Only when screen "on""
         /// </summary>
         public static string OnlyWhenScreenOn
         {
@@ -14758,7 +14758,7 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Are you sure you want to revoke the link **{0}**?
         ///
-        ///The group \"**{1}**\" will become private."
+        ///The group "**{1}**" will become private."
         /// </summary>
         public static string RevokeLinkAlert
         {
@@ -14771,7 +14771,7 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Are you sure you want to revoke the link **{0}**?
         ///
-        ///The channel \"**{1}**\" will become private."
+        ///The channel "**{1}**" will become private."
         /// </summary>
         public static string RevokeLinkAlertChannel
         {

@@ -22,6 +22,7 @@ using Windows.Foundation;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.System;
 using Windows.UI;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -209,7 +210,9 @@ namespace Unigram.Controls.Messages
                 if (paragraph.Inlines.Count > 0)
                     paragraph.Inlines.Add(new LineBreak());
 
-                paragraph.Inlines.Add(new Run { Text = "Forwarded from " });
+                paragraph.Inlines.Add(new Run { Text = Strings.Android.ForwardedMessage, FontWeight = FontWeights.Normal });
+                paragraph.Inlines.Add(new LineBreak());
+                paragraph.Inlines.Add(new Run { Text = Strings.Android.From + " ", FontWeight = FontWeights.Normal });
 
                 var name = string.Empty;
 
@@ -249,7 +252,8 @@ namespace Unigram.Controls.Messages
             if (message.HasViaBotId && message.ViaBot != null && !message.ViaBot.IsDeleted && message.ViaBot.HasUsername)
             {
                 var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
+                hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @"), FontWeight = FontWeights.Normal });
+                hyperlink.Inlines.Add(new Run { Text = message.ViaBot.Username });
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : paragraph.Foreground;
                 hyperlink.Click += (s, args) => ViaBot_Click(message);
@@ -319,7 +323,10 @@ namespace Unigram.Controls.Messages
 
         protected void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
         {
-            Context?.KeyboardButtonExecute(e.Button, ViewModel);
+            if (ViewModel is TLMessage message)
+            {
+                Context?.KeyboardButtonExecute(e.Button, message);
+            }
         }
 
         protected void Reply_Click(object sender, RoutedEventArgs e)
@@ -351,7 +358,13 @@ namespace Unigram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if (ViewModel?.Media == null || !IsFullMedia(ViewModel?.Media, true))
+            var message = ViewModel as TLMessage;
+            if (message == null)
+            {
+                return base.MeasureOverride(availableSize);
+            }
+
+            if (message.Media == null || !IsFullMedia(message.Media, true))
             {
                 return base.MeasureOverride(availableSize);
             }
@@ -360,7 +373,7 @@ namespace Unigram.Controls.Messages
             var fixedSize = false;
 
             object constraint = null;
-            if (ViewModel?.Media is TLMessageMediaPhoto photoMedia)
+            if (message.Media is TLMessageMediaPhoto photoMedia)
             {
                 if (photoMedia.HasTTLSeconds)
                 {
@@ -371,7 +384,7 @@ namespace Unigram.Controls.Messages
                     constraint = photoMedia.Photo;
                 }
             }
-            else if (ViewModel?.Media is TLMessageMediaDocument documentMedia)
+            else if (message.Media is TLMessageMediaDocument documentMedia)
             {
                 if (documentMedia.HasTTLSeconds)
                 {
@@ -382,7 +395,7 @@ namespace Unigram.Controls.Messages
                     constraint = documentMedia.Document;
                 }
             }
-            else if (ViewModel?.Media is TLMessageMediaInvoice invoiceMedia)
+            else if (message.Media is TLMessageMediaInvoice invoiceMedia)
             {
                 constraint = invoiceMedia.Photo;
             }
@@ -394,9 +407,9 @@ namespace Unigram.Controls.Messages
             //        constraint = webPage.Photo;
             //    }
             //}
-            else if (ViewModel?.Media is TLMessageMediaGeo || ViewModel?.Media is TLMessageMediaGeoLive || ViewModel?.Media is TLMessageMediaVenue)
+            else if (message.Media is TLMessageMediaGeo || message.Media is TLMessageMediaGeoLive || message.Media is TLMessageMediaVenue)
             {
-                constraint = ViewModel?.Media;
+                constraint = message.Media;
             }
 
             if (constraint == null)
