@@ -251,7 +251,7 @@ namespace Unigram.Controls.Views
             e.Handled = true;
         }
 
-        private async void ImageView_ImageOpened(object sender, RoutedEventArgs e)
+        private void ImageView_ImageOpened(object sender, RoutedEventArgs e)
         {
             var image = sender as FrameworkElement;
             if (image.DataContext != ViewModel.FirstItem)
@@ -265,8 +265,6 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            //await Task.Delay(500);
-
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
             if (animation != null)
             {
@@ -277,17 +275,22 @@ namespace Unigram.Controls.Views
                     animation.Completed += (s, args) =>
                     {
                         Transport.Show();
-                    };
-                }
-                else
-                {
-                    Transport.Show();
-                }
 
-                //if (item.IsVideo)
-                //{
-                //    Play(image.Parent as Grid, item);
-                //}
+                        if (item.IsVideo)
+                        {
+                            Play(image.Parent as Grid, item);
+                        }
+                    };
+
+                    return;
+                }
+            }
+
+            Transport.Show();
+
+            if (item.IsVideo)
+            {
+                Play(image.Parent as Grid, item);
             }
         }
 
@@ -641,6 +644,8 @@ namespace Unigram.Controls.Views
                 {
                     ViewModel.SelectedItem = ViewModel.Items[ViewModel.SelectedIndex + direction];
                     PrepareNext(direction);
+
+                    Dispose();
                 }
 
                 _layout.Offset = new Vector3(-width, 0, 0);
@@ -684,11 +689,14 @@ namespace Unigram.Controls.Views
             Grid.SetColumn(next, 2);
 
             var index = ViewModel.SelectedIndex;
-            TrySet(target, ViewModel.Items[index]);
+            var set = TrySet(target, ViewModel.Items[index]);
             TrySet(previous, ViewModel.SelectedIndex > 0 ? ViewModel.Items[index - 1] : null);
             TrySet(next, ViewModel.SelectedIndex < ViewModel.Items.Count - 1 ? ViewModel.Items[index + 1] : null);
 
-            Dispose();
+            if (set)
+            {
+                Dispose();
+            }
 
             _selecting = false;
         }
@@ -711,14 +719,15 @@ namespace Unigram.Controls.Views
             return null;
         }
 
-        private void TrySet(ContentControl element, object content)
+        private bool TrySet(ContentControl element, object content)
         {
-            if (object.Equals(element, content))
+            if (object.Equals(element.Content, content))
             {
-                return;
+                return false;
             }
 
             element.Content = content;
+            return true;
         }
 
         protected override Size MeasureOverride(Size availableSize)

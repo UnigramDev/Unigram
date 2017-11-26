@@ -864,6 +864,50 @@ namespace Unigram.Views
         {
             var flyout = new MenuFlyout();
 
+            var currentUser = ViewModel.With as TLUser;
+            var currentChat = ViewModel.With as TLChat;
+            var currentChannel = ViewModel.With as TLChannel;
+
+            CreateFlyoutItem(ref flyout, null, Strings.Android.Search);
+
+            if (currentChannel != null && !currentChannel.IsCreator && (!currentChannel.IsMegaGroup || (currentChannel.Username != null && currentChannel.Username.Length > 0)))
+            {
+                CreateFlyoutItem(ref flyout, null, Strings.Android.ReportChat);
+            }
+            //if (currentUser != null)
+            //{
+            //    this.addContactItem = this.headerItem.addSubItem(17, "");
+            //}
+            //if (this.currentEncryptedChat != null)
+            //{
+            //    this.timeItem2 = this.headerItem.addSubItem(13, LocaleController.getString("SetTimer", R.string.SetTimer));
+            //}
+            if (currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup && string.IsNullOrEmpty(currentChannel.Username)))
+            {
+                CreateFlyoutItem(ref flyout, null, Strings.Android.ClearHistory);
+            }
+            if (currentUser != null)
+            {
+                CreateFlyoutItem(ref flyout, null, Strings.Android.DeleteChatUser);
+            }
+            if (currentChat != null)
+            {
+                CreateFlyoutItem(ref flyout, null, Strings.Android.DeleteAndExit);
+            }
+            //if (currentUser == null || !currentUser.IsSelf)
+            //{
+            //    this.muteItem = this.headerItem.addSubItem(18, null);
+            //}
+            //else if (currentUser.IsSelf)
+            //{
+            //    CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
+            //}
+            if (currentUser != null && currentUser.IsBot)
+            {
+                CreateFlyoutItem(ref flyout, null, Strings.Android.BotSettings);
+                CreateFlyoutItem(ref flyout, null, Strings.Android.BotHelp);
+            }
+
             if (flyout.Items.Count > 0)
             {
                 flyout.ShowAt((Button)sender);
@@ -1895,7 +1939,7 @@ namespace Unigram.Views
                     }
 
                     if (refresh)
-                    { 
+                    {
                         sender.RequestedTheme = ElementTheme.Dark;
                         sender.RequestedTheme = ElementTheme.Default;
                     }

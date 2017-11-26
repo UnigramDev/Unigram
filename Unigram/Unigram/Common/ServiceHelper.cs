@@ -124,24 +124,26 @@ namespace Unigram.Common
 
                 return (content, entities);
             });
-            _actionsCache.Add(typeof(TLMessageActionChatEditTitle), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
+            _actionsCache.Add(typeof(TLMessageActionChatEditTitle), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
             {
                 var content = string.Empty;
                 var entities = useActiveLinks ? new List<TLMessageEntityBase>() : null;
 
+                var action = actionBase as TLMessageActionChatEditTitle;
+
                 if (message.Parent is TLChannel channel && channel.IsBroadcast)
                 {
-                    content = Strings.Android.ActionChannelChangedTitle;
+                    content = Strings.Android.ActionChannelChangedTitle.Replace("un2", action.Title);
                 }
                 else
                 {
                     if (message.IsOut)
                     {
-                        content = Strings.Android.ActionYouChangedTitle;
+                        content = Strings.Android.ActionYouChangedTitle.Replace("un2", action.Title);
                     }
                     else
                     {
-                        content = ReplaceWithLink(Strings.Android.ActionChangedTitle, "un1", fromUser, ref entities);
+                        content = ReplaceWithLink(Strings.Android.ActionChangedTitle.Replace("un2", action.Title), "un1", fromUser, ref entities);
                     }
                 }
 

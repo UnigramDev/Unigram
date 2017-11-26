@@ -109,14 +109,17 @@ namespace Unigram.Themes
                 if (webPage.HasEmbedUrl)
                 {
                     await WebPageView.Current.ShowAsync(webPage);
+                    return;
                 }
                 else if (webPage.IsInstantGallery())
                 {
                     var viewModel = new InstantGalleryViewModel(message, webPage);
                     await GalleryView.Current.ShowAsync(viewModel, () => image.Parent as FrameworkElement);
+                    return;
                 }
             }
-            else if (image.Constraint is TLPhoto photo)
+
+            if (image.Constraint is TLPhoto photo)
             {
                 var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(photo, null as string));
                 await GalleryView.Current.ShowAsync(viewModel, () => image.Parent as FrameworkElement);
