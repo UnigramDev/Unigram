@@ -4,6 +4,9 @@
 using namespace Unigram::Native;
 using namespace Platform;
 
+HMODULE NativeUtils::s_user32 = NULL;
+pGetLastInputInfo NativeUtils::s_getLastInputInfo = NULL;
+
 int64 NativeUtils::GetDirectorySize(String^ path)
 {
 	return GetDirectorySize(path, L"\\*");
@@ -125,4 +128,30 @@ ULONGLONG NativeUtils::FileTimeToSeconds(FILETIME& ft)
 	uli.LowPart = ft.dwLowDateTime;
 
 	return uli.QuadPart / 10000;
+}
+
+int32 NativeUtils::GetLastInputTime()
+{
+	if (s_getLastInputInfo == NULL)
+	{
+		pLoadLibraryEx loadLibrary = (pLoadLibraryEx)GetProcAddress(GetKernelModule(), "LoadLibraryExW");
+
+		s_user32 = loadLibrary(L"User32.dll", NULL, 0x00000001);
+		s_getLastInputInfo = (pGetLastInputInfo)GetProcAddress(s_user32, "GetLastInputInfo");
+	}
+
+	if (s_getLastInputInfo == NULL)
+	{
+		return 0;
+	}
+
+	LASTINPUTINFO last_input;
+	last_input.cbSize = sizeof(last_input);
+
+	if (s_getLastInputInfo(&last_input))
+	{
+		return last_input.dwTime;
+	}
+
+	return 0;
 }

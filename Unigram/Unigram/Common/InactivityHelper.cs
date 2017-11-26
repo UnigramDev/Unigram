@@ -6,20 +6,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Unigram.Native;
 using Windows.System.Profile;
 
 namespace Unigram.Common
 {
     public static class InactivityHelper
     {
-        [DllImport("user32.dll", ExactSpelling = true)]
-        public static extern Boolean GetLastInputInfo(ref LASTINPUTINFO plii);
-        public struct LASTINPUTINFO
-        {
-            public uint cbSize;
-            public Int32 dwTime;
-        }
-
         private static Timer _timer;
         private static int _timeout = 60 * 1000;
 
@@ -52,19 +45,12 @@ namespace Unigram.Common
 
         private static void OnTick(object state)
         {
-            LASTINPUTINFO lastInput = new LASTINPUTINFO();
-            lastInput.cbSize = (uint)Marshal.SizeOf(lastInput);
-            lastInput.dwTime = 0;
-
-            if (GetLastInputInfo(ref lastInput))
+            var lastInput = NativeUtils.GetLastInputTime();
+            var idleTime = Environment.TickCount - lastInput;
+            if (idleTime >= _timeout && _lastTime < lastInput)
             {
-                var idleTime = Environment.TickCount - lastInput.dwTime;
-                if (idleTime >= _timeout && _lastTime < lastInput.dwTime)
-                {
-                    _lastTime = lastInput.dwTime;
-                    Detected?.Invoke(null, EventArgs.Empty);
-                }
-
+                _lastTime = lastInput;
+                Detected?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -74,20 +60,11 @@ namespace Unigram.Common
         {
             get
             {
-                if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Desktop"))
+                var lastInput = NativeUtils.GetLastInputTime();
+                var idleTime = Environment.TickCount - lastInput;
+                if (idleTime >= 60 * 1000)
                 {
-                    LASTINPUTINFO lastInput = new LASTINPUTINFO();
-                    lastInput.cbSize = (uint)Marshal.SizeOf(lastInput);
-                    lastInput.dwTime = 0;
-
-                    if (GetLastInputInfo(ref lastInput))
-                    {
-                        var idleTime = Environment.TickCount - lastInput.dwTime;
-                        if (idleTime >= 60 * 1000)
-                        {
-                            return false;
-                        }
-                    }
+                    return false;
                 }
 
                 return true;
