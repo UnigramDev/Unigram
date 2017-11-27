@@ -365,8 +365,8 @@ namespace Unigram.Controls.Views
                 //_mediaPlayerElement.TransportControls = Transport;
                 _mediaPlayerElement.Tag = item.Source;
                 _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
-                _mediaPlayerElement.HorizontalAlignment = HorizontalAlignment.Center;
-                _mediaPlayerElement.VerticalAlignment = VerticalAlignment.Center;
+                //_mediaPlayerElement.HorizontalAlignment = HorizontalAlignment.Center;
+                //_mediaPlayerElement.VerticalAlignment = VerticalAlignment.Center;
 
                 _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
                 _mediaPlayer.IsLoopingEnabled = item.IsLoop;
@@ -640,7 +640,7 @@ namespace Unigram.Controls.Views
             _layout.StartAnimation("Offset.X", animation);
             batch.Completed += (s, args) =>
             {
-                if (direction != 0)
+                if (direction != 0 && ViewModel != null)
                 {
                     ViewModel.SelectedItem = ViewModel.Items[ViewModel.SelectedIndex + direction];
                     PrepareNext(direction);

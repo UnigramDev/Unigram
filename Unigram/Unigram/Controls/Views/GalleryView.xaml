@@ -31,11 +31,10 @@
                             <Image
                                 Source="{TemplateBinding PosterSource}"
                                 Stretch="{TemplateBinding Stretch}" />
-                            <controls:MediaPlayerView x:Name="MediaPlayerPresenter"
+                            <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
                                                       IsFullWindow="{TemplateBinding IsFullWindow}"
                                                       Stretch="{TemplateBinding Stretch}"
-                                                      MediaPlayer="{TemplateBinding MediaPlayer}"
-                                                      Constraint="{TemplateBinding Tag}"/>
+                                                      MediaPlayer="{TemplateBinding MediaPlayer}"/>
                             <Grid x:Name="TimedTextSourcePresenter" />
                         </Grid>
                     </ControlTemplate>
