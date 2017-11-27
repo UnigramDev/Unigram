@@ -485,8 +485,16 @@ namespace Unigram.Controls.Messages
                 var video = attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 if (video != null)
                 {
-                    width = video.W;
-                    height = video.H;
+                    if (video.IsRoundMessage)
+                    {
+                        width = 200;
+                        height = 200;
+                    }
+                    else
+                    {
+                        width = video.W;
+                        height = video.H;
+                    }
 
                     goto Calculate;
                 }
