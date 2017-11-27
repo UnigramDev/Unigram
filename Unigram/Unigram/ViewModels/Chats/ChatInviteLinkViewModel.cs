@@ -115,13 +115,13 @@ namespace Unigram.ViewModels.Chats
                 {
                     Item = chat;
 
-                    var full = CacheService.GetFullChat(chat.Id) as TLChannelFull;
+                    var full = CacheService.GetFullChat(chat.Id) as TLChatFull;
                     if (full == null)
                     {
                         var response = await ProtoService.GetFullChatAsync(chat.Id);
                         if (response.IsSucceeded)
                         {
-                            full = response.Result.FullChat as TLChannelFull;
+                            full = response.Result.FullChat as TLChatFull;
                         }
                     }
 
