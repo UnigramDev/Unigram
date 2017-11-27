@@ -24,12 +24,15 @@ namespace Unigram.ViewModels.Users
     public class UserPhotosViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+        private readonly TLInputUserBase _peer;
 
         public UserPhotosViewModel(IMTProtoService protoService, TLUserFull userFull, TLUser user)
             : base(protoService, null, null)
         {
             //Items = new MvxObservableCollection<GalleryItem>();
             //Initialize(user);
+
+            _peer = user.ToInputUser();
 
             Items = new MvxObservableCollection<GalleryItem> { new GalleryPhotoItem(userFull.ProfilePhoto as TLPhoto, user) };
             SelectedItem = Items[0];
@@ -64,15 +67,24 @@ namespace Unigram.ViewModels.Users
 
         protected override async void LoadNext()
         {
-            if (User != null && TotalItems > Items.Count)
+            using (await _loadMoreLock.WaitAsync())
             {
-                using (await _loadMoreLock.WaitAsync())
+                var item = Items.LastOrDefault() as GalleryPhotoItem;
+                if (item == null)
                 {
-                    var response = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), Items.Count, 0, 0);
-                    if (response.IsSucceeded)
-                    {
-                        Items.AddRange(response.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, _user)));
-                    }
+                    return;
+                }
+
+                var photo = item.Source as TLPhoto;
+                if (photo == null)
+                {
+                    return;
+                }
+
+                var response = await ProtoService.GetUserPhotosAsync(_peer, 0, photo.Id, 0);
+                if (response.IsSucceeded)
+                {
+                    Items.AddRange(response.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, _user)));
                 }
             }
         }
