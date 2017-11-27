@@ -58,27 +58,26 @@ namespace Unigram.Controls
                         }
 
                         Content = _imageBackground;
+                        return;
                     }
                 }
-                else
-                {
-                    if (_defaultBackground == null)
-                        _defaultBackground = new DialogBackground();
 
-                    Content = _defaultBackground;
-                }
+                if (_defaultBackground == null)
+                    _defaultBackground = new DialogBackground();
+
+                Content = _defaultBackground;
             }
             else
             {
                 if (_colorBackground == null)
                     _colorBackground = new Rectangle();
 
-                _colorBackground.Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 
-                    (byte)((selectedColor >> 16) & 0xFF), 
-                    (byte)((selectedColor >> 8) & 0xFF), 
+                _colorBackground.Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF,
+                    (byte)((selectedColor >> 16) & 0xFF),
+                    (byte)((selectedColor >> 8) & 0xFF),
                     (byte)((selectedColor & 0xFF))));
 
-                Content = _colorBackground; 
+                Content = _colorBackground;
             }
         }
     }
