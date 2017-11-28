@@ -19,7 +19,7 @@
     Unloaded="OnUnloaded">
 
     <Control.Resources>
-        <Style x:Name="yolo" TargetType="MediaPlayerElement">
+        <Style x:Name="TransportLessMediaPlayerStyle" TargetType="MediaPlayerElement">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
             <Setter Property="IsTabStop" Value="False" />

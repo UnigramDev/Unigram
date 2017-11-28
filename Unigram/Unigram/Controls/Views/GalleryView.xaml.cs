@@ -62,6 +62,11 @@ namespace Unigram.Controls.Views
 
             _layer = ElementCompositionPreview.GetElementVisual(Layer);
 
+            _mediaPlayerElement = new MediaPlayerElement { Style = Resources["TransportLessMediaPlayerStyle"] as Style };
+            _mediaPlayerElement.AreTransportControlsEnabled = true;
+            _mediaPlayerElement.TransportControls = Transport;
+            _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
+
             Initialize();
 
             if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
@@ -101,6 +106,12 @@ namespace Unigram.Controls.Views
                 Element1.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
                 Element2.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
             });
+
+            if (_request != null && (_mediaPlayer == null || _mediaPlayer.Source == null))
+            {
+                _request.RequestRelease();
+                _request = null;
+            }
         }
 
         private async void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
@@ -294,6 +305,8 @@ namespace Unigram.Controls.Views
             }
         }
 
+        #region Binding
+
         private string ConvertFrom(ITLDialogWith with)
         {
             return with is TLUser user && user.IsSelf ? user.FullName : with?.DisplayName;
@@ -309,6 +322,8 @@ namespace Unigram.Controls.Views
         {
             return string.Format(Strings.Android.Of, index, count);
         }
+
+        #endregion
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
@@ -358,15 +373,8 @@ namespace Unigram.Controls.Views
                     _mediaPlayer = new MediaPlayer();
                     _mediaPlayer.SourceChanged += OnSourceChanged;
                     _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+                    _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
                 }
-
-                _mediaPlayerElement = new MediaPlayerElement { Style = Resources["yolo"] as Style };
-                _mediaPlayerElement.AreTransportControlsEnabled = true;
-                //_mediaPlayerElement.TransportControls = Transport;
-                _mediaPlayerElement.Tag = item.Source;
-                _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
-                //_mediaPlayerElement.HorizontalAlignment = HorizontalAlignment.Center;
-                //_mediaPlayerElement.VerticalAlignment = VerticalAlignment.Center;
 
                 _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
                 _mediaPlayer.IsLoopingEnabled = item.IsLoop;
@@ -376,11 +384,6 @@ namespace Unigram.Controls.Views
                 _surface.Children.Add(_mediaPlayerElement);
             }
             catch { }
-        }
-
-        private void Flip_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Dispose();
         }
 
         private void Dispose()
@@ -397,14 +400,20 @@ namespace Unigram.Controls.Views
                 _mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
 
                 _mediaPlayerElement.SetMediaPlayer(null);
-                _mediaPlayerElement.AreTransportControlsEnabled = false;
-                _mediaPlayerElement.TransportControls = null;
-                _mediaPlayerElement = null;
+                //_mediaPlayerElement.AreTransportControlsEnabled = false;
+                //_mediaPlayerElement.TransportControls = null;
+                //_mediaPlayerElement = null;
 
                 _mediaPlayer.Dispose();
                 _mediaPlayer = null;
 
                 OnSourceChanged();
+            }
+
+            if (_request != null)
+            {
+                _request.RequestRelease();
+                _request = null;
             }
         }
 
