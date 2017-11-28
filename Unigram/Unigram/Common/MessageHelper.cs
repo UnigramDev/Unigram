@@ -83,7 +83,7 @@ namespace Unigram.Common
                 var caption = false;
                 if (message.Media is ITLMessageMediaCaption captionMedia)
                 {
-                    caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
+                    caption = !string.IsNullOrWhiteSpace(captionMedia.Caption) && !message.IsRoundVideo();
                 }
                 else if (message.Media is TLMessageMediaVenue)
                 {
