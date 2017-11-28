@@ -285,7 +285,7 @@ namespace Unigram.ViewModels
                         PinnedMessage = null;
                     }
 
-                    if (WithFull is TLChannelFull channelFull && channelFull.PinnedMsgId == messages[j].Id)
+                    if (Full is TLChannelFull channelFull && channelFull.PinnedMsgId == messages[j].Id)
                     {
                         channelFull.PinnedMsgId = null;
                         channelFull.HasPinnedMsgId = false;
