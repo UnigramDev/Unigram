@@ -280,6 +280,17 @@ namespace Unigram.ViewModels
                         ClearReplyCommand.Execute();
                     }
 
+                    if (PinnedMessage?.Id == messages[j].Id)
+                    {
+                        PinnedMessage = null;
+                    }
+
+                    if (WithFull is TLChannelFull channelFull && channelFull.PinnedMsgId == messages[j].Id)
+                    {
+                        channelFull.PinnedMsgId = null;
+                        channelFull.HasPinnedMsgId = false;
+                    }
+
                     Items.Remove(messages[j]);
                 }
 
