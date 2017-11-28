@@ -3,6 +3,7 @@
 #include "OpenGLES.h"
 #include "SimpleRenderer.h"
 
+using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 
 namespace Telegram
@@ -12,7 +13,7 @@ namespace Telegram
 		public ref class TLIntroRenderer sealed
 		{
 		public:
-			TLIntroRenderer(SwapChainPanel^ swapChainPanel);
+			TLIntroRenderer(SwapChainPanel^ swapChainPanel, ElementTheme theme);
 			virtual ~TLIntroRenderer();
 
 			void Loaded();
@@ -26,7 +27,7 @@ namespace Telegram
 			}
 
 		internal:
-			TLIntroRenderer(OpenGLES* openGLES, SwapChainPanel^ swapChainPanel);
+			TLIntroRenderer(OpenGLES* openGLES, SwapChainPanel^ swapChainPanel, ElementTheme theme);
 
 		private:
 			void OnColorValuesChanged(Windows::UI::ViewManagement::UISettings^ sender, Platform::Object^ args);
@@ -47,6 +48,7 @@ namespace Telegram
 			OpenGLES mOpenGLESHolder;
 
 			SwapChainPanel^ mSwapChainPanel;
+			ElementTheme mTheme;
 
 			EGLSurface mRenderSurface;     // This surface is associated with a swapChainPanel on the page
 			Concurrency::critical_section mRenderSurfaceCriticalSection;

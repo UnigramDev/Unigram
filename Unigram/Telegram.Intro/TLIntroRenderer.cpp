@@ -9,26 +9,28 @@ using namespace Telegram::Intro;
 using namespace Platform;
 using namespace Concurrency;
 using namespace Windows::Foundation;
+using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::ViewManagement;
 using namespace Windows::UI::Core;
 
-TLIntroRenderer::TLIntroRenderer(SwapChainPanel^ swapChainPanel) :
-	TLIntroRenderer(&mOpenGLESHolder, swapChainPanel)
+TLIntroRenderer::TLIntroRenderer(SwapChainPanel^ swapChainPanel, ElementTheme theme) :
+	TLIntroRenderer(&mOpenGLESHolder, swapChainPanel, theme)
 {
 }
 
-TLIntroRenderer::TLIntroRenderer(OpenGLES* openGLES, SwapChainPanel^ swapChainPanel) :
+TLIntroRenderer::TLIntroRenderer(OpenGLES* openGLES, SwapChainPanel^ swapChainPanel, ElementTheme theme) :
 	mOpenGLES(openGLES),
 	mRenderSurface(EGL_NO_SURFACE),
 	mCurrentPage(0),
 	mCurrentScroll(0),
 	mCurrentScale(1),
 	mSwapChainPanel(swapChainPanel),
+	mTheme(theme),
 	mSettings(ref new UISettings())
 {
 	auto color = mSettings->GetColorValue(UIColorType::Background);
-	mDarkTheme = color.R == 0 && color.G == 0 && color.B == 0;
+	mDarkTheme = (mTheme == ElementTheme::Default && color.R == 0 && color.G == 0 && color.B == 0) || mTheme == ElementTheme::Dark;
 
 	mSettings->ColorValuesChanged +=
 		ref new Windows::Foundation::TypedEventHandler<UISettings^, Object^>(this, &TLIntroRenderer::OnColorValuesChanged);
@@ -57,7 +59,7 @@ void TLIntroRenderer::Loaded()
 void TLIntroRenderer::OnColorValuesChanged(UISettings^ sender, Object^ args)
 {
 	auto color = sender->GetColorValue(UIColorType::Background);
-	mDarkTheme = color.R == 0 && color.G == 0 && color.B == 0;
+	mDarkTheme = (mTheme == ElementTheme::Default && color.R == 0 && color.G == 0 && color.B == 0) || mTheme == ElementTheme::Dark;
 }
 
 void TLIntroRenderer::OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
