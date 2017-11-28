@@ -117,6 +117,7 @@ namespace Unigram.Views
 
             if (!_passcodeService.IsBiometricsEnabled)
             {
+                Field.Focus(FocusState.Keyboard);
                 return;
             }
 
@@ -139,6 +140,10 @@ namespace Unigram.Views
                         Unlock();
                     }
                 }
+            }
+            else
+            {
+                Field.Focus(FocusState.Keyboard);
             }
         }
 
