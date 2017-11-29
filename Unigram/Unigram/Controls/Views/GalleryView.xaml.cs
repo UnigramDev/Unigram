@@ -514,13 +514,21 @@ namespace Unigram.Controls.Views
 
                 offset.Y = 0;
                 offset.X = Math.Max(maximum, Math.Min(minimum, offset.X + delta));
+
+                _layer.Opacity = 1;
             }
             else
             {
                 offset.X = -width;
                 offset.Y = Math.Max(-height, Math.Min(height, offset.Y + (float)e.Delta.Translation.Y));
 
-                //_layer.Opacity = 1 + -(offset.Y - -height) / height;
+                var opacity = Math.Abs((offset.Y - -height) / height);
+                if (opacity > 1)
+                {
+                    opacity = 2 - opacity;
+                }
+
+                _layer.Opacity = opacity;
             }
 
             _layout.Offset = offset;
@@ -586,6 +594,14 @@ namespace Unigram.Controls.Views
 
                     Dispose();
                     Hide();
+                }
+                else
+                {
+                    var opacity = _layout.Compositor.CreateScalarKeyFrameAnimation();
+                    opacity.InsertKeyFrame(0, _layer.Opacity);
+                    opacity.InsertKeyFrame(1, 1);
+
+                    _layer.StartAnimation("Opacity", opacity);
                 }
 
                 _layout.StartAnimation("Offset.Y", animation);
