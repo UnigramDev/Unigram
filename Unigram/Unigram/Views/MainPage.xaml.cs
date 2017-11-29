@@ -182,6 +182,7 @@ namespace Unigram.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            Initialize();
             await SettingsView.ViewModel.OnNavigatedToAsync(null, e.NavigationMode, null);
         }
 
