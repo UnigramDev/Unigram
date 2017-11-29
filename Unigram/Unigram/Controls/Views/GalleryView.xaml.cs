@@ -475,6 +475,20 @@ namespace Unigram.Controls.Views
             Scroll(delta);
         }
 
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (e.Key == Windows.System.VirtualKey.Left || e.Key == Windows.System.VirtualKey.GamepadLeftShoulder)
+            {
+                Scroll(-1);
+            }
+            else if (e.Key == Windows.System.VirtualKey.Right || e.Key == Windows.System.VirtualKey.GamepadRightShoulder)
+            {
+                Scroll(1);
+            }
+        }
+
         private void LayoutRoot_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
         {
             _selecting = true;
