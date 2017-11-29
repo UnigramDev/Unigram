@@ -131,6 +131,10 @@ namespace Unigram.Views
                     {
                         Unlock();
                     }
+                    else
+                    {
+                        Biometrics.Visibility = Visibility.Visible;
+                    }
                 }
                 else
                 {
@@ -138,6 +142,10 @@ namespace Unigram.Views
                     if (creationResult.Status == KeyCredentialStatus.Success)
                     {
                         Unlock();
+                    }
+                    else
+                    {
+                        Biometrics.Visibility = Visibility.Visible;
                     }
                 }
             }
