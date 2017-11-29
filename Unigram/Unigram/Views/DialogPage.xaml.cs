@@ -659,7 +659,18 @@ namespace Unigram.Views
             else if (package.Contains(StandardDataFormats.Text))
             {
                 var text = await package.GetTextAsync();
+
+                if (package.Contains(StandardDataFormats.WebLink))
+                {
+                    text += Environment.NewLine + await package.GetWebLinkAsync();
+                }
+
                 TextField.Document.GetRange(TextField.Document.Selection.EndPosition, TextField.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
+            }
+            else if (package.Contains(StandardDataFormats.WebLink))
+            {
+                var text = await package.GetWebLinkAsync();
+                TextField.Document.GetRange(TextField.Document.Selection.EndPosition, TextField.Document.Selection.EndPosition).SetText(TextSetOptions.None, text.ToString());
             }
         }
 

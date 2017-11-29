@@ -808,7 +808,7 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <controls:ProfilePicture Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
+                                    <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
 
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                                         <TextBlock x:Name="tblDialogName"
@@ -1530,7 +1530,8 @@
                                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                 IsChecked="{Binding Full.NotifySettings.IsSilent}"
                                                 Command="{x:Bind ViewModel.ToggleSilentCommand}"
-                                                Visibility="{x:Bind (Visibility)ViewModel.IsSilentVisible, Mode=OneWay}"/>
+                                                Visibility="{x:Bind (Visibility)ViewModel.IsSilentVisible, Mode=OneWay}"
+                                                VerticalAlignment="Bottom"/>
 
                     <Border x:Name="btnCommands" Grid.Column="1">
                         <controls:GlyphButton x:Name="ButtonCommands"
