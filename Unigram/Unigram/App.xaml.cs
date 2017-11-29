@@ -374,16 +374,16 @@ namespace Unigram
 
                     if (command == "ShowAllDialogs")
                     {
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                     if (command == "ShowSpecificDialog")
                     {
                         //#TODO: Fix that this'll open a specific dialog
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                 }
                 else if (args is ContactPanelActivatedEventArgs contact)
@@ -398,7 +398,7 @@ namespace Unigram
                         var full = await store.GetContactAsync(contact.Contact.Id);
                         if (full == null)
                         {
-                            NavigationService.Navigate(typeof(MainPage));
+                            NavigationService.NavigateToMain(null);
                         }
                         else
                         {
@@ -407,7 +407,7 @@ namespace Unigram
                             var first = annotations.FirstOrDefault();
                             if (first == null)
                             {
-                                NavigationService.Navigate(typeof(MainPage));
+                                NavigationService.NavigateToMain(null);
                             }
                             else
                             {
@@ -418,14 +418,14 @@ namespace Unigram
                                 }
                                 else
                                 {
-                                    NavigationService.Navigate(typeof(MainPage));
+                                    NavigationService.NavigateToMain(null);
                                 }
                             }
                         }
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
@@ -444,7 +444,7 @@ namespace Unigram
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage), protocol.Uri.ToString());
+                        NavigationService.NavigateToMain(protocol.Uri.ToString());
                     }
                 }
                 else
@@ -461,7 +461,7 @@ namespace Unigram
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage), launch);
+                        NavigationService.NavigateToMain(launch);
                     }
                 }
             }

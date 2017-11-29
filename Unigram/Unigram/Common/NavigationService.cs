@@ -240,6 +240,23 @@ namespace Unigram.Common
             //}
         }
 
+        public static void NavigateToMain(this INavigationService service, string parameter)
+        {
+            NavigatedEventHandler handler = null;
+            handler = (s, args) =>
+            {
+                service.Frame.Navigated -= handler;
+
+                if (args.Content is MainPage page)
+                {
+                    page.Activate(parameter);
+                }
+            };
+
+            service.Frame.Navigated += handler;
+            service.Navigate(typeof(MainPage));
+        }
+
         #region Payments
 
         public static void NavigateToPaymentFormStep1(this INavigationService service, TLMessage message, TLPaymentsPaymentForm paymentForm)

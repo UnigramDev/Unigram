@@ -149,7 +149,7 @@ namespace Unigram.Views
             ApplicationSettings.Current.Version = ApplicationSettings.CurrentVersion;
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        public void Initialize()
         {
             Frame.BackStack.Clear();
 
@@ -178,37 +178,22 @@ namespace Unigram.Views
             ViewModel.Contacts.NavigationService = MasterDetail.NavigationService;
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
             SettingsView.ViewModel.NavigationService = MasterDetail.NavigationService;
+        }
 
-            if (e.Parameter is string && SerializationService.Json.Deserialize((string)e.Parameter) is string parameter)
-            {
-                if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
-                {
-                    Activate(scheme);
-                }
-                else
-                {
-                    Activate(parameter);
-                }
-            }
-
-            //var config = ViewModel.CacheService.GetConfig();
-            //if (config != null)
-            //{
-            //    if (config.IsPhoneCallsEnabled)
-            //    {
-
-            //    }
-            //    else if (rpMasterTitlebar.Items.Count > 2)
-            //    {
-            //        rpMasterTitlebar.Items.RemoveAt(2);
-            //    }
-            //}
-
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
             await SettingsView.ViewModel.OnNavigatedToAsync(null, e.NavigationMode, null);
         }
 
         public void Activate(string parameter)
         {
+            Initialize();
+
+            if (parameter == null)
+            {
+                return;
+            }
+
             var data = Toast.SplitArguments(parameter);
             if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
             {
