@@ -33,6 +33,7 @@ namespace Unigram.ViewModels.Users
             //Initialize(user);
 
             _peer = user.ToInputUser();
+            _user = user;
 
             Items = new MvxObservableCollection<GalleryItem> { new GalleryPhotoItem(userFull.ProfilePhoto as TLPhoto, user) };
             SelectedItem = Items[0];
@@ -104,7 +105,7 @@ namespace Unigram.ViewModels.Users
                     if (index < Items.Count - 1)
                     {
                         Items.Remove(item);
-                        SelectedItem = Items[index - 1];
+                        SelectedItem = Items[index > 0 ? index - 1 : index];
                         TotalItems--;
                     }
                     else

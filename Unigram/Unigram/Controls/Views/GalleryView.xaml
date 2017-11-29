@@ -149,16 +149,16 @@
                         <MenuFlyout>
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanView}"
-                                            Text="View in chat"/>
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
-                                            Text="Delete"/>
+                                            Text="{CustomResource ShowInChat}"/>
                             <MenuFlyoutItem Command="{x:Bind ViewModel.SaveCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
                                             Text="Save file as..." />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"
                                             Text="Open with" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
+                                            Text="{CustomResource Delete}"/>
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
