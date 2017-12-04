@@ -1112,7 +1112,7 @@ namespace Unigram.Controls
                     }
                     else if (entity is TLMessageEntityTextUrl textUrl)
                     {
-                        builder.Insert(entity.Offset + entity.Length, $"]({textUrl.Url})");
+                        builder.Insert(entity.Offset + entity.Length + addToOffset, $"]({textUrl.Url})");
                         builder.Insert(entity.Offset + addToOffset, "[");
                         addToOffset += 4 + textUrl.Url.Length;
                         entities.Remove(entity);
