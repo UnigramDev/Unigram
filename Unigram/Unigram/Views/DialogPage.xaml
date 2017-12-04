@@ -1018,7 +1018,8 @@
                           ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
                           AllowFocusOnInteraction="False"
                           IsItemClickEnabled="True"
-                          ItemClick="Autocomplete_ItemClick">
+                          ItemClick="Autocomplete_ItemClick"
+                          SizeChanged="Autocomplete_SizeChanged">
                     <ListView.Header>
                         <Border x:Name="AutocompleteHeader"
                                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
