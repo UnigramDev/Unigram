@@ -205,6 +205,16 @@ namespace Unigram.Controls.Messages
                 paragraph.Inlines.Add(hyperlink);
             }
 
+            if (paragraph.Inlines.Count > 0)
+            {
+                if (admin != null && !message.IsOut && message.IsAdmin())
+                {
+                    paragraph.Inlines.Add(new Run { Text = " " + Strings.Android.ChatAdmin, Foreground = null });
+                }
+            }
+
+            var forward = false;
+
             if (message.HasFwdFrom && !sticker && !message.IsSaved())
             {
                 if (paragraph.Inlines.Count > 0)
@@ -247,6 +257,7 @@ namespace Unigram.Controls.Messages
                 hyperlink.Click += (s, args) => FwdFrom_Click(message);
 
                 paragraph.Inlines.Add(hyperlink);
+                forward = true;
             }
 
             if (message.HasViaBotId && message.ViaBot != null && !message.ViaBot.IsDeleted && message.ViaBot.HasUsername)
@@ -258,16 +269,23 @@ namespace Unigram.Controls.Messages
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : paragraph.Foreground;
                 hyperlink.Click += (s, args) => ViaBot_Click(message);
 
-                paragraph.Inlines.Add(hyperlink);
+                if (paragraph.Inlines.Count > 0 && !forward)
+                {
+                    paragraph.Inlines.Insert(1, hyperlink);
+                }
+                else
+                {
+                    paragraph.Inlines.Add(hyperlink);
+                }
             }
 
             if (paragraph.Inlines.Count > 0)
             {
-                if (paragraph != admin && !message.IsOut && message.IsAdmin())
+                if (admin != null && !message.IsOut && message.IsAdmin())
                 {
                     admin.Visibility = Visibility.Visible;
                 }
-                else
+                else if (admin != null)
                 {
                     admin.Visibility = Visibility.Collapsed;
                 }
@@ -278,8 +296,12 @@ namespace Unigram.Controls.Messages
             }
             else
             {
+                if (admin != null)
+                {
+                    admin.Visibility = Visibility.Collapsed;
+                }
+
                 paragraph.Visibility = Visibility.Collapsed;
-                admin.Visibility = Visibility.Collapsed;
                 parent.Visibility = message.ReplyToMsgId.HasValue ? Visibility.Visible : Visibility.Collapsed;
             }
         }

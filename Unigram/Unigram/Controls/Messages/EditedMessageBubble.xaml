@@ -58,6 +58,7 @@
                             Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                             RequestedTheme="{ThemeResource MessageTextBlockTheme}"
                             Style="{ThemeResource CaptionTextBlockStyle}"
+                           TextWrapping="NoWrap"
                             FontWeight="SemiBold"
                             Visibility="Collapsed"
                             Grid.Row="0"/>
