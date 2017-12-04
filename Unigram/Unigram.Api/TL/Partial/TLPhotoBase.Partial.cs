@@ -18,21 +18,6 @@ namespace Telegram.Api.TL
             throw new NotImplementedException();
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj is TLPhotoBase photo)
-            {
-                return this.Id == photo.Id;
-            }
-
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return this.Id.GetHashCode();
-        }
-
         #region Download/upload
 
         private double _uploadingProgress;
