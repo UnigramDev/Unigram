@@ -1,0 +1,332 @@
+﻿<Page
+    x:Class="Unigram.Views.PlaygroundPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Style x:Key="UploadProgressRingStyle" TargetType="ProgressRing">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Height" Value="10" />
+            <Setter Property="Width" Value="20" />
+            <Setter Property="MinHeight" Value="10"/>
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressRing">
+                        <Grid x:Name="Ring"
+                              Background="{TemplateBinding Background}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              Padding="{TemplateBinding Padding}"
+                              Visibility="Collapsed"
+                              RenderTransformOrigin="0.5,0.5"
+                              FlowDirection="LeftToRight">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="ActiveStates">
+                                    <VisualState x:Name="Inactive" />
+                                    <VisualState x:Name="Active">
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="Ring" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimation Duration="0:0:0.5" To="5" Storyboard.TargetProperty="(TranslateTransform.X)" Storyboard.TargetName="Translate" d:IsOptimized="True"/>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Arrow1">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Arrow3">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid.RenderTransform>
+                                <TranslateTransform x:Name="Translate"/>
+                            </Grid.RenderTransform>
+                            <Path x:Name="Arrow1" Data="M 0,-4 4,0 0,4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" HorizontalAlignment="Left" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" Margin="0,5,0,0"/>
+                            <Path x:Name="Arrow2" Data="M 0,-4 4,0 0,4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" HorizontalAlignment="Left" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" Margin="5,5,0,0"/>
+                            <Path x:Name="Arrow3" Data="M 0,-4 4,0 0,4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" HorizontalAlignment="Left" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" Margin="10,5,0,0"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TypingProgressRingStyle" TargetType="ProgressRing">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="MinWidth" Value="0"/>
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressRing">
+                        <StackPanel x:Name="Ring"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    Padding="{TemplateBinding Padding}"
+                                    FlowDirection="LeftToRight"
+                                    Orientation="Horizontal">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="ActiveStates">
+                                    <VisualState x:Name="Inactive" />
+                                    <VisualState x:Name="Active">
+                                        <Storyboard Duration="0:0:1.00" RepeatBehavior="Forever">
+                                            <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="Ring" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Dot1">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.25" Value="1"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Dot2">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.50" Value="1"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Dot3">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.75" Value="1"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <TextBlock x:Name="Dot1" Text="." Opacity="0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            <TextBlock x:Name="Dot2" Text="." Opacity="0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            <TextBlock x:Name="Dot3" Text="." Opacity="0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="SkypeProgressRingStyle" TargetType="ProgressRing">
+            <Setter Property="Background" Value="#00FFFFFF" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="MinHeight" Value="24" />
+            <Setter Property="MinWidth" Value="24" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressRing">
+                        <Grid x:Name="Ring"
+                              Padding="{TemplateBinding Padding}"
+                              Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              FlowDirection="LeftToRight"
+                              RenderTransformOrigin="0.5,0.5"
+                              CornerRadius="18"
+                              Visibility="Collapsed">
+                            <Grid.MaxWidth>
+                                <Binding Path="TemplateSettings.MaxSideLength">
+                                    <Binding.RelativeSource>
+                                        <RelativeSource Mode="TemplatedParent" />
+                                    </Binding.RelativeSource>
+                                </Binding>
+                            </Grid.MaxWidth>
+                            <Grid.MaxHeight>
+                                <Binding Path="TemplateSettings.MaxSideLength">
+                                    <Binding.RelativeSource>
+                                        <RelativeSource Mode="TemplatedParent" />
+                                    </Binding.RelativeSource>
+                                </Binding>
+                            </Grid.MaxHeight>
+                            <Grid.Resources>
+                                <Style x:Key="ProgressRingEllipseStyle" TargetType="Ellipse">
+                                    <Setter Property="Width" Value="6" />
+                                    <Setter Property="Height" Value="6" />
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                    <Setter Property="VerticalAlignment" Value="Top" />
+                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                                </Style>
+                            </Grid.Resources>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="SizeStates">
+                                    <VisualStateGroup.States>
+                                        <VisualState x:Name="Large" />
+                                        <VisualState x:Name="Small" />
+                                    </VisualStateGroup.States>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="ActiveStates">
+                                    <VisualState x:Name="Inactive" />
+                                    <VisualState x:Name="Active">
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <ObjectAnimationUsingKeyFrames Duration="0" BeginTime="0:0:1.4" Storyboard.TargetName="Ring" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse01_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                                                <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.47" Value="0.6" />
+                                                <SplineDoubleKeyFrame KeySpline="0.33,0,1,1" KeyTime="0:0:0.73" Value="0.7" />
+                                                <SplineDoubleKeyFrame KeySpline="0.8,0,0.78,1" KeyTime="0:0:1.02" Value="1.1" />
+                                                <SplineDoubleKeyFrame KeySpline="0.33,0,0,1" KeyTime="0:0:1.4" Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse01_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                                                <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.47" Value="0.6" />
+                                                <SplineDoubleKeyFrame KeySpline="0.33,0,1,1" KeyTime="0:0:0.73" Value="0.7" />
+                                                <SplineDoubleKeyFrame KeySpline="0.8,0,0.78,1" KeyTime="0:0:1.02" Value="1.1" />
+                                                <SplineDoubleKeyFrame KeySpline="0.33,0,0,1" KeyTime="0:0:1.4" Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse01Grid_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
+                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.65,0.21,0.25,0.76" KeyTime="0:0:1.4" Value="360" />
+                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse02_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.07" Value="1" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.53" Value="0.6" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.8" Value="0.7" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
+                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse02_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.07" Value="1" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.53" Value="0.6" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.8" Value="0.7" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
+                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse02Grid_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
+                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.76,0.21,0.25,0.76" KeyTime="0:0:1.4" Value="360" />
+                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse03_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.13" Value="1" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.6" Value="0.6" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.87" Value="0.7" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
+                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse03_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.13" Value="1" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.6" Value="0.6" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.87" Value="0.7" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
+                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse03Grid_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
+                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.88,0.21,0.25,0.76" KeyTime="0:0:1.4" Value="360" />
+                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse04_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.2" Value="1" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.67" Value="0.6" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.93" Value="0.7" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
+                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse04_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.2" Value="1" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.67" Value="0.6" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.93" Value="0.7" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
+                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse04Grid_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
+                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                                    <SplineDoubleKeyFrame KeySpline="1,0.2,0.25,0.76" KeyTime="0:0:1.4" Value="360" />
+                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid x:Name="Spinner_24x24" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Grid x:Name="Ellipse01Grid_S24" RenderTransformOrigin="0.5,0.5">
+                                    <Grid.RenderTransform>
+                                        <CompositeTransform />
+                                    </Grid.RenderTransform>
+                                    <Ellipse x:Name="Ellipse01_S24" Style="{StaticResource ProgressRingEllipseStyle}" Fill="{TemplateBinding Foreground}">
+                                        <Ellipse.RenderTransform>
+                                            <CompositeTransform />
+                                        </Ellipse.RenderTransform>
+                                    </Ellipse>
+                                </Grid>
+                                <Grid x:Name="Ellipse02Grid_S24" RenderTransformOrigin="0.5,0.5">
+                                    <Grid.RenderTransform>
+                                        <CompositeTransform />
+                                    </Grid.RenderTransform>
+                                    <Ellipse x:Name="Ellipse02_S24" Style="{StaticResource ProgressRingEllipseStyle}" Fill="{TemplateBinding Foreground}">
+                                        <Ellipse.RenderTransform>
+                                            <CompositeTransform />
+                                        </Ellipse.RenderTransform>
+                                    </Ellipse>
+                                </Grid>
+                                <Grid x:Name="Ellipse03Grid_S24" RenderTransformOrigin="0.5,0.5">
+                                    <Grid.RenderTransform>
+                                        <CompositeTransform />
+                                    </Grid.RenderTransform>
+                                    <Ellipse x:Name="Ellipse03_S24" Style="{StaticResource ProgressRingEllipseStyle}" Fill="{TemplateBinding Foreground}">
+                                        <Ellipse.RenderTransform>
+                                            <CompositeTransform />
+                                        </Ellipse.RenderTransform>
+                                    </Ellipse>
+                                </Grid>
+                                <Grid x:Name="Ellipse04Grid_S24" RenderTransformOrigin="0.5,0.5">
+                                    <Grid.RenderTransform>
+                                        <CompositeTransform />
+                                    </Grid.RenderTransform>
+                                    <Ellipse x:Name="Ellipse04_S24" Style="{StaticResource ProgressRingEllipseStyle}" Fill="{TemplateBinding Foreground}">
+                                        <Ellipse.RenderTransform>
+                                            <CompositeTransform />
+                                        </Ellipse.RenderTransform>
+                                    </Ellipse>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    </Grid>
+</Page>
