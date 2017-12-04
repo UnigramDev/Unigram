@@ -878,33 +878,46 @@ namespace Unigram.Views
             var currentUser = ViewModel.With as TLUser;
             var currentChat = ViewModel.With as TLChat;
             var currentChannel = ViewModel.With as TLChannel;
+            var currentDialog = ViewModel.Dialog as TLDialog;
 
-            CreateFlyoutItem(ref flyout, null, Strings.Android.Search);
+            CreateFlyoutItem(ref flyout, ViewModel.SearchCommand, Strings.Android.Search);
 
             if (currentChannel != null && !currentChannel.IsCreator && (!currentChannel.IsMegaGroup || (currentChannel.Username != null && currentChannel.Username.Length > 0)))
             {
                 CreateFlyoutItem(ref flyout, null, Strings.Android.ReportChat);
             }
-            //if (currentUser != null)
-            //{
-            //    this.addContactItem = this.headerItem.addSubItem(17, "");
-            //}
+            if (currentUser != null)
+            {
+                if (ViewModel.IsShareContactAvailable)
+                {
+                    CreateFlyoutItem(ref flyout, ViewModel.ShareContactCommand, Strings.Android.ShareMyContactInfo);
+                }
+                else if (ViewModel.IsAddContactAvailable)
+                {
+                    CreateFlyoutItem(ref flyout, ViewModel.AddContactCommand, Strings.Android.AddToContacts);
+                }
+            }
             //if (this.currentEncryptedChat != null)
             //{
             //    this.timeItem2 = this.headerItem.addSubItem(13, LocaleController.getString("SetTimer", R.string.SetTimer));
             //}
-            if (currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup && string.IsNullOrEmpty(currentChannel.Username)))
+            if (currentUser != null || currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup && string.IsNullOrEmpty(currentChannel.Username)))
             {
-                CreateFlyoutItem(ref flyout, null, Strings.Android.ClearHistory);
+                CreateFlyoutItem(ref flyout, ViewModel.DialogClearCommand, Strings.Android.ClearHistory);
             }
             if (currentUser != null)
             {
-                CreateFlyoutItem(ref flyout, null, Strings.Android.DeleteChatUser);
+                CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Android.DeleteChatUser);
             }
             if (currentChat != null)
             {
-                CreateFlyoutItem(ref flyout, null, Strings.Android.DeleteAndExit);
+                CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Android.DeleteAndExit);
             }
+            if (currentDialog != null && (currentUser != null || currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup && string.IsNullOrEmpty(currentChannel.Username))))
+            {
+                CreateFlyoutItem(ref flyout, ViewModel.ToggleMuteCommand, currentDialog.IsMuted ? Strings.Android.UnmuteNotifications : Strings.Android.MuteNotifications);
+            }
+
             //if (currentUser == null || !currentUser.IsSelf)
             //{
             //    this.muteItem = this.headerItem.addSubItem(18, null);
@@ -913,10 +926,17 @@ namespace Unigram.Views
             //{
             //    CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
             //}
-            if (currentUser != null && currentUser.IsBot)
+            if (currentUser != null && currentUser.IsBot && ViewModel.Full is TLUserFull userFull && userFull.HasBotInfo)
             {
-                CreateFlyoutItem(ref flyout, null, Strings.Android.BotSettings);
-                CreateFlyoutItem(ref flyout, null, Strings.Android.BotHelp);
+                if (userFull.BotInfo.Commands.Any(x => x.Command.Equals("settings")))
+                {
+                    CreateFlyoutItem(ref flyout, null, Strings.Android.BotSettings);
+                }
+
+                if (userFull.BotInfo.Commands.Any(x => x.Command.Equals("help")))
+                {
+                    CreateFlyoutItem(ref flyout, null, Strings.Android.BotHelp);
+                }
             }
 
             if (flyout.Items.Count > 0)
