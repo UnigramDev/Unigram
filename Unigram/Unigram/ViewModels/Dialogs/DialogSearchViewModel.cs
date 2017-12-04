@@ -267,7 +267,7 @@ namespace Unigram.ViewModels.Dialogs
                 return false;
             }
 
-            return SelectedIndex < TotalItems;
+            return SelectedIndex < TotalItems - 1;
         }
     }
 }

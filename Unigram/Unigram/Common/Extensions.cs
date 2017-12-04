@@ -424,6 +424,11 @@ namespace Unigram.Common
                 selectorItem = (SelectorItem)listViewBase.ContainerFromItem(item);
             }
 
+            if (selectorItem == null)
+            {
+                return;
+            }
+
             // calculate the position object in order to know how much to scroll to
             var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
             var position = transform.TransformPoint(new Point(0, 0));
@@ -441,10 +446,10 @@ namespace Unigram.Common
             // scroll to desired position with animation!
             scrollViewer.ChangeView(position.X, position.Y, null);
 
-            var ciccio = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
-            if (ciccio != null)
+            var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
+            if (bubble != null)
             {
-                ciccio.Highlight();
+                bubble.Highlight();
             }
         }
 

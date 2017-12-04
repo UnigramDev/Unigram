@@ -177,7 +177,7 @@ namespace Unigram.Common
                     {
                         paragraph.Inlines.Add(new LineBreak());
                     }
-                    else
+                    //else
                     {
                         //var date = BindConvert.Current.Date(message.Date);
                         //var placeholder = message.IsOut ? $"  {date}  " : $"  {date}";
@@ -402,8 +402,6 @@ namespace Unigram.Common
                 {
                     return true;
                 }
-
-                return false;
             }
 
             return false;
