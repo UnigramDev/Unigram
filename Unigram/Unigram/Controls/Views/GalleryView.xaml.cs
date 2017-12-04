@@ -36,6 +36,7 @@ using Microsoft.Graphics.Canvas.Effects;
 using Windows.UI.ViewManagement;
 using Windows.System.Display;
 using Unigram.Common;
+using Windows.Graphics.Display;
 
 namespace Unigram.Controls.Views
 {
@@ -381,6 +382,9 @@ namespace Unigram.Controls.Views
                     _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
                     _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
                 }
+
+                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
+                _mediaPlayer.SetSurfaceSize(new Size(parent.ActualWidth * dpi, parent.ActualHeight * dpi));
 
                 _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
                 _mediaPlayer.IsLoopingEnabled = item.IsLoop;

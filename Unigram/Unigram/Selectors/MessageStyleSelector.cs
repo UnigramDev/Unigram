@@ -20,7 +20,7 @@ namespace Unigram.Selectors
 
         protected override Style SelectStyleCore(object item, DependencyObject container)
         {
-            if (item is TLMessageService serviceMessage && serviceMessage.Action.TypeId != TLType.MessageActionPhoneCall)
+            if (item is TLMessageService serviceMessage && !(serviceMessage.Action is TLMessageActionPhoneCall))
             {
                 return ServiceStyle;
             }

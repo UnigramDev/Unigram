@@ -173,7 +173,7 @@ namespace Unigram.Services
             Dispose();
         }
 
-        public async void Enqueue(TLMessage message)
+        public void Enqueue(TLMessage message)
         {
             if (_mediaPlayer.Source == _playlist && _mediaPlayer.Source != null && _inverse.TryGetValue(message, out MediaPlaybackItem item) && _playlist.Items.Contains(item))
             {
@@ -222,10 +222,10 @@ namespace Unigram.Services
                 }, predicate: filter);
             }
 
-            if (voice)
-            {
-                await AttachAsync();
-            }
+            //if (voice)
+            //{
+            //    await AttachAsync();
+            //}
         }
 
         private void Enqueue(TLMessage message, bool play)
@@ -263,7 +263,10 @@ namespace Unigram.Services
 
         private void Dispose()
         {
-            _mediaPlayer.Source = null;
+            if (_mediaPlayer != null)
+            {
+                _mediaPlayer.Source = null;
+            }
 
             if (_playlist != null)
             {
@@ -284,20 +287,27 @@ namespace Unigram.Services
                 _items = null;
             }
 
-            _mapping.Clear();
-            _inverse.Clear();
-
-            if (_controller != null)
+            if (_mapping != null)
             {
-                _controller.Dispose();
-                _controller = null;
+                _mapping.Clear();
             }
 
-            if (_sensor != null)
+            if (_inverse != null)
             {
-                _sensor.ReadingChanged -= OnReadingChanged;
-                _sensor = null;
+                _inverse.Clear();
             }
+
+            //if (_controller != null)
+            //{
+            //    _controller.Dispose();
+            //    _controller = null;
+            //}
+
+            //if (_sensor != null)
+            //{
+            //    _sensor.ReadingChanged -= OnReadingChanged;
+            //    _sensor = null;
+            //}
         }
 
         private void MarkAsRead(TLMessage message)
