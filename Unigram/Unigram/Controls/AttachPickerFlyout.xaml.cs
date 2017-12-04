@@ -57,7 +57,7 @@ namespace Unigram.Controls
 
         private void Library_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ItemClick?.Invoke(this, new MediaSelectedEventArgs((StorageMedia)e.ClickedItem, false));
+            ItemClick?.Invoke(this, new MediaSelectedEventArgs((StorageMedia)e.ClickedItem, true));
         }
 
         private async void Camera_Click(object sender, RoutedEventArgs e)
