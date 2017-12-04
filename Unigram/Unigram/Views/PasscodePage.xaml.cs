@@ -34,6 +34,8 @@ namespace Unigram.Views
     {
         private readonly IPasscodeService _passcodeService;
 
+        private bool _accepted;
+
         public PasscodePage()
         {
             InitializeComponent();
@@ -107,7 +109,7 @@ namespace Unigram.Views
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
-            args.Cancel = _passcodeService.IsLocked;
+            args.Cancel = _passcodeService.IsLocked || !_accepted;
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -176,9 +178,8 @@ namespace Unigram.Views
         private void Unlock()
         {
             _passcodeService.Unlock();
+            _accepted = true;
 
-            BootStrapper.Current.ModalDialog.IsModal = false;
-            BootStrapper.Current.ModalContent = null;
             Hide();
         }
     }

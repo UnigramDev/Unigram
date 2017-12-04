@@ -156,20 +156,20 @@ namespace Unigram
             });
         }
 
+        private static volatile bool _passcodeShown;
         public static async void ShowPasscode()
         {
-            if (Current.ModalDialog.IsModal == false)
+            if (_passcodeShown)
             {
-                //Current.ModalContent = new PasscodePage();
-                //Current.ModalDialog.CanBackButtonDismiss = false;
-                //Current.ModalDialog.DisableBackButtonWhenModal = true;
-                Current.ModalContent = new Border();
-                Current.ModalDialog.IsModal = true;
-
-                var dialog = new PasscodePage();
-                var result = await dialog.ShowQueuedAsync();
-                //await new PasscodePage().ShowQueuedAsync();
+                return;
             }
+
+            _passcodeShown = true;
+
+            var dialog = new PasscodePage();
+            var result = await dialog.ShowQueuedAsync();
+
+            _passcodeShown = false;
         }
 
         public static bool IsActive { get; private set; }
@@ -277,8 +277,6 @@ namespace Unigram
             var navigationFrame = new Frame();
             var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame) as NavigationService;
             navigationService.SerializationService = TLSerializationService.Current;
-
-            return new ModalDialog { Content = navigationFrame };
 
             return navigationFrame;
         }
