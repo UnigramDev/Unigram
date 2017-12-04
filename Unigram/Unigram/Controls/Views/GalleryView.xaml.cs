@@ -58,6 +58,12 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
 
+            #region Localizations
+
+            FlyoutSaveAs.Text = Strings.Resources.SaveAs;
+
+            #endregion
+
             Layer.Visibility = Visibility.Collapsed;
 
             _layer = ElementCompositionPreview.GetElementVisual(Layer);

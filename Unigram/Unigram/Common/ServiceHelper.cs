@@ -245,8 +245,8 @@ namespace Unigram.Common
                         }
                         else
                         {
-                            content = ReplaceWithLink(Strings.Android.ActionAddUser, "un2", whoUser, ref entities);
-                            content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                            content = ReplaceWithLink(Strings.Android.ActionAddUser, "un1", fromUser, ref entities);
+                            content = ReplaceWithLink(content, "un2", whoUser, ref entities);
                         }
                     }
                 }
@@ -258,8 +258,8 @@ namespace Unigram.Common
                     }
                     else
                     {
-                        content = ReplaceWithLink(Strings.Android.ActionAddUser, "un2", action.Users, null, ref entities);
-                        content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                        content = ReplaceWithLink(Strings.Android.ActionAddUser, "un1", fromUser, ref entities);
+                        content = ReplaceWithLink(content, "un2", action.Users, null, ref entities);
                     }
                 }
 
@@ -296,8 +296,8 @@ namespace Unigram.Common
                     }
                     else
                     {
-                        content = ReplaceWithLink(Strings.Android.ActionKickUser, "un2", whoUser, ref entities);
-                        content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                        content = ReplaceWithLink(Strings.Android.ActionKickUser, "un1", fromUser, ref entities);
+                        content = ReplaceWithLink(content, "un2", whoUser, ref entities);
                     }
                 }
 
@@ -370,7 +370,8 @@ namespace Unigram.Common
             });
             _actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
-                return (LocaleHelper.Declension("NewMessages", 0), null);
+                return (Strings.Resources.UnreadMessages, null);
+                //return (LocaleHelper.Declension("NewMessages", 0), null);
             });
             _actionsCache.Add(typeof(TLMessageActionPhoneCall), (TLMessageService message, TLMessageActionBase actionBase, TLUser fromUser, bool useActiveLinks) =>
             {

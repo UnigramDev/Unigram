@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/22/2017 12:00:52
+// 	Generated: 12/04/2017 13:06:30
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -49,6 +49,28 @@ namespace Unigram.Strings
             else
             {
                 resourceLoader = ResourceLoader.GetForViewIndependentUse(currentAssemblyName + "/Resources");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "About"
+        /// </summary>
+        public static string About
+        {
+            get
+            {
+                return resourceLoader.GetString("About");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chats"
+        /// </summary>
+        public static string Chats
+        {
+            get
+            {
+                return resourceLoader.GetString("Chats");
             }
         }
         
@@ -97,13 +119,35 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Save file as..."
+        /// Localized resource similar to "News"
         /// </summary>
-        public static string SaveFileAs
+        public static string News
         {
             get
             {
-                return resourceLoader.GetString("SaveFileAs");
+                return resourceLoader.GetString("News");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "original"
+        /// </summary>
+        public static string OriginalMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("OriginalMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save as..."
+        /// </summary>
+        public static string SaveAs
+        {
+            get
+            {
+                return resourceLoader.GetString("SaveAs");
             }
         }
         
@@ -115,6 +159,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Select");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unread Messages"
+        /// </summary>
+        public static string UnreadMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("UnreadMessages");
             }
         }
     }

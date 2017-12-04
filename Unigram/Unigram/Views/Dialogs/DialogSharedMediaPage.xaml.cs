@@ -163,7 +163,7 @@ namespace Unigram.Views.Dialogs
             CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Android.Delete);
             CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Android.Forward);
             CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.Select);
-            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, messageCommon, Strings.Resources.SaveFileAs);
+            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, messageCommon, Strings.Resources.SaveAs);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {

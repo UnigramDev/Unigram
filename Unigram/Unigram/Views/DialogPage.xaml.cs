@@ -950,7 +950,7 @@ namespace Unigram.Views
             CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, Strings.Android.RemovedFromFavorites);
 
             CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, Strings.Android.SaveToGIFs);
-            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.SaveFileAs);
+            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.SaveAs);
             //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, AppResources.MessageSaveDownload);
 
             //sender.ContextFlyout = menu;

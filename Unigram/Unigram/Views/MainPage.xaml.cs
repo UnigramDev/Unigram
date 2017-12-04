@@ -67,6 +67,14 @@ namespace Unigram.Views
 
             NavigationCacheMode = NavigationCacheMode.Enabled;
 
+            #region Localizations
+
+            NavigationChats.Content = Strings.Resources.Chats;
+            NavigationAbout.Content = Strings.Resources.About;
+            NavigationNews.Content = Strings.Resources.News;
+
+            #endregion
+
             ViewModel.Aggregator.Subscribe(this);
             Loaded += OnLoaded;
 
@@ -878,7 +886,7 @@ namespace Unigram.Views
             {
                 MasterDetail.NavigationService.NavigateToDialog(ViewModel.Contacts.Self);
             }
-            else if (args.ClickedItem == NavigationOfficialChannel)
+            else if (args.ClickedItem == NavigationNews)
             {
                 MessageHelper.NavigateToUsername(ViewModel.ProtoService, "unigram", null, null, null);
             }

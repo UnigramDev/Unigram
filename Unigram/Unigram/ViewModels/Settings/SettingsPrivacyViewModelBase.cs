@@ -26,7 +26,6 @@ namespace Unigram.ViewModels.Settings
             _key = key;
 
             UpdatePrivacyAsync();
-
             Aggregator.Subscribe(this);
         }
 
@@ -54,17 +53,17 @@ namespace Unigram.ViewModels.Settings
                 if (current is TLPrivacyValueAllowAll)
                 {
                     primary = PrivacyValue.AllowAll;
-                    badge = "Everybody";
+                    badge = Strings.Android.LastSeenEverybody;
                 }
                 else if (current is TLPrivacyValueAllowContacts)
                 {
                     primary = PrivacyValue.AllowContacts;
-                    badge = "My Contacts";
+                    badge = Strings.Android.LastSeenContacts;
                 }
                 else if (current is TLPrivacyValueDisallowAll)
                 {
                     primary = PrivacyValue.DisallowAll;
-                    badge = "Nobody";
+                    badge = Strings.Android.LastSeenNobody;
                 }
                 else if (current is TLPrivacyValueDisallowUsers disallowUsers)
                 {
@@ -79,7 +78,7 @@ namespace Unigram.ViewModels.Settings
             if (primary == null)
             {
                 primary = PrivacyValue.DisallowAll;
-                badge = "Nobody";
+                badge = Strings.Android.LastSeenNobody;
             }
 
             var list = new List<string>();
@@ -158,6 +157,13 @@ namespace Unigram.ViewModels.Settings
             {
                 Set(ref _disallowed, value);
             }
+        }
+
+        protected override void BeginOnUIThread(Action action)
+        {
+            // This is somehow needed because this viewmodel requires a Dispatcher
+            // in some situations where base one might be null.
+            Execute.BeginOnUIThread(action);
         }
     }
 

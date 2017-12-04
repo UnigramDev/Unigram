@@ -1234,7 +1234,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var confirm = await TLMessageDialog.ShowAsync(urlButton.Url, Strings.Android.OpenUrlAlert, Strings.Android.OK, Strings.Android.Cancel);
+                        var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.OpenUrlAlert, urlButton.Url), Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;

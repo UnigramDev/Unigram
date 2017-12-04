@@ -150,12 +150,13 @@
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanView}"
                                             Text="{CustomResource ShowInChat}"/>
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.SaveCommand}"
+                            <MenuFlyoutItem x:Name="FlyoutSaveAs"
+                                            Command="{x:Bind ViewModel.SaveCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
                                             Text="Save file as..." />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"
-                                            Text="Open with" />
+                                            Text="{CustomResource OpenInExternalApp}" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
                                             Text="{CustomResource Delete}"/>
