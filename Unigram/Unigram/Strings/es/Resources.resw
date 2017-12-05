@@ -118,37 +118,37 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="About" xml:space="preserve">
-    <value>درباره</value>
+    <value>Acerca de</value>
   </data>
   <data name="Chats" xml:space="preserve">
-    <value>چت ها</value>
+    <value>Chats</value>
   </data>
   <data name="CopyImage" xml:space="preserve">
-    <value>کپی تصویر</value>
+    <value>Copiar imagen</value>
   </data>
   <data name="CopyMessageLink" xml:space="preserve">
-    <value>کپی لینک پیام</value>
+    <value>Copiar enlace del mensaje</value>
   </data>
   <data name="CopyPostLink" xml:space="preserve">
-    <value>کپی لینک پست</value>
+    <value>Copiar enlace de la publicación</value>
   </data>
   <data name="DeletedMessage" xml:space="preserve">
-    <value>حذف پیام</value>
+    <value>Mensaje eliminado</value>
   </data>
   <data name="News" xml:space="preserve">
-    <value>خبر ها</value>
+    <value>Noticias</value>
   </data>
   <data name="OriginalMessage" xml:space="preserve">
-    <value>اصلی</value>
+    <value>original</value>
     <comment>Original message date and time</comment>
   </data>
   <data name="SaveAs" xml:space="preserve">
-    <value>ذخیره در</value>
+    <value>Guardar como...</value>
   </data>
   <data name="Select" xml:space="preserve">
-    <value>انتخاب</value>
+    <value>Seleccionar</value>
   </data>
   <data name="UnreadMessages" xml:space="preserve">
-    <value>پیام های جدید</value>
+    <value>Mensajes sin leer</value>
   </data>
 </root>
