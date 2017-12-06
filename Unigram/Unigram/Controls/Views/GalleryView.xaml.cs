@@ -98,6 +98,19 @@ namespace Unigram.Controls.Views
             }
         }
 
+        private void ItemsStackPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var width = 40 + 4 + 4;
+            var total = (e.NewSize.Width - width) / 2d;
+
+            List.Padding = new Thickness(total, 0, total, 0);
+        }
+
+        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
         private void OnSourceChanged(MediaPlayer sender, object args)
         {
             OnSourceChanged();
@@ -228,7 +241,7 @@ namespace Unigram.Controls.Views
             var container = GetContainer(0);
             var root = container?.ContentTemplateRoot as Grid;
 
-            if (root != null && ViewModel.SelectedItem == ViewModel.FirstItem)
+            if (root != null && ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem)
             {
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
                 if (animation != null && _closing != null)

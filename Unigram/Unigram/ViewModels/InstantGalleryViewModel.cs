@@ -14,6 +14,8 @@ namespace Unigram.ViewModels
 {
     public class InstantGalleryViewModel : GalleryViewModelBase
     {
+        private readonly bool _shouldGroup;
+
         public InstantGalleryViewModel()
             : base(null, null, null)
         {
@@ -24,11 +26,15 @@ namespace Unigram.ViewModels
         public InstantGalleryViewModel(TLMessage message, TLWebPage webPage)
             : base(null, null, null)
         {
+            _shouldGroup = true;
+
             Items = new MvxObservableCollection<GalleryItem>(GetWebPagePhotos(message, webPage));
             FirstItem = Items.FirstOrDefault();
             SelectedItem = Items.FirstOrDefault();
             TotalItems = Items.Count;
         }
+
+        public override MvxObservableCollection<GalleryItem> Group => _shouldGroup ? this.Items : null;
 
         private GalleryItem GetBlock(TLMessage message, TLWebPage webPage, TLPageBlockBase pageBlock)
         {

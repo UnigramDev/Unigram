@@ -26,9 +26,15 @@ namespace Unigram.ViewModels.Dialogs
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly TLInputPeerBase _peer;
 
+        private readonly MvxObservableCollection<GalleryItem> _group;
+        private long _current;
+
         public DialogGalleryViewModel(IMTProtoService protoService, ICacheService cacheService, TLInputPeerBase peer, TLMessage selected)
             : base(protoService, cacheService, null)
         {
+            _group = new MvxObservableCollection<GalleryItem>();
+            _peer = peer;
+
             if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo())
             {
                 Items = new MvxObservableCollection<GalleryItem> { new GalleryMessageItem(selected) };
@@ -40,7 +46,6 @@ namespace Unigram.ViewModels.Dialogs
                 Items = new MvxObservableCollection<GalleryItem>();
             }
 
-            _peer = peer;
             Initialize(selected.Id);
         }
 
@@ -101,6 +106,8 @@ namespace Unigram.ViewModels.Dialogs
                             TotalItems--;
                         }
                     }
+
+                    OnSelectedItemChanged(_selectedItem);
                 }
             }
         }
@@ -144,6 +151,8 @@ namespace Unigram.ViewModels.Dialogs
                             TotalItems--;
                         }
                     }
+
+                    OnSelectedItemChanged(_selectedItem);
                 }
             }
         }
@@ -187,12 +196,49 @@ namespace Unigram.ViewModels.Dialogs
                             TotalItems--;
                         }
                     }
+
+                    OnSelectedItemChanged(_selectedItem);
                 }
             }
         }
 
         public override int Position => TotalItems - (Items.Count - base.Position);
 
+        public override MvxObservableCollection<GalleryItem> Group => _group;
+
         public override bool CanView => true;
+
+        protected override void OnSelectedItemChanged(GalleryItem item)
+        {
+            var messageItem = item as GalleryMessageItem;
+            if (messageItem == null)
+            {
+                return;
+            }
+
+            var message = messageItem.Message as TLMessage;
+            if (message == null)
+            {
+                return;
+            }
+
+            if (message.GroupedId is long group)
+            {
+                var all = Items.Where(x => x is GalleryMessageItem msg && msg.Message.GroupedId == group).ToList();
+                if (all.Count == _group.Count && group == _current)
+                {
+                    return;
+                }
+
+                _current = group;
+                _group.ReplaceWith(all);
+
+                RaisePropertyChanged(() => SelectedItem);
+            }
+            else
+            {
+                _group.Clear();
+            }
+        }
     }
 }

@@ -55,13 +55,16 @@ namespace Unigram.ViewModels
                 }
 
                 var index = Items.IndexOf(SelectedItem);
-                if (index == Items.Count - 1)
+                if (Items.Count > 1)
                 {
-                    LoadNext();
-                }
-                if (index == 0)
-                {
-                    LoadPrevious();
+                    if (index == Items.Count - 1)
+                    {
+                        LoadNext();
+                    }
+                    if (index == 0)
+                    {
+                        LoadPrevious();
+                    }
                 }
 
                 return index;
@@ -91,6 +94,7 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _selectedItem, value);
+                OnSelectedItemChanged(value);
                 //RaisePropertyChanged(() => SelectedIndex);
                 RaisePropertyChanged(() => Position);
             }
@@ -124,9 +128,13 @@ namespace Unigram.ViewModels
 
         public MvxObservableCollection<GalleryItem> Items { get; protected set; }
 
+        public virtual MvxObservableCollection<GalleryItem> Group { get; }
+
         protected virtual void LoadPrevious() { }
 
         protected virtual void LoadNext() { }
+
+        protected virtual void OnSelectedItemChanged(GalleryItem item) { }
 
         public virtual bool CanView
         {

@@ -27,6 +27,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
@@ -759,7 +760,7 @@ namespace Unigram.ViewModels
                 try
                 {
                     var dataPackage = new DataPackage();
-                    dataPackage.SetStorageItems(new[] { result });
+                    dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(result));
                     ClipboardEx.TrySetContent(dataPackage);
                 }
                 catch { }

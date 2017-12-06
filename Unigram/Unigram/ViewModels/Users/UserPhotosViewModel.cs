@@ -70,13 +70,13 @@ namespace Unigram.ViewModels.Users
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var item = Items.LastOrDefault() as GalleryPhotoItem;
-                if (item == null)
+                var last = Items.LastOrDefault() as GalleryPhotoItem;
+                if (last == null)
                 {
                     return;
                 }
 
-                var photo = item.Source as TLPhoto;
+                var photo = last.Source as TLPhoto;
                 if (photo == null)
                 {
                     return;
@@ -85,10 +85,17 @@ namespace Unigram.ViewModels.Users
                 var response = await ProtoService.GetUserPhotosAsync(_peer, 0, photo.Id, 0);
                 if (response.IsSucceeded)
                 {
-                    Items.AddRange(response.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, _user)));
+                    //Items.AddRange(response.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, _user)));
+
+                    foreach (var item in response.Result.Photos)
+                    {
+                        Items.Add(new GalleryPhotoItem(item as TLPhoto, _user));
+                    }
                 }
             }
         }
+
+        public override MvxObservableCollection<GalleryItem> Group => this.Items;
 
         public override bool CanDelete => _user != null && _user.IsSelf;
 
