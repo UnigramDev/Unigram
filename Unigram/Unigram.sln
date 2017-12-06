@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27130.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram", "Unigram\Unigram.csproj", "{2235E8EE-374A-4E49-8050-9B701467775D}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -194,11 +194,8 @@ Global
 		{CA0C2CC0-3D83-4556-A9A3-0923ECE8C1D3}.Release|x86.ActiveCfg = Release|Win32
 		{CA0C2CC0-3D83-4556-A9A3-0923ECE8C1D3}.Release|x86.Build.0 = Release|Win32
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|ARM.ActiveCfg = Debug|ARM
-		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|ARM.Build.0 = Debug|ARM
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|x64.ActiveCfg = Debug|x64
-		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|x64.Build.0 = Debug|x64
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|x86.ActiveCfg = Debug|Win32
-		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|x86.Build.0 = Debug|Win32
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|ARM.ActiveCfg = Release|ARM
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|ARM.Build.0 = Release|ARM
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|x64.ActiveCfg = Release|x64

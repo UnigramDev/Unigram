@@ -16,6 +16,8 @@ using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Help;
 using Org.BouncyCastle.OpenSsl;
+using Telegram.Api.Native.TL;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Telegram.Api.Services.Connection
 {
@@ -222,7 +224,7 @@ namespace Telegram.Api.Services.Connection
                 }
             }
 
-            using (var from = new TLBinaryReader(decryptedData))
+            using (var from = TLObjectSerializer.CreateReader(decryptedData.AsBuffer()))
             {
                 var length = from.ReadInt32();
                 if (length <= 0 || length > 208 || length % 4 != 0)
@@ -241,9 +243,9 @@ namespace Telegram.Api.Services.Connection
                     return null;
                 }
 
-                if (from.BaseStream.Position != length)
+                if (from.Position != length)
                 {
-                    Log(string.Format("Bad read length {0} shoud be {1}", from.BaseStream.Position, length));
+                    Log(string.Format("Bad read length {0} shoud be {1}", from.Position, length));
                     return null;
                 }
             }

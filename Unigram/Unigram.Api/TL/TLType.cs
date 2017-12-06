@@ -45,7 +45,8 @@ namespace Telegram.Api.TL
 		GzipPacked = 0x3072CFA1,
 		Null = 0x56730BCC,
 
-		ContestSaveDeveloperInfo = 0x9A5F6E95,
+        HelpConfigSimple = 0xD997C3C5,
+        ContestSaveDeveloperInfo = 0x9A5F6E95,
 		InputPeerEmpty = 0x7F3B18EA,
 		InputPeerSelf = 0x7DA07EC9,
 		InputPeerChat = 0x179BE863,
