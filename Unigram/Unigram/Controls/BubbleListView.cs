@@ -158,7 +158,10 @@ namespace Unigram.Controls
                     await ViewModel.LoadPreviousSliceAsync(false, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
                 }
 
-                await ViewModel.LoadNextSliceAsync();
+                if (!ViewModel.IsLastSliceLoaded)
+                {
+                    await ViewModel.LoadNextSliceAsync();
+                }
             }
         }
 

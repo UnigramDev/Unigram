@@ -11,8 +11,6 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <x:String x:Key="Empty"></x:String>
-        
         <Style x:Key="TypingProgressRingStyle" TargetType="ProgressRing">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />

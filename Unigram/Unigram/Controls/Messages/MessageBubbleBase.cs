@@ -452,9 +452,15 @@ namespace Unigram.Controls.Messages
 
                 goto Calculate;
             }
+            else if (constraint is TLMessageMediaGroup)
+            {
+                width = 320;
+                height = 420;
 
-            var photo = constraint as TLPhoto;
-            if (photo != null)
+                goto Calculate;
+            }
+
+            if (constraint is TLPhoto photo)
             {
                 if (fixedSize)
                 {
@@ -556,23 +562,25 @@ namespace Unigram.Controls.Messages
         {
             if (media == null) return false;
 
-            if (media.TypeId == TLType.MessageMediaGeo) return true;
-            else if (media.TypeId == TLType.MessageMediaGeoLive) return true;
-            else if (media.TypeId == TLType.MessageMediaVenue) return true;
-            else if (media.TypeId == TLType.MessageMediaPhoto) return true;
-            else if (media.TypeId == TLType.MessageMediaDocument)
+            if (media is TLMessageMediaGeo) return true;
+            else if (media is TLMessageMediaGeoLive) return true;
+            else if (media is TLMessageMediaVenue) return true;
+            else if (media is TLMessageMediaPhoto) return true;
+            else if (media is TLMessageMediaDocument documentMedia)
             {
-                var documentMedia = media as TLMessageMediaDocument;
                 if (TLMessage.IsGif(documentMedia.Document)) return true;
                 else if (TLMessage.IsVideo(documentMedia.Document)) return true;
             }
-            else if (media.TypeId == TLType.MessageMediaInvoice && width)
+            else if (media is TLMessageMediaInvoice invoiceMedia && width)
             {
-                var invoiceMedia = media as TLMessageMediaInvoice;
                 if (invoiceMedia.HasPhoto && invoiceMedia.Photo != null)
                 {
                     return true;
                 }
+            }
+            else if (media is TLMessageMediaGroup)
+            {
+                return true;
             }
             //else if (media.TypeId == TLType.MessageMediaWebPage && width)
             //{
@@ -591,10 +599,10 @@ namespace Unigram.Controls.Messages
         {
             if (media == null) return false;
 
-            if (media.TypeId == TLType.MessageMediaContact) return true;
-            else if (media.TypeId == TLType.MessageMediaGeoLive) return true;
-            else if (media.TypeId == TLType.MessageMediaVenue) return true;
-            else if (media.TypeId == TLType.MessageMediaPhoto)
+            if (media is TLMessageMediaContact) return true;
+            else if (media is TLMessageMediaGeoLive) return true;
+            else if (media is TLMessageMediaVenue) return true;
+            else if (media is TLMessageMediaPhoto)
             {
                 var photoMedia = media as TLMessageMediaPhoto;
                 if (string.IsNullOrWhiteSpace(photoMedia.Caption))
@@ -604,9 +612,8 @@ namespace Unigram.Controls.Messages
 
                 return true;
             }
-            else if (media.TypeId == TLType.MessageMediaDocument)
+            else if (media is TLMessageMediaDocument documentMedia)
             {
-                var documentMedia = media as TLMessageMediaDocument;
                 if (TLMessage.IsMusic(documentMedia.Document)) return true;
                 else if (TLMessage.IsVoice(documentMedia.Document)) return true;
                 else if (TLMessage.IsVideo(documentMedia.Document))

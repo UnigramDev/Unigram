@@ -539,7 +539,13 @@
 
     <DataTemplate x:Key="MediaEmptyTemplate"/>
 
-
+    <DataTemplate x:Key="MediaGroupedTemplate">
+        <ItemsControl ItemsSource="{Binding Media.Layout.Messages}"
+                      ItemTemplateSelector="{StaticResource MediaTemplateSelector}">
+            
+        </ItemsControl>
+    </DataTemplate>
+    
     <selectors:MediaTemplateSelector x:Key="MediaTemplateSelector"
                                      EmptyTemplate="{StaticResource MediaEmptyTemplate}"
                                      AudioTemplate="{StaticResource MediaAudioTemplate}"
@@ -565,6 +571,7 @@
                                      WebPageSmallPhotoTemplate="{StaticResource MediaWebPageSmallPhotoTemplate}"
                                      InvoiceTemplate="{StaticResource MediaInvoiceTemplate}"
                                      InvoicePhotoTemplate="{StaticResource MediaInvoicePhotoTemplate}"
-                                     UnsupportedTemplate="{StaticResource MediaUnsupportedTemplate}"/>
+                                     UnsupportedTemplate="{StaticResource MediaUnsupportedTemplate}"
+                                     GroupedTemplate="{StaticResource MediaGroupedTemplate}"/>
 
 </ResourceDictionary>
