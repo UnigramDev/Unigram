@@ -17,6 +17,7 @@ using Unigram.Core.Models;
 using Unigram.Models;
 using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Dialogs;
 using Windows.ApplicationModel.Contacts;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
@@ -1053,7 +1054,7 @@ namespace Unigram.ViewModels
         public RelayCommand SendLocationCommand { get; }
         private async void SendLocationExecute()
         {
-            var page = new DialogSendLocationPage();
+            var page = new DialogShareLocationPage();
 
             var dialog = new ContentDialogBase();
             dialog.Content = page;

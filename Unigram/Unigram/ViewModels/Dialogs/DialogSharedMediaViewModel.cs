@@ -19,7 +19,7 @@ using Unigram.Helpers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Dialogs
 {
     public class DialogSharedMediaViewModel : UnigramViewModelBase
     {

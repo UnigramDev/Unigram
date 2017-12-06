@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
@@ -15,31 +16,64 @@ namespace Telegram.Api.Transport
 {
     internal abstract class TcpTransportBase : ITransport
     {
-        public long MinMessageId { get; set; }
-        public Dictionary<long, long> MessageIdDict { get; set; } 
+        public MTProtoTransportType MTProtoType { get; protected set; }
 
-        public bool Additional { get; set; }
+        public long MinMessageId { get; set; }
+        public Dictionary<long, long> MessageIdDict { get; set; }
 
         public string Host { get; protected set; }
         public int Port { get; protected set; }
+        public TLProxyConfig ProxyConfig { get; protected set; }
         public virtual TransportType Type { get { return TransportType.Tcp; } }
 
-        protected bool _proxyEnabled;
-        protected string _proxyServer;
-        protected int _proxyPort;
-        protected string _proxyUsername;
-        protected string _proxyPassword;
+        private readonly Timer _timer;
 
-        protected TcpTransportBase(string host, int port)
+        protected TcpTransportBase(string host, int port, MTProtoTransportType mtProtoType, TLProxyConfig proxyConfig)
         {
             MessageIdDict = new Dictionary<long, long>();
 
             Host = host;
             Port = port;
+            MTProtoType = mtProtoType;
+            ProxyConfig = proxyConfig;
 
             var random = new Random();
             Id = random.Next(0, 255);
+
+            _timer = new Timer(OnTimerTick, _timer, Timeout.Infinite, Timeout.Infinite);
         }
+
+        #region Check Config
+
+        public event EventHandler CheckConfig;
+
+        protected virtual void RaiseCheckConfig()
+        {
+            Execute.BeginOnThreadPool(() =>
+            {
+                CheckConfig?.Invoke(this, EventArgs.Empty);
+            });
+        }
+
+        private void OnTimerTick(object state)
+        {
+            _timer.Change(Timeout.Infinite, Timeout.Infinite);
+
+            RaiseCheckConfig();
+        }
+
+        protected void StartCheckConfigTimer()
+        {
+            if (MTProtoType != MTProtoTransportType.Main) return;
+
+            _timer.Change(TimeSpan.FromSeconds(Constants.CheckConfigTimeout), Timeout.InfiniteTimeSpan);
+        }
+
+        protected void StopCheckConfigTimer()
+        {
+            _timer.Change(Timeout.Infinite, Timeout.Infinite);
+        }
+        #endregion
 
         public bool Initiated { get; set; }
         public bool Initialized { get; set; }
@@ -54,21 +88,20 @@ namespace Telegram.Api.Transport
         public int Id { get; protected set; }
         public int DCId { get; set; }
         public byte[] AuthKey { get; set; }
-        public string[] PublicKeys { get; set; }
         public long? SessionId { get; set; }
         public long? Salt { get; set; }
         public int SequenceNumber { get; set; }
 
         private long _clientTicksDelta;
-        public long ClientTicksDelta 
-        { 
-            get 
-            { 
-                return _clientTicksDelta; 
-            } 
-            set 
-            { 
-                _clientTicksDelta = value; 
+        public long ClientTicksDelta
+        {
+            get
+            {
+                return _clientTicksDelta;
+            }
+            set
+            {
+                _clientTicksDelta = value;
             }
         }
 
@@ -156,7 +189,7 @@ namespace Telegram.Api.Transport
 
                 var lengthBytes = bytes.SubArray(1 + position, 3);
 
-                shortLength = BitConverter.ToInt32(lengthBytes.Concat(new byte[] { 0x00 }).ToArray(), 0);
+                shortLength = BitConverter.ToInt32(TLUtils.Combine(lengthBytes, new byte[] { 0x00 }), 0);
                 bytesRead = 4;
             }
             else
@@ -174,19 +207,23 @@ namespace Telegram.Api.Transport
         {
             var buffer = new byte[64];
             var random = new Random();
-            random.NextBytes(buffer);
-            while (buffer[0] == 0x44414548
-                   || buffer[0] == 0x54534f50
-                   || buffer[0] == 0x20544547
-                   || buffer[0] == 0x4954504f
-                   || buffer[0] == 0xeeeeeeee
-                   || buffer[0] == 0xef)
+            while (true)
             {
-                buffer[0] = (byte)random.Next();
-            }
-            while (buffer[1] == 0x00000000)
-            {
-                buffer[1] = (byte)random.Next();
+                random.NextBytes(buffer);
+
+                var val = (buffer[3] << 24) | (buffer[2] << 16) | (buffer[1] << 8) | (buffer[0]);
+                var val2 = (buffer[7] << 24) | (buffer[6] << 16) | (buffer[5] << 8) | (buffer[4]);
+                if (buffer[0] != 0xef
+                    && val != 0x44414548
+                    && val != 0x54534f50
+                    && val != 0x20544547
+                    && val != 0x4954504f
+                    && val != 0xeeeeeeee
+                    && val2 != 0x00000000)
+                {
+                    buffer[56] = buffer[57] = buffer[58] = buffer[59] = 0xef;
+                    break;
+                }
             }
 
             return buffer;
@@ -197,11 +234,13 @@ namespace Telegram.Api.Transport
         private byte[] _previousTail = new byte[0];
         private bool _usePreviousTail;
         private int _packetLengthBytesRead = 0;
-        readonly MemoryStream _stream = new MemoryStream();
+        readonly MemoryStream _stream = new MemoryStream(32 * 1024);
         protected void OnBufferReceived(byte[] buffer, int offset, int bytesTransferred)
         {
             if (bytesTransferred > 0)
             {
+                StopCheckConfigTimer();
+
                 _bytesReceived += bytesTransferred;
 
                 if (_packetLength == 0)
@@ -264,7 +303,7 @@ namespace Telegram.Api.Transport
                     }
                     _lastPacketLength = data.Length;
 
-                    
+
 
                     if (MinMessageId == 0 && AuthKey != null)
                     {
@@ -520,8 +559,6 @@ namespace Telegram.Api.Transport
             {
                 Execute.BeginOnThreadPool(() =>
                 {
-
-
                     handler(this, args);
                 });
             }
@@ -529,8 +566,15 @@ namespace Telegram.Api.Transport
 
         public event EventHandler Connecting;
 
+        private bool _connectingRaised;
+
         protected virtual void RaiseConnectingAsync()
         {
+            if (_connectingRaised) return;
+            _connectingRaised = true;
+
+            StartCheckConfigTimer();
+
             var handler = Connecting;
             if (handler != null)
             {
@@ -576,10 +620,8 @@ namespace Telegram.Api.Transport
 
         protected virtual void WRITE_LOG(string str, Exception ex)
         {
-#if LOG_REGISTRATION
             var type = ex != null ? ex.GetType().Name : "null";
             WRITE_LOG(String.Format("{0} {1} {2}={3}", str, Id, type, ex));
-#endif
         }
 
 #if TCP_OBFUSCATED_2

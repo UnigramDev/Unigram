@@ -85,7 +85,7 @@ namespace Unigram.Services
                 if (devices.Count > 0)
                 {
                     _sensor = ProximitySensor.FromId(devices[0].Id);
-                    _sensor.ReadingChanged += OnReadingChanged;
+                    //_sensor.ReadingChanged += OnReadingChanged;
 
                     _controller = _sensor.CreateDisplayOnOffController();
                 }
@@ -263,7 +263,10 @@ namespace Unigram.Services
 
         private void Dispose()
         {
-            _mediaPlayer.Source = null;
+            if (_mediaPlayer != null)
+            {
+                _mediaPlayer.Source = null;
+            }
 
             if (_playlist != null)
             {
@@ -284,8 +287,15 @@ namespace Unigram.Services
                 _items = null;
             }
 
-            _mapping.Clear();
-            _inverse.Clear();
+            if (_mapping != null)
+            {
+                _mapping.Clear();
+            }
+
+            if (_inverse != null)
+            {
+                _inverse.Clear();
+            }
 
             //if (_controller != null)
             //{

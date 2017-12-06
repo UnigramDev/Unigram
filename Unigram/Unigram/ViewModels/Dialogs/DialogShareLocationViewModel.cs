@@ -15,13 +15,13 @@ using Unigram.Core.Services;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Dialogs
 {
-    public class DialogSendLocationViewModel : UnigramViewModelBase
+    public class DialogShareLocationViewModel : UnigramViewModelBase
     {
         private readonly ILocationService _locationService;
 
-        public DialogSendLocationViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, ILocationService foursquareService)
+        public DialogShareLocationViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, ILocationService foursquareService)
             : base(protoService, cacheService, aggregator)
         {
             _locationService = foursquareService;

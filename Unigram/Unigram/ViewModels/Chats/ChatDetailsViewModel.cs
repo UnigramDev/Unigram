@@ -18,6 +18,7 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Views;
 using Unigram.Views.Chats;
+using Unigram.Views.Dialogs;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -215,12 +216,22 @@ namespace Unigram.ViewModels.Chats
         public RelayCommand InviteCommand { get; }
         private void InviteExecute()
         {
+            if (_item == null)
+            {
+                return;
+            }
+
             NavigationService.Navigate(typeof(ChatInvitePage), _item.ToPeer());
         }
 
         public RelayCommand MediaCommand { get; }
         private void MediaExecute()
         {
+            if (_item == null)
+            {
+                return;
+            }
+
             NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
         }
 

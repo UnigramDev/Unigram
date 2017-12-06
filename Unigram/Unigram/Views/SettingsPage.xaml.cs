@@ -251,6 +251,30 @@ namespace Unigram.Views
                 //App.RaiseThemeChanged();
             }
         }
+
+        #region Binding
+
+        private string ConvertUsername(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return Strings.Android.UsernameEmpty;
+            }
+
+            return "@" + username;
+        }
+
+        private string ConvertAbout(string about)
+        {
+            if (string.IsNullOrEmpty(about))
+            {
+                return Strings.Android.UserBioEmpty;
+            }
+
+            return about;
+        }
+
+        #endregion
     }
 
     // Experiment

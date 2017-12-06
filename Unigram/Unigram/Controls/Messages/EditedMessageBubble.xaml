@@ -33,6 +33,7 @@
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
+                            <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="HiddenState">
@@ -51,14 +52,17 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="HeaderLabel"
-                        Margin="0,0,0,2"
-                        Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                        RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                        Style="{ThemeResource CaptionTextBlockStyle}"
-                        FontWeight="SemiBold"
-                        Visibility="Collapsed"
-                        Grid.Row="0"/>
+            <Grid x:Name="Header">
+                <TextBlock x:Name="HeaderLabel"
+                            Margin="0,0,0,2"
+                            Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                            RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                           TextWrapping="NoWrap"
+                            FontWeight="SemiBold"
+                            Visibility="Collapsed"
+                            Grid.Row="0"/>
+            </Grid>
 
             <!--<local:MessageReference
                 Title="Original message"

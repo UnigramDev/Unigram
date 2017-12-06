@@ -15,7 +15,13 @@
         </Grid.RowDefinitions>
         <controls:PageHeader Text="{x:Bind ConvertTitle(ViewModel.Receipt.Invoice.IsTest), FallbackValue=Receipt}"/>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <controls:ScrollViewerBackground 
+            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Padding="0,0,0,48">

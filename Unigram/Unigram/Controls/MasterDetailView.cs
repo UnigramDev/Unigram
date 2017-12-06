@@ -18,6 +18,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Composition;
 using System.Numerics;
+using System.Collections.Generic;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -35,6 +36,8 @@ namespace Unigram.Controls
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
 
+        private readonly LinkedList<BackStackType> _backStack = new LinkedList<BackStackType>();
+
         public MasterDetailView()
         {
             DefaultStyleKey = typeof(MasterDetailView);
@@ -42,6 +45,35 @@ namespace Unigram.Controls
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
             SizeChanged += OnSizeChanged;
+        }
+
+        public void Push(bool hamburger)
+        {
+            //if (hamburger)
+            //{
+            //    while (_backStack.Contains(BackStackType.Hamburger))
+            //    {
+            //        _backStack.Remove(BackStackType.Hamburger);
+            //    }
+            //}
+
+            //_backStack.AddLast(hamburger ? BackStackType.Hamburger : BackStackType.Navigation);
+        }
+
+        public bool Last()
+        {
+            if (_backStack.Count > 0)
+            {
+                return _backStack.Last.Value == BackStackType.Hamburger;
+            }
+
+            return false;
+        }
+
+        enum BackStackType
+        {
+            Hamburger,
+            Navigation
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -147,6 +179,8 @@ namespace Unigram.Controls
             AdaptiveStates = (VisualStateGroup)GetTemplateChild("AdaptiveStates");
             AdaptiveStates.CurrentStateChanged += OnCurrentStateChanged;
 
+            MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
+
             if (DetailFrame != null)
             {
                 var parent = VisualTreeHelper.GetParent(DetailFrame) as UIElement;
@@ -179,11 +213,24 @@ namespace Unigram.Controls
             }
         }
 
+        private void OnVisibilityChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (MasterPresenter.Visibility == Visibility.Visible)
+            {
+                Update?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
             if (AdaptiveStates.CurrentState == null)
             {
                 return;
+            }
+
+            if (e.NavigationMode == NavigationMode.New && DetailFrame.CanGoBack)
+            {
+                Push(false);
             }
 
             if (CurrentState == MasterDetailState.Narrow && e.SourcePageType == BlankPageType)
@@ -299,7 +346,14 @@ namespace Unigram.Controls
                 service.FrameFacade.FrameId = key;
                 service.FrameFacade.BackRequested += (s, args) =>
                 {
-                    if (DetailFrame.Content is IMasterDetailPage detailPage)
+                    //var type = BackStackType.Navigation;
+                    //if (_backStack.Count > 0)
+                    //{
+                    //    type = _backStack.Last.Value;
+                    //    _backStack.RemoveLast();
+                    //}
+
+                    if (DetailFrame.Content is IMasterDetailPage detailPage /*&& type == BackStackType.Navigation*/)
                     {
                         detailPage.OnBackRequested(args);
                         if (args.Handled)
@@ -310,12 +364,12 @@ namespace Unigram.Controls
 
                     // TODO: maybe checking for the actual width is not the perfect way,
                     // but if it is 0 it means that the control is not loaded, and the event shouldn't be handled
-                    if (CanGoBack && ActualWidth > 0)
+                    if (CanGoBack && ActualWidth > 0 /*&& type == BackStackType.Navigation*/)
                     {
                         DetailFrame.GoBack();
                         args.Handled = true;
                     }
-                    else if (ParentFrame.Content is IMasterDetailPage masterPage)
+                    else if (ParentFrame.Content is IMasterDetailPage masterPage /*&& type == BackStackType.Hamburger*/)
                     {
                         masterPage.OnBackRequested(args);
                         if (args.Handled)
@@ -387,6 +441,7 @@ namespace Unigram.Controls
         }
 
         public event EventHandler ViewStateChanged;
+        public event EventHandler Update;
         #endregion
 
         #region BlankType

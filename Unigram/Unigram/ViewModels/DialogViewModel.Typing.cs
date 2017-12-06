@@ -194,7 +194,7 @@ namespace Unigram.ViewModels
                 var label = string.Empty;
                 foreach (var pu in typingUsers)
                 {
-                    var user = getUser.Invoke(typingUsers[0].Item1) as TLUser;
+                    var user = getUser.Invoke(pu.Item1) as TLUser;
                     if (user == null)
                     {
                         getFullInfoAction?.Invoke(peer);

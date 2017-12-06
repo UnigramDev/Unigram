@@ -18,6 +18,7 @@ using Unigram.Converters;
 using Unigram.Views;
 using Unigram.Views.Channels;
 using Unigram.Views.Chats;
+using Unigram.Views.Dialogs;
 using Windows.Storage;
 using Windows.UI.Xaml.Navigation;
 

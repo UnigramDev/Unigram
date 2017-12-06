@@ -12,6 +12,7 @@ using Telegram.Api.Extensions;
 using Telegram.Api.TL;
 using Windows.UI.Xaml;
 using Windows.Foundation;
+using System.Diagnostics;
 
 namespace Telegram.Api.Helpers
 {
@@ -185,6 +186,7 @@ namespace Telegram.Api.Helpers
             waitHandle.WaitOne();
         }
 
+        [Conditional("DEBUG")]
         public static void ShowDebugMessage(string message)
         {
         }

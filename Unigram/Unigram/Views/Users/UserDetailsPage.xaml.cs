@@ -44,7 +44,7 @@ namespace Unigram.Views.Users
             if (userFull != null && userFull.ProfilePhoto is TLPhoto && user != null)
             {
                 var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, userFull, user);
-                await GalleryView.Current.ShowAsync(viewModel, () => Picture);
+                await GalleryView.Current.ShowAsync(viewModel, () => Photo);
             }
         }
 

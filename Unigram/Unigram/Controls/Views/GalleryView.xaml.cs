@@ -35,8 +35,8 @@ using Windows.UI;
 using Microsoft.Graphics.Canvas.Effects;
 using Windows.UI.ViewManagement;
 using Windows.System.Display;
-
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
+using Unigram.Common;
+using Windows.Graphics.Display;
 
 namespace Unigram.Controls.Views
 {
@@ -53,54 +53,33 @@ namespace Unigram.Controls.Views
         private MediaPlayer _mediaPlayer;
         private Grid _surface;
 
-        private Visual _layerVisual;
-        //private Visual _topBarVisual;
-        //private Visual _botBarVisual;
+        private Visual _layer;
 
         private GalleryView()
         {
             InitializeComponent();
 
+            #region Localizations
+
+            FlyoutSaveAs.Text = Strings.Resources.SaveAs;
+
+            #endregion
+
             Layer.Visibility = Visibility.Collapsed;
-            //TopBar.Visibility = Visibility.Collapsed;
-            //BotBar.Visibility = Visibility.Collapsed;
 
-            _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
-            //_topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
-            //_botBarVisual = ElementCompositionPreview.GetElementVisual(BotBar);
+            _layer = ElementCompositionPreview.GetElementVisual(Layer);
 
-            //_layerVisual.Opacity = 0;
-            //_topBarVisual.Offset = new Vector3(0, -48, 0);
-            //_botBarVisual.Offset = new Vector3(0, 48, 0);
+            _mediaPlayerElement = new MediaPlayerElement { Style = Resources["TransportLessMediaPlayerStyle"] as Style };
+            _mediaPlayerElement.AreTransportControlsEnabled = true;
+            _mediaPlayerElement.TransportControls = Transport;
+            _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
+
+            Initialize();
 
             if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
             {
                 var easing = ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction;
                 var duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
-
-                var topShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                topShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0), easing);
-                topShowAnimation.InsertKeyFrame(1.0f, new Vector3(), easing);
-                topShowAnimation.Target = nameof(Visual.Offset);
-                topShowAnimation.Duration = duration;
-
-                var botHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                botHideAnimation.InsertKeyFrame(0.0f, new Vector3(), easing);
-                botHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0), easing);
-                botHideAnimation.Target = nameof(Visual.Offset);
-                botHideAnimation.Duration = duration;
-
-                var topHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                topHideAnimation.InsertKeyFrame(0.0f, new Vector3(), easing);
-                topHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0), easing);
-                topHideAnimation.Target = nameof(Visual.Offset);
-                topHideAnimation.Duration = duration;
-
-                var botShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                botShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0), easing);
-                botShowAnimation.InsertKeyFrame(1.0f, new Vector3(), easing);
-                botShowAnimation.Target = nameof(Visual.Offset);
-                botShowAnimation.Duration = duration;
 
                 var layerShowAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
                 layerShowAnimation.InsertKeyFrame(0.0f, 0.0f, easing);
@@ -114,13 +93,22 @@ namespace Unigram.Controls.Views
                 layerHideAnimation.Target = nameof(Visual.Opacity);
                 layerHideAnimation.Duration = duration;
 
-                //ElementCompositionPreview.SetImplicitShowAnimation(TopBar, topShowAnimation);
-                //ElementCompositionPreview.SetImplicitHideAnimation(TopBar, topHideAnimation);
-                //ElementCompositionPreview.SetImplicitShowAnimation(BotBar, botShowAnimation);
-                //ElementCompositionPreview.SetImplicitHideAnimation(BotBar, botHideAnimation);
                 ElementCompositionPreview.SetImplicitShowAnimation(Layer, layerShowAnimation);
                 ElementCompositionPreview.SetImplicitHideAnimation(Layer, layerHideAnimation);
             }
+        }
+
+        private void ItemsStackPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var width = 40 + 4 + 4;
+            var total = (e.NewSize.Width - width) / 2d;
+
+            List.Padding = new Thickness(total, 0, total, 0);
+        }
+
+        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
 
         private void OnSourceChanged(MediaPlayer sender, object args)
@@ -134,8 +122,16 @@ namespace Unigram.Controls.Views
             {
                 Transport.TransportVisibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Collapsed : Visibility.Visible;
                 Details.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
-                Surface.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
+                Element0.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
+                Element1.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
+                Element2.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
             });
+
+            if (_request != null && (_mediaPlayer == null || _mediaPlayer.Source == null))
+            {
+                _request.RequestRelease();
+                _request = null;
+            }
         }
 
         private async void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
@@ -200,8 +196,13 @@ namespace Unigram.Controls.Views
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
 
+            parameter.Items.CollectionChanged -= OnCollectionChanged;
+            parameter.Items.CollectionChanged += OnCollectionChanged;
+
             DataContext = parameter;
             Bindings.Update();
+
+            PrepareNext(0);
 
             RoutedEventHandler handler = null;
             handler = new RoutedEventHandler(async (s, args) =>
@@ -212,6 +213,11 @@ namespace Unigram.Controls.Views
 
             Loaded += handler;
             return ShowAsync();
+        }
+
+        private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            PrepareNext(0);
         }
 
         protected override void MaskTitleAndStatusBar()
@@ -232,11 +238,12 @@ namespace Unigram.Controls.Views
 
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
-            if (ViewModel.SelectedItem == ViewModel.FirstItem)
-            {
-                Surface.Visibility = Visibility.Visible;
+            var container = GetContainer(0);
+            var root = container?.ContentTemplateRoot as Grid;
 
-                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
+            if (root != null && ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem)
+            {
+                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
                 if (animation != null && _closing != null)
                 {
                     var element = _closing();
@@ -246,10 +253,20 @@ namespace Unigram.Controls.Views
                     }
                 }
             }
+            else if (root != null)
+            {
+                var easing = ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction;
+                var duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
+
+                var animation = _layout.Compositor.CreateScalarKeyFrameAnimation();
+                animation.InsertKeyFrame(0, _layout.Offset.Y, easing);
+                animation.InsertKeyFrame(1, (float)ActualHeight, easing);
+                animation.Duration = duration;
+
+                _layout.StartAnimation("Offset.Y", animation);
+            }
 
             Layer.Visibility = Visibility.Collapsed;
-            //TopBar.Visibility = Visibility.Collapsed;
-            //BotBar.Visibility = Visibility.Collapsed;
 
             if (Transport.IsVisible)
             {
@@ -267,45 +284,48 @@ namespace Unigram.Controls.Views
 
         private void ImageView_ImageOpened(object sender, RoutedEventArgs e)
         {
+            var image = sender as FrameworkElement;
+            if (image.DataContext != ViewModel.FirstItem)
+            {
+                return;
+            }
+
+            var item = image.DataContext as GalleryItem;
+            if (item == null)
+            {
+                return;
+            }
+
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
             if (animation != null)
             {
                 Layer.Visibility = Visibility.Visible;
-                //TopBar.Visibility = Visibility.Visible;
-                //BotBar.Visibility = Visibility.Visible;
 
-                //Flip.Opacity = 1;
-                if (animation.TryStart(Surface))
+                if (animation.TryStart(image))
                 {
                     animation.Completed += (s, args) =>
                     {
                         Transport.Show();
 
-                        //Flip.Opacity = 1;
-                        //Surface.Visibility = Visibility.Collapsed;
+                        if (item.IsVideo)
+                        {
+                            Play(image.Parent as Grid, item);
+                        }
                     };
-                }
-                else
-                {
-                    Transport.Show();
 
-                    //Flip.Opacity = 1;
-                    //Surface.Visibility = Visibility.Collapsed;
-                }
-
-                var border = sender as FrameworkElement;
-                var item = border.DataContext as GalleryItem;
-                if (item == null)
-                {
                     return;
                 }
+            }
 
-                if (item.IsVideo)
-                {
-                    Play(item);
-                }
+            Transport.Show();
+
+            if (item.IsVideo)
+            {
+                Play(image.Parent as Grid, item);
             }
         }
+
+        #region Binding
 
         private string ConvertFrom(ITLDialogWith with)
         {
@@ -320,8 +340,10 @@ namespace Unigram.Controls.Views
 
         private string ConvertOf(int index, int count)
         {
-            return string.Format(Strings.Android.Of, index + 1, count);
+            return string.Format(Strings.Android.Of, index, count);
         }
+
+        #endregion
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
@@ -347,40 +369,44 @@ namespace Unigram.Controls.Views
                     _surface.Children.Remove(_mediaPlayerElement);
                 }
 
-                var parent = Surface;
-
-                //var container = Flip.ContainerFromItem(item) as ContentControl;
-                //if (container != null && container.ContentTemplateRoot is Grid parent)
+                var container = GetContainer(0);
+                if (container != null && container.ContentTemplateRoot is Grid parent)
                 {
-                    //_surface = parent.FindName("Surface") as ImageView;
-
-                    if (_mediaPlayer == null)
-                    {
-                        _mediaPlayer = new MediaPlayer();
-                        _mediaPlayer.SourceChanged += OnSourceChanged;
-                        _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
-                    }
-
-                    _mediaPlayerElement = new MediaPlayerElement { Style = Resources["yolo"] as Style };
-                    _mediaPlayerElement.AreTransportControlsEnabled = true;
-                    //_mediaPlayerElement.TransportControls = Transport;
-                    _mediaPlayerElement.Tag = item.Source;
-                    _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
-
-                    _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
-                    _mediaPlayer.IsLoopingEnabled = item.IsLoop;
-                    _mediaPlayer.Play();
-
-                    _surface = parent;
-                    _surface.Children.Add(_mediaPlayerElement);
+                    Play(parent, item);
                 }
             }
             catch { }
         }
 
-        private void Flip_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Play(Grid parent, GalleryItem item)
         {
-            Dispose();
+            try
+            {
+                if (_surface != null && _mediaPlayerElement != null)
+                {
+                    _surface.Children.Remove(_mediaPlayerElement);
+                    _surface = null;
+                }
+
+                if (_mediaPlayer == null)
+                {
+                    _mediaPlayer = new MediaPlayer();
+                    _mediaPlayer.SourceChanged += OnSourceChanged;
+                    _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+                    _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
+                }
+
+                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
+                _mediaPlayer.SetSurfaceSize(new Size(parent.ActualWidth * dpi, parent.ActualHeight * dpi));
+
+                _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
+                _mediaPlayer.IsLoopingEnabled = item.IsLoop;
+                _mediaPlayer.Play();
+
+                _surface = parent;
+                _surface.Children.Add(_mediaPlayerElement);
+            }
+            catch { }
         }
 
         private void Dispose()
@@ -397,19 +423,30 @@ namespace Unigram.Controls.Views
                 _mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
 
                 _mediaPlayerElement.SetMediaPlayer(null);
-                _mediaPlayerElement.AreTransportControlsEnabled = false;
-                _mediaPlayerElement.TransportControls = null;
-                _mediaPlayerElement = null;
+                //_mediaPlayerElement.AreTransportControlsEnabled = false;
+                //_mediaPlayerElement.TransportControls = null;
+                //_mediaPlayerElement = null;
 
                 _mediaPlayer.Dispose();
                 _mediaPlayer = null;
 
                 OnSourceChanged();
             }
+
+            if (_request != null)
+            {
+                _request.RequestRelease();
+                _request = null;
+            }
         }
 
         private void ImageView_Click(object sender, RoutedEventArgs e)
         {
+            if (_selecting)
+            {
+                return;
+            }
+
             if (Transport.IsVisible)
             {
                 Transport.Hide();
@@ -424,6 +461,351 @@ namespace Unigram.Controls.Views
         {
             DataContext = null;
             Bindings.StopTracking();
+
+            Element1.Content = null;
+            Element0.Content = null;
+            Element2.Content = null;
         }
+
+        #region Flippitiflip
+
+        private bool _selecting;
+        private Visual _layout;
+
+        private void Initialize()
+        {
+            _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+
+            LayoutRoot.ManipulationMode =
+                ManipulationModes.TranslateX |
+                ManipulationModes.TranslateY |
+                ManipulationModes.TranslateRailsX |
+                ManipulationModes.TranslateRailsY |
+                ManipulationModes.TranslateInertia;
+            LayoutRoot.ManipulationStarted += LayoutRoot_ManipulationStarted;
+            LayoutRoot.ManipulationDelta += LayoutRoot_ManipulationDelta;
+            LayoutRoot.ManipulationCompleted += LayoutRoot_ManipulationCompleted;
+        }
+
+        protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
+        {
+            base.OnPointerWheelChanged(e);
+            //Interact(e.Pointer.PointerDeviceType != PointerDeviceType.Touch);
+
+            var point = e.GetCurrentPoint(LayoutRoot);
+            var delta = -point.Properties.MouseWheelDelta;
+
+            Scroll(delta);
+        }
+
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (e.Key == Windows.System.VirtualKey.Left || e.Key == Windows.System.VirtualKey.GamepadLeftShoulder)
+            {
+                Scroll(-1);
+            }
+            else if (e.Key == Windows.System.VirtualKey.Right || e.Key == Windows.System.VirtualKey.GamepadRightShoulder)
+            {
+                Scroll(1);
+            }
+        }
+
+        private void LayoutRoot_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        {
+            _selecting = true;
+        }
+
+        private void LayoutRoot_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (e.IsInertial || ViewModel == null)
+            {
+                e.Complete();
+                return;
+            }
+
+            var width = (float)ActualWidth;
+            var height = (float)ActualHeight;
+
+            var offset = _layout.Offset;
+
+            if (Math.Abs(e.Cumulative.Translation.X) > Math.Abs(e.Cumulative.Translation.Y))
+            {
+                var delta = (float)e.Delta.Translation.X;
+
+                var current = -width;
+
+                var maximum = current - width;
+                var minimum = current + width;
+
+                var index = ViewModel.SelectedIndex;
+                if (index == 0)
+                {
+                    minimum = current;
+                }
+                if (index == ViewModel.Items.Count - 1)
+                {
+                    maximum = current;
+                }
+
+                offset.Y = 0;
+                offset.X = Math.Max(maximum, Math.Min(minimum, offset.X + delta));
+
+                _layer.Opacity = 1;
+            }
+            else
+            {
+                offset.X = -width;
+                offset.Y = Math.Max(-height, Math.Min(height, offset.Y + (float)e.Delta.Translation.Y));
+
+                var opacity = Math.Abs((offset.Y - -height) / height);
+                if (opacity > 1)
+                {
+                    opacity = 2 - opacity;
+                }
+
+                _layer.Opacity = opacity;
+            }
+
+            _layout.Offset = offset;
+            e.Handled = true;
+        }
+
+        private void LayoutRoot_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            var width = (float)ActualWidth;
+            var height = (float)ActualHeight;
+
+            var offset = _layout.Offset;
+
+            if (Math.Abs(e.Cumulative.Translation.X) > Math.Abs(e.Cumulative.Translation.Y))
+            {
+                var current = -width;
+                var delta = -(offset.X - current) / width;
+
+                Scroll(delta, e.Velocities.Linear.X, true);
+            }
+            else
+            {
+                var current = 0;
+                var delta = -(offset.Y - current) / height;
+
+                var maximum = current - height;
+                var minimum = current + height;
+
+                var direction = 0;
+
+                var animation = _layout.Compositor.CreateScalarKeyFrameAnimation();
+                animation.InsertKeyFrame(0, offset.Y);
+
+                if (delta < 0 && e.Velocities.Linear.Y > 1.5)
+                {
+                    // previous
+                    direction--;
+                    animation.InsertKeyFrame(1, minimum);
+                }
+                else if (delta > 0 && e.Velocities.Linear.Y < -1.5)
+                {
+                    // next
+                    direction++;
+                    animation.InsertKeyFrame(1, maximum);
+                }
+                else
+                {
+                    // back
+                    animation.InsertKeyFrame(1, current);
+                }
+
+                if (direction != 0)
+                {
+                    Layer.Visibility = Visibility.Collapsed;
+
+                    if (Transport.IsVisible)
+                    {
+                        Transport.Hide();
+                    }
+
+                    DataContext = null;
+                    Bindings.StopTracking();
+
+                    Dispose();
+                    Hide();
+                }
+                else
+                {
+                    var opacity = _layout.Compositor.CreateScalarKeyFrameAnimation();
+                    opacity.InsertKeyFrame(0, _layer.Opacity);
+                    opacity.InsertKeyFrame(1, 1);
+
+                    _layer.StartAnimation("Opacity", opacity);
+                }
+
+                _layout.StartAnimation("Offset.Y", animation);
+            }
+
+            e.Handled = true;
+        }
+
+        private void Scroll(double delta, double velocity = double.NaN, bool force = false)
+        {
+            if ((_selecting && !force) || ViewModel == null)
+            {
+                return;
+            }
+
+            _selecting = true;
+
+            var width = (float)ActualWidth;
+            var current = -width;
+
+            var maximum = current - width;
+            var minimum = current + width;
+
+            var index = ViewModel.SelectedIndex;
+            if (index == 0)
+            {
+                minimum = current;
+                delta = delta > 0 ? delta : 0;
+            }
+            if (index == ViewModel.Items.Count - 1)
+            {
+                maximum = current;
+                delta = delta < 0 ? delta : 0;
+            }
+
+            var offset = _layout.Offset;
+            var direction = 0;
+
+            var batch = _layout.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var animation = _layout.Compositor.CreateScalarKeyFrameAnimation();
+            animation.InsertKeyFrame(0, offset.X);
+
+            if (delta < 0 && (velocity > 1.5 || double.IsNaN(velocity)))
+            {
+                // previous
+                direction--;
+                animation.InsertKeyFrame(1, minimum);
+            }
+            else if (delta > 0 && (velocity < -1.5 || double.IsNaN(velocity)))
+            {
+                // next
+                direction++;
+                animation.InsertKeyFrame(1, maximum);
+            }
+            else
+            {
+                // back
+                animation.InsertKeyFrame(1, current);
+            }
+
+            _layout.StartAnimation("Offset.X", animation);
+            batch.Completed += (s, args) =>
+            {
+                if (direction != 0 && ViewModel != null)
+                {
+                    ViewModel.SelectedItem = ViewModel.Items[ViewModel.SelectedIndex + direction];
+                    PrepareNext(direction);
+
+                    Dispose();
+                }
+
+                _layout.Offset = new Vector3(-width, 0, 0);
+                _selecting = false;
+            };
+
+            batch.End();
+        }
+
+        private void PrepareNext(int direction)
+        {
+            if (ViewModel == null)
+            {
+                return;
+            }
+
+            ContentControl previous = null;
+            ContentControl target = null;
+            ContentControl next = null;
+            if (Grid.GetColumn(Element1) == direction + 1)
+            {
+                previous = Element0;
+                target = Element1;
+                next = Element2;
+            }
+            else if (Grid.GetColumn(Element0) == direction + 1)
+            {
+                previous = Element2;
+                target = Element0;
+                next = Element1;
+            }
+            else if (Grid.GetColumn(Element2) == direction + 1)
+            {
+                previous = Element1;
+                target = Element2;
+                next = Element0;
+            }
+
+            Grid.SetColumn(target, 1);
+            Grid.SetColumn(previous, 0);
+            Grid.SetColumn(next, 2);
+
+            var index = ViewModel.SelectedIndex;
+            var set = TrySet(target, ViewModel.Items[index]);
+            TrySet(previous, ViewModel.SelectedIndex > 0 ? ViewModel.Items[index - 1] : null);
+            TrySet(next, ViewModel.SelectedIndex < ViewModel.Items.Count - 1 ? ViewModel.Items[index + 1] : null);
+
+            if (set)
+            {
+                Dispose();
+            }
+
+            _selecting = false;
+        }
+
+        private ContentControl GetContainer(int direction)
+        {
+            if (Grid.GetColumn(Element1) == direction + 1)
+            {
+                return Element1;
+            }
+            else if (Grid.GetColumn(Element0) == direction + 1)
+            {
+                return Element0;
+            }
+            else if (Grid.GetColumn(Element2) == direction + 1)
+            {
+                return Element2;
+            }
+
+            return null;
+        }
+
+        private bool TrySet(ContentControl element, object content)
+        {
+            if (object.Equals(element.Content, content))
+            {
+                return false;
+            }
+
+            element.Content = content;
+            return true;
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var size = base.MeasureOverride(availableSize);
+
+            LayoutRoot.Width = availableSize.Width * 3;
+
+            if (_layout != null)
+            {
+                _layout.Offset = new Vector3((float)-availableSize.Width, 0, 0);
+            }
+
+            return size;
+        }
+
+        #endregion
     }
 }

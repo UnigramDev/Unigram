@@ -25,8 +25,9 @@ using Windows.UI.Core;
 using Windows.System;
 using System.Windows.Input;
 using Unigram.Strings;
+using Unigram.ViewModels.Dialogs;
 
-namespace Unigram.Views
+namespace Unigram.Views.Dialogs
 {
     public sealed partial class DialogSharedMediaPage : Page, IMasterDetailPage
     {
@@ -161,8 +162,8 @@ namespace Unigram.Views
             CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, messageCommon, Strings.Android.ShowInChat);
             CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Android.Delete);
             CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Android.Forward);
-            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.MessageSelect);
-            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, messageCommon, Strings.Resources.MessageSaveMedia);
+            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.Select);
+            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, messageCommon, Strings.Resources.SaveAs);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {

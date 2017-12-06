@@ -43,7 +43,7 @@ namespace Unigram.Views.Chats
             var chatFull = ViewModel.Full as TLChatFull;
             if (chatFull != null && chatFull.ChatPhoto is TLPhoto && chat != null)
             {
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, chatFull, chat);
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.CacheService, chatFull, chat);
                 await GalleryView.Current.ShowAsync(viewModel, () => Picture);
             }
         }

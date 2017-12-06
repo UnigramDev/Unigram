@@ -22,7 +22,7 @@ using Telegram.Api.TL.Messages;
 using System.Collections.Specialized;
 using Windows.Storage;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Dialogs
 {
     public class DialogStickersViewModel : UnigramViewModelBase, IHandle<RecentsDidLoadedEventArgs>, IHandle<StickersDidLoadedEventArgs>, IHandle<FeaturedStickersDidLoadedEventArgs>, IHandle<GroupStickersDidLoadedEventArgs>
     {

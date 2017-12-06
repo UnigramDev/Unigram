@@ -47,6 +47,8 @@ namespace Unigram.Common
         private int _maxSizeWidth = 800;
         private List<GroupedMessagePosition> _posArray = new List<GroupedMessagePosition>();
 
+        public int MaxSizeWidth => _maxSizeWidth;
+
         public long GroupedId { get; set; }
         public bool HasSibling { get; private set; }
 

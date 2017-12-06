@@ -27,6 +27,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
@@ -278,6 +279,17 @@ namespace Unigram.ViewModels
                     else if (ReplyInfo?.ReplyToMsgId == messages[j].Id)
                     {
                         ClearReplyCommand.Execute();
+                    }
+
+                    if (PinnedMessage?.Id == messages[j].Id)
+                    {
+                        PinnedMessage = null;
+                    }
+
+                    if (Full is TLChannelFull channelFull && channelFull.PinnedMsgId == messages[j].Id)
+                    {
+                        channelFull.PinnedMsgId = null;
+                        channelFull.HasPinnedMsgId = false;
                     }
 
                     Items.Remove(messages[j]);
@@ -748,7 +760,7 @@ namespace Unigram.ViewModels
                 try
                 {
                     var dataPackage = new DataPackage();
-                    dataPackage.SetStorageItems(new[] { result });
+                    dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(result));
                     ClipboardEx.TrySetContent(dataPackage);
                 }
                 catch { }
@@ -1023,10 +1035,14 @@ namespace Unigram.ViewModels
                 var dialog = new TLMessageDialog();
                 dialog.Title = Strings.Android.AppName;
                 dialog.Message = channel.IsBroadcast ? Strings.Android.PinMessageAlertChannel : Strings.Android.PinMessageAlert;
-                dialog.CheckBoxLabel = Strings.Android.PinNotify;
-                dialog.IsChecked = true;
                 dialog.PrimaryButtonText = Strings.Android.OK;
                 dialog.SecondaryButtonText = Strings.Android.Cancel;
+
+                if (channel.IsMegaGroup)
+                {
+                    dialog.CheckBoxLabel = Strings.Android.PinNotify;
+                    dialog.IsChecked = true;
+                }
 
                 var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
@@ -1219,7 +1235,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var confirm = await TLMessageDialog.ShowAsync(urlButton.Url, Strings.Android.OpenUrlAlert, Strings.Android.OK, Strings.Android.Cancel);
+                        var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.OpenUrlAlert, urlButton.Url), Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;

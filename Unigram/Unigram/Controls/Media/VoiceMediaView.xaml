@@ -14,7 +14,7 @@
 
     <UserControl.Resources>
         <Style TargetType="controls:ProgressVoice">
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="Foreground" Value="{ThemeResource MessageHeaderBorderBrush}" />
             <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
             <Setter Property="BorderThickness" Value="{ThemeResource ProgressBarBorderThemeThickness}" />
             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlHighlightTransparentBrush}" />

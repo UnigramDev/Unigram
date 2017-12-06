@@ -78,7 +78,8 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- The user can enter their phone number here -->
-                <controls:UpdateTextBox Text="{Binding PhoneCode, Mode=TwoWay}"
+                <controls:UpdateTextBox x:Name="PhoneCode"
+                                        Text="{Binding PhoneCode, Mode=TwoWay}"
                                         Margin="0,0,8,0"
                                         Width="30"
                                         InputScope="TelephoneNumber"
@@ -86,6 +87,7 @@
                                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
                 <controls:UpdateTextBox x:Name="PrimaryInput"
                                         Text="{Binding PhoneNumber, Mode=TwoWay}"
+                                        KeyDown="PrimaryInput_KeyDown"
                                         MinWidth="200"
                                         InputScope="TelephoneNumber"
                                         IsTextPredictionEnabled="False"

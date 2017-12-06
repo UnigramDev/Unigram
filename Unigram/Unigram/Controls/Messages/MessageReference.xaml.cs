@@ -832,7 +832,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = string.Empty;
-            ServiceLabel.Text = message is TLMessageEmpty ? "Deleted message" : string.Empty;
+            ServiceLabel.Text = message is TLMessageEmpty ? Strings.Resources.DeletedMessage : string.Empty;
             MessageLabel.Text = string.Empty;
             return true;
         }

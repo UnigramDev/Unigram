@@ -652,9 +652,32 @@ void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, Strin
 
 void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
 {
+	bool allow = true;
+	//auto settings = ApplicationData::Current->LocalSettings;
+	//if (settings->Values->HasKey("SessionGuid"))
+	//{
+	//	auto guid = safe_cast<String^>(settings->Values->Lookup("SessionGuid"));
+
+	//	std::wstringstream path;
+	//	path << temp->Data()
+	//		<< L"\\"
+	//		<< guid->Data()
+	//		<< L"\\passcode_params.dat";
+
+	//	WIN32_FIND_DATA FindFileData;
+	//	HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
+	//	int found = handle != INVALID_HANDLE_VALUE;
+	//	if (found)
+	//	{
+	//		FindClose(handle);
+
+	//		allow = false;
+	//	}
+	//}
+
 	std::wstring key = loc_key->Data();
 	std::wstring actions = L"";
-	if (group != nullptr && key.find(L"CHANNEL"))
+	if (group != nullptr && key.find(L"CHANNEL") && allow)
 	{
 		actions = L"<actions><input id='QuickMessage' type='text' placeHolderContent='Type a message...' /><action activationType='background' arguments='";
 		actions += launch->Data();
@@ -671,8 +694,8 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	xml += launch->Data();
 	xml += L"' displaytimestamp='";
 	xml += date->Data();
-	xml += L"' hint-people='remoteid:";
-	xml += group->Data();
+	//xml += L"' hint-people='remoteid:";
+	//xml += group->Data();
 	xml += L"'><visual><binding template='ToastGeneric'>";
 
 	if (picture != nullptr)

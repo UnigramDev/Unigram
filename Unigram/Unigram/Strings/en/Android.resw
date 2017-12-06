@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -225,7 +226,7 @@
     <value>un1 pinned a sticker</value>
   </data>
   <data name="ActionPinnedText" xml:space="preserve">
-    <value>un1 pinned \"{0}\"</value>
+    <value>un1 pinned "{0}"</value>
   </data>
   <data name="ActionPinnedVideo" xml:space="preserve">
     <value>un1 pinned a video</value>
@@ -570,7 +571,7 @@ Remember, logging out kills all your Secret Chats.</value>
   <data name="AskAQuestionInfo" xml:space="preserve">
     <value>Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.
 
-Please take a look at the &lt;a href=\"https://telegram.org/faq#general\"&gt;Telegram FAQ&lt;/a&gt;: it has answers to most questions and important tips for &lt;a href=\"https://telegram.org/faq#troubleshooting\"&gt;troubleshooting&lt;/a&gt;.</value>
+Please take a look at the &lt;a href="https://telegram.org/faq#general"&gt;Telegram FAQ&lt;/a&gt;: it has answers to most questions and important tips for &lt;a href="https://telegram.org/faq#troubleshooting"&gt;troubleshooting&lt;/a&gt;.</value>
   </data>
   <data name="AskButton" xml:space="preserve">
     <value>Ask a volunteer</value>
@@ -1846,7 +1847,7 @@ Learn more at telegram.org</value>
     <value>un1 set a new channel photo</value>
   </data>
   <data name="EventLogEditedChannelTitle" xml:space="preserve">
-    <value>un1 renamed the channel to \"{0}\"</value>
+    <value>un1 renamed the channel to "{0}"</value>
   </data>
   <data name="EventLogEditedGroupDescription" xml:space="preserve">
     <value>un1 edited the group description:</value>
@@ -1855,7 +1856,7 @@ Learn more at telegram.org</value>
     <value>un1 set a new group photo</value>
   </data>
   <data name="EventLogEditedGroupTitle" xml:space="preserve">
-    <value>un1 renamed the group to \"{0}\"</value>
+    <value>un1 renamed the group to "{0}"</value>
   </data>
   <data name="EventLogEditedMessages" xml:space="preserve">
     <value>un1 edited this message:</value>
@@ -3249,10 +3250,10 @@ or tap the menu button for more options.</value>
     <value>{0} pinned a {1} sticker</value>
   </data>
   <data name="NotificationActionPinnedText" xml:space="preserve">
-    <value>{0} pinned \"{1}\" in the group {2}</value>
+    <value>{0} pinned "{1}" in the group {2}</value>
   </data>
   <data name="NotificationActionPinnedTextChannel" xml:space="preserve">
-    <value>{0} pinned \"{1}\"</value>
+    <value>{0} pinned "{1}"</value>
   </data>
   <data name="NotificationActionPinnedVideo" xml:space="preserve">
     <value>{0} pinned a video in the group {1}</value>
@@ -3509,10 +3510,10 @@ The Telegram Team</value>
     <value>Only if silent</value>
   </data>
   <data name="OnlyWhenScreenOff" xml:space="preserve">
-    <value>Only when screen \"off\"</value>
+    <value>Only when screen "off"</value>
   </data>
   <data name="OnlyWhenScreenOn" xml:space="preserve">
-    <value>Only when screen \"on\"</value>
+    <value>Only when screen "on"</value>
   </data>
   <data name="Open" xml:space="preserve">
     <value>Open</value>
@@ -4190,12 +4191,12 @@ If you reset your account, all your messages and chats will be deleted.</value>
   <data name="RevokeLinkAlert" xml:space="preserve">
     <value>Are you sure you want to revoke the link **{0}**?
 
-The group \"**{1}**\" will become private.</value>
+The group "**{1}**" will become private.</value>
   </data>
   <data name="RevokeLinkAlertChannel" xml:space="preserve">
     <value>Are you sure you want to revoke the link **{0}**?
 
-The channel \"**{1}**\" will become private.</value>
+The channel "**{1}**" will become private.</value>
   </data>
   <data name="RoamingUsage" xml:space="preserve">
     <value>Roaming Data Usage</value>

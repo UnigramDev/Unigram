@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -37,6 +38,8 @@ namespace Unigram.Selectors
         public DataTemplate WebPagePhotoTemplate { get; set; }
         public DataTemplate WebPageSmallPhotoTemplate { get; set; }
         public DataTemplate WebPageTemplate { get; set; }
+
+        public DataTemplate GroupedTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -106,7 +109,7 @@ namespace Unigram.Selectors
 
                     item = documentMedia.Document;
                 }
-                
+
                 if (item is TLDocument document)
                 {
                     if (TLMessage.IsVoice(document))
@@ -187,6 +190,10 @@ namespace Unigram.Selectors
                     }
                 }
                 return WebPageTemplate;
+            }
+            else if (item is TLMessageMediaGroup)
+            {
+                return GroupedTemplate;
             }
             else if (item is TLMessageMediaUnsupported)
             {

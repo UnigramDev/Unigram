@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Unigram.Views.DialogSharedMediaPage"
+    x:Class="Unigram.Views.Dialogs.DialogSharedMediaPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
@@ -102,14 +102,14 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                        <!--<TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
                                                    Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
                                                    VerticalAlignment="Bottom"
                                                    Margin="0,0,0,1"
                                                    Grid.Column="1">
                                             <Run Text="{Binding Count}"/>
                                             <Run Text="files"/>
-                                        </TextBlock>
+                                        </TextBlock>-->
                                     </Grid>
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
@@ -205,14 +205,14 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                        <!--<TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
                                                    Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
                                                    VerticalAlignment="Bottom"
                                                    Margin="0,0,0,1"
                                                    Grid.Column="1">
                                             <Run Text="{Binding Count}"/>
                                             <Run Text="files"/>
-                                        </TextBlock>
+                                        </TextBlock>-->
                                     </Grid>
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
@@ -290,14 +290,14 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                        <!--<TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
                                                    Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
                                                    VerticalAlignment="Bottom"
                                                    Margin="0,0,0,1"
                                                    Grid.Column="1">
                                             <Run Text="{Binding Count}"/>
                                             <Run Text="files"/>
-                                        </TextBlock>
+                                        </TextBlock>-->
                                     </Grid>
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
@@ -359,7 +359,7 @@
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
                         FontWeight="SemiBold"
-                        MinWidth="48"
+                        Padding="12,0"
                         Height="48"
                         Grid.Column="3">
                     <ContentControl.ContentTransitions>

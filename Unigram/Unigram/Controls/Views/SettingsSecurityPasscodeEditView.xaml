@@ -16,7 +16,7 @@
     <StackPanel>
         <PasswordBox
             x:Name="First"
-            Header="{CustomResource EnterNewFirstPasscode}"
+            PlaceholderText="{CustomResource EnterNewFirstPasscode}"
             MaxLength="4"
             PasswordChanged="First_Changed"
             KeyDown="Password_KeyDown"
@@ -24,7 +24,7 @@
             Margin="12,16,12,12"/>
         <PasswordBox
             x:Name="Confirm"
-            Header="{CustomResource ReEnterYourPasscode}"
+            PlaceholderText="{CustomResource ReEnterYourPasscode}"
             MaxLength="4"
             PasswordChanged="Confirm_Changed"
             KeyDown="Password_KeyDown"

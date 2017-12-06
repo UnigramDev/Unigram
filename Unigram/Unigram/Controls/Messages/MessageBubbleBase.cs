@@ -205,6 +205,16 @@ namespace Unigram.Controls.Messages
                 paragraph.Inlines.Add(hyperlink);
             }
 
+            if (paragraph.Inlines.Count > 0)
+            {
+                if (admin != null && !message.IsOut && message.IsAdmin())
+                {
+                    paragraph.Inlines.Add(new Run { Text = " " + Strings.Android.ChatAdmin, Foreground = null });
+                }
+            }
+
+            var forward = false;
+
             if (message.HasFwdFrom && !sticker && !message.IsSaved())
             {
                 if (paragraph.Inlines.Count > 0)
@@ -247,6 +257,7 @@ namespace Unigram.Controls.Messages
                 hyperlink.Click += (s, args) => FwdFrom_Click(message);
 
                 paragraph.Inlines.Add(hyperlink);
+                forward = true;
             }
 
             if (message.HasViaBotId && message.ViaBot != null && !message.ViaBot.IsDeleted && message.ViaBot.HasUsername)
@@ -258,16 +269,23 @@ namespace Unigram.Controls.Messages
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : paragraph.Foreground;
                 hyperlink.Click += (s, args) => ViaBot_Click(message);
 
-                paragraph.Inlines.Add(hyperlink);
+                if (paragraph.Inlines.Count > 0 && !forward)
+                {
+                    paragraph.Inlines.Insert(1, hyperlink);
+                }
+                else
+                {
+                    paragraph.Inlines.Add(hyperlink);
+                }
             }
 
             if (paragraph.Inlines.Count > 0)
             {
-                if (paragraph != admin && !message.IsOut && message.IsAdmin())
+                if (admin != null && !message.IsOut && message.IsAdmin())
                 {
                     admin.Visibility = Visibility.Visible;
                 }
-                else
+                else if (admin != null)
                 {
                     admin.Visibility = Visibility.Collapsed;
                 }
@@ -278,8 +296,12 @@ namespace Unigram.Controls.Messages
             }
             else
             {
+                if (admin != null)
+                {
+                    admin.Visibility = Visibility.Collapsed;
+                }
+
                 paragraph.Visibility = Visibility.Collapsed;
-                admin.Visibility = Visibility.Collapsed;
                 parent.Visibility = message.ReplyToMsgId.HasValue ? Visibility.Visible : Visibility.Collapsed;
             }
         }
@@ -430,9 +452,15 @@ namespace Unigram.Controls.Messages
 
                 goto Calculate;
             }
+            else if (constraint is TLMessageMediaGroup)
+            {
+                width = 320;
+                height = 420;
 
-            var photo = constraint as TLPhoto;
-            if (photo != null)
+                goto Calculate;
+            }
+
+            if (constraint is TLPhoto photo)
             {
                 if (fixedSize)
                 {
@@ -485,8 +513,16 @@ namespace Unigram.Controls.Messages
                 var video = attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 if (video != null)
                 {
-                    width = video.W;
-                    height = video.H;
+                    if (video.IsRoundMessage)
+                    {
+                        width = 200;
+                        height = 200;
+                    }
+                    else
+                    {
+                        width = video.W;
+                        height = video.H;
+                    }
 
                     goto Calculate;
                 }
@@ -526,23 +562,25 @@ namespace Unigram.Controls.Messages
         {
             if (media == null) return false;
 
-            if (media.TypeId == TLType.MessageMediaGeo) return true;
-            else if (media.TypeId == TLType.MessageMediaGeoLive) return true;
-            else if (media.TypeId == TLType.MessageMediaVenue) return true;
-            else if (media.TypeId == TLType.MessageMediaPhoto) return true;
-            else if (media.TypeId == TLType.MessageMediaDocument)
+            if (media is TLMessageMediaGeo) return true;
+            else if (media is TLMessageMediaGeoLive) return true;
+            else if (media is TLMessageMediaVenue) return true;
+            else if (media is TLMessageMediaPhoto) return true;
+            else if (media is TLMessageMediaDocument documentMedia)
             {
-                var documentMedia = media as TLMessageMediaDocument;
                 if (TLMessage.IsGif(documentMedia.Document)) return true;
                 else if (TLMessage.IsVideo(documentMedia.Document)) return true;
             }
-            else if (media.TypeId == TLType.MessageMediaInvoice && width)
+            else if (media is TLMessageMediaInvoice invoiceMedia && width)
             {
-                var invoiceMedia = media as TLMessageMediaInvoice;
                 if (invoiceMedia.HasPhoto && invoiceMedia.Photo != null)
                 {
                     return true;
                 }
+            }
+            else if (media is TLMessageMediaGroup)
+            {
+                return true;
             }
             //else if (media.TypeId == TLType.MessageMediaWebPage && width)
             //{
@@ -561,10 +599,10 @@ namespace Unigram.Controls.Messages
         {
             if (media == null) return false;
 
-            if (media.TypeId == TLType.MessageMediaContact) return true;
-            else if (media.TypeId == TLType.MessageMediaGeoLive) return true;
-            else if (media.TypeId == TLType.MessageMediaVenue) return true;
-            else if (media.TypeId == TLType.MessageMediaPhoto)
+            if (media is TLMessageMediaContact) return true;
+            else if (media is TLMessageMediaGeoLive) return true;
+            else if (media is TLMessageMediaVenue) return true;
+            else if (media is TLMessageMediaPhoto)
             {
                 var photoMedia = media as TLMessageMediaPhoto;
                 if (string.IsNullOrWhiteSpace(photoMedia.Caption))
@@ -574,9 +612,8 @@ namespace Unigram.Controls.Messages
 
                 return true;
             }
-            else if (media.TypeId == TLType.MessageMediaDocument)
+            else if (media is TLMessageMediaDocument documentMedia)
             {
-                var documentMedia = media as TLMessageMediaDocument;
                 if (TLMessage.IsMusic(documentMedia.Document)) return true;
                 else if (TLMessage.IsVoice(documentMedia.Document)) return true;
                 else if (TLMessage.IsVideo(documentMedia.Document))

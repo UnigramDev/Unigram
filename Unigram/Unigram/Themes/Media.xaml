@@ -330,9 +330,9 @@
         <StackPanel Margin="0,8,0,6">
             <Border BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
                 <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" Margin="0,0,0,2" Style="{StaticResource CaptionRichTextBlockStyle}">
-                    <RichTextBlock.Resources>
-                        <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
-                    </RichTextBlock.Resources>
+                    <Paragraph>
+                        <Run Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold"/><Run FontWeight="SemiBold"/><Run/>
+                    </Paragraph>
                 </RichTextBlock>
             </Border>
 
@@ -354,9 +354,9 @@
                 </Grid.ColumnDefinitions>
 
                 <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" OverflowContentTarget="{Binding ElementName=OverflowArea}" MaxLines="3" TextTrimming="CharacterEllipsis" Margin="0,0,8,0" Style="{StaticResource CaptionRichTextBlockStyle}">
-                    <RichTextBlock.Resources>
-                        <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
-                    </RichTextBlock.Resources>
+                    <Paragraph>
+                        <Run Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold"/><Run FontWeight="SemiBold"/><Run/>
+                    </Paragraph>
                 </RichTextBlock>
 
                 <Border Width="48" Height="48" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Grid.Column="1">
@@ -374,9 +374,9 @@
         <StackPanel Margin="0,8,0,6">
             <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
                 <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" MaxLines="6" TextTrimming="CharacterEllipsis" Margin="0,0,0,8" Style="{StaticResource CaptionRichTextBlockStyle}">
-                    <RichTextBlock.Resources>
-                        <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
-                    </RichTextBlock.Resources>
+                    <Paragraph>
+                        <Run Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold"/><Run FontWeight="SemiBold"/><Run/>
+                    </Paragraph>
                 </RichTextBlock>
 
                 <Grid Background="Black"
@@ -396,6 +396,10 @@
                                              IsTransferring="{Binding Media.WebPage.Photo.IsTransferring}"
                                              Progress="{Binding Media.WebPage.Photo.Progress}"
                                              Style="{StaticResource MediaTransferButtonStyle}"/>
+
+                    <Grid Visibility="{Binding Media.WebPage.Info, Converter={StaticResource NullToVisibilityConverter}}" Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">
+                        <TextBlock Text="{Binding Media.WebPage.Info}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                    </Grid>
                 </Grid>
             </StackPanel>
 
@@ -407,9 +411,9 @@
         <StackPanel Margin="0,8,0,6">
             <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
                 <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" MaxLines="6" TextTrimming="CharacterEllipsis" Margin="0,0,0,8" Style="{StaticResource CaptionRichTextBlockStyle}">
-                    <RichTextBlock.Resources>
-                        <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
-                    </RichTextBlock.Resources>
+                    <Paragraph>
+                        <Run Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold"/><Run FontWeight="SemiBold"/><Run/>
+                    </Paragraph>
                 </RichTextBlock>
 
                 <ContentControl x:Name="Media"
@@ -535,7 +539,13 @@
 
     <DataTemplate x:Key="MediaEmptyTemplate"/>
 
-
+    <DataTemplate x:Key="MediaGroupedTemplate">
+        <ItemsControl ItemsSource="{Binding Media.Layout.Messages}"
+                      ItemTemplateSelector="{StaticResource MediaTemplateSelector}">
+            
+        </ItemsControl>
+    </DataTemplate>
+    
     <selectors:MediaTemplateSelector x:Key="MediaTemplateSelector"
                                      EmptyTemplate="{StaticResource MediaEmptyTemplate}"
                                      AudioTemplate="{StaticResource MediaAudioTemplate}"
@@ -561,6 +571,7 @@
                                      WebPageSmallPhotoTemplate="{StaticResource MediaWebPageSmallPhotoTemplate}"
                                      InvoiceTemplate="{StaticResource MediaInvoiceTemplate}"
                                      InvoicePhotoTemplate="{StaticResource MediaInvoicePhotoTemplate}"
-                                     UnsupportedTemplate="{StaticResource MediaUnsupportedTemplate}"/>
+                                     UnsupportedTemplate="{StaticResource MediaUnsupportedTemplate}"
+                                     GroupedTemplate="{StaticResource MediaGroupedTemplate}"/>
 
 </ResourceDictionary>

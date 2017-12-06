@@ -1,5 +1,6 @@
 ﻿using System;
 using Telegram.Intro;
+using Unigram.Common;
 using Unigram.Views.SignIn;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -44,8 +45,12 @@ namespace Unigram.Views
         {
             if (_renderer == null)
             {
-                _renderer = new TLIntroRenderer(SwapChain);
-                _renderer.Loaded();
+                try
+                {
+                    _renderer = new TLIntroRenderer(SwapChain, ApplicationSettings.Current.CurrentTheme);
+                    _renderer.Loaded();
+                }
+                catch { }
             }
         }
 
@@ -53,8 +58,12 @@ namespace Unigram.Views
         {
             if (_renderer != null)
             {
-                _renderer.Dispose();
-                _renderer = null;
+                try
+                {
+                    _renderer.Dispose();
+                    _renderer = null;
+                }
+                catch { }
             }
         }
 

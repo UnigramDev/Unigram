@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Common
 {
-    public static class UnigramNavigationService 
+    public static class UnigramNavigationService
     {
         private static ContentDialog _currentDialog;
 
@@ -88,7 +88,14 @@ namespace Unigram.Common
 
 
 
-
+        public static void Reset(this INavigationService service)
+        {
+            var cacheSize = service.Frame.CacheSize;
+            service.Frame.CacheSize = 0;
+            service.Refresh();
+            service.Frame.BackStack.Clear();
+            service.Frame.CacheSize = cacheSize;
+        }
 
         public static void GoBackAt(this INavigationService service, int index)
         {
@@ -170,7 +177,7 @@ namespace Unigram.Common
                     {
                         await page.ViewModel.LoadMessageSliceAsync(null, message.Value);
                     }
-                    
+
                     if (accessToken != null)
                     {
                         page.ViewModel.AccessToken = accessToken;
@@ -231,6 +238,23 @@ namespace Unigram.Common
             //{
             //    service.Navigate(typeof(DialogPage), peer);
             //}
+        }
+
+        public static void NavigateToMain(this INavigationService service, string parameter)
+        {
+            NavigatedEventHandler handler = null;
+            handler = (s, args) =>
+            {
+                service.Frame.Navigated -= handler;
+
+                if (args.Content is MainPage page)
+                {
+                    page.Activate(parameter);
+                }
+            };
+
+            service.Frame.Navigated += handler;
+            service.Navigate(typeof(MainPage));
         }
 
         #region Payments

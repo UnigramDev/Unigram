@@ -31,5 +31,20 @@ namespace Telegram.Api.TL
                 }
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is TLUserProfilePhoto photo)
+            {
+                return this.PhotoId == photo.PhotoId;
+            }
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.PhotoId.GetHashCode();
+        }
     }
 }

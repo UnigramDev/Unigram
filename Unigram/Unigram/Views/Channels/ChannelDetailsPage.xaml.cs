@@ -43,7 +43,7 @@ namespace Unigram.Views.Channels
             var channelFull = ViewModel.Full as TLChannelFull;
             if (channelFull != null && channelFull.ChatPhoto is TLPhoto && channel != null)
             {
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, channelFull, channel);
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.CacheService, channelFull, channel);
                 await GalleryView.Current.ShowAsync(viewModel, () => Picture);
             }
         }

@@ -372,7 +372,7 @@ namespace Unigram.ViewModels
             //    Debugger.Break();
             //});
 
-            //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.4" }, result =>
+            //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.5" }, result =>
             //{
             //    _updatesService.ProcessUpdates(result, true);
             //},

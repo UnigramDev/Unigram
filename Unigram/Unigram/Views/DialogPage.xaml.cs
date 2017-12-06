@@ -59,6 +59,7 @@ using LinqToVisualTree;
 using Unigram.Models;
 using System.Windows.Input;
 using Unigram.Strings;
+using Unigram.Views.Dialogs;
 
 namespace Unigram.Views
 {
@@ -557,11 +558,11 @@ namespace Unigram.Views
 
             if (e.IsLocal)
             {
-                ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
+                ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia>(ViewModel.MediaLibrary), e.Item);
             }
             else
             {
-                ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia>(ViewModel.MediaLibrary), e.Item);
+                ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
             }
         }
 
@@ -658,7 +659,18 @@ namespace Unigram.Views
             else if (package.Contains(StandardDataFormats.Text))
             {
                 var text = await package.GetTextAsync();
+
+                if (package.Contains(StandardDataFormats.WebLink))
+                {
+                    text += Environment.NewLine + await package.GetWebLinkAsync();
+                }
+
                 TextField.Document.GetRange(TextField.Document.Selection.EndPosition, TextField.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
+            }
+            else if (package.Contains(StandardDataFormats.WebLink))
+            {
+                var text = await package.GetWebLinkAsync();
+                TextField.Document.GetRange(TextField.Document.Selection.EndPosition, TextField.Document.Selection.EndPosition).SetText(TextSetOptions.None, text.ToString());
             }
         }
 
@@ -859,6 +871,80 @@ namespace Unigram.Views
 
         #region Context menu
 
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            var currentUser = ViewModel.With as TLUser;
+            var currentChat = ViewModel.With as TLChat;
+            var currentChannel = ViewModel.With as TLChannel;
+            var currentDialog = ViewModel.Dialog as TLDialog;
+
+            CreateFlyoutItem(ref flyout, ViewModel.SearchCommand, Strings.Android.Search);
+
+            if (currentChannel != null && !currentChannel.IsCreator && (!currentChannel.IsMegaGroup || (currentChannel.Username != null && currentChannel.Username.Length > 0)))
+            {
+                CreateFlyoutItem(ref flyout, null, Strings.Android.ReportChat);
+            }
+            if (currentUser != null)
+            {
+                if (ViewModel.IsShareContactAvailable)
+                {
+                    CreateFlyoutItem(ref flyout, ViewModel.ShareContactCommand, Strings.Android.ShareMyContactInfo);
+                }
+                else if (ViewModel.IsAddContactAvailable)
+                {
+                    CreateFlyoutItem(ref flyout, ViewModel.AddContactCommand, Strings.Android.AddToContacts);
+                }
+            }
+            //if (this.currentEncryptedChat != null)
+            //{
+            //    this.timeItem2 = this.headerItem.addSubItem(13, LocaleController.getString("SetTimer", R.string.SetTimer));
+            //}
+            if (currentUser != null || currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup && string.IsNullOrEmpty(currentChannel.Username)))
+            {
+                CreateFlyoutItem(ref flyout, ViewModel.DialogClearCommand, Strings.Android.ClearHistory);
+            }
+            if (currentUser != null)
+            {
+                CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Android.DeleteChatUser);
+            }
+            if (currentChat != null)
+            {
+                CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Android.DeleteAndExit);
+            }
+            if (currentDialog != null && (currentUser != null || currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup && string.IsNullOrEmpty(currentChannel.Username))))
+            {
+                CreateFlyoutItem(ref flyout, ViewModel.ToggleMuteCommand, currentDialog.IsMuted ? Strings.Android.UnmuteNotifications : Strings.Android.MuteNotifications);
+            }
+
+            //if (currentUser == null || !currentUser.IsSelf)
+            //{
+            //    this.muteItem = this.headerItem.addSubItem(18, null);
+            //}
+            //else if (currentUser.IsSelf)
+            //{
+            //    CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
+            //}
+            if (currentUser != null && currentUser.IsBot && ViewModel.Full is TLUserFull userFull && userFull.HasBotInfo)
+            {
+                if (userFull.BotInfo.Commands.Any(x => x.Command.Equals("settings")))
+                {
+                    CreateFlyoutItem(ref flyout, null, Strings.Android.BotSettings);
+                }
+
+                if (userFull.BotInfo.Commands.Any(x => x.Command.Equals("help")))
+                {
+                    CreateFlyoutItem(ref flyout, null, Strings.Android.BotHelp);
+                }
+            }
+
+            if (flyout.Items.Count > 0)
+            {
+                flyout.ShowAt((Button)sender);
+            }
+        }
+
         private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
@@ -873,10 +959,10 @@ namespace Unigram.Views
             CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, Strings.Android.Edit);
             CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Android.Forward);
             CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Android.Delete);
-            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.MessageSelect);
+            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.Select);
             CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, Strings.Android.Copy);
-            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, messageCommon, Strings.Resources.MessageCopyMedia);
-            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? Strings.Resources.MessageCopyLinkBroadcast : Strings.Resources.MessageCopyLinkMegaGroup);
+            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, messageCommon, Strings.Resources.CopyImage);
+            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? Strings.Resources.CopyPostLink : Strings.Resources.CopyMessageLink);
 
             // Stickers
             CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), messageCommon, Strings.Android.AddToStickers);
@@ -884,7 +970,7 @@ namespace Unigram.Views
             CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, Strings.Android.RemovedFromFavorites);
 
             CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, Strings.Android.SaveToGIFs);
-            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.MessageSaveMedia);
+            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.SaveAs);
             //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, AppResources.MessageSaveDownload);
 
             //sender.ContextFlyout = menu;
@@ -913,6 +999,16 @@ namespace Unigram.Views
 
                 flyout.Items.Add(flyoutItem);
             }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, ICommand command, string text)
+        {
+            var flyoutItem = new MenuFlyoutItem();
+            flyoutItem.IsEnabled = command != null;
+            flyoutItem.Command = command;
+            flyoutItem.Text = text;
+
+            flyout.Items.Add(flyoutItem);
         }
 
         private Visibility MessageReply_Loaded(TLMessageCommonBase messageCommon)
@@ -1706,7 +1802,7 @@ namespace Unigram.Views
 
         private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var height = e.NewSize.Height;
+            var height = ListAutocomplete.ItemsPanelRoot.ActualHeight;
             var padding = ListAutocomplete.ActualHeight - Math.Min(154, ListAutocomplete.Items.Count * 44);
 
             //ListAutocomplete.Padding = new Thickness(0, padding, 0, 0);
@@ -1874,7 +1970,7 @@ namespace Unigram.Views
                     }
 
                     if (refresh)
-                    { 
+                    {
                         sender.RequestedTheme = ElementTheme.Dark;
                         sender.RequestedTheme = ElementTheme.Default;
                     }
@@ -1918,15 +2014,8 @@ namespace Unigram.Views
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
     {
-        public StorageLibrary Library => _library;
-        public StorageFileQueryResult Query => _query;
-
-        private readonly StorageMediaComparer _comparer;
-
-        private StorageLibrary _library;
-        private StorageFileQueryResult _query;
-
-        private uint _startIndex;
+        public StorageFileQueryResult Query { get; private set; }
+        public uint StartIndex { get; private set; }
 
         public MediaLibraryCollection()
         {
@@ -1935,7 +2024,12 @@ namespace Unigram.Views
                 return;
             }
 
-            _comparer = new StorageMediaComparer();
+            var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
+            queryOptions.FolderDepth = FolderDepth.Deep;
+
+            Query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
+            Query.ContentsChanged += OnContentsChanged;
+            StartIndex = 0;
         }
 
         private int _selectedCount;
@@ -1947,130 +2041,24 @@ namespace Unigram.Views
             }
         }
 
-        private async void OnContentsChanged(IStorageQueryResultBase sender, object args)
+        private void OnContentsChanged(IStorageQueryResultBase sender, object args)
         {
-            var reader = _library.ChangeTracker.GetChangeReader();
-            var changes = await reader.ReadBatchAsync();
-
-            foreach (StorageLibraryChange change in changes)
+            Execute.BeginOnUIThread(() =>
             {
-                if (change.ChangeType == StorageLibraryChangeType.ChangeTrackingLost)
-                {
-                    // Change tracker is in an invalid state and must be reset
-                    // This should be a very rare case, but must be handled
-                    Library.ChangeTracker.Reset();
-                    return;
-                }
-                if (change.IsOfType(StorageItemTypes.File))
-                {
-                    await ProcessFileChange(change);
-                }
-                else if (change.IsOfType(StorageItemTypes.Folder))
-                {
-                    // No-op; not interested in folders
-                }
-                else
-                {
-                    if (change.ChangeType == StorageLibraryChangeType.Deleted)
-                    {
-                        //UnknownItemRemoved(change.Path);
-                    }
-                }
-            }
-
-            // Mark that all the changes have been seen and for the change tracker
-            // to never return these changes again
-            await reader.AcceptChangesAsync();
-        }
-
-        private async Task ProcessFileChange(StorageLibraryChange change)
-        {
-            switch (change.ChangeType)
-            {
-                // New File in the Library
-                case StorageLibraryChangeType.Created:
-                case StorageLibraryChangeType.MovedIntoLibrary:
-                case StorageLibraryChangeType.MovedOrRenamed:
-                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        var file = (StorageFile)(await change.GetStorageItemAsync());
-
-                        Execute.BeginOnUIThread(async () =>
-                        {
-                            var storage = await StorageMedia.CreateAsync(file, false);
-                            if (storage != null)
-                            {
-                                var array = this.ToArray();
-                                var index = Array.BinarySearch(array, storage, _comparer);
-                                if (index < 0) index = ~index;
-
-                                // Insert only if newer than the last item
-                                if (index < array.Length || !HasMoreItems)
-                                {
-                                    _startIndex++;
-
-                                    Insert(index, storage);
-                                    storage.PropertyChanged += OnPropertyChanged;
-                                }
-                            }
-                        });
-                    }
-                    break;
-                // File Removed From Library
-                case StorageLibraryChangeType.Deleted:
-                case StorageLibraryChangeType.MovedOutOfLibrary:
-                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        Execute.BeginOnUIThread(() =>
-                        {
-                            var already = this.FirstOrDefault(x => x.File.Path.Equals(change.Path));
-                            if (already != null)
-                            {
-                                _startIndex--;
-
-                                Remove(already);
-                                UpdateSelected();
-                            }
-                        });
-                    }
-                    break;
-                // Modified Contents
-                case StorageLibraryChangeType.ContentsChanged:
-                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        var file = (StorageFile)(await change.GetStorageItemAsync());
-
-                        // Update thumbnail maybe
-                    }
-                    break;
-                // Ignored Cases
-                case StorageLibraryChangeType.EncryptionChanged:
-                case StorageLibraryChangeType.ContentsReplaced:
-                case StorageLibraryChangeType.IndexingStatusChanged:
-                default:
-                    // These are safe to ignore in this application
-                    break;
-            }
+                StartIndex = 0;
+                Clear();
+                UpdateCount();
+            });
         }
 
         public override async Task<IList<StorageMedia>> LoadDataAsync()
         {
-            if (_library == null)
-            {
-                _library = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
-                _library.ChangeTracker.Enable();
-
-                var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
-                queryOptions.FolderDepth = FolderDepth.Deep;
-
-                _query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
-                _query.ContentsChanged += OnContentsChanged;
-            }
-
             var items = new List<StorageMedia>();
-            var result = await _query.GetFilesAsync(_startIndex, 10);
+            uint resultCount = 0;
+            var result = await Query.GetFilesAsync(StartIndex, 10);
+            StartIndex += (uint)result.Count;
 
-            _startIndex += (uint)result.Count;
+            resultCount = (uint)result.Count;
 
             foreach (var file in result)
             {
@@ -2089,22 +2077,206 @@ namespace Unigram.Views
         {
             if (e.PropertyName.Equals("IsSelected"))
             {
-                UpdateSelected();
+                UpdateCount();
             }
         }
 
-        private void UpdateSelected()
+        private void UpdateCount()
         {
             _selectedCount = this.Count(x => x.IsSelected);
             OnPropertyChanged(new PropertyChangedEventArgs("SelectedCount"));
         }
-
-        class StorageMediaComparer : IComparer<StorageMedia>
-        {
-            public int Compare(StorageMedia x, StorageMedia y)
-            {
-                return y.Basic.ItemDate.CompareTo(x.Basic.ItemDate);
-            }
-        }
     }
+
+    //public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
+    //{
+    //    public StorageLibrary Library => _library;
+    //    public StorageFileQueryResult Query => _query;
+
+    //    private readonly StorageMediaComparer _comparer;
+
+    //    private StorageLibrary _library;
+    //    private StorageFileQueryResult _query;
+
+    //    private uint _startIndex;
+
+    //    public MediaLibraryCollection()
+    //    {
+    //        if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+    //        {
+    //            return;
+    //        }
+
+    //        _comparer = new StorageMediaComparer();
+    //    }
+
+    //    private int _selectedCount;
+    //    public int SelectedCount
+    //    {
+    //        get
+    //        {
+    //            return _selectedCount;
+    //        }
+    //    }
+
+    //    private async void OnContentsChanged(IStorageQueryResultBase sender, object args)
+    //    {
+    //        var reader = _library.ChangeTracker.GetChangeReader();
+    //        var changes = await reader.ReadBatchAsync();
+
+    //        foreach (StorageLibraryChange change in changes)
+    //        {
+    //            if (change.ChangeType == StorageLibraryChangeType.ChangeTrackingLost)
+    //            {
+    //                // Change tracker is in an invalid state and must be reset
+    //                // This should be a very rare case, but must be handled
+    //                Library.ChangeTracker.Reset();
+    //                return;
+    //            }
+    //            if (change.IsOfType(StorageItemTypes.File))
+    //            {
+    //                await ProcessFileChange(change);
+    //            }
+    //            else if (change.IsOfType(StorageItemTypes.Folder))
+    //            {
+    //                // No-op; not interested in folders
+    //            }
+    //            else
+    //            {
+    //                if (change.ChangeType == StorageLibraryChangeType.Deleted)
+    //                {
+    //                    //UnknownItemRemoved(change.Path);
+    //                }
+    //            }
+    //        }
+
+    //        // Mark that all the changes have been seen and for the change tracker
+    //        // to never return these changes again
+    //        await reader.AcceptChangesAsync();
+    //    }
+
+    //    private async Task ProcessFileChange(StorageLibraryChange change)
+    //    {
+    //        switch (change.ChangeType)
+    //        {
+    //            // New File in the Library
+    //            case StorageLibraryChangeType.Created:
+    //            case StorageLibraryChangeType.MovedIntoLibrary:
+    //            case StorageLibraryChangeType.MovedOrRenamed:
+    //                if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+    //                {
+    //                    var file = (StorageFile)(await change.GetStorageItemAsync());
+
+    //                    Execute.BeginOnUIThread(async () =>
+    //                    {
+    //                        var storage = await StorageMedia.CreateAsync(file, false);
+    //                        if (storage != null)
+    //                        {
+    //                            var array = this.ToArray();
+    //                            var index = Array.BinarySearch(array, storage, _comparer);
+    //                            if (index < 0) index = ~index;
+
+    //                            // Insert only if newer than the last item
+    //                            if (index < array.Length || !HasMoreItems)
+    //                            {
+    //                                _startIndex++;
+
+    //                                Insert(index, storage);
+    //                                storage.PropertyChanged += OnPropertyChanged;
+    //                            }
+    //                        }
+    //                    });
+    //                }
+    //                break;
+    //            // File Removed From Library
+    //            case StorageLibraryChangeType.Deleted:
+    //            case StorageLibraryChangeType.MovedOutOfLibrary:
+    //                if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+    //                {
+    //                    Execute.BeginOnUIThread(() =>
+    //                    {
+    //                        var already = this.FirstOrDefault(x => x.File.Path.Equals(change.Path));
+    //                        if (already != null)
+    //                        {
+    //                            _startIndex--;
+
+    //                            Remove(already);
+    //                            UpdateSelected();
+    //                        }
+    //                    });
+    //                }
+    //                break;
+    //            // Modified Contents
+    //            case StorageLibraryChangeType.ContentsChanged:
+    //                if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+    //                {
+    //                    var file = (StorageFile)(await change.GetStorageItemAsync());
+
+    //                    // Update thumbnail maybe
+    //                }
+    //                break;
+    //            // Ignored Cases
+    //            case StorageLibraryChangeType.EncryptionChanged:
+    //            case StorageLibraryChangeType.ContentsReplaced:
+    //            case StorageLibraryChangeType.IndexingStatusChanged:
+    //            default:
+    //                // These are safe to ignore in this application
+    //                break;
+    //        }
+    //    }
+
+    //    public override async Task<IList<StorageMedia>> LoadDataAsync()
+    //    {
+    //        if (_library == null)
+    //        {
+    //            _library = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
+    //            _library.ChangeTracker.Enable();
+
+    //            var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
+    //            queryOptions.FolderDepth = FolderDepth.Deep;
+
+    //            _query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
+    //            _query.ContentsChanged += OnContentsChanged;
+    //        }
+
+    //        var items = new List<StorageMedia>();
+    //        var result = await _query.GetFilesAsync(_startIndex, 10);
+
+    //        _startIndex += (uint)result.Count;
+
+    //        foreach (var file in result)
+    //        {
+    //            var storage = await StorageMedia.CreateAsync(file, false);
+    //            if (storage != null)
+    //            {
+    //                items.Add(storage);
+    //                storage.PropertyChanged += OnPropertyChanged;
+    //            }
+    //        }
+
+    //        return items;
+    //    }
+
+    //    private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+    //    {
+    //        if (e.PropertyName.Equals("IsSelected"))
+    //        {
+    //            UpdateSelected();
+    //        }
+    //    }
+
+    //    private void UpdateSelected()
+    //    {
+    //        _selectedCount = this.Count(x => x.IsSelected);
+    //        OnPropertyChanged(new PropertyChangedEventArgs("SelectedCount"));
+    //    }
+
+    //    class StorageMediaComparer : IComparer<StorageMedia>
+    //    {
+    //        public int Compare(StorageMedia x, StorageMedia y)
+    //        {
+    //            return y.Basic.ItemDate.CompareTo(x.Basic.ItemDate);
+    //        }
+    //    }
+    //}
 }

@@ -284,6 +284,23 @@ namespace Unigram.Controls.Items
                         {
                             return result + Strings.Android.AttachVideoExpired;
                         }
+                        else if (message.IsRoundVideo())
+                        {
+                            return result + Strings.Android.AttachRound;
+                        }
+                        else if (message.IsSticker())
+                        {
+                            if (documentMedia.Document is TLDocument documentSticker)
+                            {
+                                var attribute = documentSticker.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                                if (attribute != null)
+                                {
+                                    return result + $"{attribute.Alt} {Strings.Android.AttachSticker}";
+                                }
+                            }
+
+                            return result + Strings.Android.AttachSticker;
+                        }
 
                         var caption = string.Empty;
                         if (!string.IsNullOrEmpty(documentMedia.Caption))
@@ -299,26 +316,9 @@ namespace Unigram.Controls.Items
                         {
                             return result + Strings.Android.AttachVideo + caption;
                         }
-                        else if (message.IsRoundVideo())
-                        {
-                            return result + Strings.Android.AttachRound + caption;
-                        }
                         else if (message.IsGif())
                         {
                             return result + Strings.Android.AttachGif + caption;
-                        }
-                        else if (message.IsSticker())
-                        {
-                            if (documentMedia.Document is TLDocument documentSticker)
-                            {
-                                var attribute = documentSticker.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
-                                if (attribute != null)
-                                {
-                                    return result + $"{attribute.Alt} {Strings.Android.AttachSticker}";
-                                }
-                            }
-
-                            return result + Strings.Android.AttachSticker;
                         }
                         else if (message.IsAudio())
                         {

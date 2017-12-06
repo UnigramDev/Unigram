@@ -63,6 +63,8 @@ using Unigram.Models;
 using Telegram.Api.Native;
 using Newtonsoft.Json;
 using Unigram.Core.Common;
+using Unigram.ViewModels.Dialogs;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
@@ -147,6 +149,7 @@ namespace Unigram.ViewModels
             ReportSpamCommand = new RelayCommand(ReportSpamExecute);
             OpenStickersCommand = new RelayCommand(OpenStickersExecute);
             DialogDeleteCommand = new RelayCommand(DialogDeleteExecute);
+            DialogClearCommand = new RelayCommand(DialogClearExecute);
             CallCommand = new RelayCommand(CallExecute);
             UnpinMessageCommand = new RelayCommand(UnpinMessageExecute);
             UnblockCommand = new RelayCommand(UnblockExecute);
@@ -841,7 +844,8 @@ namespace Unigram.ViewModels
             var already = Items.FirstOrDefault(x => x.Id == maxId);
             if (already != null)
             {
-                ListField.ScrollIntoView(already);
+                //ListField.ScrollIntoView(already);
+                await ListField.ScrollToItem(already, SnapPointsAlignment.Center);
                 return;
             }
 
@@ -860,7 +864,7 @@ namespace Unigram.ViewModels
 
             Items.Clear();
 
-            var offset = -50;
+            var offset = -25;
             var limit = 50;
 
             var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
@@ -911,8 +915,9 @@ namespace Unigram.ViewModels
             _isLoadingPreviousSlice = false;
             IsLoading = false;
 
-            await Task.Delay(200);
-            await LoadNextSliceAsync(true);
+            //await Task.Delay(200);
+            //await LoadNextSliceAsync(true);
+            await LoadMessageSliceAsync(null, maxId);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -1028,10 +1033,10 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                if (response.Result.Messages.Count < limit && maxId == int.MaxValue)
+                if (response.Result.Messages.Count < limit)
                 {
-                    IsFirstSliceLoaded = true;
-                    IsLastSliceLoaded = true;
+                    IsFirstSliceLoaded = maxId < int.MaxValue;
+                    IsLastSliceLoaded = maxId == int.MaxValue;
                 }
                 else
                 {
@@ -1043,13 +1048,26 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = false;
             _isLoadingPreviousSlice = false;
             IsLoading = false;
+
+            //if (maxId < int.MaxValue)
+            //{
+            //    await LoadMessageSliceAsync(null, maxId);
+            //}
         }
 
-        public void ScrollToBottom()
+        public void ScrollToBottom(object item)
         {
             //if (IsFirstSliceLoaded)
             {
-                ListField.ScrollToBottom();
+                if (item == null)
+                {
+                    ListField.ScrollToBottom();
+                }
+                else
+                {
+                    ListField.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+                }
+
                 ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
             }
         }
@@ -2317,7 +2335,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                ScrollToBottom();
+                ScrollToBottom(message);
             }
             else
             {
@@ -2486,7 +2504,7 @@ namespace Unigram.ViewModels
 
                 if (channel.IsBroadcast && full.HasParticipantsCount)
                 {
-                    return LocaleHelper.Declension("Subscribers",  full.ParticipantsCount ?? 0);
+                    return LocaleHelper.Declension("Subscribers", full.ParticipantsCount ?? 0);
                 }
                 else if (full.HasParticipantsCount)
                 {
@@ -2637,53 +2655,68 @@ namespace Unigram.ViewModels
         public RelayCommand ToggleMuteCommand { get; }
         private async void ToggleMuteExecute()
         {
-            var channel = With as TLChannel;
-            if (channel != null && _dialog != null)
+            TLPeerNotifySettings notifySettings = null;
+
+            var chatFull = Full as TLChatFullBase;
+            var userFull = Full as TLUserFull;
+
+            if (chatFull != null)
             {
-                var notifySettings = _dialog.NotifySettings as TLPeerNotifySettings;
-                if (notifySettings != null)
+                notifySettings = chatFull.NotifySettings as TLPeerNotifySettings;
+            }
+            else if (userFull != null)
+            {
+                notifySettings = userFull.NotifySettings as TLPeerNotifySettings;
+            }
+
+            if (notifySettings == null)
+            {
+                return;
+            }
+
+            var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
+            var settings = new TLInputPeerNotifySettings
+            {
+                MuteUntil = muteUntil,
+                IsShowPreviews = notifySettings.IsShowPreviews,
+                IsSilent = notifySettings.IsSilent,
+                Sound = notifySettings.Sound
+            };
+
+            var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = Peer }, settings);
+            if (response.IsSucceeded)
+            {
+                notifySettings.MuteUntil = muteUntil;
+
+                var dialog = CacheService.GetDialog(Peer.ToPeer());
+                if (dialog != null)
                 {
-                    var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
-                    var settings = new TLInputPeerNotifySettings
-                    {
-                        MuteUntil = muteUntil,
-                        IsShowPreviews = notifySettings.IsShowPreviews,
-                        IsSilent = notifySettings.IsSilent,
-                        Sound = notifySettings.Sound
-                    };
+                    dialog.NotifySettings = notifySettings;
+                    dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                    dialog.RaisePropertyChanged(() => dialog.IsMuted);
+                    dialog.RaisePropertyChanged(() => dialog.Self);
 
-                    var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = Peer }, settings);
-                    if (response.IsSucceeded)
-                    {
-                        notifySettings.MuteUntil = muteUntil;
-                        channel.RaisePropertyChanged(() => _dialog.NotifySettings);
-
-                        var dialog = CacheService.GetDialog(Peer.ToPeer());
-                        if (dialog != null)
-                        {
-                            dialog.NotifySettings = _dialog.NotifySettings;
-                            dialog.RaisePropertyChanged(() => dialog.NotifySettings);
-                            dialog.RaisePropertyChanged(() => dialog.Self);
-
-                            var chatFull = CacheService.GetFullChat(channel.Id);
-                            if (chatFull != null)
-                            {
-                                chatFull.NotifySettings = _dialog.NotifySettings;
-                                chatFull.RaisePropertyChanged(() => chatFull.NotifySettings);
-                            }
-
-                            // TODO: 06/05/2017
-                            //var dialogChannel = dialog.With as TLChannel;
-                            //if (dialogChannel != null)
-                            //{
-                            //    dialogChannel.NotifySettings = channel.NotifySettings;
-                            //}
-                        }
-
-                        CacheService.Commit();
-                        RaisePropertyChanged(() => With);
-                    }
+                    // TODO: 06/05/2017
+                    //var dialogChannel = dialog.With as TLChannel;
+                    //if (dialogChannel != null)
+                    //{
+                    //    dialogChannel.NotifySettings = channel.NotifySettings;
+                    //}
                 }
+
+                if (chatFull != null)
+                {
+                    chatFull.NotifySettings = _dialog.NotifySettings;
+                    chatFull.RaisePropertyChanged(() => chatFull.NotifySettings);
+                }
+                else if (userFull != null)
+                {
+                    userFull.NotifySettings = _dialog.NotifySettings;
+                    userFull.RaisePropertyChanged(() => chatFull.NotifySettings);
+                }
+
+                CacheService.Commit();
+                RaisePropertyChanged(() => With);
             }
         }
 
@@ -2793,6 +2826,19 @@ namespace Unigram.ViewModels
             if (_dialog != null)
             {
                 UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.DialogDeleteCommand.Execute(_dialog);
+            }
+        }
+
+        #endregion
+
+        #region Clear history
+
+        public RelayCommand DialogClearCommand { get; }
+        private void DialogClearExecute()
+        {
+            if (_dialog != null)
+            {
+                UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.DialogClearCommand.Execute(_dialog);
             }
         }
 
@@ -3261,8 +3307,57 @@ namespace Unigram.ViewModels
 
     public class MessageCollection : ObservableCollection<TLMessageBase>
     {
+        private readonly TLMessageComparer _comparer = new TLMessageComparer();
+
         protected override void InsertItem(int index, TLMessageBase item)
         {
+            //if (item is TLMessage message && message.GroupedId is long grouped && !(message.Media is TLMessageMediaGroup))
+            //{
+            //    var already = this.FirstOrDefault(x => x is TLMessage msg && msg.GroupedId == grouped) as TLMessage;
+            //    if (already == null)
+            //    {
+            //        already = new TLMessage();
+            //        already.Media = new TLMessageMediaGroup();
+
+            //        InsertItem(index, already);
+            //    }
+
+            //    if (already.Media is TLMessageMediaGroup group)
+            //    {
+            //        //var array = group.Messages.ToArray();
+            //        //var insert = Array.BinarySearch(array, message, _comparer);
+            //        //if (insert < 0) insert = ~insert;
+
+            //        group.Layout.GroupedId = grouped;
+            //        group.Layout.Messages.Add(message);
+            //        group.Layout.Calculate();
+
+            //        already.Flags = group.Layout.Messages[0].Flags;
+            //        already.FromId = group.Layout.Messages[0].FromId;
+            //        already.ToId = group.Layout.Messages[0].ToId;
+            //        already.FwdFrom = group.Layout.Messages[0].FwdFrom;
+            //        already.ViaBotId = group.Layout.Messages[0].ViaBotId;
+            //        already.ReplyToMsgId = group.Layout.Messages[0].ReplyToMsgId;
+            //        already.Date = group.Layout.Messages[0].Date;
+            //        already.Message = group.Layout.Messages[0].Message;
+            //        already.ReplyMarkup = group.Layout.Messages[0].ReplyMarkup;
+            //        already.Entities = group.Layout.Messages[0].Entities;
+            //        already.Views = group.Layout.Messages[0].Views;
+            //        already.EditDate = group.Layout.Messages[0].EditDate;
+            //        already.PostAuthor = group.Layout.Messages[0].PostAuthor;
+            //        already.GroupedId = group.Layout.Messages[0].GroupedId;
+
+            //        if (group.Layout.Messages[0].Media is ITLMessageMediaCaption caption)
+            //        {
+            //            group.Caption = caption.Caption;
+            //        }
+
+            //        already.RaisePropertyChanged(() => already.Media);
+            //    }
+
+            //    return;
+            //}
+
             base.InsertItem(index, item);
 
             var previous = index > 0 ? this[index - 1] : null;
@@ -3437,6 +3532,30 @@ namespace Unigram.ViewModels
 
             OnCollectionChanged(args);
         }
+
+        class TLMessageComparer : IComparer<TLMessage>
+        {
+            public int Compare(TLMessage x, TLMessage y)
+            {
+                if (x.RandomId is long xid && y.RandomId is long yid)
+                {
+                    return xid.CompareTo(yid);
+                }
+
+                return x.Id.CompareTo(y.Id);
+            }
+        }
+    }
+
+    public class TLMessageMediaGroup : TLMessageMediaBase, ITLMessageMediaCaption
+    {
+        public TLMessageMediaGroup()
+        {
+            Layout = new GroupedMessages();
+        }
+
+        public String Caption { get; set; }
+        public GroupedMessages Layout { get; private set; }
     }
 
     public class TLUserCommand

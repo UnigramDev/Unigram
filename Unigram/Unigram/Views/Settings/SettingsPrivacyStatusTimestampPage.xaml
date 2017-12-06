@@ -9,8 +9,16 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}">
-            <Setter Property="Margin" Value="-12,0"/>
+        <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}"/>
+
+        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
+            <Setter Property="Padding" Value="0,8,0,8"/>
+        </Style>
+
+        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
+            <Setter Property="Margin" Value="0,8,12,0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
     </Page.Resources>
 
@@ -19,35 +27,42 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Text="Last Seen" Glyph="&#xE10B;"/>
+        <controls:ButtonPageHeader Text="{CustomResource PrivacylastSeen}" Glyph="&#xE10B;"/>
 
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
         <ScrollViewer x:Name="ScrollingHost"
-                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="Who can see my timestamp?" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:PrivacyRadioButton Content="Everybody" Type="AllowAll" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
-                    <controls:PrivacyRadioButton Content="My Contacts" Type="AllowContacts" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
-                    <controls:PrivacyRadioButton Content="Nobody" Type="DisallowAll" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
-                    <TextBlock Text="Important: you won't be able to see Last Seen times for people with whom you don't share your Last Seen time. Approximate last seen will be shown instead (recently, within a week, within a month)." Margin="0,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="0,0,0,1"
+                            Padding="0,8,12,8"
+                            Margin="12,0,0,0">
+                    <TextBlock Text="{CustomResource LastSeenTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:PrivacyRadioButton
+                        Content="{CustomResource LastSeenEverybody}"
+                        Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                        Type="AllowAll"/>
+                    <controls:PrivacyRadioButton
+                        Content="{CustomResource LastSeenContacts}"
+                        Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                        Type="AllowContacts"/>
+                    <controls:PrivacyRadioButton
+                        Content="{CustomResource LastSeenNobody}"
+                        Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                        Type="DisallowAll"/>
                 </StackPanel>
+                <TextBlock Text="{CustomResource CustomHelp}" Margin="12,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="Add exceptions" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource AddExceptions}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton
-                        Content="Always Share With"
+                        Content="{CustomResource AlwaysShareWith}"
                         Badge="{x:Bind ViewModel.Allowed.Users.Count, Mode=OneWay, Converter={StaticResource PrivacyRuleToUsersConverter}}"/>
                     <controls:BadgeButton
-                        Content="Never Share With"
+                        Content="{CustomResource NeverShareWith}"
                         Badge="{x:Bind ViewModel.Disallowed.Users.Count, Mode=OneWay, Converter={StaticResource PrivacyRuleToUsersConverter}}"/>
-                    <TextBlock Text="These settings will override the values above." Margin="0,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+                    <TextBlock Text="{CustomResource CustomShareSettingsHelp}" Margin="0,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

@@ -12,7 +12,7 @@ using Telegram.Api.TL.Messages;
 using Unigram.Common;
 using Unigram.Core.Common;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Dialogs
 {
     public class DialogSearchViewModel : UnigramViewModelBase
     {
@@ -252,7 +252,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            SelectedItem = Items[SelectedIndex];
+            SelectedItem = Items[SelectedIndex + 1];
 
             if (_selectedItem != null)
             {
@@ -267,7 +267,7 @@ namespace Unigram.ViewModels
                 return false;
             }
 
-            return SelectedIndex < TotalItems;
+            return SelectedIndex < TotalItems - 1;
         }
     }
 }

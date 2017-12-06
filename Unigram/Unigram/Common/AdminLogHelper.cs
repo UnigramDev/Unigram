@@ -285,8 +285,8 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Android.EventLogAdded, "un2", whoUser, ref entities);
-                    content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.Android.EventLogAdded, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(content, "un2", whoUser, ref entities);
                 }
 
                 return (content, entities);

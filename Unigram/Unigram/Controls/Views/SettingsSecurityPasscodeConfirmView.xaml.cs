@@ -44,6 +44,7 @@ namespace Unigram.Controls.Views
             if (Confirm.Password.Length != 4 || !Confirm.Password.All(x => x >= '0' && x <= '9') || !service.Check(Confirm.Password))
             {
                 VisualUtilities.ShakeView(Confirm);
+                Confirm.Password = string.Empty;
                 args.Cancel = true;
             }
         }

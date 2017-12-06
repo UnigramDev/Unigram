@@ -21,13 +21,11 @@ namespace Unigram.ViewModels
     public class StickerSetViewModel : UnigramViewModelBase
     {
         private readonly IStickersService _stickersService;
-        private readonly DialogStickersViewModel _stickers;
 
-        public StickerSetViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService, DialogStickersViewModel stickers) 
+        public StickerSetViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService) 
             : base(protoService, cacheService, aggregator)
         {
             _stickersService = stickersService;
-            _stickers = stickers;
 
             Items = new MvxObservableCollection<TLDocumentBase>();
 

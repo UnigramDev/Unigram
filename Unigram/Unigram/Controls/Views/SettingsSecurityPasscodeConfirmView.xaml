@@ -16,7 +16,7 @@
     <StackPanel>
         <PasswordBox
             x:Name="Confirm"
-            Header="{CustomResource EnterCurrentPasscode}"
+            PlaceholderText="{CustomResource EnterCurrentPasscode}"
             MaxLength="4"
             PasswordChanged="Confirm_Changed"
             KeyDown="Password_KeyDown"

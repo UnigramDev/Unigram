@@ -373,8 +373,11 @@
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
-    <Compile Include="ViewModels\DialogSearchViewModel.cs" />
-    <Compile Include="ViewModels\DialogStickersViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\DialogGalleryViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\DialogSearchViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\DialogSharedMediaViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\DialogShareLocationViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Media.cs" />
     <Compile Include="ViewModels\GallerySecretViewModel.cs" />
     <Compile Include="ViewModels\InstantGalleryViewModel.cs" />
@@ -471,6 +474,12 @@
     <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
       <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Dialogs\DialogSharedMediaPage.xaml.cs">
+      <DependentUpon>DialogSharedMediaPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialogs\DialogShareLocationPage.xaml.cs">
+      <DependentUpon>DialogShareLocationPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\InvitePage.xaml.cs">
       <DependentUpon>InvitePage.xaml</DependentUpon>
     </Compile>
@@ -497,6 +506,9 @@
     </Compile>
     <Compile Include="Views\PhoneCallPage.xaml.cs">
       <DependentUpon>PhoneCallPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlaygroundPage.xaml.cs">
+      <DependentUpon>PlaygroundPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Phone\SettingsPhoneIntroPage.xaml.cs">
       <DependentUpon>SettingsPhoneIntroPage.xaml</DependentUpon>
@@ -1027,11 +1039,8 @@
     </Compile>
     <Compile Include="ViewModels\Chats\ChatDetailsViewModel.cs" />
     <Compile Include="ViewModels\ContactsViewModel.cs" />
-    <Compile Include="ViewModels\DialogGalleryViewModel.cs" />
     <Compile Include="ViewModels\DialogsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
-    <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
-    <Compile Include="ViewModels\DialogSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Handle.cs" />
     <Compile Include="ViewModels\DialogViewModel.Info.cs" />
     <Compile Include="ViewModels\DialogViewModel.Inline.cs" />
@@ -1074,12 +1083,6 @@
     </Compile>
     <Compile Include="Views\DialogPage.xaml.cs">
       <DependentUpon>DialogPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DialogSendLocationPage.xaml.cs">
-      <DependentUpon>DialogSendLocationPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DialogSharedMediaPage.xaml.cs">
-      <DependentUpon>DialogSharedMediaPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
@@ -1175,6 +1178,42 @@
     <PRIResource Include="Strings\es\Android.resw">
       <SubType>Designer</SubType>
     </PRIResource>
+    <PRIResource Include="Strings\ko\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\nl\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\pt-BR\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ru\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\uk\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ms\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\id\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ar\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ar\Resources.resw" />
+    <PRIResource Include="Strings\de\Resources.resw" />
+    <PRIResource Include="Strings\es\Resources.resw" />
+    <PRIResource Include="Strings\fr\Resources.resw" />
+    <PRIResource Include="Strings\id\Resources.resw" />
+    <PRIResource Include="Strings\it\Resources.resw" />
+    <PRIResource Include="Strings\ko\Resources.resw" />
+    <PRIResource Include="Strings\ms\Resources.resw" />
+    <PRIResource Include="Strings\pt-BR\Resources.resw" />
+    <PRIResource Include="Strings\ru\Resources.resw" />
+    <PRIResource Include="Strings\uk\Resources.resw" />
+    <PRIResource Include="Strings\nl\Resources.resw" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1571,6 +1610,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Dialogs\DialogSharedMediaPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Dialogs\DialogShareLocationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\InstantPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1623,14 +1670,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DialogSendLocationPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\DialogSharedMediaPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\GamePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1668,6 +1707,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PhoneCallPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlaygroundPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1828,7 +1871,7 @@
       <Version>4.1.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.1</Version>
+      <Version>6.0.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.0</Version>
@@ -1900,9 +1943,6 @@
     <SDKReference Include="WindowsMobile, Version=10.0.16299.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Dialog\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

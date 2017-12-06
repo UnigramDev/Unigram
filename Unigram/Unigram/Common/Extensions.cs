@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Controls;
+using Unigram.Controls.Messages;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -16,6 +19,7 @@ using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
@@ -367,6 +371,24 @@ namespace Unigram.Common
 
             return transform;
         }
+
+
+        public static async Task UpdateLayoutAsync(this FrameworkElement element)
+        {
+            var tcs = new TaskCompletionSource<object>();
+
+            EventHandler<object> layoutUpdated = (s1, e1) => tcs.TrySetResult(null);
+            try
+            {
+                element.LayoutUpdated += layoutUpdated;
+                element.UpdateLayout();
+                await tcs.Task;
+            }
+            finally
+            {
+                element.LayoutUpdated -= layoutUpdated;
+            }
+        }
     }
 
     public static class ClipboardEx
@@ -379,6 +401,113 @@ namespace Unigram.Common
                 Clipboard.Flush();
             }
             catch { }
+        }
+    }
+
+    // Modified from: https://stackoverflow.com/a/32559623/1680863
+    public static class ListViewExtensions
+    {
+        public async static Task ScrollToItem(this ListViewBase listViewBase, object item, SnapPointsAlignment alignment)
+        {
+            // get the ScrollViewer withtin the ListView/GridView
+            var scrollViewer = listViewBase.GetScrollViewer();
+            // get the SelectorItem to scroll to
+            var selectorItem = listViewBase.ContainerFromItem(item) as SelectorItem;
+
+            // when it's null, means virtualization is on and the item hasn't been realized yet
+            if (selectorItem == null)
+            {
+                // call task-based ScrollIntoViewAsync to realize the item
+                await listViewBase.ScrollIntoViewAsync(item);
+
+                // this time the item shouldn't be null again
+                selectorItem = (SelectorItem)listViewBase.ContainerFromItem(item);
+            }
+
+            if (selectorItem == null)
+            {
+                return;
+            }
+
+            // calculate the position object in order to know how much to scroll to
+            var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
+            var position = transform.TransformPoint(new Point(0, 0));
+
+            if (alignment == SnapPointsAlignment.Near) { }
+            else if (alignment == SnapPointsAlignment.Center)
+            {
+                position.Y -= (listViewBase.ActualHeight - selectorItem.ActualHeight) / 2d;
+            }
+            else if (alignment == SnapPointsAlignment.Far)
+            {
+                position.Y -= listViewBase.ActualHeight - selectorItem.ActualHeight;
+            }
+
+            // scroll to desired position with animation!
+            scrollViewer.ChangeView(position.X, position.Y, null);
+
+            var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
+            if (bubble != null)
+            {
+                bubble.Highlight();
+            }
+        }
+
+        public static async Task ScrollIntoViewAsync(this ListViewBase listViewBase, object item)
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var scrollViewer = listViewBase.GetScrollViewer();
+
+            EventHandler<object> layoutUpdated = (s1, e1) => tcs.TrySetResult(null);
+            EventHandler<ScrollViewerViewChangedEventArgs> viewChanged = (s, e) =>
+            {
+                scrollViewer.LayoutUpdated += layoutUpdated;
+                scrollViewer.UpdateLayout();
+            };
+            try
+            {
+                scrollViewer.ViewChanged += viewChanged;
+                listViewBase.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+                await tcs.Task;
+            }
+            finally
+            {
+                scrollViewer.ViewChanged -= viewChanged;
+                scrollViewer.LayoutUpdated -= layoutUpdated;
+            }
+        }
+
+        public static async Task ChangeViewAsync(this ScrollViewer scrollViewer, double? horizontalOffset, double? verticalOffset, bool disableAnimation)
+        {
+            var tcs = new TaskCompletionSource<object>();
+
+            EventHandler<object> layoutUpdated = (s1, e1) => tcs.TrySetResult(null);
+            EventHandler<ScrollViewerViewChangedEventArgs> viewChanged = (s, e) =>
+            {
+                scrollViewer.LayoutUpdated += layoutUpdated;
+                scrollViewer.UpdateLayout();
+            };
+            try
+            {
+                scrollViewer.ViewChanged += viewChanged;
+                scrollViewer.ChangeView(horizontalOffset, verticalOffset, null, disableAnimation);
+                await tcs.Task;
+            }
+            finally
+            {
+                scrollViewer.ViewChanged -= viewChanged;
+                scrollViewer.LayoutUpdated -= layoutUpdated;
+            }
+        }
+
+        public static ScrollViewer GetScrollViewer(this ListViewBase listViewBase)
+        {
+            if (listViewBase is BubbleListView bubble)
+            {
+                return bubble.ScrollingHost;
+            }
+
+            return listViewBase.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
         }
     }
 }

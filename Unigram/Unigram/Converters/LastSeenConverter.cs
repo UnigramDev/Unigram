@@ -100,7 +100,7 @@ namespace Unigram.Converters
             }
             else if (user.Status is TLUserStatusOnline online)
             {
-                if (online.Expires > Utils.CurrentTimestamp)
+                if (online.Expires > Utils.CurrentTimestamp / 1000)
                 {
                     return Strings.Android.Online;
                 }

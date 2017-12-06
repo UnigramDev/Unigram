@@ -7,7 +7,7 @@ namespace Telegram.Api.Transport
 {
     public interface ITransport
     {
-        bool Additional { get; set; }
+        MTProtoTransportType MTProtoType { get; }
 
         event EventHandler Connecting;
         event EventHandler Connected;
@@ -40,12 +40,19 @@ namespace Telegram.Api.Transport
         int Id { get; }
         int DCId { get; set; }
         byte[] AuthKey { get; set; }
+
         long? SessionId { get; set; }
+        long MinMessageId { get; set; }
+        Dictionary<long, long> MessageIdDict { get; set; }
+
         long? Salt { get; set; }
         int SequenceNumber { get; set; }
         long ClientTicksDelta { get; set; }
+
         string Host { get; }
         int Port { get; }
+        TLProxyConfig ProxyConfig { get; }
+
         TransportType Type { get; }
 
         //сделан initConnection
@@ -58,5 +65,12 @@ namespace Telegram.Api.Transport
         bool IsAuthorizing { get; set; }
         //вызван метод Close
         bool Closed { get; }
+    }
+
+    public enum MTProtoTransportType
+    {
+        Main,
+        File,
+        Special,
     }
 }

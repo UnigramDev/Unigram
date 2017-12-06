@@ -134,8 +134,16 @@ namespace Unigram.Controls
                 var video = attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 if (video != null)
                 {
-                    width = video.W;
-                    height = video.H;
+                    if (video.IsRoundMessage)
+                    {
+                        width = 200;
+                        height = 200;
+                    }
+                    else
+                    {
+                        width = video.W;
+                        height = video.H;
+                    }
 
                     goto Calculate;
                 }
@@ -156,17 +164,11 @@ namespace Unigram.Controls
                 var ratioY = availableHeight / height;
                 var ratio = Math.Min(ratioX, ratioY);
 
-                //if (Holder != null)
-                //{
-                //    Holder.Width = width * ratio;
-                //    Holder.Height = height * ratio;
-                //}
-
-                return new Size(width * ratio, height * ratio);
+                return base.MeasureOverride(new Size(width * ratio, height * ratio));
             }
             else
             {
-                return new Size(width, height);
+                return base.MeasureOverride(new Size(width, height));
             }
         }
     }

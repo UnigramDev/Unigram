@@ -744,11 +744,12 @@ namespace Unigram.Views
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
 
             for (int i = 0; i < items.Count; i++)
             {
-                var y = i / 3;
-                var x = i % 3;
+                var y = i / 4;
+                var x = i % 4;
 
                 grid.Children.Add(items[i]);
                 Grid.SetRow(items[i], y);

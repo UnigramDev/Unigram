@@ -8,6 +8,7 @@ using Telegram.Api.TL;
 using Telegram.Api.TL.Channels;
 using Unigram.Common;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Dialogs;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;

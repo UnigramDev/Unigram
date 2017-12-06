@@ -156,15 +156,20 @@ namespace Unigram
             });
         }
 
-        public static void ShowPasscode()
+        private static volatile bool _passcodeShown;
+        public static async void ShowPasscode()
         {
-            if (Current.ModalDialog.IsModal == false)
+            if (_passcodeShown)
             {
-                Current.ModalContent = new PasscodePage();
-                Current.ModalDialog.CanBackButtonDismiss = false;
-                Current.ModalDialog.DisableBackButtonWhenModal = true;
-                Current.ModalDialog.IsModal = true;
+                return;
             }
+
+            _passcodeShown = true;
+
+            var dialog = new PasscodePage();
+            var result = await dialog.ShowQueuedAsync();
+
+            _passcodeShown = false;
         }
 
         public static bool IsActive { get; private set; }
@@ -273,8 +278,6 @@ namespace Unigram
             var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame) as NavigationService;
             navigationService.SerializationService = TLSerializationService.Current;
 
-            return new ModalDialog { Content = navigationFrame };
-
             return navigationFrame;
         }
 
@@ -369,16 +372,16 @@ namespace Unigram
 
                     if (command == "ShowAllDialogs")
                     {
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                     if (command == "ShowSpecificDialog")
                     {
                         //#TODO: Fix that this'll open a specific dialog
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                 }
                 else if (args is ContactPanelActivatedEventArgs contact)
@@ -393,7 +396,7 @@ namespace Unigram
                         var full = await store.GetContactAsync(contact.Contact.Id);
                         if (full == null)
                         {
-                            NavigationService.Navigate(typeof(MainPage));
+                            NavigationService.NavigateToMain(null);
                         }
                         else
                         {
@@ -402,7 +405,7 @@ namespace Unigram
                             var first = annotations.FirstOrDefault();
                             if (first == null)
                             {
-                                NavigationService.Navigate(typeof(MainPage));
+                                NavigationService.NavigateToMain(null);
                             }
                             else
                             {
@@ -413,14 +416,14 @@ namespace Unigram
                                 }
                                 else
                                 {
-                                    NavigationService.Navigate(typeof(MainPage));
+                                    NavigationService.NavigateToMain(null);
                                 }
                             }
                         }
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
@@ -439,7 +442,7 @@ namespace Unigram
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage), protocol.Uri.ToString());
+                        NavigationService.NavigateToMain(protocol.Uri.ToString());
                     }
                 }
                 else
@@ -456,7 +459,7 @@ namespace Unigram
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage), launch);
+                        NavigationService.NavigateToMain(launch);
                     }
                 }
             }

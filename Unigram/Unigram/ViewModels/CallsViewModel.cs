@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -216,8 +217,8 @@ namespace Unigram.ViewModels
                 var missed = reason is TLPhoneCallDiscardReasonMissed || reason is TLPhoneCallDiscardReasonBusy;
 
                 var callDuration = action.Duration ?? 0;
-                var duration = missed || callDuration < 1 ? null : BindConvert.Current.CallShortDuration(callDuration);
-                finalType = duration != null ? string.Format(Strings.Resources.CallTimeFormat, finalType, duration) : finalType;
+                var duration = missed || callDuration < 1 ? null : LocaleHelper.FormatCallDuration(callDuration);
+                finalType = duration != null ? string.Format("{0} ({1})", finalType, duration) : finalType;
             }
 
             return finalType;

@@ -33,12 +33,13 @@ using System.Reactive.Linq;
 using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Controls.Views;
+using Unigram.ViewModels.Dialogs;
 
-namespace Unigram.Views
+namespace Unigram.Views.Dialogs
 {
-    public sealed partial class DialogSendLocationPage : Page
+    public sealed partial class DialogShareLocationPage : Page
     {
-        public DialogSendLocationViewModel ViewModel => DataContext as DialogSendLocationViewModel;
+        public DialogShareLocationViewModel ViewModel => DataContext as DialogShareLocationViewModel;
 
         private MapIcon userPos;
         private Geoposition _lastPosition;
@@ -62,10 +63,10 @@ namespace Unigram.Views
             }
         }
 
-        public DialogSendLocationPage()
+        public DialogShareLocationPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<DialogSendLocationViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<DialogShareLocationViewModel>();
 
             Loaded += OnLoaded;
 

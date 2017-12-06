@@ -36,6 +36,7 @@ using Unigram.ViewModels.Users;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Aggregator;
 using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Dialogs;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -103,18 +104,25 @@ namespace Unigram.Themes
         private async void SingleMedia_Click(object sender, RoutedEventArgs e)
         {
             var image = sender as ImageView;
-            var item = image.Constraint as TLPhoto;
-            var message = image.DataContext as TLMessage;
-            if (message != null && message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage && webPage.HasEmbedUrl)
+            if (image.DataContext is TLMessage message && message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
             {
-                await WebPageView.Current.ShowAsync(webPage);
+                if (webPage.HasEmbedUrl)
+                {
+                    await WebPageView.Current.ShowAsync(webPage);
+                    return;
+                }
+                else if (webPage.IsInstantGallery())
+                {
+                    var viewModel = new InstantGalleryViewModel(message, webPage);
+                    await GalleryView.Current.ShowAsync(viewModel, () => image.Parent as FrameworkElement);
+                    return;
+                }
             }
-            else if (item != null)
-            {
-                //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
-                var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(item, null as string));
-                await GalleryView.Current.ShowAsync(viewModel, () => image);
+            if (image.Constraint is TLPhoto photo)
+            {
+                var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(photo, null as string));
+                await GalleryView.Current.ShowAsync(viewModel, () => image.Parent as FrameworkElement);
             }
         }
 
@@ -143,7 +151,7 @@ namespace Unigram.Themes
                 var chatFull = InMemoryCacheService.Current.GetFullChat(chat.Id);
                 if (chatFull != null && chatFull.ChatPhoto is TLPhoto && chat != null)
                 {
-                    var viewModel = new ChatPhotosViewModel(MTProtoService.Current, chatFull, chat, serviceMessage);
+                    var viewModel = new ChatPhotosViewModel(MTProtoService.Current, InMemoryCacheService.Current, chatFull, chat, serviceMessage);
                     await GalleryView.Current.ShowAsync(viewModel, () => media);
                 }
 
@@ -151,7 +159,6 @@ namespace Unigram.Themes
             }
 
             var message = element.DataContext as TLMessage;
-
             if (message == null)
             {
                 return;
@@ -194,7 +201,7 @@ namespace Unigram.Themes
                 }
                 else
                 {
-                    viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                    viewModel = new DialogGalleryViewModel(MTProtoService.Current, InMemoryCacheService.Current, message.Parent.ToInputPeer(), message);
                 }
 
                 await GalleryView.Current.ShowAsync(viewModel, () => media);

@@ -142,22 +142,61 @@ namespace Unigram.ViewModels
             }
         }
 
+        #region Search
+
+        private string _searchQuery;
+        public string SearchQuery
+        {
+            get
+            {
+                return _searchQuery;
+            }
+            set
+            {
+                Set(ref _searchQuery, value);
+                SearchSync(value);
+            }
+        }
+
+        public void SearchSync(string query)
+        {
+            if (string.IsNullOrEmpty(query))
+            {
+                Search.Clear();
+                return;
+            }
+
+            var queries = LocaleHelper.GetQuery(query);
+
+            var contacts = CacheService.GetContacts().OfType<TLUser>().Where(x => x.IsLike(queries, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (query.Equals(_searchQuery))
+            {
+                if (Search.Count > 1) Search.RemoveAt(1);
+                if (Search.Count > 0) Search.RemoveAt(0);
+                //if (contacts.Count > 0) Search.Add(new KeyedList<string, TLObject>(null, contacts));
+                Search.Add(new KeyedList<string, TLObject>(null, contacts));
+            }
+        }
+
         public async Task SearchAsync(string query)
         {
-            Search.Clear();
-
-            var contacts = CacheService.GetContacts().Where(x => CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.FullName, query, CompareOptions.IgnoreCase) >= 0).ToList();
-            if (contacts.Count > 0)
+            if (string.IsNullOrEmpty(query))
             {
-                Search.Add(new KeyedList<string, TLObject>(null, contacts));
+                Search.Clear();
+                return;
             }
 
             var result = await ProtoService.SearchAsync(query, 100);
-            if (result.IsSucceeded)
+            if (query.Equals(_searchQuery))
             {
-                Search.Add(new KeyedList<string, TLObject>(Strings.Android.GlobalSearch, result.Result.Users));
+                if (Search.Count > 1) Search.RemoveAt(1);
+                if (result.IsSucceeded && result.Result.Users.Count > 0) Search.Add(new KeyedList<string, TLObject>(Strings.Android.GlobalSearch, result.Result.Users));
             }
+
+            //SearchQuery = query;
         }
+
+        #endregion
 
         #region Handle
 

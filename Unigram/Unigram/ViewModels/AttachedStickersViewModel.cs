@@ -17,13 +17,11 @@ namespace Unigram.ViewModels
     public class AttachedStickersViewModel : UnigramViewModelBase
     {
         private readonly IStickersService _stickersService;
-        private readonly DialogStickersViewModel _stickers;
 
-        public AttachedStickersViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService, DialogStickersViewModel stickers)
+        public AttachedStickersViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService)
             : base(protoService, cacheService, aggregator)
         {
             _stickersService = stickersService;
-            _stickers = stickers;
 
             Items = new ObservableCollection<TLStickerSetMultiCovered>();
         }

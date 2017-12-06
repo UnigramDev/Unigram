@@ -4784,6 +4784,7 @@
                                                            FontStyle="Normal"
                                                            Style="{ThemeResource BodyTextBlockStyle}"
                                                            Text="&#xE094;"
+                                                           FontSize="18"
                                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                            AutomationProperties.AccessibilityView="Raw"/>
                                             </Grid>

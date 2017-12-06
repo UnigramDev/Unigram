@@ -120,15 +120,15 @@
 
                 <local:TableStackPanel>
                     <controls:HyperButton Tag="{CustomResource Phone}"
-                                          Content="{x:Bind ViewModel.Self.Phone, Mode=OneWay, Converter={StaticResource PhoneNumberFormatConverter}}"
+                                          Content="{x:Bind ViewModel.Self.Phone, Mode=OneWay, Converter={StaticResource PhoneNumberFormatConverter}, FallbackValue=''}"
                                           Style="{StaticResource SubtitleButtonStyle}"
                                           Click="Phone_Click"/>
                     <controls:HyperButton Tag="{CustomResource Username}"
-                                          Content="{x:Bind ViewModel.Self.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}, ConverterParameter=username}"
+                                          Content="{x:Bind ConvertUsername(ViewModel.Self.Username), Mode=OneWay, FallbackValue=''}"
                                           Style="{StaticResource SubtitleButtonStyle}"
                                           Click="Username_Click"/>
                     <controls:HyperButton Tag="{CustomResource UserBio}"
-                                          Content="{x:Bind ViewModel.Full.About, Mode=OneWay, Converter={StaticResource UsernameConverter}}"
+                                          Content="{x:Bind ConvertAbout(ViewModel.Full.About), Mode=OneWay, FallbackValue=''}"
                                           Style="{StaticResource SubtitleButtonStyle}"
                                           Click="About_Click"/>
                 </local:TableStackPanel>

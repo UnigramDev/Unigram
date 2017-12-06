@@ -3,108 +3,143 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Windows.UI.Xaml;
 
 namespace Telegram.Api.TL
 {
     public abstract partial class TLWebPageBase
     {
-        public virtual Visibility SiteNameVisibility
-        {
-            get { return Visibility.Collapsed; }
-        }
+        public virtual string Info => null;
 
-        public virtual Visibility AuthorVisibility
-        {
-            get { return Visibility.Collapsed; }
-        }
-
-        public virtual Visibility TitleVisibility
-        {
-            get { return Visibility.Collapsed; }
-        }
-
-        public virtual Visibility DescriptionVisibility
-        {
-            get { return Visibility.Collapsed; }
-        }
-
-        public virtual Visibility SummaryVisibility
-        {
-            get { return Visibility.Collapsed; }
-        }
+        public virtual bool IsInstantGallery() => false;
     }
 
     public partial class TLWebPage
     {
-        public override Visibility SiteNameVisibility
+        private string _info;
+        public override string Info
         {
             get
             {
-                if (!string.IsNullOrEmpty(SiteName))
+                if (_info == null)
                 {
-                    return Visibility.Visible;
+                    if (IsInstantGallery())
+                    {
+                        _info = string.Format(LocaleHelper.GetString("Of"), 1, CountWebPageMedia(this));
+                    }
+                    else
+                    {
+                        _info = string.Empty;
+                    }
                 }
 
-                return Visibility.Collapsed;
+                return _info;
             }
         }
 
-        public override Visibility AuthorVisibility
+        public override bool IsInstantGallery() => HasCachedPage && (string.Equals(SiteName, "twitter", StringComparison.OrdinalIgnoreCase) || string.Equals(SiteName, "instagram", StringComparison.OrdinalIgnoreCase));
+
+        #region Instant Gallery
+
+        public static TLPhotoBase GetPhotoWithId(TLWebPage webPage, long id)
         {
-            get
+            if (webPage == null || webPage.CachedPage == null)
             {
-                if (!string.IsNullOrEmpty(Title))
-                {
-                    return Visibility.Collapsed;
-                }
-
-                if (!string.IsNullOrEmpty(Author))
-                {
-                    return Visibility.Visible;
-                }
-
-                return Visibility.Collapsed;
+                return null;
             }
+
+            if (webPage.Photo != null && webPage.Photo.Id == id)
+            {
+                return webPage.Photo;
+            }
+
+            foreach (var photo in webPage.CachedPage.Photos)
+            {
+                if (photo.Id == id)
+                {
+                    return photo;
+                }
+            }
+
+            return null;
         }
 
-        public override Visibility TitleVisibility
+        public static TLDocumentBase GetDocumentWithId(TLWebPage webPage, long id)
         {
-            get
+            if (webPage == null || webPage.CachedPage == null)
             {
-                if (!string.IsNullOrEmpty(Title))
-                {
-                    return Visibility.Visible;
-                }
-
-                return Visibility.Collapsed;
+                return null;
             }
+
+            if (webPage.Document != null && webPage.Document.Id == id)
+            {
+                return webPage.Document;
+            }
+
+            foreach (var document in webPage.CachedPage.Documents)
+            {
+                if (document.Id == id)
+                {
+                    return document;
+                }
+            }
+
+            return null;
         }
 
-        public override Visibility DescriptionVisibility
+        private static int CountBlock(TLWebPage webPage, TLPageBlockBase pageBlock, int count)
         {
-            get
+            if (pageBlock is TLPageBlockPhoto photoBlock)
             {
-                if (!string.IsNullOrEmpty(Description))
+                var photo = GetPhotoWithId(webPage, photoBlock.PhotoId) as TLPhoto;
+                if (photo == null)
                 {
-                    return Visibility.Visible;
+                    return count;
                 }
 
-                return Visibility.Collapsed;
+                return count + 1;
             }
+            else if (pageBlock is TLPageBlockVideo videoBlock)
+            {
+                var document = GetDocumentWithId(webPage, videoBlock.VideoId) as TLDocument;
+                if (document == null)
+                {
+                    return count;
+                }
+
+                return count + 1;
+            }
+
+            return count;
         }
 
-        public override Visibility SummaryVisibility
+        public static int CountWebPageMedia(TLWebPage webPage)
         {
-            get
-            {
-                if (!string.IsNullOrEmpty(SiteName) || !string.IsNullOrEmpty(Author) || !string.IsNullOrEmpty(Title) || !string.IsNullOrEmpty(Description))
-                {
-                    return Visibility.Visible;
-                }
+            var result = 0;
+            var blocks = webPage.CachedPage?.Blocks ?? new TLVector<TLPageBlockBase>();
 
-                return Visibility.Collapsed;
+            foreach (var block in blocks)
+            {
+                if (block is TLPageBlockSlideshow slideshow)
+                {
+                    foreach (var item in slideshow.Items)
+                    {
+                        result = CountBlock(webPage, item, result);
+                    }
+                }
+                else if (block is TLPageBlockCollage collage)
+                {
+                    foreach (var item in collage.Items)
+                    {
+                        result = CountBlock(webPage, item, result);
+                    }
+                }
             }
+
+            return result;
         }
+
+        #endregion
     }
 }
