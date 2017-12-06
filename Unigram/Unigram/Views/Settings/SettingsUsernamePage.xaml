@@ -15,9 +15,9 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="Username"
-            Glyph="&#xE10B;"
-            Command="{x:Bind ViewModel.SendCommand}"/>
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource Username}"
+            Glyph="&#xE10B;"/>
 
         <Grid Padding="12" Grid.Row="1">
             <Grid.RowDefinitions>
