@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Windows.Devices.Geolocation;
+using Windows.Storage.FileProperties;
 
 namespace Unigram.Core.Common
 {
@@ -32,6 +33,26 @@ namespace Unigram.Core.Common
         public static TLInputGeoPointBase ToInputGeoPoint(this Geoposition position)
         {
             return new TLInputGeoPoint { Lat = position.Coordinate.Point.Position.Latitude, Long = position.Coordinate.Point.Position.Longitude };
+        }
+
+        public static uint GetHeight(this ImageProperties props)
+        {
+            return props.Orientation == PhotoOrientation.Rotate180 ? props.Height : props.Width;
+        }
+
+        public static uint GetHeight(this VideoProperties props)
+        {
+            return props.Orientation == VideoOrientation.Rotate180 ? props.Height : props.Width;
+        }
+
+        public static uint GetWidth(this ImageProperties props)
+        {
+            return props.Orientation == PhotoOrientation.Rotate180 ? props.Width : props.Height;
+        }
+
+        public static uint GetWidth(this VideoProperties props)
+        {
+            return props.Orientation == VideoOrientation.Rotate180 ? props.Width : props.Height;
         }
     }
 }

@@ -12,6 +12,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
+using Unigram.Core.Common;
 using Unigram.Core.Helpers;
 using Unigram.Core.Models;
 using Unigram.Models;
@@ -386,8 +387,8 @@ namespace Unigram.ViewModels
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
 
-            var videoWidth = (int)videoProps.Width;
-            var videoHeight = (int)videoProps.Height;
+            var videoWidth = (int)videoProps.GetWidth();
+            var videoHeight = (int)videoProps.GetHeight();
 
             if (profile != null)
             {
@@ -647,8 +648,8 @@ namespace Unigram.ViewModels
 
             var originalProps = await file.Properties.GetImagePropertiesAsync();
 
-            var imageWidth = originalProps.Width;
-            var imageHeight = originalProps.Height;
+            var imageWidth = originalProps.GetWidth();
+            var imageHeight = originalProps.GetHeight();
             if (imageWidth >= 20 * imageHeight || imageHeight >= 20 * imageWidth)
             {
                 await SendFileAsync(file, caption);
@@ -686,8 +687,8 @@ namespace Unigram.ViewModels
             var photoSize = new TLPhotoSize
             {
                 Type = "y",
-                W = (int)imageProps.Width,
-                H = (int)imageProps.Height,
+                W = (int)imageProps.GetWidth(),
+                H = (int)imageProps.GetHeight(),
                 Location = fileLocation,
                 Size = (int)basicProps.Size
             };
@@ -805,13 +806,13 @@ namespace Unigram.ViewModels
                     },
                     new TLDocumentAttributeImageSize
                     {
-                        W = (int)imageProps.Width,
-                        H = (int)imageProps.Height
+                        W = (int)imageProps.GetWidth(),
+                        H = (int)imageProps.GetHeight()
                     },
                     new TLDocumentAttributeVideo
                     {
-                        W = (int)imageProps.Width,
-                        H = (int)imageProps.Height,
+                        W = (int)imageProps.GetWidth(),
+                        H = (int)imageProps.GetHeight(),
                     }
                 }
             };
@@ -1288,8 +1289,8 @@ namespace Unigram.ViewModels
 
             var originalProps = await file.Properties.GetImagePropertiesAsync();
 
-            var imageWidth = originalProps.Width;
-            var imageHeight = originalProps.Height;
+            var imageWidth = originalProps.GetWidth();
+            var imageHeight = originalProps.GetHeight();
             if (imageWidth >= 20 * imageHeight || imageHeight >= 20 * imageWidth)
             {
                 return (null, null);
@@ -1325,8 +1326,8 @@ namespace Unigram.ViewModels
             var photoSize = new TLPhotoSize
             {
                 Type = "y",
-                W = (int)imageProps.Width,
-                H = (int)imageProps.Height,
+                W = (int)imageProps.GetWidth(),
+                H = (int)imageProps.GetHeight(),
                 Location = fileLocation,
                 Size = (int)basicProps.Size
             };
