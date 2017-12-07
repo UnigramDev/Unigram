@@ -48,30 +48,6 @@ namespace Unigram.Views.Chats
             }
         }
 
-        private async void EditPhoto_Click(object sender, RoutedEventArgs e)
-        {
-            var picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
-
-            var file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                var dialog = new EditYourPhotoView(file)
-                {
-                    CroppingProportions = ImageCroppingProportions.Square,
-                    IsCropEnabled = false
-                };
-                var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogBaseResult.OK)
-                {
-                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
-                }
-            }
-
-        }
-
         #region Context menu
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
@@ -91,8 +67,11 @@ namespace Unigram.Views.Chats
             }
             if (!chat.IsAdminsEnabled || chat.IsCreator || chat.IsAdmin)
             {
-                CreateFlyoutItem(ref flyout, null, Strings.Android.ChannelEdit);
+                CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.ChannelEdit);
             }
+
+            CreateFlyoutItem(ref flyout, null, Strings.Android.SearchMembers);
+
             if (chat.IsCreator && (full == null || (full.Participants is TLChatParticipants participants && participants.Participants.Count > 0)))
             {
                 CreateFlyoutItem(ref flyout, ViewModel.MigrateCommand, Strings.Android.ConvertGroupMenu);

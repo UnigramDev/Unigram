@@ -127,6 +127,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<ChannelAdminRightsViewModel>();
             container.ContainerBuilder.RegisterType<ChannelBannedRightsViewModel>();
             container.ContainerBuilder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<ChatEditViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChatInviteLinkViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelDetailsViewModel>();// .SingleInstance();
