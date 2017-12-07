@@ -391,7 +391,7 @@ namespace Telegram
 					[propget] HRESULT CallPacketTimeoutMs([out][retval] INT32* value);
 					[propget] HRESULT MeUrlPrefix([out][retval] HSTRING* value);
 					[propget] HRESULT SuggestedLangCode([out][retval] HSTRING* value);
-					[propget] HRESULT LangPackVersion([out][retval] HSTRING* value);
+					[propget] HRESULT LangPackVersion([out][retval] INT32* value);
 					[propget] HRESULT DisabledFeatures([out][retval] Windows.Foundation.Collections.IVectorView<TLDisabledFeature*>** value);
 				}
 

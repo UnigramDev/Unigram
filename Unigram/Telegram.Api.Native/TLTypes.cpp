@@ -544,9 +544,15 @@ HRESULT TLConfig::get_SuggestedLangCode(HSTRING* value)
 	return m_suggestedLangCode.CopyTo(value);
 }
 
-HRESULT TLConfig::get_LangPackVersion(HSTRING* value)
+HRESULT TLConfig::get_LangPackVersion(INT32* value)
 {
-	return m_langPackVersion.CopyTo(value);
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_langPackVersion;
+	return S_OK;
 }
 
 HRESULT TLConfig::get_DisabledFeatures(__FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDisabledFeature** value)
@@ -610,7 +616,7 @@ HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 	if ((m_flags & TLConfigFlag::SuggestedLangCode) == TLConfigFlag::SuggestedLangCode)
 	{
 		ReturnIfFailed(result, reader->ReadString(m_suggestedLangCode.GetAddressOf()));
-		ReturnIfFailed(result, reader->ReadString(m_langPackVersion.GetAddressOf()));
+		ReturnIfFailed(result, reader->ReadInt32(&m_langPackVersion));
 	}
 
 	return ReadTLObjectVector<TLDisabledFeature>(reader, m_disabledFeatures);
@@ -659,7 +665,7 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 	if ((m_flags & TLConfigFlag::SuggestedLangCode) == TLConfigFlag::SuggestedLangCode)
 	{
 		ReturnIfFailed(result, writer->WriteString(m_suggestedLangCode.Get()));
-		ReturnIfFailed(result, writer->WriteString(m_langPackVersion.Get()));
+		ReturnIfFailed(result, writer->WriteInt32(m_langPackVersion));
 	}
 
 	return WriteTLObjectVector<TLDisabledFeature>(writer, m_disabledFeatures);

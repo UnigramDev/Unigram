@@ -229,7 +229,7 @@ namespace Telegram
 					IFACEMETHODIMP get_CallPacketTimeoutMs(_Out_ INT32* value);
 					IFACEMETHODIMP get_MeUrlPrefix(_Out_ HSTRING* value);
 					IFACEMETHODIMP get_SuggestedLangCode(_Out_ HSTRING* value);
-					IFACEMETHODIMP get_LangPackVersion(_Out_ HSTRING* value);
+					IFACEMETHODIMP get_LangPackVersion(_Out_ INT32* value);
 					IFACEMETHODIMP get_DisabledFeatures(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDisabledFeature** value);
 
 					inline TLConfigFlag GetFlags() const
@@ -392,7 +392,7 @@ namespace Telegram
 						return m_suggestedLangCode;
 					}
 
-					inline HString const& GetLangPackVersion() const
+					inline INT32 const& GetLangPackVersion() const
 					{
 						return m_langPackVersion;
 					}
@@ -439,7 +439,7 @@ namespace Telegram
 					INT32 m_callPacketTimeoutMs;
 					HString m_meUrlPrefix;
 					HString m_suggestedLangCode;
-					HString m_langPackVersion;
+					INT32 m_langPackVersion;
 					std::vector<ComPtr<TLDisabledFeature>> m_disabledFeatures;
 				};
 
