@@ -35,24 +35,30 @@ namespace Unigram.Core.Common
             return new TLInputGeoPoint { Lat = position.Coordinate.Point.Position.Latitude, Long = position.Coordinate.Point.Position.Longitude };
         }
 
+
+
         public static uint GetHeight(this ImageProperties props)
         {
+            return props.Height;
             return props.Orientation == PhotoOrientation.Rotate180 ? props.Height : props.Width;
-        }
-
-        public static uint GetHeight(this VideoProperties props)
-        {
-            return props.Orientation == VideoOrientation.Rotate180 ? props.Height : props.Width;
         }
 
         public static uint GetWidth(this ImageProperties props)
         {
+            return props.Width;
             return props.Orientation == PhotoOrientation.Rotate180 ? props.Width : props.Height;
+        }
+
+
+
+        public static uint GetHeight(this VideoProperties props)
+        {
+            return props.Orientation == VideoOrientation.Rotate180 || props.Orientation == VideoOrientation.Normal ? props.Height : props.Width;
         }
 
         public static uint GetWidth(this VideoProperties props)
         {
-            return props.Orientation == VideoOrientation.Rotate180 ? props.Width : props.Height;
+            return props.Orientation == VideoOrientation.Rotate180 || props.Orientation == VideoOrientation.Normal ? props.Width : props.Height;
         }
     }
 }
