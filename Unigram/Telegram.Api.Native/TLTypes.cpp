@@ -20,6 +20,8 @@ using Windows::Foundation::Collections::VectorView;
 RegisterTLObjectConstructor(TLDCOption);
 RegisterTLObjectConstructor(TLDisabledFeature);
 RegisterTLObjectConstructor(TLConfig);
+RegisterTLObjectConstructor(TLConfigSimple);
+RegisterTLObjectConstructor(TLIpPort);
 RegisterTLObjectConstructor(TLCDNPublicKey);
 RegisterTLObjectConstructor(TLCDNConfig);
 RegisterTLObjectConstructor(TLRPCError);
@@ -669,6 +671,138 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 	}
 
 	return WriteTLObjectVector<TLDisabledFeature>(writer, m_disabledFeatures);
+}
+
+
+TLConfigSimple::TLConfigSimple() :
+	m_date(0),
+	m_expires(0),
+	m_dcId(0)
+{
+}
+
+TLConfigSimple::~TLConfigSimple()
+{
+}
+
+HRESULT TLConfigSimple::get_Date(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_date;
+	return S_OK;
+}
+
+HRESULT TLConfigSimple::get_Expires(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_expires;
+	return S_OK;
+}
+
+HRESULT TLConfigSimple::get_DCId(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_dcId;
+	return S_OK;
+}
+
+HRESULT TLConfigSimple::get_IpPortList(__FIVectorView_1_Telegram__CApi__CNative__CTL__CTLIpPort** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto vectorView = Make<VectorView<ABI::Telegram::Api::Native::TL::TLIpPort*>>();
+
+	std::transform(m_ipPortList.begin(), m_ipPortList.end(), std::back_inserter(vectorView->GetItems()), [](auto& ptr)
+	{
+		return static_cast<ITLIpPort*>(ptr.Get());
+	});
+
+	*value = vectorView.Detach();
+	return S_OK;
+}
+
+HRESULT TLConfigSimple::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt32(&m_date));
+	ReturnIfFailed(result, reader->ReadInt32(&m_expires));
+	ReturnIfFailed(result, reader->ReadInt32(&m_dcId));
+	
+	return ReadTLObjectVector<TLIpPort>(reader, m_ipPortList);
+}
+
+HRESULT TLConfigSimple::WriteBody(ITLBinaryWriterEx* writer)
+{
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteInt32(m_date));
+	ReturnIfFailed(result, writer->WriteInt32(m_expires));
+	ReturnIfFailed(result, writer->WriteInt32(m_dcId));
+
+	return WriteTLObjectVector<TLIpPort>(writer, m_ipPortList);
+}
+
+
+TLIpPort::TLIpPort() :
+	m_ipv4(0),
+	m_port(0)
+{
+}
+
+TLIpPort::~TLIpPort()
+{
+}
+
+HRESULT TLIpPort::get_Ipv4(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_ipv4;
+	return S_OK;
+}
+
+HRESULT TLIpPort::get_Port(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_port;
+	return S_OK;
+}
+
+HRESULT TLIpPort::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt32(&m_ipv4));
+	
+	return reader->ReadInt32(&m_port);
+}
+
+HRESULT TLIpPort::WriteBody(ITLBinaryWriterEx* writer)
+{
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteInt32(m_ipv4));
+	
+	return writer->WriteInt32(m_port);
 }
 
 

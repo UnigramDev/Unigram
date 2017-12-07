@@ -53,7 +53,9 @@ namespace Telegram
 				runtimeclass TLDCOption;
 				runtimeclass TLDisabledFeature;
 				runtimeclass TLConfig;
-				
+				runtimeclass TLConfigSimple;
+				runtimeclass TLIpPort;
+
 				delegate TLObjectConstructorDelegate;
 
 			}
@@ -401,6 +403,46 @@ namespace Telegram
 				runtimeclass TLConfig
 				{
 					[default] interface ITLConfig;
+					interface ITLObject;
+				}
+
+
+				[exclusiveto(TLConfigSimple)]
+				[uuid(252D51FC-A33F-482F-84C4-506210A75B55)]
+				[version(API_VERSION)]
+				interface ITLConfigSimple : IInspectable
+				{
+					[propget] HRESULT Date([out][retval] INT32* value);
+					[propget] HRESULT Expires([out][retval] INT32* value);
+					[propget] HRESULT DCId([out][retval] INT32* value);
+					[propget] HRESULT IpPortList([out][retval] Windows.Foundation.Collections.IVectorView<TLIpPort*>** value);
+				}
+
+				[marshaling_behavior(agile)]
+				[threading(both)]
+				[version(API_VERSION)]
+				runtimeclass TLConfigSimple
+				{
+					[default] interface ITLConfigSimple;
+					interface ITLObject;
+				}
+
+
+				[exclusiveto(TLIpPort)]
+				[uuid(DEB3CCDA-745D-448C-A138-6DEC31E1ABD1)]
+				[version(API_VERSION)]
+				interface ITLIpPort : IInspectable
+				{
+					[propget] HRESULT Ipv4([out][retval] INT32* value);
+					[propget] HRESULT Port([out][retval] INT32* value);
+				}
+
+				[marshaling_behavior(agile)]
+				[threading(both)]
+				[version(API_VERSION)]
+				runtimeclass TLIpPort
+				{
+					[default] interface ITLIpPort;
 					interface ITLObject;
 				}
 

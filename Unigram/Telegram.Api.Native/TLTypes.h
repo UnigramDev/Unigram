@@ -16,6 +16,8 @@ using ABI::Telegram::Api::Native::TL::ITLDisabledFeature;
 using ABI::Telegram::Api::Native::TL::TLConfigFlag;
 using ABI::Telegram::Api::Native::TL::TLDCOptionFlag;
 using ABI::Telegram::Api::Native::TL::ITLConfig;
+using ABI::Telegram::Api::Native::TL::ITLConfigSimple;
+using ABI::Telegram::Api::Native::TL::ITLIpPort;
 
 
 namespace Telegram
@@ -31,6 +33,8 @@ namespace Telegram
 				class TLDCOption;
 				class TLDisabledFeature;
 				class TLConfig;
+				class TLConfigSimple;
+				class TLIpPort;
 				class TLCDNPublicKey;
 				class TLCDNConfig;
 				class TLRPCError;
@@ -74,6 +78,8 @@ namespace Telegram
 					MakeTLTypeTraits(TLDCOption, 0x5d8c6cc);
 					MakeTLTypeTraits(TLDisabledFeature, 0xae636f24);
 					MakeTLTypeTraits(TLConfig, 0x9c840964);
+					MakeTLTypeTraits(TLConfigSimple, 0xd997c3c5);
+					MakeTLTypeTraits(TLIpPort, 0x0);
 					MakeTLTypeTraits(TLCDNPublicKey, 0xc982eaba);
 					MakeTLTypeTraits(TLCDNConfig, 0x5725e40a);
 					MakeTLTypeTraits(TLRPCError, 0x2144ca19);
@@ -441,6 +447,82 @@ namespace Telegram
 					HString m_suggestedLangCode;
 					INT32 m_langPackVersion;
 					std::vector<ComPtr<TLDisabledFeature>> m_disabledFeatures;
+				};
+
+				class TLConfigSimple WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLConfigSimple, TLObjectT<TLObjectTraits::TLConfigSimpleTraits>>
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLConfigSimple, BaseTrust);
+
+				public:
+					TLConfigSimple();
+					~TLConfigSimple();
+
+					//COM exported methods
+					IFACEMETHODIMP get_Date(_Out_ INT32* value);
+					IFACEMETHODIMP get_Expires(_Out_ INT32* value);
+					IFACEMETHODIMP get_DCId(_Out_ INT32* value);
+					IFACEMETHODIMP get_IpPortList(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CTL__CTLIpPort** value);
+
+					inline INT32 GetDate() const
+					{
+						return m_date;
+					}
+
+					inline INT32 GetExpires() const
+					{
+						return m_expires;
+					}
+
+					inline INT32 GetDCId() const
+					{
+						return m_dcId;
+					}
+
+					inline std::vector<ComPtr<TLIpPort>> const& GetIpPortList() const
+					{
+						return m_ipPortList;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
+
+				private:
+					INT32 m_date;
+					INT32 m_expires;
+					INT32 m_dcId;
+					std::vector<ComPtr<TLIpPort>> m_ipPortList;
+				};
+
+				class TLIpPort WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLIpPort, TLObjectT<TLObjectTraits::TLIpPortTraits>>
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLIpPort, BaseTrust);
+
+				public:
+					TLIpPort();
+					~TLIpPort();
+
+					//COM exported methods
+					IFACEMETHODIMP get_Ipv4(_Out_ INT32* value);
+					IFACEMETHODIMP get_Port(_Out_ INT32* value);
+
+					inline INT32 GetIpv4() const
+					{
+						return m_ipv4;
+					}
+
+					inline INT32 GetPort() const
+					{
+						return m_port;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
+
+				private:
+					INT32 m_ipv4;
+					INT32 m_port;
 				};
 
 				class TLCDNPublicKey WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLCDNPublicKeyTraits>>
