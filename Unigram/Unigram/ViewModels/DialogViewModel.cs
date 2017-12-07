@@ -1263,27 +1263,30 @@ namespace Unigram.ViewModels
 
             if (participant is TLChannel before && before.IsMegaGroup)
             {
-                IList<TLChannelParticipantBase> participants = null;
-                Admins.TryGetValue(before.Id, out participants);
-
-                if (participants == null)
+                Execute.BeginOnThreadPool(async () =>
                 {
-                    participants = new TLChannelParticipantBase[0];
-                }
+                    IList<TLChannelParticipantBase> participants = null;
+                    Admins.TryGetValue(before.Id, out participants);
 
-                var acc = 0L;
-                foreach (var item in participants.OrderBy(x => x.UserId))
-                {
-                    acc = ((acc * 20261) + 0x80000000L + item.UserId) % 0x80000000L;
-                }
+                    if (participants == null)
+                    {
+                        participants = new TLChannelParticipantBase[0];
+                    }
 
-                var response = await ProtoService.GetParticipantsAsync(before.ToInputChannel(), new TLChannelParticipantsAdmins(), 0, 200, (int)acc);
-                if (response.IsSucceeded && response.Result is TLChannelsChannelParticipants result)
-                {
-                    participants = result.Participants;
-                }
+                    var acc = 0L;
+                    foreach (var item in participants.OrderBy(x => x.UserId))
+                    {
+                        acc = ((acc * 20261) + 0x80000000L + item.UserId) % 0x80000000L;
+                    }
 
-                Admins[before.Id] = participants;
+                    var response = await ProtoService.GetParticipantsAsync(before.ToInputChannel(), new TLChannelParticipantsAdmins(), 0, 200, (int)acc);
+                    if (response.IsSucceeded && response.Result is TLChannelsChannelParticipants result)
+                    {
+                        participants = result.Participants;
+                    }
+
+                    Admins[before.Id] = participants;
+                });
             }
 
             if (messageId.HasValue)
