@@ -368,6 +368,7 @@
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelBannedViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelEditStickerSetViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatEditViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
@@ -464,6 +465,9 @@
     </Compile>
     <Compile Include="Views\Channels\CreateChannelStep3Page.xaml.cs">
       <DependentUpon>CreateChannelStep3Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatEditPage.xaml.cs">
+      <DependentUpon>ChatEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatInviteLinkPage.xaml.cs">
       <DependentUpon>ChatInviteLinkPage.xaml</DependentUpon>
@@ -1599,6 +1603,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Channels\ChannelEditStickerSetPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

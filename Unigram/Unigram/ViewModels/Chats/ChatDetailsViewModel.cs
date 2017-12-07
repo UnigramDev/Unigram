@@ -28,14 +28,10 @@ namespace Unigram.ViewModels.Chats
 {
     public class ChatDetailsViewModel : UnigramViewModelBase, IHandle<TLUpdateNotifySettings>
     {
-        private readonly IUploadFileManager _uploadFileManager;
-
-        public ChatDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager)
+        public ChatDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            _uploadFileManager = uploadFileManager;
-
-            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
+            EditCommand = new RelayCommand(EditExecute);
             InviteCommand = new RelayCommand(InviteExecute);
             MediaCommand = new RelayCommand(MediaExecute);
             MigrateCommand = new RelayCommand(MigrateExecute);
@@ -43,7 +39,7 @@ namespace Unigram.ViewModels.Chats
             ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
         }
 
-        private TLChat _item;
+        protected TLChat _item;
         public TLChat Item
         {
             get
@@ -56,7 +52,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        private TLChatFull _full;
+        protected TLChatFull _full;
         public TLChatFull Full
         {
             get
@@ -179,38 +175,15 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand<StorageFile> EditPhotoCommand { get; }
-        private async void EditPhotoExecute(StorageFile file)
+        public RelayCommand EditCommand { get; }
+        private void EditExecute()
         {
-            var fileLocation = new TLFileLocation
+            if (_item == null)
             {
-                VolumeId = TLLong.Random(),
-                LocalId = TLInt.Random(),
-                Secret = TLLong.Random(),
-                DCId = 0
-            };
-
-            var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-            var fileCache = await FileUtils.CreateTempFileAsync(fileName);
-
-            //var fileScale = await ImageHelper.ScaleJpegAsync(file, fileCache, 640, 0.77);
-
-            await file.CopyAndReplaceAsync(fileCache);
-            var fileScale = fileCache;
-
-            var basicProps = await fileScale.GetBasicPropertiesAsync();
-            var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
-
-            var fileId = TLLong.Random();
-            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false);
-            if (upload != null)
-            {
-                var response = await ProtoService.EditChatPhotoAsync(_item.Id, new TLInputChatUploadedPhoto { File = upload.ToInputFile() });
-                if (response.IsSucceeded)
-                {
-                    //var photo = response.Result.Photo as TLPhoto;
-                }
+                return;
             }
+
+            NavigationService.Navigate(typeof(ChatEditPage), _item.ToPeer());
         }
 
         public RelayCommand InviteCommand { get; }
