@@ -8,10 +8,12 @@
 #ifdef _DEBUG
 #define BreakIfError(result, method) \
 	if((result = method) != NO_ERROR) \
-	{ \
-		__debugbreak(); \
-		break; \
-	}
+		break
+	//if((result = method) != NO_ERROR) \
+	//{ \
+	//	__debugbreak(); \
+	//	break; \
+	//}
 #else
 #define BreakIfError(result, method) \
 	if((result = method) != NO_ERROR) \

@@ -63,22 +63,26 @@ namespace Telegram.Api.Services
                 flags |= RequestFlag.EnableUnauthorized;
             }
 
-            var messageToken = _connectionManager.SendRequest(obj, (message, ex) =>
+            try
             {
-                if (message.Object is TLRPCError error)
+                var messageToken = _connectionManager.SendRequest(obj, (message, ex) =>
                 {
-                    faultCallback?.Invoke(error);
-                }
-                else if (message.Object is TLUnparsedObject unparsed)
-                {
-                    callback?.Invoke(TLFactory.Read<T>(unparsed.Reader, unparsed.Constructor));
-                }
-                else
-                {
-                    callback?.Invoke((T)(object)message.Object);
-                }
-            },
-            null, dcId, ConnectionType.Download, flags);
+                    if (message.Object is TLRPCError error)
+                    {
+                        faultCallback?.Invoke(error);
+                    }
+                    else if (message.Object is TLUnparsedObject unparsed)
+                    {
+                        callback?.Invoke(TLFactory.Read<T>(unparsed.Reader, unparsed.Constructor));
+                    }
+                    else
+                    {
+                        callback?.Invoke((T)(object)message.Object);
+                    }
+                },
+                null, dcId, ConnectionType.Download, flags);
+            }
+            catch { }
         }
     }
 }

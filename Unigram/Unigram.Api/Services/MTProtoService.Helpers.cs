@@ -47,6 +47,11 @@ namespace Telegram.Api.Services
 
             Debug.WriteLine("Sending " + caption);
 
+            if (immediate)
+            {
+                flags |= RequestFlag.Immediate;
+            }
+
             try
             {
                 return _connectionManager.SendRequest(obj, (message, ex) =>
@@ -64,7 +69,7 @@ namespace Telegram.Api.Services
                         callback?.Invoke((T)(object)message.Object);
                     }
                 },
-                quick, datacenterId, ConnectionType.Generic, flags | (immediate ? RequestFlag.Immediate : RequestFlag.None));
+                quick, datacenterId, connectionType, flags);
             }
             catch
             {
