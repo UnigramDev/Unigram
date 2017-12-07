@@ -284,6 +284,46 @@ namespace Unigram.Views
             }
         }
 
+        private void Headers_ViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+        {
+            var container = Messages.ContainerFromIndex(_panel.LastVisibleIndex) as BubbleListViewItem;
+            if (container == null)
+            {
+                return;
+            }
+
+            var root = container.ContentTemplateRoot as Grid;
+            if (root == null)
+            {
+                return;
+            }
+
+            var photo = root.FindName("PhotoBubble") as ProfilePicture;
+            if (photo == null)
+            {
+                return;
+            }
+
+            var transform = photo.TransformToVisual(Messages);
+            var point = transform.TransformPoint(new Point());
+
+            var inner = VisualTreeHelper.GetChild(photo, 0) as UIElement;
+            var visual = ElementCompositionPreview.GetElementVisual(inner);
+
+            var diff = Messages.ActualHeight - (point.Y + photo.ActualHeight);
+            if (diff < 0)
+            {
+                visual.Offset = new Vector3(0, (float)diff, 0);
+            }
+            else
+            {
+                visual.Offset = new Vector3();
+            }
+
+
+            Debug.WriteLine(diff);
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Bindings.StopTracking();
@@ -971,6 +1011,8 @@ namespace Unigram.Views
 
             CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, Strings.Android.SaveToGIFs);
             CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.SaveAs);
+
+            CreateFlyoutItem(ref flyout, MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, messageCommon, Strings.Android.AddContactTitle);
             //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, AppResources.MessageSaveDownload);
 
             //sender.ContextFlyout = menu;
@@ -1296,6 +1338,20 @@ namespace Unigram.Views
                 if (message.Action is TLMessageActionPhoneCall)
                 {
                     return Visibility.Visible;
+                }
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageAddContact_Loaded(TLMessageCommonBase messageCommon)
+        {
+            var message = messageCommon as TLMessage;
+            if (message != null)
+            {
+                if (message.Media is TLMessageMediaContact contactMedia && contactMedia.User is TLUser user && user.Id > 0)
+                {
+                    return user.IsContact ? Visibility.Collapsed : Visibility.Visible;
                 }
             }
 
