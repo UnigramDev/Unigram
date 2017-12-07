@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
+using Unigram.Core.Common;
 using Unigram.Core.Helpers;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -21,14 +22,14 @@ namespace Unigram.Models
         public StoragePhoto(StorageFile file, BasicProperties basic, ImageProperties props)
             : base(file, basic)
         {
-            _fullRectangle = new Rect(0, 0, props.Width, props.Height);
+            _fullRectangle = new Rect(0, 0, props.GetWidth(), props.GetHeight());
             _basic = basic;
 
             Properties = props;
         }
 
-        public override uint Width => Properties.Width;
-        public override uint Height => Properties.Height;
+        public override uint Width => Properties.GetWidth();
+        public override uint Height => Properties.GetHeight();
 
         public Task<StorageFile> GetFileAsync()
         {

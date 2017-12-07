@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Converters;
+using Unigram.Core.Common;
 using Unigram.Core.Helpers;
 using Windows.Foundation;
 using Windows.Media.Effects;
@@ -23,7 +24,7 @@ namespace Unigram.Models
         public StorageVideo(StorageFile file, BasicProperties basic, VideoProperties props, MediaEncodingProfile profile)
             : base(file, basic)
         {
-            _fullRectangle = new Rect(0, 0, props.Width, props.Height);
+            _fullRectangle = new Rect(0, 0, props.GetWidth(), props.GetHeight());
 
             _basic = basic;
             Properties = props;
@@ -32,8 +33,8 @@ namespace Unigram.Models
             videoDuration = props.Duration.TotalMilliseconds;
 
             originalSize = (long)basic.Size;
-            originalWidth = (int)props.Width;
-            originalHeight = (int)props.Height;
+            originalWidth = (int)props.GetWidth();
+            originalHeight = (int)props.GetHeight();
             originalBitrate = bitrate = (int)props.Bitrate; //(trackBitrate / 100000 * 100000);
 
             if (bitrate > 900000)
@@ -44,8 +45,8 @@ namespace Unigram.Models
             LoadPreview();
         }
 
-        public override uint Width => Properties.Width;
-        public override uint Height => Properties.Height;
+        public override uint Width => Properties.GetWidth();
+        public override uint Height => Properties.GetHeight();
 
         public new static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
         {

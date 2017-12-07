@@ -9,6 +9,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls.Views;
+using Unigram.Core.Common;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Devices.Enumeration;
@@ -275,8 +276,8 @@ namespace Unigram.Controls
                         if (_video)
                         {
                             var props = await _file.Properties.GetVideoPropertiesAsync();
-                            var width = props.Width;
-                            var height = props.Height;
+                            var width = props.GetWidth();
+                            var height = props.GetHeight();
                             var x = 0d;
                             var y = 0d;
 

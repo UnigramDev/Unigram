@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Core.Common;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Editing;
@@ -94,7 +95,7 @@ namespace Unigram.Core.Helpers
 
                     composition.Clips.Add(clip);
 
-                    using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.Width, (int)props.Height, VideoFramePrecision.NearestKeyFrame))
+                    using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.GetWidth(), (int)props.GetHeight(), VideoFramePrecision.NearestKeyFrame))
                     {
                         return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
                     }
@@ -293,7 +294,7 @@ namespace Unigram.Core.Helpers
 
                 composition.Clips.Add(clip);
 
-                using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.Width, (int)props.Height, VideoFramePrecision.NearestKeyFrame))
+                using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.GetWidth(), (int)props.GetHeight(), VideoFramePrecision.NearestKeyFrame))
                 {
                     return await CropAndPreviewAsync(imageStream, cropRectangle);
                 }
@@ -340,7 +341,7 @@ namespace Unigram.Core.Helpers
 
                 composition.Clips.Add(clip);
 
-                return await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.Width, (int)props.Height, VideoFramePrecision.NearestKeyFrame);
+                return await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.GetWidth(), (int)props.GetHeight(), VideoFramePrecision.NearestKeyFrame);
             }
 
             return await sourceFile.OpenReadAsync();
@@ -366,8 +367,8 @@ namespace Unigram.Core.Helpers
 
         public static async Task<TLPhotoSizeBase> GetVideoThumbnailAsync(StorageFile file, VideoProperties props, VideoTransformEffectDefinition effect)
         {
-            double originalWidth = props.Width;
-            double originalHeight = props.Height;
+            double originalWidth = props.GetWidth();
+            double originalHeight = props.GetHeight();
 
             if (effect != null && !effect.CropRectangle.IsEmpty)
             {
