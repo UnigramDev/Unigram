@@ -94,7 +94,7 @@ ConnectionManager::~ConnectionManager()
 
 HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount)
 {
-	LOG_TRACE_METHOD(this);
+	//LOG_TRACE_METHOD(this);
 
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
@@ -1347,7 +1347,7 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 
 HRESULT ConnectionManager::ProcessContextRequests(ProcessRequestsContext* context)
 {
-	LOG_TRACE_METHOD(this);
+	//LOG_TRACE_METHOD(this);
 
 	HRESULT result = S_OK;
 	bool updateDatacenters = false;
@@ -1873,6 +1873,8 @@ HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 HRESULT ConnectionManager::OnConnectionClosed(Connection* connection, int wsaError)
 {
 	auto datacenter = connection->GetDatacenter();
+
+	LogTraceError(wsaError);
 
 	ResetRequests([datacenter, connection](auto datacenterId, auto const& request) -> bool
 	{

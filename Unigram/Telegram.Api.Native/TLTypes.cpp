@@ -161,7 +161,7 @@ TLConfig::TLConfig() :
 	m_testMode(false),
 	m_thisDc(0),
 	m_chatSizeMax(0),
-	m_megagroupSizeMax(0),
+	m_megaGroupSizeMax(0),
 	m_forwardedCountMax(0),
 	m_onlineUpdatePeriodMs(0),
 	m_offlineBlurTimeoutMs(0),
@@ -183,12 +183,45 @@ TLConfig::TLConfig() :
 	m_callReceiveTimeoutMs(0),
 	m_callRingTimeoutMs(0),
 	m_callConnectTimeoutMs(0),
-	m_callPacketTimeoutMs(0)
+	m_callPacketTimeoutMs(0),
+	m_langPackVersion(0)
 {
 }
 
 TLConfig::~TLConfig()
 {
+}
+
+HRESULT TLConfig::RuntimeClassInitialize(bool testMode)
+{
+	m_testMode = testMode;
+	m_callConnectTimeoutMs = 30000;
+	m_callPacketTimeoutMs = 10000;
+	m_callReceiveTimeoutMs = 20000;
+	m_callRingTimeoutMs = 90000;
+	m_channelsReadMediaPeriod = 604800;
+	m_chatBigSize = 10;
+	m_chatSizeMax = 200;
+	m_editTimeLimit = 172800;
+	m_flags = TLConfigFlag::PhoneCallsEnabled | TLConfigFlag::LangPackVersion;
+	m_forwardedCountMax = 100;
+	m_megaGroupSizeMax = 30000;
+	m_notifyCloudDelayMs = 30000;
+	m_notifyDefaultDelayMs = 1500;
+	m_offlineBlurTimeoutMs = 5000;
+	m_offlineIdleTimeoutMs = 30000;
+	m_onlineCloudTimeoutMs = 300000;
+	m_onlineUpdatePeriodMs = 120000;
+	m_pinnedDialogsCountMax = 5;
+	m_pushChatLimit = 2;
+	m_pushChatPeriodMs = 60000;
+	m_ratingEDecay = 2419200;
+	m_savedGifsLimit = 200;
+	m_stickersFavedLimit = 5;
+	m_stickersRecentLimit = 30;
+	m_thisDc = 4;
+
+	return m_meUrlPrefix.Set(L"https://t.me/");
 }
 
 HRESULT TLConfig::get_Flags(TLConfigFlag* value)
@@ -282,7 +315,7 @@ HRESULT TLConfig::get_MegaGroupSizeMax(INT32* value)
 		return E_POINTER;
 	}
 
-	*value = m_megagroupSizeMax;
+	*value = m_megaGroupSizeMax;
 	return S_OK;
 }
 
@@ -546,14 +579,22 @@ HRESULT TLConfig::get_SuggestedLangCode(HSTRING* value)
 	return m_suggestedLangCode.CopyTo(value);
 }
 
-HRESULT TLConfig::get_LangPackVersion(INT32* value)
+HRESULT TLConfig::get_LangPackVersion(__FIReference_1_int** value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	*value = m_langPackVersion;
+	if ((m_flags & TLConfigFlag::SuggestedLangCode) == TLConfigFlag::SuggestedLangCode)
+	{
+		*value = Make<Windows::Foundation::Reference<INT32>>(m_langPackVersion).Detach();
+	}
+	else
+	{
+		*value = nullptr;
+	}
+
 	return S_OK;
 }
 
@@ -585,7 +626,7 @@ HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 	ReturnIfFailed(result, reader->ReadInt32(&m_thisDc));
 	ReturnIfFailed(result, ReadTLObjectVector<TLDCOption>(reader, m_dcOptions));
 	ReturnIfFailed(result, reader->ReadInt32(&m_chatSizeMax));
-	ReturnIfFailed(result, reader->ReadInt32(&m_megagroupSizeMax));
+	ReturnIfFailed(result, reader->ReadInt32(&m_megaGroupSizeMax));
 	ReturnIfFailed(result, reader->ReadInt32(&m_forwardedCountMax));
 	ReturnIfFailed(result, reader->ReadInt32(&m_onlineUpdatePeriodMs));
 	ReturnIfFailed(result, reader->ReadInt32(&m_offlineBlurTimeoutMs));
@@ -634,7 +675,7 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, writer->WriteInt32(m_thisDc));
 	ReturnIfFailed(result, WriteTLObjectVector<TLDCOption>(writer, m_dcOptions));
 	ReturnIfFailed(result, writer->WriteInt32(m_chatSizeMax));
-	ReturnIfFailed(result, writer->WriteInt32(m_megagroupSizeMax));
+	ReturnIfFailed(result, writer->WriteInt32(m_megaGroupSizeMax));
 	ReturnIfFailed(result, writer->WriteInt32(m_forwardedCountMax));
 	ReturnIfFailed(result, writer->WriteInt32(m_onlineUpdatePeriodMs));
 	ReturnIfFailed(result, writer->WriteInt32(m_offlineBlurTimeoutMs));
@@ -742,8 +783,28 @@ HRESULT TLConfigSimple::ReadBody(ITLBinaryReaderEx* reader)
 	ReturnIfFailed(result, reader->ReadInt32(&m_date));
 	ReturnIfFailed(result, reader->ReadInt32(&m_expires));
 	ReturnIfFailed(result, reader->ReadInt32(&m_dcId));
-	
-	return ReadTLObjectVector<TLIpPort>(reader, m_ipPortList);
+
+	UINT32 constructor;
+	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
+
+	if (constructor != TLVECTOR_CONSTRUCTOR)
+	{
+		return E_FAIL;
+	}
+
+	UINT32 count;
+	ReturnIfFailed(result, reader->ReadUInt32(&count));
+
+	m_ipPortList.resize(count);
+
+	for (UINT32 i = 0; i < count; i++)
+	{
+		m_ipPortList[i] = Make<TLIpPort>();
+
+		ReturnIfFailed(result, m_ipPortList[i]->ReadBody(reader));
+	}
+
+	return S_OK;
 }
 
 HRESULT TLConfigSimple::WriteBody(ITLBinaryWriterEx* writer)
@@ -753,7 +814,15 @@ HRESULT TLConfigSimple::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, writer->WriteInt32(m_expires));
 	ReturnIfFailed(result, writer->WriteInt32(m_dcId));
 
-	return WriteTLObjectVector<TLIpPort>(writer, m_ipPortList);
+	ReturnIfFailed(result, writer->WriteUInt32(TLVECTOR_CONSTRUCTOR));
+	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_ipPortList.size())));
+
+	for (size_t i = 0; i < m_ipPortList.size(); i++)
+	{
+		ReturnIfFailed(result, m_ipPortList[i]->WriteBody(writer));
+	}
+
+	return S_OK;
 }
 
 
@@ -793,7 +862,7 @@ HRESULT TLIpPort::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
 	ReturnIfFailed(result, reader->ReadInt32(&m_ipv4));
-	
+
 	return reader->ReadInt32(&m_port);
 }
 
@@ -801,7 +870,7 @@ HRESULT TLIpPort::WriteBody(ITLBinaryWriterEx* writer)
 {
 	HRESULT result;
 	ReturnIfFailed(result, writer->WriteInt32(m_ipv4));
-	
+
 	return writer->WriteInt32(m_port);
 }
 
@@ -1497,4 +1566,10 @@ HRESULT TLFutureSalt::ReadBody(ITLBinaryReaderEx* reader)
 	ReturnIfFailed(result, reader->ReadInt32(&m_salt.ValidUntil));
 
 	return reader->ReadInt64(&m_salt.Salt);
+}
+
+
+HRESULT TLConfigStatics::get_Default(ITLConfig** value)
+{
+	return MakeAndInitialize<TLConfig>(value, false);
 }

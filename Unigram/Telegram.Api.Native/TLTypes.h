@@ -18,6 +18,7 @@ using ABI::Telegram::Api::Native::TL::TLDCOptionFlag;
 using ABI::Telegram::Api::Native::TL::ITLConfig;
 using ABI::Telegram::Api::Native::TL::ITLConfigSimple;
 using ABI::Telegram::Api::Native::TL::ITLIpPort;
+using ABI::Telegram::Api::Native::TL::ITLConfigStatics;
 
 
 namespace Telegram
@@ -235,8 +236,11 @@ namespace Telegram
 					IFACEMETHODIMP get_CallPacketTimeoutMs(_Out_ INT32* value);
 					IFACEMETHODIMP get_MeUrlPrefix(_Out_ HSTRING* value);
 					IFACEMETHODIMP get_SuggestedLangCode(_Out_ HSTRING* value);
-					IFACEMETHODIMP get_LangPackVersion(_Out_ INT32* value);
+					IFACEMETHODIMP get_LangPackVersion(_Out_ __FIReference_1_int** value);
 					IFACEMETHODIMP get_DisabledFeatures(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDisabledFeature** value);
+
+					//Internal methods
+					STDMETHODIMP RuntimeClassInitialize(bool testMode);
 
 					inline TLConfigFlag GetFlags() const
 					{
@@ -275,7 +279,7 @@ namespace Telegram
 
 					inline INT32 GetMegaGroupSizeMax() const
 					{
-						return m_megagroupSizeMax;
+						return m_megaGroupSizeMax;
 					}
 
 					inline INT32 GetForwardedCountMax() const
@@ -420,7 +424,7 @@ namespace Telegram
 					INT32 m_thisDc;
 					std::vector<ComPtr<TLDCOption>> m_dcOptions;
 					INT32 m_chatSizeMax;
-					INT32 m_megagroupSizeMax;
+					INT32 m_megaGroupSizeMax;
 					INT32 m_forwardedCountMax;
 					INT32 m_onlineUpdatePeriodMs;
 					INT32 m_offlineBlurTimeoutMs;
@@ -496,6 +500,8 @@ namespace Telegram
 
 				class TLIpPort WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLIpPort, TLObjectT<TLObjectTraits::TLIpPortTraits>>
 				{
+					friend class TLConfigSimple;
+
 					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLIpPort, BaseTrust);
 
 				public:
@@ -1387,6 +1393,16 @@ namespace Telegram
 
 				private:
 					ServerSalt m_salt;
+				};
+
+
+				class TLConfigStatics WrlSealed : public AgileActivationFactory<ITLConfigStatics>
+				{
+					InspectableClassStatic(RuntimeClass_Telegram_Api_Native_TL_TLConfig, BaseTrust);
+
+				public:
+					//COM exported methods
+					IFACEMETHODIMP get_Default(_Out_ ITLConfig** value);
 				};
 
 			}

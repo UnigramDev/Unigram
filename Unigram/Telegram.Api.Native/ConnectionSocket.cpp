@@ -5,13 +5,18 @@
 #include "Datacenter.h"
 #include "Helpers\COMHelper.h"
 
-#define BreakIfSocketError(result, method) \
-	if((result = method) == SOCKET_ERROR) \
-		break
-
+#ifdef _DEBUG
+#define BreakIfError(result, method) \
+	if((result = method) != NO_ERROR) \
+	{ \
+		__debugbreak(); \
+		break; \
+	}
+#else
 #define BreakIfError(result, method) \
 	if((result = method) != NO_ERROR) \
 		break
+#endif
 
 #define SOCKET_SEND_BUFFER_SIZE 0
 #define SOCKET_RECEIVE_BUFFER_SIZE 1024 * 128

@@ -67,9 +67,7 @@ HRESULT UserConfiguration::RuntimeClassInitialize()
 		ReturnIfFailed(result, easClientDeviceInformation->get_FriendlyName(m_deviceModel.GetAddressOf()));
 	}
 
-	m_langPack.Set(L"android");
-
-	return S_OK;
+	return m_langPack.Set(L"android");
 }
 
 HRESULT UserConfiguration::get_AppId(INT32* value)

@@ -687,7 +687,8 @@ HRESULT Connection::OnMessageReceived(TLMemoryBinaryReader* messageReader, UINT3
 		INT32 errorCode;
 		ReturnIfFailed(result, messageReader->ReadInt32(&errorCode));
 
-#pragma message ("Log error")
+		ReturnIfFailed(result, m_datacenter->GetConnectionManager()->LogTrace(LogLevel::Error, L"Error %d received from Telegram\n", errorCode));
+
 		return E_FAIL;
 	}
 

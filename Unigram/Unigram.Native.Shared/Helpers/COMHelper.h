@@ -33,7 +33,6 @@ using namespace Microsoft::WRL::Wrappers;
 		OutputDebugStringFormat(_STRINGIFY_W("HRESULT 0x%08X at " __FUNCTION__  ", line " _STRINGIFY(__LINE__) ", file " _STRINGIFY(__FILE__) "\n"), result); \
 		break; \
 	}
-
 #else
 
 #define ReturnIfFailed(result, method) \
@@ -47,7 +46,6 @@ using namespace Microsoft::WRL::Wrappers;
 	{ \
 		break; \
 	}
-
 #endif
 
 

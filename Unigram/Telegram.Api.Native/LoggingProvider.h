@@ -80,6 +80,30 @@ namespace Telegram
 						return logger->Log(logLevel, message);
 					}
 
+					inline HRESULT LogTraceError(DWORD error)
+					{
+						WCHAR* text;
+						UINT32 length;
+						if ((length = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
+							error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPWSTR>(&text), 0, nullptr)) == 0)
+						{
+							return LogTrace(LogLevel::Error, L"An error with code 0x%08x occurred\n", error);
+						}
+						else
+						{
+							/*if (text[length - 2] == '\r' && text[length - 1] == '\n')
+							{
+								length -= 2;
+							}*/
+
+							auto result = LogTrace(LogLevel::Error, HStringReference(text, length).Get());
+
+							LocalFree(text);
+
+							return result;
+						}
+					}
+
 				protected:
 					STDMETHODIMP get_Logger(_Out_ ILogger** value)
 					{

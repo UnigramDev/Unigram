@@ -357,6 +357,14 @@ namespace Telegram
 
 
 				[exclusiveto(TLConfig)]
+				[uuid(0033FE25-9FD6-4F73-8D3B-9F1B2BF79483)]
+				[version(API_VERSION)]
+				interface ITLConfigStatics : IInspectable
+				{
+					[propget] HRESULT Default([out][retval] TLConfig** value);
+				}
+
+				[exclusiveto(TLConfig)]
 				[uuid(3368AE99-FD5C-44C9-A780-3935276EC61F)]
 				[version(API_VERSION)]
 				interface ITLConfig : IInspectable
@@ -393,10 +401,11 @@ namespace Telegram
 					[propget] HRESULT CallPacketTimeoutMs([out][retval] INT32* value);
 					[propget] HRESULT MeUrlPrefix([out][retval] HSTRING* value);
 					[propget] HRESULT SuggestedLangCode([out][retval] HSTRING* value);
-					[propget] HRESULT LangPackVersion([out][retval] INT32* value);
+					[propget] HRESULT LangPackVersion([out][retval] Windows.Foundation.IReference<INT32>** value);
 					[propget] HRESULT DisabledFeatures([out][retval] Windows.Foundation.Collections.IVectorView<TLDisabledFeature*>** value);
 				}
 
+				[static(ITLConfigStatics, API_VERSION)]
 				[marshaling_behavior(agile)]
 				[threading(both)]
 				[version(API_VERSION)]
