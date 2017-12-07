@@ -33,6 +33,8 @@ namespace Telegram
 				IFACEMETHODIMP put_AppVersion(_In_ HSTRING value);
 				IFACEMETHODIMP get_Language(_Out_ HSTRING* value);
 				IFACEMETHODIMP put_Language(_In_ HSTRING value);
+				IFACEMETHODIMP get_LangPack(_Out_ HSTRING* value);
+				IFACEMETHODIMP put_LangPack(_In_ HSTRING value);
 
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize();
@@ -62,6 +64,11 @@ namespace Telegram
 					return m_language;
 				}
 
+				inline HString const& GetLangPack() const
+				{
+					return m_langPack;
+				}
+
 			private:
 				static HRESULT FormatVersion(UINT64 major, UINT64 minor, UINT64 build, UINT64 revision, _Out_ HString& version);
 
@@ -70,6 +77,7 @@ namespace Telegram
 				HString m_systemVersion;
 				HString m_appVersion;
 				HString m_language;
+				HString m_langPack;
 			};
 
 		}

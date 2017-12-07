@@ -67,6 +67,8 @@ HRESULT UserConfiguration::RuntimeClassInitialize()
 		ReturnIfFailed(result, easClientDeviceInformation->get_FriendlyName(m_deviceModel.GetAddressOf()));
 	}
 
+	m_langPack.Set(L"android");
+
 	return S_OK;
 }
 
@@ -125,6 +127,16 @@ HRESULT UserConfiguration::get_Language(HSTRING* value)
 HRESULT UserConfiguration::put_Language(HSTRING value)
 {
 	return m_language.Set(value);
+}
+
+HRESULT UserConfiguration::get_LangPack(HSTRING* value)
+{
+	return m_langPack.CopyTo(value);
+}
+
+HRESULT UserConfiguration::put_LangPack(HSTRING value)
+{
+	return m_langPack.Set(value);
 }
 
 HRESULT UserConfiguration::FormatVersion(UINT64 major, UINT64 minor, UINT64 build, UINT64 revision, HString& version)

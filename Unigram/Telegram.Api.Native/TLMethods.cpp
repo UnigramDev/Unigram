@@ -241,7 +241,7 @@ HRESULT TLInitConnection::WriteBody(ITLBinaryWriterEx* writer)
 
 	auto& language = m_userConfiguration->GetLanguage();
 	ReturnIfFailed(result, writer->WriteString(language.Get()));
-	ReturnIfFailed(result, writer->WriteWString(L""));
+	ReturnIfFailed(result, writer->WriteString(m_userConfiguration->GetLangPack().Get()));
 	ReturnIfFailed(result, writer->WriteString(language.Get()));
 
 	return TLObjectWithQuery::WriteQuery(writer);

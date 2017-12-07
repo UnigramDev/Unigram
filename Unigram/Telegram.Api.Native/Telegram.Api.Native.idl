@@ -559,6 +559,8 @@ namespace Telegram
 				[propput] HRESULT AppVersion([in] HSTRING value);
 				[propget] HRESULT Language([out][retval] HSTRING* value);
 				[propput] HRESULT Language([in] HSTRING value);
+				[propget] HRESULT LangPack([out][retval] HSTRING* value);
+				[propput] HRESULT LangPack([in] HSTRING value);
 			}
 
 			[marshaling_behavior(agile)]
