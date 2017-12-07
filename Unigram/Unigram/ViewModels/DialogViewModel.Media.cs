@@ -99,7 +99,7 @@ namespace Unigram.ViewModels
             picker.FileTypeFilter.Add("*");
 
             var files = await picker.PickMultipleFilesAsync();
-            if (files != null)
+            if (files != null && files.Count > 0)
             {
                 foreach (var storage in files)
                 {
@@ -569,7 +569,7 @@ namespace Unigram.ViewModels
             picker.FileTypeFilter.AddRange(Constants.MediaTypes);
 
             var files = await picker.PickMultipleFilesAsync();
-            if (files != null)
+            if (files != null && files.Count > 0)
             {
                 var storages = new ObservableCollection<StorageMedia>();
 
