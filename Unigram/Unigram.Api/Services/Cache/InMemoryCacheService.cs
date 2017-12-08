@@ -967,11 +967,13 @@ namespace Telegram.Api.Services.Cache
 
             if (predicate != null)
             {
-                return msgs.Where(predicate).OrderByDescending(x => x.Id).Take(limit).ToList();
+                //return msgs.Where(predicate).OrderByDescending(x => x.Id).Take(limit).ToList();
+                return msgs.Where(predicate).OrderByDescending(x => x.Date).ThenByDescending(x => x.Id).Take(limit).ToList();
             }
 
             // TLUtils.WritePerformance(string.Format("GetCachedHistory time ({0}): {1}", _database.CountRecords<TLMessageBase>(), timer.Elapsed));
-            return msgs.OrderByDescending(x => x.Id).Take(limit).ToList();
+            //return msgs.OrderByDescending(x => x.Id).Take(limit).ToList();
+            return msgs.OrderByDescending(x => x.Date).ThenByDescending(x => x.Id).Take(limit).ToList();
         }
 
         public void GetHistoryAsync(TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount, Func<TLMessageBase, bool> predicate = null)
