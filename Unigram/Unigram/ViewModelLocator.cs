@@ -285,11 +285,11 @@ namespace Unigram
                 }
                 else if (sender.ConnectionState == ConnectionState.WaitingForNetwork || sender.CurrentNetworkType == ConnectionNeworkType.None)
                 {
-                    protoService.SetMessageOnTime(25, "Waiting for network...");
+                    protoService.SetMessageOnTime(25, Strings.Android.WaitingForNetwork);
                 }
                 else
                 {
-                    protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
+                    protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? Strings.Android.ConnectingToProxy : Strings.Android.Connecting);
                 }
             }
         }
@@ -305,11 +305,11 @@ namespace Unigram
                 }
                 else if (sender.ConnectionState == ConnectionState.WaitingForNetwork)
                 {
-                    protoService.SetMessageOnTime(25, "Waiting for network...");
+                    protoService.SetMessageOnTime(25, Strings.Android.WaitingForNetwork);
                 }
                 else
                 {
-                    protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
+                    protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? Strings.Android.ConnectingToProxy : Strings.Android.Connecting);
                 }
             }
         }
