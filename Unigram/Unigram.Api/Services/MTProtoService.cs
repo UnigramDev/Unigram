@@ -2389,7 +2389,8 @@ namespace Telegram.Api.Services
         public event EventHandler<bool> SendStatus;
         public void RaiseSendStatus(bool e)
         {
-            SendStatus?.Invoke(this, e);
+            UpdateStatusAsync(e, result => { });
+            //SendStatus?.Invoke(this, e);
         }
 
         public void Dispose()

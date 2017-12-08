@@ -184,7 +184,7 @@ namespace Unigram
         private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
         {
             IsVisible = e.Visible;
-            //HandleActivated(e.Visible);
+            HandleActivated(e.Visible);
 
             //if (e.Visible)
             //{
