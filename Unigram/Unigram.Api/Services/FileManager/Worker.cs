@@ -97,7 +97,7 @@ namespace Telegram.Api.Services.FileManager
                     TLUtils.WriteException(e);
                 }
                 _isWorking = false;
-                _isWorking = _resetEvent.WaitOne(Constants.TimeoutInterval * 1000);
+                _isWorking = _resetEvent.WaitOne();
             }
         }
 
