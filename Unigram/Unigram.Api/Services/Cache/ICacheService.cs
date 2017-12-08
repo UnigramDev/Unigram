@@ -119,6 +119,8 @@ namespace Telegram.Api.Services.Cache
         void SyncStatuses(TLVector<TLContactStatus> contacts, Action<TLVector<TLContactStatus>> callback);
         void DeleteUser(int? id);
         void DeleteChat(int? id);
+        void DeleteUserFull(int? id);
+        void DeleteChatFull(int? id);
         void DeleteUserHistory(TLPeerChannel channel, TLPeerUser peer);
 
         void ClearDialog(TLPeerBase peer, int availableMinId);

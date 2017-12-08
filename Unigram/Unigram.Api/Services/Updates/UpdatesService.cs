@@ -2011,6 +2011,7 @@ namespace Telegram.Api.Services.Updates
                 user.RaisePropertyChanged(() => user.PhotoSelf);
 
                 _cacheService.SyncUser(user, _ => { });
+                _cacheService.DeleteUserFull(user.Id);
 
                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(userPhoto));
                 //_cacheService.SyncUser(user, result => _eventAggregator.Publish(result));

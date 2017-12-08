@@ -1632,6 +1632,14 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
+        public void DeleteUserFull(int? id)
+        {
+            if (id.HasValue)
+            {
+                FullUsersContext.Remove(id.Value);
+            }
+        }
+
         public void DeleteUser(TLUserBase user)
         {
             UsersContext.Remove(user.Id);
@@ -1692,6 +1700,14 @@ namespace Telegram.Api.Services.Cache
             if (id.HasValue)
             {
                 ChatsContext.Remove(id.Value);
+            }
+        }
+
+        public void DeleteChatFull(int? id)
+        {
+            if (id.HasValue)
+            {
+                FullChatsContext.Remove(id.Value);
             }
         }
 
