@@ -142,7 +142,21 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.UploadProfilePhotoAsync(upload.ToInputFile() as TLInputFile);
                 if (response.IsSucceeded)
                 {
-                    var photo = response.Result.Photo as TLPhoto;
+                    var user = Self as TLUser;
+                    if (user == null)
+                    {
+                        return;
+                    }
+
+                    var userFull = CacheService.GetFullUser(user.Id);
+                    if (userFull == null)
+                    {
+                        return;
+                    }
+
+                    userFull.HasProfilePhoto = true;
+                    userFull.ProfilePhoto = response.Result.Photo;
+                    userFull.RaisePropertyChanged(() => userFull.ProfilePhoto);
                 }
             }
         }
