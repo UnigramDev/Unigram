@@ -14,6 +14,7 @@ using Unigram.Controls.Messages;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -37,6 +38,11 @@ namespace Unigram.Common
         public static void BeginOnUIThread(this DependencyObject element, Action action)
         {
             element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+        }
+
+        public static bool IsCompactOverlaySupported(this ApplicationView view)
+        {
+            return ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && view.IsViewModeSupported(ApplicationViewMode.CompactOverlay);
         }
 
         public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
