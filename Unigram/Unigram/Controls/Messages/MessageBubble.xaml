@@ -140,7 +140,7 @@
                 x:Name="Message"
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
                 Style="{ThemeResource BodyRichTextBlockStyle}"
-                Foreground="{StaticResource MessageForegroundBrush}"
+                Foreground="{ThemeResource MessageForegroundBrush}"
                 ContextRequested="Message_ContextRequested"
                 ContextMenuOpening="Message_ContextMenuOpening"
                 Grid.Column="1"

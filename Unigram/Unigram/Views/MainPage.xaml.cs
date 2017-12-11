@@ -69,6 +69,8 @@ namespace Unigram.Views
 
             #region Localizations
 
+            TabChats.Header = Strings.Resources.Chats;
+
             NavigationChats.Content = Strings.Resources.Chats;
             NavigationAbout.Content = Strings.Resources.About;
             NavigationNews.Content = Strings.Resources.News;

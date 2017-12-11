@@ -87,6 +87,14 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
+        public string PhoneNumber
+        {
+            get
+            {
+                return _phoneNumber;
+            }
+        }
+
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {

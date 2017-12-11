@@ -366,7 +366,7 @@
                 </Grid>
 
                 <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="2">
-                    <PivotItem Header="Chats">
+                    <PivotItem x:Name="TabChats" Header="Chats">
                         <Grid>
                             <ListView x:Name="DialogsSearchListView"
                                       ItemsSource="{x:Bind DialogsResults.View}"

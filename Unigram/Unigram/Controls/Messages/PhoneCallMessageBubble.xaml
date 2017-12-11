@@ -16,9 +16,9 @@
     MinWidth="260">
 
     <!-- TODO: not the right way -->
-    <Border Height="6" Visibility="{x:Bind (Visibility)ViewModel.IsFirst, Mode=OneWay}"/>
+    <Border Height="2" Visibility="{x:Bind (Visibility)ViewModel.IsFirst, Mode=OneWay, FallbackValue=Collapsed}"/>
 
-    <UserControl x:Name="LayoutRoot">
+    <UserControl x:Name="LayoutRoot" Margin="0,0,0,2">
         <Grid Margin="{ThemeResource MessageContentMargin}"
               Padding="{ThemeResource MessageContentPadding}"
               CornerRadius="{ThemeResource MessageCornerRadius}"
@@ -58,7 +58,7 @@
                 <Run Text="{x:Bind Convert.Date(ViewModel.Date)}"/><Run Text="{x:Bind ConvertDuration(ViewModel.Action)}"/>
             </TextBlock>
 
-            <controls:GlyphButton Glyph="&#xE13A;" Height="Auto" VerticalAlignment="Stretch" Margin="0,-4,-10,-6" Grid.Column="1" Grid.RowSpan="2"/>
+            <controls:GlyphButton Glyph="&#xE13A;" Height="40" Width="40" CornerRadius="20" VerticalAlignment="Stretch" Margin="0,-4,-6,-6" Grid.Column="1" Grid.RowSpan="2"/>
         </Grid>
     </UserControl>
 

@@ -47,6 +47,23 @@ namespace Unigram.Views.SignIn
             PrimaryInput.Focus(FocusState.Keyboard);
         }
 
+        #region Binding
+
+        private string ConvertType(TLAuthSentCodeTypeBase type, string number)
+        {
+            switch (type)
+            {
+                case TLAuthSentCodeTypeApp appType:
+                    return Strings.Android.SentAppCode;
+                case TLAuthSentCodeTypeSms smsType:
+                    return string.Format(Strings.Android.SentSmsCode, number);
+            }
+
+            return null;
+        }
+
+        #endregion
+
         public class NavigationParameters
         {
             public string PhoneNumber { get; set; }
