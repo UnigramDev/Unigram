@@ -713,7 +713,7 @@
                                   SelectionMode="None">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <messages:HistoryCallMessageControl/>
+                                    <messages:HistoryCallMessageControl ContextRequested="Call_ContextRequested"/>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                             <ListView.ItemContainerStyle>
