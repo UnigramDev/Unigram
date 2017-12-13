@@ -11,7 +11,7 @@
     <AssemblyName>Telegram.Api</AssemblyName>
     <DefaultLanguage>en</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -53,7 +53,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -64,7 +64,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
     <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -75,7 +75,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -89,6 +89,8 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Constants.Secret.cs" />
+    <Compile Include="Helpers\LocaleHelper.cs" />
+    <Compile Include="Helpers\Markdown.cs" />
     <Compile Include="Helpers\PhoneNumber.cs" />
     <Compile Include="Services\Cache\Context\ChatsContext.cs" />
     <Compile Include="Services\Cache\Context\CreateDatabase.cs" />
@@ -98,6 +100,7 @@
     <Compile Include="Services\Cache\EventArgs\DialogRemovedEventArgs.cs" />
     <Compile Include="Services\Cache\EventArgs\MessageExpiredEventArgs.cs" />
     <Compile Include="Services\Cache\EventArgs\MessagesRemovedEventArgs.cs" />
+    <Compile Include="Services\Connection\PublicConfigService.cs" />
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadableItem.cs" />
     <Compile Include="Services\FileManager\DownloadablePart.cs" />
@@ -116,7 +119,9 @@
     <Compile Include="Services\FileManager\UploadManager.cs" />
     <Compile Include="Services\FileManager\Worker.cs" />
     <Compile Include="Services\IMTProtoService.Async.cs" />
+    <Compile Include="Services\Locale\LocaleService.cs" />
     <Compile Include="Services\MTProtoService.Async.cs" />
+    <Compile Include="Services\MTProtoService.LangPack.cs" />
     <Compile Include="Services\MTProtoService.Payments.cs" />
     <Compile Include="Services\MTProtoService.Phone.cs" />
     <Compile Include="Services\Stats\StatsService.cs" />
@@ -289,6 +294,7 @@
     <Compile Include="TL\Help\Methods\TLHelpSetBotUpdatesStatus.cs" />
     <Compile Include="TL\Help\TLHelpAppUpdate.cs" />
     <Compile Include="TL\Help\TLHelpAppUpdateBase.cs" />
+    <Compile Include="TL\Help\TLHelpConfigSimple.cs" />
     <Compile Include="TL\Help\TLHelpInviteText.cs" />
     <Compile Include="TL\Help\TLHelpNoAppUpdate.cs" />
     <Compile Include="TL\Help\TLHelpRecentMeUrls.cs" />
@@ -376,6 +382,7 @@
     <Compile Include="TL\Messages\Methods\TLMessagesSendInlineBotResult.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSendMedia.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSendMessage.cs" />
+    <Compile Include="TL\Messages\Methods\TLMessagesSendMultiMedia.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSendScreenshotNotification.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSetBotCallbackAnswer.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSetBotPrecheckoutResults.cs" />
@@ -453,9 +460,11 @@
     <Compile Include="TL\Methods\TLRPCDropAnswer.cs" />
     <Compile Include="TL\Methods\TLSetClientDHParams.cs" />
     <Compile Include="TL\Partial\TLAuthorization.Partial.cs" />
+    <Compile Include="TL\Partial\TLBadMsgNotification.Partial.cs" />
     <Compile Include="TL\Partial\TLBadServerSalt.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelAdminLogEvent.Partial.cs" />
+    <Compile Include="TL\Partial\TLChannelBannedRights.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelFull.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelParticipantBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChatParticipantBase.Partial.cs" />
@@ -464,15 +473,16 @@
     <Compile Include="TL\Partial\TLInputFileLocationBase.Partial.cs" />
     <Compile Include="TL\Partial\TLInputGeoPointBase.cs" />
     <Compile Include="TL\Partial\TLInputPeerBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLIpPort.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaContact.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaDocument.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesStickerSet.Partial.cs" />
+    <Compile Include="TL\Partial\TLMultiPts.cs" />
     <Compile Include="TL\Partial\TLPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannel.Partial.cs" />
     <Compile Include="TL\Partial\TLChat.Partial.cs" />
-    <Compile Include="TL\Partial\TLChatPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLChatPhotoBase.Partial.cs" />
     <Compile Include="TL\Partial\TLConfig.Partial.cs" />
     <Compile Include="TL\Partial\TLContactsContactsBase.Partial.cs" />
@@ -480,10 +490,10 @@
     <Compile Include="TL\Partial\TLDCOption.Partial.cs" />
     <Compile Include="TL\Partial\TLDialog.Partial.cs" />
     <Compile Include="TL\Partial\TLDocument.Partial.cs" />
-    <Compile Include="TL\Partial\TLFileLocation.Partial.cs" />
     <Compile Include="TL\Partial\TLFileLocationBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesDialogsBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesMessagesBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLPeerNotifySettingsBase.cs" />
     <Compile Include="TL\Partial\TLPhoneCallBase.Partial.cs" />
     <Compile Include="TL\Partial\TLPhoneConnection.Partial.cs" />
     <Compile Include="TL\Partial\TLPhoto.Partial.cs" />
@@ -540,8 +550,6 @@
     <Compile Include="Services\MTProtoService.Users.cs" />
     <Compile Include="Services\ServiceBase.cs" />
     <Compile Include="Services\Updates\IUpdatesService.cs" />
-    <Compile Include="Services\Updates\ReceiveUpdatesEventArgs.cs" />
-    <Compile Include="Services\Updates\UpdatesBySeqComparer.cs" />
     <Compile Include="Services\Updates\UpdatesService.cs" />
     <Compile Include="TL\Core\ITLMultiPts.cs" />
     <Compile Include="TL\Core\TLBinaryReader.cs" />
@@ -884,6 +892,7 @@
     <Compile Include="TL\TLInputReportReasonPornography.cs" />
     <Compile Include="TL\TLInputReportReasonSpam.cs" />
     <Compile Include="TL\TLInputReportReasonViolence.cs" />
+    <Compile Include="TL\TLInputSingleMedia.cs" />
     <Compile Include="TL\TLInputStickeredMediaBase.cs" />
     <Compile Include="TL\TLInputStickeredMediaDocument.cs" />
     <Compile Include="TL\TLInputStickeredMediaPhoto.cs" />
@@ -899,6 +908,7 @@
     <Compile Include="TL\TLInputWebDocument.cs" />
     <Compile Include="TL\TLInputWebFileLocation.cs" />
     <Compile Include="TL\TLInvoice.cs" />
+    <Compile Include="TL\TLIpPort.cs" />
     <Compile Include="TL\TLKeyboardButton.cs" />
     <Compile Include="TL\TLKeyboardButtonBase.cs" />
     <Compile Include="TL\TLKeyboardButtonBuy.cs" />
@@ -1268,7 +1278,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.4.0</Version>
+      <Version>6.0.5</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>
@@ -1280,7 +1290,7 @@
       <Version>3.1.1</Version>
     </PackageReference>
     <PackageReference Include="Universal.WinSQLite">
-      <Version>3.12.2.2</Version>
+      <Version>3.12.2.3</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -1295,6 +1305,7 @@
       <Name>libtgvoip</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

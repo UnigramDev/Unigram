@@ -57,7 +57,7 @@ namespace Unigram.Controls
 
         private void Library_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ItemClick?.Invoke(this, new MediaSelectedEventArgs((StorageMedia)e.ClickedItem));
+            ItemClick?.Invoke(this, new MediaSelectedEventArgs((StorageMedia)e.ClickedItem, true));
         }
 
         private async void Camera_Click(object sender, RoutedEventArgs e)
@@ -75,12 +75,12 @@ namespace Unigram.Controls
                 if (file.ContentType.Equals("video/mp4"))
                 {
                     await file.CopyAsync(KnownFolders.CameraRoll, DateTime.Now.ToString("WIN_yyyyMMdd_HH_mm_ss") + ".mp4", NameCollisionOption.GenerateUniqueName);
-                    ItemClick?.Invoke(this, new MediaSelectedEventArgs(await StorageVideo.CreateAsync(file, true)));
+                    ItemClick?.Invoke(this, new MediaSelectedEventArgs(await StorageVideo.CreateAsync(file, true), false));
                 }
                 else
                 {
                     await file.CopyAsync(KnownFolders.CameraRoll, DateTime.Now.ToString("WIN_yyyyMMdd_HH_mm_ss") + ".jpg", NameCollisionOption.GenerateUniqueName);
-                    ItemClick?.Invoke(this, new MediaSelectedEventArgs(new StoragePhoto(file) { IsSelected = true }));
+                    ItemClick?.Invoke(this, new MediaSelectedEventArgs(await StoragePhoto.CreateAsync(file, true), false));
                 }
             }
         }
@@ -92,9 +92,12 @@ namespace Unigram.Controls
     {
         public StorageMedia Item { get; private set; }
 
-        public MediaSelectedEventArgs(StorageMedia item)
+        public bool IsLocal { get; private set; }
+
+        public MediaSelectedEventArgs(StorageMedia item, bool local)
         {
             Item = item;
+            IsLocal = local;
         }
     }
 }

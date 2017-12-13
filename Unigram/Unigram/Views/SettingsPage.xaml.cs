@@ -38,18 +38,6 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
 
 #if DEBUG
-            // THIS CODE WILL RUN ONLY IF FIRST CONFIGURED SERVER IP IS TEST SERVER
-            if (Telegram.Api.Constants.FirstServerIpAddress.Equals("149.154.167.40"))
-            {
-                var optionDelete = new HyperButton();
-                optionDelete.Style = App.Current.Resources["HyperButtonStyle"] as Style;
-                optionDelete.Command = ViewModel.DeleteAccountCommand;
-                optionDelete.Content = "!!! DELETE ACCOUNT !!!";
-
-                //OptionsGroup4.Children.Clear();
-                OptionsGroup4.Children.Add(optionDelete);
-            }
-
             var optionAccounts = new HyperButton();
             optionAccounts.Style = App.Current.Resources["HyperButtonStyle"] as Style;
             optionAccounts.Click += Accounts_Click;
@@ -70,7 +58,7 @@ namespace Unigram.Views
 
         private void Phone_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneWelcomePage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneIntroPage));
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)
@@ -133,9 +121,14 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(SettingsAccountsPage));
         }
 
-        private void Wallpaper_Click(object sender, RoutedEventArgs e)
+        private void Appearance_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsWallPaperPage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsAppearancePage));
+        }
+
+        private void Language_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
@@ -149,7 +142,7 @@ namespace Unigram.Views
             }
         }
 
-        private async void EditPhoto_Click(object sender, RoutedEventArgs e)
+        public async void EditPhoto_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
             picker.ViewMode = PickerViewMode.Thumbnail;
@@ -159,7 +152,11 @@ namespace Unigram.Views
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditYourPhotoView(file);
+                var dialog = new EditYourPhotoView(file)
+                {
+                    CroppingProportions = ImageCroppingProportions.Square,
+                    IsCropEnabled = false
+                };
                 var dialogResult = await dialog.ShowAsync();
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
@@ -171,7 +168,7 @@ namespace Unigram.Views
         private async void Questions_Click(object sender, RoutedEventArgs e)
         {
             var response = await ViewModel.ProtoService.GetWebPageAsync("https://telegram.org/faq", 0);
-            if (response.IsSucceeded && response.Result is TLWebPage)
+            if (response.IsSucceeded && response.Result is TLWebPage webPage && webPage.HasCachedPage)
             {
                 MasterDetail.NavigationService.Navigate(typeof(InstantPage), response.Result);
             }
@@ -254,6 +251,30 @@ namespace Unigram.Views
                 //App.RaiseThemeChanged();
             }
         }
+
+        #region Binding
+
+        private string ConvertUsername(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return Strings.Android.UsernameEmpty;
+            }
+
+            return "@" + username;
+        }
+
+        private string ConvertAbout(string about)
+        {
+            if (string.IsNullOrEmpty(about))
+            {
+                return Strings.Android.UserBioEmpty;
+            }
+
+            return about;
+        }
+
+        #endregion
     }
 
     // Experiment

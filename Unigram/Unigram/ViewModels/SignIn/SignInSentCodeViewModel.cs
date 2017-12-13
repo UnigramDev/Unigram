@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +27,8 @@ namespace Unigram.ViewModels.SignIn
         public SignInSentCodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
+            ResendCommand = new RelayCommand(ResendExecute, () => !IsLoading);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -85,8 +87,15 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public string PhoneNumber
+        {
+            get
+            {
+                return _phoneNumber;
+            }
+        }
+
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             if (_sentCode == null)
@@ -95,9 +104,9 @@ namespace Unigram.ViewModels.SignIn
                 return;
             }
 
-            if (_phoneCode == null)
+            if (string.IsNullOrEmpty(_phoneCode))
             {
-                await TLMessageDialog.ShowAsync("Please enter your code.", "Warning", "OK");
+                RaisePropertyChanged("SENT_CODE_INVALID");
                 return;
             }
 
@@ -187,8 +196,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        private RelayCommand _resendCommand;
-        public RelayCommand ResendCommand => _resendCommand = _resendCommand ?? new RelayCommand(ResendExecute, () => !IsLoading);
+        public RelayCommand ResendCommand { get; }
         private async void ResendExecute()
         {
             if (_sentCode == null)

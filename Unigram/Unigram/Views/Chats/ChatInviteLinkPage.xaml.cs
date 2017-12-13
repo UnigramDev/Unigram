@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.Helpers;
+using Telegram.Api.TL;
+using Unigram.Common;
 using Unigram.ViewModels.Chats;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -55,5 +58,20 @@ namespace Unigram.Views.Chats
         {
             DataTransferManager.ShowShareUI();
         }
+
+        #region Binding
+
+        private string ConvertType(string broadcast, string mega)
+        {
+            if (ViewModel.Item is TLChannel channel)
+            {
+                return LocaleHelper.GetString(channel.IsBroadcast ? broadcast : mega);
+            }
+
+            return LocaleHelper.GetString(mega);
+        }
+
+        #endregion
+
     }
 }

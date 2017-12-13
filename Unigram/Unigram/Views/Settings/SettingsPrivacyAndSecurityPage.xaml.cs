@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Controls.Views;
+using Unigram.Services;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -57,6 +59,25 @@ namespace Unigram.Views.Settings
         private void ChatInvite_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPrivacyChatInvitePage));
+        }
+
+        private async void Passcode_Click(object sender, RoutedEventArgs e)
+        {
+            var service = UnigramContainer.Current.ResolveType<IPasscodeService>();
+            if (sender != null && service.IsEnabled)
+            {
+                var dialog = new SettingsSecurityPasscodeConfirmView();
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    Frame.Navigate(typeof(SettingsSecurityPasscodePage));
+                }
+            }
+            else
+            {
+                Frame.Navigate(typeof(SettingsSecurityPasscodePage));
+            }
         }
     }
 }

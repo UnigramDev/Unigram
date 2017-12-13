@@ -26,6 +26,10 @@ namespace Unigram.Core.Services
     {
         Task RegisterAsync();
         Task UnregisterAsync();
+        string GetGroup(ITLDialogWith with);
+        string GetPicture(ITLDialogWith with, string group);
+        string GetTitle(ITLDialogWith with);
+        string GetLaunch(ITLDialogWith with);
 
         void Notify(TLMessageCommonBase commonMessage);
     }
@@ -66,7 +70,10 @@ namespace Unigram.Core.Services
                             SettingsHelper.ChannelUri = channel.Uri;
                         }
 
-                        await _protoService.UnregisterDeviceAsync(8, oldUri);
+                        if (Uri.TryCreate(oldUri, UriKind.Absolute, out Uri unregister))
+                        {
+                            await _protoService.UnregisterDeviceAsync(8, oldUri);
+                        }
                     }
 
                     channel.PushNotificationReceived += OnPushNotificationReceived;
@@ -162,12 +169,6 @@ namespace Unigram.Core.Services
             SettingsHelper.ChannelUri = null;
         }
 
-
-
-
-
-
-
         public void Notify(TLMessageCommonBase commonMessage)
         {
             var caption = commonMessage.Parent.DisplayName;
@@ -181,31 +182,33 @@ namespace Unigram.Core.Services
             var loc_key = commonMessage.Parent is TLChannel channel && channel.IsBroadcast ? "CHANNEL" : string.Empty;
 
             NotificationTask.UpdateToast(caption, content, sound, launch, tag, group, picture, date, loc_key);
+            NotificationTask.UpdatePrimaryTile(caption, content, picture);
         }
 
         private string GetLaunch(TLMessageCommonBase custom)
         {
-            var launch = string.Empty;
-
-            if (custom.Id > 0)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "msg_id={0}&amp;", custom.Id);
-            }
-            if (custom.Parent is TLChat chat)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", chat.Id);
-            }
-            else if (custom.Parent is TLChannel channel)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "channel_id={0}&amp;access_hash={1}", channel.Id, channel.AccessHash ?? 0);
-            }
-            else if (custom.Parent is TLUser user)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "from_id={0}&amp;access_hash={1}", user.Id, user.AccessHash ?? 0);
-            }
+            return GetLaunch(custom?.Parent);
 
             //launch += L"Action=";
             //launch += loc_key->Data();
+        }
+
+        public string GetLaunch(ITLDialogWith with)
+        {
+            var launch = string.Empty;
+
+            if (with is TLChat chat)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", chat.Id);
+            }
+            else if (with is TLChannel channel)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "channel_id={0}&amp;access_hash={1}", channel.Id, channel.AccessHash ?? 0);
+            }
+            else if (with is TLUser user)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "from_id={0}&amp;access_hash={1}", user.Id, user.AccessHash ?? 0);
+            }
 
             return launch;
         }
@@ -217,15 +220,25 @@ namespace Unigram.Core.Services
 
         private string GetGroup(TLMessageCommonBase custom)
         {
-            if (custom.Parent is TLChat chat)
+            return GetGroup(custom?.Parent);
+        }
+
+        public string GetGroup(ITLDialogWith with)
+        {
+            if (with == null)
+            {
+                return null;
+            }
+
+            if (with is TLChat chat)
             {
                 return string.Format(CultureInfo.InvariantCulture, "c{0}", chat.Id);
             }
-            else if (custom.Parent is TLChannel channel)
+            else if (with is TLChannel channel)
             {
                 return string.Format(CultureInfo.InvariantCulture, "c{0}", channel.Id);
             }
-            else if (custom.Parent is TLUser user)
+            else if (with is TLUser user)
             {
                 return string.Format(CultureInfo.InvariantCulture, "u{0}", user.Id);
             }
@@ -235,16 +248,21 @@ namespace Unigram.Core.Services
 
         private string GetPicture(TLMessageCommonBase custom, string group)
         {
+            return GetPicture(custom?.Parent, group);
+        }
+
+        public string GetPicture(ITLDialogWith with, string group)
+        {
             TLFileLocation location = null;
-            if (custom.Parent is TLUser user && user.Photo is TLUserProfilePhoto userPhoto)
+            if (with is TLUser user && user.Photo is TLUserProfilePhoto userPhoto)
             {
                 location = userPhoto.PhotoSmall as TLFileLocation;
             }
-            else if (custom.Parent is TLChat chat && chat.Photo is TLChatPhoto chatPhoto)
+            else if (with is TLChat chat && chat.Photo is TLChatPhoto chatPhoto)
             {
                 location = chatPhoto.PhotoSmall as TLFileLocation;
             }
-            else if (custom.Parent is TLChannel channel && channel.Photo is TLChatPhoto channelPhoto)
+            else if (with is TLChannel channel && channel.Photo is TLChatPhoto channelPhoto)
             {
                 location = channelPhoto.PhotoSmall as TLFileLocation;
             }
@@ -261,13 +279,36 @@ namespace Unigram.Core.Services
             return FileUtils.GetTempFileUri("placeholders/" + group + "_placeholder.png").ToString();
         }
 
+        public string GetTitle(ITLDialogWith with)
+        {
+            if (with == null)
+            {
+                return null;
+            }
+
+            if (with is TLChat chat)
+            {
+                return chat.Title;
+            }
+            else if (with is TLChannel channel)
+            {
+                return channel.Title;
+            }
+            else if (with is TLUser user)
+            {
+                return user.DisplayName;
+            }
+
+            return null;
+        }
+
         #region Brief
 
         private string GetBriefLabel(TLMessageBase value, bool showContent)
         {
             if (value is TLMessageEmpty messageEmpty)
             {
-                return "Resources.EmptyMessage";
+                return string.Empty;
             }
 
             if (value is TLMessageService messageService)
@@ -282,7 +323,7 @@ namespace Unigram.Core.Services
                 {
                     if (message.Media is TLMessageMediaDocument documentMedia)
                     {
-                        if (string.IsNullOrEmpty(documentMedia.Caption))
+                        if (string.IsNullOrEmpty(documentMedia.Caption) || message.IsRoundVideo())
                         {
                             return result;
                         }
@@ -315,8 +356,7 @@ namespace Unigram.Core.Services
                         return result + message.Message.Replace("\r\n", "\n").Replace("\n", " ");
                     }
 
-                    //return text + Resources.Message;
-                    return result + "Message";
+                    return result + Strings.Android.Message;
                 }
             }
 
@@ -339,7 +379,7 @@ namespace Unigram.Core.Services
                         {
                             if (message.Parent.ToPeer().Id != from && !message.IsPost)
                             {
-                                result = "You: ";
+                                result = $"{Strings.Android.FromYou}: ";
                             }
                         }
                         else if (message.From is TLUser user)
@@ -358,7 +398,7 @@ namespace Unigram.Core.Services
                             }
                             else if (user.IsDeleted)
                             {
-                                return $"Deleted Account: ";
+                                result = $"{Strings.Android.HiddenName}: ";
                             }
                             else
                             {
@@ -383,7 +423,24 @@ namespace Unigram.Core.Services
                     {
                         if (documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
                         {
-                            return result + "Video has expired";
+                            return result + Strings.Android.AttachVideoExpired;
+                        }
+                        else if (message.IsRoundVideo())
+                        {
+                            return result + Strings.Android.AttachRound;
+                        }
+                        else if (message.IsSticker())
+                        {
+                            if (documentMedia.Document is TLDocument documentSticker)
+                            {
+                                var attribute = documentSticker.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                                if (attribute != null)
+                                {
+                                    return result + $"{attribute.Alt} {Strings.Android.AttachSticker}";
+                                }
+                            }
+
+                            return result + Strings.Android.AttachSticker;
                         }
 
                         var caption = string.Empty;
@@ -394,32 +451,15 @@ namespace Unigram.Core.Services
 
                         if (message.IsVoice())
                         {
-                            return result + "Voice" + caption;
+                            return result + Strings.Android.AttachAudio + caption;
                         }
                         else if (message.IsVideo())
                         {
-                            return result + "Video" + caption;
-                        }
-                        else if (message.IsRoundVideo())
-                        {
-                            return result + "Video message" + caption;
+                            return result + Strings.Android.AttachVideo + caption;
                         }
                         else if (message.IsGif())
                         {
-                            return result + "GIF" + caption;
-                        }
-                        else if (message.IsSticker())
-                        {
-                            if (documentMedia.Document is TLDocument documentSticker)
-                            {
-                                var attribute = documentSticker.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
-                                if (attribute != null)
-                                {
-                                    return result + $"{attribute.Alt} Sticker";
-                                }
-                            }
-
-                            return result + "Sticker";
+                            return result + Strings.Android.AttachGif + caption;
                         }
                         else if (message.IsAudio())
                         {
@@ -434,11 +474,11 @@ namespace Unigram.Core.Services
                                     }
                                     else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
                                     {
-                                        return $"{result}{audioAttribute.Performer} - Unknown Track" + caption;
+                                        return $"{result}{audioAttribute.Performer} - {Strings.Android.AudioUnknownTitle}" + caption;
                                     }
                                     else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
                                     {
-                                        return $"{result}{audioAttribute.Title}" + caption;
+                                        return $"{result}{Strings.Android.AudioUnknownArtist} - {audioAttribute.Title}" + caption;
                                     }
                                 }
                             }
@@ -454,7 +494,7 @@ namespace Unigram.Core.Services
                             }
                         }
 
-                        return result + "Document" + caption;
+                        return result + Strings.Android.AttachDocument + caption;
                     }
                     else if (message.Media is TLMessageMediaInvoice invoiceMedia)
                     {
@@ -462,37 +502,37 @@ namespace Unigram.Core.Services
                     }
                     else if (message.Media is TLMessageMediaContact)
                     {
-                        return result + "Contact";
+                        return result + Strings.Android.AttachContact;
                     }
                     else if (message.Media is TLMessageMediaGeo)
                     {
-                        return result + "Location";
+                        return result + Strings.Android.AttachLocation;
                     }
                     else if (message.Media is TLMessageMediaGeoLive)
                     {
-                        return result + "Live Location";
+                        return result + Strings.Android.AttachLiveLocation;
                     }
                     else if (message.Media is TLMessageMediaVenue)
                     {
-                        return result + "Location, ";
+                        return result + $"{Strings.Android.AttachLocation}, ";
                     }
                     else if (message.Media is TLMessageMediaPhoto photoMedia)
                     {
                         if (photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
                         {
-                            return result + "Photo has expired";
+                            return result + Strings.Android.AttachPhotoExpired;
                         }
 
                         if (string.IsNullOrEmpty(photoMedia.Caption))
                         {
-                            return result + "Photo";
+                            return result + Strings.Android.AttachPhoto;
                         }
 
-                        return result + "Photo, ";
+                        return result + $"{Strings.Android.AttachPhoto}, ";
                     }
                     else if (message.Media is TLMessageMediaUnsupported)
                     {
-                        return result + "Unsupported media";
+                        return result + Strings.Android.UnsupportedAttachment;
                     }
                 }
 

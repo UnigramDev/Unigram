@@ -45,6 +45,11 @@ namespace Telegram.Api.Services
             service.ProcessQueue();
         }
 
+        private void GetDialogsAsyncInternal(TLMessagesGetDialogs message, Action<TLMessagesDialogsBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
+        {
+            SendAsyncInternal("messages.getDialogs", int.MaxValue, message, callback, fastCallback, faultCallback);
+        }
+
         private void ReadEncryptedHistoryAsyncInternal(TLMessagesReadEncryptedHistory message, Action<bool> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
             SendAsyncInternal("messages.readEncryptedHistory", int.MaxValue, message, callback, fastCallback, faultCallback);
@@ -88,6 +93,16 @@ namespace Telegram.Api.Services
         private void SendInlineBotResultAsyncInternal(TLMessagesSendInlineBotResult message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
             SendAsyncInternal("messages.sendInlineBotResult", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
+        }
+
+        private void UploadMediaAsyncInternal(TLMessagesUploadMedia message, Action<TLMessageMediaBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
+        {
+            SendAsyncInternal("messages.uploadMedia", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
+        }
+
+        private void SendMultiMediaAsyncInternal(TLMessagesSendMultiMedia message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
+        {
+            SendAsyncInternal("messages.sendMultiMedia", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback);
         }
 
         private void SendMediaAsyncInternal(TLMessagesSendMedia message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
@@ -137,7 +152,7 @@ namespace Telegram.Api.Services
                 Caption = caption,
                 Object = obj,
                 Message = transportMessage,
-                Callback = result => callback((T)result),
+                Callback = result => callback?.Invoke((T)result),
                 FastCallback = fastCallback,
                 FaultCallback = null, // чтобы не вылететь по таймауту не сохраняем сюда faultCallback, а просто запоминаем последнюю ошибку,
                 FaultQueueCallback = faultCallback, // для MTProto.CleanupQueue

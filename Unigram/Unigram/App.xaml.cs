@@ -48,6 +48,11 @@ using Unigram.Views.Users;
 using System.Linq;
 using Telegram.Logs;
 using Windows.Media.Playback;
+using Windows.UI.StartScreen;
+using Windows.System;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Xaml.Resources;
+using Unigram.Services;
 
 namespace Unigram
 {
@@ -56,12 +61,16 @@ namespace Unigram
     /// </summary>
     sealed partial class App : BootStrapper
     {
-        public static ShareOperation ShareOperation { get; private set; }
+        public static ShareOperation ShareOperation { get; set; }
+        public static DataPackageView DataPackage { get; set; }
+
         public static AppServiceConnection Connection { get; private set; }
 
         public static AppInMemoryState InMemoryState { get; } = new AppInMemoryState();
 
         private readonly UISettings _uiSettings;
+
+        public UISettings UISettings => _uiSettings;
 
         public static event TypedEventHandler<CoreDispatcher, AcceleratorKeyEventArgs> AcceleratorKeyActivated;
 
@@ -91,6 +100,8 @@ namespace Unigram
                 RequestedTheme = ApplicationSettings.Current.RequestedTheme == ElementTheme.Dark ? ApplicationTheme.Dark : ApplicationTheme.Light;
             }
 
+            CustomXamlResourceLoader.Current = new XamlResourceLoader();
+
             InitializeComponent();
 
             _uiSettings = new UISettings();
@@ -106,6 +117,8 @@ namespace Unigram
             }
 
             FileUtils.CreateTemporaryFolder();
+
+            InactivityHelper.Detected += Inactivity_Detected;
 
             UnhandledException += async (s, args) =>
             {
@@ -132,6 +145,35 @@ namespace Unigram
 #endif
         }
 
+        private void Inactivity_Detected(object sender, EventArgs e)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                var passcode = UnigramContainer.Current.ResolveType<IPasscodeService>();
+                if (passcode != null && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                {
+                    passcode.Lock();
+                    ShowPasscode();
+                }
+            });
+        }
+
+        private static volatile bool _passcodeShown;
+        public static async void ShowPasscode()
+        {
+            if (_passcodeShown)
+            {
+                return;
+            }
+
+            _passcodeShown = true;
+
+            var dialog = new PasscodePage();
+            var result = await dialog.ShowQueuedAsync();
+
+            _passcodeShown = false;
+        }
+
         public static bool IsActive { get; private set; }
         public static bool IsVisible { get; private set; }
 
@@ -144,7 +186,7 @@ namespace Unigram
         private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
         {
             IsVisible = e.Visible;
-            //HandleActivated(e.Visible);
+            HandleActivated(e.Visible);
 
             //if (e.Visible)
             //{
@@ -167,6 +209,26 @@ namespace Unigram
             //        updatesService.CancelUpdating();
             //    }
             //}
+
+            var passcode = UnigramContainer.Current.ResolveType<IPasscodeService>();
+            if (passcode != null)
+            {
+                if (e.Visible && passcode.IsLockscreenRequired)
+                {
+                    ShowPasscode();
+                }
+                else
+                {
+                    if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Touch)
+                    {
+                        passcode.CloseTime = DateTime.Now;
+                    }
+                    else
+                    {
+                        passcode.CloseTime = DateTime.Now.AddYears(1);
+                    }
+                }
+            }
         }
 
         private void HandleActivated(bool active)
@@ -218,22 +280,24 @@ namespace Unigram
             var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame) as NavigationService;
             navigationService.SerializationService = TLSerializationService.Current;
 
-            //return new ModalDialog
-            //{
-            //    DisableBackButtonWhenModal = false,
-            //    Content = navigationFrame
-            //};
-
             return navigationFrame;
         }
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
-            Execute.Initialize();
             Locator.Configure();
+
+            var passcode = UnigramContainer.Current.ResolveType<IPasscodeService>();
+            if (passcode != null && passcode.IsEnabled)
+            {
+                passcode.Lock();
+                InactivityHelper.Initialize(passcode.AutolockTimeout);
+            }
 
             if (Window.Current != null)
             {
+                Execute.Initialize();
+
                 Window.Current.Activated -= Window_Activated;
                 Window.Current.Activated += Window_Activated;
                 Window.Current.VisibilityChanged -= Window_VisibilityChanged;
@@ -258,26 +322,68 @@ namespace Unigram
             {
                 if (args is ShareTargetActivatedEventArgs share)
                 {
+                    var package = new DataPackage();
+                    var operation = share.ShareOperation.Data;
+                    if (operation.Contains(StandardDataFormats.ApplicationLink))
+                    {
+                        package.SetApplicationLink(await operation.GetApplicationLinkAsync());
+                    }
+                    if (operation.Contains(StandardDataFormats.Bitmap))
+                    {
+                        package.SetBitmap(await operation.GetBitmapAsync());
+                    }
+                    //if (operation.Contains(StandardDataFormats.Html))
+                    //{
+                    //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
+                    //}
+                    //if (operation.Contains(StandardDataFormats.Rtf))
+                    //{
+                    //    package.SetRtf(await operation.GetRtfAsync());
+                    //}
+                    if (operation.Contains(StandardDataFormats.StorageItems))
+                    {
+                        package.SetStorageItems(await operation.GetStorageItemsAsync());
+                    }
+                    if (operation.Contains(StandardDataFormats.Text))
+                    {
+                        package.SetText(await operation.GetTextAsync());
+                    }
+                    //if (operation.Contains(StandardDataFormats.Uri))
+                    //{
+                    //    package.SetUri(await operation.GetUriAsync());
+                    //}
+                    if (operation.Contains(StandardDataFormats.WebLink))
+                    {
+                        package.SetWebLink(await operation.GetWebLinkAsync());
+                    }
+
                     ShareOperation = share.ShareOperation;
-                    NavigationService.Navigate(typeof(ShareTargetPage));
+                    DataPackage = package.GetView();
+
+                    var options = new LauncherOptions();
+                    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
+
+                    await Launcher.LaunchUriAsync(new Uri("tg://"), options);
                 }
                 else if (args is VoiceCommandActivatedEventArgs voice)
                 {
+                    Execute.Initialize();
+
                     SpeechRecognitionResult speechResult = voice.Result;
                     string command = speechResult.RulePath[0];
 
                     if (command == "ShowAllDialogs")
                     {
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                     if (command == "ShowSpecificDialog")
                     {
                         //#TODO: Fix that this'll open a specific dialog
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                 }
                 else if (args is ContactPanelActivatedEventArgs contact)
@@ -292,7 +398,7 @@ namespace Unigram
                         var full = await store.GetContactAsync(contact.Contact.Id);
                         if (full == null)
                         {
-                            NavigationService.Navigate(typeof(MainPage));
+                            NavigationService.NavigateToMain(null);
                         }
                         else
                         {
@@ -301,7 +407,7 @@ namespace Unigram
                             var first = annotations.FirstOrDefault();
                             if (first == null)
                             {
-                                NavigationService.Navigate(typeof(MainPage));
+                                NavigationService.NavigateToMain(null);
                             }
                             else
                             {
@@ -312,44 +418,57 @@ namespace Unigram
                                 }
                                 else
                                 {
-                                    NavigationService.Navigate(typeof(MainPage));
+                                    NavigationService.NavigateToMain(null);
                                 }
                             }
                         }
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage));
+                        NavigationService.NavigateToMain(null);
                     }
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
                 {
-                    if (NavigationService.Frame.Content is MainPage page)
+                    Execute.Initialize();
+
+                    if (ShareOperation != null)
+                    {
+                        ShareOperation.ReportCompleted();
+                        ShareOperation = null;
+                    }
+
+                    if (NavigationService?.Frame?.Content is MainPage page)
                     {
                         page.Activate(protocol.Uri);
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage), protocol.Uri.ToString());
+                        NavigationService.NavigateToMain(protocol.Uri.ToString());
                     }
                 }
                 else
                 {
-                    var activate = args as ToastNotificationActivatedEventArgs;
-                    var launch = activate?.Argument ?? null;
+                    Execute.Initialize();
 
-                    if (NavigationService.Frame.Content is MainPage page)
+                    var activate = args as ToastNotificationActivatedEventArgs;
+                    var launched = args as LaunchActivatedEventArgs;
+                    var launch = activate?.Argument ?? launched?.Arguments;
+
+                    if (NavigationService?.Frame?.Content is MainPage page)
                     {
                         page.Activate(launch);
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(MainPage), launch);
+                        NavigationService.NavigateToMain(launch);
                     }
                 }
             }
             else
             {
+                Execute.Initialize();
+
                 NavigationService.Navigate(typeof(IntroPage));
             }
 
@@ -398,6 +517,20 @@ namespace Unigram
             BadgeUpdateManager.CreateBadgeUpdaterForApplication("App").Clear();
             TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
             ToastNotificationManager.History.Clear("App");
+
+            if (SettingsHelper.UserId > 0 && ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2) && JumpList.IsSupported())
+            {
+                var current = await JumpList.LoadCurrentAsync();
+                current.SystemGroupKind = JumpListSystemGroupKind.None;
+                current.Items.Clear();
+
+                var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", SettingsHelper.UserId), Strings.Android.SavedMessages);
+                cloud.Logo = new Uri("ms-appx:///Assets/JumpList/SavedMessages/SavedMessages.png");
+
+                current.Items.Add(cloud);
+
+                await current.SaveAsync();
+            }
 
 #if !DEBUG && !PREVIEW
             Execute.BeginOnThreadPool(async () =>
@@ -532,13 +665,21 @@ namespace Unigram
         public static void RaiseThemeChanged()
         {
             var frame = Window.Current.Content as Frame;
-            if (frame != null)
+            if (frame == null)
             {
-                var dark = (bool)App.Current.Resources["IsDarkTheme"];
-
-                frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
-                frame.RequestedTheme = ElementTheme.Default;
+                return;
             }
+
+            var current = App.Current as App;
+            var theme = current.UISettings.GetColorValue(UIColorType.Background);
+
+            frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark || (ApplicationSettings.Current.CurrentTheme == ElementTheme.Default && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
+            frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme;
+
+            //var dark = (bool)App.Current.Resources["IsDarkTheme"];
+
+            //frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
+            //frame.RequestedTheme = ElementTheme.Default;
         }
     }
 

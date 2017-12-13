@@ -9,6 +9,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Strings;
 using Windows.UI.Xaml.Navigation;
 
@@ -150,7 +151,7 @@ namespace Unigram.ViewModels.Channels
                                 {
                                     WebPage = new TLWebPage
                                     {
-                                        SiteName = AppResources.EventLogPreviousGroupDescription,
+                                        SiteName = Strings.Android.EventLogPreviousGroupDescription,
                                         Description = changeAbout.PrevValue,
                                         HasSiteName = true,
                                         HasDescription = true
@@ -163,32 +164,12 @@ namespace Unigram.ViewModels.Channels
                         }
                         else if (item.Action is TLChannelAdminLogEventActionChangeUsername changeUsername)
                         {
-                            var config = InMemoryCacheService.Current.GetConfig();
-                            if (config == null)
-                            {
-                                continue;
-                            }
-
-                            var linkPrefix = config.MeUrlPrefix;
-                            if (linkPrefix.EndsWith("/"))
-                            {
-                                linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                            }
-                            if (linkPrefix.StartsWith("https://"))
-                            {
-                                linkPrefix = linkPrefix.Substring(8);
-                            }
-                            else if (linkPrefix.StartsWith("http://"))
-                            {
-                                linkPrefix = linkPrefix.Substring(7);
-                            }
-
                             var message = new TLMessage();
                             //message.Id = item.Id;
                             message.FromId = item.UserId;
                             message.ToId = _channel.ToPeer();
                             message.Date = item.Date;
-                            message.Message = string.IsNullOrEmpty(changeUsername.NewValue) ? string.Empty : $"https://{linkPrefix}/{changeUsername.NewValue}";
+                            message.Message = string.IsNullOrEmpty(changeUsername.NewValue) ? string.Empty : MeUrlPrefixConverter.Convert(changeUsername.NewValue);
                             message.Entities = new TLVector<TLMessageEntityBase>();
                             message.HasMedia = true;
                             message.HasEntities = true;
@@ -205,8 +186,8 @@ namespace Unigram.ViewModels.Channels
                                 {
                                     WebPage = new TLWebPage
                                     {
-                                        SiteName = AppResources.EventLogPreviousLink,
-                                        Description = $"https://{linkPrefix}/{changeUsername.PrevValue}",
+                                        SiteName = Strings.Android.EventLogPreviousLink,
+                                        Description = MeUrlPrefixConverter.Convert(changeUsername.PrevValue),
                                         HasSiteName = true,
                                         HasDescription = true
                                     }
@@ -291,26 +272,7 @@ namespace Unigram.ViewModels.Channels
                         }
                         else if (item.Action is TLChannelAdminLogEventActionParticipantInvite participantInvite)
                         {
-                            var message = new TLMessage();
-                            //message.Id = item.Id;
-                            message.FromId = item.UserId;
-                            message.ToId = _channel.ToPeer();
-                            message.Date = item.Date;
-                            //message.Message = from.ReadString();
-                            message.Entities = new TLVector<TLMessageEntityBase>();
-
-                            message.HasFromId = true;
-                            message.HasEntities = true;
-
-                            var whoUser = participantInvite.Participant.User;
-                            var str = AppResources.EventLogInvited;
-                            var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
-                            var builder = new StringBuilder(string.Format(str, userName));
-
-                            message.Message = string.Format(str, userName);
-                            result.Insert(0, message);
-
-                            //result.Insert(0, GetServiceMessage(item));
+                            result.Insert(0, GetServiceMessage(item));
                         }
                         else if (item.Action is TLChannelAdminLogEventActionParticipantToggleBan participantToggleBan)
                         {
@@ -337,38 +299,20 @@ namespace Unigram.ViewModels.Channels
                             {
                                 n = newBanned.BannedRights;
                             }
-                            if (!_channel.IsMegaGroup || (n != null && n.IsViewMessages && (n == null || o == null || n.UntilDate == o.UntilDate)))
-                            {
-                                string str;
-                                if (n == null || !(o == null || n.IsViewMessages))
-                                {
-                                    str = AppResources.EventLogChannelUnrestricted;
-                                }
-                                else
-                                {
-                                    str = AppResources.EventLogChannelRestricted;
-                                }
 
-                                var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
-                                message.Message = string.Format(str, userName);
-                            }
-                            else
+                            if (_channel.IsMegaGroup && (n == null || !n.IsViewMessages || n != null && o != null && n.UntilDate != o.UntilDate))
                             {
-                                StringBuilder builder;
-                                if (n == null || AdminLogHelper.IsBannedForever(n.UntilDate))
+                                StringBuilder rights;
+                                String bannedDuration;
+                                if (n != null && !AdminLogHelper.IsBannedForever(n.UntilDate))
                                 {
-                                    var str = AppResources.EventLogRestricted;
-                                    var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
-                                    builder = new StringBuilder(String.Format(str, userName));
-                                }
-                                else
-                                {
-                                    var bannedDuration = "";
+                                    bannedDuration = "";
                                     int duration = n.UntilDate - item.Date;
-                                    int days = ((duration / 60) / 60) / 24;
-                                    duration -= ((days * 60) * 60) * 24;
-                                    int hours = (duration / 60) / 60;
-                                    int minutes = (duration - ((hours * 60) * 60)) / 60;
+                                    int days = duration / 60 / 60 / 24;
+                                    duration -= days * 60 * 60 * 24;
+                                    int hours = duration / 60 / 60;
+                                    duration -= hours * 60 * 60;
+                                    int minutes = duration / 60;
                                     int count = 0;
                                     for (int a = 0; a < 3; a++)
                                     {
@@ -377,8 +321,7 @@ namespace Unigram.ViewModels.Channels
                                         {
                                             if (days != 0)
                                             {
-                                                //addStr = LocaleController.formatPluralString("Days", days);
-                                                addStr = $"{days} days";
+                                                addStr = LocaleHelper.Declension("Days", days);
                                                 count++;
                                             }
                                         }
@@ -386,36 +329,39 @@ namespace Unigram.ViewModels.Channels
                                         {
                                             if (hours != 0)
                                             {
-                                                //addStr = LocaleController.formatPluralString("Hours", hours);
-                                                addStr = $"{hours} hours";
+                                                addStr = LocaleHelper.Declension("Hours", hours);
                                                 count++;
                                             }
                                         }
-                                        else if (minutes != 0)
+                                        else
                                         {
-                                            //addStr = LocaleController.formatPluralString("Minutes", minutes);
-                                            addStr = $"{minutes} minutes";
-                                            count++;
+                                            if (minutes != 0)
+                                            {
+                                                addStr = LocaleHelper.Declension("Minutes", minutes);
+                                                count++;
+                                            }
                                         }
                                         if (addStr != null)
                                         {
                                             if (bannedDuration.Length > 0)
                                             {
-                                                bannedDuration = bannedDuration + ", ";
+                                                bannedDuration += ", ";
                                             }
-                                            bannedDuration = bannedDuration + addStr;
+                                            bannedDuration += addStr;
                                         }
                                         if (count == 2)
                                         {
                                             break;
                                         }
                                     }
-
-                                    var str = AppResources.EventLogRestrictedUntil;
-                                    var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
-                                    builder = new StringBuilder(String.Format(str, userName, bannedDuration));
+                                }
+                                else
+                                {
+                                    bannedDuration = Strings.Android.UserRestrictionsUntilForever;
                                 }
 
+                                var str = Strings.Android.EventLogRestrictedUntil;
+                                rights = new StringBuilder(String.Format(str, GetUserName(whoUser, message.Entities, str.IndexOf("{0}")), bannedDuration));
                                 var added = false;
                                 if (o == null)
                                 {
@@ -430,36 +376,50 @@ namespace Unigram.ViewModels.Channels
                                 {
                                     if (!added)
                                     {
-                                        builder.Append('\n');
+                                        rights.Append('\n');
                                         added = true;
                                     }
 
-                                    builder.Append('\n').Append(!value ? '+' : '-').Append(' ');
-                                    builder.Append(label);
+                                    rights.Append('\n').Append(!value ? '+' : '-').Append(' ');
+                                    rights.Append(label);
                                 }
 
                                 if (o.IsViewMessages != n.IsViewMessages)
                                 {
-                                    AppendChange(n.IsViewMessages, AppResources.EventLogRestrictedReadMessages);
+                                    AppendChange(n.IsViewMessages, Strings.Android.EventLogRestrictedReadMessages);
                                 }
                                 if (o.IsSendMessages != n.IsSendMessages)
                                 {
-                                    AppendChange(n.IsSendMessages, AppResources.EventLogRestrictedSendMessages);
+                                    AppendChange(n.IsSendMessages, Strings.Android.EventLogRestrictedSendMessages);
                                 }
-                                if (!(o.IsSendStickers == n.IsSendStickers && o.IsSendInline == n.IsSendInline && o.IsSendGifs == n.IsSendGifs && o.IsSendGames == n.IsSendGames))
+                                if (o.IsSendStickers != n.IsSendStickers || o.IsSendInline != n.IsSendInline || o.IsSendGifs != n.IsSendGifs || o.IsSendGames != n.IsSendGames)
                                 {
-                                    AppendChange(n.IsSendStickers, AppResources.EventLogRestrictedSendStickers);
+                                    AppendChange(n.IsSendStickers, Strings.Android.EventLogRestrictedSendStickers);
                                 }
                                 if (o.IsSendMedia != n.IsSendMedia)
                                 {
-                                    AppendChange(n.IsSendMedia, AppResources.EventLogRestrictedSendMedia);
+                                    AppendChange(n.IsSendMedia, Strings.Android.EventLogRestrictedSendMedia);
                                 }
                                 if (o.IsEmbedLinks != n.IsEmbedLinks)
                                 {
-                                    AppendChange(n.IsEmbedLinks, AppResources.EventLogRestrictedSendEmbed);
+                                    AppendChange(n.IsEmbedLinks, Strings.Android.EventLogRestrictedSendEmbed);
                                 }
 
-                                message.Message = builder.ToString();
+                                message.Message = rights.ToString();
+                            }
+                            else
+                            {
+                                String str;
+                                if (n != null && (o == null || n.IsViewMessages))
+                                {
+                                    str = Strings.Android.EventLogChannelRestricted;
+                                }
+                                else
+                                {
+                                    str = Strings.Android.EventLogChannelUnrestricted;
+                                }
+
+                                message.Message = String.Format(str, GetUserName(whoUser, message.Entities, str.IndexOf("{0}")));
                             }
 
                             result.Insert(0, message);
@@ -478,7 +438,7 @@ namespace Unigram.ViewModels.Channels
                             message.HasEntities = true;
 
                             var whoUser = participantToggleAdmin.PrevParticipant.User;
-                            var str = AppResources.EventLogPromoted;
+                            var str = Strings.Android.EventLogPromoted;
                             var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
                             var builder = new StringBuilder(string.Format(str, userName));
                             var added = false;
@@ -518,44 +478,44 @@ namespace Unigram.ViewModels.Channels
 
                             if (o.IsChangeInfo != n.IsChangeInfo)
                             {
-                                AppendChange(n.IsChangeInfo, _channel.IsMegaGroup ? AppResources.EventLogPromotedChangeGroupInfo : AppResources.EventLogPromotedChangeChannelInfo);
+                                AppendChange(n.IsChangeInfo, _channel.IsMegaGroup ? Strings.Android.EventLogPromotedChangeGroupInfo : Strings.Android.EventLogPromotedChangeChannelInfo);
                             }
 
                             if (!_channel.IsMegaGroup)
                             {
                                 if (o.IsPostMessages != n.IsPostMessages)
                                 {
-                                    AppendChange(n.IsPostMessages, AppResources.EventLogPromotedPostMessages);
+                                    AppendChange(n.IsPostMessages, Strings.Android.EventLogPromotedPostMessages);
                                 }
                                 if (o.IsEditMessages != n.IsEditMessages)
                                 {
-                                    AppendChange(n.IsEditMessages, AppResources.EventLogPromotedEditMessages);
+                                    AppendChange(n.IsEditMessages, Strings.Android.EventLogPromotedEditMessages);
                                 }
                             }
                             if (o.IsDeleteMessages != n.IsDeleteMessages)
                             {
-                                AppendChange(n.IsDeleteMessages, AppResources.EventLogPromotedDeleteMessages);
+                                AppendChange(n.IsDeleteMessages, Strings.Android.EventLogPromotedDeleteMessages);
                             }
                             if (o.IsAddAdmins != n.IsAddAdmins)
                             {
-                                AppendChange(n.IsAddAdmins, AppResources.EventLogPromotedAddAdmins);
+                                AppendChange(n.IsAddAdmins, Strings.Android.EventLogPromotedAddAdmins);
                             }
                             if (_channel.IsMegaGroup)
                             {
                                 if (o.IsBanUsers != n.IsBanUsers)
                                 {
-                                    AppendChange(n.IsBanUsers, AppResources.EventLogPromotedBanUsers);
+                                    AppendChange(n.IsBanUsers, Strings.Android.EventLogPromotedBanUsers);
                                 }
                             }
                             if (o.IsInviteUsers != n.IsInviteUsers)
                             {
-                                AppendChange(n.IsInviteUsers, AppResources.EventLogPromotedAddUsers);
+                                AppendChange(n.IsInviteUsers, Strings.Android.EventLogPromotedAddUsers);
                             }
                             if (_channel.IsMegaGroup)
                             {
                                 if (o.IsPinMessages != n.IsPinMessages)
                                 {
-                                    AppendChange(n.IsPinMessages, AppResources.EventLogPromotedPinMessages);
+                                    AppendChange(n.IsPinMessages, Strings.Android.EventLogPromotedPinMessages);
                                 }
                             }
 

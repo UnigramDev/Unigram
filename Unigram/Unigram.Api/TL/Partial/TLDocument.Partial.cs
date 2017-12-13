@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace Telegram.Api.TL
 {
     public partial class TLDocument
     {
-        public async void DownloadAsync(IDownloadManager manager)
+        public async void DownloadAsync(IDownloadManager manager, Action<TLDocument> completed)
         {
             var fileName = this.GetFileName();
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
@@ -25,13 +26,13 @@ namespace Telegram.Api.TL
                     return;
                 }
 
-                IsTransferring = true;
-
                 var operation = manager.DownloadFileAsync(FileName, DCId, ToInputFileLocation(), Size);
                 var download = await operation.AsTask(Download());
                 if (download != null)
                 {
-                    IsTransferring = false;
+                    //UploadingProgress = 0;
+                    //DownloadingProgress = 0;
+                    completed(this);
                 }
             }
         }
@@ -41,16 +42,15 @@ namespace Telegram.Api.TL
             if (manager != null)
             {
                 manager.CancelDownloadFile(this);
-                DownloadingProgress = 0;
-                IsTransferring = false;
             }
 
             if (uploadManager != null)
             {
                 uploadManager.CancelUploadFile(Id);
-                UploadingProgress = 0;
-                IsTransferring = false;
             }
+
+            UploadingProgress = 0;
+            DownloadingProgress = 0;
         }
 
         private string _fileName;
@@ -117,7 +117,7 @@ namespace Telegram.Api.TL
         {
             get
             {
-                var attribute = Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                var attribute = Attributes.FirstOrDefault(x => x is TLDocumentAttributeSticker) as TLDocumentAttributeSticker;
                 if (attribute != null && !attribute.IsMask)
                 {
                     return attribute.Alt;
@@ -131,7 +131,7 @@ namespace Telegram.Api.TL
         {
             get
             {
-                var attribute = Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                var attribute = Attributes.FirstOrDefault(x => x is TLDocumentAttributeSticker) as TLDocumentAttributeSticker;
                 if (attribute != null /* && !attribute.IsMask*/)
                 {
                     return attribute.StickerSet;
@@ -174,6 +174,44 @@ namespace Telegram.Api.TL
                 }
 
                 return null;
+            }
+        }
+
+        public string Info
+        {
+            get
+            {
+                var info = string.Empty;
+                var animated = Attributes.FirstOrDefault(x => x is TLDocumentAttributeAnimated);
+                if (animated != null)
+                {
+                    info = "GIF";
+                }
+                else
+                {
+                    info = Duration;
+                }
+
+                if (info.Length > 0)
+                {
+                    info += ", ";
+                }
+
+                var bytesCount = Size;
+                if (bytesCount < 1024L)
+                {
+                    return string.Format("{1}{0} B", bytesCount, info);
+                }
+                if (bytesCount < 1048576L)
+                {
+                    return string.Format("{1}{0} KB", ((double)bytesCount / 1024.0).ToString("0.0", CultureInfo.InvariantCulture), info);
+                }
+                if (bytesCount < 1073741824L)
+                {
+                    return string.Format("{1}{0} MB", ((double)bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture), info);
+                }
+
+                return string.Format("{1}{0} GB", ((double)bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture), info);
             }
         }
 

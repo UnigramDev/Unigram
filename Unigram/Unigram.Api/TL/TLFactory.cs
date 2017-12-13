@@ -206,6 +206,7 @@ namespace Telegram.Api.TL
 				case TLType.MessagesGetUnreadMentions: return (T)(Object)new TLMessagesGetUnreadMentions(from);
 				case TLType.MessagesGetRecentLocations: return (T)(Object)new TLMessagesGetRecentLocations(from);
 				case TLType.MessagesReadMentions: return (T)(Object)new TLMessagesReadMentions(from);
+				case TLType.MessagesSendMultiMedia: return (T)(Object)new TLMessagesSendMultiMedia(from);
 				case TLType.UpdatesGetState: return (T)(Object)new TLUpdatesGetState(from);
 				case TLType.UpdatesGetDifference: return (T)(Object)new TLUpdatesGetDifference(from);
 				case TLType.UpdatesGetChannelDifference: return (T)(Object)new TLUpdatesGetChannelDifference(from);
@@ -319,6 +320,7 @@ namespace Telegram.Api.TL
 				case TLType.DestroySessionNone: return (T)(Object)new TLDestroySessionNone(from);
 				case TLType.NewSessionCreated: return (T)(Object)new TLNewSessionCreated(from);
 				case TLType.HttpWait: return (T)(Object)new TLHttpWait(from);
+				case TLType.HelpConfigSimple: return (T)(Object)new TLHelpConfigSimple(from);
 				case TLType.Error: return (T)(Object)new TLError(from);
 				case TLType.InputPeerEmpty: return (T)(Object)new TLInputPeerEmpty(from);
 				case TLType.InputPeerSelf: return (T)(Object)new TLInputPeerSelf(from);
@@ -345,6 +347,7 @@ namespace Telegram.Api.TL
 				case TLType.InputMediaGame: return (T)(Object)new TLInputMediaGame(from);
 				case TLType.InputMediaInvoice: return (T)(Object)new TLInputMediaInvoice(from);
 				case TLType.InputMediaGeoLive: return (T)(Object)new TLInputMediaGeoLive(from);
+				case TLType.InputSingleMedia: return (T)(Object)new TLInputSingleMedia(from);
 				case TLType.InputChatPhotoEmpty: return (T)(Object)new TLInputChatPhotoEmpty(from);
 				case TLType.InputChatUploadedPhoto: return (T)(Object)new TLInputChatUploadedPhoto(from);
 				case TLType.InputChatPhoto: return (T)(Object)new TLInputChatPhoto(from);

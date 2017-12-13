@@ -9,6 +9,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Microsoft.Graphics.Canvas.Text;
 using Unigram.Native;
+using Windows.Storage.Streams;
 
 namespace Unigram.Common
 {
@@ -142,6 +143,37 @@ namespace Unigram.Common
             await surface.Draw(_graphicsDevice, _drawingLock, new BitmapDrawer(uri, handler));
 
             return surface;
+        }
+
+        public ManagedSurface LoadFromStream(IRandomAccessStream uri)
+        {
+            return LoadFromStream(uri, Size.Empty);
+        }
+
+        public ManagedSurface LoadFromStream(IRandomAccessStream uri, Size size)
+        {
+            return LoadFromStream(uri, Size.Empty, null);
+        }
+
+        public ManagedSurface LoadFromStream(IRandomAccessStream uri, Size size, LoadTimeEffectHandler handler)
+        {
+            ManagedSurface surface = new ManagedSurface(CreateSurface(size));
+            var ignored = surface.Draw(_graphicsDevice, _drawingLock, new StreamDrawer(uri, handler));
+
+            return surface;
+        }
+
+        private async Task<ManagedSurface> LoadFromStreamAsyncWorker(IRandomAccessStream uri, Size size, LoadTimeEffectHandler handler)
+        {
+            ManagedSurface surface = new ManagedSurface(CreateSurface(size));
+            await surface.Draw(_graphicsDevice, _drawingLock, new StreamDrawer(uri, handler));
+
+            return surface;
+        }
+
+        public IAsyncOperation<ManagedSurface> LoadFromStreamAsync(IRandomAccessStream uri)
+        {
+            return LoadFromStreamAsyncWorker(uri, Size.Empty, null).AsAsyncOperation<ManagedSurface>();
         }
 
         public IAsyncOperation<ManagedSurface> LoadFromUriAsync(Uri uri)

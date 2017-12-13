@@ -35,6 +35,8 @@ using Unigram.Views.Users;
 using Unigram.ViewModels.Users;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Aggregator;
+using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Dialogs;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -49,24 +51,7 @@ namespace Unigram.Themes
 
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
-            Photo_Click(sender);
-        }
-
-        public static async void Photo_Click(object sender)
-        {
-            Download(sender, null);
-            return;
-
-            var image = sender as FrameworkElement;
-            var message = image.DataContext as TLMessage;
-
-            if (message != null)
-            {
-                //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
-
-                var viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
-                await GalleryView.Current.ShowAsync(viewModel, () => image);
-            }
+            Download_Click(sender, null);
         }
 
         private void InstantView_Click(object sender, RoutedEventArgs e)
@@ -93,118 +78,195 @@ namespace Unigram.Themes
             }
         }
 
+        private async void Sticker_Click(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                var stickerAttribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
+                {
+                    var page = element.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
+                    if (page != null)
+                    {
+                        await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet, page.Stickers_ItemClick);
+                    }
+                    else
+                    {
+                        await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet);
+                    }
+                }
+            }
+        }
+
         private async void SingleMedia_Click(object sender, RoutedEventArgs e)
         {
             var image = sender as ImageView;
-            var item = image.Constraint as TLPhoto;
-            var message = image.DataContext as TLMessage;
-            if (message != null && message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage && webPage.HasEmbedUrl)
+            if (image.DataContext is TLMessage message && message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
             {
-                await WebPageView.Current.ShowAsync(webPage);
+                if (webPage.HasEmbedUrl)
+                {
+                    await WebPageView.Current.ShowAsync(webPage);
+                    return;
+                }
+                else if (webPage.IsInstantGallery())
+                {
+                    var viewModel = new InstantGalleryViewModel(message, webPage);
+                    await GalleryView.Current.ShowAsync(viewModel, () => image.Parent as FrameworkElement);
+                    return;
+                }
             }
-            else if (item != null)
-            {
-                //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
-                var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(item, null as string));
-                await GalleryView.Current.ShowAsync(viewModel, () => image);
+            if (image.Constraint is TLPhoto photo)
+            {
+                var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(photo, null as string));
+                await GalleryView.Current.ShowAsync(viewModel, () => image.Parent as FrameworkElement);
             }
         }
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            Download(sender, e);
+            Download_Click(sender as FrameworkElement, e);
         }
 
-        private void SecretDownload_Click(object sender, TransferCompletedEventArgs e)
-        {
-            SecretDownload(sender, e);
-        }
-
-        public static async void Download(object sender, TransferCompletedEventArgs e)
+        public static async void Download_Click(FrameworkElement sender, TransferCompletedEventArgs e)
         {
             var element = sender as FrameworkElement;
-            var message = element.DataContext as TLMessage;
-
-            if (message != null)
+            if (element.DataContext is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionChatEditPhoto editPhotoAction)
             {
-                if (message.IsVideo() || message.IsRoundVideo() || message.IsGif() || message.IsPhoto())
-                {
-                    var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
-                    if (media == null)
-                    {
-                        media = element;
-                    }
-
-                    //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
-
-                    GalleryViewModelBase viewModel;
-                    if (message.Parent != null)
-                    {
-                        viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
-                    }
-                    else
-                    {
-                        viewModel = new SingleGalleryViewModel(new GalleryMessageItem(message));
-                    }
-
-                    await GalleryView.Current.ShowAsync(viewModel, () => media);
-                }
-                else if (e != null)
-                {
-                    var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(e.FileName));
-                    await Launcher.LaunchFileAsync(file);
-                }
-            }
-        }
-
-        public static async void SecretDownload(object sender, TransferCompletedEventArgs e)
-        {
-            var element = sender as FrameworkElement;
-            var message = element.DataContext as TLMessage;
-
-            if (message != null)
-            {
-                if (message.IsMediaUnread && !message.IsOut)
-                {
-                    var vector = new TLVector<int> { message.Id };
-                    if (message.Parent is TLChannel channel)
-                    {
-                        TelegramEventAggregator.Instance.Publish(new TLUpdateChannelReadMessagesContents { ChannelId = channel.Id, Messages = vector });
-                        MTProtoService.Current.ReadMessageContentsAsync(channel.ToInputChannel(), vector, result =>
-                        {
-                            message.IsMediaUnread = false;
-                            message.RaisePropertyChanged(() => message.IsMediaUnread);
-                        });
-                    }
-                    else
-                    {
-                        TelegramEventAggregator.Instance.Publish(new TLUpdateReadMessagesContents { Messages = vector });
-                        MTProtoService.Current.ReadMessageContentsAsync(vector, result =>
-                        {
-                            message.IsMediaUnread = false;
-                            message.RaisePropertyChanged(() => message.IsMediaUnread);
-                        });
-                    }
-                }
-
-                var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
+                var media = element.Parent as FrameworkElement;
                 if (media == null)
                 {
                     media = element;
                 }
 
-                if (media is Grid grid)
+                var chat = serviceMessage.Parent as TLChatBase;
+                if (chat == null)
                 {
-                    // TODO: WARNING!!!
-                    media = grid.Children[1] as FrameworkElement;
+                    return;
                 }
 
-                if (message.Parent != null)
+                var chatFull = InMemoryCacheService.Current.GetFullChat(chat.Id);
+                if (chatFull != null && chatFull.ChatPhoto is TLPhoto && chat != null)
                 {
-                    var viewModel = new GallerySecretViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current, InMemoryCacheService.Current, TelegramEventAggregator.Instance);
-                    await GallerySecretView.Current.ShowAsync(viewModel, () => media);
+                    var viewModel = new ChatPhotosViewModel(MTProtoService.Current, InMemoryCacheService.Current, chatFull, chat, serviceMessage);
+                    await GalleryView.Current.ShowAsync(viewModel, () => media);
                 }
+
+                return;
+            }
+
+            var message = element.DataContext as TLMessage;
+            if (message == null)
+            {
+                return;
+            }
+
+            var document = message.GetDocument();
+            if (TLMessage.IsGif(document) && !ApplicationSettings.Current.IsAutoPlayEnabled)
+            {
+                var bubble = element.Ancestors<MessageBubble>().FirstOrDefault() as MessageBubble;
+                if (bubble == null)
+                {
+                    return;
+                }
+
+                var page = bubble.Ancestors<IGifPlayback>().FirstOrDefault() as IGifPlayback;
+                if (page == null)
+                {
+                    return;
+                }
+
+                if (bubble.ViewModel is TLMessage inner)
+                {
+                    page.Play(inner);
+                }
+            }
+            else if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document) || TLMessage.IsGif(document) || message.IsPhoto())
+            {
+                var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("Media")) as FrameworkElement;
+                if (media == null)
+                {
+                    media = element;
+                }
+
+                //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
+
+                GalleryViewModelBase viewModel;
+                if (message.Parent == null || TLMessage.IsRoundVideo(document) || TLMessage.IsGif(document))
+                {
+                    viewModel = new SingleGalleryViewModel(new GalleryMessageItem(message));
+                }
+                else
+                {
+                    viewModel = new DialogGalleryViewModel(MTProtoService.Current, InMemoryCacheService.Current, message.Parent.ToInputPeer(), message);
+                }
+
+                await GalleryView.Current.ShowAsync(viewModel, () => media);
+            }
+            else if (e != null)
+            {
+                var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(e.FileName));
+                await Launcher.LaunchFileAsync(file);
+            }
+        }
+
+        private void SecretDownload_Click(object sender, TransferCompletedEventArgs e)
+        {
+            SecretDownload_Click(sender as FrameworkElement, e);
+        }
+
+        public static async void SecretDownload_Click(FrameworkElement sender, TransferCompletedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+
+            if (message == null)
+            {
+                return;
+            }
+
+            if (message.IsMediaUnread && !message.IsOut)
+            {
+                var vector = new TLVector<int> { message.Id };
+                if (message.Parent is TLChannel channel)
+                {
+                    TelegramEventAggregator.Instance.Publish(new TLUpdateChannelReadMessagesContents { ChannelId = channel.Id, Messages = vector });
+                    MTProtoService.Current.ReadMessageContentsAsync(channel.ToInputChannel(), vector, result =>
+                    {
+                        message.IsMediaUnread = false;
+                        message.RaisePropertyChanged(() => message.IsMediaUnread);
+                    });
+                }
+                else
+                {
+                    TelegramEventAggregator.Instance.Publish(new TLUpdateReadMessagesContents { Messages = vector });
+                    MTProtoService.Current.ReadMessageContentsAsync(vector, result =>
+                    {
+                        message.IsMediaUnread = false;
+                        message.RaisePropertyChanged(() => message.IsMediaUnread);
+                    });
+                }
+            }
+
+            var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("Media")) as FrameworkElement;
+            if (media == null)
+            {
+                media = element;
+            }
+
+            if (media is Grid grid)
+            {
+                // TODO: WARNING!!!
+                media = grid.Children[1] as FrameworkElement;
+            }
+
+            if (message.Parent != null)
+            {
+                var viewModel = new GallerySecretViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current, InMemoryCacheService.Current, TelegramEventAggregator.Instance);
+                await GallerySecretView.Current.ShowAsync(viewModel, () => media);
             }
         }
 

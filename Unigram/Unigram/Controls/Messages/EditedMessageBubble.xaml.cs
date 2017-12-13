@@ -45,7 +45,7 @@ namespace Unigram.Controls.Messages
 
         private Visibility UpdateFirst(bool isFirst)
         {
-            OnMessageChanged(HeaderLabel);
+            OnMessageChanged(HeaderLabel, null, Header);
             return isFirst ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -57,18 +57,20 @@ namespace Unigram.Controls.Messages
         private void OnMediaChanged()
         {
             var message = DataContext as TLMessage;
+
             var empty = false;
-            if (message.Media is TLMessageMediaWebPage)
+            if (message.Media is TLMessageMediaWebPage webpageMedia)
             {
-                empty = ((TLMessageMediaWebPage)message.Media).WebPage is TLWebPageEmpty;
+                empty = webpageMedia.WebPage is TLWebPageEmpty || webpageMedia.WebPage is TLWebPagePending;
             }
 
             if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty || empty)
             {
-                MediaControl.Margin = new Thickness(0);
-                StatusToDefault();
-                Grid.SetRow(StatusControl, 2);
-                Grid.SetRow(MessageControl, 2);
+                Media.Margin = new Thickness(0);
+                Placeholder.Visibility = Visibility.Visible;
+                FooterToNormal();
+                Grid.SetRow(Footer, 2);
+                Grid.SetRow(Message, 2);
             }
             else if (message != null && message.Media != null)
             {
@@ -85,7 +87,11 @@ namespace Unigram.Controls.Messages
                         {
                             top = 4;
                         }
-                        if (message.HasFwdFrom || message.HasViaBotId || message.HasReplyToMsgId || message.IsPost)
+                        if (message.IsFirst && message.IsSaved())
+                        {
+                            top = 4;
+                        }
+                        if ((message.HasFwdFrom && !message.IsSaved()) || message.HasViaBotId || message.HasReplyToMsgId || message.IsPost)
                         {
                             top = 4;
                         }
@@ -96,35 +102,47 @@ namespace Unigram.Controls.Messages
                     {
                         caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                     }
+                    else if (message.Media is TLMessageMediaVenue)
+                    {
+                        caption = true;
+                    }
 
                     if (caption)
                     {
-                        StatusToDefault();
+                        FooterToNormal();
                         bottom = 4;
+                    }
+                    else if (message.Media is TLMessageMediaGeoLive)
+                    {
+                        FooterToHidden();
                     }
                     else
                     {
-                        StatusToFullMedia();
+                        FooterToMedia();
                     }
 
-                    MediaControl.Margin = new Thickness(left, top, right, bottom);
-                    Grid.SetRow(StatusControl, caption ? 4 : 3);
-                    Grid.SetRow(MessageControl, caption ? 4 : 2);
+                    Media.Margin = new Thickness(left, top, right, bottom);
+                    Placeholder.Visibility = caption ? Visibility.Visible : Visibility.Collapsed;
+                    Grid.SetRow(Footer, caption ? 4 : 3);
+                    Grid.SetRow(Message, caption ? 4 : 2);
                 }
                 else if (message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaGame)
                 {
-                    MediaControl.Margin = new Thickness(0);
-                    StatusToDefault();
-                    Grid.SetRow(StatusControl, 4);
-                    Grid.SetRow(MessageControl, 2);
+                    Media.Margin = new Thickness(0);
+                    Placeholder.Visibility = Visibility.Collapsed;
+                    FooterToNormal();
+                    Grid.SetRow(Footer, 4);
+                    Grid.SetRow(Message, 2);
                 }
                 else if (message.Media is TLMessageMediaInvoice invoiceMedia)
                 {
                     var caption = !invoiceMedia.HasPhoto;
 
-                    MediaControl.Margin = new Thickness(0);
-                    StatusToDefault();
-                    Grid.SetRow(StatusControl, caption ? 3 : 4);
+                    Media.Margin = new Thickness(0);
+                    Placeholder.Visibility = caption ? Visibility.Visible : Visibility.Collapsed;
+                    FooterToNormal();
+                    Grid.SetRow(Footer, caption ? 3 : 4);
+                    Grid.SetRow(Message, 2);
                 }
                 else /*if (IsInlineMedia(message.Media))*/
                 {
@@ -134,46 +152,38 @@ namespace Unigram.Controls.Messages
                         caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                     }
 
-                    MediaControl.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);
-                    StatusToDefault();
-                    Grid.SetRow(StatusControl, caption ? 4 : 3);
-                    Grid.SetRow(MessageControl, caption ? 4 : 2);
+                    Media.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);
+                    Placeholder.Visibility = caption ? Visibility.Visible : Visibility.Collapsed;
+                    FooterToNormal();
+                    Grid.SetRow(Footer, caption ? 4 : 3);
+                    Grid.SetRow(Message, caption ? 4 : 2);
                 }
-                //else
-                //{
-                //    Debug.WriteLine("NE UNO NE L'ALTRO");
-                //    MediaControl.Margin = new Thickness(0);
-                //    StatusToDefault();
-                //    Grid.SetRow(StatusControl, 4);
-                //    Grid.SetRow(MessageControl, 2);
-                //}
             }
         }
 
-        private void StatusToFullMedia()
+        private void FooterToMedia()
         {
-            if (StatusControl.Padding.Left != 6)
-            {
-                //StatusControl.Padding = new Thickness(6, 2, 6, 4);
-                //StatusControl.Background = StatusDarkBackgroundBrush;
-                //StatusLabel.Foreground = StatusDarkForegroundBrush;
-                //StatusGlyph.Foreground = StatusDarkForegroundBrush;
-                VisualStateManager.GoToState(LayoutRoot, "FullMedia", false);
-            }
+            VisualStateManager.GoToState(LayoutRoot, "MediaState", false);
         }
 
-        private void StatusToDefault()
+        private void FooterToHidden()
         {
-            if (StatusControl.Padding.Left != 0)
-            {
-                //StatusControl.Padding = new Thickness(0, 0, 6, 0);
-                //StatusControl.Background = null;
-                //StatusLabel.Foreground = StatusLightLabelForegroundBrush;
-                //StatusGlyph.Foreground = StatusLightGlyphForegroundBrush;
-                VisualStateManager.GoToState(LayoutRoot, "Default", false);
-            }
+            VisualStateManager.GoToState(LayoutRoot, "HiddenState", false);
+        }
+
+        private void FooterToNormal()
+        {
+            VisualStateManager.GoToState(LayoutRoot, "Normal", false);
         }
 
         #endregion
+
+        private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width != e.PreviousSize.Width)
+            {
+                Placeholder.Width = e.NewSize.Width;
+            }
+        }
     }
 }

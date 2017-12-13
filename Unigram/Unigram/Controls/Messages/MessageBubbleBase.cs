@@ -17,9 +17,12 @@ using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Users;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Globalization.DateTimeFormatting;
+using Windows.System;
 using Windows.UI;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -158,100 +161,148 @@ namespace Unigram.Controls.Messages
 
         #endregion
 
-        protected void OnMessageChanged(TextBlock paragraph)
+        protected void OnMessageChanged(TextBlock paragraph, TextBlock admin, Grid parent)
         {
             paragraph.Inlines.Clear();
 
             var message = DataContext as TLMessage;
-            if (message != null)
+            if (message == null)
             {
-                if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+                return;
+            }
+
+            var sticker = message.IsSticker();
+            var light = sticker || message.IsRoundVideo();
+
+            if (!light && message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.Inlines.Add(new Run { Text = message.From?.FullName ?? string.Empty });
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Foreground = Convert.Bubble(message.FromId ?? 0);
+                hyperlink.Click += (s, args) => From_Click(message);
+
+                paragraph.Inlines.Add(hyperlink);
+            }
+            else if (!light && message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.Inlines.Add(new Run { Text = message.Parent?.DisplayName ?? string.Empty });
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Foreground = Convert.Bubble(message.ToId.Id);
+                hyperlink.Click += (s, args) => From_Click(message);
+
+                paragraph.Inlines.Add(hyperlink);
+            }
+            else if (!light && message.IsFirst && message.IsSaved())
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.Inlines.Add(new Run { Text = message.FwdFromUser?.FullName ?? message.FwdFromChannel?.DisplayName ?? string.Empty });
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Foreground = Convert.Bubble(message.FwdFrom?.FromId ?? message.FwdFrom?.ChannelId ?? 0);
+                hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+                paragraph.Inlines.Add(hyperlink);
+            }
+
+            if (paragraph.Inlines.Count > 0)
+            {
+                if (admin != null && !message.IsOut && message.IsAdmin())
                 {
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = message.From?.FullName ?? string.Empty, Foreground = Convert.Bubble(message.FromId ?? 0) });
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = paragraph.Foreground;
-                    hyperlink.Click += (s, args) => From_Click(message);
-
-                    paragraph.Inlines.Add(hyperlink);
+                    paragraph.Inlines.Add(new Run { Text = " " + Strings.Android.ChatAdmin, Foreground = null });
                 }
-                else if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
-                {
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = message.Parent?.DisplayName ?? string.Empty, Foreground = Convert.Bubble(message.ToId.Id) });
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = paragraph.Foreground;
-                    hyperlink.Click += (s, args) => From_Click(message);
+            }
 
-                    paragraph.Inlines.Add(hyperlink);
-                }
+            var forward = false;
 
-                if (message.HasFwdFrom)
-                {
-                    if (paragraph.Inlines.Count > 0)
-                        paragraph.Inlines.Add(new LineBreak());
-
-                    paragraph.Inlines.Add(new Run { Text = "Forwarded from " });
-
-                    var name = string.Empty;
-
-                    var channel = message.FwdFromChannel;
-                    if (channel != null)
-                    {
-                        name = channel.DisplayName;
-
-                        if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
-                        {
-                            name += $" ({message.FwdFrom.PostAuthor})";
-                        }
-                    }
-
-                    var user = message.FwdFromUser;
-                    if (user != null)
-                    {
-                        if (name.Length > 0)
-                        {
-                            name += $" ({user.FullName})";
-                        }
-                        else
-                        {
-                            name = user.FullName;
-                        }
-                    }
-
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = name });
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = paragraph.Foreground;
-                    hyperlink.Click += (s, args) => FwdFrom_Click(message);
-
-                    paragraph.Inlines.Add(hyperlink);
-                }
-
-                if (message.HasViaBotId && message.ViaBot != null && !message.ViaBot.IsDeleted && message.ViaBot.HasUsername)
-                {
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = paragraph.Foreground;
-                    hyperlink.Click += (s, args) => ViaBot_Click(message);
-
-                    paragraph.Inlines.Add(hyperlink);
-                }
-
+            if (message.HasFwdFrom && !sticker && !message.IsSaved())
+            {
                 if (paragraph.Inlines.Count > 0)
+                    paragraph.Inlines.Add(new LineBreak());
+
+                paragraph.Inlines.Add(new Run { Text = Strings.Android.ForwardedMessage, FontWeight = FontWeights.Normal });
+                paragraph.Inlines.Add(new LineBreak());
+                paragraph.Inlines.Add(new Run { Text = Strings.Android.From + " ", FontWeight = FontWeights.Normal });
+
+                var name = string.Empty;
+
+                var channel = message.FwdFromChannel;
+                if (channel != null)
                 {
-                    paragraph.Inlines.Add(new Run { Text = " " });
-                    paragraph.Visibility = Visibility.Visible;
+                    name = channel.DisplayName;
+
+                    //if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                    //{
+                    //    name += $" ({message.FwdFrom.PostAuthor})";
+                    //}
+                }
+
+                var user = message.FwdFromUser;
+                if (user != null)
+                {
+                    if (name.Length > 0)
+                    {
+                        name += $" ({user.FullName})";
+                    }
+                    else
+                    {
+                        name = user.FullName;
+                    }
+                }
+
+                var hyperlink = new Hyperlink();
+                hyperlink.Inlines.Add(new Run { Text = name });
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : paragraph.Foreground;
+                hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+                paragraph.Inlines.Add(hyperlink);
+                forward = true;
+            }
+
+            if (message.HasViaBotId && message.ViaBot != null && !message.ViaBot.IsDeleted && message.ViaBot.HasUsername)
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @"), FontWeight = FontWeights.Normal });
+                hyperlink.Inlines.Add(new Run { Text = message.ViaBot.Username });
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : paragraph.Foreground;
+                hyperlink.Click += (s, args) => ViaBot_Click(message);
+
+                if (paragraph.Inlines.Count > 0 && !forward)
+                {
+                    paragraph.Inlines.Insert(1, hyperlink);
                 }
                 else
                 {
-                    paragraph.Visibility = Visibility.Collapsed;
+                    paragraph.Inlines.Add(hyperlink);
                 }
+            }
+
+            if (paragraph.Inlines.Count > 0)
+            {
+                if (admin != null && !message.IsOut && message.IsAdmin())
+                {
+                    admin.Visibility = Visibility.Visible;
+                }
+                else if (admin != null)
+                {
+                    admin.Visibility = Visibility.Collapsed;
+                }
+
+                paragraph.Inlines.Add(new Run { Text = " " });
+                paragraph.Visibility = Visibility.Visible;
+                parent.Visibility = Visibility.Visible;
             }
             else
             {
+                if (admin != null)
+                {
+                    admin.Visibility = Visibility.Collapsed;
+                }
+
                 paragraph.Visibility = Visibility.Collapsed;
+                parent.Visibility = message.ReplyToMsgId.HasValue ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -294,7 +345,10 @@ namespace Unigram.Controls.Messages
 
         protected void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
         {
-            Context?.KeyboardButtonExecute(e.Button, ViewModel);
+            if (ViewModel is TLMessage message)
+            {
+                Context?.KeyboardButtonExecute(e.Button, message);
+            }
         }
 
         protected void Reply_Click(object sender, RoutedEventArgs e)
@@ -307,24 +361,14 @@ namespace Unigram.Controls.Messages
             Context?.MessageShareCommand.Execute(ViewModel);
         }
 
-        protected void MessageControl_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        protected void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            if (args.TryGetPosition(sender, out Point point))
-            {
-                var text = sender as RichTextBlock;
-                var hyperlink = text.GetHyperlinkFromPoint(point);
-                if (hyperlink != null && hyperlink.NavigateUri != null)
-                {
-                    var open = new MenuFlyoutItem { Text = "Open link" };
-                    var copy = new MenuFlyoutItem { Text = "Copy link" };
+            MessageHelper.Hyperlink_ContextRequested(sender, args);
+        }
 
-                    var flyout = new MenuFlyout();
-                    flyout.Items.Add(open);
-                    flyout.Items.Add(copy);
-                    flyout.ShowAt(sender, point);
-                    args.Handled = true;
-                }
-            }
+        protected void Message_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            e.Handled = true;
         }
 
         /// <summary>
@@ -332,11 +376,17 @@ namespace Unigram.Controls.Messages
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
 
-        private FrameworkElement _stateControl;
+        private FrameworkElement _footer;
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if (ViewModel?.Media == null || !IsFullMedia(ViewModel?.Media, true))
+            var message = ViewModel as TLMessage;
+            if (message == null)
+            {
+                return base.MeasureOverride(availableSize);
+            }
+
+            if (message.Media == null || !IsFullMedia(message.Media, true))
             {
                 return base.MeasureOverride(availableSize);
             }
@@ -345,7 +395,7 @@ namespace Unigram.Controls.Messages
             var fixedSize = false;
 
             object constraint = null;
-            if (ViewModel?.Media is TLMessageMediaPhoto photoMedia)
+            if (message.Media is TLMessageMediaPhoto photoMedia)
             {
                 if (photoMedia.HasTTLSeconds)
                 {
@@ -356,7 +406,7 @@ namespace Unigram.Controls.Messages
                     constraint = photoMedia.Photo;
                 }
             }
-            else if (ViewModel?.Media is TLMessageMediaDocument documentMedia)
+            else if (message.Media is TLMessageMediaDocument documentMedia)
             {
                 if (documentMedia.HasTTLSeconds)
                 {
@@ -367,7 +417,7 @@ namespace Unigram.Controls.Messages
                     constraint = documentMedia.Document;
                 }
             }
-            else if (ViewModel?.Media is TLMessageMediaInvoice invoiceMedia)
+            else if (message.Media is TLMessageMediaInvoice invoiceMedia)
             {
                 constraint = invoiceMedia.Photo;
             }
@@ -379,9 +429,9 @@ namespace Unigram.Controls.Messages
             //        constraint = webPage.Photo;
             //    }
             //}
-            else if (ViewModel?.Media is TLMessageMediaGeo || ViewModel?.Media is TLMessageMediaGeoLive || ViewModel?.Media is TLMessageMediaVenue)
+            else if (message.Media is TLMessageMediaGeo || message.Media is TLMessageMediaGeoLive || message.Media is TLMessageMediaVenue || message.Media is TLMessageMediaGroup)
             {
-                constraint = ViewModel?.Media;
+                constraint = message.Media;
             }
 
             if (constraint == null)
@@ -402,9 +452,31 @@ namespace Unigram.Controls.Messages
 
                 goto Calculate;
             }
+            else if (constraint is TLMessageMediaGroup groupMedia)
+            {
+                if (groupMedia.Layout.Messages.Count > 1)
+                {
+                    width = groupMedia.Layout.Width / 800d * 318d;
+                    height = groupMedia.Layout.Width / 800d * 318d;
+                    // Ignoring max height for grouped media
+                    //height = groupMedia.Layout.Height * 418d;
 
-            var photo = constraint as TLPhoto;
-            if (photo != null)
+                    goto Calculate;
+                }
+                else if (groupMedia.Layout.Messages.Count > 0)
+                {
+                    if (groupMedia.Layout.Messages[0].Media is TLMessageMediaPhoto innerPhotoMedia)
+                    {
+                        constraint = innerPhotoMedia.Photo;
+                    }
+                    else if (groupMedia.Layout.Messages[0].Media is TLMessageMediaDocument innerDocumentMedia)
+                    {
+                        constraint = innerDocumentMedia.Document;
+                    }
+                }
+            }
+
+            if (constraint is TLPhoto photo)
             {
                 if (fixedSize)
                 {
@@ -414,15 +486,15 @@ namespace Unigram.Controls.Messages
                     goto Calculate;
                 }
 
-                //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
-                var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
-                if (photoSize != null)
-                {
-                    width = photoSize.W;
-                    height = photoSize.H;
+                constraint = photo.Full;
+            }
 
-                    goto Calculate;
-                }
+            if (constraint is TLPhotoSize photoSize)
+            {
+                width = photoSize.W;
+                height = photoSize.H;
+
+                goto Calculate;
             }
 
             if (constraint is TLDocument document)
@@ -457,8 +529,16 @@ namespace Unigram.Controls.Messages
                 var video = attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 if (video != null)
                 {
-                    width = video.W;
-                    height = video.H;
+                    if (video.IsRoundMessage)
+                    {
+                        width = 200;
+                        height = 200;
+                    }
+                    else
+                    {
+                        width = video.W;
+                        height = video.H;
+                    }
 
                     goto Calculate;
                 }
@@ -466,12 +546,12 @@ namespace Unigram.Controls.Messages
 
             Calculate:
 
-            if (_stateControl == null)
-                _stateControl = FindName("StatusControl") as FrameworkElement;
-            if (_stateControl.DesiredSize.IsEmpty)
-                _stateControl.Measure(availableSize);
+            if (_footer == null)
+                _footer = FindName("Footer") as FrameworkElement;
+            if (_footer.DesiredSize.IsEmpty)
+                _footer.Measure(availableSize);
 
-            width = Math.Max(_stateControl.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96) + sumWidth);
+            width = Math.Max(_footer.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96) + sumWidth);
 
             if (width > availableWidth || height > availableHeight)
             {
@@ -498,23 +578,25 @@ namespace Unigram.Controls.Messages
         {
             if (media == null) return false;
 
-            if (media.TypeId == TLType.MessageMediaGeo) return true;
-            else if (media.TypeId == TLType.MessageMediaGeoLive) return true;
-            else if (media.TypeId == TLType.MessageMediaVenue) return true;
-            else if (media.TypeId == TLType.MessageMediaPhoto) return true;
-            else if (media.TypeId == TLType.MessageMediaDocument)
+            if (media is TLMessageMediaGeo) return true;
+            else if (media is TLMessageMediaGeoLive) return true;
+            else if (media is TLMessageMediaVenue) return true;
+            else if (media is TLMessageMediaPhoto) return true;
+            else if (media is TLMessageMediaDocument documentMedia)
             {
-                var documentMedia = media as TLMessageMediaDocument;
                 if (TLMessage.IsGif(documentMedia.Document)) return true;
                 else if (TLMessage.IsVideo(documentMedia.Document)) return true;
             }
-            else if (media.TypeId == TLType.MessageMediaInvoice && width)
+            else if (media is TLMessageMediaInvoice invoiceMedia && width)
             {
-                var invoiceMedia = media as TLMessageMediaInvoice;
                 if (invoiceMedia.HasPhoto && invoiceMedia.Photo != null)
                 {
                     return true;
                 }
+            }
+            else if (media is TLMessageMediaGroup)
+            {
+                return true;
             }
             //else if (media.TypeId == TLType.MessageMediaWebPage && width)
             //{
@@ -533,10 +615,10 @@ namespace Unigram.Controls.Messages
         {
             if (media == null) return false;
 
-            if (media.TypeId == TLType.MessageMediaContact) return true;
-            else if (media.TypeId == TLType.MessageMediaGeoLive) return true;
-            else if (media.TypeId == TLType.MessageMediaVenue) return true;
-            else if (media.TypeId == TLType.MessageMediaPhoto)
+            if (media is TLMessageMediaContact) return true;
+            else if (media is TLMessageMediaGeoLive) return true;
+            else if (media is TLMessageMediaVenue) return true;
+            else if (media is TLMessageMediaPhoto)
             {
                 var photoMedia = media as TLMessageMediaPhoto;
                 if (string.IsNullOrWhiteSpace(photoMedia.Caption))
@@ -546,9 +628,8 @@ namespace Unigram.Controls.Messages
 
                 return true;
             }
-            else if (media.TypeId == TLType.MessageMediaDocument)
+            else if (media is TLMessageMediaDocument documentMedia)
             {
-                var documentMedia = media as TLMessageMediaDocument;
                 if (TLMessage.IsMusic(documentMedia.Document)) return true;
                 else if (TLMessage.IsVoice(documentMedia.Document)) return true;
                 else if (TLMessage.IsVideo(documentMedia.Document))

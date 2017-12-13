@@ -7,7 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Unigram.Controls.Views;
+using Unigram.Core.Common;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Devices.Enumeration;
@@ -161,7 +163,7 @@ namespace Unigram.Controls
                 _recording = true;
                 _start = DateTime.Now;
 
-                Execute.BeginOnUIThread(() =>
+                this.BeginOnUIThread(() =>
                 {
                     if (_video)
                     {
@@ -231,7 +233,7 @@ namespace Unigram.Controls
 
                 _recording = false;
 
-                Execute.BeginOnUIThread(() =>
+                this.BeginOnUIThread(() =>
                 {
                     if (_video)
                     {
@@ -269,13 +271,13 @@ namespace Unigram.Controls
                 {
                     Debug.WriteLine("Sending voice message");
 
-                    Execute.BeginOnUIThread(async () =>
+                    this.BeginOnUIThread(async () =>
                     {
                         if (_video)
                         {
                             var props = await _file.Properties.GetVideoPropertiesAsync();
-                            var width = props.Width;
-                            var height = props.Height;
+                            var width = props.GetWidth();
+                            var height = props.GetHeight();
                             var x = 0d;
                             var y = 0d;
 
@@ -300,7 +302,7 @@ namespace Unigram.Controls
                             profile.Video.Height = 240;
                             profile.Video.Bitrate = 300000;
 
-                            await ViewModel.SendVideoAsync(_file, null, true, profile, transform);
+                            await ViewModel.SendVideoAsync(_file, null, true, false, null, profile, transform);
                         }
                         else
                         {

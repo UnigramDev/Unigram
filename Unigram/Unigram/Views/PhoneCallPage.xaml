@@ -190,7 +190,7 @@
                 <RowDefinition MinHeight="72"/>
             </Grid.RowDefinitions>
             <!--<TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" Text="Fela Ameghino" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>-->
-            <TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="DurationLabel" Opacity="0" Text="00:00" TextAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
 
             <Grid Grid.Row="1">
@@ -264,10 +264,10 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <controls:GlyphToggleButton Click="Mute_Click" CheckedGlyph="&#xE610;" FontFamily="{ThemeResource TelegramThemeFontFamily}" HorizontalAlignment="Right" Margin="0,0,12,0"/>
+            <controls:GlyphToggleButton Click="Mute_Click" CheckedGlyph="&#xE610;" FontFamily="{StaticResource TelegramThemeFontFamily}" HorizontalAlignment="Right" Margin="0,0,12,0"/>
             
             <Border Background="#E33A32" CornerRadius="24" Grid.Column="1">
-                <controls:GlyphButton Click="Hangup_Click" Glyph="&#xE60F;" FontFamily="{ThemeResource TelegramThemeFontFamily}" FontSize="24" Padding="0,0,0,2" CornerRadius="24"/>
+                <controls:GlyphButton Click="Hangup_Click" Glyph="&#xE60F;" FontFamily="{StaticResource TelegramThemeFontFamily}" FontSize="24" Padding="0,0,0,2" CornerRadius="24"/>
             </Border>
             
             <controls:GlyphToggleButton x:Name="Routing" Click="Routing_Click" CheckedGlyph="&#xE767;" HorizontalAlignment="Left" Margin="12,0,0,0" Grid.Column="2"/>

@@ -71,7 +71,7 @@ namespace Unigram.ViewModels
         //        user.BotInfo = userFull.BotInfo;
         //        //user.About = userFull.About;
 
-        //        Execute.BeginOnUIThread(() =>
+        //        Dispatch(() =>
         //        {
         //            RaisePropertyChanged(() => HasBots);
         //            RaisePropertyChanged(() => With);

@@ -23,6 +23,7 @@ namespace Telegram.Api.TL
 			Views = (1 << 10),
 			EditDate = (1 << 15),
 			PostAuthor = (1 << 16),
+			GroupedId = (1 << 17),
 		}
 
 		public override bool IsOut { get { return Flags.HasFlag(Flag.Out); } set { Flags = value ? (Flags | Flag.Out) : (Flags & ~Flag.Out); } }
@@ -40,6 +41,7 @@ namespace Telegram.Api.TL
 		public bool HasViews { get { return Flags.HasFlag(Flag.Views); } set { Flags = value ? (Flags | Flag.Views) : (Flags & ~Flag.Views); } }
 		public bool HasEditDate { get { return Flags.HasFlag(Flag.EditDate); } set { Flags = value ? (Flags | Flag.EditDate) : (Flags & ~Flag.EditDate); } }
 		public bool HasPostAuthor { get { return Flags.HasFlag(Flag.PostAuthor); } set { Flags = value ? (Flags | Flag.PostAuthor) : (Flags & ~Flag.PostAuthor); } }
+		public bool HasGroupedId { get { return Flags.HasFlag(Flag.GroupedId); } set { Flags = value ? (Flags | Flag.GroupedId) : (Flags & ~Flag.GroupedId); } }
 
 		public Flag Flags { get; set; }
 		public TLMessageFwdHeader FwdFrom { get; set; }
@@ -51,6 +53,7 @@ namespace Telegram.Api.TL
 		public Int32? Views { get; set; }
 		public Int32? EditDate { get; set; }
 		public String PostAuthor { get; set; }
+		public Int64? GroupedId { get; set; }
 
 		public TLMessage() { }
 		public TLMessage(TLBinaryReader from)
@@ -77,13 +80,14 @@ namespace Telegram.Api.TL
 			if (HasViews) Views = from.ReadInt32();
 			if (HasEditDate) EditDate = from.ReadInt32();
 			if (HasPostAuthor) PostAuthor = from.ReadString();
+			if (HasGroupedId) GroupedId = from.ReadInt64();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
-			to.Write(0x90DDDC11);
+			to.Write(0x44F9B43D);
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			if (HasFromId) to.Write(FromId.Value);
@@ -99,6 +103,7 @@ namespace Telegram.Api.TL
 			if (HasViews) to.Write(Views.Value);
 			if (HasEditDate) to.Write(EditDate.Value);
 			if (HasPostAuthor) to.Write(PostAuthor);
+			if (HasGroupedId) to.Write(GroupedId.Value);
 		}
 
 		private void UpdateFlags()
@@ -113,6 +118,7 @@ namespace Telegram.Api.TL
 			HasViews = Views != null;
 			HasEditDate = EditDate != null;
 			HasPostAuthor = PostAuthor != null;
+			HasGroupedId = GroupedId != null;
 		}
 	}
 }

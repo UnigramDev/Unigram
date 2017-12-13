@@ -24,6 +24,118 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLLangPackDifference>> GetDifferenceAsync(int fromVersion)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLLangPackDifference>>();
+            GetDifferenceAsync(fromVersion, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLLangPackDifference>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLLangPackDifference>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLLangPackDifference>> GetLangPackAsync(string langCode)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLLangPackDifference>>();
+            GetLangPackAsync(langCode, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLLangPackDifference>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLLangPackDifference>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLVector<TLLangPackLanguage>>> GetLanguagesAsync()
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLLangPackLanguage>>>();
+            GetLanguagesAsync((callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<TLLangPackLanguage>>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<TLLangPackLanguage>>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLVector<TLLangPackStringBase>>> GetStringsAsync(string langCode, TLVector<string> keys)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLVector<TLLangPackStringBase>>>();
+            GetStringsAsync(langCode, keys, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<TLLangPackStringBase>>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLVector<TLLangPackStringBase>>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<bool>> ResetSavedAsync()
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
+            ResetSavedAsync((callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLUpdatesBase>> SendMultiMediaAsync(TLInputPeerBase inputPeer, TLVector<TLInputSingleMedia> multiMedia, IList<TLMessage> messages)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
+            SendMultiMediaAsync(inputPeer, multiMedia, messages, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLMessageMediaBase>> UploadMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessageMediaBase>>();
+            UploadMediaAsync(inputPeer, inputMedia, message, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessageMediaBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessageMediaBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLMessagesAffectedHistory>> ReadMentionsAsync(TLInputPeerBase inputPeer)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedHistory>>();
+            ReadMentionsAsync(inputPeer, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedHistory>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedHistory>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> TogglePreHistoryHiddenAsync(TLInputChannelBase channel, bool enabled)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -536,10 +648,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUpdatesBase>> ForwardMessagesAsync(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore)
+        public Task<MTProtoResponse<TLUpdatesBase>> ForwardMessagesAsync(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, bool grouped)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            ForwardMessagesAsync(toPeer, fromPeer, id, messages, withMyScore, (callback) =>
+            ForwardMessagesAsync(toPeer, fromPeer, id, messages, withMyScore, grouped, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>

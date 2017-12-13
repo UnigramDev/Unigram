@@ -10,6 +10,7 @@
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnLoaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -82,7 +83,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <controls:ProfilePictureView Source="{x:Bind ViewModel.Item.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
+            <controls:ProfilePicture Source="{x:Bind ViewModel.Item.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
 
             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                 <TextBlock Text="{x:Bind ViewModel.Item.Title, Mode=OneWay}"
@@ -92,7 +93,7 @@
                            MaxLines="1"/>
                 <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                            Style="{StaticResource CaptionTextBlockStyle}"
-                           Text="All events"/>
+                           Text="{CustomResource EventLogAllEvents}"/>
             </StackPanel>
 
             <!--<controls:GlyphButton Glyph="&#xE11A;" Grid.Column="2"/>-->
@@ -101,6 +102,7 @@
         </Grid>
 
         <controls:PaddedListView
+            x:Name="Messages"
             ItemsSource="{x:Bind ViewModel.Items}"
             SelectionMode="None"
             Grid.Row="1">
@@ -120,13 +122,13 @@
                                     <ColumnDefinition Width="52"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <controls:ProfilePictureView x:Phase="3"
+                                <controls:ProfilePicture x:Phase="3"
                                                              x:Name="PhotoBubble"
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
-                                <messages:MessageBubble Grid.Column="1"/>
+                                                             Click="Photo_Click"/>
+                                <messages:MessageBubble x:Name="Bubble" Grid.Column="1"/>
                             </Grid>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.MessageTemplate>
@@ -137,177 +139,56 @@
                                     <ColumnDefinition Width="52"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <controls:ProfilePictureView x:Phase="3"
+                                <controls:ProfilePicture x:Phase="3"
                                                              x:Name="PhotoBubble"
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
-                                <messages:EditedMessageBubble Grid.Column="1"/>
+                                                             Click="Photo_Click"/>
+                                <messages:EditedMessageBubble x:Name="Bubble" Grid.Column="1"/>
                             </Grid>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.EditedTemplate>
                     <selectors:AdminLogTemplateSelector.EventMessageTemplate>
                         <DataTemplate>
-                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,4,0,4" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                                 <RichTextBlock common:AdminLogHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                             </Border>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.EventMessageTemplate>
                     <selectors:AdminLogTemplateSelector.EventMessagePhotoTemplate>
                         <DataTemplate>
-                            <StackPanel Margin="0,8,0,2">
+                            <StackPanel Margin="0,4,0,4">
                                 <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                                     <RichTextBlock common:AdminLogHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                                 </Border>
 
                                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                                    <controls:ProfilePictureView Source="{Binding Action.Event.Action.NewPhoto, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                                    <controls:ProfilePicture Source="{Binding Action.Event.Action.NewPhoto, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                                 </Border>
                             </StackPanel>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.EventMessagePhotoTemplate>
                     <selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
                         <DataTemplate>
-                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,4,0,4" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                             </Border>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
                     <selectors:AdminLogTemplateSelector.ServiceMessagePhotoTemplate>
                         <DataTemplate>
-                            <StackPanel Margin="0,8,0,2">
+                            <StackPanel Margin="0,4,0,4">
                                 <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                                 </Border>
 
                                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                                    <controls:ProfilePictureView Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                                    <controls:ProfilePicture Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                                 </Border>
                             </StackPanel>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.ServiceMessagePhotoTemplate>
-                    <selectors:AdminLogTemplateSelector.StickerTemplate>
-                        <DataTemplate x:DataType="tl:TLMessage">
-                            <Grid Margin="-52,0,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="52"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <controls:ProfilePictureView x:Phase="3"
-                                                             x:Name="PhotoBubble"
-                                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
-
-                                <Grid Margin="0,2" Grid.Column="1">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <!-- TODO: not the right way -->
-                                    <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
-
-                                    <Grid Grid.Row="1">
-                                        <controls:StickerView
-                                            Source="{x:Bind ((tl:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                            Constraint="{x:Bind ((tl:TLMessageMediaDocument)Media).Document}"
-                                            MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
-                                            MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"
-                                            HorizontalAlignment="Left"
-                                            Click="StickerSet_Click"/>
-
-                                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
-                                    </Grid>
-                                    
-                                    <Border Visibility="{x:Bind StickerReplyVisibility}"
-                                            Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                            VerticalAlignment="Top"
-                                            HorizontalAlignment="Left"
-                                            MaxWidth="180"
-                                            Padding="8,0,8,6"
-                                            Margin="4,0,0,4"
-                                            Grid.Column="1"
-                                            Grid.Row="1">
-                                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
-                                    </Border>
-
-                                    <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" Margin="0,0,0,2" Grid.Row="2"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </selectors:AdminLogTemplateSelector.StickerTemplate>
-                    <selectors:AdminLogTemplateSelector.RoundVideoTemplate>
-                        <DataTemplate x:DataType="tl:TLMessage">
-                            <Grid Margin="-52,0,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="52"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <controls:ProfilePictureView x:Phase="3"
-                                                             x:Name="PhotoBubble"
-                                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
-
-                                <Grid Margin="0,2" Grid.Column="1">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <!-- TODO: not the right way -->
-                                    <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
-
-                                    <Grid x:Name="MediaControl" Grid.Row="1">
-                                        <Ellipse Fill="Black"/>
-                                        <controls:ImageView
-                                            Source="{x:Bind ((tl:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                            Constraint="{x:Bind ((tl:TLMessageMediaDocument)Media).Document}"
-                                            Style="{StaticResource RoundImageViewStyle}"
-                                            MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
-                                            MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"
-                                            HorizontalAlignment="Left"/>
-
-                                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-                                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-
-                                        <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                                            <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-                                            <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
-                                        </StackPanel>
-
-                                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
-                                    </Grid>
-
-                                    <Border Visibility="{x:Bind StickerReplyVisibility}"
-                                            Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                            VerticalAlignment="Top"
-                                            HorizontalAlignment="Left"
-                                            MaxWidth="180"
-                                            Padding="8,0,8,6"
-                                            Margin="4,0,0,4"
-                                            Grid.Column="1"
-                                            Grid.Row="1">
-                                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
-                                    </Border>
-
-                                    <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" Margin="0,0,0,2" Grid.Row="2"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </selectors:AdminLogTemplateSelector.RoundVideoTemplate>
                 </selectors:AdminLogTemplateSelector>
             </ListView.ItemTemplateSelector>
             <ListView.ItemsPanel>
@@ -316,22 +197,108 @@
                                      VerticalAlignment="Bottom" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
+            <ListView.ItemContainerStyleSelector>
+                <selectors:MessageStyleSelector>
+                    <selectors:MessageStyleSelector.MessageStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                            <Setter Property="TabNavigation" Value="Local"/>
+                            <Setter Property="IsHoldingEnabled" Value="True"/>
+                            <Setter Property="Padding" Value="12,0,12,0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewItem">
+                                        <ListViewItemPresenter
+                                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                SelectionCheckMarkVisualEnabled="True"
+                                                CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                                DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                                FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                                FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                PointerOverBackground="Transparent"
+                                                PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
+                                                SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
+                                                PressedBackground="Transparent"
+                                                SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
+                                                DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                ContentMargin="{TemplateBinding Padding}"
+                                                CheckMode="Inline"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </selectors:MessageStyleSelector.MessageStyle>
+                    <selectors:MessageStyleSelector.ServiceStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                            <Setter Property="TabNavigation" Value="Local"/>
+                            <Setter Property="IsHoldingEnabled" Value="True"/>
+                            <Setter Property="Padding" Value="12,0,12,0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewItem">
+                                        <ListViewItemPresenter
+                                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                SelectionCheckMarkVisualEnabled="False"
+                                                CheckBrush="{x:Null}"
+                                                CheckBoxBrush="{x:Null}"
+                                                DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                                DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                                FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                                FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                PointerOverBackground="Transparent"
+                                                PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                SelectedBackground="Transparent"
+                                                SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
+                                                PressedBackground="Transparent"
+                                                SelectedPressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
+                                                DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                ContentMargin="{TemplateBinding Padding}"
+                                                CheckMode="Overlay"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </selectors:MessageStyleSelector.ServiceStyle>
+                </selectors:MessageStyleSelector>
+            </ListView.ItemContainerStyleSelector>
             <ListView.Footer>
                 <Border Height="8"/>
             </ListView.Footer>
         </controls:PaddedListView>
 
-        <StackPanel Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.Row="1">
-            <TextBlock Text="No events yet" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>
-            <TextBlock Foreground="White" Style="{ThemeResource BodyTextBlockStyle}">
-                <Run Text="There where no service actions"/>
-                <LineBreak/>
-                <Run Text="taken by the group's members"/>
-                <LineBreak/>
-                <Run Text="and admins in the last 48 hours."/>
-            </TextBlock>
-        </StackPanel>
-
+        <Border Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,8,12,8" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.Row="1">
+            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertType('EventLogEmptyChannel', 'EventLogEmpty')}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
+        </Border>
 
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="{ThemeResource AppBarThemeCompactHeight}" Grid.Row="2">
             <Grid.ColumnDefinitions>

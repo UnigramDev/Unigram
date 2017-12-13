@@ -44,9 +44,8 @@ namespace Telegram.Api.Services.Cache
         IList<TLMessageBase> GetSendingMessages();
         IList<TLMessageBase> GetResendingMessages(); 
 
-        void GetHistoryAsync(TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount);
-        IList<TLMessageBase> GetHistory(TLPeerBase peer, int limit = Constants.CachedMessagesCount);
-        IList<TLMessageBase> GetHistory(TLPeerBase peer, int maxId, int limit = Constants.CachedMessagesCount);
+        void GetHistoryAsync(TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount, Func<TLMessageBase, bool> predicate = null);
+        IList<TLMessageBase> GetHistory(TLPeerBase peer, int limit = Constants.CachedMessagesCount, Func<TLMessageBase, bool> predicate = null);
         //IList<TLMessageBase> GetUnreadHistory(int? currentUserId, TLPeerBase peer, int limit = Constants.CachedMessagesCount);
         IList<TLMessageBase> GetHistory(int dialogId);
         // TODO: Encrypted IList<TLDecryptedMessageBase> GetDecryptedHistory(int dialogId, int limit = Constants.CachedMessagesCount);
@@ -120,6 +119,8 @@ namespace Telegram.Api.Services.Cache
         void SyncStatuses(TLVector<TLContactStatus> contacts, Action<TLVector<TLContactStatus>> callback);
         void DeleteUser(int? id);
         void DeleteChat(int? id);
+        void DeleteUserFull(int? id);
+        void DeleteChatFull(int? id);
         void DeleteUserHistory(TLPeerChannel channel, TLPeerUser peer);
 
         void ClearDialog(TLPeerBase peer, int availableMinId);

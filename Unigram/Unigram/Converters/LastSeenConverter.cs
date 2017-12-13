@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Windows.UI.Xaml.Data;
@@ -70,58 +71,99 @@ namespace Unigram.Converters
 
         public static string GetLabel(TLUser user, bool details)
         {
+            if (user == null)
+            {
+                return null;
+            }
+
             if (user.Id == 777000)
             {
-                return "Service notifications";
+                return Strings.Android.ServiceNotifications;
             }
             else if (user.IsBot)
             {
                 if (details)
                 {
-                    return "Bot";
+                    return Strings.Android.Bot;
                 }
 
-                return user.IsBotChatHistory ? "Has access to messages" : "Has no access to messages";
+                return user.IsBotChatHistory ? Strings.Android.BotStatusRead : Strings.Android.BotStatusCantRead;
             }
             else if (user.IsSelf && details)
             {
-                return "Chat with yourself";
+                return Strings.Android.ChatYourSelf;
             }
 
-            if (user.HasStatus && user.Status != null)
+            if (user.Status is TLUserStatusOffline offline)
             {
-                switch (user.Status)
+                return FormatDateOnline(offline.WasOnline);
+            }
+            else if (user.Status is TLUserStatusOnline online)
+            {
+                if (online.Expires > Utils.CurrentTimestamp / 1000)
                 {
-                    case TLUserStatusOffline offline:
-                        var now = DateTime.Now;
-                        var seen = TLUtils.ToDateTime(offline.WasOnline);
-                        var time = string.Empty;
-                        if (details)
-                        {
-                            time = ((now.Date == seen.Date) ? "today at " : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? "yesterday at " : BindConvert.Current.ShortDate.Format(seen) + " ")) + BindConvert.Current.ShortTime.Format(seen);
-                        }
-                        else
-                        {
-                            time = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? "moments ago" : (now - seen).Minutes.ToString() + ((now - seen).Minutes.ToString() == "1" ? " minute ago" : " minutes ago")) : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString()) == "1" ? (" hour ago") : (" hours ago"))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? "yesterday " + BindConvert.Current.ShortTime.Format(seen) : BindConvert.Current.ShortDate.Format(seen);
-                        }
-
-                        return string.Format("Last seen {0}", time);
-                    case TLUserStatusOnline online:
-                        return "online";
-                    case TLUserStatusRecently recently:
-                        return "Last seen recently";
-                    case TLUserStatusLastWeek lastWeek:
-                        return "Last seen within a week";
-                    case TLUserStatusLastMonth lastMonth:
-                        return "Last seen within a month";
-                    case TLUserStatusEmpty empty:
-                    default:
-                        return "Last seen a long time ago";
+                    return Strings.Android.Online;
+                }
+                else
+                {
+                    return FormatDateOnline(online.Expires);
                 }
             }
+            else if (user.Status is TLUserStatusRecently recently)
+            {
+                return Strings.Android.Lately;
+            }
+            else if (user.Status is TLUserStatusLastWeek lastWeek)
+            {
+                return Strings.Android.WithinAWeek;
+            }
+            else if (user.Status is TLUserStatusLastMonth lastMonth)
+            {
+                return Strings.Android.WithinAMonth;
+            }
+            else
+            {
+                return Strings.Android.ALongTimeAgo;
+            }
+        }
 
-            // Debugger.Break();
-            return "Last seen a long time ago";
+        private static String FormatDateOnline(long date)
+        {
+            try
+            {
+                var rightNow = DateTime.Now;
+                int day = rightNow.DayOfYear;
+                int year = rightNow.Year;
+
+                var online = Utils.UnixTimestampToDateTime(date);
+                int dateDay = online.DayOfYear;
+                int dateYear = online.Year;
+
+                if (dateDay == day && year == dateYear)
+                {
+                    return string.Format("{0} {1} {2}", Strings.Android.LastSeen, Strings.Android.TodayAt, BindConvert.Current.ShortTime.Format(online));
+                }
+                else if (dateDay + 1 == day && year == dateYear)
+                {
+                    return string.Format("{0} {1} {2}", Strings.Android.LastSeen, Strings.Android.YesterdayAt, BindConvert.Current.ShortTime.Format(online));
+                }
+                else if (Math.Abs(Utils.CurrentTimestamp / 1000 - date) < 31536000000L)
+                {
+                    string format = string.Format(Strings.Android.FormatDateAtTime, online.ToString(Strings.Android.FormatterMonth), BindConvert.Current.ShortTime.Format(online));
+                    return string.Format("{0} {1}", Strings.Android.LastSeenDate, format);
+                }
+                else
+                {
+                    string format = string.Format(Strings.Android.FormatDateAtTime, online.ToString(Strings.Android.FormatterYear), BindConvert.Current.ShortTime.Format(online));
+                    return string.Format("{0} {1}", Strings.Android.LastSeenDate, format);
+                }
+            }
+            catch (Exception e)
+            {
+                //FileLog.e(e);
+            }
+
+            return "LOC_ERR";
         }
     }
 }

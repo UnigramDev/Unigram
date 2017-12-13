@@ -15,7 +15,7 @@ namespace Unigram.Converters
         {
             if (value == null)
             {
-                return null;
+                return parameter == null ? null : Strings.Android.NumberUnknown;
             }
 
             return PhoneNumber.Format((string)value);

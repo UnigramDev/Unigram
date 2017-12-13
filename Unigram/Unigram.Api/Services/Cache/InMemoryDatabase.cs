@@ -100,10 +100,10 @@ namespace Telegram.Api.Services.Cache
                         // TODO: Encrypted var ed = Dialogs[i] as TLEncryptedDialog;
                         if (d != null)
                         {
-                            var currentTopMessage = (TLMessageCommonBase)d.TopMessageItem;
+                            var currentDateIndex = d.GetDateIndex();
 
-                            if (currentTopMessage != null
-                                && currentTopMessage.Date < topMessage.Date)
+                            if (currentDateIndex != 0
+                                && currentDateIndex < dialog.GetDateIndex())
                             {
                                 isAdded = true;
                                 Dialogs.Insert(i, dialog);
@@ -543,7 +543,7 @@ namespace Telegram.Api.Services.Cache
                                 if (notifyTopMessageUpdated)
                                 {
                                     dialog._topMessageItem = commonMessage;
-                                    Helpers.Execute.BeginOnUIThread(() => dialog.RaisePropertyChanged(() => dialog.TopMessageItem));
+                                    dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
                                 }
                                 else
                                 {
@@ -1632,6 +1632,14 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
+        public void DeleteUserFull(int? id)
+        {
+            if (id.HasValue)
+            {
+                FullUsersContext.Remove(id.Value);
+            }
+        }
+
         public void DeleteUser(TLUserBase user)
         {
             UsersContext.Remove(user.Id);
@@ -1692,6 +1700,14 @@ namespace Telegram.Api.Services.Cache
             if (id.HasValue)
             {
                 ChatsContext.Remove(id.Value);
+            }
+        }
+
+        public void DeleteChatFull(int? id)
+        {
+            if (id.HasValue)
+            {
+                FullChatsContext.Remove(id.Value);
             }
         }
 

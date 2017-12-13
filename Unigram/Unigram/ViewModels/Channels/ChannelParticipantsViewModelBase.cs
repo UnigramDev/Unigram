@@ -36,7 +36,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             Item = null;
 
@@ -51,9 +51,11 @@ namespace Unigram.ViewModels.Channels
             {
                 Item = channel;
 
-                Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), _filter);
+                Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), _filter, null);
                 RaisePropertyChanged(() => Participants);
             }
+
+            return Task.CompletedTask;
         }
 
         public ItemsCollection Participants { get; protected set; }
@@ -63,20 +65,25 @@ namespace Unigram.ViewModels.Channels
             private readonly IMTProtoService _protoService;
             private readonly TLInputChannelBase _inputChannel;
             private readonly TLChannelParticipantsFilterBase _filter;
+            private readonly int? _count;
 
             private bool _hasMore;
 
-            public ItemsCollection(IMTProtoService protoService, TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter)
+            public ItemsCollection(IMTProtoService protoService, TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int? count)
             {
                 _protoService = protoService;
                 _inputChannel = inputChannel;
                 _filter = filter;
+                _count = count;
                 _hasMore = true;
             }
 
             public override async Task<IList<TLChannelParticipantBase>> LoadDataAsync()
             {
-                var response = await _protoService.GetParticipantsAsync(_inputChannel, _filter, Items.Count, 200, 0);
+                //var hash = CalculateHash(this);
+                var hash = 0;
+
+                var response = await _protoService.GetParticipantsAsync(_inputChannel, _filter, Items.Count, 200, hash);
                 if (response.IsSucceeded && response.Result is TLChannelsChannelParticipants participants)
                 {
                     if (participants.Participants.Count < 200)
@@ -84,10 +91,27 @@ namespace Unigram.ViewModels.Channels
                         _hasMore = false;
                     }
 
+                    if (_filter == null && _count.HasValue && _count <= 200)
+                    {
+                        return participants.Participants.OrderBy(x => x, new TLChannelParticipantBaseComparer(true)).ToList();
+                    }
+
                     return participants.Participants;
                 }
 
                 return new TLChannelParticipantBase[0];
+            }
+
+            private int CalculateHash(IList<TLChannelParticipantBase> participants)
+            {
+                var acc = 0L;
+
+                foreach (var item in participants)
+                {
+                    acc = ((acc * 20261) + 0x80000000L + item.UserId) % 0x80000000L;
+                }
+
+                return (int)acc;
             }
 
             protected override bool GetHasMoreItems()

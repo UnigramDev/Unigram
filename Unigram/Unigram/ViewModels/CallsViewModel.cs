@@ -5,13 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 using Template10.Utils;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Strings;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -22,6 +26,8 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             Items = new ItemsCollection(protoService, cacheService);
+
+            CallDeleteCommand = new RelayCommand<TLCallGroup>(CallDeleteExecute);
         }
 
         public ItemsCollection Items { get; private set; }
@@ -106,6 +112,57 @@ namespace Unigram.ViewModels
                 return new TLCallGroup[0];
             }
         }
+
+        #region Context menu
+
+        public RelayCommand<TLCallGroup> CallDeleteCommand { get; }
+        private async void CallDeleteExecute(TLCallGroup group)
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ConfirmDeleteCallLog, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var messages = new TLVector<int>(group.Items.Select(x => x.Id).ToList());
+
+            Task<MTProtoResponse<TLMessagesAffectedMessages>> task;
+
+            var peer = group.Message.Parent.ToInputPeer();
+            if (peer is TLInputPeerChannel channelPeer)
+            {
+                task = ProtoService.DeleteMessagesAsync(new TLInputChannel { ChannelId = channelPeer.ChannelId, AccessHash = channelPeer.AccessHash }, messages);
+            }
+            else
+            {
+                task = ProtoService.DeleteMessagesAsync(messages, false);
+            }
+
+            var response = await task;
+            if (response.IsSucceeded)
+            {
+                var cachedMessages = new TLVector<long>();
+                var remoteMessages = new TLVector<int>();
+                for (int i = 0; i < messages.Count; i++)
+                {
+                    if (group.Items[i].RandomId.HasValue && group.Items[i].RandomId != 0L)
+                    {
+                        cachedMessages.Add(group.Items[i].RandomId.Value);
+                    }
+                    if (group.Items[i].Id > 0)
+                    {
+                        remoteMessages.Add(group.Items[i].Id);
+                    }
+                }
+
+                CacheService.DeleteMessages(peer.ToPeer(), null, remoteMessages);
+                CacheService.DeleteMessages(cachedMessages);
+
+                Items.Remove(group);
+            }
+        }
+
+        #endregion
     }
 
     public class TLCallGroup
@@ -114,14 +171,14 @@ namespace Unigram.ViewModels
         {
             Items = new ObservableCollection<TLMessageService>(messages);
             Peer = peer;
-            Failed = failed;
+            IsFailed = failed;
         }
 
         public ObservableCollection<TLMessageService> Items { get; private set; }
 
         public TLUser Peer { get; private set; }
 
-        public bool Failed { get; private set; }
+        public bool IsFailed { get; private set; }
 
         public override string ToString()
         {
@@ -163,9 +220,9 @@ namespace Unigram.ViewModels
 
         private string GetDisplayType()
         {
-            if (Failed)
+            if (IsFailed)
             {
-                return AppResources.CallMissedShort;
+                return Strings.Android.CallMessageIncomingMissed;
             }
 
             var finalType = string.Empty;
@@ -216,8 +273,8 @@ namespace Unigram.ViewModels
                 var missed = reason is TLPhoneCallDiscardReasonMissed || reason is TLPhoneCallDiscardReasonBusy;
 
                 var callDuration = action.Duration ?? 0;
-                var duration = missed || callDuration < 1 ? null : BindConvert.Current.CallShortDuration(callDuration);
-                finalType = duration != null ? string.Format(AppResources.CallTimeFormat, finalType, duration) : finalType;
+                var duration = missed || callDuration < 1 ? null : LocaleHelper.FormatCallDuration(callDuration);
+                finalType = duration != null ? string.Format("{0} ({1})", finalType, duration) : finalType;
             }
 
             return finalType;
@@ -228,13 +285,13 @@ namespace Unigram.ViewModels
             switch (type)
             {
                 case TLCallDisplayType.Outgoing:
-                    return AppResources.CallOutgoingShort;
+                    return Strings.Android.CallMessageOutgoing;
                 case TLCallDisplayType.Incoming:
-                    return AppResources.CallIncomingShort;
+                    return Strings.Android.CallMessageIncoming;
                 case TLCallDisplayType.Cancelled:
-                    return AppResources.CallCanceledShort;
+                    return Strings.Android.CallMessageOutgoingMissed;
                 case TLCallDisplayType.Missed:
-                    return AppResources.CallMissedShort;
+                    return Strings.Android.CallMessageIncomingMissed;
                 default:
                     return null;
             }

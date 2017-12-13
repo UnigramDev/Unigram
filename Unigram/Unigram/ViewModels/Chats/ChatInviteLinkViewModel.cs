@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +24,8 @@ namespace Unigram.ViewModels.Chats
         public ChatInviteLinkViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            CopyCommand = new RelayCommand(CopyExecute);
+            RevokeCommand = new RelayCommand(RevokeExecute);
         }
 
         private TLChatBase _item;
@@ -36,6 +38,19 @@ namespace Unigram.ViewModels.Chats
             set
             {
                 Set(ref _item, value);
+            }
+        }
+
+        private TLChatFullBase _full;
+        public TLChatFullBase Full
+        {
+            get
+            {
+                return _full;
+            }
+            set
+            {
+                Set(ref _full, value);
             }
         }
 
@@ -77,6 +92,7 @@ namespace Unigram.ViewModels.Chats
 
                     if (full != null)
                     {
+                        _full = full;
                         _exportedInvite = full.ExportedInvite;
 
                         if (full.ExportedInvite is TLChatInviteExported invite)
@@ -99,13 +115,13 @@ namespace Unigram.ViewModels.Chats
                 {
                     Item = chat;
 
-                    var full = CacheService.GetFullChat(chat.Id) as TLChannelFull;
+                    var full = CacheService.GetFullChat(chat.Id) as TLChatFull;
                     if (full == null)
                     {
                         var response = await ProtoService.GetFullChatAsync(chat.Id);
                         if (response.IsSucceeded)
                         {
-                            full = response.Result.FullChat as TLChannelFull;
+                            full = response.Result.FullChat as TLChatFull;
                         }
                     }
 
@@ -132,6 +148,11 @@ namespace Unigram.ViewModels.Chats
                 {
                     _exportedInvite = response.Result;
 
+                    if (_full != null)
+                    {
+                        _full.ExportedInvite = response.Result;
+                    }
+
                     var invite = response.Result as TLChatInviteExported;
                     if (invite != null && !string.IsNullOrEmpty(invite.Link))
                     {
@@ -145,20 +166,20 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand CopyCommand => new RelayCommand(CopyExecute);
+        public RelayCommand CopyCommand { get; }
         private async void CopyExecute()
         {
-            var package = new DataPackage();
-            package.SetText(_inviteLink);
-            Clipboard.SetContent(package);
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(_inviteLink);
+            ClipboardEx.TrySetContent(dataPackage);
 
-            await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
+            await TLMessageDialog.ShowAsync(Strings.Android.LinkCopied, Strings.Android.AppName, Strings.Android.OK);
         }
 
-        public RelayCommand RevokeCommand => new RelayCommand(RevokeExecute);
+        public RelayCommand RevokeCommand { get; }
         private async void RevokeExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to revoke this link? Once you do, no one will be able to join the group using it.", "Telegram", "Revoke", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.RevokeAlert, Strings.Android.RevokeLink, Strings.Android.RevokeButton, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 Task<MTProtoResponse<TLExportedChatInviteBase>> task = null;
@@ -187,12 +208,17 @@ namespace Unigram.ViewModels.Chats
                     {
                         _exportedInvite = response.Result;
 
+                        if (_full != null)
+                        {
+                            _full.ExportedInvite = response.Result;
+                        }
+
                         var invite = response.Result as TLChatInviteExported;
                         if (invite != null && !string.IsNullOrEmpty(invite.Link))
                         {
                             InviteLink = invite.Link;
 
-                            await TLMessageDialog.ShowAsync("The previous invite link is now inactive. A new invite link has just been generated.", "Telegram", "OK");
+                            await TLMessageDialog.ShowAsync(Strings.Android.RevokeAlertNewLink, Strings.Android.RevokeLink, Strings.Android.OK);
                         }
                     }
                     else

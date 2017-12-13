@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -18,6 +18,7 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Views;
 using Unigram.Views.Chats;
+using Unigram.Views.Dialogs;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -27,15 +28,18 @@ namespace Unigram.ViewModels.Chats
 {
     public class ChatDetailsViewModel : UnigramViewModelBase, IHandle<TLUpdateNotifySettings>
     {
-        private readonly IUploadFileManager _uploadFileManager;
-
-        public ChatDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager)
+        public ChatDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            _uploadFileManager = uploadFileManager;
+            EditCommand = new RelayCommand(EditExecute);
+            InviteCommand = new RelayCommand(InviteExecute);
+            MediaCommand = new RelayCommand(MediaExecute);
+            MigrateCommand = new RelayCommand(MigrateExecute);
+            ParticipantRemoveCommand = new RelayCommand<TLChatParticipantBase>(ParticipantRemoveExecute);
+            ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
         }
 
-        private TLChat _item;
+        protected TLChat _item;
         public TLChat Item
         {
             get
@@ -48,7 +52,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        private TLChatFull _full;
+        protected TLChatFull _full;
         public TLChatFull Full
         {
             get
@@ -94,7 +98,7 @@ namespace Unigram.ViewModels.Chats
                     Full = full;
                     Participants = collection;
 
-                    RaisePropertyChanged(() => AreNotificationsEnabled);
+                    RaisePropertyChanged(() => IsMuted);
                     RaisePropertyChanged(() => Participants);
 
                     if (_full.Participants is TLChatParticipants participants)
@@ -125,17 +129,21 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public bool AreNotificationsEnabled
+        public bool IsMuted
         {
             get
             {
-                var settings = _full?.NotifySettings as TLPeerNotifySettings;
-                if (settings != null)
+                var notifySettings = _full?.NotifySettings as TLPeerNotifySettings;
+                if (notifySettings == null)
                 {
-                    return settings.MuteUntil == 0;
+                    return false;
                 }
 
-                return false;
+                var clientDelta = MTProtoService.Current.ClientTicksDelta;
+                var utc0SecsInt = notifySettings.MuteUntil - clientDelta / 4294967296.0;
+
+                var muteUntilDateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
+                return muteUntilDateTime > DateTime.Now;
             }
         }
 
@@ -149,11 +157,11 @@ namespace Unigram.ViewModels.Chats
                 var peer = notifyPeer.Peer;
                 if (peer is TLPeerChat && peer.Id == Item.Id)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         Full.NotifySettings = message.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);
-                        RaisePropertyChanged(() => AreNotificationsEnabled);
+                        RaisePropertyChanged(() => IsMuted);
 
                         //var notifySettings = updateNotifySettings.NotifySettings as TLPeerNotifySettings;
                         //if (notifySettings != null)
@@ -167,53 +175,40 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand<StorageFile> EditPhotoCommand => new RelayCommand<StorageFile>(EditPhotoExecute);
-        private async void EditPhotoExecute(StorageFile file)
+        public RelayCommand EditCommand { get; }
+        private void EditExecute()
         {
-            var fileLocation = new TLFileLocation
+            if (_item == null)
             {
-                VolumeId = TLLong.Random(),
-                LocalId = TLInt.Random(),
-                Secret = TLLong.Random(),
-                DCId = 0
-            };
-
-            var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-            var fileCache = await FileUtils.CreateTempFileAsync(fileName);
-
-            //var fileScale = await ImageHelper.ScaleJpegAsync(file, fileCache, 640, 0.77);
-
-            await file.CopyAndReplaceAsync(fileCache);
-            var fileScale = fileCache;
-
-            var basicProps = await fileScale.GetBasicPropertiesAsync();
-            var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
-
-            var fileId = TLLong.Random();
-            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false);
-            if (upload != null)
-            {
-                var response = await ProtoService.EditChatPhotoAsync(_item.Id, new TLInputChatUploadedPhoto { File = upload.ToInputFile() });
-                if (response.IsSucceeded)
-                {
-                    //var photo = response.Result.Photo as TLPhoto;
-                }
+                return;
             }
+
+            NavigationService.Navigate(typeof(ChatEditPage), _item.ToPeer());
         }
 
-        public RelayCommand InviteCommand => new RelayCommand(InviteExecute);
+        public RelayCommand InviteCommand { get; }
         private void InviteExecute()
         {
+            if (_item == null)
+            {
+                return;
+            }
+
             NavigationService.Navigate(typeof(ChatInvitePage), _item.ToPeer());
         }
 
-        public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
+        public RelayCommand MediaCommand { get; }
         private void MediaExecute()
         {
+            if (_item == null)
+            {
+                return;
+            }
+
             NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
         }
 
-        public RelayCommand MigrateCommand => new RelayCommand(MigrateExecute);
+        public RelayCommand MigrateCommand { get; }
         private async void MigrateExecute()
         {
             var chat = _item as TLChat;
@@ -222,13 +217,13 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync("**In supergroups:**\n• New members can see the full message history\n• Deleted messages will disappear for all members\n• Admins can pin important messages\n• Creator can set a public link for the group\n\n**Note:** this action can't be undone.", "Convert to Supergroup", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ConvertGroupInfo2 + "\n\n" + Strings.Android.ConvertGroupInfo3, Strings.Android.ConvertGroup, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var warning = await TLMessageDialog.ShowAsync("This action is irreversible. It is not possible to downgrade a supergroup to a regular group.", "Warning", "OK", "Cancel");
+            var warning = await TLMessageDialog.ShowAsync(Strings.Android.ConvertGroupAlert, Strings.Android.ConvertGroupAlertWarning, Strings.Android.OK, Strings.Android.Cancel);
             if (warning != ContentDialogResult.Primary)
             {
                 return;
@@ -275,7 +270,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand<TLChatParticipantBase> ParticipantRemoveCommand => new RelayCommand<TLChatParticipantBase>(ParticipantRemoveExecute);
+        public RelayCommand<TLChatParticipantBase> ParticipantRemoveCommand { get; }
         private async void ParticipantRemoveExecute(TLChatParticipantBase participant)
         {
             if (participant == null || participant.User == null)
@@ -297,11 +292,17 @@ namespace Unigram.ViewModels.Chats
                             Aggregator.Publish(newMessage);
                         }
                     }
+
+                    var removedParticipant = Participants.FirstOrDefault(p => p.UserId == participant.UserId);
+                    if (removedParticipant != null)
+                    {
+                        Participants.Remove(removedParticipant);
+                    }
                 }
             }
         }
 
-        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
+        public RelayCommand ToggleMuteCommand { get; }
         private async void ToggleMuteExecute()
         {
             if (_item == null || _full == null)
@@ -325,7 +326,7 @@ namespace Unigram.ViewModels.Chats
                 if (response.IsSucceeded)
                 {
                     notifySettings.MuteUntil = muteUntil;
-                    RaisePropertyChanged(() => AreNotificationsEnabled);
+                    RaisePropertyChanged(() => IsMuted);
                     Full.RaisePropertyChanged(() => Full.NotifySettings);
 
                     var dialog = CacheService.GetDialog(_item.ToPeer());

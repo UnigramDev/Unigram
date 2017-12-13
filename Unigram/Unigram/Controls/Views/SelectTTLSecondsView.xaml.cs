@@ -19,9 +19,16 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class SelectTTLSecondsView : ContentDialog
     {
-        public SelectTTLSecondsView()
+        public SelectTTLSecondsView(bool photo)
         {
             this.InitializeComponent();
+
+            Title = Strings.Android.MessageLifetime;
+            PrimaryButtonText = Strings.Android.OK;
+            SecondaryButtonText = Strings.Android.Cancel;
+            Footer.Text = photo 
+                ? Strings.Android.MessageLifetimePhoto
+                : Strings.Android.MessageLifetimeVideo;
 
             var seconds = new int[29];
             for (int i = 0; i < seconds.Length; i++)

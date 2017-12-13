@@ -27,7 +27,7 @@ namespace Unigram.Converters
             if (parameter != null)
             {
                 var expires = BindConvert.Current.DateTime(message.Date + geoLiveMedia.Period);
-                return (expires > DateTime.Now) ? "Live Location" : "Location Sharing Ended";
+                return (expires > DateTime.Now) ? Strings.Android.AttachLiveLocation : "Location Sharing Ended";
             }
             else
             {

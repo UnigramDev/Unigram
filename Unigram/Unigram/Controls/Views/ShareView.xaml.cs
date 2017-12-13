@@ -25,6 +25,10 @@ using Windows.UI;
 using Template10.Utils;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
+using Unigram.Common;
+using Unigram.Converters;
+using Windows.System;
+using Windows.UI.Core;
 
 namespace Unigram.Controls.Views
 {
@@ -41,11 +45,13 @@ namespace Unigram.Controls.Views
             Unloaded += OnUnloaded;
         }
 
+        #region Share
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             Bindings.Update();
 
-            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested"))
+            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested") && !ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
             {
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested += OnShareProvidersRequested;
@@ -57,7 +63,7 @@ namespace Unigram.Controls.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested"))
+            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested") && !ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
             {
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
             }
@@ -82,12 +88,12 @@ namespace Unigram.Controls.Views
         private async void OnShareToClipboard(ShareProviderOperation operation)
         {
             var webLink = await operation.Data.GetWebLinkAsync();
-            var package = new DataPackage();
-            package.SetText(webLink.ToString());
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(webLink.ToString());
 
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                Clipboard.SetContent(package);
+                ClipboardEx.TrySetContent(dataPackage);
                 operation.ReportCompleted();
             });
         }
@@ -99,6 +105,10 @@ namespace Unigram.Controls.Views
             package.SetText(ViewModel.ShareLink.ToString());
             package.SetWebLink(ViewModel.ShareLink);
         }
+
+        #endregion
+
+        #region Show
 
         private static ShareView _current;
         public static ShareView Current
@@ -114,9 +124,10 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessage message, bool withMyScore = false)
         {
+            ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
-            ViewModel.Message = message;
+            ViewModel.Messages = new[] { message };
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = withMyScore;
 
@@ -131,29 +142,7 @@ namespace Unigram.Controls.Views
                 }
                 else
                 {
-                    var config = ViewModel.CacheService.GetConfig();
-                    if (config != null)
-                    {
-                        var linkPrefix = config.MeUrlPrefix;
-                        if (linkPrefix.EndsWith("/"))
-                        {
-                            linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                        }
-                        if (linkPrefix.StartsWith("https://"))
-                        {
-                            linkPrefix = linkPrefix.Substring(8);
-                        }
-                        else if (linkPrefix.StartsWith("http://"))
-                        {
-                            linkPrefix = linkPrefix.Substring(7);
-                        }
-
-                        link = $"https://{linkPrefix}/{link}";
-                    }
-                    else
-                    {
-                        link = $"https://t.me/{link}";
-                    }
+                    link = MeUrlPrefixConverter.Convert(link);
                 }
 
                 string title = null;
@@ -173,24 +162,9 @@ namespace Unigram.Controls.Views
             }
             else if (message.Media is TLMessageMediaGame gameMedia)
             {
-                var config = ViewModel.CacheService.GetConfig();
-                if (config != null && message.ViaBot != null && message.ViaBot.Username != null)
+                if (message.ViaBot != null && message.ViaBot.Username != null)
                 {
-                    var linkPrefix = config.MeUrlPrefix;
-                    if (linkPrefix.EndsWith("/"))
-                    {
-                        linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                    }
-                    if (linkPrefix.StartsWith("https://"))
-                    {
-                        linkPrefix = linkPrefix.Substring(8);
-                    }
-                    else if (linkPrefix.StartsWith("http://"))
-                    {
-                        linkPrefix = linkPrefix.Substring(7);
-                    }
-
-                    ViewModel.ShareLink = new Uri($"https://{linkPrefix}/{message.From.Username}?game={gameMedia.Game.ShortName}");
+                    ViewModel.ShareLink = new Uri(MeUrlPrefixConverter.Convert($"{message.From.Username}?game={gameMedia.Game.ShortName}"));
                     ViewModel.ShareTitle = gameMedia.Game.Title;
                 }
             }
@@ -198,11 +172,24 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(IEnumerable<TLMessage> messages, bool withMyScore = false)
+        {
+            ViewModel.Comment = null;
+            ViewModel.ShareLink = null;
+            ViewModel.ShareTitle = null;
+            ViewModel.Messages = messages;
+            ViewModel.InputMedia = null;
+            ViewModel.IsWithMyScore = withMyScore;
+
+            return ShowAsync();
+        }
+
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(Uri link, string title)
         {
+            ViewModel.Comment = null;
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
-            ViewModel.Message = null;
+            ViewModel.Messages = null;
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = false;
 
@@ -211,9 +198,10 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputMediaBase inputMedia)
         {
+            ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
-            ViewModel.Message = null;
+            ViewModel.Messages = null;
             ViewModel.InputMedia = inputMedia;
             ViewModel.IsWithMyScore = false;
 
@@ -225,13 +213,31 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        private Border LineTop;
-        private Border LineAccent;
+        private new IAsyncOperation<ContentDialogBaseResult> ShowAsync()
+        {
+            ViewModel.Items.Clear();
+
+            RoutedEventHandler handler = null;
+            handler = new RoutedEventHandler(async (s, args) =>
+            {
+                Loaded -= handler;
+                await ViewModel.OnNavigatedToAsync(null, NavigationMode.New, null);
+            });
+
+            Loaded += handler;
+            return base.ShowAsync();
+        }
+
+        #endregion
+
+        #region Header
 
         private ScrollViewer _scrollingHost;
 
-        private SpriteVisual _backgroundVisual;
+        private Visual _groupHeader;
+        private SpriteVisual _background;
         private ExpressionAnimation _expression;
+        private ExpressionAnimation _expressionHeader;
         private ExpressionAnimation _expressionClip;
 
         private void GridView_Loaded(object sender, RoutedEventArgs e)
@@ -247,27 +253,35 @@ namespace Unigram.Controls.Views
                 var brush = App.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
                 var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroll);
 
-                if (_backgroundVisual == null)
+                if (_background == null)
                 {
-                    _backgroundVisual = ElementCompositionPreview.GetElementVisual(BackgroundPanel).Compositor.CreateSpriteVisual();
-                    ElementCompositionPreview.SetElementChildVisual(BackgroundPanel, _backgroundVisual);
+                    _background = ElementCompositionPreview.GetElementVisual(BackgroundPanel).Compositor.CreateSpriteVisual();
+                    ElementCompositionPreview.SetElementChildVisual(BackgroundPanel, _background);
                 }
 
-                _backgroundVisual.Brush = _backgroundVisual.Compositor.CreateColorBrush(brush.Color);
-                _backgroundVisual.Size = new System.Numerics.Vector2((float)BackgroundPanel.ActualWidth, (float)BackgroundPanel.ActualHeight);
-                _backgroundVisual.Clip = _backgroundVisual.Compositor.CreateInsetClip();
+                _background.Brush = _background.Compositor.CreateColorBrush(brush.Color);
+                _background.Size = new System.Numerics.Vector2((float)BackgroundPanel.ActualWidth, (float)BackgroundPanel.ActualHeight);
+                _background.Clip = _background.Compositor.CreateInsetClip();
 
-                _expression = _expression ?? _backgroundVisual.Compositor.CreateExpressionAnimation("Max(Maximum, Scrolling.Translation.Y)");
+                _groupHeader = ElementCompositionPreview.GetElementVisual(GroupHeader);
+
+                _expression = _expression ?? _background.Compositor.CreateExpressionAnimation("Max(Maximum, Scrolling.Translation.Y)");
                 _expression.SetReferenceParameter("Scrolling", props);
                 _expression.SetScalarParameter("Maximum", -(float)BackgroundPanel.Margin.Top + 1);
-                _backgroundVisual.StopAnimation("Offset.Y");
-                _backgroundVisual.StartAnimation("Offset.Y", _expression);
+                _background.StopAnimation("Offset.Y");
+                _background.StartAnimation("Offset.Y", _expression);
 
-                _expressionClip = _expressionClip ?? _backgroundVisual.Compositor.CreateExpressionAnimation("Min(0, Maximum - Scrolling.Translation.Y)");
+                _expressionHeader = _expressionHeader ?? _background.Compositor.CreateExpressionAnimation("Max(0, Maximum - Scrolling.Translation.Y)");
+                _expressionHeader.SetReferenceParameter("Scrolling", props);
+                _expressionHeader.SetScalarParameter("Maximum", -(float)BackgroundPanel.Margin.Top);
+                _groupHeader.StopAnimation("Offset.Y");
+                _groupHeader.StartAnimation("Offset.Y", _expressionHeader);
+
+                _expressionClip = _expressionClip ?? _background.Compositor.CreateExpressionAnimation("Min(0, Maximum - Scrolling.Translation.Y)");
                 _expressionClip.SetReferenceParameter("Scrolling", props);
                 _expressionClip.SetScalarParameter("Maximum", -(float)BackgroundPanel.Margin.Top + 1);
-                _backgroundVisual.Clip.StopAnimation("Offset.Y");
-                _backgroundVisual.Clip.StartAnimation("Offset.Y", _expressionClip);
+                _background.Clip.StopAnimation("Offset.Y");
+                _background.Clip.StartAnimation("Offset.Y", _expressionClip);
             }
 
             var panel = List.ItemsPanelRoot as ItemsWrapGrid;
@@ -285,9 +299,6 @@ namespace Unigram.Controls.Views
             var groupHeader = sender as Grid;
             if (groupHeader != null)
             {
-                LineTop = groupHeader.FindName("LineTop") as Border;
-                LineAccent = groupHeader.FindName("LineAccent") as Border;
-
                 if (_scrollingHost != null)
                 {
                     Scroll_ViewChanged(_scrollingHost, null);
@@ -327,12 +338,9 @@ namespace Unigram.Controls.Views
             //    }
             //}
 
-            if (LineTop != null)
-            {
-                LineTop.BorderThickness = new Thickness(0, 0, 0, top);
-                LineAccent.BorderThickness = new Thickness(0, accent, 0, 0);
-                LineBottom.BorderThickness = new Thickness(0, bottom, 0, 0);
-            }
+            LineTop.BorderThickness = new Thickness(0, 0, 0, top);
+            LineAccent.BorderThickness = new Thickness(0, accent, 0, 0);
+            LineBottom.BorderThickness = new Thickness(0, bottom, 0, 0);
         }
 
         // SystemControlBackgroundChromeMediumLowBrush
@@ -381,23 +389,29 @@ namespace Unigram.Controls.Views
             BackgroundPanel.Height = e.NewSize.Height;
             BackgroundPanel.Margin = new Thickness(0, top, 0, -top);
 
-            if (_backgroundVisual != null && _expression != null && _expressionClip != null)
+            if (_background != null && _expression != null && _expressionClip != null)
             {
                 var brush = App.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
 
-                _backgroundVisual.Brush = _backgroundVisual.Compositor.CreateColorBrush(brush.Color);
-                _backgroundVisual.Size = new System.Numerics.Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
-                _backgroundVisual.Clip = _backgroundVisual.Compositor.CreateInsetClip();
+                _background.Brush = _background.Compositor.CreateColorBrush(brush.Color);
+                _background.Size = new System.Numerics.Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
+                _background.Clip = _background.Compositor.CreateInsetClip();
 
                 _expression.SetScalarParameter("Maximum", -(float)top + 1);
-                _backgroundVisual.StopAnimation("Offset.Y");
-                _backgroundVisual.StartAnimation("Offset.Y", _expression);
+                _background.StopAnimation("Offset.Y");
+                _background.StartAnimation("Offset.Y", _expression);
+
+                _expressionHeader.SetScalarParameter("Maximum", -(float)top);
+                _groupHeader.StopAnimation("Offset.Y");
+                _groupHeader.StartAnimation("Offset.Y", _expressionHeader);
 
                 _expressionClip.SetScalarParameter("Maximum", -(float)top + 1);
-                _backgroundVisual.Clip.StopAnimation("Offset.Y");
-                _backgroundVisual.Clip.StartAnimation("Offset.Y", _expressionClip);
+                _background.Clip.StopAnimation("Offset.Y");
+                _background.Clip.StartAnimation("Offset.Y", _expressionClip);
             }
         }
+
+        #endregion
 
         //protected override void UpdateView(Rect bounds)
         //{
@@ -424,7 +438,55 @@ namespace Unigram.Controls.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedItems = new List<TLDialog>(List.SelectedItems.Cast<TLDialog>());
+            if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
+            {
+                foreach (var item in ViewModel.SelectedItems)
+                {
+                    if (item is ITLDialogWith with && List.Items.Contains(with) && !List.SelectedItems.Contains(with))
+                    {
+                        Debug.WriteLine("Adding \"{0}\" to ListView", (object)with.DisplayName);
+                        List.SelectedItems.Add(with);
+                    }
+                }
+
+                ViewModel.SelectionMode = ListViewSelectionMode.Multiple;
+            }
+
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                return;
+            }
+
+            if (e.AddedItems != null)
+            {
+                foreach (var item in e.AddedItems)
+                {
+                    if (item is ITLDialogWith with && !ViewModel.SelectedItems.Contains(with))
+                    {
+                        Debug.WriteLine("Adding \"{0}\" to ViewModel", (object)with.DisplayName);
+                        ViewModel.SelectedItems.Add(with);
+                        ViewModel.SendCommand.RaiseCanExecuteChanged();
+                    }
+                }
+            }
+
+            if (e.RemovedItems != null)
+            {
+                foreach (var item in e.RemovedItems)
+                {
+                    if (item is ITLDialogWith with && ViewModel.SelectedItems.Contains(with))
+                    {
+                        Debug.WriteLine("Removing \"{0}\" from ViewModel", (object)with.DisplayName);
+                        ViewModel.SelectedItems.Remove(with);
+                        ViewModel.SendCommand.RaiseCanExecuteChanged();
+                    }
+                }
+            }
+        }
+
+        private void Query_Changed(object sender, TextChangedEventArgs e)
+        {
+            ViewModel.Search(((TextBox)sender).Text);
         }
     }
 }

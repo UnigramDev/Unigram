@@ -10,7 +10,9 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -62,7 +64,9 @@ namespace Unigram.Views
 
         private bool _disposed;
 
-        public PhoneCallPage()
+        public ContentDialogBase Dialog { get; set; }
+
+        public PhoneCallPage(bool extend)
         {
             this.InitializeComponent();
 
@@ -113,7 +117,7 @@ namespace Unigram.Views
 
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             //coreTitleBar.IsVisibleChanged += CoreBar_IsVisibleChanged;
-            coreTitleBar.ExtendViewIntoTitleBar = true;
+            coreTitleBar.ExtendViewIntoTitleBar = extend;
 
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -233,7 +237,7 @@ namespace Unigram.Views
                 }
 
                 FromLabel.Text = user.FullName;
-                TextBlockHelper.SetMarkdown(DescriptionLabel, string.Format("If these emoji are the same on **{0}**'s screen, this call is 100% secure.", user.FirstName));
+                DescriptionLabel.Text = string.Format(Strings.Android.CallEmojiKeyTooltip, user.FirstName);
             }
 
             if (tuple.Item4.Length > 0)
@@ -255,28 +259,28 @@ namespace Unigram.Views
             switch (state)
             {
                 case TLPhoneCallState.WaitingIncoming:
-                    return "Incoming call";
+                    return Strings.Android.VoipIncoming;
                 case TLPhoneCallState.WaitInit:
                 case TLPhoneCallState.WaitInitAck:
-                    return "Connecting";
+                    return Strings.Android.VoipConnecting;
                 case TLPhoneCallState.ExchangingKeys:
-                    return "Exchanging encryption keys";
+                    return Strings.Android.VoipExchangingKeys;
                 case TLPhoneCallState.Waiting:
-                    return "Waiting";
+                    return Strings.Android.VoipWaiting;
                 case TLPhoneCallState.Ringing:
-                    return "Ringing";
+                    return Strings.Android.VoipRinging;
                 case TLPhoneCallState.Requesting:
-                    return "Requesting";
+                    return Strings.Android.VoipRequesting;
                 case TLPhoneCallState.HangingUp:
-                    return "Hanging up";
+                    return Strings.Android.VoipHangingUp;
                 case TLPhoneCallState.Ended:
-                    return "Call ended";
+                    return Strings.Android.VoipCallEnded;
                 case TLPhoneCallState.Busy:
-                    return "Line busy";
+                    return Strings.Android.VoipBusy;
+                case TLPhoneCallState.Failed:
+                    return Strings.Android.VoipFailed;
                 case TLPhoneCallState.Established:
                     return "00:00";
-                case TLPhoneCallState.Failed:
-                    return "Failed to connect";
             }
 
             return null;
@@ -452,11 +456,11 @@ namespace Unigram.Views
         private async void ShowDebugString()
         {
             var result = await VoIPConnection.Current.GetDebugStringAsync();
-            if (result != null)
+            if (result != null && result.Item1 != null)
             {
                 var text = new TextBlock();
                 text.Text = result.Item1;
-                text.Margin = new Thickness(0, 16, 0, 0);
+                text.Margin = new Thickness(12, 16, 12, 0);
                 text.Style = Application.Current.Resources["BodyTextBlockStyle"] as Style;
 
                 var scroll = new ScrollViewer();
@@ -464,11 +468,10 @@ namespace Unigram.Views
                 scroll.VerticalScrollMode = ScrollMode.Auto;
                 scroll.Content = text;
 
-                var dialog = new ContentDialog();
+                var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
                 dialog.Title = $"libtgvoip v{result.Item2}";
                 dialog.Content = scroll;
                 dialog.PrimaryButtonText = "OK";
-                dialog.Style = Application.Current.Resources["FixedContentDialogStyle"] as Style;
                 dialog.Closed += (s, args) =>
                 {
                     _debugDialog = null;

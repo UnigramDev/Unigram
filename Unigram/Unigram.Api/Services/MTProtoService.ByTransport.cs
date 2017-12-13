@@ -15,11 +15,38 @@ using Telegram.Api.TL.Messages.Methods;
 using Telegram.Api.TL.Methods;
 using Telegram.Api.TL.Upload;
 using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Help.Methods;
 
 namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        public void PingByTransportAsync(ITransport transport, long pingId, Action<TLPong> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLPing { PingId = pingId };
+
+            SendNonInformativeMessageByTransport<TLPong>(transport, "ping", obj,
+                result =>
+                {
+                    callback?.Invoke(result);
+                },
+                faultCallback);
+        }
+
+        public void GetConfigByTransportAsync(ITransport transport, Action<TLConfig> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLHelpGetConfig();
+
+            Logs.Log.Write("help.getConfig");
+
+            SendInformativeMessageByTransport<TLConfig>(transport, "help.getConfig", obj,
+                result =>
+                {
+                    callback?.Invoke(result);
+                },
+                faultCallback);
+        }
+
         private void ReqPQByTransportAsync(ITransport transport, TLInt128 nonce, Action<TLResPQ> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLReqPQ { Nonce = nonce };
@@ -1006,6 +1033,142 @@ namespace Telegram.Api.Services
             return transport;
         }
 
+        private void SendNonInformativeMessageByTransport<T>(ITransport transport, string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null) where T : TLObject
+        {
+            bool isInitialized;
+            lock (transport.SyncRoot)
+            {
+                isInitialized = transport.AuthKey != null;
+            }
+
+            if (!isInitialized)
+            {
+                faultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "transport " + transport.DCId + " " + caption + " delayed send is not supported" });
+
+                return;
+            }
+
+            int sequenceNumber;
+            long messageId;
+            lock (transport.SyncRoot)
+            {
+                sequenceNumber = transport.SequenceNumber * 2;
+                messageId = transport.GenerateMessageId(true);
+            }
+            var authKey = transport.AuthKey;
+            var salt = transport.Salt;
+            var sessionId = transport.SessionId;
+            var clientsTicksDelta = transport.ClientTicksDelta;
+            var transportMessage = CreateTLTransportMessage(salt ?? 0, sessionId ?? 0, sequenceNumber, messageId, obj);
+            var encryptedMessage = CreateTLEncryptedMessage(authKey, transportMessage);
+
+            lock (transport.SyncRoot)
+            {
+                if (transport.Closed)
+                {
+                    var transportDCId = transport.DCId;
+                    var transportKey = transport.AuthKey;
+                    var transportSalt = transport.Salt;
+                    var transportSessionId = transport.SessionId;
+                    var transportLastMessageId = transport.MessageIdDict;
+                    var transportSequenceNumber = transport.SequenceNumber;
+                    var transportClientTicksDelta = transport.ClientTicksDelta;
+                    bool isCreated;
+
+                    transport = transport.MTProtoType == MTProtoTransportType.Special
+                        ? _transportService.GetSpecialTransport(transport.Host, transport.Port, Type, out isCreated)
+                        : _transportService.GetFileTransport(transport.Host, transport.Port, Type, out isCreated);
+
+                    if (isCreated)
+                    {
+                        transport.DCId = transportDCId;
+                        transport.AuthKey = transportKey;
+                        transport.Salt = transportSalt;
+                        transport.SessionId = transportSessionId;
+                        transport.MessageIdDict = transportLastMessageId;
+                        transport.SequenceNumber = transportSequenceNumber;
+                        transport.ClientTicksDelta = transportClientTicksDelta;
+                        transport.PacketReceived += OnPacketReceivedByTransport;
+                    }
+                }
+            }
+
+            PrintCaption(caption);
+
+            HistoryItem historyItem = null;
+            if (string.Equals(caption, "ping", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(caption, "ping_delay_disconnect", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(caption, "messages.container", StringComparison.OrdinalIgnoreCase))
+            {
+                //save items to history
+                historyItem = new HistoryItem
+                {
+                    SendTime = DateTime.Now,
+                    //SendBeforeTime = sendBeforeTime,
+                    Caption = caption,
+                    Object = obj,
+                    Message = transportMessage,
+                    Callback = t => callback((T)t),
+                    AttemptFailed = null,
+                    FaultCallback = faultCallback,
+                    ClientTicksDelta = clientsTicksDelta,
+                    Status = RequestStatus.Sent,
+                };
+
+                lock (_historyRoot)
+                {
+                    _history[historyItem.Hash] = historyItem;
+                }
+#if DEBUG
+                RaisePropertyChanged(() => History);
+#endif
+            }
+
+            //Debug.WriteLine(">>{0, -30} MsgId {1} SeqNo {2, -4} SessionId {3}", caption, transportMessage.MessageId.Value, transportMessage.SeqNo.Value, transportMessage.SessionId.Value);
+
+            var captionString = string.Format("{0} {1}", caption, transportMessage.MsgId);
+
+            SendPacketAsync(transport, captionString, encryptedMessage,
+                result =>
+                {
+                    if (!result)
+                    {
+                        if (historyItem != null)
+                        {
+                            lock (_historyRoot)
+                            {
+                                _history.Remove(historyItem.Hash);
+                            }
+#if DEBUG
+                            RaisePropertyChanged(() => History);
+#endif
+                        }
+                        faultCallback?.Invoke(new TLRPCError { ErrorCode = 404,  ErrorMessage = "FastCallback SocketError=" + result });
+                    }
+                },
+                error =>
+                {
+                    if (historyItem != null)
+                    {
+                        lock (_historyRoot)
+                        {
+                            _history.Remove(historyItem.Hash);
+                        }
+#if DEBUG
+                        RaisePropertyChanged(() => History);
+#endif
+                    }
+                    faultCallback?.Invoke(new TLRPCError
+                    {
+                        ErrorCode = 404,
+#if WINDOWS_PHONE
+                        SocketError = error.Error,
+#endif
+                        //Exception = error.Exception
+                    });
+                });
+        }
+
         private readonly object _initConnectionSyncRoot = new object();
 
         private void SendInformativeMessageByTransport<T>(ITransport transport, string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null,
@@ -1080,9 +1243,10 @@ namespace Telegram.Api.Services
                         AppVersion = _deviceInfo.AppVersion,
                         Query = obj,
                         DeviceModel = _deviceInfo.DeviceModel,
-                        LangCode = Utils.CurrentUICulture(),
+                        SystemVersion = _deviceInfo.SystemVersion,
                         SystemLangCode = Utils.CurrentUICulture(),
-                        SystemVersion = _deviceInfo.SystemVersion
+                        LangCode = Utils.CurrentUICulture(),
+                        LangPack = "android"
                     };
 
                     var withLayerN = new TLInvokeWithLayer { Query = initConnection, Layer = Constants.SupportedLayer };
@@ -1113,7 +1277,7 @@ namespace Telegram.Api.Services
                 Caption = caption,
                 Object = obj,
                 Message = transportMessage,
-                Callback = t => callback((T)t),
+                Callback = t => callback?.Invoke((T)t),
                 FaultCallback = faultCallback,
                 ClientTicksDelta = clientsTicksDelta,
                 Status = RequestStatus.Sent,
@@ -1180,7 +1344,7 @@ namespace Telegram.Api.Services
             {
                 Caption = caption,
                 Message = message,
-                Callback = t => callback((T)t),
+                Callback = t => callback?.Invoke((T)t),
                 FaultCallback = faultCallback,
                 SendTime = DateTime.Now,
                 Status = RequestStatus.Sent
@@ -2008,7 +2172,41 @@ namespace Telegram.Api.Services
                 }
 
                 // send acknowledgments
-                SendAcknowledgmentsByTransport(transport, transportMessage);
+                SendAcknowledgments(transportMessage);
+
+                // set client ticks delta
+                bool updated = false;
+                lock (_activeTransportRoot)
+                {
+                    if (transport.ClientTicksDelta == 0)
+                    {
+                        var serverTime = transportMessage.MsgId;
+                        var clientTime = transport.GenerateMessageId();
+
+                        var serverDateTime = Utils.UnixTimestampToDateTime(serverTime >> 32);
+                        var clientDateTime = Utils.UnixTimestampToDateTime(clientTime >> 32);
+
+                        //var errorInfo = new StringBuilder();
+
+                        //errorInfo.AppendLine("Server time: " + serverDateTime);
+                        //errorInfo.AppendLine("Client time: " + clientDateTime);
+
+                        transport.ClientTicksDelta = serverTime - clientTime;
+
+                        if (transport.ClientTicksDelta == 0) transport.ClientTicksDelta = 1;
+                        updated = true;
+                    }
+                }
+
+                if (updated && _config != null)
+                {
+                    var dcOption = _config.DCOptions.FirstOrDefault(x => string.Equals(x.IpAddress, transport.Host, StringComparison.OrdinalIgnoreCase));
+                    if (dcOption != null)
+                    {
+                        dcOption.ClientTicksDelta = transport.ClientTicksDelta;
+                        _cacheService.SetConfig(_config);
+                    }
+                }
 
                 // updates
                 _updatesService.ProcessTransportMessage(transportMessage);
@@ -2059,6 +2257,33 @@ namespace Telegram.Api.Services
                     {
                         transport.SessionId = transportMessage.SessionId;
                         transport.Salt = newSessionCreated.ServerSalt;
+                    }
+                }
+
+                // pong
+                foreach (var pong in TLUtils.FindInnerObjects<TLPong>(transportMessage))
+                {
+                    HistoryItem item;
+                    lock (_historyRoot)
+                    {
+                        if (_history.ContainsKey(pong.MsgId))
+                        {
+                            item = _history[pong.MsgId];
+                            _history.Remove(pong.MsgId);
+                        }
+                        else
+                        {
+                            //Execute.ShowDebugMessage("TLPong lost item id=" + pong.MessageId);
+                            continue;
+                        }
+                    }
+#if DEBUG
+                    RaisePropertyChanged(() => History);
+#endif
+
+                    if (item != null)
+                    {
+                        item.Callback?.Invoke(pong);
                     }
                 }
 

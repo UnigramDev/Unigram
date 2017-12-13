@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -16,9 +16,11 @@ using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Common;
+using Unigram.Helpers;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Users;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.System;
 
 namespace Unigram.ViewModels
@@ -28,6 +30,19 @@ namespace Unigram.ViewModels
         public GalleryViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            StickersCommand = new RelayCommand(StickersExecute);
+            ViewCommand = new RelayCommand(ViewExecute);
+            DeleteCommand = new RelayCommand(DeleteExecute);
+            SaveCommand = new RelayCommand(SaveExecute);
+            OpenWithCommand = new RelayCommand(OpenWithExecute);
+        }
+
+        public virtual int Position
+        {
+            get
+            {
+                return SelectedIndex + 1;
+            }
         }
 
         public int SelectedIndex
@@ -40,16 +55,19 @@ namespace Unigram.ViewModels
                 }
 
                 var index = Items.IndexOf(SelectedItem);
-                if (index == Items.Count - 1)
+                if (Items.Count > 1)
                 {
-                    LoadNext();
-                }
-                if (index == 0)
-                {
-                    LoadPrevious();
+                    if (index == Items.Count - 1)
+                    {
+                        LoadNext();
+                    }
+                    if (index == 0)
+                    {
+                        LoadPrevious();
+                    }
                 }
 
-                return index + 1;
+                return index;
             }
         }
 
@@ -76,7 +94,9 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _selectedItem, value);
-                RaisePropertyChanged(() => SelectedIndex);
+                OnSelectedItemChanged(value);
+                //RaisePropertyChanged(() => SelectedIndex);
+                RaisePropertyChanged(() => Position);
             }
         }
 
@@ -108,11 +128,15 @@ namespace Unigram.ViewModels
 
         public MvxObservableCollection<GalleryItem> Items { get; protected set; }
 
+        public virtual MvxObservableCollection<GalleryItem> Group { get; }
+
         protected virtual void LoadPrevious() { }
 
         protected virtual void LoadNext() { }
 
-        public virtual bool CanGoto
+        protected virtual void OnSelectedItemChanged(GalleryItem item) { }
+
+        public virtual bool CanView
         {
             get
             {
@@ -132,7 +156,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
@@ -144,7 +168,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand StickersCommand => new RelayCommand(StickersExecute);
+        public RelayCommand StickersCommand { get; }
         private async void StickersExecute()
         {
             if (_selectedItem != null && _selectedItem.HasStickers)
@@ -168,8 +192,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand GotoCommand => new RelayCommand(GotoExecute);
-        protected virtual void GotoExecute()
+        public RelayCommand ViewCommand { get; }
+        protected virtual void ViewExecute()
         {
             NavigationService.GoBack();
 
@@ -190,39 +214,30 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
+        public RelayCommand DeleteCommand { get; }
         protected virtual void DeleteExecute()
         {
         }
 
-        public RelayCommand OpenWithCommand => new RelayCommand(OpenWithExecute);
+        public RelayCommand SaveCommand { get; }
+        protected virtual async void SaveExecute()
+        {
+            var value = GetTLObjectFromSelectedGalleryItem();
+
+            if (value is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
+            {
+                await TLFileHelper.SavePhotoAsync(photoSize, photo.Date, false);
+            }
+            else if (value is TLDocument document)
+            {
+                await TLFileHelper.SaveDocumentAsync(document, document.Date, false);
+            }
+        }
+
+        public RelayCommand OpenWithCommand { get; }
         protected virtual async void OpenWithExecute()
         {
-            object value = null;
-
-            if (SelectedItem is GalleryMessageItem messageItem)
-            {
-                if (messageItem.Message.Media is TLMessageMediaPhoto photoMedia)
-                {
-                    value = photoMedia.Photo;
-                }
-                else if (messageItem.Message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-                {
-                    value = document;
-                }
-            }
-            else if (SelectedItem is GalleryMessageServiceItem serviceItem && serviceItem.Message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction)
-            {
-                value = chatEditPhotoAction.Photo;
-            }
-            else if (SelectedItem is GalleryPhotoItem photoItem)
-            {
-                value = photoItem.Photo;
-            }
-            else if (SelectedItem is GalleryDocumentItem documentItem)
-            {
-                value = documentItem.Document;
-            }
+            var value = GetTLObjectFromSelectedGalleryItem();
 
             if (value is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
             {
@@ -258,6 +273,39 @@ namespace Unigram.ViewModels
 
             // Open that file
             //await Windows.System.Launcher.LaunchFileAsync(*INSERT FILE HERE*);
+        }
+
+        private object GetTLObjectFromSelectedGalleryItem()
+        {
+            if (SelectedItem is GalleryMessageItem messageItem)
+            {
+                if (messageItem.Message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    return photoMedia.Photo;
+                }
+
+                if (messageItem.Message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    return document;
+                }
+            }
+
+            if (SelectedItem is GalleryMessageServiceItem serviceItem && serviceItem.Message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction)
+            {
+                return chatEditPhotoAction.Photo;
+            }
+
+            if (SelectedItem is GalleryPhotoItem photoItem)
+            {
+                return photoItem.Photo;
+            }
+
+            if (SelectedItem is GalleryDocumentItem documentItem)
+            {
+                return documentItem.Document;
+            }
+
+            return null;
         }
     }
 
@@ -306,6 +354,323 @@ namespace Unigram.ViewModels
         public virtual void Share()
         {
             throw new NotImplementedException();
+        }
+    }
+
+
+    public class GalleryMessageItem : GalleryItem
+    {
+        protected readonly TLMessage _message;
+
+        public GalleryMessageItem(TLMessage message)
+        {
+            _message = message;
+        }
+
+        public TLMessage Message => _message;
+
+        public override ITLTransferable Source
+        {
+            get
+            {
+                if (_message.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
+                {
+                    return photo;
+                }
+                else if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    return document;
+                }
+
+                return null;
+            }
+        }
+
+        public override string Caption
+        {
+            get
+            {
+                if (_message.Media is ITLMessageMediaCaption captionMedia)
+                {
+                    return captionMedia.Caption;
+                }
+
+                return null;
+            }
+        }
+
+        //public override ITLDialogWith From => _message.IsPost ? _message.Parent : _message.From;
+
+        public override ITLDialogWith From
+        {
+            get
+            {
+                if (_message.HasFwdFrom)
+                {
+                    return (ITLDialogWith)_message.FwdFrom.Channel ?? _message.FwdFrom.User;
+                }
+
+                return _message.IsPost ? _message.Parent : _message.From;
+            }
+        }
+
+        public override int Date => _message.Date;
+
+        public override bool IsVideo => _message.IsVideo() || _message.IsGif() || _message.IsRoundVideo();
+
+        public override bool IsLoop => _message.IsGif() || _message.IsRoundVideo();
+
+        public override bool IsShareEnabled => _message.Parent != null;
+
+        public override bool HasStickers
+        {
+            get
+            {
+                if (_message.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
+                {
+                    return photo.IsHasStickers;
+                }
+                else if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    return document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
+                }
+
+                return false;
+            }
+        }
+
+        public override TLInputStickeredMediaBase ToInputStickeredMedia()
+        {
+            if (_message.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
+            {
+                return new TLInputStickeredMediaPhoto { Id = photo.ToInputPhoto() };
+            }
+            else if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                return new TLInputStickeredMediaDocument { Id = document.ToInputDocument() };
+            }
+
+            return null;
+        }
+
+        public override Uri GetVideoSource()
+        {
+            if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                return FileUtils.GetTempFileUri(document.GetFileName());
+            }
+
+            return null;
+        }
+
+        public override async void Share()
+        {
+            if (ShouldShare(_message, true))
+            {
+                await ShareView.Current.ShowAsync(_message);
+            }
+            else
+            {
+                await ShareView.Current.ShowAsync(_message.Media.ToInputMedia());
+            }
+        }
+
+        private bool ShouldShare(TLMessage message, bool allowOut)
+        {
+            if (message.IsSticker())
+            {
+                return false;
+            }
+            else if (message.HasFwdFrom && message.FwdFrom.HasChannelId && (!message.IsOut || allowOut))
+            {
+                return true;
+            }
+            else if (message.HasFromId && !message.IsPost)
+            {
+                if (message.Media is TLMessageMediaEmpty || message.Media == null || message.Media is TLMessageMediaWebPage webpageMedia && !(webpageMedia.WebPage is TLWebPage))
+                {
+                    return false;
+                }
+
+                var user = message.From;
+                if (user != null && user.IsBot)
+                {
+                    return true;
+                }
+
+                if (!message.IsOut || allowOut)
+                {
+                    if (message.Media is TLMessageMediaGame || message.Media is TLMessageMediaInvoice)
+                    {
+                        return true;
+                    }
+
+                    var parent = message.Parent as TLChannel;
+                    if (parent != null && parent.IsMegaGroup)
+                    {
+                        //TLRPC.Chat chat = MessagesController.getInstance().getChat(messageObject.messageOwner.to_id.channel_id);
+                        //return chat != null && chat.username != null && chat.username.length() > 0 && !(messageObject.messageOwner.media instanceof TLRPC.TL_messageMediaContact) && !(messageObject.messageOwner.media instanceof TLRPC.TL_messageMediaGeo);
+
+                        return parent.HasUsername && !(message.Media is TLMessageMediaContact) && !(message.Media is TLMessageMediaGeo);
+                    }
+                }
+            }
+            //else if (messageObject.messageOwner.from_id < 0 || messageObject.messageOwner.post)
+            else if (message.IsPost)
+            {
+                //if (messageObject.messageOwner.to_id.channel_id != 0 && (messageObject.messageOwner.via_bot_id == 0 && messageObject.messageOwner.reply_to_msg_id == 0 || messageObject.type != 13))
+                //{
+                //    return Visibility.Visible;
+                //}
+
+                if (message.ToId is TLPeerChannel && (!message.HasViaBotId && !message.HasReplyToMsgId))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    public class GalleryMessageServiceItem : GalleryItem
+    {
+        private readonly TLMessageService _message;
+
+        public GalleryMessageServiceItem(TLMessageService message)
+        {
+            _message = message;
+        }
+
+        public TLMessageService Message => _message;
+
+        public override ITLTransferable Source
+        {
+            get
+            {
+                if (_message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction && chatEditPhotoAction.Photo is TLPhoto photo)
+                {
+                    return photo;
+                }
+
+                return null;
+            }
+        }
+
+        //public override ITLDialogWith From => _message.IsPost ? _message.Parent : _message.From;
+
+        public override ITLDialogWith From
+        {
+            get
+            {
+                return _message.IsPost ? _message.Parent : _message.From;
+            }
+        }
+
+        public override int Date => _message.Date;
+
+        public override bool HasStickers
+        {
+            get
+            {
+                if (_message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction && chatEditPhotoAction.Photo is TLPhoto photo)
+                {
+                    return photo.IsHasStickers;
+                }
+
+                return false;
+            }
+        }
+
+        public override TLInputStickeredMediaBase ToInputStickeredMedia()
+        {
+            if (_message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction && chatEditPhotoAction.Photo is TLPhoto photo)
+            {
+                return new TLInputStickeredMediaPhoto { Id = photo.ToInputPhoto() };
+            }
+
+            return null;
+        }
+    }
+
+    public class GalleryPhotoItem : GalleryItem
+    {
+        private readonly TLPhoto _photo;
+        private readonly ITLDialogWith _from;
+        private readonly string _caption;
+
+        public GalleryPhotoItem(TLPhoto photo, ITLDialogWith from)
+        {
+            _photo = photo;
+            _from = from;
+        }
+
+        public GalleryPhotoItem(TLPhoto photo, string caption)
+        {
+            _photo = photo;
+            _caption = caption;
+        }
+
+        public TLPhoto Photo => _photo;
+
+        public override ITLTransferable Source => _photo;
+
+        public override string Caption => _caption;
+
+        public override ITLDialogWith From => _from;
+
+        public override int Date => _photo.Date;
+
+        public override bool HasStickers => _photo.IsHasStickers;
+
+        public override TLInputStickeredMediaBase ToInputStickeredMedia()
+        {
+            return new TLInputStickeredMediaPhoto { Id = _photo.ToInputPhoto() };
+        }
+    }
+
+    public class GalleryDocumentItem : GalleryItem
+    {
+        private readonly TLDocument _document;
+        private readonly ITLDialogWith _from;
+        private readonly string _caption;
+
+        public GalleryDocumentItem(TLDocument document, ITLDialogWith from)
+        {
+            _document = document;
+            _from = from;
+        }
+
+        public GalleryDocumentItem(TLDocument document, string caption)
+        {
+            _document = document;
+            _caption = caption;
+        }
+
+        public TLDocument Document => _document;
+
+        public override ITLTransferable Source => _document;
+
+        public override string Caption => _caption;
+
+        public override ITLDialogWith From => _from;
+
+        public override int Date => _document.Date;
+
+        public override bool IsVideo => TLMessage.IsVideo(_document) || TLMessage.IsGif(_document) || TLMessage.IsRoundVideo(_document);
+
+        public override bool IsLoop => TLMessage.IsGif(_document) || TLMessage.IsRoundVideo(_document);
+
+        public override bool HasStickers => _document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
+
+        public override TLInputStickeredMediaBase ToInputStickeredMedia()
+        {
+            return new TLInputStickeredMediaDocument { Id = _document.ToInputDocument() };
+        }
+
+        public override Uri GetVideoSource()
+        {
+            return FileUtils.GetTempFileUri(_document.GetFileName());
         }
     }
 }

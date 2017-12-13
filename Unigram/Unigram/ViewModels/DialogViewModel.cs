@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,7 +47,7 @@ using Telegram.Api;
 using Unigram.Views;
 using Telegram.Api.TL.Phone.Methods;
 using Windows.ApplicationModel.Calls;
-using Unigram.Tasks;
+using Unigram.Native.Tasks;
 using Windows.Media.Effects;
 using Windows.Media.Transcoding;
 using Windows.Media.MediaProperties;
@@ -58,13 +58,19 @@ using Telegram.Api.TL.Messages;
 using Windows.UI.Notifications;
 using Unigram.Native;
 using Unigram.Views.Channels;
+using Telegram.Api.TL.Channels;
+using Windows.UI.StartScreen;
+using Unigram.Models;
+using Newtonsoft.Json;
+using Unigram.Core.Common;
+using Unigram.ViewModels.Dialogs;
+using Windows.UI.Xaml.Controls.Primitives;
+using System.Collections.Concurrent;
 
 namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : UnigramViewModelBase
     {
-        public bool IsActive { get; set; }
-
         public MessageCollection Items { get; private set; }
 
         private List<TLMessageCommonBase> _selectedItems = new List<TLMessageCommonBase>();
@@ -79,7 +85,31 @@ namespace Unigram.ViewModels
                 Set(ref _selectedItems, value);
                 MessagesForwardCommand.RaiseCanExecuteChanged();
                 MessagesDeleteCommand.RaiseCanExecuteChanged();
+                MessagesCopyCommand.RaiseCanExecuteChanged();
             }
+        }
+
+        public void ExpandSelection(IEnumerable<TLMessageCommonBase> vector)
+        {
+            var messages = vector.ToList();
+
+            for (int i = 0; i < messages.Count; i++)
+            {
+                if (messages[i] is TLMessage message && message.Media is TLMessageMediaGroup groupMedia)
+                {
+                    messages.RemoveAt(i);
+
+                    for (int j = 0; j < groupMedia.Layout.Messages.Count; j++)
+                    {
+                        messages.Insert(i, groupMedia.Layout.Messages[j]);
+                        i++;
+                    }
+
+                    i--;
+                }
+            }
+
+            SelectedItems = messages;
         }
 
         public MediaLibraryCollection MediaLibrary
@@ -90,6 +120,11 @@ namespace Unigram.ViewModels
             }
         }
 
+        // Kludge
+        public static Dictionary<long, IList<TLChannelParticipantBase>> Admins { get; } = new Dictionary<long, IList<TLChannelParticipantBase>>();
+
+        private readonly ConcurrentDictionary<long, TLMessage> _groupedMessages = new ConcurrentDictionary<long, TLMessage>();
+
         private readonly DialogStickersViewModel _stickers;
         private readonly IStickersService _stickersService;
         private readonly ILocationService _locationService;
@@ -98,11 +133,12 @@ namespace Unigram.ViewModels
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
         private readonly IUploadVideoManager _uploadVideoManager;
+        private readonly IPushService _pushService;
 
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, ILiveLocationService liveLocationService)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, ILiveLocationService liveLocationService, IPushService pushService)
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
@@ -112,6 +148,7 @@ namespace Unigram.ViewModels
             _stickersService = stickersService;
             _locationService = locationService;
             _liveLocationService = liveLocationService;
+            _pushService = pushService;
 
             _stickers = new DialogStickersViewModel(protoService, cacheService, aggregator, stickersService);
 
@@ -123,6 +160,66 @@ namespace Unigram.ViewModels
                 InformativeMessage = null;
             };
 
+            NextMentionCommand = new RelayCommand(NextMentionExecute);
+            PreviousSliceCommand = new RelayCommand(PreviousSliceExecute);
+            ClearReplyCommand = new RelayCommand(ClearReplyExecute);
+            PinnedCommand = new RelayCommand(PinnedExecute);
+            JoinChannelCommand = new RelayCommand(JoinChannelExecute);
+            ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
+            ToggleSilentCommand = new RelayCommand(ToggleSilentExecute);
+            HideReportSpamCommand = new RelayCommand(HideReportSpamExecute);
+            ReportSpamCommand = new RelayCommand(ReportSpamExecute);
+            OpenStickersCommand = new RelayCommand(OpenStickersExecute);
+            DialogDeleteCommand = new RelayCommand(DialogDeleteExecute);
+            DialogClearCommand = new RelayCommand(DialogClearExecute);
+            CallCommand = new RelayCommand(CallExecute);
+            UnpinMessageCommand = new RelayCommand(UnpinMessageExecute);
+            UnblockCommand = new RelayCommand(UnblockExecute);
+            ShareContactCommand = new RelayCommand(ShareContactExecute);
+            AddContactCommand = new RelayCommand(AddContactExecute);
+            PinChatCommand = new RelayCommand(PinChatExecute, CanExecutePinChatCommand);
+            UnpinChatCommand = new RelayCommand(UnpinChatExecute, CanUnpinChatExecute);
+            StartCommand = new RelayCommand(StartExecute);
+            SearchCommand = new RelayCommand(SearchExecute);
+            JumpDateCommand = new RelayCommand(JumpDateExecute);
+            GroupStickersCommand = new RelayCommand(GroupStickersExecute);
+            ReadMentionsCommand = new RelayCommand(ReadMentionsExecute);
+            SendCommand = new RelayCommand<string>(SendMessage);
+            SwitchCommand = new RelayCommand<TLInlineBotSwitchPM>(SwitchExecute);
+
+            MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
+            MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
+            MessagesCopyCommand = new RelayCommand(MessagesCopyExecute, MessagesCopyCanExecute);
+
+            MessageReplyCommand = new RelayCommand<TLMessageBase>(MessageReplyExecute);
+            MessageDeleteCommand = new RelayCommand<TLMessageBase>(MessageDeleteExecute);
+            MessageForwardCommand = new RelayCommand<TLMessageBase>(MessageForwardExecute);
+            MessageShareCommand = new RelayCommand<TLMessage>(MessageShareExecute);
+            MessageSelectCommand = new RelayCommand<TLMessageBase>(MessageSelectExecute);
+            MessageCopyCommand = new RelayCommand<TLMessage>(MessageCopyExecute);
+            MessageCopyMediaCommand = new RelayCommand<TLMessage>(MessageCopyMediaExecute);
+            MessageCopyLinkCommand = new RelayCommand<TLMessageCommonBase>(MessageCopyLinkExecute);
+            MessageEditLastCommand = new RelayCommand(MessageEditLastExecute);
+            MessageEditCommand = new RelayCommand<TLMessage>(MessageEditExecute);
+            MessagePinCommand = new RelayCommand<TLMessageBase>(MessagePinExecute);
+            //KeyboardButtonCommand = new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);
+            MessageOpenReplyCommand = new RelayCommand<TLMessageCommonBase>(MessageOpenReplyExecute);
+            MessageStickerPackInfoCommand = new RelayCommand<TLMessage>(MessageStickerPackInfoExecute);
+            MessageFaveStickerCommand = new RelayCommand<TLMessage>(MessageFaveStickerExecute);
+            MessageUnfaveStickerCommand = new RelayCommand<TLMessage>(MessageUnfaveStickerExecute);
+            MessageSaveStickerCommand = new RelayCommand<TLMessage>(MessageSaveStickerExecute);
+            MessageSaveMediaCommand = new RelayCommand<TLMessage>(MessageSaveMediaExecute);
+            MessageSaveDownloadCommand = new RelayCommand<TLMessage>(MessageSaveDownloadExecute);
+            MessageSaveGIFCommand = new RelayCommand<TLMessage>(MessageSaveGIFExecute);
+            MessageAddContactCommand = new RelayCommand<TLMessage>(MessageAddContactExecute);
+
+            SendStickerCommand = new RelayCommand<TLDocument>(SendStickerExecute);
+            SendGifCommand = new RelayCommand<TLDocument>(SendGifExecute);
+            SendFileCommand = new RelayCommand(SendFileExecute);
+            SendMediaCommand = new RelayCommand(SendMediaExecute);
+            SendContactCommand = new RelayCommand(SendContactExecute);
+            SendLocationCommand = new RelayCommand(SendLocationExecute);
+
             Items = new MessageCollection();
             Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
 
@@ -133,6 +230,8 @@ namespace Unigram.ViewModels
         {
             Debug.WriteLine("Finalizing DialogViewModel");
             Aggregator.Unsubscribe(this);
+
+            GC.Collect();
 
             //if (Messages != null)
             //{
@@ -166,7 +265,15 @@ namespace Unigram.ViewModels
             //}
         }
 
-        public DialogStickersViewModel Stickers { get { return _stickers; } }
+        public bool IsActive
+        {
+            get
+            {
+                return NavigationService?.IsPeerActive(Peer) ?? false;
+            }
+        }
+
+        public DialogStickersViewModel Stickers => _stickers;
 
         private TLDialog _dialog;
         public TLDialog Dialog
@@ -379,16 +486,29 @@ namespace Unigram.ViewModels
             }
         }
 
-        private UpdatingScrollMode _updatingScrollMode;
-        public UpdatingScrollMode UpdatingScrollMode
+        private bool _canPinChat;
+        public bool CanPinChat
         {
             get
             {
-                return _updatingScrollMode;
+                return _canPinChat;
             }
             set
             {
-                Set(ref _updatingScrollMode, value);
+                Set(ref _canPinChat, value);
+            }
+        }
+
+        private bool _canUnpinChat;
+        public bool CanUnpinChat
+        {
+            get
+            {
+                return _canUnpinChat;
+            }
+            set
+            {
+                Set(ref _canUnpinChat, value);
             }
         }
 
@@ -517,7 +637,6 @@ namespace Unigram.ViewModels
 
             _isLoadingNextSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
@@ -539,6 +658,11 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, maxId, limit);
             if (response.IsSucceeded)
             {
+                if (response.Result.Messages.Count > 0)
+                {
+                    ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
+                }
+
                 ProcessReplies(response.Result.Messages);
 
                 Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Replies processed");
@@ -558,10 +682,8 @@ namespace Unigram.ViewModels
 
                 Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Items added");
 
-                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
-                for (int i = response.Result.Messages.Count - 1; i >= 0; i--)
+                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
                 {
-                    var item = response.Result.Messages[i];
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
                     {
@@ -592,14 +714,15 @@ namespace Unigram.ViewModels
 
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            if (last)
-            {
-                UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
-            }
-            else
-            {
-                UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
-            }
+
+            //if (last)
+            //{
+            //    UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
+            //}
+            //else
+            //{
+            //    UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
+            //}
 
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
@@ -616,9 +739,15 @@ namespace Unigram.ViewModels
 
             maxId = Items.LastOrDefault()?.Id ?? 1;
 
-            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit, 0, maxId, limit);
+            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit - 1, 0, maxId, limit);
             if (response.IsSucceeded)
             {
+                if (response.Result.Messages.Count > 0)
+                {
+                    //ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
+                    ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                }
+
                 ProcessReplies(response.Result.Messages);
 
                 //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
@@ -637,7 +766,7 @@ namespace Unigram.ViewModels
                     //InsertMessage(item as TLMessageCommonBase);
                 }
 
-                foreach (var item in response.Result.Messages.OrderBy(x => x.Date))
+                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
                 {
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
@@ -660,7 +789,7 @@ namespace Unigram.ViewModels
             IsLoading = false;
         }
 
-        public RelayCommand NextMentionCommand => new RelayCommand(NextMentionExecute);
+        public RelayCommand NextMentionCommand { get; }
         private async void NextMentionExecute()
         {
             var dialog = _dialog;
@@ -711,7 +840,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand PreviousSliceCommand => new RelayCommand(PreviousSliceExecute);
+        public RelayCommand PreviousSliceCommand { get; }
         private async void PreviousSliceExecute()
         {
             if (_goBackStack.Count > 0)
@@ -738,7 +867,8 @@ namespace Unigram.ViewModels
             var already = Items.FirstOrDefault(x => x.Id == maxId);
             if (already != null)
             {
-                ListField.ScrollIntoView(already);
+                //ListField.ScrollIntoView(already);
+                await ListField.ScrollToItem(already, SnapPointsAlignment.Center);
                 return;
             }
 
@@ -747,7 +877,6 @@ namespace Unigram.ViewModels
             IsLoading = true;
             IsLastSliceLoaded = false;
             IsFirstSliceLoaded = false;
-            UpdatingScrollMode = UpdatingScrollMode.ForceKeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
 
@@ -758,12 +887,17 @@ namespace Unigram.ViewModels
 
             Items.Clear();
 
-            var offset = -50;
+            var offset = -25;
             var limit = 50;
 
             var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
             if (response.IsSucceeded)
             {
+                if (response.Result.Messages.Count > 0)
+                {
+                    ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                }
+
                 ProcessReplies(response.Result.Messages);
 
                 //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
@@ -776,7 +910,10 @@ namespace Unigram.ViewModels
                     }
 
                     Items.Add(item);
+                }
 
+                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
+                {
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
                     {
@@ -801,8 +938,9 @@ namespace Unigram.ViewModels
             _isLoadingPreviousSlice = false;
             IsLoading = false;
 
-            await Task.Delay(200);
-            await LoadNextSliceAsync(true);
+            //await Task.Delay(200);
+            //await LoadNextSliceAsync(true);
+            await LoadMessageSliceAsync(null, maxId);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -813,10 +951,13 @@ namespace Unigram.ViewModels
             var obj = new TLMessagesGetHistory { Peer = Peer, OffsetId = 0, OffsetDate = dateOffset - 1, AddOffset = offset, Limit = limit, MaxId = 0, MinId = 0 };
             ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.getHistory", obj, result =>
             {
-                Execute.BeginOnUIThread(async () =>
+                if (result.Messages.Count > 0)
                 {
-                    await LoadMessageSliceAsync(null, result.Messages[0].Id);
-                });
+                    BeginOnUIThread(async () =>
+                    {
+                        await LoadMessageSliceAsync(null, result.Messages[0].Id);
+                    });
+                }
             });
 
             //var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, dateOffset, 0, limit);
@@ -837,7 +978,6 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = _dialog?.UnreadCount > 0 ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.ForceKeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
 
@@ -862,6 +1002,11 @@ namespace Unigram.ViewModels
                     maxId = int.MaxValue;
                     offset = 0;
                     goto Retry;
+                }
+
+                if (response.Result.Messages.Count > 0)
+                {
+                    ListField.SetScrollMode(maxId == int.MaxValue ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
                 }
 
                 ProcessReplies(response.Result.Messages);
@@ -898,7 +1043,7 @@ namespace Unigram.ViewModels
                     Items.Add(item);
                 }
 
-                foreach (var item in response.Result.Messages.OrderBy(x => x.Date))
+                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
                 {
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
@@ -913,22 +1058,40 @@ namespace Unigram.ViewModels
 
                 if (response.Result.Messages.Count < limit)
                 {
-                    IsFirstSliceLoaded = true;
-                    IsLastSliceLoaded = true;
+                    IsFirstSliceLoaded = maxId < int.MaxValue;
+                    IsLastSliceLoaded = maxId == int.MaxValue;
+                }
+                else
+                {
+                    IsFirstSliceLoaded = false;
+                    IsLastSliceLoaded = false;
                 }
             }
 
             _isLoadingNextSlice = false;
             _isLoadingPreviousSlice = false;
             IsLoading = false;
+
+            //if (maxId < int.MaxValue)
+            //{
+            //    await LoadMessageSliceAsync(null, maxId);
+            //}
         }
 
-        public void ScrollToBottom()
+        public void ScrollToBottom(object item)
         {
             //if (IsFirstSliceLoaded)
             {
-                ListField.ScrollToBottom();
-                UpdatingScrollMode = UpdatingScrollMode.ForceKeepLastItemInView;
+                if (item == null)
+                {
+                    ListField.ScrollToBottom();
+                }
+                else
+                {
+                    ListField.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+                }
+
+                ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
             }
         }
 
@@ -937,16 +1100,86 @@ namespace Unigram.ViewModels
             var replyIds = new TLVector<int>();
             var replyToMsgs = new List<TLMessageCommonBase>();
 
+            var groups = new Dictionary<long, Tuple<TLMessage, GroupedMessages>>();
+
             for (int i = 0; i < messages.Count; i++)
             {
-                var message = messages[i] as TLMessageCommonBase;
-                if (message != null)
+                var commonMessage = messages[i] as TLMessageCommonBase;
+                if (commonMessage != null)
                 {
-                    var replyId = message.ReplyToMsgId;
+                    if (commonMessage is TLMessage message && message.HasGroupedId && message.GroupedId is long groupedId)
+                    {
+                        _groupedMessages.TryGetValue(groupedId, out TLMessage group);
+
+                        if (group == null)
+                        {
+                            var media = new TLMessageMediaGroup();
+
+                            group = new TLMessage();
+                            group.Media = media;
+                            group.Date = message.Date;
+
+                            messages[i] = group;
+                            commonMessage = group;
+
+                            groups[groupedId] = Tuple.Create(group, media.Layout);
+                            _groupedMessages[groupedId] = group;
+                        }
+                        else
+                        {
+                            messages.RemoveAt(i);
+                            i--;
+                        }
+
+                        if (group.Media is TLMessageMediaGroup groupMedia)
+                        {
+                            //var array = group.Messages.ToArray();
+                            //var insert = Array.BinarySearch(array, message, _comparer);
+                            //if (insert < 0) insert = ~insert;
+
+                            groupMedia.Layout.GroupedId = groupedId;
+                            groupMedia.Layout.Messages.Add(message);
+                            groupMedia.Layout.Calculate();
+
+                            var first = groupMedia.Layout.Messages.FirstOrDefault();
+                            var last = groupMedia.Layout.Messages.LastOrDefault();
+
+                            if (first != null)
+                            {
+                                group.Flags = first.Flags;
+                                group.HasEditDate = false;
+                                group.FromId = first.FromId;
+                                group.ToId = first.ToId;
+                                group.FwdFrom = first.FwdFrom;
+                                group.ViaBotId = first.ViaBotId;
+                                group.ReplyToMsgId = first.ReplyToMsgId;
+                                group.Date = first.Date;
+                                group.Message = first.Message;
+                                group.ReplyMarkup = first.ReplyMarkup;
+                                group.Entities = first.Entities;
+                                group.Views = first.Views;
+                                group.PostAuthor = first.PostAuthor;
+                                group.GroupedId = first.GroupedId;
+                            }
+
+                            if (last.Media is ITLMessageMediaCaption caption)
+                            {
+                                group.HasEditDate = last.HasEditDate;
+                                group.EditDate = last.EditDate;
+
+                                groupMedia.Caption = caption.Caption;
+
+                                group.RaisePropertyChanged(() => group.EditDate);
+                                group.RaisePropertyChanged(() => group.Self);
+                            }
+                        }
+                    }
+
+                    var replyId = commonMessage.ReplyToMsgId;
                     if (replyId != null && replyId.Value != 0)
                     {
                         var channelId = new int?();
-                        var channel = message.ToId as TLPeerChannel;
+                        var channel = commonMessage.ToId as TLPeerChannel;
                         if (channel != null)
                         {
                             channelId = channel.Id;
@@ -967,7 +1200,7 @@ namespace Unigram.ViewModels
                         else
                         {
                             replyIds.Add(replyId.Value);
-                            replyToMsgs.Add(message);
+                            replyToMsgs.Add(commonMessage);
                         }
                     }
 
@@ -976,6 +1209,12 @@ namespace Unigram.ViewModels
                     //    message.Media.NotListened = true;
                     //}
                 }
+            }
+
+            foreach (var group in groups.Values)
+            {
+                group.Item2.Calculate();
+                group.Item1.RaisePropertyChanged(() => group.Item1.Media);
             }
 
             if (replyIds.Count > 0)
@@ -1063,6 +1302,12 @@ namespace Unigram.ViewModels
             Peer = participant.ToInputPeer();
             With = participant;
             Dialog = CacheService.GetDialog(Peer.ToPeer());
+            UpdatePinChatCommands();
+
+            if (CanUnpinChat)
+            {
+                ResetTile();
+            }
 
             //Aggregator.Subscribe(this);
 
@@ -1072,6 +1317,15 @@ namespace Unigram.ViewModels
             //    messageId = storage;
             //}
             var dialog = _dialog;
+            //if (dialog == null)
+            //{
+            //    var response = await ProtoService.GetPeerDialogsAsync(new TLVector<TLInputPeerBase> { _peer });
+            //    if (response.IsSucceeded)
+            //    {
+            //        Dialog = response.Result.Dialogs.FirstOrDefault();
+            //        dialog = response.Result.Dialogs.FirstOrDefault();
+            //    }
+            //}
 
             //for (int i = 0; i < 200;)
             //{
@@ -1087,6 +1341,34 @@ namespace Unigram.ViewModels
             //    }
             //}
 
+            if (participant is TLChannel before && before.IsMegaGroup)
+            {
+                Execute.BeginOnThreadPool(async () =>
+                {
+                    IList<TLChannelParticipantBase> participants = null;
+                    Admins.TryGetValue(before.Id, out participants);
+
+                    if (participants == null)
+                    {
+                        participants = new TLChannelParticipantBase[0];
+                    }
+
+                    var acc = 0L;
+                    foreach (var item in participants.OrderBy(x => x.UserId))
+                    {
+                        acc = ((acc * 20261) + 0x80000000L + item.UserId) % 0x80000000L;
+                    }
+
+                    var response = await ProtoService.GetParticipantsAsync(before.ToInputChannel(), new TLChannelParticipantsAdmins(), 0, 200, (int)acc);
+                    if (response.IsSucceeded && response.Result is TLChannelsChannelParticipants result)
+                    {
+                        participants = result.Participants;
+                    }
+
+                    Admins[before.Id] = participants;
+                });
+            }
+
             if (messageId.HasValue)
             {
                 LoadMessageSliceAsync(null, messageId.Value);
@@ -1096,17 +1378,38 @@ namespace Unigram.ViewModels
                 var maxId = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
                 var offset = _dialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
 
-                //if (maxId == int.MaxValue)
-                //{
-                //    var history = CacheService.GetHistory(_peer.ToPeer());
+                if (maxId == int.MaxValue)
+                {
+                    var history = CacheService.GetHistory(_peer.ToPeer());
+                    if (history.IsEmpty())
+                    {
+                        LoadFirstSliceAsync(maxId, offset);
+                    }
+                    else
+                    {
+                        ProcessReplies(history);
 
-                //    IsLastSliceLoaded = false;
-                //    IsFirstSliceLoaded = false;
+                        IsLastSliceLoaded = false;
+                        IsFirstSliceLoaded = false;
 
-                //    UpdatingScrollMode = UpdatingScrollMode.ForceKeepLastItemInView;
-                //    Items.AddRange(history.Reverse());
-                //}
-                //else
+                        ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                        Items.AddRange(history.Reverse());
+
+                        foreach (var item in history.OrderByDescending(x => x.Date))
+                        {
+                            var message = item as TLMessage;
+                            if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                            {
+                                var bot = CacheService.GetUser(message.FromId) as TLUser;
+                                if (bot != null && bot.IsBot)
+                                {
+                                    SetReplyMarkup(message);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
                 {
                     LoadFirstSliceAsync(maxId, offset);
                 }
@@ -1225,45 +1528,45 @@ namespace Unigram.ViewModels
                         HasBotCommands = BotCommands.Count > 0;
 
                         Stickers.SyncGroup(full);
-
-                        if (full.HasPinnedMsgId)
-                        {
-                            var update = true;
-
-                            var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
-                            if (appData.Values.TryGetValue("Pinned" + channel.Id, out object pinnedObj))
-                            {
-                                var pinnedId = (int)pinnedObj;
-                                if (pinnedId == full.PinnedMsgId)
-                                {
-                                    update = false;
-                                }
-                            }
-
-                            var pinned = CacheService.GetMessage(full.PinnedMsgId, channel.Id);
-                            if (pinned == null && update)
-                            {
-                                var y = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int>() { full.PinnedMsgId ?? 0 });
-                                if (y.IsSucceeded)
-                                {
-                                    pinned = y.Result.Messages.FirstOrDefault();
-                                }
-                            }
-
-                            if (pinned != null && update)
-                            {
-                                PinnedMessage = pinned;
-                            }
-                            else
-                            {
-                                PinnedMessage = null;
-                            }
-                        }
                     }
                     else
                     {
                         BotCommands = null;
                         HasBotCommands = false;
+                    }
+
+                    if (full.HasPinnedMsgId)
+                    {
+                        var update = true;
+
+                        var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
+                        if (appData.Values.TryGetValue("Pinned" + channel.Id, out object pinnedObj))
+                        {
+                            var pinnedId = (int)pinnedObj;
+                            if (pinnedId == full.PinnedMsgId)
+                            {
+                                update = false;
+                            }
+                        }
+
+                        var pinned = CacheService.GetMessage(full.PinnedMsgId, channel.Id);
+                        if (pinned == null && update)
+                        {
+                            var y = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int>() { full.PinnedMsgId ?? 0 });
+                            if (y.IsSucceeded)
+                            {
+                                pinned = y.Result.Messages.FirstOrDefault();
+                            }
+                        }
+
+                        if (pinned != null && update)
+                        {
+                            PinnedMessage = pinned;
+                        }
+                        else
+                        {
+                            PinnedMessage = null;
+                        }
                     }
                 }
 
@@ -1697,7 +2000,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand ClearReplyCommand => new RelayCommand(ClearReplyExecute);
+        public RelayCommand ClearReplyCommand { get; }
         private void ClearReplyExecute()
         {
             if (Reply is TLMessagesContainter container && container.EditMessage != null)
@@ -1711,7 +2014,7 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public RelayCommand PinnedCommand => new RelayCommand(PinnedExecute);
+        public RelayCommand PinnedCommand { get; }
         private async void PinnedExecute()
         {
             if (PinnedMessage != null)
@@ -1720,7 +2023,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
+        public RelayCommand<string> SendCommand { get; }
         private async void SendMessage(string args)
         {
             await SendMessageAsync(args, null, false);
@@ -1754,6 +2057,32 @@ namespace Unigram.ViewModels
 
                 return;
             }
+            else if (messageText.Equals("/tg_dialog", StringComparison.OrdinalIgnoreCase))
+            {
+                if (_dialog != null)
+                {
+                    var data = new
+                    {
+                        Flags = _dialog.Flags,
+                        Peer = _dialog.Peer,
+                        TopMessage = _dialog.TopMessage,
+                        ReadInboxMaxId = _dialog.ReadInboxMaxId,
+                        ReadOutboxMaxId = _dialog.ReadOutboxMaxId,
+                        UnreadCount = _dialog.UnreadCount,
+                        UnreadMentionsCount = _dialog.UnreadMentionsCount,
+                        NotifySettings = _dialog.NotifySettings,
+                        Pts = _dialog.Pts,
+                        Draft = _dialog.Draft,
+                    };
+
+                    var json = JsonConvert.SerializeObject(data, Formatting.Indented, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+                    json = json.Format();
+
+                    await SendMessageAsync(json, new List<TLMessageEntityBase> { new TLMessageEntityPre { Offset = 0, Length = json.Length } });
+                }
+
+                return;
+            }
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
@@ -1783,7 +2112,15 @@ namespace Unigram.ViewModels
                         var edit = await ProtoService.EditMessageAsync(Peer, container.EditMessage.Id, message.Message, message.Entities, null, null, false, false);
                         if (edit.IsSucceeded)
                         {
-                            CacheService.SyncEditedMessage(container.EditMessage, true, true, cachedMessage => { });
+                            CacheService.SyncEditedMessage(container.EditMessage, true, true, cachedMessage =>
+                            {
+                                if (container.EditMessage.HasGroupedId && container.EditMessage.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out TLMessage group) && group.Media is TLMessageMediaGroup groupMedia)
+                                {
+                                    groupMedia.Caption = message.Message;
+                                    groupMedia.RaisePropertyChanged(() => groupMedia.Caption);
+                                    group.RaisePropertyChanged(() => group.Self);
+                                }
+                            });
                         }
                         else
                         {
@@ -1841,7 +2178,7 @@ namespace Unigram.ViewModels
                     if (forwardMessages != null)
                     {
                         App.InMemoryState.ForwardMessages = null;
-                        await ForwardMessagesAsync(forwardMessages);
+                        ForwardMessages(forwardMessages);
                     }
                 });
             }
@@ -1850,12 +2187,12 @@ namespace Unigram.ViewModels
                 if (forwardMessages != null)
                 {
                     App.InMemoryState.ForwardMessages = null;
-                    await ForwardMessagesAsync(forwardMessages);
+                    ForwardMessages(forwardMessages);
                 }
             }
         }
 
-        public async Task ForwardMessagesAsync(IEnumerable<TLMessage> forwardMessages)
+        public void ForwardMessages(IEnumerable<TLMessage> forwardMessages)
         {
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
 
@@ -1867,6 +2204,8 @@ namespace Unigram.ViewModels
             {
                 var clone = fwdMessage.Clone();
                 clone.Id = 0;
+                clone.HasEditDate = false;
+                clone.EditDate = null;
                 clone.HasReplyToMsgId = false;
                 clone.ReplyToMsgId = null;
                 clone.HasReplyMarkup = false;
@@ -1913,6 +2252,10 @@ namespace Unigram.ViewModels
                     clone.Entities = null;
                     clone.Message = null;
                 }
+                else if (clone.Media is TLMessageMediaGeoLive geoLiveMedia)
+                {
+                    clone.Media = new TLMessageMediaGeo { Geo = geoLiveMedia.Geo };
+                }
 
                 if (fromPeer == null)
                 {
@@ -1949,6 +2292,8 @@ namespace Unigram.ViewModels
                                 clone.FwdFrom.HasChannelId = clone.FwdFrom.HasChannelPost = true;
                                 clone.FwdFrom.ChannelId = fwdChannel.Id;
                                 clone.FwdFrom.ChannelPost = fwdMessage.Id;
+                                clone.FwdFrom.HasPostAuthor = fwdMessage.HasPostAuthor;
+                                clone.FwdFrom.PostAuthor = fwdMessage.PostAuthor;
                             }
                         }
                     }
@@ -1966,6 +2311,14 @@ namespace Unigram.ViewModels
                             Date = fwdMessage.Date
                         };
                     }
+
+                    if (clone.FwdFrom != null && ((_peer is TLInputPeerUser user && user.UserId == SettingsHelper.UserId) || _peer is TLInputPeerSelf))
+                    {
+                        clone.FwdFrom.SavedFromMsgId = fwdMessage.Id;
+                        clone.FwdFrom.SavedFromPeer = fwdMessage.Parent?.ToPeer();
+                        clone.FwdFrom.HasSavedFromMsgId = true;
+                        clone.FwdFrom.HasSavedFromPeer = clone.FwdFrom.SavedFromPeer != null;
+                    }
                 }
 
                 msgs.Add(clone);
@@ -1976,7 +2329,7 @@ namespace Unigram.ViewModels
 
             CacheService.SyncSendingMessages(msgs, null, async (_) =>
             {
-                await ProtoService.ForwardMessagesAsync(Peer, fromPeer, msgIds, msgs, false);
+                await ProtoService.ForwardMessagesAsync(Peer, fromPeer, msgIds, msgs, false, false);
             });
         }
 
@@ -2008,7 +2361,7 @@ namespace Unigram.ViewModels
                         message.Reply = _replyMarkupMessage;
                     }
 
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         if (Reply != null)
                         {
@@ -2042,7 +2395,7 @@ namespace Unigram.ViewModels
                         //}
                     }
 
-                    Execute.BeginOnUIThread(delegate
+                    BeginOnUIThread(delegate
                     {
                         Reply = null;
                     });
@@ -2073,7 +2426,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                ScrollToBottom();
+                ScrollToBottom(message);
             }
             else
             {
@@ -2212,9 +2565,121 @@ namespace Unigram.ViewModels
             }
         }
 
+        private async Task<string> GetSubtitle()
+        {
+            if (With is TLUser user)
+            {
+                return LastSeenConverter.GetLabel(user, true);
+            }
+            else if (With is TLChannel channel && channel.HasAccessHash && channel.AccessHash.HasValue)
+            {
+                var full = Full as TLChannelFull;
+                if (full == null)
+                {
+                    full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
+                }
+
+                if (full == null)
+                {
+                    var response = await ProtoService.GetFullChannelAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value });
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result.FullChat as TLChannelFull;
+                    }
+                }
+
+                if (full == null)
+                {
+                    return string.Empty;
+                }
+
+                if (channel.IsBroadcast && full.HasParticipantsCount)
+                {
+                    return LocaleHelper.Declension("Subscribers", full.ParticipantsCount ?? 0);
+                }
+                else if (full.HasParticipantsCount)
+                {
+                    var config = CacheService.GetConfig();
+                    if (config == null)
+                    {
+                        return LocaleHelper.Declension("Members", full.ParticipantsCount ?? 0);
+                    }
+
+                    var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax, 0);
+                    if (participants.IsSucceeded && participants.Result is TLChannelsChannelParticipants channelParticipants)
+                    {
+                        full.Participants = participants.Result;
+
+                        if (full.ParticipantsCount <= config.ChatSizeMax)
+                        {
+                            var count = 0;
+                            foreach (var item in channelParticipants.Users.OfType<TLUser>())
+                            {
+                                if (item.HasStatus && item.Status is TLUserStatusOnline)
+                                {
+                                    count++;
+                                }
+                            }
+
+                            if (count > 1)
+                            {
+                                return string.Format("{0}, {1}", LocaleHelper.Declension("Members", full.ParticipantsCount ?? 0), LocaleHelper.Declension("OnlineCount", count));
+                            }
+                        }
+                    }
+
+                    return LocaleHelper.Declension("Members", full.ParticipantsCount ?? 0);
+                }
+            }
+            else if (With is TLChat chat)
+            {
+                var full = Full as TLChatFull;
+                if (full == null)
+                {
+                    full = CacheService.GetFullChat(chat.Id) as TLChatFull;
+                }
+
+                if (full == null)
+                {
+                    var response = await ProtoService.GetFullChatAsync(chat.Id);
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result.FullChat as TLChatFull;
+                    }
+                }
+
+                if (full == null)
+                {
+                    return string.Empty;
+                }
+
+                var participants = full.Participants as TLChatParticipants;
+                if (participants != null)
+                {
+                    var count = 0;
+                    foreach (var item in participants.Participants)
+                    {
+                        if (item.User != null && item.User.HasStatus && item.User.Status is TLUserStatusOnline)
+                        {
+                            count++;
+                        }
+                    }
+
+                    if (count > 1)
+                    {
+                        return string.Format("{0}, {1}", LocaleHelper.Declension("Members", participants.Participants.Count), LocaleHelper.Declension("OnlineCount", count));
+                    }
+
+                    return LocaleHelper.Declension("Members", participants.Participants.Count);
+                }
+            }
+
+            return string.Empty;
+        }
+
         #region Join channel
 
-        public RelayCommand JoinChannelCommand => new RelayCommand(JoinChannelExecute);
+        public RelayCommand JoinChannelCommand { get; }
         private async void JoinChannelExecute()
         {
             var channel = With as TLChannel;
@@ -2278,56 +2743,70 @@ namespace Unigram.ViewModels
 
         #region Toggle mute
 
-        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
+        public RelayCommand ToggleMuteCommand { get; }
         private async void ToggleMuteExecute()
         {
-            var channel = With as TLChannel;
-            if (channel != null && _dialog != null)
+            TLPeerNotifySettings notifySettings = null;
+
+            var chatFull = Full as TLChatFullBase;
+            var userFull = Full as TLUserFull;
+
+            if (chatFull != null)
             {
-                var notifySettings = _dialog.NotifySettings as TLPeerNotifySettings;
-                if (notifySettings != null)
+                notifySettings = chatFull.NotifySettings as TLPeerNotifySettings;
+            }
+            else if (userFull != null)
+            {
+                notifySettings = userFull.NotifySettings as TLPeerNotifySettings;
+            }
+
+            if (notifySettings == null)
+            {
+                return;
+            }
+
+            var peer = _peer;
+            if (peer == null)
+            {
+                return;
+            }
+
+            var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
+            var settings = new TLInputPeerNotifySettings
+            {
+                MuteUntil = muteUntil,
+                IsShowPreviews = notifySettings.IsShowPreviews,
+                IsSilent = notifySettings.IsSilent,
+                Sound = notifySettings.Sound
+            };
+
+            var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = peer }, settings);
+            if (response.IsSucceeded)
+            {
+                notifySettings.MuteUntil = muteUntil;
+
+                var dialog = CacheService.GetDialog(peer.ToPeer());
+                if (dialog != null)
                 {
-                    var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
-                    var settings = new TLInputPeerNotifySettings
-                    {
-                        MuteUntil = muteUntil,
-                        IsShowPreviews = notifySettings.IsShowPreviews,
-                        IsSilent = notifySettings.IsSilent,
-                        Sound = notifySettings.Sound
-                    };
-
-                    var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = Peer }, settings);
-                    if (response.IsSucceeded)
-                    {
-                        notifySettings.MuteUntil = muteUntil;
-                        channel.RaisePropertyChanged(() => _dialog.NotifySettings);
-
-                        var dialog = CacheService.GetDialog(Peer.ToPeer());
-                        if (dialog != null)
-                        {
-                            dialog.NotifySettings = _dialog.NotifySettings;
-                            dialog.RaisePropertyChanged(() => dialog.NotifySettings);
-                            dialog.RaisePropertyChanged(() => dialog.Self);
-
-                            var chatFull = CacheService.GetFullChat(channel.Id);
-                            if (chatFull != null)
-                            {
-                                chatFull.NotifySettings = _dialog.NotifySettings;
-                                chatFull.RaisePropertyChanged(() => chatFull.NotifySettings);
-                            }
-
-                            // TODO: 06/05/2017
-                            //var dialogChannel = dialog.With as TLChannel;
-                            //if (dialogChannel != null)
-                            //{
-                            //    dialogChannel.NotifySettings = channel.NotifySettings;
-                            //}
-                        }
-
-                        CacheService.Commit();
-                        RaisePropertyChanged(() => With);
-                    }
+                    dialog.NotifySettings = notifySettings;
+                    dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                    dialog.RaisePropertyChanged(() => dialog.IsMuted);
+                    dialog.RaisePropertyChanged(() => dialog.Self);
                 }
+
+                if (chatFull != null)
+                {
+                    chatFull.NotifySettings = notifySettings;
+                    chatFull.RaisePropertyChanged(() => chatFull.NotifySettings);
+                }
+                else if (userFull != null)
+                {
+                    userFull.NotifySettings = notifySettings;
+                    userFull.RaisePropertyChanged(() => userFull.NotifySettings);
+                }
+
+                CacheService.Commit();
+                RaisePropertyChanged(() => With);
             }
         }
 
@@ -2335,7 +2814,7 @@ namespace Unigram.ViewModels
 
         #region Toggle silent
 
-        public RelayCommand ToggleSilentCommand => new RelayCommand(ToggleSilentExecute);
+        public RelayCommand ToggleSilentCommand { get; }
         private async void ToggleSilentExecute()
         {
             var channel = With as TLChannel;
@@ -2393,7 +2872,7 @@ namespace Unigram.ViewModels
 
         #region Report Spam
 
-        public RelayCommand HideReportSpamCommand => new RelayCommand(HideReportSpamExecute);
+        public RelayCommand HideReportSpamCommand { get; }
         private async void HideReportSpamExecute()
         {
             var response = await ProtoService.HideReportSpamAsync(Peer);
@@ -2403,7 +2882,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand ReportSpamCommand => new RelayCommand(ReportSpamExecute);
+        public RelayCommand ReportSpamCommand { get; }
         private async void ReportSpamExecute()
         {
             if (IsReportSpam)
@@ -2420,7 +2899,7 @@ namespace Unigram.ViewModels
 
         #region Stickers
 
-        public RelayCommand OpenStickersCommand => new RelayCommand(OpenStickersExecute);
+        public RelayCommand OpenStickersCommand { get; }
         private void OpenStickersExecute()
         {
             _stickers.SyncStickers();
@@ -2431,7 +2910,7 @@ namespace Unigram.ViewModels
 
         #region Delete and Exit
 
-        public RelayCommand DialogDeleteCommand => new RelayCommand(DialogDeleteExecute);
+        public RelayCommand DialogDeleteCommand { get; }
         private void DialogDeleteExecute()
         {
             if (_dialog != null)
@@ -2442,9 +2921,22 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Clear history
+
+        public RelayCommand DialogClearCommand { get; }
+        private void DialogClearExecute()
+        {
+            if (_dialog != null)
+            {
+                UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.DialogClearCommand.Execute(_dialog);
+            }
+        }
+
+        #endregion
+
         #region Call
 
-        public RelayCommand CallCommand => new RelayCommand(CallExecute);
+        public RelayCommand CallCommand { get; }
         private async void CallExecute()
         {
             var user = With as TLUser;
@@ -2472,7 +2964,7 @@ namespace Unigram.ViewModels
 
         #region Unpin message
 
-        public RelayCommand UnpinMessageCommand => new RelayCommand(UnpinMessageExecute);
+        public RelayCommand UnpinMessageCommand { get; }
         private async void UnpinMessageExecute()
         {
             if (_pinnedMessage == null)
@@ -2488,7 +2980,7 @@ namespace Unigram.ViewModels
 
             if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages))
             {
-                var confirm = await TLMessageDialog.ShowAsync("Would you like to unpin this message?", "Unigram", "Yes", "No");
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.UnpinMessageAlert, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var response = await ProtoService.UpdatePinnedMessageAsync(false, channel.ToInputChannel(), 0);
@@ -2515,7 +3007,7 @@ namespace Unigram.ViewModels
 
         #region Unblock
 
-        public RelayCommand UnblockCommand => new RelayCommand(UnblockExecute);
+        public RelayCommand UnblockCommand { get; }
         private async void UnblockExecute()
         {
             var user = _with as TLUser;
@@ -2524,7 +3016,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to unblock this contact?", "Telegram", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureUnblockContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -2551,7 +3043,7 @@ namespace Unigram.ViewModels
 
         #region Switch
 
-        public RelayCommand<TLInlineBotSwitchPM> SwitchCommand => new RelayCommand<TLInlineBotSwitchPM>(SwitchExecute);
+        public RelayCommand<TLInlineBotSwitchPM> SwitchCommand { get; }
         private void SwitchExecute(TLInlineBotSwitchPM switchPM)
         {
             if (_currentInlineBot == null)
@@ -2567,7 +3059,7 @@ namespace Unigram.ViewModels
 
         #region Share my contact
 
-        public RelayCommand ShareContactCommand => new RelayCommand(ShareContactExecute);
+        public RelayCommand ShareContactCommand { get; }
         private async void ShareContactExecute()
         {
             var user = InMemoryCacheService.Current.GetUser(SettingsHelper.UserId) as TLUser;
@@ -2583,7 +3075,7 @@ namespace Unigram.ViewModels
 
         #region Add contact
 
-        public RelayCommand AddContactCommand => new RelayCommand(AddContactExecute);
+        public RelayCommand AddContactCommand { get; }
         private async void AddContactExecute()
         {
             var user = With as TLUser;
@@ -2637,9 +3129,110 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Pin chat
+
+        public RelayCommand PinChatCommand { get; }
+        private async void PinChatExecute()
+        {
+            var group = _pushService.GetGroup(this.With);
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                return;
+            }
+
+            var displayName = _pushService.GetTitle(this.With);
+            var arguments = _pushService.GetLaunch(this.With);
+            var picture = _pushService.GetPicture(this.With, group);
+
+            var secondaryTile = new SecondaryTile(group, displayName, arguments, new Uri(picture), TileSize.Default);
+            secondaryTile.VisualElements.Wide310x150Logo = new Uri(picture);
+            secondaryTile.VisualElements.Square310x310Logo = new Uri(picture);
+
+            var tileCreated = await secondaryTile.RequestCreateAsync();
+            if (tileCreated)
+            {
+                UpdatePinChatCommands();
+                ResetTile();
+            }
+        }
+
+        private void ResetTile()
+        {
+            var group = _pushService.GetGroup(this.With);
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                return;
+            }
+
+            var displayName = _pushService.GetTitle(this.With);
+            var picture = _pushService.GetPicture(this.With, group);
+
+            var existsSecondaryTile = SecondaryTile.Exists(group);
+            if (existsSecondaryTile)
+            {
+                NotificationTask.ResetSecondaryTile(displayName, picture, group);
+            }
+        }
+
+        private bool CanExecutePinChatCommand()
+        {
+            var group = _pushService.GetGroup(this.With);
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                return false;
+            }
+
+            return !SecondaryTile.Exists(group);
+        }
+
+        #endregion
+
+        #region Unpin chat
+
+        public RelayCommand UnpinChatCommand { get; }
+        private async void UnpinChatExecute()
+        {
+            var group = _pushService.GetGroup(this.With);
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                return;
+            }
+
+            var secondaryTile = new SecondaryTile(group);
+            if (secondaryTile == null)
+            {
+                return;
+            }
+
+            var tileDeleted = await secondaryTile.RequestDeleteAsync();
+            if (tileDeleted)
+            {
+                UpdatePinChatCommands();
+            }
+        }
+
+        private bool CanUnpinChatExecute()
+        {
+            var group = _pushService.GetGroup(this.With);
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                return false;
+            }
+
+            return SecondaryTile.Exists(group);
+        }
+
+        #endregion
+
+        private void UpdatePinChatCommands()
+        {
+            CanPinChat = CanExecutePinChatCommand();
+            CanUnpinChat = !CanPinChat;
+        }
+
         #region Start
 
-        public RelayCommand StartCommand => new RelayCommand(StartExecute);
+        public RelayCommand StartCommand { get; }
         private async void StartExecute()
         {
             var bot = GetStartingBot();
@@ -2712,7 +3305,7 @@ namespace Unigram.ViewModels
 
         #region Search
 
-        public RelayCommand SearchCommand => new RelayCommand(SearchExecute);
+        public RelayCommand SearchCommand { get; }
         private void SearchExecute()
         {
             Search = new DialogSearchViewModel(ProtoService, CacheService, Aggregator, this);
@@ -2722,7 +3315,7 @@ namespace Unigram.ViewModels
 
         #region Jump to date
 
-        public RelayCommand JumpDateCommand => new RelayCommand(JumpDateExecute);
+        public RelayCommand JumpDateCommand { get; }
         private async void JumpDateExecute()
         {
             var dialog = new Controls.Views.CalendarView();
@@ -2741,7 +3334,7 @@ namespace Unigram.ViewModels
 
         #region Group stickers
 
-        public RelayCommand GroupStickersCommand => new RelayCommand(GroupStickersExecute);
+        public RelayCommand GroupStickersCommand { get; }
         private void GroupStickersExecute()
         {
             var channel = With as TLChannel;
@@ -2763,6 +3356,39 @@ namespace Unigram.ViewModels
             else
             {
                 Stickers.HideGroup(channelFull);
+            }
+        }
+
+        #endregion
+
+        #region Read mentions
+
+        public RelayCommand ReadMentionsCommand { get; }
+        private async void ReadMentionsExecute()
+        {
+            var peer = _peer;
+            if (peer == null)
+            {
+                return;
+            }
+
+            var dialog = _dialog;
+            if (dialog == null)
+            {
+                return;
+            }
+
+            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to clear your mentions?", "Telegram", "OK", "Cancel");
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await ProtoService.ReadMentionsAsync(peer);
+            if (response.IsSucceeded)
+            {
+                dialog.UnreadMentionsCount = 0;
+                dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
             }
         }
 
@@ -2869,22 +3495,21 @@ namespace Unigram.ViewModels
             }
 
             var oldFirst = item.IsFirst;
-            var isItemPost = false;
-            if (item is TLMessage) isItemPost = ((TLMessage)item).IsPost;
 
-            if (!isItemPost)
+            var itemPost = item is TLMessage && ((TLMessage)item).IsPost;
+
+            if (!itemPost)
             {
                 var attach = false;
                 if (previous != null)
                 {
-                    var isPreviousPost = false;
-                    if (previous is TLMessage) isPreviousPost = ((TLMessage)previous).IsPost;
+                    var previousPost = previous is TLMessage && ((TLMessage)previous).IsPost;
 
-                    attach = !isPreviousPost &&
+                    attach = !previousPost &&
                              !(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
                              !(previous.IsService()) &&
                              !(previous is TLMessageEmpty) &&
-                             previous.FromId == item.FromId &&
+                             AreTogether(item, previous) &&
                              item.Date - previous.Date < 900;
                 }
 
@@ -2904,70 +3529,27 @@ namespace Unigram.ViewModels
                     previous.IsLast = false;
                 }
             }
-
-            //if (item.IsFirst && item is TLMessage)
-            //{
-            //    var message = item as TLMessage;
-            //    if (message != null && !message.IsPost && !message.IsOut)
-            //    {
-            //        base.InsertItem(index, new TLMessageEmpty { Date = item.Date, FromId = item.FromId, Id = item.Id, ToId = item.ToId });
-            //    }
-            //}
-
-            //if (!item.IsFirst && oldFirst)
-            //{
-            //    var next = index > 0 ? this[index - 1] : null;
-            //    if (next is TLMessageEmpty)
-            //    {
-            //        Remove(item);
-            //    }
-            //}
         }
 
-        //public ObservableCollection<MessageGroup> Groups { get; private set; } = new ObservableCollection<MessageGroup>();
+        private bool AreTogether(TLMessageBase item1, TLMessageBase item2)
+        {
+            if (item1 is TLMessage message1 && item2 is TLMessage message2)
+            {
+                var saved1 = message1.IsSaved();
+                var saved2 = message2.IsSaved();
+                if (saved1 && saved2)
+                {
+                    return message1.FwdFrom.FromId == message2.FwdFrom.FromId &&
+                           message1.FwdFrom.SavedFromPeer.Equals(message2.FwdFrom.SavedFromPeer);
+                }
+                else if (saved1 || saved2)
+                {
+                    return false;
+                }
+            }
 
-        //protected override void InsertItem(int index, TLMessageBase item)
-        //{
-        //    base.InsertItem(index, item);
-
-        //    var group = GroupForIndex(index);
-        //    if (group == null || group?.FromId != item.FromId)
-        //    {
-        //        group = new MessageGroup(this, item.From, item.FromId, item.ToId, item is TLMessage ? ((TLMessage)item).IsOut : false);
-        //        Groups.Insert(index == 0 ? 0 : Groups.Count, group); // TODO: should not be 0 all the time
-        //    }
-
-        //    group.Insert(Math.Max(0, index - group.FirstIndex), item);
-        //}
-
-        //protected override void RemoveItem(int index)
-        //{
-        //    base.RemoveItem(index);
-
-        //    var group = GroupForIndex(index);
-        //    if (group != null)
-        //    {
-        //        group.RemoveAt(index - group.FirstIndex);
-        //    }
-        //}
-
-        //private MessageGroup GroupForIndex(int index)
-        //{
-        //    if (index == 0)
-        //    {
-        //        return Groups.FirstOrDefault();
-        //    }
-        //    else if (index == Count - 1)
-        //    {
-        //        return Groups.LastOrDefault();
-        //    }
-        //    else
-        //    {
-        //        return Groups.FirstOrDefault(x => x.FirstIndex >= index && x.LastIndex <= index);
-        //    }
-        //}
-
-        //public override event NotifyCollectionChangedEventHandler CollectionChanged;
+            return item1.FromId == item2.FromId;
+        }
 
         public void RaiseCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
@@ -2987,80 +3569,35 @@ namespace Unigram.ViewModels
 
                 UpdateAttach(next, item, index + 1);
                 UpdateAttach(item, previous, index);
-
             }
 
             OnCollectionChanged(args);
-            //CollectionChanged?.Invoke(this, args);
+        }
+
+        class TLMessageComparer : IComparer<TLMessage>
+        {
+            public int Compare(TLMessage x, TLMessage y)
+            {
+                if (x.RandomId is long xid && y.RandomId is long yid)
+                {
+                    return xid.CompareTo(yid);
+                }
+
+                return x.Id.CompareTo(y.Id);
+            }
         }
     }
 
-    //public class MessageGroup : ObservableCollection<TLMessageBase>
-    //{
-    //    private ObservableCollection<MessageGroup> _parent;
+    public class TLMessageMediaGroup : TLMessageMediaBase, ITLMessageMediaCaption
+    {
+        public TLMessageMediaGroup()
+        {
+            Layout = new GroupedMessages();
+        }
 
-    //    public MessageGroup(MessageCollection parent, TLUser from, int? fromId, TLPeerBase toId, bool isOut)
-    //    {
-    //        _parent = parent.Groups;
-
-    //        From = from;
-    //        if (fromId == null)
-    //            FromId = 33303409;
-    //        FromId = fromId;
-    //        ToId = toId;
-    //        IsOut = isOut;
-    //    }
-
-    //    public TLUser From { get; private set; }
-
-    //    public int? FromId { get; private set; }
-
-    //    public TLPeerBase ToId { get; private set; }
-
-    //    public bool IsOut { get; private set; }
-
-    //    public int FirstIndex
-    //    {
-    //        get
-    //        {
-    //            var count = 0;
-    //            var index = _parent.IndexOf(this);
-    //            if (index > 0)
-    //            {
-    //                count = _parent[index - 1].LastIndex + 1;
-    //            }
-
-    //            return count;
-    //        }
-    //    }
-
-    //    public int LastIndex
-    //    {
-    //        get
-    //        {
-    //            return FirstIndex + Math.Max(0, Count - 1);
-    //        }
-    //    }
-
-    //    protected override void InsertItem(int index, TLMessageBase item)
-    //    {
-    //        // TODO: experimental
-    //        if (index == 0)
-    //        {
-    //            if (Count > 0)
-    //                this[0].IsFirst = false;
-
-    //            item.IsFirst = true;
-    //        }
-
-    //        base.InsertItem(index, item);
-    //    }
-
-    //    protected override void RemoveItem(int index)
-    //    {
-    //        base.RemoveItem(index);
-    //    }
-    //}
+        public String Caption { get; set; }
+        public GroupedMessages Layout { get; private set; }
+    }
 
     public class TLUserCommand
     {

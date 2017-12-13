@@ -1,16 +1,25 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Unigram.Core.Unidecode;
+using Telegram.Api.Helpers;
+using Telegram.Api.TL;
+using Unigram.Controls;
+using Unigram.Controls.Messages;
+using Unigram.ViewModels;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
@@ -19,6 +28,49 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static bool IsAdmin(this TLMessageBase message)
+        {
+            // Kludge
+            return message.Parent is TLChannel channel && DialogViewModel.Admins.TryGetValue(channel.Id, out IList<TLChannelParticipantBase> admins) && admins.Any(x => x.UserId == message.FromId);
+        }
+
+        public static void BeginOnUIThread(this DependencyObject element, Action action)
+        {
+            element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+        }
+
+        public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
+        public static int ToInt32(this String value)
+        {
+            if (value == null)
+            {
+                return 0;
+            }
+
+            var val = 0;
+            try
+            {
+                var matcher = _pattern.Match(value);
+                if (matcher.Success)
+                {
+                    var num = matcher.Groups[0].Value;
+                    val = int.Parse(num);
+                }
+            }
+            catch (Exception e)
+            {
+                //FileLog.e(e);
+            }
+
+            return val;
+        }
+
+        public static int TryParseOrDefault(string value, int defaultValue)
+        {
+            int.TryParse(value, out defaultValue);
+            return defaultValue;
+        }
+
         public static Dictionary<string, string> ParseQueryString(this string query)
         {
             var first = query.Split('?');
@@ -50,30 +102,77 @@ namespace Unigram.Common
             return source.IndexOf(toCheck, comp) >= 0;
         }
 
-        public static bool IsLike(this string source, string query, StringComparison comp)
+        public static bool StartsWith(this string source, string[] toCheck, StringComparison comp)
         {
-            var result = query.Split(' ').All(x =>
+            foreach (var item in toCheck)
             {
-                var index = source.IndexOf(x, comp);
-                if (index > -1)
+                if (source.StartsWith(item, comp))
                 {
-                    return index == 0 || char.IsSeparator(source[index - 1]) || !char.IsLetterOrDigit(source[index - 1]);
+                    return true;
                 }
+            }
 
-                return false;
-            });
+            return false;
+        }
 
-            source = Unidecoder.Unidecode(source);
-            return result || query.Split(' ').All(x =>
+        public static bool IsLike(this TLUser user, string[] query, StringComparison comp)
+        {
+            return IsLike(user.FullName, user.Username, query, comp);
+        }
+
+        public static bool IsLike(this TLChannel channel, string[] query, StringComparison comp)
+        {
+            return IsLike(channel.Title, channel.Username, query, comp);
+        }
+
+        public static bool IsLike(this TLChat chat, string[] query, StringComparison comp)
+        {
+            return IsLike(chat.Title, null, query, comp);
+        }
+
+        public static bool IsLike(string name, string username, string[] query, StringComparison comp)
+        {
+            var translit = LocaleHelper.Transliterate(name);
+            if (translit.Equals(name, StringComparison.OrdinalIgnoreCase))
             {
-                var index = source.IndexOf(x, comp);
-                if (index > -1)
-                {
-                    return index == 0 || char.IsSeparator(source[index - 1]) || !char.IsLetterOrDigit(source[index - 1]);
-                }
+                translit = null;
+            }
 
-                return false;
-            });
+            foreach (var q in query)
+            {
+                if (name.StartsWith(q, comp) || name.Contains(" " + q, comp) || translit != null && (translit.StartsWith(q, comp) || translit.Contains(" " + q, comp)))
+                {
+                    return true;
+                }
+                else if (username != null && username.StartsWith(q, comp))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsLike(this string source, string[] queries, StringComparison comp)
+        {
+            foreach (var query in queries)
+            {
+                if (query.Split(' ').All(x =>
+                {
+                    var index = source.IndexOf(x, comp);
+                    if (index > -1)
+                    {
+                        return index == 0 || char.IsSeparator(source[index - 1]) || !char.IsLetterOrDigit(source[index - 1]);
+                    }
+
+                    return false;
+                }))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static string Format(this string input)
@@ -86,14 +185,36 @@ namespace Unigram.Common
             return input;
         }
 
-        public static string TrimEnd(this string input, string suffixToRemove)
+        public static string TrimStart(this string target, string trimString)
         {
-            if (input != null && suffixToRemove != null && input.EndsWith(suffixToRemove))
+            string result = target;
+            while (result.StartsWith(trimString))
             {
-                return input.Substring(0, input.Length - suffixToRemove.Length);
+                result = result.Substring(trimString.Length);
             }
-            else return input;
+
+            return result;
         }
+
+        public static string TrimEnd(this string target, string trimString)
+        {
+            string result = target;
+            while (result.EndsWith(trimString))
+            {
+                result = result.Substring(0, result.Length - trimString.Length);
+            }
+
+            return result;
+        }
+
+        //public static string TrimEnd(this string input, string suffixToRemove)
+        //{
+        //    if (input != null && suffixToRemove != null && input.EndsWith(suffixToRemove))
+        //    {
+        //        return input.Substring(0, input.Length - suffixToRemove.Length);
+        //    }
+        //    else return input;
+        //}
 
         public static void AddRange<T>(this IList<T> list, IEnumerable<T> source)
         {
@@ -249,6 +370,144 @@ namespace Unigram.Common
             }
 
             return transform;
+        }
+
+
+        public static async Task UpdateLayoutAsync(this FrameworkElement element)
+        {
+            var tcs = new TaskCompletionSource<object>();
+
+            EventHandler<object> layoutUpdated = (s1, e1) => tcs.TrySetResult(null);
+            try
+            {
+                element.LayoutUpdated += layoutUpdated;
+                element.UpdateLayout();
+                await tcs.Task;
+            }
+            finally
+            {
+                element.LayoutUpdated -= layoutUpdated;
+            }
+        }
+    }
+
+    public static class ClipboardEx
+    {
+        public static void TrySetContent(DataPackage content)
+        {
+            try
+            {
+                Clipboard.SetContent(content);
+                Clipboard.Flush();
+            }
+            catch { }
+        }
+    }
+
+    // Modified from: https://stackoverflow.com/a/32559623/1680863
+    public static class ListViewExtensions
+    {
+        public async static Task ScrollToItem(this ListViewBase listViewBase, object item, SnapPointsAlignment alignment)
+        {
+            // get the ScrollViewer withtin the ListView/GridView
+            var scrollViewer = listViewBase.GetScrollViewer();
+            // get the SelectorItem to scroll to
+            var selectorItem = listViewBase.ContainerFromItem(item) as SelectorItem;
+
+            // when it's null, means virtualization is on and the item hasn't been realized yet
+            if (selectorItem == null)
+            {
+                // call task-based ScrollIntoViewAsync to realize the item
+                await listViewBase.ScrollIntoViewAsync(item);
+
+                // this time the item shouldn't be null again
+                selectorItem = (SelectorItem)listViewBase.ContainerFromItem(item);
+            }
+
+            if (selectorItem == null)
+            {
+                return;
+            }
+
+            // calculate the position object in order to know how much to scroll to
+            var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
+            var position = transform.TransformPoint(new Point(0, 0));
+
+            if (alignment == SnapPointsAlignment.Near) { }
+            else if (alignment == SnapPointsAlignment.Center)
+            {
+                position.Y -= (listViewBase.ActualHeight - selectorItem.ActualHeight) / 2d;
+            }
+            else if (alignment == SnapPointsAlignment.Far)
+            {
+                position.Y -= listViewBase.ActualHeight - selectorItem.ActualHeight;
+            }
+
+            // scroll to desired position with animation!
+            scrollViewer.ChangeView(position.X, position.Y, null);
+
+            var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
+            if (bubble != null)
+            {
+                bubble.Highlight();
+            }
+        }
+
+        public static async Task ScrollIntoViewAsync(this ListViewBase listViewBase, object item)
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var scrollViewer = listViewBase.GetScrollViewer();
+
+            EventHandler<object> layoutUpdated = (s1, e1) => tcs.TrySetResult(null);
+            EventHandler<ScrollViewerViewChangedEventArgs> viewChanged = (s, e) =>
+            {
+                scrollViewer.LayoutUpdated += layoutUpdated;
+                scrollViewer.UpdateLayout();
+            };
+            try
+            {
+                scrollViewer.ViewChanged += viewChanged;
+                listViewBase.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+                await tcs.Task;
+            }
+            finally
+            {
+                scrollViewer.ViewChanged -= viewChanged;
+                scrollViewer.LayoutUpdated -= layoutUpdated;
+            }
+        }
+
+        public static async Task ChangeViewAsync(this ScrollViewer scrollViewer, double? horizontalOffset, double? verticalOffset, bool disableAnimation)
+        {
+            var tcs = new TaskCompletionSource<object>();
+
+            EventHandler<object> layoutUpdated = (s1, e1) => tcs.TrySetResult(null);
+            EventHandler<ScrollViewerViewChangedEventArgs> viewChanged = (s, e) =>
+            {
+                scrollViewer.LayoutUpdated += layoutUpdated;
+                scrollViewer.UpdateLayout();
+            };
+            try
+            {
+                scrollViewer.ViewChanged += viewChanged;
+                scrollViewer.ChangeView(horizontalOffset, verticalOffset, null, disableAnimation);
+                await tcs.Task;
+            }
+            finally
+            {
+                scrollViewer.ViewChanged -= viewChanged;
+                scrollViewer.LayoutUpdated -= layoutUpdated;
+            }
+        }
+
+        public static ScrollViewer GetScrollViewer(this ListViewBase listViewBase)
+        {
+            if (listViewBase is BubbleListView bubble)
+            {
+                return bubble.ScrollingHost;
+            }
+
+            return listViewBase.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
         }
     }
 }

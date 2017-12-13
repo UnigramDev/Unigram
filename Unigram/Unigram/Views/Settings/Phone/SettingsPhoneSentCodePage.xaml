@@ -1,0 +1,93 @@
+﻿<Page
+    x:Class="Unigram.Views.Settings.SettingsPhoneSentCodePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:common="using:Unigram.Common"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnLoaded"
+    mc:Ignorable="d">
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:ButtonPageHeader
+            x:Name="Header"
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource YourCode}"
+            Glyph="&#xE10B;"/>
+
+        <Grid x:Name="ContentPanel" Padding="12,20" MaxWidth="360" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock
+                x:Name="TitleLabel"
+                Visibility="Collapsed"
+                Text="{CustomResource YourCode}"
+                Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock
+                common:TextBlockHelper.Markdown="{x:Bind ConvertType(ViewModel.SentCode.Type, ViewModel.PhoneNumber), FallbackValue=''}"
+                Style="{StaticResource BodyTextBlockStyle}"
+                Padding="0,8,0,16"
+                Grid.Row="1"/>
+
+            <controls:UpdateTextBox
+                x:Name="PrimaryInput"
+                Text="{Binding PhoneCode, Mode=TwoWay}"
+                Margin="0,12,0,4"
+                InputScope="Digits"
+                IsTextPredictionEnabled="False"
+                PlaceholderText="{CustomResource Code}"
+                Grid.Row="3"/>
+
+            <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
+
+            <Button x:Name="NextButton"
+                    Content="{CustomResource OK}"
+                    Command="{x:Bind ViewModel.SendCommand}"
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                    Foreground="White"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,4,0,8"
+                    Grid.Row="5"
+                    Visibility="Collapsed"/>
+
+            <HyperlinkButton Command="{x:Bind ViewModel.ResendCommand}"
+                             Visibility="{x:Bind (Visibility)ViewModel.SentCode.HasNextType}"
+                             Content="{CustomResource DidNotGetTheCode}"
+                             Grid.Row="6"/>
+        </Grid>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="DisplayModeStates">
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentPanel.VerticalAlignment" Value="Center" />
+                        <Setter Target="Header.Visibility" Value="Collapsed"/>
+                        <Setter Target="NextButton.Visibility" Value="Visible"/>
+                        <Setter Target="TitleLabel.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Compact">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</Page>

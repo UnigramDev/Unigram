@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.Helpers;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -19,9 +21,16 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class DeleteChannelMessageDialog : ContentDialog
     {
-        public DeleteChannelMessageDialog()
+        public DeleteChannelMessageDialog(int count, string fullName)
         {
             this.InitializeComponent();
+
+            Title = Strings.Android.Message;
+            PrimaryButtonText = Strings.Android.OK;
+            SecondaryButtonText = Strings.Android.Cancel;
+
+            Message.Text = string.Format(Strings.Android.AreYouSureDeleteMessages, LocaleHelper.Declension("Messages", count));
+            DeleteAllCheck.Content = string.Format(Strings.Android.DeleteAllFrom, fullName ?? string.Empty);
         }
 
         public bool BanUser

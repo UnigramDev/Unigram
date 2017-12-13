@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ namespace Telegram.Api.TL
             set
             {
                 _uploadingProgress = value;
-                RaisePropertyChanged(() => UploadingProgress);
+                RaisePropertyChanged(() => IsTransferring);
                 RaisePropertyChanged(() => Progress);
             }
         }
@@ -44,7 +45,7 @@ namespace Telegram.Api.TL
             set
             {
                 _downloadingProgress = value;
-                RaisePropertyChanged(() => DownloadingProgress);
+                RaisePropertyChanged(() => IsTransferring);
                 RaisePropertyChanged(() => Progress);
             }
         }
@@ -62,20 +63,11 @@ namespace Telegram.Api.TL
             }
         }
 
-        private bool _isTransferring;
         public bool IsTransferring
         {
             get
             {
-                return _isTransferring;
-            }
-            set
-            {
-                if (_isTransferring != value)
-                {
-                    _isTransferring = value;
-                    RaisePropertyChanged(() => IsTransferring);
-                }
+                return (_downloadingProgress > 0 && _downloadingProgress < 1) || (_uploadingProgress > 0 && _uploadingProgress < 1);
             }
         }
 
@@ -83,11 +75,10 @@ namespace Telegram.Api.TL
 
         public Progress<double> Download()
         {
-            IsTransferring = true;
+            DownloadingProgress = double.Epsilon;
 
             return new Progress<double>((value) =>
             {
-                IsTransferring = value < 1 && value > 0;
                 DownloadingProgress = value;
                 Debug.WriteLine(value);
             });
@@ -95,11 +86,10 @@ namespace Telegram.Api.TL
 
         public Progress<double> Upload()
         {
-            IsTransferring = true;
+            UploadingProgress = double.Epsilon;
 
             return new Progress<double>((value) =>
             {
-                IsTransferring = value < 1 && value > 0;
                 UploadingProgress = value;
                 Debug.WriteLine(value);
             });
@@ -116,21 +106,54 @@ namespace Telegram.Api.TL
 
     public partial class TLPhoto
     {
+        public async void DownloadAsync(IDownloadFileManager manager, Action<TLPhoto> completed)
+        {
+            var photoSize = Full as TLPhotoSize;
+            if (photoSize == null)
+            {
+                return;
+            }
+
+            var location = photoSize.Location as TLFileLocation;
+            if (location == null)
+            {
+                return;
+            }
+
+            var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+
+            }
+            else
+            {
+                if (IsTransferring)
+                {
+                    return;
+                }
+
+                var operation = manager.DownloadFileAsync(location, photoSize.Size);
+                var download = await operation.AsTask(Download());
+                if (download != null)
+                {
+                    completed(this);
+                }
+            }
+        }
         public void Cancel(IDownloadFileManager manager, IUploadManager uploadManager)
         {
             if (manager != null)
             {
                 manager.CancelDownloadFile(this);
-                DownloadingProgress = 0;
-                IsTransferring = false;
             }
 
             if (uploadManager != null)
             {
                 uploadManager.CancelUploadFile(Id);
-                UploadingProgress = 0;
-                IsTransferring = false;
             }
+
+            DownloadingProgress = 0;
+            UploadingProgress = 0;
         }
 
         public override TLInputPhotoBase ToInputPhoto()

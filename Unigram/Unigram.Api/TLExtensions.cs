@@ -205,6 +205,11 @@ namespace Telegram.Api
 
         public static bool CodeEquals(this TLRPCError error, TLErrorCode code)
         {
+            if (error == null)
+            {
+                return false;
+            }
+
             if (Enum.IsDefined(typeof(TLErrorCode), error.ErrorCode))
             {
                 return (TLErrorCode)error.ErrorCode == code;
@@ -215,7 +220,10 @@ namespace Telegram.Api
 
         public static bool TypeEquals(this TLRPCError error, TLErrorType type)
         {
-            if (error.ErrorMessage == null) return false;
+            if (error == null || error.ErrorMessage == null)
+            {
+                return false;
+            }
 
             var strings = error.ErrorMessage.Split(':');
             var typeString = strings[0];

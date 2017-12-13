@@ -23,4 +23,27 @@ namespace Telegram.Api.TL
             }
         }
     }
+
+    public partial class TLFileLocation
+    {
+        public TLInputFileLocation ToInputFileLocation()
+        {
+            return new TLInputFileLocation
+            {
+                LocalId = LocalId,
+                Secret = Secret,
+                VolumeId = VolumeId
+            };
+        }
+
+        public override void Update(TLFileLocationBase fileLocation)
+        {
+            if (fileLocation is TLFileLocation location)
+            {
+                DCId = location.DCId;
+            }
+
+            base.Update(fileLocation);
+        }
+    }
 }

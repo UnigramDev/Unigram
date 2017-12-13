@@ -9,6 +9,18 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}"/>
+
+        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
+            <Setter Property="Padding" Value="0,8,0,8"/>
+        </Style>
+
+        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
+            <Setter Property="Margin" Value="12,8,12,0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
         <Style x:Key="SubtitleButtonStyle" TargetType="controls:BadgeButton">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
@@ -81,74 +93,60 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Data and Storage"/>
+        <controls:PageHeader Text="{CustomResource DataSettings}"/>
 
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
         <ScrollViewer x:Name="ScrollingHost"
-                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-
-            <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Padding="0,0,0,72" Grid.Row="1">
+            <StackPanel Margin="0,0,0,48">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="AUTOMATIC MEDIA DOWNLOAD" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource AutomaticMediaDownload}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton
                         Badge="{x:Bind ViewModel.AutoDownloads[0].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{x:Bind ViewModel.AutoDownloads[0].Type}"
-                        Content="When using mobile data"
-                        Margin="-12,0"
+                        Content="{CustomResource WhenUsingMobileData}"
                         Style="{StaticResource SubtitleButtonStyle}"/>
                     <controls:BadgeButton
                         Badge="{x:Bind ViewModel.AutoDownloads[1].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{x:Bind ViewModel.AutoDownloads[1].Type}"
-                        Content="When connected on Wi-Fi"
-                        Margin="-12,0"
+                        Content="{CustomResource WhenConnectedOnWiFi}"
                         Style="{StaticResource SubtitleButtonStyle}"/>
                     <controls:BadgeButton
                         Badge="{x:Bind ViewModel.AutoDownloads[2].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{x:Bind ViewModel.AutoDownloads[2].Type}"
-                        Content="When roaming"
-                        Margin="-12,0,-12,-12"
-                        BorderBrush="Transparent"
+                        Content="{CustomResource WhenRoaming}"
                         Style="{StaticResource SubtitleButtonStyle}"/>
                 </StackPanel>
+                
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="DISK AND NETWORK USAGE" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource DataUsage}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:HyperButton
-                        Tag="Storage usage"
+                        Tag="{CustomResource StorageUsage}"
                         Click="Storage_Click"
-                        Margin="-12,0"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                     <controls:HyperButton
                         Tag="Network usage"
                         Click="Stats_Click"
-                        Margin="-12,0,-12,-12"
-                        BorderBrush="Transparent"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                 </StackPanel>
+                
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="CALLS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <ComboBox Header="Use less data for calls" SelectedIndex="0">
-                        <ComboBoxItem Content="Never"/>
-                        <ComboBoxItem Content="Only on mobile data"/>
-                        <ComboBoxItem Content="Always"/>
-                    </ComboBox>
+                    <TextBlock Text="{CustomResource Calls}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:BadgeButton
+                        Badge="{x:Bind ConvertUseLessData(ViewModel.UseLessData), Mode=OneWay}"
+                        Command="{x:Bind ViewModel.UseLessDataCommand}"
+                        Content="{CustomResource VoipUseLessData}"/>
                 </StackPanel>
+                
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="PROXY" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource Proxy}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:HyperButton
-                        Tag="Proxy Settings"
+                        Tag="{CustomResource ProxySettings}"
                         Click="Proxy_Click"
-                        Margin="-12,0,-12,-12"
-                        BorderBrush="Transparent"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                 </StackPanel>
             </StackPanel>

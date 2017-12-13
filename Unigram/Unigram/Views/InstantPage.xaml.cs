@@ -251,7 +251,7 @@ namespace Unigram.Views
                 MTProtoService.Current.ResolveUsernameAsync(chat.Username,
                     result =>
                     {
-                        Execute.BeginOnUIThread(() => button.Content = result.Chats.FirstOrDefault());
+                        this.BeginOnUIThread(() => button.Content = result.Chats.FirstOrDefault());
                     });
             }
 
@@ -390,7 +390,7 @@ namespace Unigram.Views
                         if (caption)
                         {
                             textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                            textBlock.TextAlignment = TextAlignment.Center;
+                            textBlock.Margin = new Thickness(0, 12, 0, 0);
                         }
                         break;
                     case TLType.PageBlockPullquote:
@@ -501,26 +501,20 @@ namespace Unigram.Views
                 transferBinding.Path = new PropertyPath("IsTransferring");
                 transferBinding.Source = photo;
 
+                var progressBinding = new Binding();
+                progressBinding.Path = new PropertyPath("Progress");
+                progressBinding.Source = photo;
+
                 var transfer = new TransferButton();
                 transfer.Completed += (s, args) => Image_Click(child, null);
                 transfer.Transferable = photo;
                 transfer.Style = Application.Current.Resources["MediaTransferButtonStyle"] as Style;
                 transfer.SetBinding(TransferButton.IsTransferringProperty, transferBinding);
-
-                var progressBinding = new Binding();
-                progressBinding.Path = new PropertyPath("Progress");
-                progressBinding.Source = photo;
-
-                var progress = new ProgressBarRing();
-                progress.Background = new SolidColorBrush(Colors.Transparent);
-                progress.Foreground = new SolidColorBrush(Colors.White);
-                progress.IsHitTestVisible = false;
-                progress.SetBinding(ProgressBarRing.ValueProperty, progressBinding);
+                transfer.SetBinding(TransferButton.ProgressProperty, progressBinding);
 
                 var grid = new Grid();
                 grid.Children.Add(child);
                 grid.Children.Add(transfer);
-                grid.Children.Add(progress);
 
                 element.Children.Add(grid);
 
@@ -558,26 +552,20 @@ namespace Unigram.Views
                 transferBinding.Path = new PropertyPath("IsTransferring");
                 transferBinding.Source = video;
 
+                var progressBinding = new Binding();
+                progressBinding.Path = new PropertyPath("Progress");
+                progressBinding.Source = video;
+
                 var transfer = new TransferButton();
                 transfer.Completed += (s, args) => Image_Click(child, null);
                 transfer.Transferable = video;
                 transfer.Style = Application.Current.Resources["MediaTransferButtonStyle"] as Style;
                 transfer.SetBinding(TransferButton.IsTransferringProperty, transferBinding);
-
-                var progressBinding = new Binding();
-                progressBinding.Path = new PropertyPath("Progress");
-                progressBinding.Source = video;
-
-                var progress = new ProgressBarRing();
-                progress.Background = new SolidColorBrush(Colors.Transparent);
-                progress.Foreground = new SolidColorBrush(Colors.White);
-                progress.IsHitTestVisible = false;
-                progress.SetBinding(ProgressBarRing.ValueProperty, progressBinding);
+                transfer.SetBinding(TransferButton.ProgressProperty, progressBinding);
 
                 var grid = new Grid();
                 grid.Children.Add(child);
                 grid.Children.Add(transfer);
-                grid.Children.Add(progress);
 
                 element.Children.Add(grid);
 
@@ -707,7 +695,7 @@ namespace Unigram.Views
         {
             var element = new StackPanel { Style = Resources["BlockCollageStyle"] as Style };
 
-            var items = new List<Image>();
+            var items = new List<ImageView>();
             foreach (var item in block.Items)
             {
                 if (item is TLPageBlockPhoto photoBlock)
@@ -715,8 +703,13 @@ namespace Unigram.Views
                     var photo = photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
                     if (photo != null)
                     {
-                        var child = new Image();
+                        var galleryItem = new GalleryPhotoItem(photo as TLPhoto, photoBlock.Caption?.ToString());
+                        ViewModel.Gallery.Items.Add(galleryItem);
+
+                        var child = new ImageView();
                         child.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
+                        child.DataContext = galleryItem;
+                        child.Click += Image_Click;
                         child.Width = 72;
                         child.Height = 72;
                         child.Stretch = Stretch.UniformToFill;
@@ -730,8 +723,13 @@ namespace Unigram.Views
                     var video = documents.FirstOrDefault(x => x.Id == videoBlock.VideoId);
                     if (video != null)
                     {
-                        var child = new Image();
+                        var galleryItem = new GalleryDocumentItem(video as TLDocument, videoBlock.Caption?.ToString());
+                        ViewModel.Gallery.Items.Add(galleryItem);
+
+                        var child = new ImageView();
                         child.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
+                        child.DataContext = galleryItem;
+                        child.Click += Image_Click;
                         child.Width = 72;
                         child.Height = 72;
                         child.Stretch = Stretch.UniformToFill;
@@ -746,11 +744,12 @@ namespace Unigram.Views
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
 
             for (int i = 0; i < items.Count; i++)
             {
-                var y = i / 3;
-                var x = i % 3;
+                var y = i / 4;
+                var x = i % 4;
 
                 grid.Children.Add(items[i]);
                 Grid.SetRow(items[i], y);
@@ -783,7 +782,7 @@ namespace Unigram.Views
             header.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
             header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
             header.ColumnDefinitions.Add(new ColumnDefinition());
-            header.Margin = new Thickness(_padding, 0, 0, _padding);
+            header.Margin = new Thickness(_padding, 0, 0, 0);
 
             var photo = photos.FirstOrDefault(x => x.Id == block.AuthorPhotoId);
             var ellipse = new Ellipse();
@@ -1104,7 +1103,7 @@ namespace Unigram.Views
                 protoService.SendInformativeMessageInternal<TLWebPageBase>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
                     result =>
                     {
-                        Execute.BeginOnUIThread(() =>
+                        this.BeginOnUIThread(() =>
                         {
                             ViewModel.NavigationService.Navigate(typeof(InstantPage), result);
                         });

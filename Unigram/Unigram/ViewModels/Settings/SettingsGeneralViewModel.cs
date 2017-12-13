@@ -17,7 +17,7 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsGeneralViewModel : UnigramViewModelBase
     {
-        private IContactsService _contactsService;
+        private readonly IContactsService _contactsService;
 
         public SettingsGeneralViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IContactsService contactsService)
             : base(protoService, cacheService, aggregator)
@@ -47,6 +47,19 @@ namespace Unigram.ViewModels.Settings
             set
             {
                 ApplicationSettings.Current.IsReplaceEmojiEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsAutoPlayEnabled
+        {
+            get
+            {
+                return ApplicationSettings.Current.IsAutoPlayEnabled;
+            }
+            set
+            {
+                ApplicationSettings.Current.IsAutoPlayEnabled = value;
                 RaisePropertyChanged();
             }
         }
@@ -97,11 +110,11 @@ namespace Unigram.ViewModels.Settings
                     var contacts = CacheService.GetContacts();
                     var response = new TLContactsContacts { Users = new TLVector<TLUserBase>(contacts) };
 
-                    await _contactsService.SyncContactsAsync(response);
+                    await _contactsService.ExportAsync(response);
                 }
                 else
                 {
-                    await _contactsService.UnsyncContactsAsync();
+                    await _contactsService.RemoveAsync();
                 }
             }
         }

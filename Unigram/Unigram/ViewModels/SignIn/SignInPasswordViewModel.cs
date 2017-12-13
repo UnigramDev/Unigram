@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,6 +29,9 @@ namespace Unigram.ViewModels.SignIn
         public SignInPasswordViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
+            SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
+            ForgotCommand = new RelayCommand(ForgotExecute);
+            ResetCommand = new RelayCommand(ResetExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -86,8 +89,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             if (_parameters == null)
@@ -96,9 +98,9 @@ namespace Unigram.ViewModels.SignIn
                 return;
             }
 
-            if (_password == null)
+            if (string.IsNullOrEmpty(_password))
             {
-                await TLMessageDialog.ShowAsync("Please enter your password.", "Warning", "OK");
+                RaisePropertyChanged("PASSWORD_INVALID");
                 return;
             }
 
@@ -139,7 +141,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public RelayCommand ForgotCommand => new RelayCommand(ForgotExecute);
+        public RelayCommand ForgotCommand { get; }
         private async void ForgotExecute()
         {
             if (_parameters == null)
@@ -155,25 +157,27 @@ namespace Unigram.ViewModels.SignIn
                 var response = await ProtoService.RequestPasswordRecoveryAsync();
                 if (response.IsSucceeded)
                 {
-                    await TLMessageDialog.ShowAsync(string.Format("We have sent a recovery code to the e-mail you provided:\n\n{0}", response.Result.EmailPattern), "Telegram", "OK");
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.RestoreEmailSent, response.Result.EmailPattern), Strings.Android.AppName, Strings.Android.OK);
+
+                    // TODO: show recovery page
                 }
                 else if (response.Error != null)
                 {
                     IsLoading = false;
-                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Android.AppName, Strings.Android.OK);
                 }
             }
             else
             {
-                await TLMessageDialog.ShowAsync("Since you haven't provided a recovery e-mail when setting up your password, your remaining options are either to remember your password or to reset your account.", "Sorry", "OK");
+                await TLMessageDialog.ShowAsync(Strings.Android.RestorePasswordNoEmailText, Strings.Android.RestorePasswordNoEmailTitle, Strings.Android.OK);
                 IsResettable = true;
             }
         }
 
-        public RelayCommand ResetCommand => new RelayCommand(ResetExecute);
+        public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync("This action can't be undone.\n\nIf you reset your account, all your messages and chats will be deleted.", "Warning", "Reset", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ResetMyAccountWarningText, Strings.Android.ResetMyAccountWarning, Strings.Android.ResetMyAccountWarningReset, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 IsLoading = true;
@@ -195,7 +199,19 @@ namespace Unigram.ViewModels.SignIn
                 else if (response.Error != null)
                 {
                     IsLoading = false;
-                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+
+                    if (response.Error.ErrorMessage.Contains("2FA_RECENT_CONFIRM"))
+                    {
+                        await TLMessageDialog.ShowAsync(Strings.Android.ResetAccountCancelledAlert, Strings.Android.AppName, Strings.Android.OK);
+                    }
+                    else if (response.Error.ErrorMessage.StartsWith("2FA_CONFIRM_WAIT_"))
+                    {
+                        // TODO: show info
+                    }
+                    else
+                    {
+                        await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Android.AppName, Strings.Android.OK);
+                    }
                 }
             }
         }

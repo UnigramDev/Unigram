@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Channels;
 using Unigram.Common;
@@ -23,7 +24,7 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        public SendPhotosView View { get; set; }
+        public SendMediaView View { get; set; }
 
         public CaptionTextBox()
         {
@@ -75,33 +76,33 @@ namespace Unigram.Controls
                     return;
                 }
 
-                //// If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                //if (ApplicationSettings.Current.IsSendByEnterEnabled)
-                //{
-                //    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                //    if (send)
-                //    {
-                //        AcceptsReturn = false;
-                //        await SendAsync();
-                //    }
-                //    else
-                //    {
-                //        AcceptsReturn = true;
-                //    }
-                //}
-                //else
-                //{
-                //    var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                //    if (send)
-                //    {
-                //        AcceptsReturn = false;
-                //        await SendAsync();
-                //    }
-                //    else
-                //    {
-                //        AcceptsReturn = true;
-                //    }
-                //}
+                // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
+                if (ApplicationSettings.Current.IsSendByEnterEnabled)
+                {
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        View?.Accept();
+                        AcceptsReturn = false;
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
+                }
+                else
+                {
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        View?.Accept();
+                        AcceptsReturn = false;
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
+                }
             }
         }
 
@@ -135,7 +136,10 @@ namespace Unigram.Controls
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            View.SelectedItem.Caption = Text.ToString();
+            if (View?.SelectedItem != null)
+            {
+                View.SelectedItem.Caption = Text.ToString();
+            }
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
@@ -146,7 +150,7 @@ namespace Unigram.Controls
             {
                 View.Autocomplete = GetUsernames(username);
             }
-            else if (BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(SelectionStart, text.Length)), out string replacement) && replacement.Length > 0 && ApplicationSettings.Current.IsReplaceEmojiEnabled)
+            else if (BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(SelectionStart, text.Length)), out string replacement) && replacement.Length > 0)
             {
                 View.Autocomplete = EmojiSuggestion.GetSuggestions(replacement);
             }
@@ -158,6 +162,7 @@ namespace Unigram.Controls
 
         private List<TLUser> GetUsernames(string username)
         {
+            var query = LocaleHelper.GetQuery(username);
             bool IsMatch(TLUser user)
             {
                 if (user.Username == null)
@@ -165,10 +170,8 @@ namespace Unigram.Controls
                     return false;
                 }
 
-                return (user.FullName.IsLike(username, StringComparison.OrdinalIgnoreCase)) ||
-                       (user.HasUsername && user.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase));
+                return user.IsLike(query, StringComparison.OrdinalIgnoreCase);
             }
-
 
             var results = new List<TLUser>();
 

@@ -43,7 +43,7 @@ namespace Unigram.Core.Services
                     var accessStatus = await Geolocator.RequestAccessAsync();
                     if (accessStatus == GeolocationAccessStatus.Allowed)
                     {
-                        _locator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default, ReportInterval = uint.MaxValue };
+                        _locator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default, ReportInterval = uint.MaxValue, MovementThreshold = 20 };
                     }
                 }
                 catch { }

@@ -132,8 +132,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 066060;
-        public const string CurrentChangelog = "- Groups with unread mentions and replies to you are now marked with an '@' badge in the chats list.\r\n- Navigate new mentions and replies to you in a group using the new '@' button.\r\n- Tap on any sticker to add it your Favorite Stickers and quickly access it from the redesigned sticker panel.\r\n\r\n- Check signal strength when on a Telegram call using the new indicator.\r\n- Add an official sticker set for your group which all members will be able to use without adding while chatting in your group (100+ member groups only).\r\n\r\n- Search through messages of a particular user in any group. To do this, tap '...' in the top right corner when in a group > Search > tap the new 'Search by member' icon in the bottom right corner.\r\n- While searching, select a user to browse all of her messages in the group or add a keyword to narrow down search results.";
+        public const int CurrentVersion = 01210600;
+        public const string CurrentChangelog = "- New Appearance settings: theme, chat background and font size in a single place";
 
         private int? _appVersion;
         public int Version
@@ -183,6 +183,23 @@ namespace Unigram.Common
             {
                 _requestedTheme = value;
                 AddOrUpdateValue("RequestedTheme", (int)value);
+            }
+        }
+
+        private int? _contactsSavedCount;
+        public int ContactsSavedCount
+        {
+            get
+            {
+                if (_contactsSavedCount == null)
+                    _contactsSavedCount = GetValueOrDefault("ContactsSavedCount", 0);
+
+                return _contactsSavedCount ?? 0;
+            }
+            set
+            {
+                _contactsSavedCount = value;
+                AddOrUpdateValue("ContactsSavedCount", value);
             }
         }
 
@@ -237,6 +254,40 @@ namespace Unigram.Common
             }
         }
 
+        private bool? _isAutoPlayEnabled;
+        public bool IsAutoPlayEnabled
+        {
+            get
+            {
+                if (_isAutoPlayEnabled == null)
+                    _isAutoPlayEnabled = GetValueOrDefault("IsAutoPlayEnabled", true);
+
+                return _isAutoPlayEnabled ?? true;
+            }
+            set
+            {
+                _isAutoPlayEnabled = value;
+                AddOrUpdateValue("IsAutoPlayEnabled", value);
+            }
+        }
+
+        private bool? _isSendGrouped;
+        public bool IsSendGrouped
+        {
+            get
+            {
+                if (_isSendGrouped == null)
+                    _isSendGrouped = GetValueOrDefault("IsSendGrouped", true);
+
+                return _isSendGrouped ?? true;
+            }
+            set
+            {
+                _isSendGrouped = value;
+                AddOrUpdateValue("IsSendGrouped", value);
+            }
+        }
+
         private int? _selectedBackground;
         public int SelectedBackground
         {
@@ -271,33 +322,37 @@ namespace Unigram.Common
             }
         }
 
-        //private bool? _isPeerToPeer;
-        //public bool IsPeerToPeer
-        //{
-        //    get
-        //    {
-        //        if (_isPeerToPeer == null)
-        //            _isPeerToPeer = GetValueOrDefault("IsPeerToPeer", true);
-
-        //        return _isPeerToPeer ?? true;
-        //    }
-        //    set
-        //    {
-        //        _isPeerToPeer = value;
-        //        AddOrUpdateValue("IsPeerToPeer", value);
-        //    }
-        //}
-
-        // This setting should not be cached or changes will be not be reflected during the session
-        public bool IsPeerToPeer
+        private int? _peerToPeerMode;
+        public int PeerToPeerMode
         {
             get
             {
-                return GetValueOrDefault("IsPeerToPeer", true);
+                if (_peerToPeerMode == null)
+                    _peerToPeerMode = GetValueOrDefault("PeerToPeerMode", 1);
+
+                return _peerToPeerMode ?? 1;
             }
             set
             {
-                AddOrUpdateValue("IsPeerToPeer", value);
+                _peerToPeerMode = value;
+                AddOrUpdateValue("PeerToPeerMode", value);
+            }
+        }
+
+        private libtgvoip.DataSavingMode? _useLessData;
+        public libtgvoip.DataSavingMode UseLessData
+        {
+            get
+            {
+                if (_useLessData == null)
+                    _useLessData = (libtgvoip.DataSavingMode)GetValueOrDefault("UseLessData", 0);
+
+                return _useLessData ?? libtgvoip.DataSavingMode.Never;
+            }
+            set
+            {
+                _useLessData = value;
+                AddOrUpdateValue("UseLessData", (int)value);
             }
         }
 
@@ -326,6 +381,13 @@ namespace Unigram.Common
         }
 
         public ApplicationSettingsDownload AutoDownload => new ApplicationSettingsDownload();
+
+        public void CleanUp()
+        {
+            // Here should be cleaned up all the settings that are shared with background tasks.
+            _peerToPeerMode = null;
+            _useLessData = null;
+        }
     }
 
     public class ApplicationSettingsDownload

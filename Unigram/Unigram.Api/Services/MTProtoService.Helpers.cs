@@ -80,7 +80,7 @@ namespace Telegram.Api.Services
                     Caption = caption,
                     Object = obj,
                     Message = transportMessage,
-                    Callback = t => callback((T)t),
+                    Callback = t => callback?.Invoke((T)t),
                     AttemptFailed = null,
                     FaultCallback = faultCallback,
                     ClientTicksDelta = clientsTicksDelta,
@@ -230,9 +230,10 @@ namespace Telegram.Api.Services
                         AppVersion = _deviceInfo.AppVersion,
                         Query = obj,
                         DeviceModel = _deviceInfo.DeviceModel,
-                        LangCode = Utils.CurrentUICulture(),
+                        SystemVersion = _deviceInfo.SystemVersion,
                         SystemLangCode = Utils.CurrentUICulture(),
-                        SystemVersion = _deviceInfo.SystemVersion
+                        LangCode = Utils.CurrentUICulture(),
+                        LangPack = "android"
                     };
 
                     SaveInitConnectionAsync(initConnection);
@@ -413,7 +414,7 @@ namespace Telegram.Api.Services
             {
                 Caption = caption,
                 Message = message,
-                Callback = t => callback((T) t),
+                Callback = t => callback?.Invoke((T) t),
                 FaultCallback = faultCallback,
                 SendTime = DateTime.Now,
                 Status = RequestStatus.Sent

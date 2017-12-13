@@ -15,15 +15,10 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="Admins"
-            Glyph="&#xE109;"
-            CommandVisibility="{x:Bind (Visibility)ViewModel.Item.IsCreator, Mode=OneWay}"/>
+            CommandVisibility="{x:Bind (Visibility)ViewModel.Item.IsCreator, Mode=OneWay}"
+            Text="{CustomResource ChannelAdministrators}"
+            Glyph="&#xE109;"/>
 
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Participants}"
                   ItemClick="ListView_ItemClick"
@@ -31,21 +26,23 @@
                   SelectionMode="None"
                   Grid.Row="1">
             <ListView.Header>
-                <Border Visibility="{x:Bind (Visibility)ViewModel.CanEditDemocracy, Mode=OneWay}"
-                        Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                        Padding="12,12,12,12">
-                    <ComboBox Header="Who can add new members?"
-                              SelectedIndex="{x:Bind ViewModel.IsDemocracy, Mode=TwoWay, Converter={StaticResource BooleanToIndexConverter}, ConverterParameter=invert}"
-                              HorizontalAlignment="Stretch"
-                              Style="{StaticResource SolidComboBoxStyle}">
-                        <ComboBoxItem Content="All Members"/>
-                        <ComboBoxItem Content="Only Admins"/>
-                    </ComboBox>
-                </Border>
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.CanEditDemocracy, Mode=OneWay}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="0,0,0,1"
+                            Padding="0,8,12,8"
+                            Margin="12,0,0,18">
+                    <TextBlock Text="{CustomResource WhoCanAddMembers}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <RadioButton
+                        IsChecked="{x:Bind ViewModel.IsDemocracy, Mode=TwoWay}"
+                        Content="{CustomResource WhoCanAddMembersAllMembers}"/>
+                    <RadioButton
+                        IsChecked="{x:Bind ViewModel.IsDemocracy, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                        Content="{CustomResource WhoCanAddMembersAdmins}"/>
+                </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="tl:TLChannelParticipantBase">
-                    <Grid Margin="0,6">
+                    <Grid Padding="0,6" Background="Transparent" ContextRequested="Participant_ContextRequested">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -54,7 +51,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <controls:ProfilePictureView x:Phase="3" Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                        <controls:ProfilePicture x:Phase="3" Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
                         <TextBlock Text="{x:Bind User.FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                         <TextBlock Text="{x:Bind Converter={StaticResource ChannelParticipantToTypeConverter}}"
@@ -75,6 +72,13 @@
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.Footer>
+                <TextBlock
+                    Text="{x:Bind ConvertType('ChannelAdminsInfo', 'MegaAdminsInfo')}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="12"/>
+            </ListView.Footer>
         </ListView>
     </Grid>
 </Page>

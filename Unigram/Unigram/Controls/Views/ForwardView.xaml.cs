@@ -57,20 +57,8 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(List<TLMessage> messages)
-        {
-            ViewModel.Messages = messages;
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-
-            return ShowAsync();
-        }
-
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLKeyboardButtonSwitchInline switchInline, TLUser bot)
         {
-            ViewModel.Messages = null;
             ViewModel.SwitchInline = switchInline;
             ViewModel.SwitchInlineBot = bot;
             ViewModel.SendMessage = null;
@@ -81,7 +69,6 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(string message, bool hasUrl)
         {
-            ViewModel.Messages = null;
             ViewModel.SwitchInline = null;
             ViewModel.SwitchInlineBot = null;
             ViewModel.SendMessage = message;
@@ -90,15 +77,29 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
+        private new IAsyncOperation<ContentDialogBaseResult> ShowAsync()
+        {
+            ViewModel.Items.Clear();
+
+            RoutedEventHandler handler = null;
+            handler = new RoutedEventHandler(async (s, args) =>
+            {
+                Loaded -= handler;
+                await ViewModel.OnNavigatedToAsync(null, NavigationMode.New, null);
+            });
+
+            Loaded += handler;
+            return base.ShowAsync();
+        }
 
 
-        private Border LineTop;
-        private Border LineAccent;
 
         private ScrollViewer _scrollingHost;
 
-        private SpriteVisual _backgroundVisual;
+        private Visual _groupHeader;
+        private SpriteVisual _background;
         private ExpressionAnimation _expression;
+        private ExpressionAnimation _expressionHeader;
         private ExpressionAnimation _expressionClip;
 
         private void GridView_Loaded(object sender, RoutedEventArgs e)
@@ -114,27 +115,35 @@ namespace Unigram.Controls.Views
                 var brush = App.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
                 var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroll);
 
-                if (_backgroundVisual == null)
+                if (_background == null)
                 {
-                    _backgroundVisual = ElementCompositionPreview.GetElementVisual(BackgroundPanel).Compositor.CreateSpriteVisual();
-                    ElementCompositionPreview.SetElementChildVisual(BackgroundPanel, _backgroundVisual);
+                    _background = ElementCompositionPreview.GetElementVisual(BackgroundPanel).Compositor.CreateSpriteVisual();
+                    ElementCompositionPreview.SetElementChildVisual(BackgroundPanel, _background);
                 }
 
-                _backgroundVisual.Brush = _backgroundVisual.Compositor.CreateColorBrush(brush.Color);
-                _backgroundVisual.Size = new System.Numerics.Vector2((float)BackgroundPanel.ActualWidth, (float)BackgroundPanel.ActualHeight);
-                _backgroundVisual.Clip = _backgroundVisual.Compositor.CreateInsetClip();
+                _background.Brush = _background.Compositor.CreateColorBrush(brush.Color);
+                _background.Size = new System.Numerics.Vector2((float)BackgroundPanel.ActualWidth, (float)BackgroundPanel.ActualHeight);
+                _background.Clip = _background.Compositor.CreateInsetClip();
 
-                _expression = _expression ?? _backgroundVisual.Compositor.CreateExpressionAnimation("Max(Maximum, Scrolling.Translation.Y)");
+                _groupHeader = ElementCompositionPreview.GetElementVisual(GroupHeader);
+
+                _expression = _expression ?? _background.Compositor.CreateExpressionAnimation("Max(Maximum, Scrolling.Translation.Y)");
                 _expression.SetReferenceParameter("Scrolling", props);
                 _expression.SetScalarParameter("Maximum", -(float)BackgroundPanel.Margin.Top + 1);
-                _backgroundVisual.StopAnimation("Offset.Y");
-                _backgroundVisual.StartAnimation("Offset.Y", _expression);
+                _background.StopAnimation("Offset.Y");
+                _background.StartAnimation("Offset.Y", _expression);
 
-                _expressionClip = _expressionClip ?? _backgroundVisual.Compositor.CreateExpressionAnimation("Min(0, Maximum - Scrolling.Translation.Y)");
+                _expressionHeader = _expressionHeader ?? _background.Compositor.CreateExpressionAnimation("Max(0, Maximum - Scrolling.Translation.Y)");
+                _expressionHeader.SetReferenceParameter("Scrolling", props);
+                _expressionHeader.SetScalarParameter("Maximum", -(float)BackgroundPanel.Margin.Top);
+                _groupHeader.StopAnimation("Offset.Y");
+                _groupHeader.StartAnimation("Offset.Y", _expressionHeader);
+
+                _expressionClip = _expressionClip ?? _background.Compositor.CreateExpressionAnimation("Min(0, Maximum - Scrolling.Translation.Y)");
                 _expressionClip.SetReferenceParameter("Scrolling", props);
                 _expressionClip.SetScalarParameter("Maximum", -(float)BackgroundPanel.Margin.Top + 1);
-                _backgroundVisual.Clip.StopAnimation("Offset.Y");
-                _backgroundVisual.Clip.StartAnimation("Offset.Y", _expressionClip);
+                _background.Clip.StopAnimation("Offset.Y");
+                _background.Clip.StartAnimation("Offset.Y", _expressionClip);
             }
 
             var panel = List.ItemsPanelRoot as ItemsWrapGrid;
@@ -152,9 +161,6 @@ namespace Unigram.Controls.Views
             var groupHeader = sender as Grid;
             if (groupHeader != null)
             {
-                LineTop = groupHeader.FindName("LineTop") as Border;
-                LineAccent = groupHeader.FindName("LineAccent") as Border;
-
                 if (_scrollingHost != null)
                 {
                     Scroll_ViewChanged(_scrollingHost, null);
@@ -194,12 +200,9 @@ namespace Unigram.Controls.Views
             //    }
             //}
 
-            if (LineTop != null)
-            {
-                LineTop.BorderThickness = new Thickness(0, 0, 0, top);
-                LineAccent.BorderThickness = new Thickness(0, accent, 0, 0);
-                LineBottom.BorderThickness = new Thickness(0, bottom, 0, 0);
-            }
+            LineTop.BorderThickness = new Thickness(0, 0, 0, top);
+            LineAccent.BorderThickness = new Thickness(0, accent, 0, 0);
+            LineBottom.BorderThickness = new Thickness(0, bottom, 0, 0);
         }
 
         // SystemControlBackgroundChromeMediumLowBrush
@@ -248,21 +251,25 @@ namespace Unigram.Controls.Views
             BackgroundPanel.Height = e.NewSize.Height;
             BackgroundPanel.Margin = new Thickness(0, top, 0, -top);
 
-            if (_backgroundVisual != null && _expression != null && _expressionClip != null)
+            if (_background != null && _expression != null && _expressionClip != null)
             {
                 var brush = App.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
 
-                _backgroundVisual.Brush = _backgroundVisual.Compositor.CreateColorBrush(brush.Color);
-                _backgroundVisual.Size = new System.Numerics.Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
-                _backgroundVisual.Clip = _backgroundVisual.Compositor.CreateInsetClip();
+                _background.Brush = _background.Compositor.CreateColorBrush(brush.Color);
+                _background.Size = new System.Numerics.Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
+                _background.Clip = _background.Compositor.CreateInsetClip();
 
                 _expression.SetScalarParameter("Maximum", -(float)top + 1);
-                _backgroundVisual.StopAnimation("Offset.Y");
-                _backgroundVisual.StartAnimation("Offset.Y", _expression);
+                _background.StopAnimation("Offset.Y");
+                _background.StartAnimation("Offset.Y", _expression);
+
+                _expressionHeader.SetScalarParameter("Maximum", -(float)top);
+                _groupHeader.StopAnimation("Offset.Y");
+                _groupHeader.StartAnimation("Offset.Y", _expressionHeader);
 
                 _expressionClip.SetScalarParameter("Maximum", -(float)top + 1);
-                _backgroundVisual.Clip.StopAnimation("Offset.Y");
-                _backgroundVisual.Clip.StartAnimation("Offset.Y", _expressionClip);
+                _background.Clip.StopAnimation("Offset.Y");
+                _background.Clip.StartAnimation("Offset.Y", _expressionClip);
             }
         }
 
@@ -286,7 +293,7 @@ namespace Unigram.Controls.Views
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.SelectedItem = e.ClickedItem as TLDialog;
+            ViewModel.SelectedItem = e.ClickedItem as ITLDialogWith;
             ViewModel.SendCommand.Execute();
         }
     }

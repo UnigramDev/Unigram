@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Common
 {
-    public static class UnigramNavigationService 
+    public static class UnigramNavigationService
     {
         private static ContentDialog _currentDialog;
 
@@ -88,7 +88,14 @@ namespace Unigram.Common
 
 
 
-
+        public static void Reset(this INavigationService service)
+        {
+            var cacheSize = service.Frame.CacheSize;
+            service.Frame.CacheSize = 0;
+            service.Refresh();
+            service.Frame.BackStack.Clear();
+            service.Frame.CacheSize = cacheSize;
+        }
 
         public static void GoBackAt(this INavigationService service, int index)
         {
@@ -170,7 +177,7 @@ namespace Unigram.Common
                     {
                         await page.ViewModel.LoadMessageSliceAsync(null, message.Value);
                     }
-                    
+
                     if (accessToken != null)
                     {
                         page.ViewModel.AccessToken = accessToken;
@@ -233,6 +240,23 @@ namespace Unigram.Common
             //}
         }
 
+        public static void NavigateToMain(this INavigationService service, string parameter)
+        {
+            NavigatedEventHandler handler = null;
+            handler = (s, args) =>
+            {
+                service.Frame.Navigated -= handler;
+
+                if (args.Content is MainPage page)
+                {
+                    page.Activate(parameter);
+                }
+            };
+
+            service.Frame.Navigated += handler;
+            service.Navigate(typeof(MainPage));
+        }
+
         #region Payments
 
         public static void NavigateToPaymentFormStep1(this INavigationService service, TLMessage message, TLPaymentsPaymentForm paymentForm)
@@ -278,6 +302,7 @@ namespace Unigram.Common
                 if (found)
                 {
                     service.Frame.BackStack.RemoveAt(i);
+                    i--;
                 }
             }
 
@@ -289,6 +314,19 @@ namespace Unigram.Common
                     service.Frame.ForwardStack.Clear();
                 }
             }
+        }
+
+        public static bool IsPeerActive(this INavigationService service, TLInputPeerBase inputPeer)
+        {
+            if (service.CurrentPageType == typeof(DialogPage))
+            {
+                if (TryGetPeerFromParameter(service, service.CurrentPageParam, out TLPeerBase peer))
+                {
+                    return peer.Equals(inputPeer);
+                }
+            }
+
+            return false;
         }
 
         public static TLPeerBase GetPeerFromBackStack(this INavigationService service)

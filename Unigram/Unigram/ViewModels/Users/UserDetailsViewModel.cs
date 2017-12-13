@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -26,6 +26,7 @@ using Unigram.Controls.Views;
 using Unigram.Views.Users;
 using Unigram.Converters;
 using System.Runtime.CompilerServices;
+using Unigram.Views.Dialogs;
 
 namespace Unigram.ViewModels.Users
 {
@@ -36,6 +37,18 @@ namespace Unigram.ViewModels.Users
         public UserDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            SendMessageCommand = new RelayCommand(SendMessageExecute);
+            MediaCommand = new RelayCommand(MediaExecute);
+            CommonChatsCommand = new RelayCommand(CommonChatsExecute);
+            SystemCallCommand = new RelayCommand(SystemCallExecute);
+            BlockCommand = new RelayCommand(BlockExecute);
+            UnblockCommand = new RelayCommand(UnblockExecute);
+            ReportCommand = new RelayCommand(ReportExecute);
+            ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
+            CallCommand = new RelayCommand(CallExecute);
+            AddCommand = new RelayCommand(AddExecute);
+            EditCommand = new RelayCommand(EditExecute);
+            DeleteCommand = new RelayCommand(DeleteExecute);
         }
 
         private TLUser _item;
@@ -81,7 +94,7 @@ namespace Unigram.ViewModels.Users
                 Item = user;
                 RaisePropertyChanged(() => IsEditEnabled);
                 RaisePropertyChanged(() => IsAddEnabled);
-                RaisePropertyChanged(() => AreNotificationsEnabled);
+                RaisePropertyChanged(() => IsMuted);
                 RaisePropertyChanged(() => PhoneVisibility);
                 RaisePropertyChanged(() => AddToGroupVisibility);
                 RaisePropertyChanged(() => HelpVisibility);
@@ -130,7 +143,7 @@ namespace Unigram.ViewModels.Users
                 // TODO: 06/05/2017
                 //Item.IsBlocked = message.Blocked;
                 Full.IsBlocked = message.Blocked;
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     RaisePropertyChanged(() => BlockVisibility);
                     RaisePropertyChanged(() => UnblockVisibility);
@@ -148,11 +161,11 @@ namespace Unigram.ViewModels.Users
                 var peer = notifyPeer.Peer;
                 if (peer is TLPeerUser && peer.Id == Item.Id)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         Full.NotifySettings = message.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);
-                        RaisePropertyChanged(() => AreNotificationsEnabled);
+                        RaisePropertyChanged(() => IsMuted);
 
                         //var notifySettings = updateNotifySettings.NotifySettings as TLPeerNotifySettings;
                         //if (notifySettings != null)
@@ -166,34 +179,42 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand SendMessageCommand => new RelayCommand(SendMessageExecute);
+        public RelayCommand SendMessageCommand { get; }
         private void SendMessageExecute()
         {
-            if (Item is TLUser user)
+            if (_item == null)
             {
-                NavigationService.NavigateToDialog(user);
+                return;
             }
+
+            NavigationService.NavigateToDialog(_item);
         }
 
-        public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
+        public RelayCommand MediaCommand { get; }
         private void MediaExecute()
         {
-            if (Item is TLUser user && user.HasAccessHash)
+            if (_item == null)
             {
-                NavigationService.Navigate(typeof(DialogSharedMediaPage), new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
+                return;
             }
+
+            NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
+
+
         }
 
-        public RelayCommand CommonChatsCommand => new RelayCommand(CommonChatsExecute);
+        public RelayCommand CommonChatsCommand { get; }
         private void CommonChatsExecute()
         {
-            if (Item is TLUser user && user.HasAccessHash)
+            if (_item == null)
             {
-                NavigationService.Navigate(typeof(UserCommonChatsPage), new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash.Value });
+                return;
             }
+
+            NavigationService.Navigate(typeof(UserCommonChatsPage), _item.ToInputUser());
         }
 
-        public RelayCommand SystemCallCommand => new RelayCommand(SystemCallExecute);
+        public RelayCommand SystemCallCommand { get; }
         private void SystemCallExecute()
         {
             var user = Item as TLUser;
@@ -210,12 +231,12 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand BlockCommand => new RelayCommand(BlockExecute);
+        public RelayCommand BlockCommand { get; }
         private async void BlockExecute()
         {
             if (Item is TLUser user)
             {
-                var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to block this contact?", "Telegram", "OK", "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureBlockContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -224,18 +245,24 @@ namespace Unigram.ViewModels.Users
                 var result = await ProtoService.BlockAsync(user.ToInputUser());
                 if (result.IsSucceeded && result.Result)
                 {
+                    if (Full is TLUserFull full)
+                    {
+                        full.IsBlocked = true;
+                        full.RaisePropertyChanged(() => full.IsBlocked);
+                    }
+
                     CacheService.Commit();
                     Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = true });
                 }
             }
         }
 
-        public RelayCommand UnblockCommand => new RelayCommand(UnblockExecute);
+        public RelayCommand UnblockCommand { get; }
         private async void UnblockExecute()
         {
             if (Item is TLUser user)
             {
-                var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to unblock this contact?", "Telegram", "OK", "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureUnblockContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -244,6 +271,12 @@ namespace Unigram.ViewModels.Users
                 var result = await ProtoService.UnblockAsync(user.ToInputUser());
                 if (result.IsSucceeded && result.Result)
                 {
+                    if (Full is TLUserFull full)
+                    {
+                        full.IsBlocked = false;
+                        full.RaisePropertyChanged(() => full.IsBlocked);
+                    }
+
                     CacheService.Commit();
                     Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = false });
 
@@ -255,7 +288,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand ReportCommand => new RelayCommand(ReportExecute);
+        public RelayCommand ReportCommand { get; }
         private async void ReportExecute()
         {
             var user = Item as TLUser;
@@ -270,8 +303,9 @@ namespace Unigram.ViewModels.Users
                 stack.Children.Add(opt2);
                 stack.Children.Add(opt3);
                 stack.Children.Add(opt4);
-                stack.Margin = new Thickness(0, 16, 0, 0);
-                var dialog = new ContentDialog();
+                stack.Margin = new Thickness(12, 16, 12, 0);
+
+                var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
                 dialog.Content = stack;
                 dialog.Title = "Resources.Report";
                 dialog.IsPrimaryButtonEnabled = true;
@@ -320,17 +354,21 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public bool AreNotificationsEnabled
+        public bool IsMuted
         {
             get
             {
-                var settings = _full?.NotifySettings as TLPeerNotifySettings;
-                if (settings != null)
+                var notifySettings = _full?.NotifySettings as TLPeerNotifySettings;
+                if (notifySettings == null)
                 {
-                    return settings.MuteUntil == 0;
+                    return false;
                 }
 
-                return false;
+                var clientDelta = MTProtoService.Current.ClientTicksDelta;
+                var utc0SecsInt = notifySettings.MuteUntil - clientDelta / 4294967296.0;
+
+                var muteUntilDateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
+                return muteUntilDateTime > DateTime.Now;
             }
         }
 
@@ -508,7 +546,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
+        public RelayCommand ToggleMuteCommand { get; }
         private async void ToggleMuteExecute()
         {
             if (_item == null || _full == null)
@@ -537,7 +575,7 @@ namespace Unigram.ViewModels.Users
                     }
 
                     notifySettings.MuteUntil = muteUntil;
-                    RaisePropertyChanged(() => AreNotificationsEnabled);
+                    RaisePropertyChanged(() => IsMuted);
                     Full.RaisePropertyChanged(() => Full.NotifySettings);
 
                     var dialog = CacheService.GetDialog(_item.ToPeer());
@@ -556,7 +594,7 @@ namespace Unigram.ViewModels.Users
 
         #region Call
 
-        public RelayCommand CallCommand => new RelayCommand(CallExecute);
+        public RelayCommand CallCommand { get; }
         private async void CallExecute()
         {
             if (_item == null || _full == null)
@@ -584,7 +622,7 @@ namespace Unigram.ViewModels.Users
 
         #endregion
 
-        public RelayCommand AddCommand => new RelayCommand(AddExecute);
+        public RelayCommand AddCommand { get; }
         private async void AddExecute()
         {
             var user = _item as TLUser;
@@ -639,7 +677,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand EditCommand => new RelayCommand(EditExecute);
+        public RelayCommand EditCommand { get; }
         private async void EditExecute()
         {
             var user = _item as TLUser;
@@ -679,7 +717,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
+        public RelayCommand DeleteCommand { get; }
         private async void DeleteExecute()
         {
             var user = _item as TLUser;
@@ -688,7 +726,7 @@ namespace Unigram.ViewModels.Users
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to delete this contact?", "Telegram", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureDeleteContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

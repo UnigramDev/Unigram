@@ -13,6 +13,7 @@ namespace Telegram.Api.TL.Contacts
             return new TLContactsImportedContacts
             {
                 Imported = new TLVector<TLImportedContact>(Imported.Count),
+                PopularInvites = new TLVector<TLPopularContact>(PopularInvites.Count),
                 RetryContacts = new TLVector<long>(RetryContacts.Count),
                 Users = new TLVector<TLUserBase>(Users.Count)
             };

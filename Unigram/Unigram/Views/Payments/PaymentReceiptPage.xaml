@@ -15,7 +15,13 @@
         </Grid.RowDefinitions>
         <controls:PageHeader Text="{x:Bind ConvertTitle(ViewModel.Receipt.Invoice.IsTest), FallbackValue=Receipt}"/>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <controls:ScrollViewerBackground 
+            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Padding="0,0,0,48">
@@ -47,38 +53,43 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="Total" Margin="12,4,0,8" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PaymentTransactionTotal}" Margin="12,4,0,8" Style="{StaticResource BaseTextBlockStyle}"/>
                     <TextBlock Text="{x:Bind Convert.FormatAmount(ViewModel.Receipt.TotalAmount, ViewModel.Receipt.Currency), FallbackValue=Empty}" Margin="8,4,12,8" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
                 </Grid>
 
                 <StackPanel Padding="12,8">
                     <TextBlock Text="{x:Bind ViewModel.Receipt.CredentialsTitle, FallbackValue=Empty}"/>
-                    <TextBlock Text="Payment method" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PaymentCheckoutMethod}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Bot.FullName, FallbackValue=Empty}"/>
+                    <TextBlock Text="{CustomResource PaymentCheckoutProvider}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasShippingAddress, FallbackValue=Collapsed}" Padding="12,8">
                     <TextBlock Text="{x:Bind ConvertAddress(ViewModel.Receipt.Info.ShippingAddress), FallbackValue=Empty}"/>
-                    <TextBlock Text="Shipping address" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PaymentShippingAddress}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasName, FallbackValue=Collapsed}" Padding="12,8">
                     <TextBlock Text="{x:Bind ViewModel.Receipt.Info.Name, FallbackValue=Empty}"/>
-                    <TextBlock Text="Name" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PaymentCheckoutName}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasPhone, FallbackValue=Collapsed}" Padding="12,8">
                     <TextBlock Text="{x:Bind Convert.PhoneNumber(ViewModel.Receipt.Info.Phone), FallbackValue=Empty}"/>
-                    <TextBlock Text="Phone number" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PaymentCheckoutPhoneNumber}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasEmail, FallbackValue=Collapsed}" Padding="12,8">
                     <TextBlock Text="{x:Bind ViewModel.Receipt.Info.Email, FallbackValue=Empty}"/>
-                    <TextBlock Text="Contact address" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PaymentCheckoutEmail}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.HasShipping, FallbackValue=Collapsed}" Padding="12,8">
                     <TextBlock Text="{x:Bind ViewModel.Receipt.Shipping.Title, FallbackValue=Empty}"/>
-                    <TextBlock Text="Shipping method" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PaymentCheckoutShippingMethod}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -26,6 +27,7 @@ namespace Unigram.ViewModels.Payments
         public PaymentFormStep5ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -154,12 +156,12 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(string .Format("Neither Telegram, nor {0} will have access to your credit card information. Credit card details will be handled only by the payment system, {1}.\n\nPayments will go directly to the developer of {0}. Telegram cannot provide any guarantees, so proceed at your own risk. In case of problems, please contact the developer of {0} or your bank.", _bot.FullName, _provider.FullName), "Transaction review", "OK", "Cancel");
-            //var confirm = await TLMessageDialog.ShowAsync(string.Format("Do you really want to transfer {0} to the {1} bot for {2}?", BindConvert.Current.FormatAmount(_totalAmount, _paymentForm.Invoice.Currency), _bot.FullName, _invoice.Title), "Transaction review", "OK", "Cancel");
+            var disclaimer = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.PaymentWarningText, _bot.FullName, _provider.FullName), Strings.Android.PaymentWarning, Strings.Android.OK);
+
+            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.PaymentTransactionMessage, LocaleHelper.FormatCurrency(_totalAmount, _paymentForm.Invoice.Currency), _bot.FullName, _invoice.Title), Strings.Android.PaymentTransactionReview, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
                 return;

@@ -19,6 +19,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using LinqToVisualTree;
+using Unigram.Common;
+using Telegram.Api.Helpers;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -37,7 +40,18 @@ namespace Unigram.Views.Channels
             DataContext = UnigramContainer.Current.ResolveType<ChannelAdminLogViewModel>();
         }
 
-        private void ProfileBubble_Click(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            _panel = (ItemsStackPanel)Messages.ItemsPanelRoot;
+
+            var scroll = Messages.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+            if (scroll != null)
+            {
+                scroll.ViewChanged += OnViewChanged;
+            }
+        }
+
+        private void Photo_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
             var message = control.DataContext as TLMessage;
@@ -47,9 +61,9 @@ namespace Unigram.Views.Channels
             }
         }
 
-        private void Download_Click(object sender, Controls.TransferCompletedEventArgs e)
+        private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            Media.Download(sender, e);
+            Media.Download_Click(sender as FrameworkElement, e);
         }
 
         private async void StickerSet_Click(object sender, RoutedEventArgs e)
@@ -75,7 +89,7 @@ namespace Unigram.Views.Channels
                 return;
             }
 
-            await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? AppResources.EventLogInfoDetail : AppResources.EventLogInfoDetailChannel, AppResources.EventLogInfoTitle, "OK");
+            await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? Strings.Android.EventLogInfoDetail : Strings.Android.EventLogInfoDetailChannel, Strings.Android.EventLogInfoTitle, Strings.Android.OK);
         }
 
         private async void Settings_Click(object sender, RoutedEventArgs e)
@@ -88,5 +102,19 @@ namespace Unigram.Views.Channels
 
             await ChannelAdminLogFilterView.Current.ShowAsync(channel.ToPeer());
         }
+
+        #region Binding
+
+        private string ConvertType(string broadcast, string mega)
+        {
+            if (ViewModel.Item is TLChannel channel)
+            {
+                return LocaleHelper.GetString(channel.IsBroadcast ? broadcast : mega);
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

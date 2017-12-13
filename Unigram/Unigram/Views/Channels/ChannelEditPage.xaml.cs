@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.Helpers;
+using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Channels;
+using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
@@ -33,11 +37,15 @@ namespace Unigram.Views.Channels
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<ChannelEditViewModel>();
-        }
 
-        private void Photo_Click(object sender, RoutedEventArgs e)
-        {
-
+            var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            {
+                if (ViewModel.UpdateIsValid(Username.Text))
+                {
+                    ViewModel.CheckAvailability(Username.Text);
+                }
+            });
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
@@ -50,13 +58,37 @@ namespace Unigram.Views.Channels
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditYourPhotoView(file);
-                var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogBaseResult.OK)
+                var dialog = new EditYourPhotoView(file)
+                {
+                    CroppingProportions = ImageCroppingProportions.Square,
+                    IsCropEnabled = false
+                };
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogBaseResult.OK)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
             }
         }
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
+        }
+
+        #region Binding
+
+        private string ConvertType(string broadcast, string mega)
+        {
+            if (ViewModel.Item is TLChannel channel)
+            {
+                return LocaleHelper.GetString(channel.IsBroadcast ? broadcast : mega);
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

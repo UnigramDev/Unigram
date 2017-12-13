@@ -1,46 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Api.TL;
+﻿using Telegram.Api.TL;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
     public class BubbleListViewItem : ListViewItem
     {
-        public readonly BubbleListView Owner;
+        public readonly BubbleListView Messages;
 
-        public BubbleListViewItem(BubbleListView owner)
+        public BubbleListViewItem(BubbleListView messages)
         {
-            Owner = owner;
-            //RegisterPropertyChangedCallback(IsSelectedProperty, OnIsSelectedChanged);
+            Messages = messages;
         }
 
-        //private void OnIsSelectedChanged(DependencyObject sender, DependencyProperty dp)
-        //{
-        //    if (!(Content is TLMessageService))
-        //    {
-        //        (Content as TLMessageBase).IsSelected = IsSelected;
+        #region ContentMargin
 
-        //        if (Owner.DataContext is DialogViewModel && Owner.SelectionMode == ListViewSelectionMode.Multiple)
-        //        {
-        //            (Owner.DataContext as DialogViewModel).MessagesDeleteCommand.RaiseCanExecuteChanged();
-        //            (Owner.DataContext as DialogViewModel).MessagesForwardCommand.RaiseCanExecuteChanged();
-        //        }
-        //    }
-        //}
+        public Thickness ContentMargin
+        {
+            get { return (Thickness)GetValue(ContentMarginProperty); }
+            set { SetValue(ContentMarginProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentMarginProperty =
+            DependencyProperty.Register("ContentMargin", typeof(Thickness), typeof(BubbleListViewItem), new PropertyMetadata(default(Thickness)));
+
+        #endregion
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            if (Owner.SelectionMode == ListViewSelectionMode.Multiple && Content is TLMessageService service && service.Action.TypeId != TLType.MessageActionPhoneCall)
+            if (Messages.SelectionMode == ListViewSelectionMode.Multiple)
             {
-                e.Handled = true;
+                if (Content is TLMessageService serviceMessage && !(serviceMessage.Action is TLMessageActionPhoneCall))
+                {
+                    e.Handled = true;
+                }
+                else if (Content is TLMessage message)
+                {
+                    if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
+                    {
+                        e.Handled = true;
+                    }
+                    else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
+                    {
+                        e.Handled = true;
+                    }
+                }
             }
 
             base.OnPointerPressed(e);

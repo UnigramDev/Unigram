@@ -9,8 +9,16 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style TargetType="ComboBox">
-            <Setter Property="MinWidth" Value="192" />
+        <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}"/>
+
+        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
+            <Setter Property="Padding" Value="0,8,0,8"/>
+        </Style>
+
+        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
+            <Setter Property="Margin" Value="12,8,12,0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
     </Page.Resources>
 
@@ -19,47 +27,81 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Notifications and Sounds"/>
-        
+        <controls:PageHeader Text="{CustomResource NotificationsAndSounds}"/>
+
         <ScrollViewer x:Name="ScrollingHost"
-                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel>
+            <StackPanel Margin="0,0,0,48">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="MESSAGE NOTIFICATIONS" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.PrivateAlert, Mode=TwoWay}" Content="Alert"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.PrivatePreview, Mode=TwoWay}" Content="Message Preview" Margin="0,8"/>
-                    <ComboBox Header="Sound" SelectedIndex="0" IsEnabled="False">
-                        <ComboBoxItem Content="Default"/>
-                    </ComboBox>
-                </StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="GROUP NOTIFICATIONS" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.GroupAlert, Mode=TwoWay}" Content="Alert"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.GroupPreview, Mode=TwoWay}" Content="Message Preview" Margin="0,8"/>
-                    <ComboBox Header="Sound" SelectedIndex="0" IsEnabled="False">
-                        <ComboBoxItem Content="Default"/>
-                    </ComboBox>
-                </StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="IN-APP NOTIFICATIONS" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.InAppSounds, Mode=TwoWay}" Content="In-App Sounds"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.InAppVibrate, Mode=TwoWay}" Visibility="{x:Bind (Visibility)ViewModel.IsVibrationAvailable}" Content="In-App Vibrate" Margin="0,8"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.InAppPreview, Mode=TwoWay}" Content="In-App Preview"/>
+                    <TextBlock Text="{CustomResource MessageNotifications}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <CheckBox
+                        x:Name="PrivateAlert"
+                        Click="Private_Click"
+                        IsChecked="{x:Bind ViewModel.PrivateAlert, Mode=OneWay}"
+                        Content="{CustomResource Alert}"
+                        Margin="12,8,12,8"/>
+                    <CheckBox
+                        x:Name="PrivatePreview"
+                        Click="Private_Click"
+                        IsChecked="{x:Bind ViewModel.PrivatePreview, Mode=OneWay}"
+                        Content="{CustomResource MessagePreview}"
+                        Margin="12,0,12,0"/>
+                    <controls:BadgeButton
+                        IsEnabled="False"
+                        Content="{CustomResource Sound}"
+                        Badge="{CustomResource SoundDefault}"/>
                 </StackPanel>
 
-                <StackPanel Padding="12,8,12,72">
-                    <HyperlinkButton Command="{x:Bind ViewModel.ResetCommand}" Content="Reset All Notifications" Foreground="Red"/>
-                    <TextBlock Text="Undo all custom notification settings for all your contacts and groups." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource GroupNotifications}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <CheckBox
+                        x:Name="GroupAlert"
+                        Click="Group_Click"
+                        IsChecked="{x:Bind ViewModel.GroupAlert, Mode=OneWay}"
+                        Content="{CustomResource Alert}"
+                        Margin="12,8,12,8"/>
+                    <CheckBox
+                        x:Name="GroupPreview"
+                        Click="Group_Click"
+                        IsChecked="{x:Bind ViewModel.GroupPreview, Mode=OneWay}"
+                        Content="{CustomResource MessagePreview}"
+                        Margin="12,0,12,0"/>
+                    <controls:BadgeButton
+                        IsEnabled="False"
+                        Content="{CustomResource Sound}"
+                        Badge="{CustomResource SoundDefault}"/>
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource InAppNotifications}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <CheckBox
+                        IsChecked="{x:Bind ViewModel.InAppSounds, Mode=TwoWay}"
+                        Content="{CustomResource InAppSounds}"
+                        Margin="12,8,12,8"/>
+                    <CheckBox
+                        IsChecked="{x:Bind ViewModel.InAppVibrate, Mode=TwoWay}"
+                        Visibility="{x:Bind (Visibility)ViewModel.IsVibrationAvailable}"
+                        Content="{CustomResource InAppVibrate}"
+                        Margin="12,0,12,8"/>
+                    <CheckBox 
+                        IsChecked="{x:Bind ViewModel.InAppPreview, Mode=TwoWay}"
+                        Content="{CustomResource InAppPreview}"
+                        Margin="12,0"/>
+
+                    <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" Height="1" Margin="12,6,0,0"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,24,0,0">
+                    <controls:BadgeButton
+                        Content="{CustomResource ResetAllNotifications}"
+                        Foreground="Red"
+                        Command="{x:Bind ViewModel.ResetCommand}"
+                        Style="{StaticResource BadgeButtonStyle}"/>
+                    <TextBlock Text="{CustomResource UndoAllCustom}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
-        <controls:ScrollViewerBackground
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
     </Grid>
 </Page>

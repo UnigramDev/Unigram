@@ -1,6 +1,6 @@
 <p align="center">
   <a href="http://unigram.me">
-    <img src="https://github.com/UnigramDev/Unigram/blob/develop/Unigram/Unigram/Assets/Logos/Placeholder/Placeholder-2.png?raw=true" width=80 height=80>
+    <img src="https://raw.githubusercontent.com/UnigramDev/Unigram/develop/Unigram/Assets/StoreLogo/Release/StoreLogo.scale-200.png" width=80 height=80>
   </a>
 
   <h3 align="center">Unigram</h3>
@@ -22,7 +22,7 @@
 ## Build instructions
 1. First, check that you have the [necessary tools](#requirements) installed.
 2. Go to <https://my.telegram.org/apps> and register a new app.
-3. Clone the repo `git clone --recursive https://github.com/UnigramDev/Unigram.git`.
+3. Clone the repository __*recursively*__ `git clone --recursive https://github.com/UnigramDev/Unigram.git`.
 4. Create a new file inside `Unigram/Unigram/Unigram.Api` and name it `Constants.Secret.cs`: 
 ```csharp
 namespace Telegram.Api
@@ -46,7 +46,7 @@ The following tools and SDKs are mandatory for the project development:
     * .NET Framework 4.7 SDK
     * NuGet package manager
     * Universal Windows Platform tools
-    * Windows 10 SDK 15063
+    * Windows 10 SDK 16299
 
 [Can I use Visual Studio 2015?](https://github.com/UnigramDev/Unigram/wiki/FAQ:-Development#why-do-i-have-to-use-visual-studio-2017-cant-i-use-vs2015)
 

@@ -22,6 +22,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Common;
+using System.Windows.Input;
 
 namespace Unigram.Views.Users
 {
@@ -42,7 +44,7 @@ namespace Unigram.Views.Users
             if (userFull != null && userFull.ProfilePhoto is TLPhoto && user != null)
             {
                 var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, userFull, user);
-                await GalleryView.Current.ShowAsync(viewModel, () => Picture);
+                await GalleryView.Current.ShowAsync(viewModel, () => Photo);
             }
         }
 
@@ -54,5 +56,93 @@ namespace Unigram.Views.Users
                 ViewModel.ToggleMuteCommand.Execute();
             }
         }
+
+        #region Context menu
+
+        private void About_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            MessageHelper.Hyperlink_ContextRequested(sender, args);
+        }
+
+        private void About_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            var user = ViewModel.Item as TLUser;
+            var full = ViewModel.Full as TLUserFull;
+            if (full == null || user == null)
+            {
+                return;
+            }
+
+            if (user.IsSelf)
+            {
+                CreateFlyoutItem(ref flyout, null, Strings.Android.ShareContact);
+            }
+            else
+            {
+                if (user.IsContact)
+                {
+                    CreateFlyoutItem(ref flyout, null, Strings.Android.ShareContact);
+                    CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.BlockCommand, !full.IsBlocked ? Strings.Android.BlockContact : Strings.Android.Unblock);
+                    CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.EditContact);
+                    CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Android.DeleteContact);
+                }
+                else
+                {
+                    if (user.IsBot)
+                    {
+                        if (!user.IsBotNochats)
+                        {
+                            CreateFlyoutItem(ref flyout, null, Strings.Android.BotInvite);
+                        }
+
+                        CreateFlyoutItem(ref flyout, null, Strings.Android.BotShare);
+                    }
+
+                    if (user.Phone != null && user.Phone.Length > 0)
+                    {
+                        CreateFlyoutItem(ref flyout, ViewModel.AddCommand, Strings.Android.AddContact);
+                        CreateFlyoutItem(ref flyout, null, Strings.Android.ShareContact);
+                        CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.BlockCommand, !full.IsBlocked ? Strings.Android.BlockContact : Strings.Android.Unblock);
+                    }
+                    else
+                    {
+                        if (user.IsBot)
+                        {
+                            CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.BlockCommand, !full.IsBlocked ? Strings.Android.BotStop : Strings.Android.BotRestart);
+                        }
+                        else
+                        {
+                            CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.BlockCommand, !full.IsBlocked ? Strings.Android.BlockContact : Strings.Android.Unblock);
+                        }
+                    }
+                }
+            }
+
+            CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
+
+            if (flyout.Items.Count > 0)
+            {
+                flyout.ShowAt((Button)sender);
+            }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, ICommand command, string text)
+        {
+            var flyoutItem = new MenuFlyoutItem();
+            flyoutItem.IsEnabled = command != null;
+            flyoutItem.Command = command;
+            flyoutItem.Text = text;
+
+            flyout.Items.Add(flyoutItem);
+        }
+
+        #endregion
     }
 }

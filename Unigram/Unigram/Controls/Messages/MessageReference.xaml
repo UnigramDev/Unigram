@@ -33,23 +33,38 @@
         </ControlTemplate>
     </HyperlinkButton.Template>
 
-    <Grid Background="Transparent">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Border x:Name="ThumbRoot" x:DeferLoadStrategy="Lazy" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="36" Height="36" Margin="6,0,0,0">
-            <Border x:Name="ThumbEllipse">
-                <Border.Background>
-                    <ImageBrush x:Name="ThumbImage" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                </Border.Background>
+    <UserControl>
+        <Grid Background="Transparent">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState x:Name="Normal"/>
+                    <VisualState x:Name="LightState">
+                        <VisualState.Setters>
+                            <Setter Target="Label.Foreground" Value="#FFFFFF"/>
+                            <Setter Target="TitleLabel.Foreground" Value="#FFFFFF"/>
+                            <Setter Target="ServiceLabel.Foreground" Value="#FFFFFF"/>
+                            <Setter Target="MessageLabel.Foreground" Value="#FFFFFF"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="ThumbRoot" x:DeferLoadStrategy="Lazy" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="36" Height="36" Margin="6,0,0,0">
+                <Border x:Name="ThumbEllipse">
+                    <Border.Background>
+                        <ImageBrush x:Name="ThumbImage" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                    </Border.Background>
+                </Border>
             </Border>
-        </Border>
 
-        <TextBlock Margin="8,0,0,2" VerticalAlignment="Center" MaxLines="2" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}" Grid.Column="1">
-            <Run x:Name="TitleLabel" Foreground="{ThemeResource MessageHeaderForegroundBrush}"/>
-            <LineBreak/>
-            <Run x:Name="ServiceLabel" Foreground="{ThemeResource MessageSubtleForegroundBrush}"/><Run x:Name="MessageLabel" Foreground="{ThemeResource MessageForegroundBrush}"/>
-        </TextBlock>
-    </Grid>
+            <TextBlock x:Name="Label" Margin="8,0,0,2" VerticalAlignment="Center" MaxLines="2" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}" Grid.Column="1">
+                <Run x:Name="TitleLabel" Foreground="{ThemeResource MessageHeaderForegroundBrush}"/>
+                <LineBreak/>
+                <Run x:Name="ServiceLabel" Foreground="{ThemeResource MessageSubtleForegroundBrush}"/><Run x:Name="MessageLabel" Foreground="{ThemeResource MessageForegroundBrush}"/>
+            </TextBlock>
+        </Grid>
+    </UserControl>
 </HyperlinkButton>

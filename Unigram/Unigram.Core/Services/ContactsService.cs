@@ -4,81 +4,193 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Aggregator;
+using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Contacts;
 using Unigram.Common;
+using Unigram.Core.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
+using Windows.Foundation.Metadata;
 
 namespace Unigram.Core.Services
 {
     public interface IContactsService
     {
-        Task SyncContactsAsync(TLContactsContactsBase result);
+        Task ImportAsync();
+        Task ExportAsync(TLContactsContacts result);
 
-        Task UnsyncContactsAsync();
+        Task RemoveAsync();
     }
 
     public class ContactsService : IContactsService
     {
-        private readonly DisposableMutex _syncLock;
+        private readonly IMTProtoService _protoService;
+        private readonly ITelegramEventAggregator _aggregator;
 
-        public ContactsService()
+        private readonly DisposableMutex _syncLock;
+        private readonly object _importedPhonesRoot;
+
+        public ContactsService(IMTProtoService protoService, ITelegramEventAggregator aggregator)
         {
+            _protoService = protoService;
+            _aggregator = aggregator;
+
             _syncLock = new DisposableMutex();
+            _importedPhonesRoot = new object();
         }
 
-        public async Task SyncContactsAsync(TLContactsContactsBase result)
+        #region Import
+
+        public async Task ImportAsync()
         {
             using (await _syncLock.WaitAsync())
             {
-                Debug.WriteLine("SYNCING CONTACTS");
+                Debug.WriteLine("» Importing contacts");
 
-                var contactList = await GetContactListAsync();
+                var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
+                if (store != null)
+                {
+                    await ImportAsync(store);
+                }
+
+                Debug.WriteLine("» Importing contacts completed");
+            }
+        }
+
+        private async Task ImportAsync(ContactStore store)
+        {
+            var contacts = await store.FindContactsAsync();
+            var importedPhones = new Dictionary<string, Contact>();
+
+            foreach (var contact in contacts)
+            {
+                foreach (var phone in contact.Phones)
+                {
+                    importedPhones[phone.Number] = contact;
+                }
+            }
+
+            var importedPhonesCache = GetImportedPhones();
+
+            var importingContacts = new TLVector<TLInputContactBase>();
+            var importingPhones = new List<string>();
+
+            foreach (var phone in importedPhones.Keys.Take(1300).ToList())
+            {
+                if (!importedPhonesCache.ContainsKey(phone))
+                {
+                    var contact = importedPhones[phone];
+                    var firstName = contact.FirstName ?? string.Empty;
+                    var lastName = contact.LastName ?? string.Empty;
+
+                    if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
+                    {
+                        if (string.IsNullOrEmpty(contact.DisplayName))
+                        {
+                            continue;
+                        }
+
+                        firstName = contact.DisplayName;
+                    }
+
+                    if (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
+                    {
+                        var item = new TLInputPhoneContact
+                        {
+                            Phone = phone,
+                            FirstName = firstName,
+                            LastName = lastName,
+                            ClientId = importedPhones[phone].GetHashCode()
+                        };
+
+                        importingContacts.Add(item);
+                        importingPhones.Add(phone);
+                    }
+                }
+            }
+
+            if (importingContacts.IsEmpty())
+            {
+                return;
+            }
+
+            //base.IsWorking = true;
+            _protoService.ImportContactsAsync(importingContacts, result =>
+            {
+                //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                //{
+                //    this.IsWorking = false;
+                //    this.Status = ((this.Items.get_Count() == 0 && this.LazyItems.get_Count() == 0 && result.Users.Count == 0) ? string.Format("{0}", AppResources.NoContactsHere) : string.Empty);
+                //    int count = result.RetryContacts.Count;
+                //    if (count > 0)
+                //    {
+                //        Telegram.Api.Helpers.Execute.ShowDebugMessage("contacts.importContacts error: retryContacts count=" + count);
+                //    }
+                //    this.InsertContacts(result.Users);
+                //});
+
+                _aggregator.Publish(new TLUpdateContactsReset());
+                SaveImportedPhones(importedPhonesCache, importingPhones);
+            }, 
+            fault =>
+            {
+                Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                {
+                    //this.IsWorking = false;
+                    //this.Status = string.Empty;
+                    Telegram.Api.Helpers.Execute.ShowDebugMessage("contacts.importContacts error: " + fault);
+                });
+            });
+        }
+
+        private void SaveImportedPhones(Dictionary<string, string> importedPhonesCache, List<string> importingPhones)
+        {
+            foreach (var current in importingPhones)
+            {
+                importedPhonesCache[current] = current;
+            }
+
+            var vector = new TLVector<string>(importedPhonesCache.Keys);
+            TLUtils.SaveObjectToMTProtoFile(_importedPhonesRoot, "importedPhones.dat", vector);
+        }
+
+        private Dictionary<string, string> GetImportedPhones()
+        {
+            var vector = TLUtils.OpenObjectFromMTProtoFile<TLVector<string>>(_importedPhonesRoot, "importedPhones.dat") ?? new TLVector<string>();
+            return vector.ToDictionary(x => x, y => y);
+        }
+
+        #endregion
+
+        #region Export
+
+        public async Task ExportAsync(TLContactsContacts result)
+        {
+            using (await _syncLock.WaitAsync())
+            {
+                Debug.WriteLine("» Exporting contacts");
+
+                var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
+                if (store == null)
+                {
+                    return;
+                }
+
+                var contactList = await GetContactListAsync(store);
                 var annotationList = await GetAnnotationListAsync();
-                var peopleList = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
 
                 if (contactList != null && annotationList != null)
                 {
-                    await ExportContacts(contactList, annotationList, result);
+                    await ExportAsync(contactList, annotationList, result);
                 }
 
-                //if (peopleList != null)
-                //{
-                //    await ImportContacts(peopleList);
-                //}
-
-                Debug.WriteLine("SYNCED CONTACTS");
+                Debug.WriteLine("» Exporting contacts completed");
             }
         }
 
-        public async Task UnsyncContactsAsync()
-        {
-            using (await _syncLock.WaitAsync())
-            {
-                Debug.WriteLine("UNSYNCING CONTACTS");
-
-                var contactList = await GetContactListAsync();
-                var annotationList = await GetAnnotationListAsync();
-
-                await contactList.DeleteAsync();
-                await annotationList.DeleteAsync();
-
-                Debug.WriteLine("UNSYNCED CONTACTS");
-            }
-        }
-
-
-        private async Task ImportContacts(ContactStore peopleList)
-        {
-            var contacts = await peopleList.FindContactsAsync();
-            foreach (var contact in contacts)
-            {
-
-            }
-        }
-
-        private async Task ExportContacts(ContactList contactList, ContactAnnotationList annotationList, TLContactsContactsBase result)
+        private async Task ExportAsync(ContactList contactList, ContactAnnotationList annotationList, TLContactsContactsBase result)
         {
             var contacts = result as TLContactsContacts;
             if (contacts != null)
@@ -128,6 +240,11 @@ namespace Unigram.Core.Services
                     annotation.RemoteId = contact.RemoteId;
                     annotation.SupportedOperations = ContactAnnotationOperations.ContactProfile | ContactAnnotationOperations.Message | ContactAnnotationOperations.AudioCall;
 
+                    if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+                    {
+                        annotation.SupportedOperations |= ContactAnnotationOperations.Share;
+                    }
+
                     if (annotation.ProviderProperties.Count == 0)
                     {
                         annotation.ProviderProperties.Add("ContactPanelAppID", Package.Current.Id.FamilyName + "!App");
@@ -139,14 +256,8 @@ namespace Unigram.Core.Services
             }
         }
 
-        private async Task<ContactList> GetContactListAsync()
+        private async Task<ContactList> GetContactListAsync(ContactStore store)
         {
-            var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
-            if (store == null)
-            {
-                return null;
-            }
-
             ContactList contactList;
             var contactsList = await store.FindContactListsAsync();
             if (contactsList.Count == 0)
@@ -181,6 +292,30 @@ namespace Unigram.Core.Services
             }
 
             return contactList;
+        }
+
+        #endregion
+
+        public async Task RemoveAsync()
+        {
+            using (await _syncLock.WaitAsync())
+            {
+                Debug.WriteLine("UNSYNCING CONTACTS");
+
+                var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
+                if (store == null)
+                {
+                    return;
+                }
+
+                var contactList = await GetContactListAsync(store);
+                var annotationList = await GetAnnotationListAsync();
+
+                await contactList.DeleteAsync();
+                await annotationList.DeleteAsync();
+
+                Debug.WriteLine("UNSYNCED CONTACTS");
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ using Unigram.Common;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
 using System.Threading.Tasks;
+using Unigram.Views.Settings;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -34,6 +35,11 @@ namespace Unigram.Controls.Views
         public StickersView()
         {
             InitializeComponent();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Bindings.StopTracking();
         }
 
         private void Gifs_ItemClick(object sender, ItemClickEventArgs e)
@@ -156,6 +162,11 @@ namespace Unigram.Controls.Views
         private void GroupStickers_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.GroupStickersCommand.Execute(null);
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigationService.Navigate(typeof(SettingsStickersPage));
         }
     }
 

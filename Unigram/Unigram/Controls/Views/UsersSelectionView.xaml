@@ -28,7 +28,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel VerticalAlignment="Center" Margin="12,0">
-            <TextBlock Text="{x:Bind ViewModel.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
+            <TextBlock Text="{x:Bind ViewModel.Title, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
             <TextBlock Visibility="{x:Bind ConvertMaximum(ViewModel.Maximum, x:True)}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
                 <Run Text="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"/><Run Text="/"/><Run Text="{x:Bind ViewModel.Maximum}"/>
             </TextBlock>
@@ -42,7 +42,7 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       MaxHeight="76">
-            <controls:TagsTextBox x:Name="SearchField" Text="{Binding SearchQuery, Mode=TwoWay}" TextChanged="SearchField_TextChanged" ItemsSource="{x:Bind ViewModel.SelectedItems}" VerticalAlignment="Stretch" PlaceholderText="Search" Margin="0,8" SizeChanged="TagsTextBox_SizeChanged"/>
+            <controls:TagsTextBox x:Name="SearchField" Text="{Binding SearchQuery, Mode=TwoWay}" TextChanged="SearchField_TextChanged" ItemsSource="{x:Bind ViewModel.SelectedItems}" VerticalAlignment="Stretch" PlaceholderText="{CustomResource Search}" Margin="0,8" SizeChanged="TagsTextBox_SizeChanged"/>
         </ScrollViewer>
         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
     </Grid>
@@ -67,7 +67,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePictureView x:Phase="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" IsEnabled="False" Grid.RowSpan="2"/>
+                    <controls:ProfilePicture x:Phase="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" IsEnabled="False" Grid.RowSpan="2"/>
 
                     <TextBlock Text="{x:Bind FullName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                     <TextBlock Text="{x:Bind Converter={StaticResource LastSeenConverter}, ConverterParameter=list}"
@@ -90,7 +90,7 @@
               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
               ItemsSource="{x:Bind SearchResults.View}"
               SelectionMode="{x:Bind ViewModel.SelectionMode}"
-              SelectionChanged="ListView_SelectionChanged"
+              SelectionChanged="SearchListView_SelectionChanged"
               IsItemClickEnabled="True"
               ItemClick="ListView_ItemClick"
               Grid.Row="2">
@@ -105,7 +105,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                    <controls:ProfilePicture Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
                     <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                     <TextBlock Text="{x:Bind Username}"

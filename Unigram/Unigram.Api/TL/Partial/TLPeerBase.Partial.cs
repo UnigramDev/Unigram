@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
@@ -37,12 +38,42 @@ namespace Telegram.Api.TL
                 return false;
             }
 
-            var peer = obj as TLPeerBase;
-            if ((this is TLPeerUser && obj is TLPeerUser) ||
-                (this is TLPeerChat && obj is TLPeerChat) ||
-                (this is TLPeerChannel && obj is TLPeerChannel))
+            if (this is TLPeerUser userPeer)
             {
-                return Id.Equals(peer.Id);
+                if (obj is TLPeerUser otherUser)
+                {
+                    return userPeer.UserId == otherUser.UserId;
+                }
+                else if (obj is TLInputPeerUser inputUser)
+                {
+                    return userPeer.UserId == inputUser.UserId;
+                }
+                else if (obj is TLInputPeerSelf selfUser)
+                {
+                    return userPeer.UserId == SettingsHelper.UserId;
+                }
+            }
+            else if (this is TLPeerChat chatPeer)
+            {
+                if (obj is TLPeerChat otherChat)
+                {
+                    return chatPeer.ChatId == otherChat.ChatId;
+                }
+                else if (obj is TLInputPeerChat inputChat)
+                {
+                    return chatPeer.ChatId == inputChat.ChatId;
+                }
+            }
+            else if (this is TLPeerChannel channelPeer)
+            {
+                if (obj is TLPeerChannel otherChannel)
+                {
+                    return channelPeer.ChannelId == otherChannel.ChannelId;
+                }
+                else if (obj is TLInputPeerChannel inputChannel)
+                {
+                    return channelPeer.ChannelId == inputChannel.ChannelId;
+                }
             }
 
             return base.Equals(obj);
@@ -55,24 +86,19 @@ namespace Telegram.Api.TL
 
         //#region User equality
 
-        //public static bool operator ==(TLPeerBase peer, TLUserBase user)
+        //public static bool operator ==(TLPeerBase peer1, TLPeerBase peer2)
         //{
-        //    if (((object)peer == null) || ((object)peer == null))
+        //    if ((object)peer1 == null || (object)peer2 == null)
         //    {
         //        return false;
         //    }
 
-        //    if (peer is TLPeerUser userPeer && userPeer.UserId == user.Id)
-        //    {
-        //        return true;
-        //    }
-
-        //    return false;
+        //    return peer1.Equals(peer2);
         //}
 
-        //public static bool operator !=(TLPeerBase peer, TLUserBase user)
+        //public static bool operator !=(TLPeerBase peer1, TLPeerBase peer2)
         //{
-        //    return !(peer == user);
+        //    return !(peer1 == peer2);
         //}
 
         //#endregion

@@ -6,6 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Converters;
+using Unigram.Core.Common;
+using Unigram.Core.Helpers;
+using Windows.Foundation;
+using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -18,8 +22,10 @@ namespace Unigram.Models
         private BasicProperties _basic;
 
         public StorageVideo(StorageFile file, BasicProperties basic, VideoProperties props, MediaEncodingProfile profile)
-            : base(file)
+            : base(file, basic)
         {
+            _fullRectangle = new Rect(0, 0, props.GetWidth(), props.GetHeight());
+
             _basic = basic;
             Properties = props;
             Profile = profile;
@@ -27,35 +33,55 @@ namespace Unigram.Models
             videoDuration = props.Duration.TotalMilliseconds;
 
             originalSize = (long)basic.Size;
-            originalWidth = (int)props.Width;
-            originalHeight = (int)props.Height;
+            originalWidth = (int)props.GetWidth();
+            originalHeight = (int)props.GetHeight();
             originalBitrate = bitrate = (int)props.Bitrate; //(trackBitrate / 100000 * 100000);
 
             if (bitrate > 900000)
             {
                 bitrate = 900000;
             }
+
+            LoadPreview();
         }
 
-        public static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
+        public override uint Width => Properties.GetWidth();
+        public override uint Height => Properties.GetHeight();
+
+        public new static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
         {
-            return new StorageVideo(file, await file.GetBasicPropertiesAsync(), await file.Properties.GetVideoPropertiesAsync(), await MediaEncodingProfile.CreateFromFileAsync(file)) { IsSelected = selected };
+            try
+            {
+                var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
+                if (profile.Video == null)
+                {
+                    return null;
+                }
+
+                var basic = await file.GetBasicPropertiesAsync();
+                var video = await file.Properties.GetVideoPropertiesAsync();
+
+                if (video.Width > 0 && video.Height > 0)
+                {
+                    return new StorageVideo(file, basic, video, profile) { IsSelected = selected };
+                }
+
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public VideoProperties Properties { get; private set; }
 
         public MediaEncodingProfile Profile { get; private set; }
 
-        private ImageSource _preview;
-        public ImageSource Preview
+        public override void Refresh()
         {
-            get
-            {
-                if (_preview == null)
-                    LoadPreview();
-
-                return _preview;
-            }
+            base.Refresh();
+            LoadPreview();
         }
 
         public string Duration
@@ -127,9 +153,18 @@ namespace Unigram.Models
 
         private async void LoadPreview()
         {
-            _preview = _thumbnail;
+            //_preview = _thumbnail;
             //_preview = await ImageHelper.GetPreviewBitmapAsync(File);
             //RaisePropertyChanged(() => Preview);
+
+            int originalWidth = this.originalWidth;
+            int originalHeight = this.originalHeight;
+
+            if (CropRectangle.HasValue)
+            {
+                originalWidth = (int)CropRectangle.Value.Width;
+                originalHeight = (int)CropRectangle.Value.Height;
+            }
 
             Compression = 6;
 
@@ -172,7 +207,7 @@ namespace Unigram.Models
         public override void Reset()
         {
             base.Reset();
-            LoadPreview();
+            Refresh();
         }
 
         private int originalWidth;
@@ -204,8 +239,17 @@ namespace Unigram.Models
 
         public async Task<MediaEncodingProfile> GetEncodingAsync()
         {
-            int resultWidth = this.originalWidth;
-            int resultHeight = this.originalHeight;
+            int originalWidth = this.originalWidth;
+            int originalHeight = this.originalHeight;
+
+            if (CropRectangle.HasValue)
+            {
+                originalWidth = (int)CropRectangle.Value.Width;
+                originalHeight = (int)CropRectangle.Value.Height;
+            }
+
+            int resultWidth = originalWidth;
+            int resultHeight = originalHeight;
 
             int bitrate = this.originalBitrate;
             long videoFramesSize = 0;
@@ -353,6 +397,20 @@ namespace Unigram.Models
                     videoFramesSize = (long)(bitrate / 8 * videoDuration / 1000);
                 }
             }
+        }
+
+        public VideoTransformEffectDefinition GetTransform()
+        {
+            var crop = CropRectangle;
+            if (crop.HasValue)
+            {
+                var transform = new VideoTransformEffectDefinition();
+                transform.CropRectangle = crop.Value;
+
+                return transform;
+            }
+
+            return null;
         }
     }
 }

@@ -12,17 +12,17 @@ namespace Unigram.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            var participant = value as TLChannelParticipantBase;
             switch (value)
             {
                 case TLChannelParticipantCreator creator:
-                    return "Creator";
+                    return Strings.Android.ChannelCreator;
                 case TLChannelParticipantAdmin admin:
-                    return string.Format("Promoted by {0}", admin.PromotedByUser.FullName);
+                    return string.Format(Strings.Android.EditAdminPromotedBy, admin.PromotedByUser.FullName);
                 case TLChannelParticipantBanned banned:
-                    return string.Format("Restricted by {0}", banned.KickedByUser.FullName);
-                case TLChannelParticipant participant:
+                    return string.Format(Strings.Android.UserRestrictionsBy, banned.KickedByUser.FullName);
                 default:
-                    return "User";
+                    return LastSeenConverter.GetLabel(participant.User, false);
             }
         }
 

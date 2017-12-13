@@ -13,8 +13,6 @@ namespace Telegram.Api.TL
     {
         public Int32 AdminsCount { get; set; }
 
-        public Int32? ParticipantsCount { get; set; }
-
         public TLVector<int> ParticipantIds { get; set; }
 
         public Int32? ReadInboxMaxId { get; set; }
@@ -75,6 +73,7 @@ namespace Telegram.Api.TL
                 this.RestrictionReason = channel.RestrictionReason;
                 this.AdminRights = channel.AdminRights;
                 this.BannedRights = channel.BannedRights;
+                this.ParticipantsCount = channel.ParticipantsCount;
 
                 if (channel.ReadInboxMaxId != 0 && (ReadInboxMaxId == 0 || ReadInboxMaxId < channel.ReadInboxMaxId))
                 {

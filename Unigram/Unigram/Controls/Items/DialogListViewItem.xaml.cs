@@ -65,7 +65,11 @@ namespace Unigram.Controls.Items
                 _oldViewModel = ViewModel;
                 ViewModel.PropertyChanged += OnPropertyChanged;
 
+                Photo.Visibility = ViewModel.With is TLUser user1 && user1.IsSelf ? Visibility.Collapsed : Visibility.Visible;
+                SavedMessages.Visibility = ViewModel.With is TLUser user2 && user2.IsSelf ? Visibility.Visible : Visibility.Collapsed;
+
                 FromLabel.Text = UpdateFromLabel(ViewModel);
+                DraftLabel.Text = UpdateDraftLabel(ViewModel);
                 BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
                 //UpdateStateIcon();
@@ -81,6 +85,7 @@ namespace Unigram.Controls.Items
             if (e.PropertyName == "Self")
             {
                 FromLabel.Text = UpdateFromLabel(ViewModel);
+                DraftLabel.Text = UpdateDraftLabel(ViewModel);
                 BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
                 //UpdateStateIcon();
@@ -90,6 +95,7 @@ namespace Unigram.Controls.Items
             else if (e.PropertyName == "TopMessageItem")
             {
                 FromLabel.Text = UpdateFromLabel(ViewModel);
+                DraftLabel.Text = UpdateDraftLabel(ViewModel);
                 BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
                 //UpdateStateIcon();
@@ -146,7 +152,7 @@ namespace Unigram.Controls.Items
 
             if (value is TLMessageEmpty messageEmpty)
             {
-                return "Resources.EmptyMessage";
+                return string.Empty;
             }
 
             if (value is TLMessageService messageService)
@@ -161,7 +167,7 @@ namespace Unigram.Controls.Items
                 {
                     if (message.Media is TLMessageMediaDocument documentMedia)
                     {
-                        if (string.IsNullOrEmpty(documentMedia.Caption))
+                        if (string.IsNullOrEmpty(documentMedia.Caption) || message.IsRoundVideo())
                         {
                             return result;
                         }
@@ -194,9 +200,18 @@ namespace Unigram.Controls.Items
                         return result + message.Message.Replace("\r\n", "\n").Replace("\n", " ");
                     }
 
-                    //return text + Resources.Message;
-                    return result + "Message";
+                    return result + Strings.Android.Message;
                 }
+            }
+
+            return string.Empty;
+        }
+
+        private string UpdateDraftLabel(TLDialog dialog)
+        {
+            if (dialog.Draft is TLDraftMessage draft && !string.IsNullOrWhiteSpace(draft.Message))
+            {
+                return $"{Strings.Android.Draft}: ";
             }
 
             return string.Empty;
@@ -206,8 +221,7 @@ namespace Unigram.Controls.Items
         {
             if (dialog.Draft is TLDraftMessage draft && !string.IsNullOrWhiteSpace(draft.Message))
             {
-                FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelDraftBrush"] as SolidColorBrush;
-                return "Draft: ";
+                return string.Empty;
             }
 
             if (dialog.TopMessageItem is TLMessage message)
@@ -216,8 +230,6 @@ namespace Unigram.Controls.Items
 
                 if (message.ShowFrom)
                 {
-                    FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelFromBrush"] as SolidColorBrush;
-
                     var from = message.FromId;
                     if (from != null)
                     {
@@ -226,7 +238,7 @@ namespace Unigram.Controls.Items
                         {
                             if (dialog.Id != from && !message.IsPost)
                             {
-                                result = "You: ";
+                                result = $"{Strings.Android.FromYou}: ";
                             }
                         }
                         else if (message.From is TLUser user)
@@ -245,7 +257,7 @@ namespace Unigram.Controls.Items
                             }
                             else if (user.IsDeleted)
                             {
-                                return $"Deleted Account: ";
+                                result = $"{Strings.Android.HiddenName}: ";
                             }
                             else
                             {
@@ -270,7 +282,24 @@ namespace Unigram.Controls.Items
                     {
                         if (documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
                         {
-                            return result + "Video has expired";
+                            return result + Strings.Android.AttachVideoExpired;
+                        }
+                        else if (message.IsRoundVideo())
+                        {
+                            return result + Strings.Android.AttachRound;
+                        }
+                        else if (message.IsSticker())
+                        {
+                            if (documentMedia.Document is TLDocument documentSticker)
+                            {
+                                var attribute = documentSticker.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                                if (attribute != null)
+                                {
+                                    return result + $"{attribute.Alt} {Strings.Android.AttachSticker}";
+                                }
+                            }
+
+                            return result + Strings.Android.AttachSticker;
                         }
 
                         var caption = string.Empty;
@@ -281,32 +310,15 @@ namespace Unigram.Controls.Items
 
                         if (message.IsVoice())
                         {
-                            return result + "Voice" + caption;
+                            return result + Strings.Android.AttachAudio + caption;
                         }
                         else if (message.IsVideo())
                         {
-                            return result + "Video" + caption;
-                        }
-                        else if (message.IsRoundVideo())
-                        {
-                            return result + "Video message" + caption;
+                            return result + Strings.Android.AttachVideo + caption;
                         }
                         else if (message.IsGif())
                         {
-                            return result + "GIF" + caption;
-                        }
-                        else if (message.IsSticker())
-                        {
-                            if (documentMedia.Document is TLDocument documentSticker)
-                            {
-                                var attribute = documentSticker.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
-                                if (attribute != null)
-                                {
-                                    return result + $"{attribute.Alt} Sticker";
-                                }
-                            }
-
-                            return result + "Sticker";
+                            return result + Strings.Android.AttachGif + caption;
                         }
                         else if (message.IsAudio())
                         {
@@ -321,11 +333,11 @@ namespace Unigram.Controls.Items
                                     }
                                     else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
                                     {
-                                        return $"{result}{audioAttribute.Performer} - Unknown Track" + caption;
+                                        return $"{result}{audioAttribute.Performer} - {Strings.Android.AudioUnknownTitle}" + caption;
                                     }
                                     else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
                                     {
-                                        return $"{result}{audioAttribute.Title}" + caption;
+                                        return $"{result}{Strings.Android.AudioUnknownArtist} - {audioAttribute.Title}" + caption;
                                     }
                                 }
                             }
@@ -341,7 +353,7 @@ namespace Unigram.Controls.Items
                             }
                         }
 
-                        return result + "Document" + caption;
+                        return result + Strings.Android.AttachDocument + caption;
                     }
                     else if (message.Media is TLMessageMediaInvoice invoiceMedia)
                     {
@@ -349,37 +361,37 @@ namespace Unigram.Controls.Items
                     }
                     else if (message.Media is TLMessageMediaContact)
                     {
-                        return result + "Contact";
+                        return result + Strings.Android.AttachContact;
                     }
                     else if (message.Media is TLMessageMediaGeo)
                     {
-                        return result + "Location";
+                        return result + Strings.Android.AttachLocation;
                     }
                     else if (message.Media is TLMessageMediaGeoLive)
                     {
-                        return result + "Live Location";
+                        return result + Strings.Android.AttachLiveLocation;
                     }
                     else if (message.Media is TLMessageMediaVenue)
                     {
-                        return result + "Location, ";
+                        return result + $"{Strings.Android.AttachLocation}, ";
                     }
                     else if (message.Media is TLMessageMediaPhoto photoMedia)
                     {
                         if (photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
                         {
-                            return result + "Photo has expired";
+                            return result + Strings.Android.AttachPhotoExpired;
                         }
 
                         if (string.IsNullOrEmpty(photoMedia.Caption))
                         {
-                            return result + "Photo";
+                            return result + Strings.Android.AttachPhoto;
                         }
 
-                        return result + "Photo, ";
+                        return result + $"{Strings.Android.AttachPhoto}, ";
                     }
                     else if (message.Media is TLMessageMediaUnsupported)
                     {
-                        return result + "Unsupported media";
+                        return result + Strings.Android.UnsupportedAttachment;
                     }
                 }
 
@@ -387,7 +399,6 @@ namespace Unigram.Controls.Items
             }
             else if (dialog.TopMessageItem is TLMessageService messageService)
             {
-                FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelFromBrush"] as SolidColorBrush;
                 return ServiceHelper.Convert(messageService);
             }
 

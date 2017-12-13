@@ -186,450 +186,44 @@
             </Setter>
         </Style>
 
-        <!-- Teorically temporary location, but we'll see -->
-        <MenuFlyout x:Key="MessageMenuFlyout" Opening="MenuFlyout_Opening">
-            <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
-            <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin message"/>
-            <MenuFlyoutItem Loaded="MessageEdit_Loaded" Command="{x:Bind ViewModel.MessageEditCommand}" CommandParameter="{Binding}" Text="Edit message"/>
-            <MenuFlyoutItem Loaded="MessageForward_Loaded" Command="{x:Bind ViewModel.MessageForwardCommand}" CommandParameter="{Binding}" Text="Forward message"/>
-            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
-            <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>
-            <MenuFlyoutItem Loaded="MessageCopy_Loaded" Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy text"/>
-            <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
-            <MenuFlyoutItem Loaded="MessageSaveGIF_Loaded" Command="{x:Bind ViewModel.MessageSaveGIFCommand}" CommandParameter="{Binding}" Text="Save to GIFs"/>
-            <MenuFlyoutItem Loaded="MessageSaveMedia_Loaded" Command="{x:Bind ViewModel.MessageSaveMediaCommand}" CommandParameter="{Binding}" Text="Save file as..."/>
-        </MenuFlyout>
-
-        <MenuFlyout x:Key="StickerMenuFlyout" Opening="MenuFlyout_Opening">
-            <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
-            <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin message"/>
-            <MenuFlyoutItem Loaded="MessageForward_Loaded" Command="{x:Bind ViewModel.MessageForwardCommand}" CommandParameter="{Binding}" Text="Forward message"/>
-            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
-            <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>
-            <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
-            <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
-            <MenuFlyoutItem Loaded="MessageFaveSticker_Loaded" Command="{x:Bind ViewModel.MessageFaveStickerCommand}" CommandParameter="{Binding}" Text="Add to Favorites"/>
-            <MenuFlyoutItem Loaded="MessageUnfaveSticker_Loaded" Command="{x:Bind ViewModel.MessageUnfaveStickerCommand}" CommandParameter="{Binding}" Text="Delete from Favorites"/>
-            <!--<MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Command="{x:Bind ViewModel.MessageStickerPackInfoCommand}" CommandParameter="{Binding}" Text="Sticker pack info"/>-->
-            <MenuFlyoutItem Loaded="MessageSaveSticker_Loaded" Command="{x:Bind ViewModel.MessageSaveStickerCommand}" CommandParameter="{Binding}" Text="Save sticker as..."/>
-        </MenuFlyout>
-
-        <MenuFlyout x:Key="ServiceMenuFlyout" Opening="MenuFlyout_Opening">
-            <MenuFlyoutItem Loaded="MessageCallAgain_Loaded" Text="Call Again" IsEnabled="False"/>
-            <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
-            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
-        </MenuFlyout>
-            
-        <!-- Round video -->
-        <DataTemplate x:Key="UserRoundVideoTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <!-- TODO: not the right way -->
-                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
-
-                <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
-                            Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            VerticalAlignment="Top"
-                            HorizontalAlignment="Right"
-                            MaxWidth="180"
-                            Padding="8,0,8,6"
-                            Margin="0,0,4,4"
-                            Grid.Row="1">
-                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
-                        <messages:MessageReference.Resources>
-                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#FFFFFF"/>
-                        </messages:MessageReference.Resources>
-                    </messages:MessageReference>
-                </StackPanel>
-
-                <Grid x:Name="MediaControl" ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1" Grid.Row="1">
-                    <Ellipse Fill="Black"/>
-                    <controls:ImageView
-                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
-                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                        Style="{StaticResource RoundImageViewStyle}"
-                        MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
-                        MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"
-                        HorizontalAlignment="Right"/>
-
-                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-                    <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-
-                    <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                        <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-                        <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
-                    </StackPanel>
-
-                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
-                </Grid>
-
-                <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Column="1" Grid.Row="2"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="FriendRoundVideoTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <!-- TODO: not the right way -->
-                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
-
-                <Grid x:Name="MediaControl" ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Row="1">
-                    <Ellipse Fill="Black"/>
-                    <controls:ImageView
-                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
-                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                        Style="{StaticResource RoundImageViewStyle}"
-                        MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
-                        MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"
-                        HorizontalAlignment="Left"/>
-
-                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-                    <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-
-                    <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                        <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-                        <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
-                    </StackPanel>
-
-                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
-                </Grid>
-
-                <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
-                            Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            VerticalAlignment="Top"
-                            HorizontalAlignment="Left"
-                            MaxWidth="180"
-                            Padding="8,0,8,6"
-                            Margin="4,0,0,4"
-                            Grid.Column="1"
-                            Grid.Row="1">
-                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
-                        <messages:MessageReference.Resources>
-                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#FFFFFF"/>
-                        </messages:MessageReference.Resources>
-                    </messages:MessageReference>
-                </StackPanel>
-
-                <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
-                        Background="{ThemeResource MessageServiceBackgroundBrush}"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom"
-                        CornerRadius="14"
-                        Margin="8,0,0,4"
-                        Grid.Column="1"
-                        Grid.Row="1">
-                    <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
-                </Border>
-
-                <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="ChatFriendRoundVideoTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="-52,0,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="52"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePictureView x:Phase="3"
-                                             x:Name="PhotoBubble"
-                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                             Click="ProfileBubble_Click"/>
-
-                <Grid Margin="0,2" Grid.Column="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <!-- TODO: not the right way -->
-                    <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
-
-                    <Grid x:Name="MediaControl" ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Row="1">
-                        <Ellipse Fill="Black"/>
-                        <controls:ImageView
-                            Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
-                            Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                            Style="{StaticResource RoundImageViewStyle}"
-                            MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
-                            MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"
-                            HorizontalAlignment="Left"/>
-
-                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-
-                        <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                            <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-                            <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
-                        </StackPanel>
-
-                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
-                    </Grid>
-
-                    <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
-                                Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                VerticalAlignment="Top"
-                                HorizontalAlignment="Left"
-                                MaxWidth="180"
-                                Padding="8,0,8,6"
-                                Margin="4,0,0,4"
-                                Grid.Column="1"
-                                Grid.Row="1">
-                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
-                        <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
-                            <messages:MessageReference.Resources>
-                                <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                                <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                                <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                                <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#FFFFFF"/>
-                            </messages:MessageReference.Resources>
-                        </messages:MessageReference>
-                    </StackPanel>
-
-                    <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
-                            Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Bottom"
-                            CornerRadius="14"
-                            Margin="8,0,0,4"
-                            Grid.Column="1"
-                            Grid.Row="1">
-                        <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
-                    </Border>
-
-                    <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
-                </Grid>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <!-- TODO: not the right way -->
-                <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
-
-                <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
-                            Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            VerticalAlignment="Top"
-                            HorizontalAlignment="Right"
-                            MaxWidth="180"
-                            Padding="8,0,8,6"
-                            Margin="0,0,4,4"
-                            Grid.Row="1">
-                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
-                        <messages:MessageReference.Resources>
-                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#FFFFFF"/>
-                        </messages:MessageReference.Resources>
-                    </messages:MessageReference>
-                </StackPanel>
-
-                <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Column="1" Grid.Row="1">
-                    <controls:ImageView
-                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
-                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                        MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
-                        MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"
-                        HorizontalAlignment="Right"
-                        Click="StickerSet_Click"/>
-
-                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
-                </Grid>
-
-                <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Column="1" Grid.Row="2"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="FriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <!-- TODO: not the right way -->
-                <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
-
-                <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
-                    <controls:ImageView
-                        Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
-                        Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                        MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
-                        MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"
-                        HorizontalAlignment="Left"
-                        Click="StickerSet_Click"/>
-
-                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
-                </Grid>
-
-                <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
-                            Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            VerticalAlignment="Top"
-                            HorizontalAlignment="Left"
-                            MaxWidth="180"
-                            Padding="8,0,8,6"
-                            Margin="4,0,0,4"
-                            Grid.Column="1"
-                            Grid.Row="1">
-                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
-                        <messages:MessageReference.Resources>
-                            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                            <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#FFFFFF"/>
-                        </messages:MessageReference.Resources>
-                    </messages:MessageReference>
-                </StackPanel>
-
-                <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="ChatFriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="-52,0,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="52"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePictureView x:Phase="3"
-                                             x:Name="PhotoBubble"
-                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                             Click="ProfileBubble_Click"/>
-
-                <Grid Margin="0,2" Grid.Column="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <!-- TODO: not the right way -->
-                    <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
-
-                    <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
-                        <controls:ImageView
-                            Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
-                            Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
-                            MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
-                            MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"
-                            HorizontalAlignment="Left"
-                            Click="StickerSet_Click"/>
-
-                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
-                    </Grid>
-
-                    <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
-                                Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                VerticalAlignment="Top"
-                                HorizontalAlignment="Left"
-                                MaxWidth="180"
-                                Padding="8,0,8,6"
-                                Margin="4,0,0,4"
-                                Grid.Column="1"
-                                Grid.Row="1">
-                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
-                        <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
-                            <messages:MessageReference.Resources>
-                                <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
-                                <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
-                                <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-                                <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#FFFFFF"/>
-                            </messages:MessageReference.Resources>
-                        </messages:MessageReference>
-                    </StackPanel>
-
-                    <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
-                </Grid>
-            </Grid>
-        </DataTemplate>
-
         <!-- Region Service -->
+
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+            <Border ContextRequested="Message_ContextRequested" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,8" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
-            <StackPanel Margin="0,8,0,2">
-                <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+            <StackPanel Margin="0,8,0,8" ContextRequested="Message_ContextRequested">
+                <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                 </Border>
 
-                <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                    <controls:ProfilePictureView Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
+                    <controls:ProfilePicture Click="Media_Click" Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                 </Border>
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageLocalTemplate">
-            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,8" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageDateTemplate">
-            <controls:SimpleButton Click="Date_Click" Margin="0,8,0,2" HorizontalAlignment="Center" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+            <controls:SimpleButton Click="Date_Click" Margin="0,8,0,8" HorizontalAlignment="Center" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                 </Border>
             </controls:SimpleButton>
         </DataTemplate>
+
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}">
+            <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -646,7 +240,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested"/>
 
                 <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -666,13 +260,13 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePictureView x:Phase="3"
+                <controls:ProfilePicture x:Phase="3"
                                              x:Name="PhotoBubble"
                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Source="{x:Bind Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                             Click="ProfileBubble_Click"/>
-                <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
+                                             Click="Photo_Click"/>
+                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" Grid.Column="1"/>
 
                 <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -682,11 +276,19 @@
                         Grid.Column="2">
                     <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
                 </Border>
+                <Border Visibility="{x:Bind FwdFrom.HasSavedFromMsgId, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                        Background="{ThemeResource MessageServiceBackgroundBrush}"
+                        VerticalAlignment="Bottom"
+                        CornerRadius="14"
+                        Margin="8,0,0,4"
+                        Grid.Column="2">
+                    <controls:GlyphButton Click="View_Click" Glyph="&#xE90B;" FontFamily="{StaticResource TelegramThemeFontFamily}" Padding="0,2,0,0" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                </Border>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceUserCallMessageTemplate">
-            <messages:PhoneCallMessageBubble ContextFlyout="{StaticResource ServiceMenuFlyout}">
+            <messages:PhoneCallMessageBubble ContextRequested="Message_ContextRequested">
                 <StackPanel.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -698,340 +300,19 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceFriendCallMessageTemplate">
-            <messages:PhoneCallMessageBubble ContextFlyout="{StaticResource ServiceMenuFlyout}"/>
+            <messages:PhoneCallMessageBubble ContextRequested="Message_ContextRequested"/>
         </DataTemplate>
 
         <selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
                                            UserMessageTemplate="{StaticResource UserMessageTemplate}"
-                                           UserStickerTemplate="{StaticResource UserStickerTemplate}"
-                                           UserRoundVideoTemplate="{StaticResource UserRoundVideoTemplate}"
                                            FriendMessageTemplate="{StaticResource FriendMessageTemplate}"
-                                           FriendStickerTemplate="{StaticResource FriendStickerTemplate}"
-                                           FriendRoundVideoTemplate="{StaticResource FriendRoundVideoTemplate}"
                                            ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
-                                           ChatFriendStickerTemplate="{StaticResource ChatFriendStickerTemplate}"
-                                           ChatFriendRoundVideoTemplate="{StaticResource ChatFriendRoundVideoTemplate}"
                                            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
                                            ServiceMessagePhotoTemplate="{StaticResource ServiceMessagePhotoTemplate}"
                                            ServiceMessageLocalTemplate="{StaticResource ServiceMessageLocalTemplate}"
                                            ServiceMessageDateTemplate="{StaticResource ServiceMessageDateTemplate}"
                                            ServiceUserCallTemplate="{StaticResource ServiceUserCallMessageTemplate}"
                                            ServiceFriendCallTemplate="{StaticResource ServiceFriendCallMessageTemplate}"/>
-
-        <Style x:Key="UploadProgressRingStyle" TargetType="ProgressRing">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
-            <Setter Property="IsHitTestVisible" Value="False" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Height" Value="10" />
-            <Setter Property="Width" Value="20" />
-            <Setter Property="MinHeight" Value="10"/>
-            <Setter Property="IsTabStop" Value="False" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ProgressRing">
-                        <Grid x:Name="Ring"
-                              Background="{TemplateBinding Background}"
-                              BorderThickness="{TemplateBinding BorderThickness}"
-                              BorderBrush="{TemplateBinding BorderBrush}"
-                              Padding="{TemplateBinding Padding}"
-                              Visibility="Collapsed"
-                              RenderTransformOrigin="0.5,0.5"
-                              FlowDirection="LeftToRight">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="ActiveStates">
-                                    <VisualState x:Name="Inactive" />
-                                    <VisualState x:Name="Active">
-                                        <Storyboard RepeatBehavior="Forever">
-                                            <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="Ring" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0">
-                                                    <DiscreteObjectKeyFrame.Value>
-                                                        <Visibility>Visible</Visibility>
-                                                    </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <DoubleAnimation Duration="0:0:0.5" To="5" Storyboard.TargetProperty="(TranslateTransform.X)" Storyboard.TargetName="Translate" d:IsOptimized="True"/>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Arrow1">
-                                                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Arrow3">
-                                                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid.RenderTransform>
-                                <TranslateTransform x:Name="Translate"/>
-                            </Grid.RenderTransform>
-                            <Path x:Name="Arrow1" Data="M 0,-4 4,0 0,4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" HorizontalAlignment="Left" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" Margin="0,5,0,0"/>
-                            <Path x:Name="Arrow2" Data="M 0,-4 4,0 0,4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" HorizontalAlignment="Left" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" Margin="5,5,0,0"/>
-                            <Path x:Name="Arrow3" Data="M 0,-4 4,0 0,4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" HorizontalAlignment="Left" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" Margin="10,5,0,0"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="TypingProgressRingStyle" TargetType="ProgressRing">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
-            <Setter Property="IsHitTestVisible" Value="False" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Stretch" />
-            <Setter Property="Height" Value="Auto" />
-            <Setter Property="Width" Value="Auto" />
-            <Setter Property="MinHeight" Value="0"/>
-            <Setter Property="MinWidth" Value="0"/>
-            <Setter Property="IsTabStop" Value="False" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ProgressRing">
-                        <StackPanel x:Name="Ring"
-                                    Background="{TemplateBinding Background}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    Padding="{TemplateBinding Padding}"
-                                    FlowDirection="LeftToRight"
-                                    Orientation="Horizontal">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="ActiveStates">
-                                    <VisualState x:Name="Inactive" />
-                                    <VisualState x:Name="Active">
-                                        <Storyboard Duration="0:0:1.00" RepeatBehavior="Forever">
-                                            <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="Ring" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0">
-                                                    <DiscreteObjectKeyFrame.Value>
-                                                        <Visibility>Visible</Visibility>
-                                                    </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Dot1">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.25" Value="1"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Dot2">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.50" Value="1"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Dot3">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.75" Value="1"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <TextBlock x:Name="Dot1" Text="." Opacity="0" Style="{StaticResource CaptionTextBlockStyle}"/>
-                            <TextBlock x:Name="Dot2" Text="." Opacity="0" Style="{StaticResource CaptionTextBlockStyle}"/>
-                            <TextBlock x:Name="Dot3" Text="." Opacity="0" Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </StackPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="SkypeProgressRingStyle" TargetType="ProgressRing">
-            <Setter Property="Background" Value="#00FFFFFF" />
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
-            <Setter Property="IsHitTestVisible" Value="False" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="MinHeight" Value="24" />
-            <Setter Property="MinWidth" Value="24" />
-            <Setter Property="IsTabStop" Value="False" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ProgressRing">
-                        <Grid x:Name="Ring"
-                              Padding="{TemplateBinding Padding}"
-                              Background="{TemplateBinding Background}"
-                              BorderBrush="{TemplateBinding BorderBrush}"
-                              BorderThickness="{TemplateBinding BorderThickness}"
-                              FlowDirection="LeftToRight"
-                              RenderTransformOrigin="0.5,0.5"
-                              CornerRadius="18"
-                              Visibility="Collapsed">
-                            <Grid.MaxWidth>
-                                <Binding Path="TemplateSettings.MaxSideLength">
-                                    <Binding.RelativeSource>
-                                        <RelativeSource Mode="TemplatedParent" />
-                                    </Binding.RelativeSource>
-                                </Binding>
-                            </Grid.MaxWidth>
-                            <Grid.MaxHeight>
-                                <Binding Path="TemplateSettings.MaxSideLength">
-                                    <Binding.RelativeSource>
-                                        <RelativeSource Mode="TemplatedParent" />
-                                    </Binding.RelativeSource>
-                                </Binding>
-                            </Grid.MaxHeight>
-                            <Grid.Resources>
-                                <Style x:Key="ProgressRingEllipseStyle" TargetType="Ellipse">
-                                    <Setter Property="Width" Value="6" />
-                                    <Setter Property="Height" Value="6" />
-                                    <Setter Property="HorizontalAlignment" Value="Center" />
-                                    <Setter Property="VerticalAlignment" Value="Top" />
-                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-                                </Style>
-                            </Grid.Resources>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="SizeStates">
-                                    <VisualStateGroup.States>
-                                        <VisualState x:Name="Large" />
-                                        <VisualState x:Name="Small" />
-                                    </VisualStateGroup.States>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="ActiveStates">
-                                    <VisualState x:Name="Inactive" />
-                                    <VisualState x:Name="Active">
-                                        <Storyboard RepeatBehavior="Forever">
-                                            <ObjectAnimationUsingKeyFrames Duration="0" BeginTime="0:0:1.4" Storyboard.TargetName="Ring" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse01_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
-                                                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
-                                                <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.47" Value="0.6" />
-                                                <SplineDoubleKeyFrame KeySpline="0.33,0,1,1" KeyTime="0:0:0.73" Value="0.7" />
-                                                <SplineDoubleKeyFrame KeySpline="0.8,0,0.78,1" KeyTime="0:0:1.02" Value="1.1" />
-                                                <SplineDoubleKeyFrame KeySpline="0.33,0,0,1" KeyTime="0:0:1.4" Value="1" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse01_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
-                                                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
-                                                <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.47" Value="0.6" />
-                                                <SplineDoubleKeyFrame KeySpline="0.33,0,1,1" KeyTime="0:0:0.73" Value="0.7" />
-                                                <SplineDoubleKeyFrame KeySpline="0.8,0,0.78,1" KeyTime="0:0:1.02" Value="1.1" />
-                                                <SplineDoubleKeyFrame KeySpline="0.33,0,0,1" KeyTime="0:0:1.4" Value="1" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse01Grid_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
-                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.65,0.21,0.25,0.76" KeyTime="0:0:1.4" Value="360" />
-                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse02_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
-                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.07" Value="1" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.53" Value="0.6" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.8" Value="0.7" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
-                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse02_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
-                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.07" Value="1" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.53" Value="0.6" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.8" Value="0.7" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
-                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse02Grid_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
-                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.76,0.21,0.25,0.76" KeyTime="0:0:1.4" Value="360" />
-                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse03_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
-                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.13" Value="1" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.6" Value="0.6" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.87" Value="0.7" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
-                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse03_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
-                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.13" Value="1" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.6" Value="0.6" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.87" Value="0.7" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
-                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse03Grid_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
-                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.88,0.21,0.25,0.76" KeyTime="0:0:1.4" Value="360" />
-                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse04_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
-                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.2" Value="1" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.67" Value="0.6" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.93" Value="0.7" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
-                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse04_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
-                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.2" Value="1" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.67" Value="0.6" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:0.93" Value="0.7" />
-                                                    <SplineDoubleKeyFrame KeySpline="0.33,0,0.67,1" KeyTime="0:0:1.02" Value="0.8" />
-                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse04Grid_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
-                                                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                                    <SplineDoubleKeyFrame KeySpline="1,0.2,0.25,0.76" KeyTime="0:0:1.4" Value="360" />
-                                                </DoubleAnimationUsingKeyFrames.KeyFrames>
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid x:Name="Spinner_24x24" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Grid x:Name="Ellipse01Grid_S24" RenderTransformOrigin="0.5,0.5">
-                                    <Grid.RenderTransform>
-                                        <CompositeTransform />
-                                    </Grid.RenderTransform>
-                                    <Ellipse x:Name="Ellipse01_S24" Style="{StaticResource ProgressRingEllipseStyle}" Fill="{TemplateBinding Foreground}">
-                                        <Ellipse.RenderTransform>
-                                            <CompositeTransform />
-                                        </Ellipse.RenderTransform>
-                                    </Ellipse>
-                                </Grid>
-                                <Grid x:Name="Ellipse02Grid_S24" RenderTransformOrigin="0.5,0.5">
-                                    <Grid.RenderTransform>
-                                        <CompositeTransform />
-                                    </Grid.RenderTransform>
-                                    <Ellipse x:Name="Ellipse02_S24" Style="{StaticResource ProgressRingEllipseStyle}" Fill="{TemplateBinding Foreground}">
-                                        <Ellipse.RenderTransform>
-                                            <CompositeTransform />
-                                        </Ellipse.RenderTransform>
-                                    </Ellipse>
-                                </Grid>
-                                <Grid x:Name="Ellipse03Grid_S24" RenderTransformOrigin="0.5,0.5">
-                                    <Grid.RenderTransform>
-                                        <CompositeTransform />
-                                    </Grid.RenderTransform>
-                                    <Ellipse x:Name="Ellipse03_S24" Style="{StaticResource ProgressRingEllipseStyle}" Fill="{TemplateBinding Foreground}">
-                                        <Ellipse.RenderTransform>
-                                            <CompositeTransform />
-                                        </Ellipse.RenderTransform>
-                                    </Ellipse>
-                                </Grid>
-                                <Grid x:Name="Ellipse04Grid_S24" RenderTransformOrigin="0.5,0.5">
-                                    <Grid.RenderTransform>
-                                        <CompositeTransform />
-                                    </Grid.RenderTransform>
-                                    <Ellipse x:Name="Ellipse04_S24" Style="{StaticResource ProgressRingEllipseStyle}" Fill="{TemplateBinding Foreground}">
-                                        <Ellipse.RenderTransform>
-                                            <CompositeTransform />
-                                        </Ellipse.RenderTransform>
-                                    </Ellipse>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Page.Resources>
 
     <Grid x:Name="LayoutRoot"
@@ -1117,37 +398,38 @@
                             Grid.ColumnSpan="3">
                         <Button.Content>
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <controls:ProfilePictureView Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
+                                <TextBlock Text="{CustomResource SavedMessages}" VerticalAlignment="Center" Margin="12,0" Visibility="{x:Bind ViewModel.WithUser.IsSelf, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" Style="{StaticResource BaseTextBlockStyle}"/>
 
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
-                                    <TextBlock x:Name="tblDialogName"
-                                               Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}"
-                                               Style="{StaticResource BaseTextBlockStyle}"
-                                               TextWrapping="NoWrap"
-                                               TextTrimming="CharacterEllipsis"
-                                               MaxLines="1"/>
-                                    <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                                        <TextBlock x:Name="tblDialogStatus"
-                                                   Visibility="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                                   Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}" />
-                                        <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.Dialog.IsTyping, Mode=OneWay}">
-                                            <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
+                                <Grid Visibility="{x:Bind ViewModel.WithUser.IsSelf, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert, FallbackValue=Visible}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
+
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
+                                        <TextBlock x:Name="tblDialogName"
+                                                   Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}"
+                                                   Style="{StaticResource BaseTextBlockStyle}"
+                                                   TextWrapping="NoWrap"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   MaxLines="1"/>
+                                        <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                                            <TextBlock x:Name="tblDialogStatus"
+                                                       Visibility="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                                       Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}" />
                                             <TextBlock Text="{x:Bind ViewModel.Dialog.TypingSubtitle, Mode=OneWay}"
+                                                       Visibility="{x:Bind (Visibility)ViewModel.Dialog.IsTyping, Mode=OneWay}"
                                                        Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                                                        Style="{StaticResource CaptionTextBlockStyle}"/>
-                                            <ProgressRing IsActive="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
 
-                                <Border Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable,Mode=OneWay}" Width="48" Grid.Column="2"/>
+                                    <Border Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable,Mode=OneWay}" Width="48" Grid.Column="2"/>
+                                </Grid>
                             </Grid>
                         </Button.Content>
                     </Button>
@@ -1159,7 +441,8 @@
                         Glyph="&#xE13A;"
                         Grid.Column="1"/>
 
-                    <Button x:Name="btnOptions"
+                    <Button x:Name="Options"
+                            Click="Menu_ContextRequested"
                             Padding="16,23,16,0"
                             Style="{StaticResource EllipsisButton}"
                             Grid.Column="2">
@@ -1169,77 +452,41 @@
                                   FontSize="16"
                                   Glyph="&#xE10C;"
                                   Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                        <Button.Flyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                Command="{x:Bind ViewModel.SearchCommand}"
-                                                Text="Search"
-                                                Tag="&#xE11A;"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                Click="Manage_Click"
-                                                Text="Manage"
-                                                Tag="&#xE133;"
-                                                MinWidth="120"/>
-
-                                <MenuFlyoutItem Text="Share my contact"
-                                                Command="{x:Bind ViewModel.ShareContactCommand}"
-                                                Visibility="{x:Bind (Visibility)ViewModel.IsShareContactAvailable, Mode=OneWay}"/>
-                                <MenuFlyoutItem Text="Add to contacts"
-                                                Command="{x:Bind ViewModel.AddContactCommand}"
-                                                Visibility="{x:Bind (Visibility)ViewModel.IsAddContactAvailable, Mode=OneWay}"/>
-                            
-
-                            
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                x:Name="cbtnPinToStart"
-                                                Visibility="Collapsed"
-                                                IsEnabled="False"
-                                                Tag="&#xE141;"
-                                                Text="Pin to Start"/>
-                            </MenuFlyout>
-                        </Button.Flyout>
                     </Button>
                 </Grid>
-            
+
                 <Grid x:Name="ManagePanel" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Button Command="{Binding MessagesForwardCommand}" Margin="12,0,4,0" Style="{StaticResource AccentButtonStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Forward" VerticalAlignment="Center"/>
-                            <ContentControl Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
-                                <ContentControl.ContentTransitions>
-                                    <TransitionCollection>
-                                        <EntranceThemeTransition/>
-                                    </TransitionCollection>
-                                </ContentControl.ContentTransitions>
-                                <ContentControl.Clip>
-                                    <RectangleGeometry Rect="0,0,200,32"/>
-                                </ContentControl.Clip>
-                            </ContentControl>
-                        </StackPanel>
-                    </Button>
-                    <Button Command="{Binding MessagesDeleteCommand}" Margin="4,0,12,0" Style="{StaticResource AccentButtonStyle}" Grid.Column="1">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Delete" VerticalAlignment="Center"/>
-                            <ContentControl Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
-                                <ContentControl.ContentTransitions>
-                                    <TransitionCollection>
-                                        <EntranceThemeTransition/>
-                                    </TransitionCollection>
-                                </ContentControl.ContentTransitions>
-                                <ContentControl.Clip>
-                                    <RectangleGeometry Rect="0,0,200,32"/>
-                                </ContentControl.Clip>
-                            </ContentControl>
-                        </StackPanel>
-                    </Button>
+                    <controls:GlyphButton Glyph="&#xE16F;" Command="{x:Bind ViewModel.MessagesCopyCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
+                    <controls:GlyphButton Glyph="&#xE111;" Command="{x:Bind ViewModel.MessagesForwardCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="2"/>
 
-                    <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Grid.Column="3"/>
+                    <ContentControl
+                        Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        FontWeight="SemiBold"
+                        Padding="12,0"
+                        Height="48"
+                        Grid.Column="4">
+                        <ContentControl.ContentTransitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition/>
+                            </TransitionCollection>
+                        </ContentControl.ContentTransitions>
+                        <ContentControl.Clip>
+                            <RectangleGeometry Rect="0,0,200,48"/>
+                        </ContentControl.Clip>
+                    </ContentControl>
+
+                    <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Grid.Column="5"/>
                 </Grid>
             </Grid>
         </controls:ContentPageHeader>
@@ -1260,13 +507,13 @@
                                      ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                                      ItemContainerTransitions="{x:Null}"
                                      ShowsScrollingPlaceholders="False"
-                                     UpdatingScrollMode="{x:Bind ViewModel.UpdatingScrollMode, Mode=TwoWay}"
                                      SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                                      SelectionChanged="List_SelectionChanged"
                                      Grid.ColumnSpan="2">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsStackPanel ItemsUpdatingScrollMode="KeepItemsInView"
+                        <ItemsStackPanel Loading="ItemsStackPanel_Loading"
+                                         ItemsUpdatingScrollMode="KeepItemsInView"
                                          VerticalAlignment="Bottom" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
@@ -1385,33 +632,8 @@
                     </Grid>
                 </ListView.Header>
                 <ListView.Footer>
-                    <Border Height="8"/>
+                    <Border Height="2"/>
                 </ListView.Footer>
-                <!--<ListView.GroupStyle>
-                     <GroupStyle>
-                     <GroupStyle.HeaderTemplateSelector>
-                     <selectors:MessageGroupTemplateSelector>
-                     <selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
-                     <DataTemplate x:DataType="viewmodels:MessageGroup">
-                     <Grid>
-                     <Ellipse Width="32" Height="32" Fill="Red" Margin="12,12,0,0"/>
-                     <Border CornerRadius="32" Width="32" Height="32" Margin="12,12,0,0">
-                     <Border.Background>
-                     <ImageBrush ImageSource="{x:Bind From.Photo, Converter={StaticResource DefaultPhotoConverter}, Mode=OneWay}"/>
-                     </Border.Background>
-                     </Border>
-                     </Grid>
-                     </DataTemplate>
-                     </selectors:MessageGroupTemplateSelector.ChatFriendMessageTemplate>
-                     <selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
-                     <DataTemplate>
-                     <Rectangle Width="44"/>
-                     </DataTemplate>
-                     </selectors:MessageGroupTemplateSelector.PlaceholderMessageTemplate>
-                     </selectors:MessageGroupTemplateSelector>
-                     </GroupStyle.HeaderTemplateSelector>
-                     </GroupStyle>
-                     </ListView.GroupStyle>-->
             </controls:BubbleListView>
 
             <Border Visibility="{x:Bind ConvertIsEmpty(ViewModel.IsEmpty, ViewModel.WithUser.IsSelf, ViewModel.WithUser.IsBot, x:False), Mode=OneWay, FallbackValue=Collapsed}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,7" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
@@ -1420,15 +642,19 @@
 
             <StackPanel Visibility="{x:Bind ConvertIsEmpty(ViewModel.IsEmpty, ViewModel.WithUser.IsSelf, ViewModel.WithUser.IsBot, x:True), Mode=OneWay, FallbackValue=Collapsed}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <FontIcon Glyph="&#xE753;" Foreground="White" FontSize="64"/>
-                <TextBlock Text="Your cloud storage" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{CustomResource ChatYourSelfTitle}" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>
                 <TextBlock Foreground="White" Style="{ThemeResource BodyTextBlockStyle}">
-                    <Run Text="• Forward messages here to save them"/>
+                    <Run Text="•"/>
+                    <Run Text="{CustomResource ChatYourSelfDescription1}"/>
                     <LineBreak/>
-                    <Run Text="• Send media and files to store them"/>
+                    <Run Text="•"/>
+                    <Run Text="{CustomResource ChatYourSelfDescription2}"/>
                     <LineBreak/>
-                    <Run Text="• Access this chat from any device"/>
+                    <Run Text="•"/>
+                    <Run Text="{CustomResource ChatYourSelfDescription3}"/>
                     <LineBreak/>
-                    <Run Text="• Use search to quickly find things"/>
+                    <Run Text="•"/>
+                    <Run Text="{CustomResource ChatYourSelfDescription4}"/>
                 </TextBlock>
             </StackPanel>
 
@@ -1437,34 +663,34 @@
                  </Border>-->
 
             <StackPanel>
-                <Grid>
-                    <Grid x:Name="PinnedMessage"
-                          Visibility="{x:Bind ViewModel.PinnedMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                          Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                          MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                          Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="48"/>
-                        </Grid.ColumnDefinitions>
+                <controls:PlaybackHeader/>
 
-                        <Button x:Name="btnPinnedMessage" Command="{Binding PinnedCommand}" Padding="0,0,48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                            <messages:MessageReference Click="Reply_Click" Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage.SelfBase, Mode=OneWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
-                        </Button>
+                <Grid x:Name="PinnedMessage"
+                        Visibility="{x:Bind ViewModel.PinnedMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                        Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                        MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                        Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
 
-                        <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE10A;" FontSize="16" Grid.Column="1"/>
+                    <Button x:Name="btnPinnedMessage" Command="{Binding PinnedCommand}" Padding="0,0,48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
+                        <messages:MessageReference Click="Reply_Click" Title="{CustomResource PinnedMessage}" Message="{x:Bind ViewModel.PinnedMessage.SelfBase, Mode=OneWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
+                    </Button>
 
-                        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
-                    </Grid>
-                    <Grid x:Name="InformativeMessage"
-                          Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                          Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                          MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                          Grid.Row="1">
-                        <messages:MessageReference Message="{x:Bind ViewModel.InformativeMessage, Mode=TwoWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
+                    <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE10A;" FontSize="16" Grid.Column="1"/>
 
-                        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
-                    </Grid>
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
+                </Grid>
+                <Grid x:Name="InformativeMessage"
+                        Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                        Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                        MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                        Grid.Row="1">
+                    <messages:MessageReference Message="{x:Bind ViewModel.InformativeMessage, Mode=TwoWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
+
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
                 </Grid>
 
                 <Grid Visibility="{x:Bind (Visibility)ViewModel.IsReportSpam, Mode=OneWay}"
@@ -1475,7 +701,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Command="{x:Bind ViewModel.ReportSpamCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                        <TextBlock Text="Report spam" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind ConvertReportSpam(ViewModel.With), Mode=OneWay}" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </Button>
 
                     <controls:GlyphButton Command="{x:Bind ViewModel.HideReportSpamCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
@@ -1491,7 +717,8 @@
             </StackPanel>
 
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,6">
-                <StackPanel Visibility="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
+                <StackPanel Visibility="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                            RightTapped="Mentions_RightTapped">
                     <Border  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
                              MinWidth="20"
                              Height="20"
@@ -1593,7 +820,8 @@
                           ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
                           AllowFocusOnInteraction="False"
                           IsItemClickEnabled="True"
-                          ItemClick="Autocomplete_ItemClick">
+                          ItemClick="Autocomplete_ItemClick"
+                          SizeChanged="Autocomplete_SizeChanged">
                     <ListView.Header>
                         <Border x:Name="AutocompleteHeader"
                                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -1613,19 +841,21 @@
         </Grid>
 
         <ScrollViewer x:Name="ReplyMarkupPanel"
+                      MaxHeight="260"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       HorizontalScrollBarVisibility="Disabled"
                       HorizontalScrollMode="Disabled"
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                      Visibility="Collapsed"
                       Grid.Row="4">
-            <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" AllowFocusOnInteraction="True" Margin="4,-2,4,0"/>
+            <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" AllowFocusOnInteraction="False" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0,4,0"/>
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
             <views:StickersView x:Name="StickersPanel" AllowFocusOnInteraction="False" Visibility="Collapsed" Height="260" MaxHeight="360" MinHeight="260"/>
         </Grid>
-        
+
         <!-- Input pane -->
         <ContentControl x:Name="TextArea"
                         Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
@@ -1669,7 +899,7 @@
                         Messages="{x:Bind Messages}"
                         Autocomplete="{x:Bind ListAutocomplete}"
                         AcceptsReturn="False"
-                        PlaceholderText="Type your message..."
+                        PlaceholderText="{x:Bind ConvertPlaceholder(ViewModel.With), Mode=OneWay}"
                         BorderThickness="0"
                         Padding="48,4,0,6"
                         TextWrapping="Wrap"
@@ -1680,7 +910,9 @@
                         PreventKeyboardDisplayOnProgrammaticFocus="True"
                         MinHeight="48"
                         MaxHeight="96"
-                        TextChanged="TextField_TextChanged"/>
+                        TextChanged="TextField_TextChanged"
+                        LostFocus="TextField_LostFocus"
+                        Capture="TextField_Tapped"/>
 
                     <controls:GlyphButton x:Name="ButtonAttach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
                         <FlyoutBase.AttachedFlyout>
@@ -1694,12 +926,12 @@
                                                 Tag="&#xE160;"
                                                 Command="{x:Bind ViewModel.SendFileCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                Text="Location"
+                                                Text="{CustomResource ChatLocation}"
                                                 Tag="&#xE1C4;"
                                                 IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                                 Command="{x:Bind ViewModel.SendLocationCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                Text="Contact"
+                                                Text="{CustomResource AttachContact}"
                                                 Tag="&#xE187;"
                                                 IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                                 Command="{x:Bind ViewModel.SendContactCommand}"/>
@@ -1767,7 +999,7 @@
                 <Border HorizontalAlignment="Right" Margin="0,0,84,0" Grid.ColumnSpan="4" Grid.Row="1">
                     <StackPanel x:Name="SlidePanel" SizeChanged="SlidePanel_SizeChanged" Orientation="Horizontal">
                         <FontIcon Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Glyph="&#xE00E;" FontSize="12" Margin="0,1,4,0"/>
-                        <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Text="Slide to cancel" VerticalAlignment="Center" Margin="0,0,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Text="{CustomResource SlideToCancel}" VerticalAlignment="Center" Margin="0,0,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </StackPanel>
                 </Border>
 
@@ -1784,7 +1016,8 @@
                                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                 IsChecked="{Binding Full.NotifySettings.IsSilent}"
                                                 Command="{x:Bind ViewModel.ToggleSilentCommand}"
-                                                Visibility="{x:Bind (Visibility)ViewModel.IsSilentVisible, Mode=OneWay}"/>
+                                                Visibility="{x:Bind (Visibility)ViewModel.IsSilentVisible, Mode=OneWay}"
+                                                VerticalAlignment="Bottom"/>
 
                     <Border x:Name="btnCommands" Grid.Column="1">
                         <controls:GlyphButton x:Name="ButtonCommands"
@@ -1792,8 +1025,21 @@
                                               AllowFocusOnInteraction="False"
                                               Glyph="&#xE613;"
                                               Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
                                               VerticalAlignment="Bottom"/>
+                    </Border>
+
+                    <Border x:Name="btnMarkup" Grid.Column="1">
+                        <controls:GlyphToggleButton x:Name="ButtonMarkup"
+                                                    Click="Markup_Click"
+                                                    AllowFocusOnInteraction="False"
+                                                    CheckedGlyph="&#xE910;"
+                                                    UncheckedGlyph="&#xE90F;"
+                                                    IsChecked="True"
+                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                    Visibility="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                                    FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                    VerticalAlignment="Bottom"/>
                     </Border>
 
                     <Border x:Name="btnStickers" Grid.Column="2">
@@ -1801,7 +1047,7 @@
                                               Click="Stickers_Click"
                                               AllowFocusOnInteraction="False"
                                               Glyph="&#xE606;"
-                                              FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
                                               VerticalAlignment="Bottom"/>
                     </Border>
 
@@ -1840,7 +1086,7 @@
                                           AllowFocusOnInteraction="False"
                                           Padding="0,2,0,0"/>
                 </Border>
-                
+
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                         Visibility="{Binding ReplyInfo, Converter={StaticResource EditToVisibilityConverter}}"
                         HorizontalAlignment="Right"

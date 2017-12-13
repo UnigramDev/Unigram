@@ -169,7 +169,7 @@ namespace Telegram.Api.Services
 
         private Timer _checkTransportTimer;
 
-        public MTProtoService(IDeviceInfoService deviceInfo,IUpdatesService updatesService, ICacheService cacheService, ITransportService transportService, IConnectionService connectionService, IStatsService statsService)
+        public MTProtoService(IDeviceInfoService deviceInfo,IUpdatesService updatesService, ICacheService cacheService, ITransportService transportService, IConnectionService connectionService, IStatsService statsService, IPublicConfigService publicConfigService)
         {
             var isBackground = deviceInfo != null && deviceInfo.IsBackground;
 
@@ -187,6 +187,8 @@ namespace Telegram.Api.Services
             _connectionService = connectionService;
             _connectionService.Initialize(this);
             _connectionService.ConnectionLost += OnConnectionLost;
+
+            _publicConfigService = publicConfigService;
 
             var sendStatusEvents = Observable.FromEventPattern<EventHandler<bool>, bool>(
                 keh => { SendStatus += keh; },
@@ -223,6 +225,7 @@ namespace Telegram.Api.Services
             _transportService = transportService;
             _transportService.ConnectionLost += OnConnectionLost;
             _transportService.FileConnectionLost += OnFileConnectionLost;
+            _transportService.CheckConfig += OnCheckConfig;
 
             lock (_activeTransportRoot)
             {
@@ -1238,9 +1241,43 @@ namespace Telegram.Api.Services
                             }
                         }
                     }
+
                     // send acknowledgments
                     SendAcknowledgments(transportMessage);
 
+                    // set client ticks delta
+                    bool updated = false;
+                    lock (_activeTransportRoot)
+                    {
+                        if (transport.ClientTicksDelta == 0)
+                        {
+                            var serverTime = transportMessage.MsgId;
+                            var clientTime = transport.GenerateMessageId();
+
+                            var serverDateTime = Utils.UnixTimestampToDateTime(serverTime >> 32);
+                            var clientDateTime = Utils.UnixTimestampToDateTime(clientTime >> 32);
+
+                            //var errorInfo = new StringBuilder();
+
+                            //errorInfo.AppendLine("Server time: " + serverDateTime);
+                            //errorInfo.AppendLine("Client time: " + clientDateTime);
+
+                            transport.ClientTicksDelta = serverTime - clientTime;
+
+                            if (transport.ClientTicksDelta == 0) transport.ClientTicksDelta = 1;
+                            updated = true;
+                        }
+                    }
+
+                    if (updated && _config != null)
+                    {
+                        var dcOption = _config.DCOptions.FirstOrDefault(x => string.Equals(x.IpAddress, transport.Host, StringComparison.OrdinalIgnoreCase));
+                        if (dcOption != null)
+                        {
+                            dcOption.ClientTicksDelta = transport.ClientTicksDelta;
+                            _cacheService.SetConfig(_config);
+                        }
+                    }
 
                     // updates
                     _updatesService.ProcessTransportMessage(transportMessage);
@@ -1314,6 +1351,7 @@ namespace Telegram.Api.Services
                         }
                     }
 
+                    // pong
                     foreach (var pong in TLUtils.FindInnerObjects<TLPong>(transportMessage))
                     {
                         HistoryItem item;
@@ -2351,7 +2389,8 @@ namespace Telegram.Api.Services
         public event EventHandler<bool> SendStatus;
         public void RaiseSendStatus(bool e)
         {
-            SendStatus?.Invoke(this, e);
+            UpdateStatusAsync(e, result => { });
+            //SendStatus?.Invoke(this, e);
         }
 
         public void Dispose()

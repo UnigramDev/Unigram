@@ -32,11 +32,205 @@ using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Views.SignIn;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Transport;
+using Windows.Foundation;
+using Windows.UI.Xaml.Input;
+using Unigram.ViewModels.Dialogs;
 
 namespace Unigram.Common
 {
     public class MessageHelper
     {
+        #region Message
+
+        public static TLMessage GetMessage(DependencyObject obj)
+        {
+            return (TLMessage)obj.GetValue(MessageProperty);
+        }
+
+        public static void SetMessage(DependencyObject obj, TLMessage value)
+        {
+            // TODO: shitty hack!!!
+            var oldValue = obj.GetValue(MessageProperty);
+            obj.SetValue(MessageProperty, value);
+
+            if (oldValue == value)
+            {
+                OnMessageChanged(obj as RichTextBlock, value);
+            }
+        }
+
+        public static readonly DependencyProperty MessageProperty =
+            DependencyProperty.RegisterAttached("Message", typeof(TLMessage), typeof(MessageHelper), new PropertyMetadata(null, OnMessageChanged));
+
+        private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as RichTextBlock;
+            var newValue = e.NewValue as TLMessage;
+
+            OnMessageChanged(sender, newValue);
+        }
+
+        private static void OnMessageChanged(RichTextBlock sender, TLMessage newValue)
+        {
+            //sender.IsTextSelectionEnabled = false;
+            var block = sender.Blocks[0] as Paragraph;
+            var span = block.Inlines[0] as Span;
+
+            var message = newValue as TLMessage;
+            if (message != null /*&& sender.Visibility == Visibility.Visible*/)
+            {
+                var text = !string.IsNullOrWhiteSpace(message.Message);
+
+                var caption = false;
+                if (message.Media is ITLMessageMediaCaption captionMedia)
+                {
+                    caption = !string.IsNullOrWhiteSpace(captionMedia.Caption) && !message.IsRoundVideo();
+                }
+                else if (message.Media is TLMessageMediaVenue)
+                {
+                    caption = true;
+                }
+
+                var game = false;
+                var notGame = true;
+                if (message.Media is TLMessageMediaGame)
+                {
+                    game = sender.Tag != null;
+                    notGame = false;
+                }
+
+                var notLive = true;
+                if (message.Media is TLMessageMediaGeoLive)
+                {
+                    notLive = false;
+                }
+
+                var empty = false;
+                if (message.Media is TLMessageMediaWebPage webpageMedia)
+                {
+                    empty = webpageMedia.WebPage is TLWebPageEmpty || webpageMedia.WebPage is TLWebPagePending;
+                }
+
+                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame && notLive) ? Visibility.Visible : Visibility.Collapsed);
+                if (sender.Visibility == Visibility.Collapsed)
+                {
+                    span.Inlines.Clear();
+                    return;
+                }
+
+                var foreground = sender.Resources["MessageHyperlinkForegroundBrush"] as SolidColorBrush;
+
+                var paragraph = new Span();
+
+                if (message.HasEntities && message.Entities != null)
+                {
+                    ReplaceEntities(message, paragraph, foreground);
+                }
+                else
+                {
+                    if (message.HasEntities && message.Entities == null)
+                    {
+                        Debug.WriteLine("WARNING: this is weird!");
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(message.Message))
+                    {
+                        paragraph.Inlines.Add(new Run { Text = message.Message });
+                    }
+                    else if (message.Media is TLMessageMediaVenue venueMedia)
+                    {
+                        paragraph.Inlines.Add(new Run { Text = venueMedia.Title, FontWeight = FontWeights.SemiBold });
+                        paragraph.Inlines.Add(new LineBreak());
+                        paragraph.Inlines.Add(new Run { Text = venueMedia.Address });
+                    }
+                    else if (game)
+                    {
+                        var gameMedia = message.Media as TLMessageMediaGame;
+                        if (gameMedia != null)
+                        {
+                            Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a TLMessageMediaGame");
+                            ReplaceAll(message, gameMedia.Game.Description, paragraph, sender.Foreground, true);
+                        }
+                    }
+                    else if (caption)
+                    {
+                        var captionMedia2 = message.Media as ITLMessageMediaCaption;
+                        if (captionMedia2 != null)
+                        {
+                            Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a ITLMediaCaption");
+                            ReplaceAll(message, captionMedia2.Caption, paragraph, sender.Foreground, true);
+                        }
+                    }
+
+                    //var text = message.Message;
+                    //var captionMedia = message.Media as ITLMediaCaption;
+                    //if (captionMedia != null && !string.IsNullOrWhiteSpace(captionMedia.Caption))
+                    //{
+                    //    text = captionMedia.Caption;
+                    //}
+
+                    //ReplaceAll(message, text, paragraph, sender.Foreground, true);
+                }
+
+                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || empty || message?.Media == null)
+                {
+                    if (IsAnyCharacterRightToLeft(message.Message ?? string.Empty))
+                    {
+                        paragraph.Inlines.Add(new LineBreak());
+                    }
+                    //else
+                    {
+                        //var date = BindConvert.Current.Date(message.Date);
+                        //var placeholder = message.IsOut ? $"  {date}  " : $"  {date}";
+
+                        //var bot = false;
+                        //if (message.From != null)
+                        //{
+                        //    bot = message.From.IsBot;
+                        //}
+
+                        //if (message.HasEditDate && !message.HasViaBotId && !bot && !(message.ReplyMarkup is TLReplyInlineMarkup))
+                        //{
+                        //    placeholder = "edited" + placeholder;
+                        //}
+
+                        //if (message.HasViews)
+                        //{
+                        //    placeholder = "WS  " + (message.Views ?? 0) + placeholder;
+
+                        //    if (message.HasFromId && message.From != null)
+                        //    {
+                        //        placeholder = (message.From.FullName + "  " ?? string.Empty) + placeholder;
+                        //    }
+                        //    else if (message.IsPost && message.HasPostAuthor && message.PostAuthor != null)
+                        //    {
+                        //        placeholder = (message.PostAuthor + "  " ?? string.Empty) + placeholder;
+                        //    }
+                        //    else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                        //    {
+                        //        placeholder = (message.FwdFrom.PostAuthor + "  " ?? string.Empty) + placeholder;
+                        //    }
+                        //}
+
+                        //paragraph.Inlines.Add(new Run { Text = "\u200E" + placeholder, Foreground = null, FontSize = 12 });
+                    }
+                }
+                else
+                {
+                    paragraph.Inlines.Add(new Run { Text = " " });
+                }
+
+                span.Inlines.Clear();
+                span.Inlines.Add(paragraph);
+            }
+            else
+            {
+                span.Inlines.Clear();
+            }
+        }
+
+        #endregion
+
         #region IsFirst
 
         public static TLMessageBase GetHeader(DependencyObject obj)
@@ -151,191 +345,6 @@ namespace Unigram.Common
 
         #endregion
 
-        #region Message
-
-        public static TLMessage GetMessage(DependencyObject obj)
-        {
-            return (TLMessage)obj.GetValue(MessageProperty);
-        }
-
-        public static void SetMessage(DependencyObject obj, TLMessage value)
-        {
-            // TODO: shitty hack!!!
-            var oldValue = obj.GetValue(MessageProperty);
-            obj.SetValue(MessageProperty, value);
-
-            if (oldValue == value)
-            {
-                OnMessageChanged(obj as TextBlock, value);
-            }
-        }
-
-        public static readonly DependencyProperty MessageProperty =
-            DependencyProperty.RegisterAttached("Message", typeof(TLMessage), typeof(MessageHelper), new PropertyMetadata(null, OnMessageChanged));
-
-        private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as TextBlock;
-            var newValue = e.NewValue as TLMessage;
-
-            OnMessageChanged(sender, newValue);
-        }
-
-        private static void OnMessageChanged(TextBlock sender, TLMessage newValue)
-        {
-            //sender.IsTextSelectionEnabled = false;
-
-            var message = newValue as TLMessage;
-            if (message != null /*&& sender.Visibility == Visibility.Visible*/)
-            {
-                var text = !string.IsNullOrWhiteSpace(message.Message);
-
-                var caption = false;
-                if (message.Media is ITLMessageMediaCaption captionMedia)
-                {
-                    caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
-                }
-                else if (message.Media is TLMessageMediaVenue)
-                {
-                    caption = true;
-                }
-
-                var game = false;
-                var notGame = true;
-                if (message.Media is TLMessageMediaGame)
-                {
-                    game = sender.Tag != null;
-                    notGame = false;
-                }
-
-                var notLive = true;
-                if (message.Media is TLMessageMediaGeoLive)
-                {
-                    notLive = false;
-                }
-
-                var emptyWebPage = false;
-                if (message.Media is TLMessageMediaWebPage webpageMedia)
-                {
-                    emptyWebPage = webpageMedia.WebPage is TLWebPageEmpty;
-                }
-
-                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame && notLive) ? Visibility.Visible : Visibility.Collapsed);
-                if (sender.Visibility == Visibility.Collapsed)
-                {
-                    sender.Inlines.Clear();
-                    return;
-                }
-
-                var foreground = sender.Resources["MessageHyperlinkForegroundBrush"] as SolidColorBrush;
-
-                var paragraph = new Span();
-
-                if (message.HasEntities && message.Entities != null)
-                {
-                    ReplaceEntities(message, paragraph, foreground);
-                }
-                else
-                {
-                    if (message.HasEntities && message.Entities == null)
-                    {
-                        Debug.WriteLine("WARNING: this is weird!");
-                    }
-                    
-                    if (!string.IsNullOrWhiteSpace(message.Message))
-                    {
-                        paragraph.Inlines.Add(new Run { Text = message.Message });
-                    }
-                    else if (message.Media is TLMessageMediaVenue venueMedia)
-                    {
-                        paragraph.Inlines.Add(new Run { Text = venueMedia.Title, FontWeight = FontWeights.SemiBold });
-                        paragraph.Inlines.Add(new LineBreak());
-                        paragraph.Inlines.Add(new Run { Text = venueMedia.Address });
-                    }
-                    else if (game)
-                    {
-                        var gameMedia = message.Media as TLMessageMediaGame;
-                        if (gameMedia != null)
-                        {
-                            Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a TLMessageMediaGame");
-                            ReplaceAll(message, gameMedia.Game.Description, paragraph, sender.Foreground, true);
-                        }
-                    }
-                    else if (caption)
-                    {
-                        var captionMedia2 = message.Media as ITLMessageMediaCaption;
-                        if (captionMedia2 != null)
-                        {
-                            Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a ITLMediaCaption");
-                            ReplaceAll(message, captionMedia2.Caption, paragraph, sender.Foreground, true);
-                        }
-                    }
-
-                    //var text = message.Message;
-                    //var captionMedia = message.Media as ITLMediaCaption;
-                    //if (captionMedia != null && !string.IsNullOrWhiteSpace(captionMedia.Caption))
-                    //{
-                    //    text = captionMedia.Caption;
-                    //}
-
-                    //ReplaceAll(message, text, paragraph, sender.Foreground, true);
-                }
-
-                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || emptyWebPage || message?.Media == null)
-                {
-                    if (IsAnyCharacterRightToLeft(message.Message ?? string.Empty))
-                    {
-                        paragraph.Inlines.Add(new LineBreak());
-                    }
-                    else
-                    {
-                        var date = BindConvert.Current.Date(message.Date);
-                        var placeholder = message.IsOut ? $"  {date}  " : $"  {date}";
-
-                        var bot = false;
-                        if (message.From != null)
-                        {
-                            bot = message.From.IsBot;
-                        }
-
-                        if (message.HasEditDate && !message.HasViaBotId && !bot && !(message.ReplyMarkup is TLReplyInlineMarkup))
-                        {
-                            placeholder = "edited" + placeholder;
-                        }
-
-                        if (message.HasViews)
-                        {
-                            placeholder = "WS  " + (message.Views ?? 0) + placeholder;
-
-                            if (message.HasFromId && message.From != null)
-                            {
-                                placeholder = (message.From.FullName + "  " ?? string.Empty) + placeholder;
-                            }
-                            else if (message.HasPostAuthor && message.PostAuthor != null)
-                            {
-                                placeholder = (message.PostAuthor + "  " ?? string.Empty) + placeholder;
-                            }
-                        }
-
-                        paragraph.Inlines.Add(new Run { Text = "\u200E" + placeholder, Foreground = null, FontSize = 12 });
-                    }
-                }
-                else
-                {
-                    paragraph.Inlines.Add(new Run { Text = " " });
-                }
-
-                sender.Inlines.Clear();
-                sender.Inlines.Add(paragraph);
-            }
-            else
-            {
-                sender.Inlines.Clear();
-            }
-        }
-
-        #endregion
-
         #region Text
         public static string GetText(DependencyObject obj)
         {
@@ -352,7 +361,7 @@ namespace Unigram.Common
 
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as TextBlock;
+            var sender = d as FrameworkElement;
             var newValue = e.NewValue as string;
             var oldValue = e.OldValue as string;
 
@@ -365,8 +374,18 @@ namespace Unigram.Common
             var paragraph = new Span();
             ReplaceAll(null, newValue, paragraph, foreground, true);
 
-            sender.Inlines.Clear();
-            sender.Inlines.Add(paragraph);
+            if (sender is TextBlock textBlock)
+            {
+                textBlock.Inlines.Clear();
+                textBlock.Inlines.Add(paragraph);
+            }
+            else if (sender is RichTextBlock richBlock)
+            {
+                var block = new Paragraph();
+                block.Inlines.Add(paragraph);
+                richBlock.Blocks.Clear();
+                richBlock.Blocks.Add(block);
+            }
         }
         #endregion
 
@@ -384,8 +403,6 @@ namespace Unigram.Common
                 {
                     return true;
                 }
-
-                return false;
             }
 
             return false;
@@ -533,11 +550,16 @@ namespace Unigram.Common
                 {
                     object data = text.Substring(entity.Offset, entity.Length);
 
-                    var hyper = new Hyperlink();
-                    hyper.Click += (s, args) => Hyperlink_Navigate(type, data, message);
-                    hyper.Inlines.Add(new Run { Text = (string)data });
-                    hyper.Foreground = foreground;
-                    paragraph.Inlines.Add(hyper);
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Click += (s, args) => Hyperlink_Navigate(type, data, message);
+                    hyperlink.Inlines.Add(new Run { Text = (string)data });
+                    hyperlink.Foreground = foreground;
+                    paragraph.Inlines.Add(hyperlink);
+
+                    if (entity is TLMessageEntityUrl)
+                    {
+                        SetEntity(hyperlink, (string)data);
+                    }
                 }
                 else if (type == TLType.MessageEntityTextUrl ||
                          type == TLType.MessageEntityMentionName ||
@@ -557,15 +579,16 @@ namespace Unigram.Common
                         data = ((TLInputMessageEntityMentionName)entity).UserId;
                     }
 
-                    var hyper = new Hyperlink();
-                    hyper.Click += (s, args) => Hyperlink_Navigate(type, data, message);
-                    hyper.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
-                    hyper.Foreground = foreground;
-                    paragraph.Inlines.Add(hyper);
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Click += (s, args) => Hyperlink_Navigate(type, data, message);
+                    hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    hyperlink.Foreground = foreground;
+                    paragraph.Inlines.Add(hyperlink);
 
                     if (entity is TLMessageEntityTextUrl textUrl)
                     {
-                        ToolTipService.SetToolTip(hyper, textUrl.Url);
+                        SetEntity(hyperlink, textUrl.Url);
+                        ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                     }
                 }
 
@@ -615,12 +638,28 @@ namespace Unigram.Common
                             label = label.Substring(0, 55) + "…";
                         }
 
+                        var navstr = match.Value.Substring(index);
+
                         var hyperlink = new Hyperlink();
-                        hyperlink.Click += (s, args) => Hyperlink_Legacy(match.Value.Substring(index), message as TLMessage);
+                        hyperlink.Click += (s, args) => Hyperlink_Legacy(navstr, message as TLMessage);
                         hyperlink.UnderlineStyle = UnderlineStyle.Single;
                         hyperlink.Foreground = foreground;
                         hyperlink.Inlines.Add(new Run { Text = label });
                         paragraph.Inlines.Add(hyperlink);
+
+                        if (navstr.StartsWith("@"))
+                        {
+                        }
+                        else if (navstr.StartsWith("#"))
+                        {
+                        }
+                        else if (navstr.StartsWith("/"))
+                        {
+                        }
+                        else if (!navstr.Contains("@"))
+                        {
+                            SetEntity(hyperlink, navstr);
+                        }
                     }
                 }
 
@@ -754,20 +793,23 @@ namespace Unigram.Common
             else if (type == TLType.MessageEntityHashtag)
             {
                 //await UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchAsync((string)data);
-                UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
-                UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Publish("Search");
+                //UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
+                //UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Publish("Search");
+
+                var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                if (service != null && service.Content is DialogPage page)
+                {
+                    page.ViewModel.Search = new DialogSearchViewModel(MTProtoService.Current, InMemoryCacheService.Current, TelegramEventAggregator.Instance, page.ViewModel);
+                    page.ViewModel.Search.SearchCommand.Execute((string)data);
+                }
             }
             else if (type == TLType.MessageEntityBotCommand)
             {
                 // TODO: THIS IS BAD
                 var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                if (service != null)
+                if (service != null && service.Content is DialogPage page)
                 {
-                    var dialogPage = service.Frame.Content as DialogPage;
-                    if (dialogPage != null)
-                    {
-                        dialogPage.ViewModel.SendCommand.Execute((string)data);
-                    }
+                    page.ViewModel.SendCommand.Execute((string)data);
                 }
             }
             else
@@ -804,14 +846,8 @@ namespace Unigram.Common
 
                             if (type == TLType.MessageEntityTextUrl)
                             {
-                                var dialog = new TLMessageDialog(navigation, "Open this link?");
-                                dialog.Title = "Open this link?";
-                                dialog.Message = navigation;
-                                dialog.PrimaryButtonText = "Open";
-                                dialog.SecondaryButtonText = "Cancel";
-
-                                var result = await dialog.ShowQueuedAsync();
-                                if (result != ContentDialogResult.Primary)
+                                var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.OpenUrlAlert, navigation), Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                                if (confirm != ContentDialogResult.Primary)
                                 {
                                     return;
                                 }
@@ -1073,9 +1109,9 @@ namespace Unigram.Common
 
         public static async void NavigateToSocks(string server, int port, string user, string pass)
         {
-            var userText = user != null ? string.Format("Username: {0}\n", user) : string.Empty;
-            var passText = pass != null ? string.Format("Password: {0}\n", pass) : string.Empty;
-            var confirm = await TLMessageDialog.ShowAsync(string.Format("Are you sure you want to enable this proxy?\n\nServer: {0}\nPort: {1}\n{2}{3}\nYou can change your proxy server later in the Settings (Data and Storage).", server, port, userText, passText), "Proxy", "Enable", "Cancel");
+            var userText = user != null ? string.Format($"{Strings.Android.UseProxyUsername}: {user}\n", user) : string.Empty;
+            var passText = pass != null ? string.Format($"{Strings.Android.UseProxyPassword}: {pass}\n", pass) : string.Empty;
+            var confirm = await TLMessageDialog.ShowAsync($"{Strings.Android.EnableProxyAlert}\n\n{Strings.Android.UseProxyAddress}: {server}\n{Strings.Android.UseProxyPort}: {port}\n{userText}{passText}\n{Strings.Android.EnableProxyAlert2}", Strings.Android.Proxy, Strings.Android.ConnectingToProxyEnable, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 SettingsHelper.ProxyServer = server;
@@ -1123,6 +1159,11 @@ namespace Unigram.Common
         public static async void NavigateToStickerSet(string text)
         {
             await StickerSetView.Current.ShowAsync(new TLInputStickerSetShortName { ShortName = text });
+        }
+
+        public static async void NavigateToUsername(string username, string accessToken, string post, string game)
+        {
+            NavigateToUsername(MTProtoService.Current, username, accessToken, post, game);
         }
 
         public static async void NavigateToUsername(IMTProtoService protoService, string username, string accessToken, string post, string game)
@@ -1280,7 +1321,7 @@ namespace Unigram.Common
                     //                return;
                     //            }
                     //        }
-                    //        MessageBox.Show(string.Format(AppResources.CantFindContactWithUsername, username), AppResources.Error, 0);
+                    //        MessageBox.Show(string.Format(Strings.Resources.CantFindContactWithUsername, username), Strings.Resources.Error, 0);
                     //    });
                     //}, delegate (TLRPCError error)
                     //{
@@ -1292,7 +1333,7 @@ namespace Unigram.Common
                     //        }
                     //        if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
                     //        {
-                    //            MessageBox.Show(string.Format(AppResources.CantFindContactWithUsername, username), AppResources.Error, 0);
+                    //            MessageBox.Show(string.Format(Strings.Resources.CantFindContactWithUsername, username), Strings.Resources.Error, 0);
                     //            return;
                     //        }
                     //        Telegram.Api.Helpers.Execute.ShowDebugMessage(string.Format("contacts.resolveUsername {0} error {1}", username, error));
@@ -1355,17 +1396,17 @@ namespace Unigram.Common
                             }
                             if (import.Error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || import.Error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || import.Error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
                             {
-                                //MessageBox.Show(AppResources.GroupNotExistsError, AppResources.Error, 0);
+                                //MessageBox.Show(Strings.Resources.GroupNotExistsError, Strings.Resources.Error, 0);
                                 return;
                             }
                             else if (import.Error.TypeEquals(TLErrorType.USERS_TOO_MUCH))
                             {
-                                //MessageBox.Show(AppResources.UsersTooMuch, AppResources.Error, 0);
+                                //MessageBox.Show(Strings.Resources.UsersTooMuch, Strings.Resources.Error, 0);
                                 return;
                             }
                             else if (import.Error.TypeEquals(TLErrorType.BOTS_TOO_MUCH))
                             {
-                                //MessageBox.Show(AppResources.BotsTooMuch, AppResources.Error, 0);
+                                //MessageBox.Show(Strings.Resources.BotsTooMuch, Strings.Resources.Error, 0);
                                 return;
                             }
                             else if (import.Error.TypeEquals(TLErrorType.USER_ALREADY_PARTICIPANT))
@@ -1388,7 +1429,7 @@ namespace Unigram.Common
                 }
                 if (response.Error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || response.Error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || response.Error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
                 {
-                    //MessageBox.Show(AppResources.GroupNotExistsError, AppResources.Error, 0);
+                    //MessageBox.Show(Strings.Resources.GroupNotExistsError, Strings.Resources.Error, 0);
                     await TLMessageDialog.ShowAsync("This invite link is broken or has expired.", "Warning", "OK");
                     return;
                 }
@@ -1540,10 +1581,10 @@ namespace Unigram.Common
         {
             var tdesktop = GetTDesktopClipboard(entities);
 
-            var package = new DataPackage();
-            if (tdesktop != null) package.SetData("application/x-td-field-tags", tdesktop);
-            package.SetText(message);
-            Clipboard.SetContent(package);
+            var dataPackage = new DataPackage();
+            if (tdesktop != null) dataPackage.SetData("application/x-td-field-tags", tdesktop);
+            dataPackage.SetText(message);
+            ClipboardEx.TrySetContent(dataPackage);
         }
 
         private static IRandomAccessStream GetTDesktopClipboard(IEnumerable<TLMessageEntityBase> entities)
@@ -1599,6 +1640,122 @@ namespace Unigram.Common
 
             return null;
         }
+
+        private string GetLinkFromEntity(TLMessage message, TLMessageEntityBase entity)
+        {
+            if (entity is TLMessageEntityTextUrl textUrl)
+            {
+                return textUrl.Url;
+            }
+            else if (entity is TLMessageEntityUrl)
+            {
+                if (message.Message.Length < entity.Offset + entity.Length)
+                {
+                    return message.Message.Substring(entity.Offset, entity.Length);
+                }
+            }
+
+            return null;
+        }
+
+        #region Entity
+
+        public static void Hyperlink_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var text = sender as RichTextBlock;
+            if (args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                var length = text.SelectedText.Length;
+                if (length > 0)
+                {
+                    var link = text.SelectedText;
+
+                    var copy = new MenuFlyoutItem { Text = Strings.Android.Copy, DataContext = link };
+
+                    copy.Click += LinkCopy_Click;
+
+                    var flyout = new MenuFlyout();
+                    flyout.Items.Add(copy);
+                    flyout.ShowAt(sender, point);
+
+                    args.Handled = true;
+                }
+                else
+                {
+                    var hyperlink = text.GetHyperlinkFromPoint(point);
+                    if (hyperlink == null)
+                    {
+                        return;
+                    }
+
+                    var link = GetEntity(hyperlink);
+                    if (link == null)
+                    {
+                        return;
+                    }
+
+                    var open = new MenuFlyoutItem { Text = Strings.Android.Open, DataContext = link };
+                    var copy = new MenuFlyoutItem { Text = Strings.Android.Copy, DataContext = link };
+
+                    open.Click += LinkOpen_Click;
+                    copy.Click += LinkCopy_Click;
+
+                    var flyout = new MenuFlyout();
+                    flyout.Items.Add(open);
+                    flyout.Items.Add(copy);
+                    flyout.ShowAt(sender, point);
+
+                    args.Handled = true;
+                }
+            }
+        }
+
+        private async static void LinkOpen_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var entity = item.DataContext as string;
+
+            var url = entity;
+            if (entity.StartsWith("http") == false)
+            {
+                url = "http://" + url;
+            }
+
+            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+            {
+                await Launcher.LaunchUriAsync(uri);
+            }
+        }
+
+        private static void LinkCopy_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var entity = item.DataContext as string;
+
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(entity);
+            ClipboardEx.TrySetContent(dataPackage);
+        }
+
+        public static string GetEntity(DependencyObject obj)
+        {
+            return (string)obj.GetValue(EntityProperty);
+        }
+
+        public static void SetEntity(DependencyObject obj, string value)
+        {
+            obj.SetValue(EntityProperty, value);
+        }
+
+        public static readonly DependencyProperty EntityProperty =
+            DependencyProperty.RegisterAttached("Entity", typeof(string), typeof(MessageHelper), new PropertyMetadata(null));
+
+        #endregion
     }
 
     public enum MessageCommandType

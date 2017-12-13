@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Unigram.Views.SignIn;
@@ -26,7 +26,6 @@ using Telegram.Api.Transport;
 
 namespace Unigram.ViewModels.SignIn
 {
-
     public class SignInViewModel : UnigramViewModelBase
     {
         public SignInViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
@@ -34,14 +33,17 @@ namespace Unigram.ViewModels.SignIn
         {
             ProtoService.GotUserCountry += GotUserCountry;
 
-            if (!string.IsNullOrEmpty(ProtoService.Country))
-            {
-                GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
-            }
+            SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
+            ProxyCommand = new RelayCommand(ProxyExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            if (!string.IsNullOrEmpty(ProtoService.Country))
+            {
+                GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
+            }
+
             IsLoading = false;
             return Task.CompletedTask;
         }
@@ -60,7 +62,7 @@ namespace Unigram.ViewModels.SignIn
 
             if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     SelectedCountry = country;
                 });
@@ -134,15 +136,20 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public List<KeyedList<string, Country>> Countries { get; } = Country.GroupedCountries;
+        public IList<Country> Countries { get; } = Country.Countries;
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (PhoneCode == null || PhoneNumber == null)
+            if (string.IsNullOrEmpty(_phoneCode))
             {
-                await TLMessageDialog.ShowAsync("Please enter your phone number.", "Warning", "OK");
+                RaisePropertyChanged("PHONE_CODE_INVALID");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(_phoneNumber))
+            {
+                RaisePropertyChanged("PHONE_NUMBER_INVALID");
                 return;
             }
 
@@ -163,18 +170,38 @@ namespace Unigram.ViewModels.SignIn
             {
                 IsLoading = false;
 
-                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
+                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
+                    //needShowInvalidAlert(req.phone_number, false);
                 }
-                else
+                else if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await TLMessageDialog.ShowAsync(Strings.Android.PhoneNumberFlood, Strings.Android.AppName, Strings.Android.OK);
+                }
+                //else if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_BANNED))
+                //{
+                //    needShowInvalidAlert(req.phone_number, true);
+                //}
+                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || response.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.InvalidCode, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.CodeExpired, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else if (response.Error.ErrorMessage.StartsWith("FLOOD_WAIT"))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Android.FloodWait, Strings.Android.AppName, Strings.Android.OK);
+                }
+                else if (response.Error.ErrorCode != -1000)
+                {
+                    await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Android.AppName, Strings.Android.OK);
                 }
             }
         }
 
-        public RelayCommand ProxyCommand => new RelayCommand(ProxyExecute);
+        public RelayCommand ProxyCommand { get; }
         private async void ProxyExecute()
         {
             var dialog = new ProxyView();
@@ -191,7 +218,7 @@ namespace Unigram.ViewModels.SignIn
             if (confirm == ContentDialogResult.Primary)
             {
                 SettingsHelper.ProxyServer = dialog.Server;
-                SettingsHelper.ProxyPort = int.Parse(dialog.Port ?? "1080");
+                SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
                 SettingsHelper.ProxyUsername = dialog.Username;
                 SettingsHelper.ProxyPassword = dialog.Password;
                 SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;

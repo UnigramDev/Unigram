@@ -1,20 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
+using Telegram.Helpers;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
+using Unigram.Helpers;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.Views;
@@ -23,6 +27,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
@@ -33,7 +38,7 @@ namespace Unigram.ViewModels
     {
         #region Reply
 
-        public RelayCommand<TLMessageBase> MessageReplyCommand => new RelayCommand<TLMessageBase>(MessageReplyExecute);
+        public RelayCommand<TLMessageBase> MessageReplyCommand { get; }
         private void MessageReplyExecute(TLMessageBase message)
         {
             Search = null;
@@ -54,16 +59,22 @@ namespace Unigram.ViewModels
                 //}
             }
 
+            var message31 = message as TLMessage;
+            if (message31 != null && message31.Media is TLMessageMediaGroup groupMedia)
+            {
+                message = groupMedia.Layout.Messages.FirstOrDefault();
+                message31 = message as TLMessage;
+            }
+
             if (message.Id <= 0) return;
 
-            var message31 = message as TLMessage;
             if (message31 != null && !message31.IsOut && message31.HasFromId)
             {
                 var fromId = message31.FromId.Value;
                 var user = CacheService.GetUser(fromId) as TLUser;
                 if (user != null && user.IsBot)
                 {
-                    // TODO: SetReplyMarkup(message31);
+                    SetReplyMarkup(message31);
                 }
             }
 
@@ -75,15 +86,25 @@ namespace Unigram.ViewModels
 
         #region Delete
 
-        public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
+        public RelayCommand<TLMessageBase> MessageDeleteCommand { get; }
         private async void MessageDeleteExecute(TLMessageBase messageBase)
         {
-            if (messageBase == null) return;
+            if (messageBase == null)
+            {
+                return;
+            }
 
             var message = messageBase as TLMessage;
+            if (message != null && message.Media is TLMessageMediaGroup groupMedia)
+            {
+                ExpandSelection(new[] { message });
+                MessagesDeleteExecute();
+                return;
+            }
+
             if (message != null && !message.IsOut && !message.IsPost && Peer is TLInputPeerChannel)
             {
-                var dialog = new DeleteChannelMessageDialog();
+                var dialog = new DeleteChannelMessageDialog(1, message.From?.FullName);
 
                 var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
@@ -92,7 +113,24 @@ namespace Unigram.ViewModels
 
                     if (dialog.DeleteAll)
                     {
-                        // TODO
+                        var response = await DeleteUserHistoryAsync(channel, message.From.ToInputUser());
+                        if (response.IsSucceeded)
+                        {
+                            CacheService.DeleteUserHistory(new TLPeerChannel { ChannelId = channel.Id }, new TLPeerUser { UserId = message.From.Id });
+                        }
+
+                        for (int i = 0; i < Items.Count; i++)
+                        {
+                            if (Items[i] is TLMessageCommonBase messageCommon && messageCommon.ToId is TLPeerChannel && messageCommon.FromId.Value == message.From.Id)
+                            {
+                                if (messageCommon.Id == 1 && messageCommon is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionChannelMigrateFrom)
+                                {
+                                    continue;
+                                }
+
+                                Items.RemoveAt(i--);
+                            }
+                        }
                     }
                     else
                     {
@@ -108,20 +146,19 @@ namespace Unigram.ViewModels
 
                     if (dialog.BanUser)
                     {
-                        // TODO: layer 68
-                        //var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
-                        //if (response.IsSucceeded)
-                        //{
-                        //    var updates = response.Result as TLUpdates;
-                        //    if (updates != null)
-                        //    {
-                        //        var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
-                        //        if (newChannelMessageUpdate != null)
-                        //        {
-                        //            Aggregator.Publish(newChannelMessageUpdate.Message);
-                        //        }
-                        //    }
-                        //}
+                        var response = await ProtoService.EditBannedAsync(channel, message.From.ToInputUser(), new TLChannelBannedRights { IsEmbedLinks = true, IsSendGames = true, IsSendGifs = true, IsSendInline = true, IsSendMedia = true, IsSendMessages = true, IsSendStickers = true, IsViewMessages = true });
+                        if (response.IsSucceeded)
+                        {
+                            var updates = response.Result as TLUpdates;
+                            if (updates != null)
+                            {
+                                var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
+                                if (newChannelMessageUpdate != null)
+                                {
+                                    Aggregator.Publish(newChannelMessageUpdate.Message);
+                                }
+                            }
+                        }
                     }
 
                     if (dialog.ReportSpam)
@@ -133,10 +170,10 @@ namespace Unigram.ViewModels
             else
             {
                 var dialog = new TLMessageDialog();
-                dialog.Title = "Delete";
-                dialog.Message = "Do you want to delete this message?";
-                dialog.PrimaryButtonText = "Yes";
-                dialog.SecondaryButtonText = "No";
+                dialog.Title = Strings.Android.Message;
+                dialog.Message = string.Format(Strings.Android.AreYouSureDeleteMessages, LocaleHelper.Declension("Messages", 1));
+                dialog.PrimaryButtonText = Strings.Android.OK;
+                dialog.SecondaryButtonText = Strings.Android.Cancel;
 
                 var chat = With as TLChat;
 
@@ -149,28 +186,28 @@ namespace Unigram.ViewModels
                         var user = With as TLUser;
                         if (user != null && !user.IsBot)
                         {
-                            dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
+                            dialog.CheckBoxLabel = string.Format(Strings.Android.DeleteForUser, user.FullName);
                         }
 
                         //var chat = With as TLChat;
                         if (chat != null)
                         {
-                            dialog.CheckBoxLabel = "Delete for everyone";
+                            dialog.CheckBoxLabel = Strings.Android.DeleteForAll;
                         }
                     }
                 }
-                else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it just for you.";
-                }
-                else if (Peer is TLInputPeerChat)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
-                }
-                else if (Peer is TLInputPeerChannel)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
-                }
+                //else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it just for you.";
+                //}
+                //else if (Peer is TLInputPeerChat)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
+                //}
+                //else if (Peer is TLInputPeerChannel)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
+                //}
 
                 var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
@@ -189,6 +226,24 @@ namespace Unigram.ViewModels
                     DeleteMessages(null, null, messages, revoke, null, DeleteMessagesInternal);
                 }
             }
+        }
+
+        private async Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteUserHistoryAsync(TLChannel channel, TLInputUserBase userId)
+        {
+            var response = await ProtoService.DeleteUserHistoryAsync(channel, userId);
+            if (response.IsSucceeded)
+            {
+                if (response.Result.Offset > 0)
+                {
+                    return await DeleteUserHistoryAsync(channel, userId);
+                }
+            }
+            else
+            {
+                Telegram.Api.Helpers.Execute.ShowDebugMessage("channels.deleteUserHistory error " + response.Error);
+            }
+
+            return response;
         }
 
         private void DeleteMessagesInternal(TLMessageBase lastMessage, IList<TLMessageBase> messages)
@@ -210,8 +265,33 @@ namespace Unigram.ViewModels
             CacheService.DeleteMessages(Peer.ToPeer(), lastMessage, remoteMessages);
             CacheService.DeleteMessages(cachedMessages);
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
+                var groups = new Dictionary<long, Tuple<TLMessage, GroupedMessages>>();
+
+                for (int j = 0; j < messages.Count; j++)
+                {
+                    if (messages[j] is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out TLMessage group) && group.Media is TLMessageMediaGroup groupMedia)
+                    {
+                        groupMedia.Layout.Messages.Remove(grouped);
+                        groups[groupedId] = Tuple.Create(group, groupMedia.Layout);
+                    }
+                }
+
+                foreach (var group in groups.Values)
+                {
+                    if (group.Item2.Messages.Count > 0)
+                    {
+                        group.Item2.Calculate();
+                        group.Item1.RaisePropertyChanged(() => group.Item1.Self);
+                    }
+                    else
+                    {
+                        _groupedMessages.TryRemove(group.Item2.GroupedId, out TLMessage removed);
+                        Items.Remove(group.Item1);
+                    }
+                }
+
                 for (int j = 0; j < messages.Count; j++)
                 {
                     if (EditedMessage?.Id == messages[j].Id)
@@ -221,6 +301,17 @@ namespace Unigram.ViewModels
                     else if (ReplyInfo?.ReplyToMsgId == messages[j].Id)
                     {
                         ClearReplyCommand.Execute();
+                    }
+
+                    if (PinnedMessage?.Id == messages[j].Id)
+                    {
+                        PinnedMessage = null;
+                    }
+
+                    if (Full is TLChannelFull channelFull && channelFull.PinnedMsgId == messages[j].Id)
+                    {
+                        channelFull.PinnedMsgId = null;
+                        channelFull.HasPinnedMsgId = false;
                     }
 
                     Items.Remove(messages[j]);
@@ -267,18 +358,22 @@ namespace Unigram.ViewModels
 
         #region Forward
 
-        public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
-        private async void MessageForwardExecute(TLMessageBase message)
+        public RelayCommand<TLMessageBase> MessageForwardCommand { get; }
+        private async void MessageForwardExecute(TLMessageBase messageBase)
         {
-            if (message is TLMessage)
+            if (messageBase is TLMessage message)
             {
+                if (message.Media is TLMessageMediaGroup groupMedia)
+                {
+                    ExpandSelection(new[] { message });
+                    MessagesForwardExecute();
+                    return;
+                }
+
                 Search = null;
                 SelectionMode = ListViewSelectionMode.None;
 
-                await ForwardView.Current.ShowAsync(new List<TLMessage> { message as TLMessage });
-
-                //App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
-                //NavigationService.GoBackAt(0);
+                await ShareView.Current.ShowAsync(message);
             }
         }
 
@@ -286,7 +381,7 @@ namespace Unigram.ViewModels
 
         #region Share
 
-        public RelayCommand<TLMessage> MessageShareCommand => new RelayCommand<TLMessage>(MessageShareExecute);
+        public RelayCommand<TLMessage> MessageShareCommand { get; }
         private async void MessageShareExecute(TLMessage message)
         {
             await ShareView.Current.ShowAsync(message);
@@ -296,30 +391,27 @@ namespace Unigram.ViewModels
 
         #region Multiple Delete
 
-        private RelayCommand _messagesDeleteCommand;
-        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedItems.Count > 0 && SelectedItems.All(messageCommon =>
-        {
-            var channel = _with as TLChannel;
-            if (channel != null)
-            {
-                if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
-                {
-                    return false;
-                }
-
-                if (messageCommon.IsOut || channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsDeleteMessages))
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return true;
-        })));
-
+        public RelayCommand MessagesDeleteCommand { get; }
         private async void MessagesDeleteExecute()
         {
+            var messages = new List<TLMessageCommonBase>(SelectedItems);
+
+            for (int i = 0; i < messages.Count; i++)
+            {
+                if (messages[i] is TLMessage message && message.Media is TLMessageMediaGroup groupMedia)
+                {
+                    messages.RemoveAt(i);
+
+                    for (int j = 0; j < groupMedia.Layout.Messages.Count; j++)
+                    {
+                        messages.Insert(i, groupMedia.Layout.Messages[j]);
+                        i++;
+                    }
+
+                    i--;
+                }
+            }
+
             //if (messageBase == null) return;
 
             //var message = messageBase as TLMessage;
@@ -373,13 +465,11 @@ namespace Unigram.ViewModels
             //}
             //else
             {
-                var messages = new List<TLMessageCommonBase>(SelectedItems);
-
                 var dialog = new TLMessageDialog();
-                dialog.Title = "Delete";
-                dialog.Message = messages.Count > 1 ? string.Format("Do you want to delete this {0} messages?", messages.Count) : "Do you want to delete this message?";
-                dialog.PrimaryButtonText = "Yes";
-                dialog.SecondaryButtonText = "No";
+                dialog.Title = Strings.Android.Message;
+                dialog.Message = string.Format(Strings.Android.AreYouSureDeleteMessages, LocaleHelper.Declension("Messages", messages.Count));
+                dialog.PrimaryButtonText = Strings.Android.OK;
+                dialog.SecondaryButtonText = Strings.Android.Cancel;
 
                 var chat = With as TLChat;
 
@@ -397,28 +487,28 @@ namespace Unigram.ViewModels
                         var user = With as TLUser;
                         if (user != null && !user.IsBot)
                         {
-                            dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
+                            dialog.CheckBoxLabel = string.Format(Strings.Android.DeleteForUser, user.FullName);
                         }
 
                         //var chat = With as TLChat;
                         if (chat != null)
                         {
-                            dialog.CheckBoxLabel = "Delete for everyone";
+                            dialog.CheckBoxLabel = Strings.Android.DeleteForAll;
                         }
                     }
                 }
-                else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it just for you.";
-                }
-                else if (Peer is TLInputPeerChat)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
-                }
-                else if (Peer is TLInputPeerChannel)
-                {
-                    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
-                }
+                //else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it just for you.";
+                //}
+                //else if (Peer is TLInputPeerChat)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
+                //}
+                //else if (Peer is TLInputPeerChannel)
+                //{
+                //    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
+                //}
 
                 var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
@@ -445,50 +535,205 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool MessagesDeleteCanExecute()
+        {
+            return SelectedItems.Count > 0 && SelectedItems.All(messageCommon =>
+            {
+                var channel = _with as TLChannel;
+                if (channel != null)
+                {
+                    if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
+                    {
+                        return false;
+                    }
+
+                    if (messageCommon.IsOut || channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsDeleteMessages))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                return true;
+            });
+        }
+
         #endregion
 
         #region Multiple Forward
 
-        private RelayCommand _messagesForwardCommand;
-        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedItems.Count > 0 && SelectedItems.All(x =>
-        {
-            if (x is TLMessage message)
-            {
-                if (message.Media is TLMessageMediaPhoto photoMedia)
-                {
-                    return !photoMedia.HasTTLSeconds;
-                }
-                else if (message.Media is TLMessageMediaDocument documentMedia)
-                {
-                    return !documentMedia.HasTTLSeconds;
-                }
-
-                return true;
-            }
-
-            return false;
-        })));
-
+        public RelayCommand MessagesForwardCommand { get; }
         private async void MessagesForwardExecute()
         {
-            var messages = SelectedItems.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
+            var messages = SelectedItems.OfType<TLMessage>().Where(x => x.RandomId == null).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
                 Search = null;
                 SelectionMode = ListViewSelectionMode.None;
 
-                await ForwardView.Current.ShowAsync(messages);
-
-                //App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
-                //NavigationService.GoBackAt(0);
+                await ShareView.Current.ShowAsync(messages);
             }
+        }
+
+        private bool MessagesForwardCanExecute()
+        {
+            return SelectedItems.Count > 0 && SelectedItems.All(x =>
+            {
+                if (x is TLMessage message)
+                {
+                    if (message.Media is TLMessageMediaPhoto photoMedia)
+                    {
+                        return !photoMedia.HasTTLSeconds;
+                    }
+                    else if (message.Media is TLMessageMediaDocument documentMedia)
+                    {
+                        return !documentMedia.HasTTLSeconds;
+                    }
+
+                    return true;
+                }
+
+                return false;
+            });
+        }
+
+        #endregion
+
+        #region Multiple Copy
+
+        public RelayCommand MessagesCopyCommand { get; }
+        private void MessagesCopyExecute()
+        {
+            var messages = SelectedItems.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
+            if (messages.Count > 0)
+            {
+                var builder = new StringBuilder();
+                SelectionMode = ListViewSelectionMode.None;
+
+                var broadcast = With is TLChannel check && check.IsBroadcast;
+
+                foreach (var message in messages)
+                {
+                    var date = BindConvert.Current.DateTime(message.Date);
+                    builder.AppendLine(string.Format("{0}, [{1} {2}]", broadcast ? message.Parent.DisplayName : message.From.FullName, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date)));
+
+                    if (message.HasFwdFrom && message.FwdFrom != null)
+                    {
+                        if (message.FwdFromChannel is TLChannel channel)
+                        {
+                            builder.AppendLine($"[{Strings.Android.ForwardedMessage}]");
+                            builder.AppendLine($"[{Strings.Android.From} {channel.Title}]");
+                        }
+                        else if (message.FwdFromUser is TLUser user)
+                        {
+                            builder.AppendLine($"[{Strings.Android.ForwardedMessage}]");
+                            builder.AppendLine($"[{Strings.Android.From} {user.FullName}]");
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(message.Message))
+                    {
+                        if (message.Media is TLMessageMediaPhoto photoMedia)
+                        {
+                            builder.Append($"[{Strings.Android.AttachPhoto}]");
+
+                            if (string.IsNullOrEmpty(photoMedia.Caption)) { }
+                            else
+                            {
+                                builder.AppendLine();
+                                builder.Append(photoMedia.Caption);
+                            }
+                        }
+                        else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                        {
+                            if (TLMessage.IsVoice(document))
+                            {
+                                builder.Append($"[{Strings.Android.AttachAudio}]");
+                            }
+                            else if (TLMessage.IsVideo(document))
+                            {
+                                builder.Append($"[{Strings.Android.AttachVideo}]");
+                            }
+                            else if (TLMessage.IsRoundVideo(document))
+                            {
+                                builder.Append($"[{Strings.Android.AttachRound}]");
+                            }
+                            else if (TLMessage.IsGif(document))
+                            {
+                                builder.Append($"[{Strings.Android.AttachGif}]");
+                            }
+                            else if (TLMessage.IsSticker(document))
+                            {
+                                var attribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                                if (attribute != null)
+                                {
+                                    builder.Append($"[{attribute.Alt} {Strings.Android.AttachSticker}]");
+                                }
+                                else
+                                {
+                                    builder.Append($"[{Strings.Android.AttachSticker}]");
+                                }
+                            }
+                            else if (TLMessage.IsMusic(document))
+                            {
+                                builder.Append($"[{Strings.Android.AttachMusic}]");
+                            }
+
+                            if (string.IsNullOrEmpty(documentMedia.Caption)) { }
+                            else
+                            {
+                                builder.AppendLine();
+                                builder.Append(documentMedia.Caption);
+                            }
+                        }
+                        else if (message.Media is TLMessageMediaGeo geoMedia)
+                        {
+                            if (geoMedia.Geo is TLGeoPoint geo)
+                            {
+                                builder.AppendLine($"[{Strings.Android.AttachLocation}]");
+                                builder.Append(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", geo.Lat, geo.Long));
+                            }
+                        }
+                        else if (message.Media is TLMessageMediaVenue venueMedia)
+                        {
+                            if (venueMedia.Geo is TLGeoPoint geo)
+                            {
+                                builder.AppendLine($"[{Strings.Android.AttachLocation}]");
+                                builder.AppendLine(venueMedia.Title);
+                                builder.AppendLine(venueMedia.Address);
+                                builder.Append(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", geo.Lat, geo.Long));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        builder.Append(message.Message);
+                    }
+
+                    if (message != messages.Last())
+                    {
+                        builder.AppendLine();
+                        builder.AppendLine();
+                    }
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(builder.ToString());
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+        }
+
+        private bool MessagesCopyCanExecute()
+        {
+            return SelectedItems.Count > 0;
         }
 
         #endregion
 
         #region Select
 
-        public RelayCommand<TLMessageBase> MessageSelectCommand => new RelayCommand<TLMessageBase>(MessageSelectExecute);
+        public RelayCommand<TLMessageBase> MessageSelectCommand { get; }
         private void MessageSelectExecute(TLMessageBase message)
         {
             Search = null;
@@ -500,16 +745,16 @@ namespace Unigram.ViewModels
             }
 
             SelectionMode = ListViewSelectionMode.Multiple;
+            ListField.SelectedItems.Add(message);
 
-            SelectedItems = new List<TLMessageCommonBase> { messageCommon };
-            RaisePropertyChanged("SelectedItems");
+            ExpandSelection(new[] { messageCommon });
         }
 
         #endregion
 
         #region Copy
 
-        public RelayCommand<TLMessage> MessageCopyCommand => new RelayCommand<TLMessage>(MessageCopyExecute);
+        public RelayCommand<TLMessage> MessageCopyCommand { get; }
         private void MessageCopyExecute(TLMessage message)
         {
             if (message == null)
@@ -533,7 +778,37 @@ namespace Unigram.ViewModels
             {
                 var dataPackage = new DataPackage();
                 dataPackage.SetText(text);
-                Clipboard.SetContent(dataPackage);
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+        }
+
+        #endregion
+
+        #region Copy media
+
+        public RelayCommand<TLMessage> MessageCopyMediaCommand { get; }
+        private async void MessageCopyMediaExecute(TLMessage message)
+        {
+            var photo = message.GetPhoto();
+            var photoSize = photo?.Full as TLPhotoSize;
+            if (photoSize == null)
+            {
+                return;
+            }
+
+            var location = photoSize.Location;
+            var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+                var result = await FileUtils.GetTempFileAsync(fileName);
+
+                try
+                {
+                    var dataPackage = new DataPackage();
+                    dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(result));
+                    ClipboardEx.TrySetContent(dataPackage);
+                }
+                catch { }
             }
         }
 
@@ -541,57 +816,41 @@ namespace Unigram.ViewModels
 
         #region Copy link
 
-        public RelayCommand<TLMessage> MessageCopyLinkCommand => new RelayCommand<TLMessage>(MessageCopyLinkExecute);
-        private void MessageCopyLinkExecute(TLMessage message)
+        public RelayCommand<TLMessageCommonBase> MessageCopyLinkCommand { get; }
+        private void MessageCopyLinkExecute(TLMessageCommonBase messageCommon)
         {
-            if (message == null) return;
-
-            if (With is TLChannel channel)
+            if (messageCommon == null)
             {
-                var link = $"{channel.Username}/{message.Id}";
-
-                if (message.IsRoundVideo())
-                {
-                    link = $"https://telesco.pe/{link}";
-                }
-                else
-                {
-                    var config = CacheService.GetConfig();
-                    if (config != null)
-                    {
-                        var linkPrefix = config.MeUrlPrefix;
-                        if (linkPrefix.EndsWith("/"))
-                        {
-                            linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                        }
-                        if (linkPrefix.StartsWith("https://"))
-                        {
-                            linkPrefix = linkPrefix.Substring(8);
-                        }
-                        else if (linkPrefix.StartsWith("http://"))
-                        {
-                            linkPrefix = linkPrefix.Substring(7);
-                        }
-
-                        link = $"https://{linkPrefix}/{link}";
-                    }
-                    else
-                    {
-                        link = $"https://t.me/{link}";
-                    }
-                }
-
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(link);
-                Clipboard.SetContent(dataPackage);
+                return;
             }
+
+            var channel = With as TLChannel;
+            if (channel == null)
+            {
+                return;
+            }
+
+            var link = $"{channel.Username}/{messageCommon.Id}";
+
+            if (messageCommon is TLMessage message && message.IsRoundVideo())
+            {
+                link = $"https://telesco.pe/{link}";
+            }
+            else
+            {
+                link = MeUrlPrefixConverter.Convert(link);
+            }
+
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(link);
+            ClipboardEx.TrySetContent(dataPackage);
         }
 
         #endregion
 
         #region Edit
 
-        public RelayCommand MessageEditLastCommand => new RelayCommand(MessageEditLastExecute);
+        public RelayCommand MessageEditLastCommand { get; }
         private void MessageEditLastExecute()
         {
             var last = Items.LastOrDefault(x => x is TLMessage message && message.IsOut);
@@ -601,10 +860,15 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLMessage> MessageEditCommand => new RelayCommand<TLMessage>(MessageEditExecute);
+        public RelayCommand<TLMessage> MessageEditCommand { get; }
         private async void MessageEditExecute(TLMessage message)
         {
             Search = null;
+
+            if (message?.Media is TLMessageMediaGroup groupMedia)
+            {
+                message = groupMedia.Layout.Messages.LastOrDefault();
+            }
 
             if (message == null)
             {
@@ -614,7 +878,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetMessageEditDataAsync(Peer, message.Id);
             if (response.IsSucceeded)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     var messageEditText = GetMessageEditText(response.Result, message);
                     StartEditMessage(messageEditText, message);
@@ -622,12 +886,12 @@ namespace Unigram.ViewModels
             }
             else
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     //this.IsWorking = false;
                     //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.MESSAGE_ID_INVALID))
                     //{
-                    //    MessageBox.Show(AppResources.EditMessageError, AppResources.Error, 0);
+                    //    MessageBox.Show(Strings.Resources.EditMessageError, Strings.Resources.Error, 0);
                     //    return;
                     //}
                     Execute.ShowDebugMessage("messages.getMessageEditData error " + response.Error);
@@ -791,16 +1055,16 @@ namespace Unigram.ViewModels
 
         #region Pin
 
-        public RelayCommand<TLMessageBase> MessagePinCommand => new RelayCommand<TLMessageBase>(MessagePinExecute);
+        public RelayCommand<TLMessageBase> MessagePinCommand { get; }
         private async void MessagePinExecute(TLMessageBase message)
         {
             if (PinnedMessage?.Id == message.Id)
             {
                 var dialog = new TLMessageDialog();
-                dialog.Title = "Unpin message";
-                dialog.Message = "Would you like to unpin this message?";
-                dialog.PrimaryButtonText = "Yes";
-                dialog.SecondaryButtonText = "No";
+                dialog.Title = Strings.Android.AppName;
+                dialog.Message = Strings.Android.UnpinMessageAlert;
+                dialog.PrimaryButtonText = Strings.Android.OK;
+                dialog.SecondaryButtonText = Strings.Android.Cancel;
 
                 var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
@@ -817,19 +1081,23 @@ namespace Unigram.ViewModels
             }
             else
             {
+                var channel = With as TLChannel;
                 var dialog = new TLMessageDialog();
-                dialog.Title = "Pin message";
-                dialog.Message = "Would you like to pin this message?";
-                dialog.CheckBoxLabel = "Notify all members";
-                dialog.IsChecked = true;
-                dialog.PrimaryButtonText = "Yes";
-                dialog.SecondaryButtonText = "No";
+                dialog.Title = Strings.Android.AppName;
+                dialog.Message = channel.IsBroadcast ? Strings.Android.PinMessageAlertChannel : Strings.Android.PinMessageAlert;
+                dialog.PrimaryButtonText = Strings.Android.OK;
+                dialog.SecondaryButtonText = Strings.Android.Cancel;
+
+                if (channel.IsMegaGroup)
+                {
+                    dialog.CheckBoxLabel = Strings.Android.PinNotify;
+                    dialog.IsChecked = true;
+                }
 
                 var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
                 {
-                    var channel = Peer as TLInputPeerChannel;
-                    var inputChannel = new TLInputChannel { ChannelId = channel.ChannelId, AccessHash = channel.AccessHash };
+                    var inputChannel = channel.ToInputChannel();
 
                     var silent = dialog.IsChecked == false;
                     var result = await ProtoService.UpdatePinnedMessageAsync(silent, inputChannel, message.Id);
@@ -932,7 +1200,7 @@ namespace Unigram.ViewModels
             ReplyMarkup = message.ReplyMarkup;
         }
 
-        //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand => new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);
+        //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand { get; }
         public async void KeyboardButtonExecute(TLKeyboardButtonBase button, TLMessage message)
         {
             if (button is TLKeyboardButtonBuy buyButton)
@@ -1017,12 +1285,8 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var dialog = new TLMessageDialog(urlButton.Url, "Open this link?");
-                        dialog.PrimaryButtonText = "OK";
-                        dialog.SecondaryButtonText = "Cancel";
-
-                        var result = await dialog.ShowQueuedAsync();
-                        if (result != ContentDialogResult.Primary)
+                        var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.OpenUrlAlert, urlButton.Url), Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                        if (confirm != ContentDialogResult.Primary)
                         {
                             return;
                         }
@@ -1112,7 +1376,13 @@ namespace Unigram.ViewModels
             {
                 if (CacheService.GetUser(SettingsHelper.UserId) is TLUser cached)
                 {
-                    var confirm = await TLMessageDialog.ShowAsync("The bot will know your phone number. This can be useful for integration with other services.", "Share your phone number?", "OK", "Cancel");
+                    var content = Strings.Android.AreYouSureShareMyContactInfo;
+                    if (With is TLUser withUser)
+                    {
+                        content = withUser.IsBot ? Strings.Android.AreYouSureShareMyContactInfoBot : string.Format(Strings.Android.AreYouSureShareMyContactInfoUser, PhoneNumber.Format(cached.Phone), withUser.FullName);
+                    }
+
+                    var confirm = await TLMessageDialog.ShowAsync(content, Strings.Android.ShareYouPhoneNumberTitle, Strings.Android.OK, Strings.Android.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await SendContactAsync(cached);
@@ -1121,7 +1391,7 @@ namespace Unigram.ViewModels
             }
             else if (button is TLKeyboardButtonRequestGeoLocation requestGeoButton)
             {
-                var confirm = await TLMessageDialog.ShowAsync("This will send your current location to the bot.", "Share your location?", "OK", "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ShareYouLocationInfo, Strings.Android.ShareYouLocationTitle, Strings.Android.OK, Strings.Android.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var location = await _locationService.GetPositionAsync();
@@ -1141,7 +1411,7 @@ namespace Unigram.ViewModels
 
         #region Open reply
 
-        public RelayCommand<TLMessageCommonBase> MessageOpenReplyCommand => new RelayCommand<TLMessageCommonBase>(MessageOpenReplyExecute);
+        public RelayCommand<TLMessageCommonBase> MessageOpenReplyCommand { get; }
         private async void MessageOpenReplyExecute(TLMessageCommonBase messageCommon)
         {
             if (messageCommon != null && messageCommon.ReplyToMsgId.HasValue)
@@ -1154,7 +1424,7 @@ namespace Unigram.ViewModels
 
         #region Sticker info
 
-        public RelayCommand<TLMessage> MessageStickerPackInfoCommand => new RelayCommand<TLMessage>(MessageStickerPackInfoExecute);
+        public RelayCommand<TLMessage> MessageStickerPackInfoCommand { get; }
         private async void MessageStickerPackInfoExecute(TLMessage message)
         {
             if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1171,7 +1441,7 @@ namespace Unigram.ViewModels
 
         #region Fave sticker
 
-        public RelayCommand<TLMessage> MessageFaveStickerCommand => new RelayCommand<TLMessage>(MessageFaveStickerExecute);
+        public RelayCommand<TLMessage> MessageFaveStickerCommand { get; }
         private void MessageFaveStickerExecute(TLMessage message)
         {
             if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1184,7 +1454,7 @@ namespace Unigram.ViewModels
 
         #region Unfave sticker
 
-        public RelayCommand<TLMessage> MessageUnfaveStickerCommand => new RelayCommand<TLMessage>(MessageUnfaveStickerExecute);
+        public RelayCommand<TLMessage> MessageUnfaveStickerCommand { get; }
         private void MessageUnfaveStickerExecute(TLMessage message)
         {
             if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1197,7 +1467,7 @@ namespace Unigram.ViewModels
 
         #region Save sticker as
 
-        public RelayCommand<TLMessage> MessageSaveStickerCommand => new RelayCommand<TLMessage>(MessageSaveStickerExecute);
+        public RelayCommand<TLMessage> MessageSaveStickerCommand { get; }
         private async void MessageSaveStickerExecute(TLMessage message)
         {
             if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1252,54 +1522,51 @@ namespace Unigram.ViewModels
 
         #region Save file as
 
-        public RelayCommand<TLMessage> MessageSaveMediaCommand => new RelayCommand<TLMessage>(MessageSaveMediaExecute);
+        public RelayCommand<TLMessage> MessageSaveMediaCommand { get; }
         private async void MessageSaveMediaExecute(TLMessage message)
         {
-            if (message?.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
+            if (message.IsSticker())
             {
-                var location = photoSize.Location;
-                var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                {
-                    var picker = new FileSavePicker();
-                    picker.FileTypeChoices.Add("JPEG Image", new[] { ".jpg" });
-                    picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                    picker.SuggestedFileName = BindConvert.Current.DateTime(message.Date).ToString("photo_yyyyMMdd_HH_mm_ss") + ".jpg";
-
-                    var file = await picker.PickSaveFileAsync();
-                    if (file != null)
-                    {
-                        var result = await FileUtils.GetTempFileAsync(fileName);
-                        await result.CopyAndReplaceAsync(file);
-                    }
-                }
+                MessageSaveStickerExecute(message);
+                return;
             }
 
-            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            var photo = message.GetPhoto();
+            if (photo?.Full is TLPhotoSize photoSize)
             {
-                var fileName = document.GetFileName();
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                {
-                    var extension = document.GetFileExtension();
+                await TLFileHelper.SavePhotoAsync(photoSize, message.Date, false);
+            }
 
-                    var picker = new FileSavePicker();
-                    picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { document.GetFileExtension() });
-                    picker.SuggestedStartLocation = PickerLocationId.Downloads;
-                    picker.SuggestedFileName = BindConvert.Current.DateTime(message.Date).ToString("photo_yyyyMMdd_HH_mm_ss") + extension;
+            var document = message.GetDocument();
+            if (document != null)
+            {
+                await TLFileHelper.SaveDocumentAsync(document, message.Date, false);
+            }
+        }
 
-                    var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
-                    if (fileNameAttribute != null)
-                    {
-                        picker.SuggestedFileName = fileNameAttribute.FileName;
-                    }
+        #endregion
 
-                    var file = await picker.PickSaveFileAsync();
-                    if (file != null)
-                    {
-                        var result = await FileUtils.GetTempFileAsync(fileName);
-                        await result.CopyAndReplaceAsync(file);
-                    }
-                }
+        #region Save to Downloads
+
+        public RelayCommand<TLMessage> MessageSaveDownloadCommand { get; }
+        private async void MessageSaveDownloadExecute(TLMessage message)
+        {
+            if (message.IsSticker())
+            {
+                MessageSaveStickerExecute(message);
+                return;
+            }
+
+            var photo = message.GetPhoto();
+            if (photo?.Full is TLPhotoSize photoSize)
+            {
+                await TLFileHelper.SavePhotoAsync(photoSize, message.Date, true);
+            }
+
+            var document = message.GetDocument();
+            if (document != null)
+            {
+                await TLFileHelper.SaveDocumentAsync(document, message.Date, true);
             }
         }
 
@@ -1307,17 +1574,89 @@ namespace Unigram.ViewModels
 
         #region Save to GIFs
 
-        public RelayCommand<TLMessage> MessageSaveGIFCommand => new RelayCommand<TLMessage>(MessageSaveGIFExecute);
+        public RelayCommand<TLMessage> MessageSaveGIFCommand { get; }
         private async void MessageSaveGIFExecute(TLMessage message)
         {
-            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            TLDocument document = null;
+            if (message?.Media is TLMessageMediaDocument documentMedia)
             {
-                var response = await ProtoService.SaveGifAsync(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, false);
+                document = documentMedia.Document as TLDocument;
+            }
+            else if (message?.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+            {
+                document = webPage.Document as TLDocument;
+            }
+
+            if (document == null)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SaveGifAsync(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, false);
+            if (response.IsSucceeded)
+            {
+                _stickers.StickersService.AddRecentGif(document, (int)(Utils.CurrentTimestamp / 1000));
+            }
+        }
+
+        #endregion
+
+        #region Add contact
+
+        public RelayCommand<TLMessage> MessageAddContactCommand { get; }
+        private async void MessageAddContactExecute(TLMessage message)
+        {
+            var contactMedia = message.Media as TLMessageMediaContact;
+            if (contactMedia == null)
+            {
+                return;
+            }
+
+            var user = contactMedia.User as TLUser;
+            if (user == null)
+            {
+                return;
+            }
+
+            var confirm = await EditUserNameView.Current.ShowAsync(user.FirstName, user.LastName);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var contact = new TLInputPhoneContact
+                {
+                    ClientId = user.Id,
+                    FirstName = EditUserNameView.Current.FirstName,
+                    LastName = EditUserNameView.Current.LastName,
+                    Phone = user.Phone
+                };
+
+                var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact });
                 if (response.IsSucceeded)
                 {
-                    _stickers.StickersService.AddRecentGif(document, (int)(Utils.CurrentTimestamp / 1000));
+                    if (response.Result.Users.Count > 0)
+                    {
+                        Aggregator.Publish(new TLUpdateContactLink
+                        {
+                            UserId = response.Result.Users[0].Id,
+                            MyLink = new TLContactLinkContact(),
+                            ForeignLink = new TLContactLinkUnknown()
+                        });
+                    }
 
-                    //_stickers.SyncGifs();
+                    user.RaisePropertyChanged(() => user.HasFirstName);
+                    user.RaisePropertyChanged(() => user.HasLastName);
+                    user.RaisePropertyChanged(() => user.FirstName);
+                    user.RaisePropertyChanged(() => user.LastName);
+                    user.RaisePropertyChanged(() => user.FullName);
+                    user.RaisePropertyChanged(() => user.DisplayName);
+
+                    user.RaisePropertyChanged(() => user.HasPhone);
+                    user.RaisePropertyChanged(() => user.Phone);
+
+                    var dialog = CacheService.GetDialog(user.ToPeer());
+                    if (dialog != null)
+                    {
+                        dialog.RaisePropertyChanged(() => dialog.With);
+                    }
                 }
             }
         }

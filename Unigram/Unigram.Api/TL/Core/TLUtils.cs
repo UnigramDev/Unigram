@@ -534,7 +534,9 @@ namespace Telegram.Api.TL
                         {
                             using (var from = new TLBinaryReader(fileStream))
                             {
-                                return TLFactory.Read<T>(from);
+                                from.ReadUInt32();
+                                return (T)Activator.CreateInstance(typeof(T), from);
+                                //return TLFactory.Read<T>(from);
                             }
                         }
                     }

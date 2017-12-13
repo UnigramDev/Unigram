@@ -33,7 +33,7 @@ namespace Unigram.Views.Payments
 
         private string ConvertTitle(bool test)
         {
-            return test ? "Test receipt" : "Receipt";
+            return (test ? "Test " : string.Empty) + Strings.Android.PaymentReceipt;
         }
 
         private string ConvertAddress(TLPostAddress address)

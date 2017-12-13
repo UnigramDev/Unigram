@@ -1,0 +1,156 @@
+﻿<Page x:Class="Unigram.Views.Dialogs.DialogShareLocationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Unigram.Views"
+      xmlns:tl="using:Telegram.Api.TL"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+      xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+      xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
+      mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ListView x:Name="NearbyList" ItemsSource="{Binding Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="NearbyList_ItemClick">
+            <ListView.Header>
+                <StackPanel>
+                    <Grid x:Name="MapPresenter" Background="Red">
+                        <!-- Map -->
+                        <!--<Border x:Name="mMap"/>-->
+                        <maps:MapControl x:Name="mMap" MapServiceToken="05wFBCi3igV05Qwo43MP~lcpzO5UGwDSGj0DYrlayPA~Am2tMY6A9-vRSedZPL-yuUfUoVoRd0FcQIoPh0xQErRotbnird_u0IYQOJrODViy"/>
+                        <!-- Map controls -->
+                        <StackPanel x:Name="spMapControls"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Orientation="Vertical"
+                                    Width="32"
+                                    Background="#88000000"
+                                    Margin="0,0,12,0">
+
+                            <!-- Find position -->
+                            <Button x:Name="btnLocate"
+                                    Padding="0,12"
+                                    HorizontalAlignment="Stretch"
+                                    Foreground="White"
+                                    Click="BtnLocate_Click">
+                                <Button.Content>
+                                    <FontIcon FontSize="14" Glyph=""/>
+                                </Button.Content>
+                            </Button>
+
+                            <!-- Change terrain -->
+                            <Button x:Name="btnLayerChange"
+                                    Padding="0,12"
+                                    HorizontalAlignment="Stretch"
+                                    Foreground="White"
+                                    Click="BtnLayerChange_Click">
+                                <Button.Content>
+                                    <FontIcon FontSize="14" Glyph=""/>
+                                </Button.Content>
+                            </Button>
+                        </StackPanel>
+
+                        <Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
+                            <Border CornerRadius="10" Margin="1" Background="White">
+                                <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
+                            </Border>
+                        </Border>
+                    </Grid>
+
+                    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                BorderThickness="0,1,0,0">
+                        <!-- Current Location -->
+                        <Button x:Name="btnCurrentLocation"
+                                Click="CurrentLocation_Click"
+                                Background="Transparent"
+                                Padding="0"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                Style="{StaticResource EmptyButtonStyle}">
+                            <Button.Content>
+                                <StackPanel Height="48" Orientation="Horizontal" Margin="0,8">
+                                    <Border Height="40" Width="40" CornerRadius="20" Margin="12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                                        <TextBlock Text=""
+                                                   Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                   FontFamily="Segoe MDL2 Assets"
+                                                   VerticalAlignment="Center"
+                                                   TextAlignment="Center"
+                                                   FontSize="24"/>
+                                    </Border>
+                                    <StackPanel Orientation="Vertical"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{CustomResource SendLocation}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                                        <TextBlock x:Name="tblCurrentLocation" Text="Getting your location..." TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                        <Button x:Name="LiveLocationButton"
+                                Click="LiveLocation_Click"
+                                Background="Transparent"
+                                Padding="0"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                Style="{StaticResource EmptyButtonStyle}">
+                            <Button.Content>
+                                <StackPanel Height="48" Orientation="Horizontal" Margin="0,8">
+                                    <Border Height="40" Width="40" CornerRadius="20" Margin="12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                                        <TextBlock Text=""
+                                                   Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                   FontFamily="Segoe MDL2 Assets"
+                                                   VerticalAlignment="Center"
+                                                   TextAlignment="Center"
+                                                   FontSize="24"/>
+                                    </Border>
+                                    <StackPanel Orientation="Vertical"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center">
+                                        <TextBlock x:Name="LiveLocationLabel" Text="{CustomResource SendLiveLocation}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                                        <TextBlock Text="{CustomResource SendLiveLocationInfo}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+
+
+                        <!-- Nearby header -->
+                        <Border Height="32" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                            <TextBlock Text="{CustomResource NearbyPlaces}" Margin="12,5,0,0"/>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="tl:TLMessageMediaVenue">
+                    <StackPanel Height="48" Orientation="Horizontal">
+                        <Border Height="40" Width="40" CornerRadius="20" Margin="0,0,12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                            <BitmapIcon UriSource="{x:Bind VenueType, Converter={StaticResource VenueToGlyphConverter}}" Margin="4"/>
+                        </Border>
+                        <StackPanel Orientation="Vertical"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center">
+                            <TextBlock Text="{x:Bind Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind Address}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                    <Setter Property="Padding" Value="12,8"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.Footer>
+                <Canvas Width="200" Height="24" Margin="12">
+                    <Path Data="M56.084,5.0310007 C54.653,5.0310003 53.709999,6.179 53.709999,7.4679996 53.709999,8.7890002 54.731998,9.9050003 56.161999,9.9050003 56.917,9.9050003 57.688,9.5280005 58.191002,8.8510004 L58.191002,6.0850002 C57.735001,5.4870001 56.98,5.0310003 56.084,5.0310007 z M11.763,5.0310007 C10.395,5.0310003 9.4359999,6.1160003 9.4359999,7.4690005 9.4359999,8.8200003 10.395,9.9050003 11.763,9.9050003 13.131,9.9050003 14.09,8.8200003 14.09,7.4690005 14.09,6.1160003 13.131,5.0310003 11.763,5.0310007 z M47.341,4.9210011 C46.382,4.9210001 45.516998,5.5660001 45.265999,6.5250007 L49.291,6.5250007 C49.070999,5.581 48.223,4.9210001 47.341,4.9210011 z M33.035999,4.9210011 C32.077,4.9210001 31.212,5.5660001 30.959999,6.5250007 L34.986,6.5250007 C34.765999,5.581 33.917,4.9210001 33.035999,4.9210011 z M16.368999,3.7729996 L17.91,3.7729996 19.938999,8.8200003 21.966999,3.7729996 23.004999,3.7729996 25.033001,8.8200003 27.061001,3.7729996 28.601999,3.7729996 25.599001,11.163 24.561001,11.163 22.486,5.9739996 20.41,11.163 19.372999,11.163 z M42.171001,3.6160008 C42.328999,3.6160003 42.580002,3.6320001 42.752998,3.663 L42.580002,5.0940005 C42.407001,5.0470001 42.234001,5.0310003 41.998001,5.0310007 41.228001,5.0310003 40.41,5.5660001 40.000999,6.2730004 L40.000999,11.163 38.507999,11.163 38.507999,3.7729996 39.953999,3.7729996 39.953999,4.6220003 C40.316002,4.1190001 41.085999,3.6160003 42.171001,3.6160008 z M32.988998,3.6160008 C35.049,3.6160003 36.542,5.2830001 36.542,7.4690005 36.542,7.5310003 36.542,7.6410004 36.526001,7.7829996 L30.834999,7.7829996 C30.914,9.0239998 31.936001,10.015 33.224998,10.015 34.325001,10.015 34.923,9.4810005 35.348,9.0090004 L36.321999,9.9369999 C35.771999,10.644001 34.717999,11.32 33.209,11.32 31.055,11.32 29.388,9.6850001 29.388,7.4690005 29.388,5.251 30.896999,3.6160003 32.988998,3.6160008 z M11.763,3.6160008 C13.949,3.6160003 15.583,5.2670003 15.583,7.4690005 15.583,9.6699997 13.949,11.32 11.763,11.32 9.5769997,11.32 7.9419999,9.6699997 7.9420009,7.4690005 7.9419999,5.2670003 9.5769997,3.6160003 11.763,3.6160008 z M47.293999,3.6159998 C49.354,3.6160003 50.848,5.2830001 50.848,7.4689995 50.848,7.5310003 50.848,7.6410004 50.832001,7.7829996 L45.139999,7.7829996 C45.219002,9.0239998 46.241001,10.015 47.529999,10.015 48.631001,10.015 49.229,9.4810005 49.653,9.0090004 L50.627998,9.9369999 C50.077,10.644001 49.023998,11.32 47.514999,11.32 45.360001,11.32 43.694,9.6850001 43.694,7.4689995 43.694,5.251 45.202999,3.6160003 47.293999,3.6159998 z M1.5720005,1.6510006 L1.5720005,4.7959996 4.0879998,4.7959996 C4.8429999,4.7960001 5.2509999,4.607 5.5339999,4.3080012 5.8010001,4.0250002 5.974,3.6480001 5.974,3.2230002 5.974,2.7990001 5.8010001,2.4210001 5.5339999,2.1380004 5.2509999,1.8400002 4.8429999,1.6510001 4.0879998,1.6510006 z M0,0.15699977 L4.1660013,0.15699977 C5.2360001,0.15700018 5.927,0.42400017 6.4619999,0.87999946 7.1220002,1.4460002 7.5469999,2.2800001 7.5469999,3.2230002 7.5469999,4.166 7.1220002,5.0000001 6.4619999,5.5659992 5.927,6.022 5.2360001,6.2890002 4.1660013,6.2889997 L1.5720005,6.2889997 1.5720005,11.163 0,11.163 z M58.191002,0 L59.683998,0 59.683998,11.163 58.237999,11.163 58.237999,10.487 C57.639999,11.021001 56.838001,11.32 55.958,11.32 55.297001,11.32 54.605999,11.132001 54.103001,10.833 52.986,10.173 52.216,8.9459997 52.216,7.4679996 52.216,5.9900004 53.001999,4.7480003 54.118,4.0879997 54.620998,3.7890002 55.235001,3.6160003 55.925999,3.6159998 56.729,3.6160003 57.529999,3.8670002 58.191002,4.4180008 z" Fill="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Height="11.32" Stretch="Fill" StrokeThickness="0" Canvas.Top="5.327" Width="59.684"/>
+                    <Path Data="M3.6010001,5.0310001 C2.7049999,5.0310001 1.95,5.487 1.4939998,6.085 L1.4939998,8.8509998 C1.997,9.5279999 2.7679999,9.9049997 3.5220001,9.9049997 4.9530001,9.9049997 5.9749999,8.7889995 5.9749999,7.4689998 5.9749999,6.1789999 5.0310001,5.0310001 3.6010001,5.0310001 z M8.2869997,3.773 L9.8900003,3.773 12.202,8.6470003 14.325,3.773 15.897,3.773 11.038,14.936 9.4499998,14.936 11.447,10.393 z M0,0 L1.4939998,0 1.4939998,4.4180002 C2.155,3.868 2.9560001,3.6159999 3.7590001,3.6159999 4.4499998,3.6159999 5.0630002,3.789 5.566,4.0879998 6.6830001,4.7480001 7.4689999,5.9899998 7.4689999,7.4689998 7.4689999,8.9460001 6.698,10.173 5.5819998,10.833 5.079,11.132 4.3870001,11.32 3.727,11.32 2.846,11.32 2.0439999,11.021 1.447,10.487 L1.447,11.163 0,11.163 z" Fill="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Height="14.936" Canvas.Left="66.507" Stretch="Fill" StrokeThickness="0" Canvas.Top="5.327" Width="15.897"/>
+                    <Path Data="M61.508999,4.8740005 C60.078999,4.8739995 59.136002,6.0219993 59.136002,7.3109988 59.136002,8.6319994 60.157001,9.748999 61.588001,9.748999 62.342999,9.748999 63.112999,9.3709997 63.616001,8.6949991 L63.616001,5.9279989 C63.16,5.3309993 62.404999,4.8739995 61.508999,4.8740005 z M42.563999,4.8740005 C41.132999,4.8739995 40.189999,6.0219993 40.189999,7.3109988 40.189999,8.6319994 41.210999,9.748999 42.641998,9.748999 43.396999,9.748999 44.167,9.3709997 44.669998,8.6949991 L44.669998,5.9279989 C44.214001,5.3309993 43.459999,4.8739995 42.563999,4.8740005 z M10.819,4.8739981 C9.4519997,4.8739995 8.4919996,5.9589995 8.4919996,7.3109988 8.4919996,8.663999 9.4519997,9.748999 10.819,9.748999 12.187,9.748999 13.146,8.663999 13.146,7.3109988 13.146,5.9589995 12.187,4.8739995 10.819,4.8739981 z M76.460999,4.7639989 C75.500999,4.7639994 74.637001,5.4089994 74.385002,6.367999 L78.410004,6.367999 C78.190002,5.4249996 77.341003,4.7639994 76.460999,4.7639989 z M48.68,3.6169993 L50.173,3.6169993 50.173,7.6259984 C50.173,8.380999 50.331001,8.7879995 50.598,9.1039995 50.928001,9.4959997 51.463001,9.7479996 52.028999,9.7479996 52.941002,9.7479996 53.679001,9.1979994 54.104,8.6949991 L54.104,3.6169993 55.598,3.6169993 55.598,11.005999 54.152,11.005999 54.152,10.329999 C53.820999,10.643999 53.002998,11.163999 51.981998,11.163998 50.928001,11.163999 49.969002,10.692 49.355999,9.9219994 48.900002,9.3559994 48.68,8.6319994 48.68,7.3899998 z M16.525999,3.6169993 L18.02,3.6169993 18.02,7.6259984 C18.02,8.380999 18.177999,8.7879995 18.445,9.1039995 18.775,9.4959997 19.309,9.7479996 19.875999,9.7479996 20.788,9.7479996 21.527,9.1979994 21.951,8.6949991 L21.951,3.6169993 23.445,3.6169993 23.445,11.005999 21.999001,11.005999 21.999001,10.329999 C21.669001,10.643999 20.851,11.163999 19.829,11.163998 18.775,11.163999 17.816,10.692 17.202999,9.9219994 16.747,9.3559994 16.525999,8.6319994 16.525999,7.3900007 z M71.446999,3.4590003 C71.603996,3.4589995 71.856003,3.4749993 72.028,3.5059992 L71.856003,4.9369992 C71.681999,4.8899993 71.510002,4.8739995 71.274002,4.8740005 70.502998,4.8739995 69.685997,5.4089994 69.277,6.1160006 L69.277,11.005999 67.782997,11.005999 67.782997,3.6159984 69.230003,3.6159984 69.230003,4.4649986 C69.591003,3.9619993 70.362,3.4589995 71.446999,3.4590003 z M76.413002,3.4589991 C78.473,3.4589995 79.967003,5.1259994 79.967003,7.3119997 79.967003,7.3749994 79.967003,7.4839996 79.950996,7.6259998 L74.259003,7.6259998 C74.337997,8.8679995 75.360001,9.8589996 76.649002,9.8589996 77.75,9.8589996 78.347,9.3239998 78.772003,8.8529991 L79.746002,9.7799992 C79.195999,10.487999 78.142998,11.163999 76.634003,11.163998 74.480003,11.163999 72.813004,9.5279993 72.813004,7.3119997 72.813004,5.0949992 74.321999,3.4589995 76.413002,3.4589991 z M61.352001,3.4589991 C62.185001,3.4589995 62.987,3.7109994 63.662998,4.2929997 L63.662998,3.6169993 65.110001,3.6169993 65.110001,11.006999 63.662998,11.006999 63.662998,10.331 C63.066002,10.864999 62.264999,11.163999 61.383999,11.163998 60.723,11.163999 60.030998,10.975999 59.528,10.676999 58.411999,10.017 57.641998,8.788999 57.641998,7.3109988 57.641998,5.8329996 58.428001,4.5919994 59.543999,3.9309994 60.047001,3.6319994 60.66,3.4589995 61.352001,3.4589991 z M42.407001,3.4589991 C43.240002,3.4589995 44.042,3.7109994 44.716999,4.2929997 L44.716999,3.6169993 46.164001,3.6169993 46.164001,14.779999 44.669998,14.779999 44.669998,10.362 C44.073002,10.880999 43.319,11.163999 42.438,11.163998 41.777,11.163999 41.084999,10.975999 40.583,10.676999 39.466,10.017 38.695999,8.788999 38.695999,7.3109988 38.695999,5.8329996 39.481998,4.5919994 40.598,3.9309994 41.101002,3.6319994 41.714001,3.4589995 42.407001,3.4589991 z M34.433998,3.4589991 C35.52,3.4589995 36.306,3.8059994 36.887001,4.2769999 L36.118,5.3459996 C35.661999,4.9999994 35.127998,4.7639994 34.529999,4.7639989 33.806,4.7639994 33.193001,5.1099996 33.193001,5.6919989 33.193001,6.1949996 33.775002,6.3679995 34.513,6.5569991 35.676998,6.8549995 37.202999,7.3749994 37.202999,8.8989996 37.202999,10.3 35.896999,11.163999 34.450001,11.163998 33.271999,11.163999 32.280998,10.801999 31.462999,10.142999 L32.234001,9.0409998 C32.924999,9.5759997 33.68,9.8589996 34.418999,9.8589996 35.063999,9.8589996 35.709,9.512999 35.709,8.9310001 35.709,8.0819992 34.481998,8.0349993 33.396999,7.6729988 32.500999,7.3749994 31.700001,6.8089995 31.700001,5.7699999 31.700001,4.1829995 33.115002,3.4589995 34.433998,3.4589991 z M29.781,3.4589991 C29.938,3.4589995 30.190001,3.4749993 30.362,3.5059992 L30.190001,4.9369992 C30.017,4.8899993 29.844,4.8739995 29.608,4.8739981 28.837,4.8739995 28.02,5.4089994 27.612,6.1160006 L27.612,11.005999 26.118,11.005999 26.118,3.6159996 27.563999,3.6159996 27.563999,4.4649986 C27.926001,3.9619993 28.695999,3.4589995 29.781,3.4589991 z M10.819,3.4589991 C13.005,3.4589995 14.64,5.1099996 14.64,7.3109988 14.64,9.5119995 13.005,11.163999 10.819,11.163998 8.6330004,11.163999 6.9990001,9.5119995 6.9989996,7.3109988 6.9990001,5.1099996 8.6330004,3.4589995 10.819,3.4589991 z M0,0 L6.2900004,0 6.2900004,1.4939998 1.5730006,1.4939998 1.5730006,4.3240003 5.1890001,4.3240003 5.1890001,5.8179978 1.5730006,5.8179978 1.5730006,11.006999 0,11.006999 z" Fill="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Height="14.78" Canvas.Left="120.033" Stretch="Fill" StrokeThickness="0" Canvas.Top="5.868" Width="79.967"/>
+                    <Path Data="F1M14.56,3.468L14.015,6.27C13.95,6.573 13.647,6.86 13.288,6.86 12.928,6.86 8.221,6.852 8.221,6.852 7.651,6.852 7.159,7.275 7.159,7.836L7.159,8.447C7.159,9.008,7.624,9.467,8.195,9.467L12.494,9.467C12.896,9.467 13.236,9.841 13.149,10.264 13.061,10.689 12.614,12.926 12.564,13.157 12.514,13.39 12.263,13.703 11.86,13.703L8.351,13.703C7.622,13.726 7.465,13.731 7.037,14.255 6.609,14.779 2.765,19.326 2.765,19.326 2.726,19.37 2.688,19.358 2.688,19.309L2.688,3.426C2.688,3.068,3.004,2.648,3.478,2.648L13.915,2.648C14.299,2.648,14.659,3.003,14.56,3.468 M15.329,0.001C15.329,0.001 4.118,0 2.323,0 0.528,0 0,1.33 0,2.167L0,22.522C0,23.465 0.515,23.815 0.804,23.93 1.093,24.045 1.892,24.143 2.37,23.6 2.37,23.6 8.595,16.559 8.695,16.449 8.793,16.34 8.904,16.339 8.962,16.339 9.02,16.339 11.621,16.34 12.907,16.34 14.577,16.34 14.844,15.148 15.018,14.457 15.164,13.878 16.792,5.666 17.336,3.061 17.751,1.072 17.239,0.001 15.329,0.001" Fill="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" StrokeThickness="0" Canvas.Left="92.541" Width="17.47" Height="24.02"/>
+                </Canvas>
+            </ListView.Footer>
+        </ListView>
+    </Grid>
+</Page>

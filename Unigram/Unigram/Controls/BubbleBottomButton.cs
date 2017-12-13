@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Converters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -32,7 +34,7 @@ namespace Unigram.Controls
                 {
                     JoinCommand?.Execute(null);
                 }
-                else if (channel.HasBannedRights && channel.BannedRights.IsViewMessages)
+                else if (channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsViewMessages)
                 {
                     DeleteAndExitCommand?.Execute(null);
                 }
@@ -40,7 +42,7 @@ namespace Unigram.Controls
                 {
                     if (channel.IsBroadcast)
                     {
-                        if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPostMessages))
+                        if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null && channel.AdminRights.IsPostMessages))
                         {
 
                         }
@@ -221,19 +223,26 @@ namespace Unigram.Controls
             {
                 if (channel.IsLeft)
                 {
-                    Content = channel.IsBroadcast ? "Join channel" : "Join";
+                    Content = Strings.Android.ChannelJoin;
                     return false;
                 }
-                else if (channel.HasBannedRights)
+                else if (channel.HasBannedRights && channel.BannedRights != null)
                 {
                     if (channel.BannedRights.IsViewMessages)
                     {
-                        Content = "Delete and exit";
+                        Content = Strings.Android.DeleteChat;
                         return false;
                     }
                     else if (channel.BannedRights.IsSendMessages)
                     {
-                        Content = "The admins of this group have restricted you from writing here.";
+                        if (channel.BannedRights.IsForever())
+                        {
+                            Content = Strings.Android.SendMessageRestrictedForever;
+                        }
+                        else
+                        {
+                            Content = string.Format(Strings.Android.SendMessageRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate));
+                        }
                         return null;
                     }
                 }
@@ -241,7 +250,7 @@ namespace Unigram.Controls
                 {
                     if (channel.IsBroadcast)
                     {
-                        if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPostMessages))
+                        if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null && channel.AdminRights.IsPostMessages))
                         {
                             return true;
                         }
@@ -250,15 +259,13 @@ namespace Unigram.Controls
                             var dialog = InMemoryCacheService.Current.GetDialog(channel.ToPeer());
                             if (dialog != null)
                             {
-                                var settings = dialog.NotifySettings as TLPeerNotifySettings;
-                                if (settings != null)
-                                {
-                                    Content = settings.MuteUntil > 0 ? "Unmute" : "Mute";
-                                }
-                                else
-                                {
-                                    Content = "Mute";
-                                }
+                                Content = dialog.IsMuted ? Strings.Android.ChannelUnmute : Strings.Android.ChannelMute;
+                            }
+
+                            var full = InMemoryCacheService.Current.GetFullChat(channel.Id);
+                            if (full != null && full.NotifySettings is TLPeerNotifySettings notifySettings)
+                            {
+                                Content = notifySettings.IsMuted ? Strings.Android.ChannelUnmute : Strings.Android.ChannelMute;
                             }
 
                             return false;
@@ -274,7 +281,7 @@ namespace Unigram.Controls
 
             if (with is TLChatForbidden forbiddenChat)
             {
-                Content = "Delete and exit";
+                Content = Strings.Android.DeleteChat;
                 return false;
             }
 
@@ -283,19 +290,19 @@ namespace Unigram.Controls
                 var full = InMemoryCacheService.Current.GetFullUser(user.Id);
                 if (full != null && full.IsBlocked)
                 {
-                    Content = user.IsBot ? "Restart" : "Unblock";
+                    Content = user.IsBot ? Strings.Android.BotUnblock : Strings.Android.Unblock;
                     return false;
                 }
 
                 if (user.IsBot && HasAccessToken)
                 {
-                    Content = "Start";
+                    Content = Strings.Android.BotStart;
                     return false;
                 }
 
                 if (user.IsDeleted)
                 {
-                    Content = "Delete this chat";
+                    Content = Strings.Android.DeleteThisChat;
                     return false;
                 }
             }

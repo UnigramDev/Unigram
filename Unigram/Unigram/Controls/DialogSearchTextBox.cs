@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Channels;
 using Unigram.Common;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Dialogs;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -156,17 +158,11 @@ namespace Unigram.Controls
 
         private List<TLUser> GetUsernames(string username)
         {
+            var query = LocaleHelper.GetQuery(username);
             bool IsMatch(TLUser user)
             {
-                if (user.Username == null)
-                {
-                    return false;
-                }
-
-                return (user.FullName.IsLike(username, StringComparison.OrdinalIgnoreCase)) ||
-                       (user.HasUsername && user.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase));
+                return user.IsLike(query, StringComparison.OrdinalIgnoreCase);
             }
-
 
             var results = new List<TLUser>();
 

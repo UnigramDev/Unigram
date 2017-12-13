@@ -10,7 +10,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Unloaded="OnUnloaded">
 
     <UserControl.Resources>
 
@@ -85,10 +86,17 @@
 
         <DataTemplate x:Key="GifMediaTemplate" x:DataType="tl:TLBotInlineMediaResult">
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{x:Bind Photo}"
+                <controls:ImageView Source="{x:Bind Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{x:Bind Document}"
                                     IsHitTestVisible="False"
                                     Height="96"/>
+
+                <controls:TransferButton Transferable="{Binding Document}"
+                                         IsTransferring="{Binding Document.IsTransferring}"
+                                         Progress="{Binding Document.Progress}"
+                                         IsHitTestVisible="False"
+                                         Style="{StaticResource MediaTransferButtonStyle}"/>
+
                 <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
             </Grid>
         </DataTemplate>
@@ -112,7 +120,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePictureView Source="{Binding Media.User, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                <controls:ProfilePicture Source="{Binding Media.User, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
                 <TextBlock Text="{Binding Media.FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
                 <TextBlock Text="{Binding Media.PhoneNumber, Converter={StaticResource PhoneNumberFormatConverter}}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
@@ -256,7 +264,7 @@
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
               BorderThickness="0,1,0,0"
-              Visibility="{Binding InlineBotResultsVisibility}">
+              Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}">
             <!--Visibility="{Binding InlineBotResults.Results.Count, Converter={StaticResource BooleanToVisibilityConverter}}"-->
             <!--<Grid.Visibility>
                  <Binding Path="InlineBotResults.Results.Count" Converter="{StaticResource BooleanToVisibilityConverter}">
@@ -278,13 +286,19 @@
                         Content="{x:Bind ViewModel.InlineBotResults.SwitchPM.Text, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                         HorizontalAlignment="Stretch"/>
-                <controls:OrientableListView ItemsSource="{x:Bind ViewModel.InlineBotResults.Results, Mode=OneWay}"
+                <controls:OrientableListView x:Name="Items"
+                                             ItemsSource="{x:Bind ViewModel.InlineBotResults, Mode=OneWay}"
                                              IsHorizontal="{x:Bind ViewModel.InlineBotResults.IsGallery, Mode=OneWay}"
                                              ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
                                              ItemClick="ListView_ItemClick"
                                              IsItemClickEnabled="True"
                                              SelectionMode="None"
                                              Grid.Row="1">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel Loaded="OnLoaded"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem" BasedOn="{StaticResource ZoomableListViewItemStyle}">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -305,7 +319,7 @@
             </Grid>
 
             <Border Visibility="{x:Bind ConvertBannedRights(ViewModel.With, x:False), Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <TextBlock Text="The admins of this group restricted you from posting inline content here." VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind ConvertBannedRights(ViewModel.With), Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
             </Border>
         </Grid>
     </Grid>

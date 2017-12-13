@@ -1,0 +1,26 @@
+﻿<local:HackedContentPresenter
+    x:Class="Unigram.Controls.Messages.MessageFooter"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:Unigram.Controls.Messages"
+    mc:Ignorable="d"
+    d:DesignHeight="24"
+    d:DesignWidth="400"
+    Background="Transparent"
+    CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
+    Foreground="{ThemeResource MessageSubtleLabelBrush}"
+    VerticalAlignment="Bottom"
+    HorizontalAlignment="Right"
+    Padding="6,0,6,0"
+    DataContextChanged="OnDataContextChanged"
+    Unloaded="OnUnloaded">
+
+    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}">
+        <ToolTipService.ToolTip>
+            <ToolTip Opened="ToolTip_Opened"/>
+        </ToolTipService.ToolTip>
+        <Run x:Name="ViewsGlyph" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/><Run Text="{x:Bind ConvertViews(ViewModel, ViewModel.Views), Mode=OneWay, FallbackValue=}"/><Run Text="{x:Bind ConvertEdit(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay, FallbackValue=}" FontStyle="Italic"/><Run Text="{x:Bind Convert.Date(ViewModel.Date), FallbackValue=}"/><Run Text="{x:Bind ConvertState(ViewModel.IsOut, ViewModel.IsPost, ViewModel.IsSaved(), ViewModel.State), Mode=OneWay, FallbackValue=}" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+    </TextBlock>
+</local:HackedContentPresenter>

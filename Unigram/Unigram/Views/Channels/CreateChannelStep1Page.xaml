@@ -14,12 +14,13 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
-            Text="New channel"
-            Glyph="&#xE10B;"
-            Command="{x:Bind ViewModel.SendCommand}"/>
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource NewChannel}"
+            Glyph="&#xE10B;"/>
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -38,12 +39,29 @@
                     <controls:GlyphButton Glyph="&#xE114;" FontSize="16" CornerRadius="32" Width="64" Height="64"/>
                 </Grid>
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                    <controls:UpdateTextBox Text="{Binding Title, Mode=TwoWay}" MaxLength="{StaticResource ChannelTitleMaxLength}" PlaceholderText="Channel name"/>
+                    <controls:UpdateTextBox
+                        Text="{Binding Title, Mode=TwoWay}"
+                        MaxLength="{StaticResource ChannelTitleMaxLength}"
+                        PlaceholderText="{CustomResource EnterChannelName}"/>
                 </Border>
             </Grid>
 
-            <TextBox Text="{x:Bind ViewModel.About, Mode=TwoWay}" MaxLength="{StaticResource ChannelAboutMaxLength}" Header="Description" AcceptsReturn="True" TextWrapping="Wrap" Margin="12,12,12,8" Grid.Row="1"/>
-            <TextBlock Text="You can provide an optional description for your channel." Margin="12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+            <TextBox
+                Text="{x:Bind ViewModel.About, Mode=TwoWay}"
+                MaxLength="{StaticResource ChannelAboutMaxLength}"
+                PlaceholderText="{CustomResource DescriptionPlaceholder}"
+                AcceptsReturn="True"
+                TextWrapping="Wrap"
+                Margin="12,8,12,8"
+                Grid.Row="1"/>
+            <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" Height="1" Margin="12,0,0,0" Grid.Row="2"/>
+
+            <TextBlock
+                Text="{CustomResource DescriptionInfo}"
+                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Margin="12,8"
+                Grid.Row="3"/>
         </Grid>
     </Grid>
 </Page>

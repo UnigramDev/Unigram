@@ -1,10 +1,12 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Unigram.Core.Services;
+using Unigram.Views;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,7 +25,7 @@ namespace Unigram.Controls
 
     public class ReplyMarkupPanel : Grid
     {
-        private double _keyboardHeight = 300;
+        private double _keyboardHeight = 260;
 
         //#region ReplyMarkup
 
@@ -84,19 +86,19 @@ namespace Unigram.Controls
                 var keyboard = ReplyMarkup as TLReplyKeyboardMarkup;
                 if (keyboard.IsResize)
                 {
-                    Height = double.NaN;
+                    scroll.Height = double.NaN;
                     scroll.MaxHeight = _keyboardHeight;
                 }
                 else
                 {
-                    Height = _keyboardHeight;
-                    scroll.MaxHeight = double.PositiveInfinity;
+                    scroll.Height = _keyboardHeight;
+                    scroll.MaxHeight = _keyboardHeight;
                 }
             }
             else if (ReplyMarkup is TLReplyKeyboardHide && !inline && Parent is ScrollViewer scroll2)
             {
-                Height = 0;
-                scroll2.MaxHeight = double.PositiveInfinity;
+                scroll2.Height = 0;
+                scroll2.MaxHeight = _keyboardHeight;
             }
         }
 
@@ -130,28 +132,6 @@ namespace Unigram.Controls
             {
                 receipt = invoiceMedia.HasReceiptMsgId;
             }
-
-            //if (receipt)
-            //{
-            //    var panel = new Grid();
-            //    panel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            //    panel.VerticalAlignment = VerticalAlignment.Stretch;
-            //    panel.Margin = new Thickness(-2, 0, -2, 0);
-
-            //    var button = new GlyphButton();
-            //    button.DataContext = new TLKeyboardButtonBuy();
-            //    button.Content = "Receipt";
-            //    button.Margin = new Thickness(2, 2, 2, 0);
-            //    button.HorizontalAlignment = HorizontalAlignment.Stretch;
-            //    button.VerticalAlignment = VerticalAlignment.Stretch;
-            //    button.Click += Button_Click;
-            //    button.Style = App.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
-
-            //    panel.Children.Add(button);
-            //    Children.Add(panel);
-
-            //    return;
-            //}
 
             if (rows != null && ((inline && newValue is TLReplyInlineMarkup) || (!inline && newValue is TLReplyKeyboardMarkup)))
             {
@@ -197,16 +177,16 @@ namespace Unigram.Controls
                         }
                         else if (row.Buttons[i] is TLKeyboardButtonBuy && receipt)
                         {
-                            button.Content = "Receipt";
+                            button.Content = Strings.Android.PaymentReceipt;
                         }
 
-                        Grid.SetColumn(button, i);
+                        SetColumn(button, i);
 
                         panel.ColumnDefinitions.Add(new ColumnDefinition());
                         panel.Children.Add(button);
                     }
 
-                    Grid.SetRow(panel, j);
+                    SetRow(panel, j);
 
                     RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, resize ? GridUnitType.Auto : GridUnitType.Star) });
                     Children.Add(panel);
@@ -214,6 +194,12 @@ namespace Unigram.Controls
 
                 if (Children.Count > 0 && !inline)
                 {
+                    var page = this.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
+                    if (page != null)
+                    {
+                        page.ShowMarkup();
+                    }
+
                     Padding = new Thickness(0, 0, 0, 4);
                 }
                 else if (!inline)
@@ -226,8 +212,7 @@ namespace Unigram.Controls
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var btn = button.DataContext as TLKeyboardButtonBase;
-            if (btn != null)
+            if (button.DataContext is TLKeyboardButtonBase btn)
             {
                 ButtonClick?.Invoke(this, new ReplyMarkupButtonClickEventArgs(btn));
             }

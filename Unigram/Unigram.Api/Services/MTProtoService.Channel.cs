@@ -34,7 +34,7 @@ namespace Telegram.Api.Services
             var obj = new TLChannelsReadMessageContents { Channel = inputChannel, Id = id };
 
             const string caption = "channels.readMessageContents";
-            ReadMessageContentsAsyncInternal(obj, callback, () => { }, faultCallback);
+            SendInformativeMessage(caption, obj, callback, /*() => { },*/ faultCallback);
         }
 
         public void GetAdminLogAsync(TLInputChannelBase inputChannel, string query, TLChannelAdminLogEventsFilter filter, TLVector<TLInputUserBase> admins, long maxId, long minId, int limit, Action<TLChannelsAdminLogResults> callback, Action<TLRPCError> faultCallback = null)
@@ -249,7 +249,7 @@ namespace Telegram.Api.Services
                     channel.IsLeft = true;
                     if (channel.ParticipantsCount != null)
                     {
-                        channel.ParticipantsCount = new int?(channel.ParticipantsCount.Value - 1);
+                        channel.ParticipantsCount = channel.ParticipantsCount.Value - 1;
                     }
                     _cacheService.Commit();
 
@@ -299,8 +299,6 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLUpdatesBase>(caption, obj,
                 result =>
                 {
-
-
                     var multiPts = result as ITLMultiPts;
                     if (multiPts != null)
                     {
@@ -578,7 +576,7 @@ namespace Telegram.Api.Services
 
         public void EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, TLInputGeoPointBase geoPoint, bool noWebPage, bool stop, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesEditMessage { Flags = 0, Peer = peer, Id = id, Message = message, IsNoWebPage = noWebPage, Entities = entities, ReplyMarkup = replyMarkup, GeoPoint = geoPoint, IsStop = stop };
+            var obj = new TLMessagesEditMessage { Flags = 0, Peer = peer, Id = id, Message = message, IsNoWebPage = noWebPage, Entities = entities, ReplyMarkup = replyMarkup, GeoPoint = geoPoint, IsStopGeoLive = stop };
 
             const string caption = "messages.editMessage";
             SendInformativeMessage<TLUpdatesBase>(caption, obj,

@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Telegram.Api.TL.Account;
 using Telegram.Api.TL.Auth;
+using Unigram.Common;
 
 namespace Unigram.Views.SignIn
 {
@@ -28,6 +29,18 @@ namespace Unigram.Views.SignIn
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<SignInPasswordViewModel>();
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "PASSWORD_INVALID":
+                    VisualUtilities.ShakeView(PrimaryInput);
+                    break;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

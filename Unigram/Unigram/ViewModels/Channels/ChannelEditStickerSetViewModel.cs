@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,9 +25,12 @@ namespace Unigram.ViewModels.Channels
         {
             _stickersService = stickersService;
 
-            Aggregator.Subscribe(this);
+            SendCommand = new RelayCommand(SendExecute);
+            CancelCommand = new RelayCommand(CancelExecute);
 
             Items = new MvxObservableCollection<TLMessagesStickerSet>();
+
+            Aggregator.Subscribe(this);
         }
 
         private TLChannelFull _full;
@@ -172,7 +175,7 @@ namespace Unigram.ViewModels.Channels
         private void ProcessStickerSets(StickerType type)
         {
             var stickers = _stickersService.GetStickerSets(type);
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 Items.ReplaceWith(stickers);
                 SelectedItem = null;
@@ -182,7 +185,7 @@ namespace Unigram.ViewModels.Channels
 
         public MvxObservableCollection<TLMessagesStickerSet> Items { get; private set; }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             if (_shortName != _selectedItem?.Set.ShortName && !string.IsNullOrWhiteSpace(_shortName))
@@ -232,7 +235,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public RelayCommand CancelCommand => new RelayCommand(CancelExecute);
+        public RelayCommand CancelCommand { get; }
         private void CancelExecute()
         {
             ShortName = null;

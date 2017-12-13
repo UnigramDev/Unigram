@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Auth;
 using Unigram.Strings;
@@ -38,17 +40,13 @@ namespace Unigram.Common
             var sender = d as TextBlock;
             var type = e.NewValue as TLAuthSentCodeTypeBase;
 
-            sender.Inlines.Clear();
-
             switch (type)
             {
                 case TLAuthSentCodeTypeApp appType:
-                    sender.Inlines.Add(new Run { Text = "We've sent the code to the " });
-                    sender.Inlines.Add(new Run { Text = "Telegram", FontWeight = FontWeights.SemiBold });
-                    sender.Inlines.Add(new Run { Text = " app on your other device." });
+                    SetMarkdown(sender, Strings.Android.SentAppCode);
                     break;
                 case TLAuthSentCodeTypeSms smsType:
-                    sender.Inlines.Add(new Run { Text = "We've sent you an SMS with the code." });
+                    SetMarkdown(sender, Strings.Android.SentSmsCode);
                     break;
             }
         }
@@ -85,59 +83,59 @@ namespace Unigram.Common
             var webPage = newValue as TLWebPage;
             if (webPage != null)
             {
-                var paragraph = new Paragraph();
+                var empty = true;
+
+                var paragraph = sender.Blocks[0] as Paragraph;
+                var title = paragraph.Inlines[0] as Run;
+                var subtitle = paragraph.Inlines[1] as Run;
+                var content = paragraph.Inlines[2] as Run;
+
+                title.Text = string.Empty;
+                content.Text = string.Empty;
 
                 if (webPage.HasSiteName && !string.IsNullOrWhiteSpace(webPage.SiteName))
                 {
-                    var foreground = sender.Resources["MessageHeaderForegroundBrush"] as SolidColorBrush;
-
-                    paragraph.Inlines.Add(new Run { Text = webPage.SiteName, FontWeight = FontWeights.SemiBold, Foreground = foreground });
+                    empty = false;
+                    title.Text = webPage.SiteName;
                 }
 
                 if (webPage.HasTitle && !string.IsNullOrWhiteSpace(webPage.Title))
                 {
-                    if (paragraph.Inlines.Count > 0)
+                    if (title.Text.Length > 0)
                     {
-                        paragraph.Inlines.Add(new LineBreak());
+                        subtitle.Text = Environment.NewLine;
                     }
 
-                    paragraph.Inlines.Add(new Run { Text = webPage.Title, FontWeight = FontWeights.SemiBold });
+                    empty = false;
+                    subtitle.Text += webPage.Title;
                 }
                 else if (webPage.HasAuthor && !string.IsNullOrWhiteSpace(webPage.Author))
                 {
-                    if (paragraph.Inlines.Count > 0)
+                    if (title.Text.Length > 0)
                     {
-                        paragraph.Inlines.Add(new LineBreak());
+                        subtitle.Text = Environment.NewLine;
                     }
 
-                    paragraph.Inlines.Add(new Run { Text = webPage.Author, FontWeight = FontWeights.SemiBold });
+                    empty = false;
+                    subtitle.Text += webPage.Author;
                 }
 
                 if (webPage.HasDescription && !string.IsNullOrWhiteSpace(webPage.Description))
                 {
-                    if (paragraph.Inlines.Count > 0)
+                    if (title.Text.Length > 0 || subtitle.Text.Length > 0)
                     {
-                        paragraph.Inlines.Add(new LineBreak());
+                        content.Text = Environment.NewLine;
                     }
 
-                    paragraph.Inlines.Add(new Run { Text = webPage.Description });
+                    empty = false;
+                    content.Text += webPage.Description;
                 }
 
-                sender.Blocks.Clear();
-                sender.Blocks.Add(paragraph);
-
-                if (paragraph.Inlines.Count > 0)
-                {
-                    sender.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    sender.Visibility = Visibility.Collapsed;
-                }
+                sender.Visibility = empty ? Visibility.Collapsed : Visibility.Visible;
             }
             else
             {
-                sender.Blocks.Clear();
+                sender.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -164,28 +162,75 @@ namespace Unigram.Common
 
             sender.Inlines.Clear();
 
-            var previous = 0;
-            var index = markdown.IndexOf("**");
-            var next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
-
-            while (index > -1 && next > -1)
+            if (markdown.Contains("</a>"))
             {
-                if (index - previous > 0)
+                markdown = Regex.Replace(markdown, "<a href=\"(.*?)\">(.*?)<\\/a>", "[$2]($1)");
+            }
+
+            var entities = Markdown.Parse(ref markdown);
+            var text = markdown;
+            var previous = 0;
+
+            foreach (var entity in entities.OrderBy(x => x.Offset))
+            {
+                if (entity.Offset > previous)
                 {
-                    sender.Inlines.Add(new Run { Text = markdown.Substring(previous, index - previous) });
+                    sender.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
                 }
 
-                sender.Inlines.Add(new Run { Text = markdown.Substring(index + 2, next - index - 2), FontWeight = FontWeights.SemiBold });
+                if (entity.Length + entity.Offset > text.Length)
+                {
+                    previous = entity.Offset + entity.Length;
+                    continue;
+                }
 
-                previous = next + 2;
-                index = markdown.IndexOf("**", next + 2);
-                next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
+                var type = entity.TypeId;
+                if (type == TLType.MessageEntityBold)
+                {
+                    sender.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontWeight = FontWeights.SemiBold });
+                }
+                else if (type == TLType.MessageEntityItalic)
+                {
+                    sender.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontStyle = FontStyle.Italic });
+                }
+                else if (entity is TLMessageEntityTextUrl textUrl)
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.NavigateUri = new Uri(textUrl.Url);
+                    hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    sender.Inlines.Add(hyperlink);
+                }
+
+                previous = entity.Offset + entity.Length;
             }
 
-            if (markdown.Length - previous > 0)
+            if (text.Length > previous)
             {
-                sender.Inlines.Add(new Run { Text = markdown.Substring(previous, markdown.Length - previous) });
+                sender.Inlines.Add(new Run { Text = text.Substring(previous) });
             }
+
+            //var previous = 0;
+            //var index = markdown.IndexOf("**");
+            //var next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
+
+            //while (index > -1 && next > -1)
+            //{
+            //    if (index - previous > 0)
+            //    {
+            //        sender.Inlines.Add(new Run { Text = markdown.Substring(previous, index - previous) });
+            //    }
+
+            //    sender.Inlines.Add(new Run { Text = markdown.Substring(index + 2, next - index - 2), FontWeight = FontWeights.SemiBold });
+
+            //    previous = next + 2;
+            //    index = markdown.IndexOf("**", next + 2);
+            //    next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
+            //}
+
+            //if (markdown.Length - previous > 0)
+            //{
+            //    sender.Inlines.Add(new Run { Text = markdown.Substring(previous, markdown.Length - previous) });
+            //}
         }
         #endregion
 
@@ -215,16 +260,16 @@ namespace Unigram.Common
 
             if (newMessage.Media == null || (newMessage.Media is TLMessageMediaEmpty) || (newMessage.Media is TLMessageMediaWebPage) || !string.IsNullOrEmpty(newMessage.Message))
             {
-                siteName.Text = AppResources.EventLogOriginalMessages;
+                siteName.Text = Strings.Android.EventLogOriginalMessages;
                 description.Text = oldMessage.Message;
             }
             else if (oldMessage.Media is ITLMessageMediaCaption captionMedia)
             {
-                siteName.Text = AppResources.EventLogOriginalCaption;
+                siteName.Text = Strings.Android.EventLogOriginalCaption;
 
                 if (string.IsNullOrEmpty(captionMedia.Caption))
                 {
-                    description.Text = AppResources.EventLogOriginalCaptionEmpty;
+                    description.Text = Strings.Android.EventLogOriginalCaptionEmpty;
                 }
                 else
                 {

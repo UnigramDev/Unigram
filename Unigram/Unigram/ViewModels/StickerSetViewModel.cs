@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -12,6 +12,7 @@ using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
 using Template10.Utils;
 using Unigram.Common;
+using Unigram.Core.Common;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
@@ -20,15 +21,15 @@ namespace Unigram.ViewModels
     public class StickerSetViewModel : UnigramViewModelBase
     {
         private readonly IStickersService _stickersService;
-        private readonly DialogStickersViewModel _stickers;
 
-        public StickerSetViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService, DialogStickersViewModel stickers) 
+        public StickerSetViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService) 
             : base(protoService, cacheService, aggregator)
         {
             _stickersService = stickersService;
-            _stickers = stickers;
 
-            Items = new ObservableCollection<TLMessagesStickerSet>();
+            Items = new MvxObservableCollection<TLDocumentBase>();
+
+            SendCommand = new RelayCommand(SendExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -41,8 +42,7 @@ namespace Unigram.ViewModels
                 if (response.IsSucceeded)
                 {
                     StickerSet = response.Result.Set;
-                    Items.Clear();
-                    Items.Add(response.Result);
+                    Items.ReplaceWith(response.Result.Documents);
 
                     IsLoading = false;
 
@@ -57,9 +57,8 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    StickerSet = new TLStickerSet();
+                    StickerSet = new TLStickerSet { Title = "Sticker pack not found." };
                     Items.Clear();
-                    Items.Add(new TLMessagesStickerSet { Set = new TLStickerSet { Title = "Sticker pack not found." } });
 
                     //IsLoading = false;
                 }
@@ -79,9 +78,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        public ObservableCollection<TLMessagesStickerSet> Items { get; private set; }
+        public MvxObservableCollection<TLDocumentBase> Items { get; private set; }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             IsLoading = true;

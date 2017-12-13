@@ -56,8 +56,12 @@ namespace Unigram.Controls
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
-            var bounds = Window.Current.Bounds;
-            if (/*BackgroundElement != null &&*/ sender.VisibleBounds != bounds)
+            if (sender == null)
+            {
+                return;
+            }
+
+            if (/*BackgroundElement != null &&*/ Window.Current?.Bounds is Rect bounds && sender.VisibleBounds != bounds)
             {
                 Margin = new Thickness(sender.VisibleBounds.X - bounds.Left, sender.VisibleBounds.Y - bounds.Top, bounds.Width - (sender.VisibleBounds.Right - bounds.Left), bounds.Height - (sender.VisibleBounds.Bottom - bounds.Top));
                 UpdateViewBase();
@@ -284,6 +288,8 @@ namespace Unigram.Controls
         {
             Container = (Border)GetTemplateChild("Container");
             BackgroundElement = (Border)GetTemplateChild("BackgroundElement");
+
+            OnVisibleBoundsChanged(_applicationView, null);
 
             Container.Tapped += Outside_Tapped;
             BackgroundElement.Tapped += Inside_Tapped;

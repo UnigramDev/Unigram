@@ -18,7 +18,7 @@ using Unigram.Core.Services;
 
 namespace Unigram.ViewModels
 {
-    public class ContactsViewModel : UnigramViewModelBase, IHandle<TLUpdateUserStatus>, IHandle<TLUpdateContactLink>
+    public class ContactsViewModel : UnigramViewModelBase, IHandle<TLUpdateUserStatus>, IHandle<TLUpdateContactLink>, IHandle<TLUpdateContactsReset>
     {
         private IContactsService _contactsService;
 
@@ -38,65 +38,56 @@ namespace Unigram.ViewModels
 
         public async Task LoadContactsAsync()
         {
-            //var contacts = CacheService.GetContacts();
-            //foreach (var item in contacts.OfType<TLUser>())
-            //{
-            //    var user = item as TLUser;
-            //    if (user.IsSelf)
-            //    {
-            //        continue;
-            //    }
+            Items.Clear();
 
-            //    //var status = LastSeenHelper.GetLastSeen(user);
-            //    //var listItem = new UsersPanelListItem(user as TLUser);
-            //    //listItem.fullName = user.FullName;
-            //    //listItem.lastSeen = status.Item1;
-            //    //listItem.lastSeenEpoch = status.Item2;
-            //    //listItem.Photo = listItem._parent.Photo;
-            //    //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+            var contacts = CacheService.GetContacts();
+            foreach (var item in contacts.OfType<TLUser>())
+            {
+                var user = item as TLUser;
+                if (user.IsSelf)
+                {
+                    continue;
+                }
 
-            //    Items.Add(user);
-            //}
+                Items.Add(user);
+            }
 
-            var contacts = new List<TLUserBase>();
-
-            //var input = string.Join(",", contacts.Select(x => x.Id).Union(new[] { SettingsHelper.UserId }).OrderBy(x => x));
-            //var hash = Utils.ComputeMD5(input);
-            //var hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
-
-            var hash = CalculateContactsHash(0, contacts.ToList());
+            var savedCount = ApplicationSettings.Current.ContactsSavedCount;
+            var hash = CalculateContactsHash(savedCount, contacts.OrderBy(x => x.Id));
 
             var response = await ProtoService.GetContactsAsync(hash);
-            if (response.IsSucceeded)
+            if (response.IsSucceeded && response.Result is TLContactsContacts result)
             {
-                var result = response.Result as TLContactsContacts;
-                if (result != null)
+                ApplicationSettings.Current.ContactsSavedCount = result.SavedCount;
+
+                BeginOnUIThread(() =>
                 {
-                    Execute.BeginOnUIThread(() =>
+                    Items.Clear();
+
+                    foreach (var item in result.Users.OfType<TLUser>())
                     {
-                        foreach (var item in result.Users.OfType<TLUser>())
+                        var user = item as TLUser;
+                        if (user.IsSelf)
                         {
-                            var user = item as TLUser;
-                            if (user.IsSelf)
-                            {
-                                continue;
-                            }
-
-                            Items.Add(user);
+                            continue;
                         }
-                    });
 
-                    if (ApplicationSettings.Current.IsContactsSyncEnabled)
-                    {
-                        await _contactsService.SyncContactsAsync(response.Result);
+                        Items.Add(user);
                     }
+                });
+
+                if (ApplicationSettings.Current.IsContactsSyncEnabled)
+                {
+                    await _contactsService.ExportAsync(result);
                 }
             }
+
+            await _contactsService.ImportAsync();
 
             Aggregator.Subscribe(this);
         }
 
-        public static int CalculateContactsHash(int savedCount, IList<TLUserBase> contacts)
+        public static int CalculateContactsHash(int savedCount, IEnumerable<TLUserBase> contacts)
         {
             if (contacts == null)
             {
@@ -108,8 +99,6 @@ namespace Unigram.ViewModels
 
             foreach (var contact in contacts)
             {
-                if (contact == null) continue;
-
                 acc = ((acc * 20261) + 0x80000000L + contact.Id) % 0x80000000L;
             }
 
@@ -153,28 +142,67 @@ namespace Unigram.ViewModels
             }
         }
 
+        #region Search
+
+        private string _searchQuery;
+        public string SearchQuery
+        {
+            get
+            {
+                return _searchQuery;
+            }
+            set
+            {
+                Set(ref _searchQuery, value);
+                SearchSync(value);
+            }
+        }
+
+        public void SearchSync(string query)
+        {
+            if (string.IsNullOrEmpty(query))
+            {
+                Search.Clear();
+                return;
+            }
+
+            var queries = LocaleHelper.GetQuery(query);
+
+            var contacts = CacheService.GetContacts().OfType<TLUser>().Where(x => x.IsLike(queries, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (query.Equals(_searchQuery))
+            {
+                if (Search.Count > 1) Search.RemoveAt(1);
+                if (Search.Count > 0) Search.RemoveAt(0);
+                //if (contacts.Count > 0) Search.Add(new KeyedList<string, TLObject>(null, contacts));
+                Search.Add(new KeyedList<string, TLObject>(null, contacts));
+            }
+        }
+
         public async Task SearchAsync(string query)
         {
-            Search.Clear();
-
-            var contacts = CacheService.GetContacts().Where(x => CultureInfo.CurrentCulture.CompareInfo.IndexOf(x.FullName, query, CompareOptions.IgnoreCase) >= 0).ToList();
-            if (contacts.Count > 0)
+            if (string.IsNullOrEmpty(query))
             {
-                Search.Add(new KeyedList<string, TLObject>("Contacts", contacts));
+                Search.Clear();
+                return;
             }
 
             var result = await ProtoService.SearchAsync(query, 100);
-            if (result.IsSucceeded)
+            if (query.Equals(_searchQuery))
             {
-                Search.Add(new KeyedList<string, TLObject>("Global search", result.Result.Users));
+                if (Search.Count > 1) Search.RemoveAt(1);
+                if (result.IsSucceeded && result.Result.Users.Count > 0) Search.Add(new KeyedList<string, TLObject>(Strings.Android.GlobalSearch, result.Result.Users));
             }
+
+            //SearchQuery = query;
         }
+
+        #endregion
 
         #region Handle
 
         public void Handle(TLUpdateUserStatus message)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var first = Items.FirstOrDefault(x => x.Id == message.UserId);
                 if (first != null)
@@ -200,7 +228,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateContactLink update)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var contact = update.MyLink is TLContactLinkContact;
                 var already = Items.FirstOrDefault(x => x.Id == update.UserId);
@@ -225,6 +253,11 @@ namespace Unigram.ViewModels
 
                 Items.Remove(already);
             });
+        }
+
+        public void Handle(TLUpdateContactsReset update)
+        {
+            LoadContacts();
         }
 
         #endregion

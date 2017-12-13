@@ -17,7 +17,7 @@ namespace Telegram.Api
 
         public const int DatabaseVersion = 6;
 
-        public const int SupportedLayer = 72;
+        public const int SupportedLayer = 73;
 
         public const int CallsMaxLayer = 65;
         public const int CallsMinLayer = 65;
@@ -42,6 +42,8 @@ namespace Telegram.Api
         public const int CachedDialogsCount = 20;
         public const int CachedMessagesCount = 15;
         public const int WorkersNumber = 4;
+
+        public const int CheckConfigTimeout = 20;
 
         public const string ConfigKey = "Config";
         public const string ConfigFileName = "config.xml";
@@ -83,5 +85,7 @@ namespace Telegram.Api
         public const double DifferenceMinInterval = 10.0;           //seconds
 
         public const string InitConnectionFileName = "init_connection.dat";
+
+        public const string ProxyConfigFileName = "proxy_config.dat";
     }
 }

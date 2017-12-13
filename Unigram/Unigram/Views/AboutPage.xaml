@@ -67,7 +67,7 @@
                             Padding="0,6,0,12"
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.UsefulChangelogCommand}"/>
-                
+
                 <!-- Support -->
                 <TextBlock Margin="0,12,0,6"
                                Text="Support"

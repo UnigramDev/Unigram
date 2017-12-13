@@ -32,8 +32,8 @@ namespace Telegram.Api.Transport
 
         private readonly double _timeout;
 
-        public TcpTransportWinRT(string host, int port)
-            : base(host, port)
+        public TcpTransportWinRT(string host, int port, MTProtoTransportType mtProtoType, TLProxyConfig proxyConfig)
+            : base(host, port, mtProtoType, proxyConfig)
         {
             _timeout = 25.0;
             _socket = new StreamSocket();
@@ -50,40 +50,28 @@ namespace Telegram.Api.Transport
             //}
         }
 
-        public TcpTransportWinRT(string host, int port, bool proxyEnabled, string proxyServer, int proxyPort)
-            : this (host, port, proxyEnabled, proxyServer, proxyPort, null, null)
-        {
-
-        }
-
-        public TcpTransportWinRT(string host, int port, bool proxyEnabled, string proxyServer, int proxyPort, string username, string password)
-            : this(host, port)
-        {
-            _proxyEnabled = proxyEnabled;
-            _proxyServer = proxyServer;
-            _proxyPort = proxyPort;
-            _proxyUsername = username;
-            _proxyPassword = password;
-        }
-
 #if TCP_OBFUSCATED_2
-        private byte[] GetInitBufferInternal()
+        protected override byte[] GetInitBuffer()
         {
             var buffer = new byte[64];
             var random = new Random();
-            random.NextBytes(buffer);
-            while (buffer[0] == 0x44414548
-                   || buffer[0] == 0x54534f50
-                   || buffer[0] == 0x20544547
-                   || buffer[0] == 0x4954504f
-                   || buffer[0] == 0xeeeeeeee
-                   || buffer[0] == 0xef)
+            while (true)
             {
-                buffer[0] = (byte)random.Next();
-            }
-            while (buffer[1] == 0x00000000)
-            {
-                buffer[1] = (byte)random.Next();
+                random.NextBytes(buffer);
+
+                var val = (buffer[3] << 24) | (buffer[2] << 16) | (buffer[1] << 8) | (buffer[0]);
+                var val2 = (buffer[7] << 24) | (buffer[6] << 16) | (buffer[5] << 8) | (buffer[4]);
+                if (buffer[0] != 0xef
+                    && val != 0x44414548
+                    && val != 0x54534f50
+                    && val != 0x20544547
+                    && val != 0x4954504f
+                    && val != 0xeeeeeeee
+                    && val2 != 0x00000000)
+                {
+                    buffer[56] = buffer[57] = buffer[58] = buffer[59] = 0xef;
+                    break;
+                }
             }
 
             var keyIvEncrypt = buffer.SubArray(8, 48);
@@ -96,11 +84,11 @@ namespace Telegram.Api.Transport
             DecryptIV = keyIvEncrypt.SubArray(32, 16);
             //Array.Reverse(DecryptIV);
 
-            var shortStamp = BitConverter.GetBytes(0xefefefef);
-            for (var i = 0; i < shortStamp.Length; i++)
-            {
-                buffer[56 + i] = shortStamp[i];
-            }
+            //var shortStamp = BitConverter.GetBytes(0xefefefef);
+            //for (var i = 0; i < shortStamp.Length; i++)
+            //{
+            //    buffer[56 + i] = shortStamp[i];
+            //}
 
             var encryptedBuffer = Encrypt(buffer);
             for (var i = 56; i < encryptedBuffer.Length; i++)
@@ -110,11 +98,6 @@ namespace Telegram.Api.Transport
 
             return buffer;
         }
-
-        protected override byte[] GetInitBuffer()
-        {
-            return GetInitBufferInternal();
-        }
 #endif
 
         private async Task<bool> ConnectAsync(double timeout, Action<TcpTransportResult> faultCallback)
@@ -123,11 +106,11 @@ namespace Telegram.Api.Transport
             {
                 RaiseConnectingAsync();
 
-                if (_proxyEnabled)
+                if (ProxyConfig != null && ProxyConfig.IsEnabled && !ProxyConfig.IsEmpty)
                 {
                     Debug.WriteLine(">>> Connecting through SOCKS5");
 
-                    await _socket.ConnectAsync(new HostName(_proxyServer), _proxyPort.ToString()).WithTimeout(timeout);
+                    await _socket.ConnectAsync(new HostName(ProxyConfig.Server), ProxyConfig.Port.ToString()).WithTimeout(timeout);
 
                     _dataWriter.WriteByte(0x05); // version
                     _dataWriter.WriteByte(0x02); // number of auth methods
@@ -142,8 +125,8 @@ namespace Telegram.Api.Transport
 
                     if (response[1] == 0x02)
                     {
-                        var username = _proxyUsername ?? string.Empty;
-                        var password = _proxyPassword ?? string.Empty;
+                        var username = ProxyConfig.Username ?? string.Empty;
+                        var password = ProxyConfig.Password ?? string.Empty;
 
                         _dataWriter.WriteByte(0x01); // version
                         _dataWriter.WriteByte((byte)username.Length);
@@ -202,7 +185,7 @@ namespace Telegram.Api.Transport
 
                 lock (_dataWriterSyncRoot)
                 {
-                    var buffer = GetInitBufferInternal();
+                    var buffer = GetInitBuffer();
                     _dataWriter.WriteBytes(buffer);
                 }
 
@@ -421,6 +404,8 @@ namespace Telegram.Api.Transport
             {
                 _socket.Dispose();
             }
+
+            StopCheckConfigTimer();
         }
 
         public override string GetTransportInfo()

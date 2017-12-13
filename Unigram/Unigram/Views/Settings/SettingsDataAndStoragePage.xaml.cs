@@ -1,4 +1,5 @@
-﻿using System;
+﻿using libtgvoip;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -58,7 +59,7 @@ namespace Unigram.Views.Settings
             if (confirm == ContentDialogResult.Primary)
             {
                 SettingsHelper.ProxyServer = dialog.Server;
-                SettingsHelper.ProxyPort = int.Parse(dialog.Port ?? "1080");
+                SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
                 SettingsHelper.ProxyUsername = dialog.Username;
                 SettingsHelper.ProxyPassword = dialog.Password;
                 SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
@@ -71,5 +72,24 @@ namespace Unigram.Views.Settings
                 }
             }
         }
+
+        #region Binding
+
+        private string ConvertUseLessData(DataSavingMode value)
+        {
+            switch (value)
+            {
+                default:
+                case DataSavingMode.Never:
+                    return Strings.Android.UseLessDataNever;
+                case DataSavingMode.MobileOnly:
+                    return Strings.Android.UseLessDataOnMobile;
+                case DataSavingMode.Always:
+                    return Strings.Android.UseLessDataAlways;
+            }
+        }
+
+        #endregion
+
     }
 }
