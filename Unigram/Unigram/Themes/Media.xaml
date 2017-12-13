@@ -69,9 +69,6 @@
                                 Constraint="{Binding}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-                                HorizontalContentAlignment="Center"
-                                VerticalContentAlignment="Center"
-                                Stretch="UniformToFill"
                                 Click="Photo_Click"/>
 
             <controls:TransferButton Completed="Download_Click"
@@ -166,10 +163,7 @@
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-                                HorizontalContentAlignment="Center"
-                                VerticalContentAlignment="Center"
-                                Stretch="UniformToFill"/>
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
             <controls:TransferButton Completed="Download_Click"
                                      Transferable="{Binding Media.Document}"

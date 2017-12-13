@@ -457,7 +457,9 @@ namespace Unigram.Controls.Messages
                 if (groupMedia.Layout.Messages.Count > 1)
                 {
                     width = groupMedia.Layout.Width / 800d * 318d;
-                    height = groupMedia.Layout.Height * 418d;
+                    height = groupMedia.Layout.Width / 800d * 318d;
+                    // Ignoring max height for grouped media
+                    //height = groupMedia.Layout.Height * 418d;
 
                     goto Calculate;
                 }
@@ -484,15 +486,7 @@ namespace Unigram.Controls.Messages
                     goto Calculate;
                 }
 
-                //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
-                var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
-                if (photoSize != null)
-                {
-                    width = photoSize.W;
-                    height = photoSize.H;
-
-                    goto Calculate;
-                }
+                constraint = photo.Full;
             }
 
             if (constraint is TLDocument document)

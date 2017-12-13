@@ -129,6 +129,10 @@ namespace Unigram.Controls
             {
                 if (message.HasGroupedId)
                 {
+                    HorizontalContentAlignment = HorizontalAlignment.Center;
+                    VerticalContentAlignment = VerticalAlignment.Center;
+                    Stretch = Stretch.UniformToFill;
+
                     return base.MeasureOverride(availableSize);
                 }
 
@@ -180,7 +184,6 @@ namespace Unigram.Controls
 
             if (constraint is TLPhoto photo)
             {
-                //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
                 constraint = photo.Full;
             }
 

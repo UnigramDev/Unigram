@@ -59,16 +59,22 @@ namespace Unigram.ViewModels
                 //}
             }
 
+            var message31 = message as TLMessage;
+            if (message31 != null && message31.Media is TLMessageMediaGroup groupMedia)
+            {
+                message = groupMedia.Layout.Messages.FirstOrDefault();
+                message31 = message as TLMessage;
+            }
+
             if (message.Id <= 0) return;
 
-            var message31 = message as TLMessage;
             if (message31 != null && !message31.IsOut && message31.HasFromId)
             {
                 var fromId = message31.FromId.Value;
                 var user = CacheService.GetUser(fromId) as TLUser;
                 if (user != null && user.IsBot)
                 {
-                    // TODO: SetReplyMarkup(message31);
+                    SetReplyMarkup(message31);
                 }
             }
 
