@@ -866,6 +866,11 @@ namespace Unigram.Controls.Messages
 
         #endregion
 
+        //private string GetFromLabel(TLMessage message, string title)
+        //{
+        //    return GetFromLabelInternal(message, title) + Environment.NewLine;
+        //}
+
         private string GetFromLabel(TLMessage message, string title)
         {
             if (!string.IsNullOrWhiteSpace(title))
@@ -904,6 +909,11 @@ namespace Unigram.Controls.Messages
 
             return from;
         }
+
+        //private string GetFromLabel(TLMessageService message, string title)
+        //{
+        //    return GetFromLabelInternal(message, title) + Environment.NewLine;
+        //}
 
         private string GetFromLabel(TLMessageService message, string title)
         {

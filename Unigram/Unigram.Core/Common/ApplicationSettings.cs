@@ -132,8 +132,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 0119530;
-        public const string CurrentChangelog = "- Get secure thanks to the Passcode Lock\n- Better replies: when clicking on a reply the original message will be highlighted\n- More languages: Arabic, Dutch, French, German, Indonesian, Italian, Korean, Malay, Portuguese (Brazil), Russian, Spanish and Ukranian are now supported";
+        public const int CurrentVersion = 01210600;
+        public const string CurrentChangelog = "- New Appearance settings: theme, chat background and font size in a single place.";
 
         private int? _appVersion;
         public int Version

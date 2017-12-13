@@ -441,7 +441,7 @@
                         Glyph="&#xE13A;"
                         Grid.Column="1"/>
 
-                    <Button x:Name="btnOptions"
+                    <Button x:Name="Options"
                             Click="Menu_ContextRequested"
                             Padding="16,23,16,0"
                             Style="{StaticResource EllipsisButton}"

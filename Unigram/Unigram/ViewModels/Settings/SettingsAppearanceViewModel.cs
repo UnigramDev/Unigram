@@ -23,29 +23,24 @@ namespace Unigram.ViewModels.Settings
         {
             Message1 = new TLMessage
             {
-                Message = "Yes, deeply personal. I hate you. Every little bit of you. Now get out!",
+                Message = "Ahh you kids today with techno music! Enjoy the classics, like Hasselhoff!",
                 Date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now.AddSeconds(-25)),
-                HasEntities = true,
-                Entities = new TLVector<TLMessageEntityBase>
-                {
-                    new TLMessageEntityItalic { Offset = 63, Length = 8 }
-                },
                 HasReplyToMsgId = true,
                 ReplyToMsgId = int.MaxValue,
                 Reply = new TLMessage
                 {
-                    Message = "There is something... personal in this...",
+                    Message = "Reinhardt, we need to find you some new tunes.",
                     From = new TLUser
                     {
                         HasFirstName = true,
-                        FirstName = "Clouseau"
+                        FirstName = "Lucio"
                     }
                 }
             };
 
             Message2 = new TLMessage
             {
-                Message = "You want me to leave?",
+                Message = "I can't take you seriously right now. Sorry..",
                 Date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now),
                 IsFirst = true,
                 IsOut = true,

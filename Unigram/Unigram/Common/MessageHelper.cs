@@ -34,6 +34,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Transport;
 using Windows.Foundation;
 using Windows.UI.Xaml.Input;
+using Unigram.ViewModels.Dialogs;
 
 namespace Unigram.Common
 {
@@ -792,20 +793,23 @@ namespace Unigram.Common
             else if (type == TLType.MessageEntityHashtag)
             {
                 //await UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchAsync((string)data);
-                UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
-                UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Publish("Search");
+                //UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
+                //UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Publish("Search");
+
+                var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                if (service != null && service.Content is DialogPage page)
+                {
+                    page.ViewModel.Search = new DialogSearchViewModel(MTProtoService.Current, InMemoryCacheService.Current, TelegramEventAggregator.Instance, page.ViewModel);
+                    page.ViewModel.Search.SearchCommand.Execute((string)data);
+                }
             }
             else if (type == TLType.MessageEntityBotCommand)
             {
                 // TODO: THIS IS BAD
                 var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                if (service != null)
+                if (service != null && service.Content is DialogPage page)
                 {
-                    var dialogPage = service.Frame.Content as DialogPage;
-                    if (dialogPage != null)
-                    {
-                        dialogPage.ViewModel.SendCommand.Execute((string)data);
-                    }
+                    page.ViewModel.SendCommand.Execute((string)data);
                 }
             }
             else

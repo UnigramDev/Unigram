@@ -207,6 +207,13 @@ namespace Unigram.Views
         //    base.OnNavigatedTo(e);
         //}
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            TextField.FocusMaybe(FocusState.Keyboard);
+
+            base.OnNavigatedTo(e);
+        }
+
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             //if (_panel != null && ViewModel.With != null)
@@ -1003,7 +1010,7 @@ namespace Unigram.Views
             // Stickers
             CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), messageCommon, Strings.Android.AddToStickers);
             CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, Strings.Android.AddToFavorites);
-            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, Strings.Android.RemovedFromFavorites);
+            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, Strings.Android.DeleteFromFavorites);
 
             CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, Strings.Android.SaveToGIFs);
             CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.SaveAs);
