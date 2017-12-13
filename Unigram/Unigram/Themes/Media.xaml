@@ -66,9 +66,12 @@
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
-                                Constraint="{Binding Media}"
+                                Constraint="{Binding}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Stretch="UniformToFill"
                                 Click="Photo_Click"/>
 
             <controls:TransferButton Completed="Download_Click"
@@ -161,9 +164,12 @@
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                Constraint="{Binding Media.Document}"
+                                Constraint="{Binding}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Stretch="UniformToFill"/>
 
             <controls:TransferButton Completed="Download_Click"
                                      Transferable="{Binding Media.Document}"
@@ -540,10 +546,11 @@
     <DataTemplate x:Key="MediaEmptyTemplate"/>
 
     <DataTemplate x:Key="MediaGroupedTemplate">
-        <ItemsControl ItemsSource="{Binding Media.Layout.Messages}"
+        <local:GroupedMediaView Click="Photo_Click" Completed="Download_Click"/>
+        <!--<ItemsControl ItemsSource="{Binding Media.Layout.Messages}"
                       ItemTemplateSelector="{StaticResource MediaTemplateSelector}">
             
-        </ItemsControl>
+        </ItemsControl>-->
     </DataTemplate>
     
     <selectors:MediaTemplateSelector x:Key="MediaTemplateSelector"

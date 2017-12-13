@@ -134,6 +134,9 @@
       <DependentUpon>SharedLinkListViewItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MediaPlayerView.cs" />
+    <Compile Include="Controls\Media\GroupedMediaView.xaml.cs">
+      <DependentUpon>GroupedMediaView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Media\MusicMediaView.xaml.cs">
       <DependentUpon>MusicMediaView.xaml</DependentUpon>
     </Compile>
@@ -1347,6 +1350,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Items\SharedLinkListViewItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Media\GroupedMediaView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

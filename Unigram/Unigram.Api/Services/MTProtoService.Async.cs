@@ -648,10 +648,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUpdatesBase>> ForwardMessagesAsync(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore)
+        public Task<MTProtoResponse<TLUpdatesBase>> ForwardMessagesAsync(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, bool grouped)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            ForwardMessagesAsync(toPeer, fromPeer, id, messages, withMyScore, (callback) =>
+            ForwardMessagesAsync(toPeer, fromPeer, id, messages, withMyScore, grouped, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>

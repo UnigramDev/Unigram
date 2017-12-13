@@ -125,6 +125,16 @@ namespace Unigram.Controls
 
             var constraint = Constraint;
 
+            if (constraint is TLMessage message)
+            {
+                if (message.HasGroupedId)
+                {
+                    return base.MeasureOverride(availableSize);
+                }
+
+                constraint = message.Media;
+            }
+
             if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaGeoLive || constraint is TLMessageMediaVenue)
             {
                 width = 320;

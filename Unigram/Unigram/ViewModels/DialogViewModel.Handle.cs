@@ -92,24 +92,33 @@ namespace Unigram.ViewModels
             {
                 BeginOnUIThread(() =>
                 {
-                    var groups = new Dictionary<long, GroupedMessages>();
+                    var groups = new Dictionary<long, Tuple<TLMessage, GroupedMessages>>();
 
                     for (var i = 0; i < Items.Count; i++)
                     {
                         var messageCommon = Items[i] as TLMessageCommonBase;
                         if (messageCommon != null && messageCommon.ToId is TLPeerChannel && messageCommon.Id <= args.AvailableMinId)
                         {
-                            if (messageCommon is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out GroupedMessages group))
+                            if (messageCommon is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out TLMessage group) && group.Media is TLMessageMediaGroup groupMedia)
                             {
-                                group.Messages.Remove(grouped);
-                                groups[groupedId] = group;
+                                groupMedia.Layout.Messages.Remove(grouped);
+                                groups[groupedId] = Tuple.Create(group, groupMedia.Layout);
                             }
                         }
                     }
 
                     foreach (var group in groups.Values)
                     {
-                        group.Calculate();
+                        if (group.Item2.Messages.Count > 0)
+                        {
+                            group.Item2.Calculate();
+                            group.Item1.RaisePropertyChanged(() => group.Item1.Media);
+                        }
+                        else
+                        {
+                            _groupedMessages.TryRemove(group.Item2.GroupedId, out TLMessage removed);
+                            Items.Remove(group.Item1);
+                        }
                     }
 
                     for (var i = 0; i < Items.Count; i++)
@@ -220,30 +229,33 @@ namespace Unigram.ViewModels
             {
                 BeginOnUIThread(() =>
                 {
-                    var groups = new Dictionary<long, GroupedMessages>();
+                    var groups = new Dictionary<long, Tuple<TLMessage, GroupedMessages>>();
 
                     foreach (var message in args.Messages)
                     {
-                        if (message is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out GroupedMessages group))
+                        if (message is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out TLMessage group) && group.Media is TLMessageMediaGroup groupMedia)
                         {
-                            groups[groupedId] = group;
-                            groups[groupedId].Messages.Remove(grouped);
+                            groupMedia.Layout.Messages.Remove(grouped);
+                            groups[groupedId] = Tuple.Create(group, groupMedia.Layout);
                         }
                     }
 
                     foreach (var group in groups.Values)
                     {
-                        group.Calculate();
+                        if (group.Item2.Messages.Count > 0)
+                        {
+                            group.Item2.Calculate();
+                            group.Item1.RaisePropertyChanged(() => group.Item1.Media);
+                        }
+                        else
+                        {
+                            _groupedMessages.TryRemove(group.Item2.GroupedId, out TLMessage removed);
+                            Items.Remove(group.Item1);
+                        }
                     }
 
                     foreach (var message in args.Messages)
                     {
-                        if (message is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out GroupedMessages group))
-                        {
-                            groups[groupedId] = group;
-                            groups[groupedId].Messages.Remove(grouped);
-                        }
-
                         if (EditedMessage?.Id == message.Id)
                         {
                             ClearReplyCommand.Execute();
@@ -253,7 +265,7 @@ namespace Unigram.ViewModels
                             ClearReplyCommand.Execute();
                         }
 
-                        if (PinnedMessage?.Id ==  message.Id)
+                        if (PinnedMessage?.Id == message.Id)
                         {
                             PinnedMessage = null;
                         }
@@ -540,7 +552,14 @@ namespace Unigram.ViewModels
 
         private void InsertMessage(TLMessageCommonBase messageCommon)
         {
-            ProcessReplies(new List<TLMessageBase> { messageCommon });
+            var result = new List<TLMessageBase> { messageCommon };
+            ProcessReplies(result);
+
+            messageCommon = result.FirstOrDefault() as TLMessageCommonBase;
+            if (messageCommon == null)
+            {
+                return;
+            }
 
             BeginOnUIThread(() =>
             {

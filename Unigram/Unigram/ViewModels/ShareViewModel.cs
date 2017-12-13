@@ -212,6 +212,8 @@ namespace Unigram.ViewModels
                     var msgs = new TLVector<TLMessage>();
                     var msgIds = new TLVector<int>();
 
+                    var grouped = false;
+
                     foreach (var fwdMessage in _messages)
                     {
                         var clone = fwdMessage.Clone();
@@ -231,11 +233,18 @@ namespace Unigram.ViewModels
                         clone.IsMediaUnread = dialog.ToPeer() is TLPeerChannel ? true : false;
                         clone.IsUnread = true;
                         clone.State = TLMessageState.Sending;
+                        clone.HasGroupedId = false;
+                        clone.GroupedId = null;
 
                         if (clone.Media == null)
                         {
                             clone.HasMedia = true;
                             clone.Media = new TLMessageMediaEmpty();
+                        }
+
+                        if (fwdMessage.HasGroupedId)
+                        {
+                            grouped = true;
                         }
 
                         if (fwdMessage.Parent is TLChannel channel)
@@ -361,7 +370,7 @@ namespace Unigram.ViewModels
                             }
                         }
 
-                        var response = await ProtoService.ForwardMessagesAsync(toPeer, fromPeer, msgIds, msgs, IsWithMyScore);
+                        var response = await ProtoService.ForwardMessagesAsync(toPeer, fromPeer, msgIds, msgs, IsWithMyScore, grouped);
                         if (response.IsSucceeded)
                         {
                             foreach (var i in m)
