@@ -311,11 +311,7 @@ namespace Telegram.Api.TL
                     return false;
                 }
 
-                var clientDelta = MTProtoService.Current.ClientTicksDelta;
-                var utc0SecsInt = notifySettings.MuteUntil - clientDelta / 4294967296.0;
-
-                var muteUntilDateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
-                return muteUntilDateTime > DateTime.Now;
+                return notifySettings.IsMuted;
             }
         }
 
