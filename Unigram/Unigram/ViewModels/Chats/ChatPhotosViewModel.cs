@@ -116,30 +116,92 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
+        protected override async void LoadPrevious()
+        {
+            using (await _loadMoreLock.WaitAsync())
+            {
+                var item = Items.FirstOrDefault() as GalleryMessageItem;
+                if (item == null)
+                {
+                    return;
+                }
+
+                var offset = item.Message.Id;
+
+                var limit = 20;
+                var req = new TLMessagesSearch
+                {
+                    Peer = _peer,
+                    Filter = new TLInputMessagesFilterChatPhotos(),
+                    OffsetId = offset,
+                    AddOffset = 0,
+                    Limit = limit,
+                };
+
+                //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
+                var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
+                if (response.IsSucceeded)
+                {
+                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+
+                    foreach (var photo in response.Result.Messages.Where(x => x.Id < offset))
+                    {
+                        if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
+                        {
+                            Items.Insert(0, new GalleryMessageServiceItem(message));
+                        }
+                        else
+                        {
+                            TotalItems--;
+                        }
+                    }
+
+                    OnSelectedItemChanged(_selectedItem);
+                }
+            }
+        }
+
         protected override async void LoadNext()
         {
-            if (TotalItems > Items.Count)
+            using (await _loadMoreLock.WaitAsync())
             {
-                using (await _loadMoreLock.WaitAsync())
+                var item = Items.LastOrDefault() as GalleryMessageItem;
+                if (item == null)
                 {
-                    var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterChatPhotos(), 0, 0, 0, _lastMaxId, 15);
-                    if (response.IsSucceeded)
-                    {
-                        foreach (var photo in response.Result.Messages)
-                        {
-                            if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
-                            {
-                                Items.Insert(0, new GalleryMessageServiceItem(message));
-                            }
-                            else
-                            {
-                                TotalItems--;
-                            }
-                        }
+                    return;
+                }
 
-                        //SelectedItem = Items.LastOrDefault();
-                        //FirstItem = Items.LastOrDefault();
+                var offset = item.Message.Id;
+
+                var limit = 20;
+                var req = new TLMessagesSearch
+                {
+                    Peer = _peer,
+                    Filter = new TLInputMessagesFilterChatPhotos(),
+                    OffsetId = offset + 1,
+                    AddOffset = -limit,
+                    Limit = limit,
+                };
+
+                //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
+                var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
+                if (response.IsSucceeded)
+                {
+                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+
+                    foreach (var photo in response.Result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
+                    {
+                        if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
+                        {
+                            Items.Add(new GalleryMessageServiceItem(message));
+                        }
+                        else
+                        {
+                            TotalItems--;
+                        }
                     }
+
+                    OnSelectedItemChanged(_selectedItem);
                 }
             }
         }
