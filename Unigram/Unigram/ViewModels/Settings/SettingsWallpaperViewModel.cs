@@ -175,8 +175,8 @@ namespace Unigram.ViewModels.Settings
                         await file.CopyAndReplaceAsync(result);
 
                         var accent = await ImageHelper.GetAccentAsync(result);
-                        Theme.Current.AddOrUpdateValue("MessageServiceBackgroundBrush", accent[0]);
-                        Theme.Current.AddOrUpdateValue("MessageServiceBackgroundPressedBrush", accent[1]);
+                        Theme.Current.AddOrUpdateColor("MessageServiceBackgroundBrush", accent[0]);
+                        Theme.Current.AddOrUpdateColor("MessageServiceBackgroundPressedBrush", accent[1]);
                     }
                     else
                     {
@@ -185,8 +185,8 @@ namespace Unigram.ViewModels.Settings
                 }
                 else
                 {
-                    Theme.Current.AddOrUpdateValue("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96));
-                    Theme.Current.AddOrUpdateValue("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96));
+                    Theme.Current.AddOrUpdateColor("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96));
+                    Theme.Current.AddOrUpdateColor("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96));
                 }
 
                 ApplicationSettings.Current.SelectedBackground = wallpaper.Id;
@@ -206,8 +206,8 @@ namespace Unigram.ViewModels.Settings
                     await file.CopyAndReplaceAsync(result);
 
                     var accent = await ImageHelper.GetAccentAsync(result);
-                    Theme.Current.AddOrUpdateValue("MessageServiceBackgroundBrush", accent[0]);
-                    Theme.Current.AddOrUpdateValue("MessageServiceBackgroundPressedBrush", accent[1]);
+                    Theme.Current.AddOrUpdateColor("MessageServiceBackgroundBrush", accent[0]);
+                    Theme.Current.AddOrUpdateColor("MessageServiceBackgroundPressedBrush", accent[1]);
                 }
                 else
                 {

@@ -12,8 +12,6 @@ namespace Unigram.Selectors
 {
     public class MessageTemplateSelector : DataTemplateSelector
     {
-        public Dictionary<long, GroupedMessages> GroupedItems { get; set; }
-
         protected DataTemplate EmptyMessageTemplate = new DataTemplate();
 
         public DataTemplate UserMessageTemplate { get; set; }
@@ -28,9 +26,6 @@ namespace Unigram.Selectors
         public DataTemplate ServiceMessageLocalTemplate { get; set; }
         public DataTemplate ServiceMessageDateTemplate { get; set; }
 
-        public DataTemplate GroupedPhotoTemplate { get; set; }
-        public DataTemplate GroupedVideoTemplate { get; set; }
-
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             var messageBase = item as TLMessageBase;
@@ -40,11 +35,6 @@ namespace Unigram.Selectors
             }
             else if (messageBase is TLMessage message)
             {
-                if (message.HasGroupedId && message.GroupedId is long groupedId && GroupedItems != null && GroupedItems.TryGetValue(groupedId, out GroupedMessages group) && group.Messages.Count > 1)
-                {
-                    return message.Media is TLMessageMediaPhoto ? GroupedPhotoTemplate : GroupedVideoTemplate;
-                }
-
                 if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
                 {
                     return ServiceMessageTemplate;

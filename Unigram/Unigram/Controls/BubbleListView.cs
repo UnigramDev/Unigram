@@ -34,7 +34,6 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(ListView);
 
             Loaded += OnLoaded;
-            SizeChanged += OnSizeChanged;
         }
 
         public void ScrollToBottom()
@@ -56,8 +55,6 @@ namespace Unigram.Controls
                 SetScrollMode();
             }
 
-            ViewModel.Items.CollectionChanged += OnCollectionChanged;
-
             if (ScrollingHost.ScrollableHeight < 120 && Items.Count > 0)
             {
                 if (!ViewModel.IsFirstSliceLoaded)
@@ -66,78 +63,6 @@ namespace Unigram.Controls
                 }
 
                 await ViewModel.LoadNextSliceAsync();
-            }
-        }
-
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            var groups = new Dictionary<long, GroupedMessages>();
-
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (var item in e.NewItems)
-                {
-                    if (item is TLMessage message && message.HasGroupedId && message.GroupedId is long groupedId && ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group))
-                    {
-                        groups[groupedId] = group;
-                    }
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (var item in e.OldItems)
-                {
-                    if (item is TLMessage message && message.HasGroupedId && message.GroupedId is long groupedId && ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group))
-                    {
-                        groups[groupedId] = group;
-                    }
-                }
-            }
-
-            foreach (var group in groups.Values)
-            {
-                foreach (var message in group.Messages)
-                {
-                    var container = ContainerFromItem(message) as BubbleListViewItem;
-                    if (container == null)
-                    {
-                        continue;
-                    }
-
-                    PrepareContainerForItemOverride(container, message);
-                }
-            }
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            var previousWidth = Math.Min(Math.Max(e.PreviousSize.Width, 320) - 12 - 52, 320);
-            var previousHeight = Math.Min(Math.Max(e.PreviousSize.Width, 320) - 12 - 52, 420);
-
-            var newWidth = Math.Min(Math.Max(e.NewSize.Width, 320) - 12 - 52, 320);
-            var newHeight = Math.Min(Math.Max(e.NewSize.Width, 320) - 12 - 52, 420);
-
-            if (ItemsStack != null && (newWidth != previousWidth || newHeight != previousHeight))
-            {
-                for (int i = ItemsStack.FirstCacheIndex; i <= ItemsStack.LastCacheIndex; i++)
-                {
-                    var container = ContainerFromIndex(i);
-                    if (container == null)
-                    {
-                        continue;
-                    }
-
-                    var message = ItemFromContainer(container) as TLMessage;
-                    if (message == null)
-                    {
-                        continue;
-                    }
-
-                    if (message.HasGroupedId && message.GroupedId is long groupedId)
-                    {
-                        PrepareContainerForItemGrouping(container, message, groupedId);
-                    }
-                }
             }
         }
 
@@ -238,111 +163,5 @@ namespace Unigram.Controls
             return new BubbleListViewItem(this);
         }
 
-        protected override bool PrepareContainerForItemGrouping(DependencyObject element, TLMessage message, long groupedId)
-        {
-            var container = element as BubbleListViewItem;
-            if (container == null)
-            {
-                return false;
-            }
-
-            if (ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group) && 
-                group.Positions.TryGetValue(message, out GroupedMessagePosition position) && 
-                group.Messages.Count > 1)
-            {
-                var messageId = message.RandomId ?? message.Id;
-
-                var photo = message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost);
-
-                var width = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 320);
-                var height = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 420);
-
-                container.HorizontalAlignment = message.IsOut ? HorizontalAlignment.Right : HorizontalAlignment.Left;
-                container.Width = position.Width / 800d * width;
-                container.Height = position.Height * height;
-
-                container.Width -= 2;
-                container.Height -= 2;
-
-                double maxWidth = group.Width;
-
-                double left = group.Width;
-                double top = 0;
-
-                for (int i = 0; i < group.Messages.Count; i++)
-                {
-                    var msg = group.Messages[i];
-                    var pos = group.Positions[msg];
-                    var msgId = msg.RandomId ?? msg.Id;
-
-                    if (msgId > messageId && pos.MinY == position.MinY && message.IsOut)
-                    {
-                        left -= pos.Width;
-                    }
-                    else if (msgId < messageId && pos.MinY == position.MinY && !message.IsOut)
-                    {
-                        left -= pos.Width;
-                    }
-
-                    if (msgId < messageId && pos.MinY == position.MinY)
-                    {
-                        top = pos.Height * 2 - position.Height;
-                    }
-
-                    if (msgId <= messageId && i > 0 && (position.SpanSize == 800 || position.SpanSize == 1000) && ((position.Flags & 1) == 0 || (position.Flags & 2) == 0))
-                    {
-                        if (i == 1)
-                        {
-                            top = group.Positions[group.Messages[0]].Height * 2 - pos.Height;
-                        }
-                        else if (i > 1)
-                        {
-                            top = top - group.Positions[group.Messages[i - 1]].Height - pos.Height;
-                        }
-                    }
-                }
-
-                if (position.SpanSize == 800 || position.SpanSize == 1000)
-                {
-                    left = message.IsOut ? maxWidth : position.Width;
-                }
-
-                left = (maxWidth - left) / 800d * width;
-                top = message == group.Messages[0] ? message.IsFirst ? 2d : -2d : -top * height;
-
-                if (message.IsOut)
-                {
-                    container.Margin = new Thickness(2, 2 + top, 12 + left, position.IsLast ? 2 : 0);
-                }
-                else
-                {
-                    container.Margin = new Thickness(photo ? position.IsLast ? 0 : 52 + left : 12 + left, 2 + top, 2, position.IsLast ? 4 : 0);
-                }
-
-                if (message == group.Messages[0] && ((message.HasReplyToMsgId && message.ReplyToMsgId.HasValue) || (message.HasFwdFrom && message.FwdFrom != null) || (message.HasViaBotId && message.ViaBotId.HasValue)))
-                {
-                    var add = message.HasReplyToMsgId && message.ReplyToMsgId.HasValue ? 50 : 26;
-                    container.Padding = new Thickness(0, add, 0, 0);
-                    container.ContentMargin = new Thickness(0, -add, 0, 0);
-                    container.Height += add;
-                }
-                else if (position.IsLast && photo)
-                {
-                    var add = left + 52;
-                    container.Padding = new Thickness(add, 0, 0, 0);
-                    container.ContentMargin = new Thickness(-add, 0, 0, 0);
-                    container.Width += add;
-                }
-                else
-                {
-                    container.Padding = new Thickness();
-                    container.ContentMargin = new Thickness();
-                }
-
-                return true;
-            }
-
-            return false;
-        }
     }
 }

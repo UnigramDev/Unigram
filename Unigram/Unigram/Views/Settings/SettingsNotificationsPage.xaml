@@ -37,11 +37,15 @@
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource MessageNotifications}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <CheckBox
-                        IsChecked="{x:Bind ViewModel.PrivateAlert, Mode=TwoWay}"
+                        x:Name="PrivateAlert"
+                        Click="Private_Click"
+                        IsChecked="{x:Bind ViewModel.PrivateAlert, Mode=OneWay}"
                         Content="{CustomResource Alert}"
                         Margin="12,8,12,8"/>
                     <CheckBox
-                        IsChecked="{x:Bind ViewModel.PrivatePreview, Mode=TwoWay}"
+                        x:Name="PrivatePreview"
+                        Click="Private_Click"
+                        IsChecked="{x:Bind ViewModel.PrivatePreview, Mode=OneWay}"
                         Content="{CustomResource MessagePreview}"
                         Margin="12,0,12,0"/>
                     <controls:BadgeButton
@@ -53,11 +57,15 @@
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource GroupNotifications}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <CheckBox
-                        IsChecked="{x:Bind ViewModel.GroupAlert, Mode=TwoWay}"
+                        x:Name="GroupAlert"
+                        Click="Group_Click"
+                        IsChecked="{x:Bind ViewModel.GroupAlert, Mode=OneWay}"
                         Content="{CustomResource Alert}"
                         Margin="12,8,12,8"/>
                     <CheckBox
-                        IsChecked="{x:Bind ViewModel.GroupPreview, Mode=TwoWay}"
+                        x:Name="GroupPreview"
+                        Click="Group_Click"
+                        IsChecked="{x:Bind ViewModel.GroupPreview, Mode=OneWay}"
                         Content="{CustomResource MessagePreview}"
                         Margin="12,0,12,0"/>
                     <controls:BadgeButton
@@ -95,10 +103,5 @@
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
-        <controls:ScrollViewerBackground
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
     </Grid>
 </Page>

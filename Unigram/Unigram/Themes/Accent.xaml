@@ -138,8 +138,8 @@
 
 
 
-            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#99000000"/>
-            <SolidColorBrush x:Key="MessageOverlayBackgroundOutBrush" Color="#99000000"/>
+            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
+            <SolidColorBrush x:Key="MessageOverlayBackgroundOutBrush" Color="#54000000"/>
 
 
 
@@ -189,6 +189,8 @@
     <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
     <HorizontalAlignment x:Key="MessageHorizontalAlignmentOut">Right</HorizontalAlignment>
 
+    <x:Double x:Key="MessageFontSize">15</x:Double>
+    
     <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#667A8A96"/>
     <SolidColorBrush x:Key="MessageServiceForegroundBrush" Color="#FFFFFFFF"/>
     <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#887A8A96"/>

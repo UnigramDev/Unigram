@@ -1508,7 +1508,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ForwardMessagesAsync(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void ForwardMessagesAsync(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, bool grouped, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var randomId = new TLVector<long>();
             foreach (var message in messages)
@@ -1557,6 +1557,11 @@ namespace Telegram.Api.Services
             if (withMyScore)
             {
                 obj.IsWithMyScore = true;
+            }
+
+            if (grouped)
+            {
+                obj.IsGrouped = true;
             }
 
             const string caption = "messages.forwardMessages";

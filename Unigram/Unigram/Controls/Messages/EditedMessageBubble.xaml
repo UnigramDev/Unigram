@@ -83,7 +83,8 @@
                 x:Name="Message"
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
                 Style="{ThemeResource BodyRichTextBlockStyle}"
-                Foreground="{StaticResource MessageForegroundBrush}"
+                FontSize="{ThemeResource MessageFontSize}"
+                Foreground="{ThemeResource MessageForegroundBrush}"
                 ContextRequested="Message_ContextRequested"
                 ContextMenuOpening="Message_ContextMenuOpening"
                 Grid.Row="2">
@@ -91,7 +92,7 @@
                     <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
                 </RichTextBlock.Resources>
                 <Paragraph>
-                    <Span/><InlineUIContainer><TextBlock x:Name="Placeholder" TextLineBounds="TrimToBaseline" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
+                    <Span/><InlineUIContainer><TextBlock x:Name="Placeholder" TextLineBounds="TrimToBaseline" FontSize="{ThemeResource MessageFontSize}" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
                 </Paragraph>
             </RichTextBlock>
 

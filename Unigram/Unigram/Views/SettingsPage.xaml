@@ -158,9 +158,9 @@
                                           Click="Stickers_Click"
                                           FontFamily="{StaticResource TelegramThemeFontFamily}"
                                           Style="{StaticResource GlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource ChatBackground}"
+                    <controls:GlyphButton Content="Appearance"
                                           Glyph="&#xE2B1;"
-                                          Click="Wallpaper_Click"
+                                          Click="Appearance_Click"
                                           Style="{StaticResource GlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource Language}"
                                           Glyph="&#xE164;"

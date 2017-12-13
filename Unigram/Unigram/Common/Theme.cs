@@ -29,6 +29,8 @@ namespace Unigram.Common
             this.Add("MessageServiceForegroundBrush", GetBrushOrDefault("MessageServiceForegroundBrush", Colors.White));
             this.Add("MessageServiceBackgroundBrush", GetBrushOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
             this.Add("MessageServiceBackgroundPressedBrush", GetBrushOrDefault("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96)));
+
+            this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 15d));
         }
 
         public void Update()
@@ -39,7 +41,7 @@ namespace Unigram.Common
                 return;
             }
 
-            var fileName = FileUtils.GetTempFileName("theme.xaml");
+            var fileName = FileUtils.GetFileName("colors.palette");
             if (File.Exists(fileName))
             {
                 var text = File.ReadAllText(fileName);
@@ -69,7 +71,7 @@ namespace Unigram.Common
 
         #region Settings
 
-        public bool AddOrUpdateValue(string key, Color value)
+        public bool AddOrUpdateColor(string key, Color value)
         {
             bool valueChanged = false;
 
@@ -105,12 +107,45 @@ namespace Unigram.Common
             return valueChanged;
         }
 
-        public Brush GetBrushOrDefault(string key, Color defaultValue)
+        public bool AddOrUpdateValue(string key, Object value)
         {
-            return new SolidColorBrush(GetValueOrDefault(key, defaultValue));
+            bool valueChanged = false;
+
+            if (isolatedStore.Values.ContainsKey(key))
+            {
+                if (isolatedStore.Values[key] != value)
+                {
+                    isolatedStore.Values[key] = value;
+                    valueChanged = true;
+                }
+            }
+            else
+            {
+                isolatedStore.Values.Add(key, value);
+                valueChanged = true;
+            }
+
+            if (valueChanged)
+            {
+                if (this.ContainsKey(key))
+                {
+                    this[key] = value;
+                }
+                else
+                {
+                    this.Add(key, value);
+                }
+            }
+
+            return valueChanged;
         }
 
-        public Color GetValueOrDefault(string key, Color defaultValue)
+        public Brush GetBrushOrDefault(string key, Color defaultValue)
+        {
+            return new SolidColorBrush(GetColorOrDefault(key, defaultValue));
+        }
+
+        public Color GetColorOrDefault(string key, Color defaultValue)
         {
             Color value;
 
@@ -118,6 +153,22 @@ namespace Unigram.Common
             {
                 var hex = (int)isolatedStore.Values[key];
                 value = Color.FromArgb((byte)((hex >> 24) & 0xff), (byte)((hex >> 16) & 0xff), (byte)((hex >> 8) & 0xff), (byte)(hex & 0xff));
+            }
+            else
+            {
+                value = defaultValue;
+            }
+
+            return value;
+        }
+
+        public valueType GetValueOrDefault<valueType>(string key, valueType defaultValue)
+        {
+            valueType value;
+
+            if (isolatedStore.Values.ContainsKey(key))
+            {
+                value = (valueType)isolatedStore.Values[key];
             }
             else
             {

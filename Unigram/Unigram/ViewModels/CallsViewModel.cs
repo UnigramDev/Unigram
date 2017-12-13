@@ -9,10 +9,13 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 using Template10.Utils;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Strings;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -23,6 +26,8 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             Items = new ItemsCollection(protoService, cacheService);
+
+            CallDeleteCommand = new RelayCommand<TLCallGroup>(CallDeleteExecute);
         }
 
         public ItemsCollection Items { get; private set; }
@@ -107,6 +112,57 @@ namespace Unigram.ViewModels
                 return new TLCallGroup[0];
             }
         }
+
+        #region Context menu
+
+        public RelayCommand<TLCallGroup> CallDeleteCommand { get; }
+        private async void CallDeleteExecute(TLCallGroup group)
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ConfirmDeleteCallLog, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var messages = new TLVector<int>(group.Items.Select(x => x.Id).ToList());
+
+            Task<MTProtoResponse<TLMessagesAffectedMessages>> task;
+
+            var peer = group.Message.Parent.ToInputPeer();
+            if (peer is TLInputPeerChannel channelPeer)
+            {
+                task = ProtoService.DeleteMessagesAsync(new TLInputChannel { ChannelId = channelPeer.ChannelId, AccessHash = channelPeer.AccessHash }, messages);
+            }
+            else
+            {
+                task = ProtoService.DeleteMessagesAsync(messages, false);
+            }
+
+            var response = await task;
+            if (response.IsSucceeded)
+            {
+                var cachedMessages = new TLVector<long>();
+                var remoteMessages = new TLVector<int>();
+                for (int i = 0; i < messages.Count; i++)
+                {
+                    if (group.Items[i].RandomId.HasValue && group.Items[i].RandomId != 0L)
+                    {
+                        cachedMessages.Add(group.Items[i].RandomId.Value);
+                    }
+                    if (group.Items[i].Id > 0)
+                    {
+                        remoteMessages.Add(group.Items[i].Id);
+                    }
+                }
+
+                CacheService.DeleteMessages(peer.ToPeer(), null, remoteMessages);
+                CacheService.DeleteMessages(cachedMessages);
+
+                Items.Remove(group);
+            }
+        }
+
+        #endregion
     }
 
     public class TLCallGroup

@@ -65,6 +65,7 @@ using Newtonsoft.Json;
 using Unigram.Core.Common;
 using Unigram.ViewModels.Dialogs;
 using Windows.UI.Xaml.Controls.Primitives;
+using System.Collections.Concurrent;
 
 namespace Unigram.ViewModels
 {
@@ -88,6 +89,29 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void ExpandSelection(IEnumerable<TLMessageCommonBase> vector)
+        {
+            var messages = vector.ToList();
+
+            for (int i = 0; i < messages.Count; i++)
+            {
+                if (messages[i] is TLMessage message && message.Media is TLMessageMediaGroup groupMedia)
+                {
+                    messages.RemoveAt(i);
+
+                    for (int j = 0; j < groupMedia.Layout.Messages.Count; j++)
+                    {
+                        messages.Insert(i, groupMedia.Layout.Messages[j]);
+                        i++;
+                    }
+
+                    i--;
+                }
+            }
+
+            SelectedItems = messages;
+        }
+
         public MediaLibraryCollection MediaLibrary
         {
             get
@@ -99,9 +123,7 @@ namespace Unigram.ViewModels
         // Kludge
         public static Dictionary<long, IList<TLChannelParticipantBase>> Admins { get; } = new Dictionary<long, IList<TLChannelParticipantBase>>();
 
-        public Dictionary<long, GroupedMessages> GroupedItems => _groupedMessages;
-
-        private readonly Dictionary<long, GroupedMessages> _groupedMessages = new Dictionary<long, GroupedMessages>();
+        private readonly ConcurrentDictionary<long, TLMessage> _groupedMessages = new ConcurrentDictionary<long, TLMessage>();
 
         private readonly DialogStickersViewModel _stickers;
         private readonly IStickersService _stickersService;
@@ -1078,7 +1100,7 @@ namespace Unigram.ViewModels
             var replyIds = new TLVector<int>();
             var replyToMsgs = new List<TLMessageCommonBase>();
 
-            var groups = new Dictionary<long, GroupedMessages>();
+            var groups = new Dictionary<long, Tuple<TLMessage, GroupedMessages>>();
 
             for (int i = 0; i < messages.Count; i++)
             {
@@ -1087,14 +1109,70 @@ namespace Unigram.ViewModels
                 {
                     if (commonMessage is TLMessage message && message.HasGroupedId && message.GroupedId is long groupedId)
                     {
-                        _groupedMessages.TryGetValue(groupedId, out GroupedMessages group);
+                        _groupedMessages.TryGetValue(groupedId, out TLMessage group);
+
                         if (group == null)
                         {
-                            group = _groupedMessages[groupedId] = new GroupedMessages { GroupedId = groupedId };
+                            var media = new TLMessageMediaGroup();
+
+                            group = new TLMessage();
+                            group.Media = media;
+                            group.Date = message.Date;
+
+                            messages[i] = group;
+                            commonMessage = group;
+
+                            groups[groupedId] = Tuple.Create(group, media.Layout);
+                            _groupedMessages[groupedId] = group;
+                        }
+                        else
+                        {
+                            messages.RemoveAt(i);
+                            i--;
                         }
 
-                        group.Messages.Add(message);
-                        groups[groupedId] = group;
+                        if (group.Media is TLMessageMediaGroup groupMedia)
+                        {
+                            //var array = group.Messages.ToArray();
+                            //var insert = Array.BinarySearch(array, message, _comparer);
+                            //if (insert < 0) insert = ~insert;
+
+                            groupMedia.Layout.GroupedId = groupedId;
+                            groupMedia.Layout.Messages.Add(message);
+                            groupMedia.Layout.Calculate();
+
+                            var first = groupMedia.Layout.Messages.FirstOrDefault();
+                            var last = groupMedia.Layout.Messages.LastOrDefault();
+
+                            if (first != null)
+                            {
+                                group.Flags = first.Flags;
+                                group.HasEditDate = false;
+                                group.FromId = first.FromId;
+                                group.ToId = first.ToId;
+                                group.FwdFrom = first.FwdFrom;
+                                group.ViaBotId = first.ViaBotId;
+                                group.ReplyToMsgId = first.ReplyToMsgId;
+                                group.Date = first.Date;
+                                group.Message = first.Message;
+                                group.ReplyMarkup = first.ReplyMarkup;
+                                group.Entities = first.Entities;
+                                group.Views = first.Views;
+                                group.PostAuthor = first.PostAuthor;
+                                group.GroupedId = first.GroupedId;
+                            }
+
+                            if (last.Media is ITLMessageMediaCaption caption)
+                            {
+                                group.HasEditDate = last.HasEditDate;
+                                group.EditDate = last.EditDate;
+
+                                groupMedia.Caption = caption.Caption;
+
+                                group.RaisePropertyChanged(() => group.EditDate);
+                                group.RaisePropertyChanged(() => group.Self);
+                            }
+                        }
                     }
 
                     var replyId = commonMessage.ReplyToMsgId;
@@ -1135,7 +1213,8 @@ namespace Unigram.ViewModels
 
             foreach (var group in groups.Values)
             {
-                group.Calculate();
+                group.Item2.Calculate();
+                group.Item1.RaisePropertyChanged(() => group.Item1.Media);
             }
 
             if (replyIds.Count > 0)
@@ -2033,7 +2112,15 @@ namespace Unigram.ViewModels
                         var edit = await ProtoService.EditMessageAsync(Peer, container.EditMessage.Id, message.Message, message.Entities, null, null, false, false);
                         if (edit.IsSucceeded)
                         {
-                            CacheService.SyncEditedMessage(container.EditMessage, true, true, cachedMessage => { });
+                            CacheService.SyncEditedMessage(container.EditMessage, true, true, cachedMessage =>
+                            {
+                                if (container.EditMessage.HasGroupedId && container.EditMessage.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out TLMessage group) && group.Media is TLMessageMediaGroup groupMedia)
+                                {
+                                    groupMedia.Caption = message.Message;
+                                    groupMedia.RaisePropertyChanged(() => groupMedia.Caption);
+                                    group.RaisePropertyChanged(() => group.Self);
+                                }
+                            });
                         }
                         else
                         {
@@ -2242,7 +2329,7 @@ namespace Unigram.ViewModels
 
             CacheService.SyncSendingMessages(msgs, null, async (_) =>
             {
-                await ProtoService.ForwardMessagesAsync(Peer, fromPeer, msgIds, msgs, false);
+                await ProtoService.ForwardMessagesAsync(Peer, fromPeer, msgIds, msgs, false, false);
             });
         }
 
@@ -2678,6 +2765,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var peer = _peer;
+            if (peer == null)
+            {
+                return;
+            }
+
             var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
             var settings = new TLInputPeerNotifySettings
             {
@@ -2687,36 +2780,29 @@ namespace Unigram.ViewModels
                 Sound = notifySettings.Sound
             };
 
-            var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = Peer }, settings);
+            var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = peer }, settings);
             if (response.IsSucceeded)
             {
                 notifySettings.MuteUntil = muteUntil;
 
-                var dialog = CacheService.GetDialog(Peer.ToPeer());
+                var dialog = CacheService.GetDialog(peer.ToPeer());
                 if (dialog != null)
                 {
                     dialog.NotifySettings = notifySettings;
                     dialog.RaisePropertyChanged(() => dialog.NotifySettings);
                     dialog.RaisePropertyChanged(() => dialog.IsMuted);
                     dialog.RaisePropertyChanged(() => dialog.Self);
-
-                    // TODO: 06/05/2017
-                    //var dialogChannel = dialog.With as TLChannel;
-                    //if (dialogChannel != null)
-                    //{
-                    //    dialogChannel.NotifySettings = channel.NotifySettings;
-                    //}
                 }
 
                 if (chatFull != null)
                 {
-                    chatFull.NotifySettings = _dialog.NotifySettings;
+                    chatFull.NotifySettings = notifySettings;
                     chatFull.RaisePropertyChanged(() => chatFull.NotifySettings);
                 }
                 else if (userFull != null)
                 {
-                    userFull.NotifySettings = _dialog.NotifySettings;
-                    userFull.RaisePropertyChanged(() => chatFull.NotifySettings);
+                    userFull.NotifySettings = notifySettings;
+                    userFull.RaisePropertyChanged(() => userFull.NotifySettings);
                 }
 
                 CacheService.Commit();
@@ -3311,57 +3397,8 @@ namespace Unigram.ViewModels
 
     public class MessageCollection : ObservableCollection<TLMessageBase>
     {
-        private readonly TLMessageComparer _comparer = new TLMessageComparer();
-
         protected override void InsertItem(int index, TLMessageBase item)
         {
-            //if (item is TLMessage message && message.GroupedId is long grouped && !(message.Media is TLMessageMediaGroup))
-            //{
-            //    var already = this.FirstOrDefault(x => x is TLMessage msg && msg.GroupedId == grouped) as TLMessage;
-            //    if (already == null)
-            //    {
-            //        already = new TLMessage();
-            //        already.Media = new TLMessageMediaGroup();
-
-            //        InsertItem(index, already);
-            //    }
-
-            //    if (already.Media is TLMessageMediaGroup group)
-            //    {
-            //        //var array = group.Messages.ToArray();
-            //        //var insert = Array.BinarySearch(array, message, _comparer);
-            //        //if (insert < 0) insert = ~insert;
-
-            //        group.Layout.GroupedId = grouped;
-            //        group.Layout.Messages.Add(message);
-            //        group.Layout.Calculate();
-
-            //        already.Flags = group.Layout.Messages[0].Flags;
-            //        already.FromId = group.Layout.Messages[0].FromId;
-            //        already.ToId = group.Layout.Messages[0].ToId;
-            //        already.FwdFrom = group.Layout.Messages[0].FwdFrom;
-            //        already.ViaBotId = group.Layout.Messages[0].ViaBotId;
-            //        already.ReplyToMsgId = group.Layout.Messages[0].ReplyToMsgId;
-            //        already.Date = group.Layout.Messages[0].Date;
-            //        already.Message = group.Layout.Messages[0].Message;
-            //        already.ReplyMarkup = group.Layout.Messages[0].ReplyMarkup;
-            //        already.Entities = group.Layout.Messages[0].Entities;
-            //        already.Views = group.Layout.Messages[0].Views;
-            //        already.EditDate = group.Layout.Messages[0].EditDate;
-            //        already.PostAuthor = group.Layout.Messages[0].PostAuthor;
-            //        already.GroupedId = group.Layout.Messages[0].GroupedId;
-
-            //        if (group.Layout.Messages[0].Media is ITLMessageMediaCaption caption)
-            //        {
-            //            group.Caption = caption.Caption;
-            //        }
-
-            //        already.RaisePropertyChanged(() => already.Media);
-            //    }
-
-            //    return;
-            //}
-
             base.InsertItem(index, item);
 
             var previous = index > 0 ? this[index - 1] : null;

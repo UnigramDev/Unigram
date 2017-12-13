@@ -12,9 +12,6 @@ namespace Unigram.Selectors
 {
     public class MessageStyleSelector : StyleSelector
     {
-        public Dictionary<long, GroupedMessages> GroupedItems { get; set; }
-
-        public Style GroupStyle { get; set; }
         public Style MessageStyle { get; set; }
         public Style ServiceStyle { get; set; }
 
@@ -31,11 +28,6 @@ namespace Unigram.Selectors
                 if (message.IsService())
                 {
                     return ServiceStyle;
-                }
-
-                if (message.HasGroupedId && message.GroupedId is long groupedId && GroupedItems != null && GroupedItems.TryGetValue(groupedId, out GroupedMessages group) && group.Messages.Count > 1)
-                {
-                    return GroupStyle;
                 }
 
                 //if (message.IsOut)

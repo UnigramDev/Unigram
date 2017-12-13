@@ -429,11 +429,6 @@ namespace Unigram.Views
             }
             else if (messageBase is TLMessage message)
             {
-                if (message.HasGroupedId && message.GroupedId is long groupedId && ViewModel.GroupedItems != null && ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group) && group.Messages.Count > 1)
-                {
-                    return message.Media is TLMessageMediaPhoto ? "GroupedPhotoTemplate" : "GroupedVideoTemplate";
-                }
-
                 if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
                 {
                     return "ServiceMessageTemplate";

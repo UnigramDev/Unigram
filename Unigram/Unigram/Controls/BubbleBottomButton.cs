@@ -260,16 +260,12 @@ namespace Unigram.Controls
                             if (dialog != null)
                             {
                                 Content = dialog.IsMuted ? Strings.Android.ChannelUnmute : Strings.Android.ChannelMute;
+                            }
 
-                                //var settings = dialog.NotifySettings as TLPeerNotifySettings;
-                                //if (settings != null)
-                                //{
-                                //    Content = settings.MuteUntil > 0 ? "Unmute" : "Mute";
-                                //}
-                                //else
-                                //{
-                                //    Content = "Mute";
-                                //}
+                            var full = InMemoryCacheService.Current.GetFullChat(channel.Id);
+                            if (full != null && full.NotifySettings is TLPeerNotifySettings notifySettings)
+                            {
+                                Content = notifySettings.IsMuted ? Strings.Android.ChannelUnmute : Strings.Android.ChannelMute;
                             }
 
                             return false;

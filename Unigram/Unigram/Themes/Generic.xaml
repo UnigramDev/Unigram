@@ -1801,7 +1801,12 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ImageView">
-                    <Image x:Name="Holder" Source="{TemplateBinding Source}" Stretch="{TemplateBinding Stretch}"/>
+                    <Image
+                        x:Name="Holder"
+                        Source="{TemplateBinding Source}"
+                        Stretch="{TemplateBinding Stretch}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

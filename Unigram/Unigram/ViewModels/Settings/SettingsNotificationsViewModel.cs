@@ -41,6 +41,26 @@ namespace Unigram.ViewModels.Settings
             await UpdateAsync();
         }
 
+        public Task UpdatePrivateAsync()
+        {
+            return ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyUsers(), new TLInputPeerNotifySettings
+            {
+                MuteUntil = _privateAlert ? 0 : int.MaxValue,
+                IsShowPreviews = _privatePreview,
+                //Sound = _privateSound
+            });
+        }
+
+        public Task UpdateGroupAsync()
+        {
+            return ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyChats(), new TLInputPeerNotifySettings
+            {
+                MuteUntil = _groupAlert ? 0 : int.MaxValue,
+                IsShowPreviews = _groupPreview,
+                //Sound = _privateSound
+            });
+        }
+
         private async void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (_suppressUpdating)
@@ -51,33 +71,6 @@ namespace Unigram.ViewModels.Settings
             if (e.PropertyName.Equals(nameof(InAppVibrate)) && InAppVibrate && IsVibrationAvailable)
             {
                 await _vibrationService.VibrateAsync();
-            }
-
-            if (e.PropertyName.Equals(nameof(PrivateAlert)) || e.PropertyName.Equals(nameof(PrivatePreview)) || e.PropertyName.Equals(nameof(PrivateSound)))
-            {
-                if (e.PropertyName.Equals(nameof(PrivateSound)) && !string.IsNullOrEmpty(PrivateSound))
-                {
-                }
-
-                await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyUsers(), new TLInputPeerNotifySettings
-                {
-                    MuteUntil = _privateAlert ? 0 : int.MaxValue,
-                    IsShowPreviews = _privatePreview,
-                    //Sound = _privateSound
-                });
-            }
-            else if (e.PropertyName.Equals(nameof(GroupAlert)) || e.PropertyName.Equals(nameof(GroupPreview)) || e.PropertyName.Equals(nameof(GroupSound)))
-            {
-                if (e.PropertyName.Equals(nameof(GroupSound)) && !string.IsNullOrEmpty(GroupSound))
-                {
-                }
-
-                await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyChats(), new TLInputPeerNotifySettings
-                {
-                    MuteUntil = _groupAlert ? 0 : int.MaxValue,
-                    IsShowPreviews = _groupPreview,
-                    //Sound = _privateSound
-                });
             }
         }
 
@@ -227,16 +220,12 @@ namespace Unigram.ViewModels.Settings
         {
             ProtoService.GetNotifySettingsAsync(new TLInputNotifyUsers(), result =>
             {
-
-                var settings = result as TLPeerNotifySettings;
-                if (settings != null)
+                if (result is TLPeerNotifySettings settings)
                 {
                     BeginOnUIThread(() =>
                     {
-                        _suppressUpdating = true;
                         PrivateAlert = settings.MuteUntil == 0;
                         PrivatePreview = settings.IsShowPreviews;
-                        _suppressUpdating = false;
                     });
                     //sound = Enumerable.FirstOrDefault<string>(this.StateService.Sounds, (string x) => string.Equals(x, settings.Sound.Value, 5));
                     //this.Settings.ContactSound = (sound ?? this.StateService.Sounds.get_Item(0));
@@ -247,16 +236,12 @@ namespace Unigram.ViewModels.Settings
 
             ProtoService.GetNotifySettingsAsync(new TLInputNotifyChats(), result =>
             {
-
-                var settings = result as TLPeerNotifySettings;
-                if (settings != null)
+                if (result is TLPeerNotifySettings settings)
                 {
                     BeginOnUIThread(() =>
                     {
-                        _suppressUpdating = true;
                         GroupAlert = settings.MuteUntil == 0;
                         GroupPreview = settings.IsShowPreviews;
-                        _suppressUpdating = false;
                     });
                     //sound = Enumerable.FirstOrDefault<string>(this.StateService.Sounds, (string x) => string.Equals(x, settings.Sound.Value, 5));
                     //this.Settings.GroupSound = (sound ?? this.StateService.Sounds.get_Item(0));
@@ -270,8 +255,7 @@ namespace Unigram.ViewModels.Settings
         {
             var settings = update.NotifySettings as TLPeerNotifySettings;
 
-            var notifyUsers = update.Peer as TLNotifyUsers;
-            if (notifyUsers != null && settings != null)
+            if (update.Peer is TLNotifyUsers notifyUsers && settings != null)
             {
                 BeginOnUIThread(() =>
                 {
@@ -279,9 +263,7 @@ namespace Unigram.ViewModels.Settings
                     PrivatePreview = settings.IsShowPreviews;
                 });
             }
-
-            var notifyChats = update.Peer as TLNotifyChats;
-            if (notifyChats != null && settings != null)
+            else if (update.Peer is TLNotifyChats notifyChats && settings != null)
             {
                 BeginOnUIThread(() =>
                 {
