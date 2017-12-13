@@ -9,7 +9,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid x:Name="LayoutRoot">
+    <Grid x:Name="LayoutRoot" Tag="{x:Bind UpdateSelf(ViewModel.Self), Mode=OneWay}">
 
     </Grid>
 </UserControl>

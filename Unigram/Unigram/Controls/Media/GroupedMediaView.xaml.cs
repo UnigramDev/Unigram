@@ -24,24 +24,24 @@ namespace Unigram.Controls.Media
 {
     public sealed partial class GroupedMediaView : UserControl
     {
+        public TLMessage ViewModel => DataContext as TLMessage;
+
         public GroupedMediaView()
         {
             InitializeComponent();
-            DataContextChanged += OnDataContextChanged;
         }
 
-        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        private object UpdateSelf(TLMessage message)
         {
-            var message = DataContext as TLMessage;
             if (message == null)
             {
-                return;
+                return null;
             }
 
             var groupMedia = message.Media as TLMessageMediaGroup;
             if (groupMedia == null)
             {
-                return;
+                return null;
             }
 
             var groupedMessages = groupMedia.Layout;
@@ -130,6 +130,8 @@ namespace Unigram.Controls.Media
                 LayoutRoot.Children.Clear();
                 LayoutRoot.Children.Add(stackPanel);
             }
+
+            return null;
         }
 
         private FrameworkElement GetPhoto(KeyValuePair<TLMessage, GroupedMessagePosition> position, GroupedMessages groupedMessages, double left, double top)

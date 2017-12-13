@@ -112,7 +112,7 @@ namespace Unigram.ViewModels
                         if (group.Item2.Messages.Count > 0)
                         {
                             group.Item2.Calculate();
-                            group.Item1.RaisePropertyChanged(() => group.Item1.Media);
+                            group.Item1.RaisePropertyChanged(() => group.Item1.Self);
                         }
                         else
                         {
@@ -245,7 +245,7 @@ namespace Unigram.ViewModels
                         if (group.Item2.Messages.Count > 0)
                         {
                             group.Item2.Calculate();
-                            group.Item1.RaisePropertyChanged(() => group.Item1.Media);
+                            group.Item1.RaisePropertyChanged(() => group.Item1.Self);
                         }
                         else
                         {

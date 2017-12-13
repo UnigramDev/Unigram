@@ -1141,24 +1141,36 @@ namespace Unigram.ViewModels
                             groupMedia.Layout.Messages.Add(message);
                             groupMedia.Layout.Calculate();
 
-                            group.Flags = groupMedia.Layout.Messages[0].Flags;
-                            group.FromId = groupMedia.Layout.Messages[0].FromId;
-                            group.ToId = groupMedia.Layout.Messages[0].ToId;
-                            group.FwdFrom = groupMedia.Layout.Messages[0].FwdFrom;
-                            group.ViaBotId = groupMedia.Layout.Messages[0].ViaBotId;
-                            group.ReplyToMsgId = groupMedia.Layout.Messages[0].ReplyToMsgId;
-                            group.Date = groupMedia.Layout.Messages[0].Date;
-                            group.Message = groupMedia.Layout.Messages[0].Message;
-                            group.ReplyMarkup = groupMedia.Layout.Messages[0].ReplyMarkup;
-                            group.Entities = groupMedia.Layout.Messages[0].Entities;
-                            group.Views = groupMedia.Layout.Messages[0].Views;
-                            group.EditDate = groupMedia.Layout.Messages[0].EditDate;
-                            group.PostAuthor = groupMedia.Layout.Messages[0].PostAuthor;
-                            group.GroupedId = groupMedia.Layout.Messages[0].GroupedId;
+                            var first = groupMedia.Layout.Messages.FirstOrDefault();
+                            var last = groupMedia.Layout.Messages.LastOrDefault();
 
-                            if (groupMedia.Layout.Messages.Last().Media is ITLMessageMediaCaption caption)
+                            if (first != null)
                             {
+                                group.Flags = first.Flags;
+                                group.HasEditDate = false;
+                                group.FromId = first.FromId;
+                                group.ToId = first.ToId;
+                                group.FwdFrom = first.FwdFrom;
+                                group.ViaBotId = first.ViaBotId;
+                                group.ReplyToMsgId = first.ReplyToMsgId;
+                                group.Date = first.Date;
+                                group.Message = first.Message;
+                                group.ReplyMarkup = first.ReplyMarkup;
+                                group.Entities = first.Entities;
+                                group.Views = first.Views;
+                                group.PostAuthor = first.PostAuthor;
+                                group.GroupedId = first.GroupedId;
+                            }
+
+                            if (last.Media is ITLMessageMediaCaption caption)
+                            {
+                                group.HasEditDate = last.HasEditDate;
+                                group.EditDate = last.EditDate;
+
                                 groupMedia.Caption = caption.Caption;
+
+                                group.RaisePropertyChanged(() => group.EditDate);
+                                group.RaisePropertyChanged(() => group.Self);
                             }
                         }
                     }
@@ -2100,7 +2112,15 @@ namespace Unigram.ViewModels
                         var edit = await ProtoService.EditMessageAsync(Peer, container.EditMessage.Id, message.Message, message.Entities, null, null, false, false);
                         if (edit.IsSucceeded)
                         {
-                            CacheService.SyncEditedMessage(container.EditMessage, true, true, cachedMessage => { });
+                            CacheService.SyncEditedMessage(container.EditMessage, true, true, cachedMessage =>
+                            {
+                                if (container.EditMessage.HasGroupedId && container.EditMessage.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out TLMessage group) && group.Media is TLMessageMediaGroup groupMedia)
+                                {
+                                    groupMedia.Caption = message.Message;
+                                    groupMedia.RaisePropertyChanged(() => groupMedia.Caption);
+                                    group.RaisePropertyChanged(() => group.Self);
+                                }
+                            });
                         }
                         else
                         {
