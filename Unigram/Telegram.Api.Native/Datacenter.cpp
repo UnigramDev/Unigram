@@ -591,7 +591,7 @@ HRESULT Datacenter::GetUploadConnection(boolean create, ComPtr<Connection>& valu
 		return RO_E_CLOSED;
 	}
 
-	auto& connection = m_downloadConnections[m_nextUploadConnectionIndex];
+	auto& connection = m_uploadConnections[m_nextUploadConnectionIndex];
 	if (create)
 	{
 		if (connection == nullptr)
@@ -600,7 +600,7 @@ HRESULT Datacenter::GetUploadConnection(boolean create, ComPtr<Connection>& valu
 			ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, this, ConnectionType::Upload));
 		}
 
-		m_nextUploadConnectionIndex = (m_nextUploadConnectionIndex + 1) % DOWNLOAD_CONNECTIONS_COUNT;
+		m_nextUploadConnectionIndex = (m_nextUploadConnectionIndex + 1) % UPLOAD_CONNECTIONS_COUNT;
 	}
 
 	value = connection;
