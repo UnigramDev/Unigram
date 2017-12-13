@@ -95,7 +95,7 @@ namespace Unigram.ViewModels
             }
 
             var message = messageBase as TLMessage;
-            if (message.Media is TLMessageMediaGroup groupMedia)
+            if (message != null && message.Media is TLMessageMediaGroup groupMedia)
             {
                 ExpandSelection(new[] { message });
                 MessagesDeleteExecute();

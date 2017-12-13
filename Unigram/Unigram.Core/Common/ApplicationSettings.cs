@@ -133,7 +133,7 @@ namespace Unigram.Common
         #region App version
 
         public const int CurrentVersion = 01210600;
-        public const string CurrentChangelog = "- New Appearance settings: theme, chat background and font size in a single place.";
+        public const string CurrentChangelog = "- New Appearance settings: theme, chat background and font size in a single place";
 
         private int? _appVersion;
         public int Version
