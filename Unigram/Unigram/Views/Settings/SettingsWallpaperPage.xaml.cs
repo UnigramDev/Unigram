@@ -25,13 +25,5 @@ namespace Unigram.Views.Settings
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<SettingsWallPaperViewModel>();
         }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            while (Frame.BackStackDepth > 1)
-            {
-                Frame.BackStack.RemoveAt(1);
-            }
-        }
     }
 }

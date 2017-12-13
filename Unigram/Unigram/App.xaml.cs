@@ -70,6 +70,8 @@ namespace Unigram
 
         private readonly UISettings _uiSettings;
 
+        public UISettings UISettings => _uiSettings;
+
         public static event TypedEventHandler<CoreDispatcher, AcceleratorKeyEventArgs> AcceleratorKeyActivated;
 
         public ViewModelLocator Locator
