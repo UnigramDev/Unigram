@@ -665,13 +665,21 @@ namespace Unigram
         public static void RaiseThemeChanged()
         {
             var frame = Window.Current.Content as Frame;
-            if (frame != null)
+            if (frame == null)
             {
-                var dark = (bool)App.Current.Resources["IsDarkTheme"];
-
-                frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
-                frame.RequestedTheme = ElementTheme.Default;
+                return;
             }
+
+            var current = App.Current as App;
+            var theme = current.UISettings.GetColorValue(UIColorType.Background);
+
+            frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark || (ApplicationSettings.Current.CurrentTheme == ElementTheme.Default && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
+            frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme;
+
+            //var dark = (bool)App.Current.Resources["IsDarkTheme"];
+
+            //frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
+            //frame.RequestedTheme = ElementTheme.Default;
         }
     }
 

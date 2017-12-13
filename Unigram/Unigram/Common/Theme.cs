@@ -41,7 +41,7 @@ namespace Unigram.Common
                 return;
             }
 
-            var fileName = FileUtils.GetTempFileName("theme.xaml");
+            var fileName = FileUtils.GetFileName("colors.palette");
             if (File.Exists(fileName))
             {
                 var text = File.ReadAllText(fileName);

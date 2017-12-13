@@ -156,10 +156,8 @@ namespace Unigram.Controls
 
                     goto Calculate;
                 }
-                else
-                {
-                    constraint = photoMedia.Photo;
-                }
+
+                constraint = photoMedia.Photo;
             }
 
             if (constraint is TLMessageMediaDocument documentMedia)
@@ -171,10 +169,8 @@ namespace Unigram.Controls
 
                     goto Calculate;
                 }
-                else
-                {
-                    constraint = documentMedia.Document;
-                }
+
+                constraint = documentMedia.Document;
             }
 
             if (constraint is TLMessageMediaWebPage webPageMedia)

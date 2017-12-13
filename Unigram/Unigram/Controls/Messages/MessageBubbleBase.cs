@@ -489,6 +489,14 @@ namespace Unigram.Controls.Messages
                 constraint = photo.Full;
             }
 
+            if (constraint is TLPhotoSize photoSize)
+            {
+                width = photoSize.W;
+                height = photoSize.H;
+
+                goto Calculate;
+            }
+
             if (constraint is TLDocument document)
             {
                 if (fixedSize)

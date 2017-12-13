@@ -204,6 +204,19 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:PageHeader Text="Appearance"/>
+        <Button x:Name="Options"
+                Click="Menu_ContextRequested"
+                Padding="16,23,16,0"
+                Style="{StaticResource EllipsisButton}"
+                HorizontalAlignment="Right"
+                Opacity="0">
+            <FontIcon x:Name="EllipsisIcon"
+                      VerticalAlignment="Center"
+                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                      FontSize="16"
+                      Glyph="&#xE10C;"
+                      Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+        </Button>
 
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
@@ -225,8 +238,8 @@
                 <Grid x:Name="Preview">
                     <controls:DialogBackgroundPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                     <StackPanel Padding="12,12,12,10">
-                        <messages:MessageBubble DataContext="{x:Bind ViewModel.Message1}"/>
-                        <messages:MessageBubble DataContext="{x:Bind ViewModel.Message2}">
+                        <messages:MessageBubble x:Name="Message1" DataContext="{x:Bind ViewModel.Message1}"/>
+                        <messages:MessageBubble x:Name="Message2" DataContext="{x:Bind ViewModel.Message2}">
                             <FrameworkElement.Resources>
                                 <ResourceDictionary>
                                     <ResourceDictionary.MergedDictionaries>
