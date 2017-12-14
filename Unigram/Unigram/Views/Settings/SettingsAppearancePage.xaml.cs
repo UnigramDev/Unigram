@@ -99,6 +99,7 @@ namespace Unigram.Views.Settings
         private async void Export_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileSavePicker();
+            picker.FileTypeChoices.Add("Palette", new[] { ".palette" });
             picker.SuggestedFileName = "colors.palette";
 
             var file = await picker.PickSaveFileAsync();

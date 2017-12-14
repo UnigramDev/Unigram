@@ -15,8 +15,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsAppearanceViewModel : UnigramViewModelBase
     {
-        private readonly Dictionary<int, int> _indexToSize = new Dictionary<int, int> { { 0, 10 }, { 1, 12 }, { 2, 15 }, { 3, 18 }, { 4, 20 } };
-        private readonly Dictionary<int, int> _sizeToIndex = new Dictionary<int, int> { { 10, 0 }, { 12, 1 }, { 15, 2 }, { 18, 3 }, { 20, 4 } };
+        private readonly Dictionary<int, int> _indexToSize = new Dictionary<int, int> { { 0, 12 }, { 1, 13 }, { 2, 14 }, { 3, 15 }, { 4, 16 }, { 5, 17 }, { 6, 18 } };
+        private readonly Dictionary<int, int> _sizeToIndex = new Dictionary<int, int> { { 12, 0 }, { 13, 1 }, { 14, 2 }, { 15, 3 }, { 16, 4 }, { 17, 5 }, { 18, 6 } };
 
         public SettingsAppearanceViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
