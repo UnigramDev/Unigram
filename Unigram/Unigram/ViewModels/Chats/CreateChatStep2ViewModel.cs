@@ -13,12 +13,15 @@ using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Views;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage;
+using ChatCreateStep2Tuple = Telegram.Api.TL.TLTuple<string, Telegram.Api.TL.TLInputFileBase>;
 
 namespace Unigram.ViewModels.Chats
 {
     public class CreateChatStep2ViewModel : UsersSelectionViewModel
     {
         private string _title;
+        private TLInputFileBase _photo;
 
         public CreateChatStep2ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
@@ -39,7 +42,18 @@ namespace Unigram.ViewModels.Chats
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            _title = (string)parameter;
+            var buffer = parameter as byte[];
+            if (buffer != null)
+            {
+                using (var from = new TLBinaryReader(buffer))
+                {
+                    var tuple = new ChatCreateStep2Tuple(from);
+
+                    _title = tuple.Item1;
+                    _photo = tuple.Item2;
+                }
+            }
+
 
             RaisePropertyChanged(() => Title);
             return base.OnNavigatedToAsync(parameter, mode, state);
@@ -65,6 +79,19 @@ namespace Unigram.ViewModels.Chats
                         var chat = updates.Chats.FirstOrDefault() as TLChat;
                         if (chat != null)
                         {
+                            if (_photo != null)
+                            {
+                                var edit = await ProtoService.EditChatPhotoAsync(chat.Id, new TLInputChatUploadedPhoto { File = _photo });
+                                if (edit.IsSucceeded)
+                                {
+
+                                }
+                                else
+                                {
+
+                                }
+                            }
+
                             NavigationService.NavigateToDialog(chat);
                             NavigationService.RemoveLast();
                             NavigationService.RemoveLast();

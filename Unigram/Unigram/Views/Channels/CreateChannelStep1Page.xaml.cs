@@ -14,6 +14,10 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage.Pickers;
+using Unigram.Controls.Views;
+using Unigram.Controls;
+using Unigram.Common;
 
 namespace Unigram.Views.Channels
 {
@@ -25,6 +29,30 @@ namespace Unigram.Views.Channels
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<CreateChannelStep1ViewModel>();
+        }
+
+        private async void EditPhoto_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
+
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                var dialog = new EditYourPhotoView(file)
+                {
+                    CroppingProportions = ImageCroppingProportions.Square,
+                    IsCropEnabled = false
+                };
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogBaseResult.OK)
+                {
+                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
+                }
+            }
         }
     }
 }

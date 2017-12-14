@@ -148,7 +148,7 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var username = _isPublic ? _username.Trim() : null;
+            var username = _isPublic ? _username?.Trim() : null;
 
             if (_item != null && !string.Equals(username, _item.Username))
             {
