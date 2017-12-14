@@ -175,15 +175,20 @@ HRESULT Connection::Connect(bool ipv6)
 		return S_FALSE;
 	}
 
+	HRESULT result;
+	ComPtr<Connection> connection = this;
+
 	auto& connectionManager = m_datacenter->GetConnectionManager();
 	if (!connectionManager->IsNetworkAvailable())
 	{
-		connectionManager->OnConnectionClosed(this, ERROR_NO_NETWORK);
+		ReturnIfFailed(result, connectionManager->SubmitWork([connection, connectionManager]()-> HRESULT
+		{
+			return connectionManager->OnConnectionClosed(connection.Get(), ERROR_NO_NETWORK);
+		}));
 
 		return HRESULT_FROM_WIN32(ERROR_NO_NETWORK);
 	}
 
-	HRESULT result;
 	ServerEndpoint* endpoint;
 	if (FAILED(result = m_datacenter->GetCurrentEndpoint(m_type, ipv6, &endpoint)))
 	{
@@ -239,7 +244,6 @@ HRESULT Connection::Connect(bool ipv6)
 
 	m_flags = FLAGS_SET_CURRENTNETWORKTYPE(m_flags, currentNetworkType) | static_cast<ConnectionFlag>(ConnectionState::Connecting);
 
-	ComPtr<Connection> connection = this;
 	return connectionManager->SubmitWork([connection, connectionManager]()-> HRESULT
 	{
 		return connectionManager->OnConnectionOpening(connection.Get());
@@ -472,7 +476,7 @@ HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, 
 	HRESULT result;
 
 	{
-		auto lock = LockCriticalSection();
+		//auto lock = LockCriticalSection();
 
 		if (messageContext->SequenceNumber % 2)
 		{
@@ -507,7 +511,7 @@ HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, 
 	}
 
 	{
-		auto lock = LockCriticalSection();
+		//auto lock = LockCriticalSection();
 
 		AddProcessedMessageId(messageContext->Id);
 	}
@@ -520,7 +524,7 @@ HRESULT Connection::OnNewSessionCreatedResponse(TLNewSessionCreated* response)
 	auto& connectionManager = m_datacenter->GetConnectionManager();
 
 	{
-		auto lock = LockCriticalSection();
+		//auto lock = LockCriticalSection();
 
 		if (IsSessionProcessed(response->GetUniqueId()))
 		{
@@ -610,7 +614,7 @@ HRESULT Connection::OnSocketConnected()
 	ComPtr<Connection> connection = this;
 	auto& connectionManager = m_datacenter->GetConnectionManager();
 	return connectionManager->SubmitWork([connection, connectionManager]()-> HRESULT
-	{
+	{	
 		return connectionManager->OnConnectionOpened(connection.Get());
 	});
 }
@@ -739,7 +743,7 @@ HRESULT Connection::OnMessageReceived(TLMemoryBinaryReader* messageReader, UINT3
 	ComPtr<Connection> connection = this;
 	auto& connectionManager = m_datacenter->GetConnectionManager();
 	return connectionManager->SubmitWork([messageContext, messageObject, connection]()-> HRESULT
-	{
+	{			
 		return connection->HandleMessageResponse(&messageContext, messageObject.Get());
 	});
 }
@@ -1065,5 +1069,3 @@ HRESULT Connection::GetProxyEndpoint(IProxySettings* proxySettings, ServerEndpoi
 
 	return proxySettings->get_Port(&endpoint->Port);
 }
-
-

@@ -20,6 +20,7 @@
 #include "Helpers\COMHelper.h"
 
 #include "MethodLogger.h"
+#include "DebugContext.h"
 
 #define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>((flags) & ConnectionManagerFlag::ConnectionState)
 #define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) ((flags) & ~ConnectionManagerFlag::ConnectionState) | static_cast<ConnectionManagerFlag>(connectionState)
@@ -95,6 +96,8 @@ ConnectionManager::~ConnectionManager()
 HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount)
 {
 	//LOG_TRACE_METHOD(this);
+
+	static Telegram::Api::Native::Diagnostics::DebugContext debugContext;
 
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
@@ -426,15 +429,18 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 		m_lastRequestToken = requestToken;
 	}
 
+	LOG_TRACE(this, LogLevel::Information, L"Enqueuing request token=%d for connection type=%d, datacenter=%d\n", requestToken, connectionType, datacenterId);
 
 #pragma message("Potential deadlock")
 
-	ReturnIfFailed(result, SubmitWork([this, flags, requestToken, request]() -> HRESULT
+	ReturnIfFailed(result, SubmitWork([this, flags, request]() -> HRESULT
 	{
 		{
 			auto requestsLock = m_requestsCriticalSection.Lock();
 			m_requestsQueue.push_back(request);
 		}
+
+		LOG_TRACE(this, LogLevel::Information, L"Request token=%d for connection type=%d, datacenter=%d Enqueued\n", request->GetToken(), request->GetConnectionType(), request->GetDatacenterId());
 
 		if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
 		{
@@ -1347,8 +1353,6 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 
 HRESULT ConnectionManager::ProcessContextRequests(ProcessRequestsContext* context)
 {
-	//LOG_TRACE_METHOD(this);
-
 	HRESULT result = S_OK;
 	bool updateDatacenters = false;
 
@@ -1402,6 +1406,8 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 			return E_FAIL;
 		}
 	}
+
+	LOG_TRACE(this, LogLevel::Information, L"Processing requests for connection type=%d, datacenter=%d\n", connection->GetType(), datacenterContext->Datacenter->GetId());
 
 	INT64 lastRpcMessageId = 0;
 	bool requiresQuickAck = false;
@@ -1482,6 +1488,9 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 HRESULT ConnectionManager::ProcessConnectionRequest(Connection* connection, MessageRequest* request)
 {
 	auto& datacenter = connection->GetDatacenter();
+
+	LOG_TRACE(this, LogLevel::Information, L"Processing request token=%d for connection type=%d, datacenter=%d\n", request->GetToken(), connection->GetType(), datacenter->GetId());
+
 	auto messageId = GenerateMessageId();
 	request->SetMessageContext({ messageId, connection->GenerateMessageSequenceNumber(true) });
 
@@ -1552,6 +1561,8 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 		m_runningRequestCount[static_cast<UINT32>(request->GetConnectionType()) >> 1]--;
 		m_runningRequests.erase(requestIterator);
 	}
+
+	LOG_TRACE(this, LogLevel::Information, L"Completing request token=%d for connection type=%d, datacenter=%d\n", request->GetToken(), connection->GetType(), connection->GetDatacenter()->GetId());
 
 	HRESULT result = S_OK;
 	ComPtr<ITLRPCError> rpcError;
@@ -1844,6 +1855,8 @@ HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 {
 	auto& datacenter = connection->GetDatacenter();
 
+	LOG_TRACE(this, LogLevel::Information, L"Connection type=%d, datacenter=%d opened\n", connection->GetType(), datacenter->GetId());
+
 	if (connection->GetType() == ConnectionType::Generic)
 	{
 		auto lock = LockCriticalSection();
@@ -1874,7 +1887,7 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection, int wsaErr
 {
 	auto datacenter = connection->GetDatacenter();
 
-	LogTraceError(wsaError);
+	LOG_TRACE(this, LogLevel::Information, L"Connection type=%d, datacenter=%d closed, WSAError: 0x%08X\n", connection->GetType(), datacenter->GetId(), wsaError);
 
 	ResetRequests([datacenter, connection](auto datacenterId, auto const& request) -> bool
 	{
@@ -1917,6 +1930,8 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection, int wsaErr
 
 HRESULT ConnectionManager::OnDatacenterHandshakeCompleted(Datacenter* datacenter, INT32 timeDifference)
 {
+	LOG_TRACE(this, LogLevel::Information, L"Datacenter id=%d closed handshake completed\n", datacenter->GetId());
+
 	{
 		auto lock = LockCriticalSection();
 

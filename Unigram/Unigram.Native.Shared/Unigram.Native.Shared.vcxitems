@@ -19,4 +19,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Helpers\LibraryHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Helpers\StringHelper.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Helpers\LibraryHelper.cpp" />
+  </ItemGroup>
 </Project>

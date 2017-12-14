@@ -140,7 +140,7 @@ HRESULT Datacenter::get_Id(INT32* value)
 	return S_OK;
 }
 
-HRESULT Datacenter::get_Connections(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CConnection** value)
+HRESULT Datacenter::get_Connections(__FIVectorView_1_Telegram__CApi__CNative__CConnection** value)
 {
 	if (value == nullptr)
 	{
@@ -591,7 +591,7 @@ HRESULT Datacenter::GetUploadConnection(boolean create, ComPtr<Connection>& valu
 		return RO_E_CLOSED;
 	}
 
-	auto& connection = m_downloadConnections[m_nextUploadConnectionIndex];
+	auto& connection = m_uploadConnections[m_nextUploadConnectionIndex];
 	if (create)
 	{
 		if (connection == nullptr)
