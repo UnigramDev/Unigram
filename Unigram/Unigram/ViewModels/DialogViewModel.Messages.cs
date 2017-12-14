@@ -1662,5 +1662,33 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        #region Service message
+
+        public RelayCommand<TLMessageService> MessageServiceCommand { get; }
+        private async void MessageServiceExecute(TLMessageService message)
+        {
+            if (message.Action is TLMessageActionDate)
+            {
+                var date = BindConvert.Current.DateTime(message.Date);
+
+                var dialog = new Controls.Views.CalendarView();
+                dialog.MaxDate = DateTimeOffset.Now.Date;
+                dialog.SelectedDates.Add(date);
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
+                {
+                    var offset = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, date);
+                    await LoadDateSliceAsync(offset);
+                }
+            }
+            else if (message.Action is TLMessageActionPinMessage && message.ReplyToMsgId is int reply)
+            {
+                await LoadMessageSliceAsync(message.Id, reply);
+            }
+        }
+
+        #endregion
     }
 }

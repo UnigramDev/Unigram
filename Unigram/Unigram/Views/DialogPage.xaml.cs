@@ -90,21 +90,19 @@ namespace Unigram.Views
 
             //NavigationCacheMode = NavigationCacheMode.Required;
 
-            //_typeToItemHashSetMapping.Add("GroupedPhotoTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("GroupedVideoTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
             //_typeToItemHashSetMapping.Add("ServiceMessageLocalTemplate", new HashSet<SelectorItem>());
             //_typeToItemHashSetMapping.Add("ServiceMessageDateTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ServiceUserCallTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ServiceFriendCallTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceUserCallTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceFriendCallTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
 
-            //Messages.ChoosingItemContainer += OnChoosingItemContainer;
-            //Messages.ContainerContentChanging += OnContainerContentChanging;
+            Messages.ChoosingItemContainer += OnChoosingItemContainer;
+            Messages.ContainerContentChanging += OnContainerContentChanging;
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -995,6 +993,11 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var messageCommon = element.DataContext as TLMessageCommonBase;
             var channel = messageCommon.Parent as TLChannel;
+
+            if (messageCommon is TLMessageService serviceMessage && (serviceMessage.Action is TLMessageActionDate || serviceMessage.Action is TLMessageActionUnreadMessages))
+            {
+                return;
+            }
 
             // Generic
             CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, Strings.Android.Reply);
@@ -1980,6 +1983,19 @@ namespace Unigram.Views
         private void ItemsStackPanel_Loading(FrameworkElement sender, object args)
         {
             Messages.SetScrollMode();
+        }
+
+        private void ServiceMessage_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var message = button.DataContext as TLMessageService;
+
+            if (message == null)
+            {
+                return;
+            }
+
+            ViewModel.MessageServiceCommand.Execute(message);
         }
     }
 

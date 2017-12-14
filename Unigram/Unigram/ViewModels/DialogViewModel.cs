@@ -212,6 +212,7 @@ namespace Unigram.ViewModels
             MessageSaveDownloadCommand = new RelayCommand<TLMessage>(MessageSaveDownloadExecute);
             MessageSaveGIFCommand = new RelayCommand<TLMessage>(MessageSaveGIFExecute);
             MessageAddContactCommand = new RelayCommand<TLMessage>(MessageAddContactExecute);
+            MessageServiceCommand = new RelayCommand<TLMessageService>(MessageServiceExecute);
 
             SendStickerCommand = new RelayCommand<TLDocument>(SendStickerExecute);
             SendGifCommand = new RelayCommand<TLDocument>(SendGifExecute);

@@ -464,15 +464,15 @@ namespace Unigram.Views
                 {
                     return "EmptyMessageTemplate";
                 }
-                else if (serviceMessage.Action is TLMessageActionDate)
-                {
-                    return "ServiceMessageDateTemplate";
-                }
-                else if (serviceMessage.Action is TLMessageActionUnreadMessages)
-                {
-                    //return ServiceMessageUnreadTemplate;
-                    return "ServiceMessageLocalTemplate";
-                }
+                //else if (serviceMessage.Action is TLMessageActionDate)
+                //{
+                //    return "ServiceMessageDateTemplate";
+                //}
+                //else if (serviceMessage.Action is TLMessageActionUnreadMessages)
+                //{
+                //    //return ServiceMessageUnreadTemplate;
+                //    return "ServiceMessageLocalTemplate";
+                //}
                 else if (serviceMessage.Action is TLMessageActionPhoneCall)
                 {
                     return serviceMessage.IsOut ? "ServiceUserCallTemplate" : "ServiceFriendCallTemplate";
