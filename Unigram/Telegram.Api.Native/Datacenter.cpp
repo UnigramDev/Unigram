@@ -21,9 +21,9 @@
 
 #define ENCRYPT_KEY_IV_PARAM 0
 #define DECRYPT_KEY_IV_PARAM 8
-#define FLAGS_GET_HANDSHAKESTATE(flags) static_cast<HandshakeState>((flags) & DatacenterFlag::HandshakeState)
+#define FLAGS_GET_HANDSHAKESTATE(flags) static_cast<Datacenter::HandshakeState>((flags) & DatacenterFlag::HandshakeState)
 #define FLAGS_SET_HANDSHAKESTATE(flags, handshakeState) ((flags) & ~DatacenterFlag::HandshakeState) | static_cast<DatacenterFlag>(handshakeState)
-#define FLAGS_GET_AUTHORIZATIONSTATE(flags) static_cast<AuthorizationState>((flags) & DatacenterFlag::AuthorizationState)
+#define FLAGS_GET_AUTHORIZATIONSTATE(flags) static_cast<Datacenter::AuthorizationState>((flags) & DatacenterFlag::AuthorizationState)
 #define FLAGS_SET_AUTHORIZATIONSTATE(flags, authorizationState) ((flags) & ~DatacenterFlag::AuthorizationState) | static_cast<DatacenterFlag>(authorizationState)
 
 using namespace Telegram::Api::Native;
@@ -56,7 +56,7 @@ HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager,
 
 	if (isCdn)
 	{
-		m_flags |= DatacenterFlag::CDN;
+		m_flags = m_flags | DatacenterFlag::CDN;
 	}
 
 	m_id = id;
@@ -89,7 +89,7 @@ HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager,
 
 	if (layer != TELEGRAM_API_NATIVE_LAYER)
 	{
-		m_flags &= ~DatacenterFlag::ConnectionInitialized;
+		m_flags = m_flags & ~DatacenterFlag::ConnectionInitialized;
 	}
 
 	if (FLAGS_GET_HANDSHAKESTATE(m_flags) == HandshakeState::Authenticated)
@@ -102,12 +102,12 @@ HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager,
 	}
 	else
 	{
-		m_flags &= ~DatacenterFlag::HandshakeState;
+		m_flags = m_flags & ~DatacenterFlag::HandshakeState;
 	}
 
 	if (FLAGS_GET_AUTHORIZATIONSTATE(m_flags) != AuthorizationState::Authorized)
 	{
-		m_flags &= ~DatacenterFlag::AuthorizationState;
+		m_flags = m_flags & ~DatacenterFlag::AuthorizationState;
 	}
 
 	UINT32 serverSaltCount;
@@ -140,7 +140,7 @@ HRESULT Datacenter::get_Id(INT32* value)
 	return S_OK;
 }
 
-HRESULT Datacenter::get_Connections(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CConnection** value)
+HRESULT Datacenter::get_Connections(__FIVectorView_1_Telegram__CApi__CNative__CConnection** value)
 {
 	if (value == nullptr)
 	{
@@ -567,16 +567,13 @@ HRESULT Datacenter::GetDownloadConnection(boolean create, ComPtr<Connection>& va
 	}
 
 	auto& connection = m_downloadConnections[m_nextDownloadConnectionIndex];
-	if (create)
+	if (connection == nullptr && create)
 	{
-		if (connection == nullptr)
-		{
-			HRESULT result;
-			ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, this, ConnectionType::Download));
-		}
-
-		m_nextDownloadConnectionIndex = (m_nextDownloadConnectionIndex + 1) % DOWNLOAD_CONNECTIONS_COUNT;
+		HRESULT result;
+		ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, this, ConnectionType::Download));
 	}
+
+	m_nextDownloadConnectionIndex = (m_nextDownloadConnectionIndex + 1) % DOWNLOAD_CONNECTIONS_COUNT;
 
 	value = connection;
 	return S_OK;
@@ -592,16 +589,13 @@ HRESULT Datacenter::GetUploadConnection(boolean create, ComPtr<Connection>& valu
 	}
 
 	auto& connection = m_uploadConnections[m_nextUploadConnectionIndex];
-	if (create)
+	if (connection == nullptr && create)
 	{
-		if (connection == nullptr)
-		{
-			HRESULT result;
-			ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, this, ConnectionType::Upload));
-		}
-
-		m_nextUploadConnectionIndex = (m_nextUploadConnectionIndex + 1) % UPLOAD_CONNECTIONS_COUNT;
+		HRESULT result;
+		ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, this, ConnectionType::Upload));
 	}
+
+	m_nextUploadConnectionIndex = (m_nextUploadConnectionIndex + 1) % UPLOAD_CONNECTIONS_COUNT;
 
 	value = connection;
 	return S_OK;
@@ -614,9 +608,9 @@ HRESULT Datacenter::BeginHandshake(bool reconnect, bool reset)
 	if (reset)
 	{
 		m_authenticationContext.reset();
-		m_flags &= ~DatacenterFlag::HandshakeState;
+		m_flags = m_flags & ~DatacenterFlag::HandshakeState;
 	}
-	else if (static_cast<INT32>(m_flags) & static_cast<INT32>(HandshakeState::Started))
+	else if (static_cast<INT32>(static_cast<DatacenterFlag>(m_flags)) & static_cast<INT32>(HandshakeState::Started))
 	{
 		return S_FALSE;
 	}
@@ -666,16 +660,20 @@ HRESULT Datacenter::BeginHandshake(bool reconnect, bool reset)
 	ReturnIfFailed(result, MakeAndInitialize<Methods::TLReqPQ>(&pqRequest, handshakeContext->Nonce));
 
 	m_authenticationContext = std::move(handshakeContext);
-	m_flags |= static_cast<DatacenterFlag>(HandshakeState::Started);
+	m_flags = m_flags | static_cast<DatacenterFlag>(HandshakeState::Started);
 
-	return genericConnection->SendUnencryptedMessage(pqRequest.Get(), false);
+	ReturnIfFailed(result, genericConnection->SendUnencryptedMessage(pqRequest.Get(), false));
+
+	LOG_TRACE(m_connectionManager.Get(), LogLevel::Information, L"Handshake for datacenter=%d started\n", m_id);
+
+	return S_OK;
 }
 
 HRESULT Datacenter::ImportAuthorization()
 {
 	auto lock = LockCriticalSection();
 
-	if (static_cast<INT32>(m_flags) & static_cast<INT32>(AuthorizationState::Importing))
+	if (static_cast<INT32>(static_cast<DatacenterFlag>(m_flags)) & static_cast<INT32>(AuthorizationState::Importing))
 	{
 		return S_FALSE;
 	}
@@ -686,7 +684,7 @@ HRESULT Datacenter::ImportAuthorization()
 
 	auto authExportAuthorization = Make<Methods::TLAuthExportAuthorization>(m_id);
 
-	m_flags |= static_cast<DatacenterFlag>(AuthorizationState::Importing);
+	m_flags = m_flags | static_cast<DatacenterFlag>(AuthorizationState::Importing);
 
 	HRESULT result;
 	INT32 requestToken;
@@ -707,36 +705,38 @@ HRESULT Datacenter::ImportAuthorization()
 			INT32 requestToken;
 			return datacenter->m_connectionManager->SendRequestWithFlags(authImportAuthorization.Get(), Callback<ISendRequestCompletedCallback>([datacenter](IMessageResponse* response, IMessageError* error) -> HRESULT
 			{
+				auto lock = datacenter->LockCriticalSection();
+
+				if (error == nullptr)
 				{
-					auto lock = datacenter->LockCriticalSection();
+					datacenter->m_flags = datacenter->m_flags | static_cast<DatacenterFlag>(AuthorizationState::Authorized);
 
-					if (error == nullptr)
-					{
-						datacenter->m_flags |= static_cast<DatacenterFlag>(AuthorizationState::Authorized);
+					HRESULT result;
+					ReturnIfFailed(result, datacenter->m_connectionManager->OnDatacenterImportAuthorizationCompleted(datacenter.Get()));
 
-						HRESULT result;
-						ReturnIfFailed(result, datacenter->m_connectionManager->OnDatacenterImportAuthorizationCompleted(datacenter.Get()));
+					LOG_TRACE(datacenter->m_connectionManager.Get(), LogLevel::Information, L"Authorization for datacenter=%d imported\n", datacenter->GetId());
 
-						return datacenter->SaveSettings();
-					}
-					else
-					{
-						datacenter->m_flags &= ~DatacenterFlag::AuthorizationState;
-						return S_OK;
-					}
+					return datacenter->SaveSettings();
+				}
+				else
+				{
+					datacenter->m_flags = datacenter->m_flags & ~DatacenterFlag::AuthorizationState;
+					return S_OK;
 				}
 			}).Get(), nullptr, datacenter->m_id, ConnectionType::Generic, RequestFlag::EnableUnauthorized | RequestFlag::Immediate, &requestToken);
 		}
 		else
 		{
-			datacenter->m_flags &= ~DatacenterFlag::AuthorizationState;
+			datacenter->m_flags = datacenter->m_flags & ~DatacenterFlag::AuthorizationState;
 			return S_OK;
 		}
 	}).Get(), nullptr, DEFAULT_DATACENTER_ID, ConnectionType::Generic, RequestFlag::Immediate, &requestToken)))
 	{
-		m_flags &= ~DatacenterFlag::AuthorizationState;
+		m_flags = m_flags & ~DatacenterFlag::AuthorizationState;
 		return result;
 	}
+
+	LOG_TRACE(m_connectionManager.Get(), LogLevel::Information, L"Importing authorization for datacenter=%d\n", m_id);
 
 	return S_OK;
 }
@@ -752,7 +752,7 @@ HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 
 	auto getFutureSalts = Make<Methods::TLGetFutureSalts>(count);
 
-	m_flags |= DatacenterFlag::RequestingFutureSalts;
+	m_flags = m_flags | DatacenterFlag::RequestingFutureSalts;
 
 	HRESULT result;
 	INT32 requestToken;
@@ -762,12 +762,14 @@ HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 	{
 		auto lock = datacenter->LockCriticalSection();
 
-		datacenter->m_flags &= ~DatacenterFlag::RequestingFutureSalts;
+		datacenter->m_flags = datacenter->m_flags & ~DatacenterFlag::RequestingFutureSalts;
 
 		if (error == nullptr)
 		{
 			auto futureSalts = GetMessageResponseObject<TLFutureSalts>(response);
 			datacenter->MergeServerSalts(futureSalts->GetSalts());
+
+			LOG_TRACE(datacenter->m_connectionManager.Get(), LogLevel::Information, L"Server salts for datacenter=%d updated\n", datacenter->m_id);
 
 			return datacenter->SaveSettings();
 		}
@@ -777,9 +779,11 @@ HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 		}
 	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::WithoutLogin | RequestFlag::EnableUnauthorized | RequestFlag::Immediate, &requestToken)))
 	{
-		m_flags &= ~DatacenterFlag::RequestingFutureSalts;
+		m_flags = m_flags & ~DatacenterFlag::RequestingFutureSalts;
 		return result;
 	}
+
+	LOG_TRACE(m_connectionManager.Get(), LogLevel::Information, L"Requesting future salts for datacenter=%d\n", m_id);
 
 	return S_OK;
 }
@@ -890,7 +894,7 @@ HRESULT Datacenter::OnConnectionClosed(Connection* connection)
 		if (FLAGS_GET_HANDSHAKESTATE(m_flags) != HandshakeState::Authenticated)
 		{
 			m_authenticationContext.reset();
-			m_flags &= ~DatacenterFlag::HandshakeState;
+			m_flags = m_flags & ~DatacenterFlag::HandshakeState;
 		}
 	}
 
@@ -905,7 +909,7 @@ HRESULT Datacenter::OnHandshakePQResponse(Connection* connection, TLResPQ* respo
 	HandshakeContext* handshakeContext;
 	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, HandshakeState::Started));
 
-	m_flags |= static_cast<DatacenterFlag>(HandshakeState::PQ);
+	m_flags = m_flags | static_cast<DatacenterFlag>(HandshakeState::PQ);
 
 	if (!DatacenterCryptography::CheckNonces(handshakeContext->Nonce, response->GetNonce()))
 	{
@@ -991,7 +995,7 @@ HRESULT Datacenter::OnHandshakeServerDHResponse(Connection* connection, TLServer
 	HandshakeContext* handshakeContext;
 	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, HandshakeState::PQ));
 
-	m_flags |= static_cast<DatacenterFlag>(HandshakeState::ServerDH);
+	m_flags = m_flags | static_cast<DatacenterFlag>(HandshakeState::ServerDH);
 
 	BYTE ivBuffer[32];
 	BYTE aesKeyAndIvBuffer[104];
@@ -1179,7 +1183,7 @@ HRESULT Datacenter::OnHandshakeClientDHResponse(Connection* connection, TLDHGenO
 		HandshakeContext* handshakeContext;
 		ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, HandshakeState::ServerDH));
 
-		m_flags |= static_cast<DatacenterFlag>(HandshakeState::ClientDH);
+		m_flags = m_flags | static_cast<DatacenterFlag>(HandshakeState::ClientDH);
 
 		if (!(DatacenterCryptography::CheckNonces(handshakeContext->Nonce, response->GetNonce()) &&
 			DatacenterCryptography::CheckNonces(handshakeContext->ServerNonce, response->GetServerNonce())))
@@ -1217,16 +1221,21 @@ HRESULT Datacenter::OnHandshakeClientDHResponse(Connection* connection, TLDHGenO
 
 		timeDifference = handshakeContext->TimeDifference;
 		m_authenticationContext = std::move(authKeyContext);
-		m_flags |= static_cast<DatacenterFlag>(HandshakeState::Authenticated);
+		m_flags = m_flags | static_cast<DatacenterFlag>(HandshakeState::Authenticated);
 	}
 
 	ReturnIfFailed(result, m_connectionManager->OnDatacenterHandshakeCompleted(this, timeDifference));
 
+	LOG_TRACE(m_connectionManager.Get(), LogLevel::Information, L"Handshake for datacenter id=%d completed\n", m_id);
+
 	return SaveSettings();
 }
 
-HRESULT Datacenter::OnBadServerSaltResponse(INT64 messageId, TLBadServerSalt* response)
+HRESULT Datacenter::OnBadServerSaltResponse(Connection* connection, INT64 messageId, TLBadServerSalt* response)
 {
+	LOG_TRACE(m_connectionManager.Get(), LogLevel::Information, L"BadServerSalt error=%d for message with id=%llu on connection with type=%d in datacenter=%d\n",
+		response->GetErrorCode(), response->GetBadMessageContext()->Id, connection->GetType(), m_id);
+
 	{
 		auto lock = LockCriticalSection();
 
@@ -1246,8 +1255,11 @@ HRESULT Datacenter::OnBadServerSaltResponse(INT64 messageId, TLBadServerSalt* re
 	return SaveSettings();
 }
 
-HRESULT Datacenter::OnBadMessageResponse(INT64 messageId, TLBadMessage* response)
+HRESULT Datacenter::OnBadMessageResponse(Connection* connection, INT64 messageId, TLBadMessage* response)
 {
+	LOG_TRACE(m_connectionManager.Get(), LogLevel::Information, L"BadMessage error=%d for message with id=%llu on connection with type=%d in datacenter=%d\n",
+		response->GetErrorCode(), response->GetBadMessageContext()->Id, connection->GetType(), m_id);
+
 	switch (response->GetErrorCode())
 	{
 	case 16:
@@ -1256,9 +1268,13 @@ HRESULT Datacenter::OnBadMessageResponse(INT64 messageId, TLBadMessage* response
 	case 32:
 	case 33:
 	case 64:
-		RecreateSessions();
+	{
+		//RecreateSessions();
+
+		connection->RecreateSession();
 
 		return m_connectionManager->OnDatacenterBadMessage(this, response->GetBadMessageContext()->Id, messageId);
+	}
 	default:
 		return S_OK;
 	}

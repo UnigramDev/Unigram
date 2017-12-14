@@ -19,8 +19,6 @@
 #include "Collections.h"
 #include "Helpers\COMHelper.h"
 
-#include "MethodLogger.h"
-
 #define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>((flags) & ConnectionManagerFlag::ConnectionState)
 #define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) ((flags) & ~ConnectionManagerFlag::ConnectionState) | static_cast<ConnectionManagerFlag>(connectionState)
 #define FLAGS_GET_NETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>(flags & ConnectionManagerFlag::NetworkType) >> 2)
@@ -94,8 +92,6 @@ ConnectionManager::~ConnectionManager()
 
 HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount)
 {
-	//LOG_TRACE_METHOD(this);
-
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
 	{
@@ -321,6 +317,8 @@ HRESULT ConnectionManager::get_ProxySettings(IProxySettings** value)
 
 	auto lock = LockCriticalSection();
 
+	return S_OK;
+
 	return m_proxySettings.CopyTo(value);
 }
 
@@ -426,15 +424,18 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 		m_lastRequestToken = requestToken;
 	}
 
+	LOG_TRACE(this, LogLevel::Information, L"Enqueuing request with token=%d for connection with type=%d in datacenter=%d\n", requestToken, connectionType, datacenterId);
 
 #pragma message("Potential deadlock")
 
-	ReturnIfFailed(result, SubmitWork([this, flags, requestToken, request]() -> HRESULT
+	ReturnIfFailed(result, SubmitWork([this, flags, request]() -> HRESULT
 	{
 		{
 			auto requestsLock = m_requestsCriticalSection.Lock();
 			m_requestsQueue.push_back(request);
 		}
+
+		LOG_TRACE(this, LogLevel::Information, L"Request with token=%d for connection with type=%d in datacenter=%d enqueued\n", request->GetToken(), request->GetConnectionType(), request->GetDatacenterId());
 
 		if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
 		{
@@ -761,7 +762,6 @@ HRESULT ConnectionManager::UpdateNetworkStatus(INetworkInformationStatics* netwo
 HRESULT ConnectionManager::Reset()
 {
 	auto lock = LockCriticalSection();
-	auto requestsLock = m_requestsCriticalSection.Lock();
 
 	CloseAllObjects(true);
 
@@ -770,16 +770,21 @@ HRESULT ConnectionManager::Reset()
 		datacenter.second->Close();
 	}
 
+	{
+		auto requestsLock = m_requestsCriticalSection.Lock();
+
+		m_requestsQueue.clear();
+		m_runningRequests.clear();
+		m_quickAckRequests.clear();
+
+		ZeroMemory(m_runningRequestCount, sizeof(m_runningRequestCount));
+	}
+
 	m_userId = 0;
 	m_currentRoundTripTime = 0;
 	m_flags = FLAGS_SET_CONNECTIONSTATE(m_flags & (ConnectionManagerFlag::NetworkType | ConnectionManagerFlag::UseIPv6 | ConnectionManagerFlag::UseTestBackend), ConnectionState::Connecting);
 	m_datacenters.clear();
 	m_cdnPublicKeys.clear();
-	m_requestsQueue.clear();
-	m_runningRequests.clear();
-	m_quickAckRequests.clear();
-
-	ZeroMemory(m_runningRequestCount, sizeof(m_runningRequestCount));
 
 	HRESULT result;
 	ReturnIfFailed(result, m_processRequestsWork.AttachToThreadpool(this));
@@ -1257,7 +1262,7 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 
 	if (!datacenterContextIterator->second.Datacenter->IsAuthenticated())
 	{
-		datacenterContextIterator->second.Flags |= DatacenterRequestContextFlag::RequiresHandshake;
+		datacenterContextIterator->second.Flags = datacenterContextIterator->second.Flags | DatacenterRequestContextFlag::RequiresHandshake;
 		return S_FALSE;
 	}
 
@@ -1265,7 +1270,7 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 	{
 		if (m_userId != 0 && datacenterId != m_movingToDatacenterId)
 		{
-			datacenterContextIterator->second.Flags |= DatacenterRequestContextFlag::RequiresAuthorization;
+			datacenterContextIterator->second.Flags = datacenterContextIterator->second.Flags | DatacenterRequestContextFlag::RequiresAuthorization;
 		}
 
 		return S_FALSE;
@@ -1347,8 +1352,6 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 
 HRESULT ConnectionManager::ProcessContextRequests(ProcessRequestsContext* context)
 {
-	//LOG_TRACE_METHOD(this);
-
 	HRESULT result = S_OK;
 	bool updateDatacenters = false;
 
@@ -1402,6 +1405,8 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 			return E_FAIL;
 		}
 	}
+
+	LOG_TRACE(this, LogLevel::Information, L"Processing requests for connection with type=%d in datacenter=%d\n", connection->GetType(), datacenterContext->Datacenter->GetId());
 
 	INT64 lastRpcMessageId = 0;
 	bool requiresQuickAck = false;
@@ -1469,11 +1474,15 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 		ReturnIfFailed(result, connection->SendEncryptedMessage(&messageContext, messageBody.Get(), nullptr));
 	}
 
-	auto datacenterId = datacenterContext->Datacenter->GetId();
-	for (auto& request : datacenterContext->GenericRequests)
 	{
-		m_runningRequestCount[static_cast<UINT32>(request->GetConnectionType()) >> 1]++;
-		m_runningRequests.push_back(std::make_pair(datacenterId, std::move(request)));
+		auto requestsLock = m_requestsCriticalSection.Lock();
+
+		auto datacenterId = datacenterContext->Datacenter->GetId();
+		for (auto& request : datacenterContext->GenericRequests)
+		{
+			m_runningRequestCount[static_cast<UINT32>(request->GetConnectionType()) >> 1]++;
+			m_runningRequests.push_back(std::make_pair(datacenterId, std::move(request)));
+		}
 	}
 
 	return S_OK;
@@ -1482,6 +1491,9 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 HRESULT ConnectionManager::ProcessConnectionRequest(Connection* connection, MessageRequest* request)
 {
 	auto& datacenter = connection->GetDatacenter();
+
+	LOG_TRACE(this, LogLevel::Information, L"Processing request with token=%d for connection with type=%d in datacenter=%d\n", request->GetToken(), connection->GetType(), datacenter->GetId());
+
 	auto messageId = GenerateMessageId();
 	request->SetMessageContext({ messageId, connection->GenerateMessageSequenceNumber(true) });
 
@@ -1553,6 +1565,8 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 		m_runningRequests.erase(requestIterator);
 	}
 
+	LOG_TRACE(this, LogLevel::Information, L"Completing request with token=%d for connection with type=%d in datacenter=%d\n", request->GetToken(), connection->GetType(), connection->GetDatacenter()->GetId());
+
 	HRESULT result = S_OK;
 	ComPtr<ITLRPCError> rpcError;
 	if (SUCCEEDED(messageBody->QueryInterface(IID_PPV_ARGS(&rpcError))))
@@ -1570,6 +1584,7 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 			{
 				auto messageError = Make<MessageError>(errorCode, std::move(errorMessage));
 				auto messageResponse = Make<MessageResponse>(messageContext->Id, request->GetConnectionType(), messageBody);
+
 				return sendCompletedCallback->Invoke(messageResponse.Get(), messageError.Get());
 			}
 
@@ -1759,9 +1774,11 @@ HRESULT ConnectionManager::AdjustCurrentTime(INT64 messageId)
 	auto lock = LockCriticalSection();
 
 	INT64 currentTime = ConnectionManager::GetCurrentSystemTime();
-	INT64 messageTime = static_cast<INT64>((messageId / 4294967296.0) * 1000.0);
+	INT64 messageTime = static_cast<INT64>((static_cast<double>(messageId) / 4294967296.0) * 1000.0);
 
-	m_timeDifference = static_cast<INT32>((messageTime - currentTime - (m_currentRoundTripTime / 2)) / 1000LL);
+	auto delta = messageTime - currentTime;
+
+	m_timeDifference = static_cast<INT32>((static_cast<double>(delta) - (static_cast<double>(m_currentRoundTripTime) / 2.0)) / 1000.0);
 	m_lastOutgoingMessageId = 0;
 
 	return SaveSettings();
@@ -1823,10 +1840,14 @@ HRESULT ConnectionManager::OnApplicationResuming(IInspectable* sender, IInspecta
 
 HRESULT ConnectionManager::OnConnectionOpening(Connection* connection)
 {
+	auto& datacenter = connection->GetDatacenter();
+
+	LOG_TRACE(this, LogLevel::Information, L"Opening connection with type=%d in datacenter=%d\n", connection->GetType(), datacenter->GetId());
+
 	if (connection->GetType() == ConnectionType::Generic)
 	{
 		auto lock = LockCriticalSection();
-		auto& datacenter = connection->GetDatacenter();
+		//auto& datacenter = connection->GetDatacenter();
 
 		if (datacenter->GetId() == m_currentDatacenterId && FLAGS_GET_CONNECTIONSTATE(m_flags) != ConnectionState::Connected)
 		{
@@ -1843,6 +1864,8 @@ HRESULT ConnectionManager::OnConnectionOpening(Connection* connection)
 HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 {
 	auto& datacenter = connection->GetDatacenter();
+
+	LOG_TRACE(this, LogLevel::Information, L"Connection with type=%d in datacenter=%d opened\n", connection->GetType(), datacenter->GetId());
 
 	if (connection->GetType() == ConnectionType::Generic)
 	{
@@ -1874,7 +1897,7 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection, int wsaErr
 {
 	auto datacenter = connection->GetDatacenter();
 
-	LogTraceError(wsaError);
+	LOG_TRACE(this, LogLevel::Information, L"Connection with type=%d in datacenter=%d closed, WSAError: 0x%08X\n", connection->GetType(), datacenter->GetId(), wsaError);
 
 	ResetRequests([datacenter, connection](auto datacenterId, auto const& request) -> bool
 	{
@@ -2009,6 +2032,8 @@ HRESULT ConnectionManager::OnConnectionQuickAckReceived(Connection* connection, 
 HRESULT ConnectionManager::OnConnectionSessionCreated(Connection* connection, INT64 firstMessageId)
 {
 	auto datacenter = connection->GetDatacenter();
+
+	LOG_TRACE(this, LogLevel::Information, L"Session created for connection with type=%d in datacenter=%d\n", connection->GetType(), datacenter->GetId());
 
 	ResetRequests([datacenter, connection, firstMessageId](auto datacenterId, auto const& request) -> bool
 	{

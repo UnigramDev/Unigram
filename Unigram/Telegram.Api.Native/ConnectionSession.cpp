@@ -13,7 +13,7 @@ using namespace Telegram::Api::Native::TL;
 ConnectionSession::ConnectionSession() :
 	m_nextMessageSequenceNumber(0),
 	m_minProcessedMessageId(0),
-	m_id(GenereateNewSessionId())
+	m_sessionId(GenereateNewSessionId())
 {
 }
 
@@ -30,7 +30,7 @@ void ConnectionSession::RecreateSession()
 	m_processedSessionChanges.clear();
 	m_nextMessageSequenceNumber = 0;
 
-	m_id = GenereateNewSessionId();
+	m_sessionId = GenereateNewSessionId();
 }
 
 HRESULT ConnectionSession::AddConfirmationMessage(ConnectionManager* connectionManager, std::vector<ComPtr<TLMessage>>& messages)
@@ -50,7 +50,7 @@ HRESULT ConnectionSession::AddConfirmationMessage(ConnectionManager* connectionM
 	return S_OK;
 }
 
-HRESULT ConnectionSession::CreateConfirmationMessage(_In_ ConnectionManager* connectionManager, _Out_ TL::TLMessage** messages)
+HRESULT ConnectionSession::CreateConfirmationMessage(ConnectionManager* connectionManager, TL::TLMessage** messages)
 {
 	auto msgAck = Make<TLMsgsAck>();
 	auto& messagesIds = msgAck->GetMessagesIds();

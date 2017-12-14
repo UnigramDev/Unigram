@@ -43,12 +43,12 @@ namespace Telegram
 
 				inline INT64 GetSessionId()
 				{
-					return m_id;
+					return m_sessionId;
 				}
 
 				inline void SetSessionId(INT64 sessionId)
 				{
-					m_id = sessionId;
+					m_sessionId = sessionId;
 				}
 
 				inline bool HasMessagesToConfirm()
@@ -60,7 +60,7 @@ namespace Telegram
 				static INT64 GenereateNewSessionId();
 
 			private:
-				INT64 m_id;
+				INT64 m_sessionId;
 				UINT32 m_nextMessageSequenceNumber;
 				INT64 m_minProcessedMessageId;
 				std::vector<INT64> m_processedMessageIds;

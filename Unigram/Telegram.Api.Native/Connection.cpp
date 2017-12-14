@@ -175,15 +175,20 @@ HRESULT Connection::Connect(bool ipv6)
 		return S_FALSE;
 	}
 
+	HRESULT result;
+	ComPtr<Connection> connection = this;
+
 	auto& connectionManager = m_datacenter->GetConnectionManager();
 	if (!connectionManager->IsNetworkAvailable())
 	{
-		connectionManager->OnConnectionClosed(this, ERROR_NO_NETWORK);
+		ReturnIfFailed(result, connectionManager->SubmitWork([connection, connectionManager]()-> HRESULT
+		{
+			return connectionManager->OnConnectionClosed(connection.Get(), ERROR_NO_NETWORK);
+		}));
 
 		return HRESULT_FROM_WIN32(ERROR_NO_NETWORK);
 	}
 
-	HRESULT result;
 	ServerEndpoint* endpoint;
 	if (FAILED(result = m_datacenter->GetCurrentEndpoint(m_type, ipv6, &endpoint)))
 	{
@@ -234,12 +239,11 @@ HRESULT Connection::Connect(bool ipv6)
 
 	if (ipv6)
 	{
-		m_flags |= ConnectionFlag::IPv6;
+		m_flags = m_flags | ConnectionFlag::IPv6;
 	}
 
 	m_flags = FLAGS_SET_CURRENTNETWORKTYPE(m_flags, currentNetworkType) | static_cast<ConnectionFlag>(ConnectionState::Connecting);
 
-	ComPtr<Connection> connection = this;
 	return connectionManager->SubmitWork([connection, connectionManager]()-> HRESULT
 	{
 		return connectionManager->OnConnectionOpening(connection.Get());
@@ -292,7 +296,7 @@ HRESULT Connection::CreateMessagePacket(UINT32 messageLength, bool reportAck, Co
 
 		ReturnIfFailed(result, packetWriter->put_Position(64));
 
-		m_flags |= ConnectionFlag::CryptographyInitialized;
+		m_flags = m_flags | ConnectionFlag::CryptographyInitialized;
 	}
 
 	if (packetLength < 0x7f)
@@ -390,6 +394,8 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 	{
 		auto& connectionManager = m_datacenter->GetConnectionManager();
 		connectionManager->IncrementConnectionSentBytes(m_type, packetWriter->GetCapacity());
+
+		LOG_TRACE(connectionManager.Get(), LogLevel::Information, L"Sending %d bytes on connection with type=%d in datacenter=%d\n", packetWriter->GetCapacity(), m_type, m_datacenter->GetId());
 	}
 
 	return result;
@@ -462,6 +468,8 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, bool reportAc
 	{
 		auto& connectionManager = m_datacenter->GetConnectionManager();
 		connectionManager->IncrementConnectionSentBytes(m_type, packetWriter->GetCapacity());
+
+		LOG_TRACE(connectionManager.Get(), LogLevel::Information, L"Sending %d bytes on connection with type=%d in datacenter=%d\n", packetWriter->GetCapacity(), m_type, m_datacenter->GetId());
 	}
 
 	return result;
@@ -537,7 +545,7 @@ HRESULT Connection::OnNewSessionCreatedResponse(TLNewSessionCreated* response)
 		AddProcessedSession(response->GetUniqueId());
 	}
 
-	return connectionManager->OnConnectionSessionCreated(this, response->GetFirstMesssageId());
+	return connectionManager->OnConnectionSessionCreated(this, response->GetFirstMessageId());
 }
 
 HRESULT Connection::OnMsgDetailedInfoResponse(TLMsgDetailedInfo* response)
@@ -601,7 +609,7 @@ HRESULT Connection::OnSocketConnected()
 		return OnProxyConnected();
 	}
 
-	m_flags |= static_cast<ConnectionFlag>(ConnectionState::Connected);
+	m_flags = m_flags | static_cast<ConnectionFlag>(ConnectionState::Connected);
 	m_failedConnectionCount = 0;
 
 	HRESULT result;
@@ -618,7 +626,7 @@ HRESULT Connection::OnSocketConnected()
 HRESULT Connection::OnSocketDisconnected(int wsaError)
 {
 	auto connectionState = FLAGS_GET_CONNECTIONSTATE(m_flags);
-	m_flags &= ~(ConnectionFlag::ConnectionState | ConnectionFlag::ProxyHandshakeState | ConnectionFlag::CryptographyInitialized);
+	m_flags = m_flags & ~(ConnectionFlag::ConnectionState | ConnectionFlag::ProxyHandshakeState | ConnectionFlag::CryptographyInitialized);
 	m_partialPacketBuffer.Reset();
 
 	HRESULT result;
@@ -649,7 +657,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 
 			if (switchToNextEndpoint)
 			{
-				m_flags |= ConnectionFlag::TryingNextEndpoint;
+				m_flags = m_flags | ConnectionFlag::TryingNextEndpoint;
 				m_failedConnectionCount = 0;
 				m_datacenter->NextEndpoint(m_type, (m_flags & ConnectionFlag::IPv6) == ConnectionFlag::IPv6);
 			}
@@ -751,11 +759,14 @@ HRESULT Connection::OnProxyConnected()
 	HRESULT result;
 	ComPtr<IProxySettings> proxySettings;
 	connectionManager->get_ProxySettings(&proxySettings);
-	ReturnIfFailed(result, connectionManager->get_ProxySettings(&proxySettings));
+
+	if (proxySettings == nullptr)
+	{
+		return E_INVALID_PROTOCOL_OPERATION;
+	}
 
 	ComPtr<IProxyCredentials> proxyCredentials;
 	proxySettings->get_Credentials(&proxyCredentials);
-	ReturnIfFailed(result, proxySettings->get_Credentials(&proxyCredentials));
 
 	if (proxyCredentials == nullptr)
 	{
@@ -800,7 +811,6 @@ HRESULT Connection::OnProxyGreetingResponse(BYTE* buffer, UINT32 length)
 		HRESULT result;
 		ComPtr<IProxySettings> proxySettings;
 		connectionManager->get_ProxySettings(&proxySettings);
-		ReturnIfFailed(result, connectionManager->get_ProxySettings(&proxySettings));
 
 		if (proxySettings == nullptr)
 		{
@@ -809,7 +819,6 @@ HRESULT Connection::OnProxyGreetingResponse(BYTE* buffer, UINT32 length)
 
 		ComPtr<IProxyCredentials> proxyCredentials;
 		proxySettings->get_Credentials(&proxyCredentials);
-		ReturnIfFailed(result, proxySettings->get_Credentials(&proxyCredentials));
 
 		if (proxyCredentials == nullptr)
 		{
@@ -857,7 +866,7 @@ HRESULT Connection::OnProxyAuthenticationResponse(BYTE* buffer, UINT32 length)
 
 	HRESULT result;
 	ServerEndpoint* endpoint;
-	bool ipv6 = (m_flags &ConnectionFlag::IPv6) == ConnectionFlag::IPv6;
+	bool ipv6 = (m_flags & ConnectionFlag::IPv6) == ConnectionFlag::IPv6;
 	ReturnIfFailed(result, m_datacenter->GetCurrentEndpoint(m_type, ipv6, &endpoint));
 
 	if (ipv6)
@@ -943,6 +952,8 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 
 	UINT32 packetPosition;
 	auto& connectionManager = m_datacenter->GetConnectionManager();
+
+	LOG_TRACE(connectionManager.Get(), LogLevel::Information, L"Received %d bytes on connection with type=%d in datacenter=%d\n", length, m_type, m_datacenter->GetId());
 
 	while (packetReader->HasUnconsumedBuffer())
 	{
@@ -1065,5 +1076,3 @@ HRESULT Connection::GetProxyEndpoint(IProxySettings* proxySettings, ServerEndpoi
 
 	return proxySettings->get_Port(&endpoint->Port);
 }
-
-
