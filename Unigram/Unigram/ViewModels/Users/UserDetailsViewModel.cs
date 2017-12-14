@@ -294,10 +294,10 @@ namespace Unigram.ViewModels.Users
             var user = Item as TLUser;
             if (user != null)
             {
-                var opt1 = new RadioButton { Content = "Spam", Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-                var opt2 = new RadioButton { Content = "Violence", Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-                var opt3 = new RadioButton { Content = "Pornography", Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-                var opt4 = new RadioButton { Content = "Other", Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
+                var opt1 = new RadioButton { Content = Strings.Android.ReportChatSpam, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
+                var opt2 = new RadioButton { Content = Strings.Android.ReportChatViolence, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
+                var opt3 = new RadioButton { Content = Strings.Android.ReportChatPornography, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
+                var opt4 = new RadioButton { Content = Strings.Android.ReportChatOther, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
                 var stack = new StackPanel();
                 stack.Children.Add(opt1);
                 stack.Children.Add(opt2);
@@ -307,11 +307,11 @@ namespace Unigram.ViewModels.Users
 
                 var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
                 dialog.Content = stack;
-                dialog.Title = "Resources.Report";
+                dialog.Title = Strings.Android.ReportChat;
                 dialog.IsPrimaryButtonEnabled = true;
                 dialog.IsSecondaryButtonEnabled = true;
-                dialog.PrimaryButtonText = "Resources.OK";
-                dialog.SecondaryButtonText = "Resources.Cancel";
+                dialog.PrimaryButtonText = Strings.Android.OK;
+                dialog.SecondaryButtonText = Strings.Android.Cancel;
 
                 var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
@@ -324,20 +324,20 @@ namespace Unigram.ViewModels.Users
                                 ? new TLInputReportReasonPornography()
                                 : (TLReportReasonBase)new TLInputReportReasonOther()));
 
-                    if (reason.TypeId == TLType.InputReportReasonOther)
+                    if (reason is TLInputReportReasonOther other)
                     {
                         var input = new InputDialog();
-                        input.Title = "Resources.Report";
-                        input.PlaceholderText = "Resources.Description";
+                        input.Title = Strings.Android.ReportChat;
+                        input.PlaceholderText = Strings.Android.ReportChatDescription;
                         input.IsPrimaryButtonEnabled = true;
                         input.IsSecondaryButtonEnabled = true;
-                        input.PrimaryButtonText = "Resources.OK";
-                        input.SecondaryButtonText = "Resources.Cancel";
+                        input.PrimaryButtonText = Strings.Android.OK;
+                        input.SecondaryButtonText = Strings.Android.Cancel;
 
                         var inputResult = await input.ShowQueuedAsync();
                         if (inputResult == ContentDialogResult.Primary)
                         {
-                            reason = new TLInputReportReasonOther { Text = input.Text };
+                            other.Text = input.Text;
                         }
                         else
                         {
@@ -364,11 +364,7 @@ namespace Unigram.ViewModels.Users
                     return false;
                 }
 
-                var clientDelta = MTProtoService.Current.ClientTicksDelta;
-                var utc0SecsInt = notifySettings.MuteUntil - clientDelta / 4294967296.0;
-
-                var muteUntilDateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
-                return muteUntilDateTime > DateTime.Now;
+                return notifySettings.IsMuted;
             }
         }
 

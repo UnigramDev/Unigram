@@ -279,29 +279,41 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
+            var item = _item;
+            if (item == null)
+            {
+                return;
+            }
+
+            var full = _full;
+            if (full == null)
+            {
+                return;
+            }
+
             var about = _about.Format();
             var title = _title.Trim();
-            var username = _isPublic ? _username.Trim() : null;
+            var username = _isPublic ? _username?.Trim() : null;
 
-            if (_item != null && !string.Equals(username, _item.Username))
+            if (item != null && !string.Equals(username, item.Username))
             {
-                var response = await ProtoService.UpdateUsernameAsync(_item.ToInputChannel(), username);
+                var response = await ProtoService.UpdateUsernameAsync(item.ToInputChannel(), username);
                 if (response.IsSucceeded)
                 {
-                    _item.Username = username;
-                    _item.HasUsername = username != null;
-                    _item.RaisePropertyChanged(() => _item.Username);
-                    _item.RaisePropertyChanged(() => _item.HasUsername);
+                    item.Username = username;
+                    item.HasUsername = username != null;
+                    item.RaisePropertyChanged(() => item.Username);
+                    item.RaisePropertyChanged(() => item.HasUsername);
                 }
             }
 
-            if (_item != null && !string.Equals(title, _item.Title))
+            if (item != null && !string.Equals(title, item.Title))
             {
-                var response = await ProtoService.EditTitleAsync(_item, title);
+                var response = await ProtoService.EditTitleAsync(item, title);
                 if (response.IsSucceeded)
                 {
-                    _item.Title = title;
-                    _item.RaisePropertyChanged(() => _item.Title);
+                    item.Title = title;
+                    item.RaisePropertyChanged(() => item.Title);
                 }
                 else
                 {
@@ -310,13 +322,13 @@ namespace Unigram.ViewModels.Channels
                 }
             }
 
-            if (_full != null && !string.Equals(about, _full.About))
+            if (full != null && !string.Equals(about, full.About))
             {
-                var response = await ProtoService.EditAboutAsync(_item, about);
+                var response = await ProtoService.EditAboutAsync(item, about);
                 if (response.IsSucceeded)
                 {
-                    _full.About = about;
-                    _full.RaisePropertyChanged(() => _full.About);
+                    full.About = about;
+                    full.RaisePropertyChanged(() => full.About);
                 }
                 else
                 {
@@ -325,9 +337,9 @@ namespace Unigram.ViewModels.Channels
                 }
             }
 
-            if (_isSignatures != _item.IsSignatures)
+            if (_isSignatures != item.IsSignatures)
             {
-                var response = await ProtoService.ToggleSignaturesAsync(_item.ToInputChannel(), _isSignatures);
+                var response = await ProtoService.ToggleSignaturesAsync(item.ToInputChannel(), _isSignatures);
                 if (response.IsSucceeded)
                 {
 
@@ -339,9 +351,9 @@ namespace Unigram.ViewModels.Channels
                 }
             }
 
-            if (_full != null && _isHiddenPreHistory != _full.IsHiddenPreHistory)
+            if (full != null && _isHiddenPreHistory != full.IsHiddenPreHistory)
             {
-                var response = await ProtoService.TogglePreHistoryHiddenAsync(_item.ToInputChannel(), _isHiddenPreHistory);
+                var response = await ProtoService.TogglePreHistoryHiddenAsync(item.ToInputChannel(), _isHiddenPreHistory);
                 if (response.IsSucceeded)
                 {
 

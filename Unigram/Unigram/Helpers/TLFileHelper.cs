@@ -89,7 +89,16 @@ namespace Unigram.Helpers
                 else
                 {
                     var picker = new FileSavePicker();
-                    picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { document.GetFileExtension() });
+
+                    if (!string.IsNullOrEmpty(extension))
+                    {
+                        picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
+                    }
+                    else
+                    {
+                        picker.FileTypeChoices.Add("Unknown", new[] { ".dat" });
+                    }
+
                     picker.SuggestedStartLocation = PickerLocationId.Downloads;
                     picker.SuggestedFileName = resultName;
 
