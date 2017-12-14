@@ -42,22 +42,16 @@ ConnectionSocket::~ConnectionSocket()
 
 void ConnectionSocket::SetTimeout(INT32 timeoutMs)
 {
-	auto lock = m_criticalSection.Lock();
-
 	TimeoutToFileTime(timeoutMs, m_timeout);
 }
 
 HRESULT ConnectionSocket::Close()
 {
-	auto lock = m_criticalSection.Lock();
-
 	return CloseSocket(NO_ERROR, SOCKET_CLOSE_NONE); // SOCKET_CLOSE_JOINTHREAD);
 }
 
 HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, ServerEndpoint const* endpoint, bool ipv6)
 {
-	auto lock = m_criticalSection.Lock();
-
 	if (m_socket != INVALID_SOCKET)
 	{
 		return E_NOT_VALID_STATE;
@@ -135,9 +129,6 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 
 HRESULT ConnectionSocket::DisconnectSocket(bool immediate)
 {
-	auto lock = m_criticalSection.Lock();
-
-
 	if (immediate)
 	{
 		return CloseSocket(NO_ERROR, SOCKET_CLOSE_RAISEEVENT);
@@ -162,8 +153,6 @@ HRESULT ConnectionSocket::SendData(BYTE const* buffer, UINT32 length)
 	{
 		return E_POINTER;
 	}*/
-
-	auto lock = m_criticalSection.Lock();
 
 	if (m_socket == INVALID_SOCKET)
 	{
@@ -275,9 +264,7 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 
 HRESULT ConnectionSocket::OnCallback(PTP_CALLBACK_INSTANCE instance, ULONG_PTR waitResult)
 {
-	//auto lock = LockCriticalSection();
-
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	if (waitResult != WAIT_OBJECT_0)
 	{

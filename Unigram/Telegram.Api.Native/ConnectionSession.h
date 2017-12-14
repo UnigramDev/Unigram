@@ -53,10 +53,7 @@ namespace Telegram
 
 				inline bool HasMessagesToConfirm()
 				{
-					//auto lock = LockCriticalSection();
-
-					auto lock = m_criticalSection.Lock();
-
+					auto lock = LockCriticalSection();
 					return !m_messagesIdsToConfirm.empty();
 				}
 
@@ -69,8 +66,6 @@ namespace Telegram
 				std::vector<INT64> m_processedMessageIds;
 				std::vector<INT64> m_messagesIdsToConfirm;
 				std::vector<INT64> m_processedSessionChanges;
-
-				CriticalSection m_criticalSection;
 			};
 
 		}

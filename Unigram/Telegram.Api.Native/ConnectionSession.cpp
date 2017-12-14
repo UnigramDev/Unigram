@@ -23,9 +23,7 @@ ConnectionSession::~ConnectionSession()
 
 void ConnectionSession::RecreateSession()
 {
-	//auto lock = LockCriticalSection();
-
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	m_processedMessageIds.clear();
 	m_messagesIdsToConfirm.clear();
@@ -37,9 +35,7 @@ void ConnectionSession::RecreateSession()
 
 HRESULT ConnectionSession::AddConfirmationMessage(ConnectionManager* connectionManager, std::vector<ComPtr<TLMessage>>& messages)
 {
-	//auto lock = LockCriticalSection();
-
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	if (m_messagesIdsToConfirm.empty())
 	{
@@ -54,10 +50,8 @@ HRESULT ConnectionSession::AddConfirmationMessage(ConnectionManager* connectionM
 	return S_OK;
 }
 
-HRESULT ConnectionSession::CreateConfirmationMessage(_In_ ConnectionManager* connectionManager, _Out_ TL::TLMessage** messages)
+HRESULT ConnectionSession::CreateConfirmationMessage(ConnectionManager* connectionManager, TL::TLMessage** messages)
 {
-	auto lock = m_criticalSection.Lock();
-
 	auto msgAck = Make<TLMsgsAck>();
 	auto& messagesIds = msgAck->GetMessagesIds();
 	messagesIds.insert(messagesIds.begin(), m_messagesIdsToConfirm.begin(), m_messagesIdsToConfirm.end());
@@ -71,9 +65,7 @@ HRESULT ConnectionSession::CreateConfirmationMessage(_In_ ConnectionManager* con
 
 UINT32 ConnectionSession::GenerateMessageSequenceNumber(bool increment)
 {
-	//auto lock = LockCriticalSection();
-
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	auto value = m_nextMessageSequenceNumber;
 	if (increment)
@@ -86,16 +78,12 @@ UINT32 ConnectionSession::GenerateMessageSequenceNumber(bool increment)
 
 bool ConnectionSession::IsMessageIdProcessed(INT64 messageId)
 {
-	auto lock = m_criticalSection.Lock();
-
 	return !(messageId & 1) || (m_minProcessedMessageId != 0 && messageId < m_minProcessedMessageId) ||
 		std::find(m_processedMessageIds.begin(), m_processedMessageIds.end(), messageId) != m_processedMessageIds.end();
 }
 
 void ConnectionSession::AddProcessedMessageId(INT64 messageId)
 {
-	auto lock = m_criticalSection.Lock();
-
 	if (m_processedMessageIds.size() > 300)
 	{
 		std::sort(m_processedMessageIds.begin(), m_processedMessageIds.end());
@@ -108,8 +96,6 @@ void ConnectionSession::AddProcessedMessageId(INT64 messageId)
 
 void ConnectionSession::AddMessageToConfirm(INT64 messageId)
 {
-	auto lock = m_criticalSection.Lock();
-
 	if (std::find(m_processedMessageIds.begin(), m_processedMessageIds.end(), messageId) == m_processedMessageIds.end())
 	{
 		m_messagesIdsToConfirm.push_back(messageId);
@@ -118,15 +104,11 @@ void ConnectionSession::AddMessageToConfirm(INT64 messageId)
 
 bool ConnectionSession::IsSessionProcessed(INT64 sessionId)
 {
-	auto lock = m_criticalSection.Lock();
-
 	return std::find(m_processedSessionChanges.begin(), m_processedSessionChanges.end(), sessionId) != m_processedSessionChanges.end();
 }
 
 void ConnectionSession::AddProcessedSession(INT64 sessionId)
 {
-	auto lock = m_criticalSection.Lock();
-
 	m_processedSessionChanges.push_back(sessionId);
 }
 

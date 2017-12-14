@@ -47,8 +47,6 @@ namespace Telegram
 				FILETIME m_timeout;
 				std::vector<BYTE> m_sendBuffer;
 				std::unique_ptr<BYTE[]> m_receiveBuffer;
-
-				CriticalSection m_criticalSection;
 			};
 
 		}

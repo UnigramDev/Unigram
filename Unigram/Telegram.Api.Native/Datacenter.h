@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <atomic>
 #include <wrl.h>
 #include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
@@ -9,8 +10,8 @@
 #include "MultiThreadObject.h"
 
 #define DEFAULT_DATACENTER_ID INT_MAX
-#define DOWNLOAD_CONNECTIONS_COUNT 2
-#define UPLOAD_CONNECTIONS_COUNT 2
+#define DOWNLOAD_CONNECTIONS_COUNT 1
+#define UPLOAD_CONNECTIONS_COUNT 1
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -133,30 +134,31 @@ namespace Telegram
 
 				inline bool IsCDN()
 				{
+					//auto lock = LockCriticalSection();
 					return (m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN;
 				}
 
 				inline bool IsHandshaking()
 				{
-					auto lock = LockCriticalSection();
-					return (static_cast<INT32>(m_flags) & 0x11) == 0x1;
+					//auto lock = LockCriticalSection();
+					return static_cast<INT32>(m_flags & static_cast<DatacenterFlag>(0x11)) == 0x1;
 				}
 
 				inline bool IsAuthenticated()
 				{
-					auto lock = LockCriticalSection();
+					//auto lock = LockCriticalSection();
 					return static_cast<HandshakeState>(m_flags & DatacenterFlag::HandshakeState) == HandshakeState::Authenticated;
 				}
 
 				inline bool IsConnectionInitialized()
 				{
-					auto lock = LockCriticalSection();
+					//auto lock = LockCriticalSection();
 					return (m_flags & DatacenterFlag::ConnectionInitialized) == DatacenterFlag::ConnectionInitialized;
 				}
 
 				inline bool IsAuthorized()
 				{
-					auto lock = LockCriticalSection();
+					//auto lock = LockCriticalSection();
 					return static_cast<AuthorizationState>(m_flags & DatacenterFlag::AuthorizationState) == AuthorizationState::Authorized;
 				}
 
@@ -220,34 +222,39 @@ namespace Telegram
 				HRESULT OnHandshakePQResponse(_In_ Connection* connection, _In_ TL::TLResPQ* response);
 				HRESULT OnHandshakeServerDHResponse(_In_ Connection* connection, _In_ TL::TLServerDHParamsOk* response);
 				HRESULT OnHandshakeClientDHResponse(_In_ Connection* connection, _In_ TL::TLDHGenOk* response);
-				HRESULT OnBadServerSaltResponse(INT64 messageId, _In_ TL::TLBadServerSalt* response);
-				HRESULT OnBadMessageResponse(INT64 messageId, _In_ TL::TLBadMessage* response);
+				HRESULT OnBadServerSaltResponse(_In_ Connection* connection, INT64 messageId, _In_ TL::TLBadServerSalt* response);
+				HRESULT OnBadMessageResponse(_In_ Connection* connection, INT64 messageId, _In_ TL::TLBadMessage* response);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, bool ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT EncryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length, UINT32 padding, _Out_opt_ INT32* quickAckId);
 				HRESULT DecryptMessage(INT64 authKeyId, _Inout_updates_(length) BYTE* buffer, UINT32 length);
 
 				inline void SetConnectionInitialized()
 				{
-					auto lock = LockCriticalSection();
-					m_flags |= DatacenterFlag::ConnectionInitialized;
+					//auto lock = LockCriticalSection();
+					//m_flags |= DatacenterFlag::ConnectionInitialized;
+					m_flags = m_flags | DatacenterFlag::ConnectionInitialized;
 				}
 
 				inline void SetImportingAuthorization()
 				{
-					auto lock = LockCriticalSection();
+					//auto lock = LockCriticalSection();
 					m_flags = (m_flags & ~DatacenterFlag::AuthorizationState) | static_cast<DatacenterFlag>(AuthorizationState::Importing);
 				}
 
 				inline void SetAuthorized()
 				{
-					auto lock = LockCriticalSection();
-					m_flags |= static_cast<DatacenterFlag>(AuthorizationState::Authorized);
+					//auto lock = LockCriticalSection();
+					//m_flags |= static_cast<DatacenterFlag>(AuthorizationState::Authorized);
+
+					m_flags = m_flags | static_cast<DatacenterFlag>(AuthorizationState::Authorized);
 				}
 
 				inline void SetUnauthorized()
 				{
-					auto lock = LockCriticalSection();
-					m_flags &= ~DatacenterFlag::AuthorizationState;
+					//auto lock = LockCriticalSection();
+					//m_flags &= ~DatacenterFlag::AuthorizationState;
+
+					m_flags = m_flags & ~DatacenterFlag::AuthorizationState;
 				}
 
 				inline HRESULT OnHandshakeError(HRESULT error)
@@ -277,7 +284,7 @@ namespace Telegram
 				static HRESULT SendAckRequest(_In_ Connection* connection, INT64 messageId);
 
 				INT32 m_id;
-				DatacenterFlag m_flags;
+				std::atomic<DatacenterFlag> m_flags;
 				std::unique_ptr<AuthenticationContext> m_authenticationContext;
 				std::vector<ServerEndpoint> m_ipv4Endpoints;
 				std::vector<ServerEndpoint> m_ipv4DownloadEndpoints;

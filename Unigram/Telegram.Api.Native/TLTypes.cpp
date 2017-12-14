@@ -1345,13 +1345,13 @@ HRESULT TLBadMsgNotificationT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reade
 
 HRESULT TLBadMessage::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
-	return connection->GetDatacenter()->OnBadMessageResponse(messageContext->Id, this);
+	return connection->GetDatacenter()->OnBadMessageResponse(connection, messageContext->Id, this);
 }
 
 
 HRESULT TLBadServerSalt::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
-	return connection->GetDatacenter()->OnBadServerSaltResponse(messageContext->Id, this);
+	return connection->GetDatacenter()->OnBadServerSaltResponse(connection, messageContext->Id, this);
 }
 
 HRESULT TLBadServerSalt::ReadBody(ITLBinaryReaderEx* reader)

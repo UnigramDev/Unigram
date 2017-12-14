@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <atomic>
 #include <wrl.h>
 #include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
@@ -132,13 +133,13 @@ namespace Telegram
 
 				inline bool IsConnected()
 				{
-					auto lock = LockCriticalSection();
+					//auto lock = LockCriticalSection();
 					return static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) > ConnectionState::Disconnected;
 				}
 
 				inline bool IsHandshaking()
 				{
-					auto lock = LockCriticalSection();
+					//auto lock = LockCriticalSection();
 					return static_cast<ProxyHandshakeState>(m_flags & ConnectionFlag::ProxyHandshakeState) != ProxyHandshakeState::None;
 				}
 
@@ -187,7 +188,7 @@ namespace Telegram
 				static HRESULT GetProxyEndpoint(_In_ IProxySettings* proxySettings, _Out_ ServerEndpoint* endpoint);
 
 				ConnectionType m_type;
-				ConnectionFlag m_flags;
+				std::atomic<ConnectionFlag> m_flags;
 				ComPtr<Datacenter> m_datacenter;
 				ComPtr<NativeBuffer> m_partialPacketBuffer;
 				UINT32 m_failedConnectionCount;

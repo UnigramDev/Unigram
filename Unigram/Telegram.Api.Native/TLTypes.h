@@ -1030,7 +1030,7 @@ namespace Telegram
 					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
-					inline INT64 GetFirstMesssageId() const
+					inline INT64 GetFirstMessageId() const
 					{
 						return m_firstMesssageId;
 					}
