@@ -77,28 +77,6 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public int RequestedTheme
-        {
-            get
-            {
-                return (int)ApplicationSettings.Current.RequestedTheme;
-            }
-            set
-            {
-                ApplicationSettings.Current.RequestedTheme = (ElementTheme)value;
-                RaisePropertyChanged();
-                RaisePropertyChanged(() => IsThemeChanged);
-            }
-        }
-
-        public bool IsThemeChanged
-        {
-            get
-            {
-                return ApplicationSettings.Current.CurrentTheme != ApplicationSettings.Current.RequestedTheme;
-            }
-        }
-
         public override async void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             base.RaisePropertyChanged(propertyName);
