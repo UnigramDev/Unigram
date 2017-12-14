@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Views;
-using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Channels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -15,20 +15,20 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage.Pickers;
-using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Controls;
+using Unigram.Common;
 
-namespace Unigram.Views.Chats
+namespace Unigram.Views.Channels
 {
-    public sealed partial class CreateChatStep1Page : Page
+    public sealed partial class ChannelCreateStep1Page : Page
     {
-        public CreateChatStep1ViewModel ViewModel => DataContext as CreateChatStep1ViewModel;
+        public ChannelCreateStep1ViewModel ViewModel => DataContext as ChannelCreateStep1ViewModel;
 
-        public CreateChatStep1Page()
+        public ChannelCreateStep1Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<CreateChatStep1ViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<ChannelCreateStep1ViewModel>();
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)

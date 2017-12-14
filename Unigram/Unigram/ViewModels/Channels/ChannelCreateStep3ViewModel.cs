@@ -9,9 +9,9 @@ using Telegram.Api.Services.Cache;
 
 namespace Unigram.ViewModels.Channels
 {
-    public class CreateChannelStep3ViewModel : UsersSelectionViewModel
+    public class ChannelCreateStep3ViewModel : UsersSelectionViewModel
     {
-        public CreateChannelStep3ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public ChannelCreateStep3ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
         }

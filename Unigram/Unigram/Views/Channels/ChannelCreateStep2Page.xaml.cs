@@ -17,14 +17,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Channels
 {
-    public sealed partial class CreateChannelStep2Page : Page
+    public sealed partial class ChannelCreateStep2Page : Page
     {
-        public CreateChannelStep2ViewModel ViewModel => DataContext as CreateChannelStep2ViewModel;
+        public ChannelCreateStep2ViewModel ViewModel => DataContext as ChannelCreateStep2ViewModel;
 
-        public CreateChannelStep2Page()
+        public ChannelCreateStep2Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<CreateChannelStep2ViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<ChannelCreateStep2ViewModel>();
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

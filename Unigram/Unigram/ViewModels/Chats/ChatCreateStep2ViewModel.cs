@@ -18,12 +18,12 @@ using ChatCreateStep2Tuple = Telegram.Api.TL.TLTuple<string, Telegram.Api.TL.TLI
 
 namespace Unigram.ViewModels.Chats
 {
-    public class CreateChatStep2ViewModel : UsersSelectionViewModel
+    public class ChatCreateStep2ViewModel : UsersSelectionViewModel
     {
         private string _title;
         private TLInputFileBase _photo;
 
-        public CreateChatStep2ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public ChatCreateStep2ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             var config = CacheService.GetConfig();

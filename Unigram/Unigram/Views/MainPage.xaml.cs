@@ -839,12 +839,12 @@ namespace Unigram.Views
 
         private void NewChat_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(CreateChatStep1Page));
+            MasterDetail.NavigationService.Navigate(typeof(ChatCreateStep1Page));
         }
 
         private void NewChannel_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(CreateChannelStep1Page));
+            MasterDetail.NavigationService.Navigate(typeof(ChannelCreateStep1Page));
         }
 
         private void NewContact_Click(object sender, RoutedEventArgs e)
@@ -883,11 +883,11 @@ namespace Unigram.Views
         {
             if (args.ClickedItem == NavigationNewChat)
             {
-                MasterDetail.NavigationService.Navigate(typeof(CreateChatStep1Page));
+                MasterDetail.NavigationService.Navigate(typeof(ChatCreateStep1Page));
             }
             else if (args.ClickedItem == NavigationNewChannel)
             {
-                MasterDetail.NavigationService.Navigate(typeof(CreateChannelStep1Page));
+                MasterDetail.NavigationService.Navigate(typeof(ChannelCreateStep1Page));
             }
             else if (args.ClickedItem == NavigationChats)
             {

@@ -9,15 +9,16 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Channels.Methods;
 using Unigram.Common;
-using Unigram.Views.Chats;
+using Unigram.Views.Channels;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
-using ChatCreateStep2Tuple = Telegram.Api.TL.TLTuple<string, Telegram.Api.TL.TLInputFileBase>;
+using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Chats
+namespace Unigram.ViewModels.Channels
 {
-    public class CreateChatStep1ViewModel : UnigramViewModelBase
+    public class ChannelCreateStep1ViewModel : UnigramViewModelBase
     {
         private IUploadFileManager _uploadFileManager;
 
@@ -25,7 +26,7 @@ namespace Unigram.ViewModels.Chats
         private Action _uploadingCallback;
         private TLInputFileBase _photo;
 
-        public CreateChatStep1ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager)
+        public ChannelCreateStep1ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager) 
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
@@ -48,6 +49,19 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
+        private string _about;
+        public string About
+        {
+            get
+            {
+                return _about;
+            }
+            set
+            {
+                Set(ref _about, value);
+            }
+        }
+
         private BitmapImage _preview;
         public BitmapImage Preview
         {
@@ -62,19 +76,29 @@ namespace Unigram.ViewModels.Chats
         }
 
         public RelayCommand SendCommand { get; }
-        private void SendExecute()
+        private async void SendExecute()
         {
-            if (_photo != null)
+            var response = await ProtoService.CreateChannelAsync(TLChannelsCreateChannel.Flag.Broadcast, _title, _about);
+            if (response.IsSucceeded)
             {
-                ContinueUploadingPhoto();
-            }
-            else if (_uploadingPhoto)
-            {
-                _uploadingCallback = () => ContinueUploadingPhoto();
-            }
-            else
-            {
-                NavigationService.Navigate(typeof(CreateChatStep2Page), new ChatCreateStep2Tuple(_title, null));
+                if (response.Result is TLUpdates updates)
+                {
+                    if (updates.Chats.FirstOrDefault() is TLChannel channel)
+                    {
+                        if (_photo != null)
+                        {
+                            ContinueUploadingPhoto(channel);
+                        }
+                        else if (_uploadingPhoto)
+                        {
+                            _uploadingCallback = () => ContinueUploadingPhoto(channel);
+                        }
+                        else
+                        {
+                            NavigationService.Navigate(typeof(ChannelCreateStep2Page), channel.ToPeer());
+                        }
+                    }
+                }
             }
         }
 
@@ -109,9 +133,17 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        private void ContinueUploadingPhoto()
+        private async void ContinueUploadingPhoto(TLChannel channel)
         {
-            NavigationService.Navigate(typeof(CreateChatStep2Page), new ChatCreateStep2Tuple(_title, _photo));
+            var response = await ProtoService.EditPhotoAsync(channel, new TLInputChatUploadedPhoto { File = _photo });
+            if (response.IsSucceeded)
+            {
+                NavigationService.Navigate(typeof(ChannelCreateStep2Page), channel.ToPeer());
+            }
+            else
+            {
+                // TODO: ...
+            }
         }
     }
 }

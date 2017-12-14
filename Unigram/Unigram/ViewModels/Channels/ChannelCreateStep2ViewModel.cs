@@ -19,9 +19,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
-    public class CreateChannelStep2ViewModel : ChannelDetailsViewModel
+    public class ChannelCreateStep2ViewModel : ChannelDetailsViewModel
     {
-        public CreateChannelStep2ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public ChannelCreateStep2ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
             AdminedPublicChannels = new MvxObservableCollection<TLChannel>();
@@ -162,7 +162,7 @@ namespace Unigram.ViewModels.Channels
                 }
             }
 
-            NavigationService.Navigate(typeof(CreateChannelStep3Page));
+            NavigationService.Navigate(typeof(ChannelCreateStep3Page));
         }
 
         public RelayCommand<TLChannel> RevokeLinkCommand { get; }
