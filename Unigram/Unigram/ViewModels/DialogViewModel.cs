@@ -125,6 +125,8 @@ namespace Unigram.ViewModels
 
         private readonly ConcurrentDictionary<long, TLMessage> _groupedMessages = new ConcurrentDictionary<long, TLMessage>();
 
+        private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+
         private readonly DialogStickersViewModel _stickers;
         private readonly IStickersService _stickersService;
         private readonly ILocationService _locationService;
@@ -632,163 +634,169 @@ namespace Unigram.ViewModels
 
         public async Task LoadNextSliceAsync(bool force = false)
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
+            using (await _loadMoreLock.WaitAsync())
             {
-                return;
-            }
-
-            _isLoadingNextSlice = true;
-            IsLoading = true;
-
-            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
-
-            var maxId = int.MaxValue;
-            var limit = 50;
-
-            for (int i = 0; i < Items.Count; i++)
-            {
-                if (Items[i].Id != 0 && Items[i].Id < maxId)
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
                 {
-                    maxId = Items[i].Id;
-                }
-            }
-
-            Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
-
-            //return;
-
-            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, maxId, limit);
-            if (response.IsSucceeded)
-            {
-                if (response.Result.Messages.Count > 0)
-                {
-                    ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
+                    return;
                 }
 
-                ProcessReplies(response.Result.Messages);
+                _isLoadingNextSlice = true;
+                IsLoading = true;
 
-                Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Replies processed");
+                Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
-                //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
-                for (int i = 0; i < response.Result.Messages.Count; i++)
+                var maxId = int.MaxValue;
+                var limit = 50;
+
+                for (int i = 0; i < Items.Count; i++)
                 {
-                    var item = response.Result.Messages[i];
-                    if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
+                    if (Items[i].Id != 0 && Items[i].Id < maxId)
                     {
-                        continue;
+                        maxId = Items[i].Id;
+                    }
+                }
+
+                Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
+
+                //return;
+
+                var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, maxId, limit);
+                if (response.IsSucceeded)
+                {
+                    if (response.Result.Messages.Count > 0)
+                    {
+                        ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
                     }
 
-                    Items.Insert(0, item);
-                    //InsertMessage(item as TLMessageCommonBase);
-                }
+                    ProcessReplies(response.Result.Messages);
 
-                Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Items added");
+                    Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Replies processed");
 
-                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
-                {
-                    var message = item as TLMessage;
-                    if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                    //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
+                    for (int i = 0; i < response.Result.Messages.Count; i++)
                     {
-                        var user = CacheService.GetUser(message.FromId) as TLUser;
-                        if (user != null && user.IsBot)
+                        var item = response.Result.Messages[i];
+                        if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
                         {
-                            SetReplyMarkup(message);
+                            continue;
+                        }
+
+                        Items.Insert(0, item);
+                        //InsertMessage(item as TLMessageCommonBase);
+                    }
+
+                    Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Items added");
+
+                    foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
+                    {
+                        var message = item as TLMessage;
+                        if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                        {
+                            var user = CacheService.GetUser(message.FromId) as TLUser;
+                            if (user != null && user.IsBot)
+                            {
+                                SetReplyMarkup(message);
+                            }
                         }
                     }
+
+                    if (response.Result.Messages.Count < limit)
+                    {
+                        IsLastSliceLoaded = true;
+                    }
                 }
 
-                if (response.Result.Messages.Count < limit)
-                {
-                    IsLastSliceLoaded = true;
-                }
+                _isLoadingNextSlice = false;
+                IsLoading = false;
             }
-
-            _isLoadingNextSlice = false;
-            IsLoading = false;
         }
 
         public async Task LoadPreviousSliceAsync(bool force = false, bool last = false)
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
+            using (await _loadMoreLock.WaitAsync())
             {
-                return;
-            }
-
-            _isLoadingPreviousSlice = true;
-            IsLoading = true;
-
-            //if (last)
-            //{
-            //    UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
-            //}
-            //else
-            //{
-            //    UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
-            //}
-
-            Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
-
-            var maxId = int.MaxValue;
-            var limit = 50;
-
-            //for (int i = 0; i < Messages.Count; i++)
-            //{
-            //    if (Messages[i].Id != 0 && Messages[i].Id < maxId)
-            //    {
-            //        maxId = Messages[i].Id;
-            //    }
-            //}
-
-            maxId = Items.LastOrDefault()?.Id ?? 1;
-
-            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit - 1, 0, maxId, limit);
-            if (response.IsSucceeded)
-            {
-                if (response.Result.Messages.Count > 0)
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
                 {
-                    //ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
-                    ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                    return;
                 }
 
-                ProcessReplies(response.Result.Messages);
+                _isLoadingPreviousSlice = true;
+                IsLoading = true;
 
-                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
-                for (int i = response.Result.Messages.Count - 1; i >= 0; i--)
+                //if (last)
+                //{
+                //    UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
+                //}
+                //else
+                //{
+                //    UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
+                //}
+
+                Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
+
+                var maxId = int.MaxValue;
+                var limit = 50;
+
+                //for (int i = 0; i < Messages.Count; i++)
+                //{
+                //    if (Messages[i].Id != 0 && Messages[i].Id < maxId)
+                //    {
+                //        maxId = Messages[i].Id;
+                //    }
+                //}
+
+                maxId = Items.LastOrDefault()?.Id ?? 1;
+
+                var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit - 1, 0, maxId, limit);
+                if (response.IsSucceeded)
                 {
-                    var item = response.Result.Messages[i];
-                    if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
+                    if (response.Result.Messages.Count > 0)
                     {
-                        continue;
+                        //ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
+                        ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                     }
 
-                    if (item.Id > maxId)
-                    {
-                        Items.Add(item);
-                    }
-                    //InsertMessage(item as TLMessageCommonBase);
-                }
+                    ProcessReplies(response.Result.Messages);
 
-                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
-                {
-                    var message = item as TLMessage;
-                    if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                    //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                    for (int i = response.Result.Messages.Count - 1; i >= 0; i--)
                     {
-                        var user = CacheService.GetUser(message.FromId) as TLUser;
-                        if (user != null && user.IsBot)
+                        var item = response.Result.Messages[i];
+                        if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
                         {
-                            SetReplyMarkup(message);
+                            continue;
+                        }
+
+                        if (item.Id > maxId)
+                        {
+                            Items.Add(item);
+                        }
+                        //InsertMessage(item as TLMessageCommonBase);
+                    }
+
+                    foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
+                    {
+                        var message = item as TLMessage;
+                        if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                        {
+                            var user = CacheService.GetUser(message.FromId) as TLUser;
+                            if (user != null && user.IsBot)
+                            {
+                                SetReplyMarkup(message);
+                            }
                         }
                     }
+
+                    if (response.Result.Messages.Count < limit)
+                    {
+                        IsFirstSliceLoaded = true;
+                    }
                 }
 
-                if (response.Result.Messages.Count < limit)
-                {
-                    IsFirstSliceLoaded = true;
-                }
+                _isLoadingPreviousSlice = false;
+                IsLoading = false;
             }
-
-            _isLoadingPreviousSlice = false;
-            IsLoading = false;
         }
 
         public RelayCommand NextMentionCommand { get; }
@@ -972,107 +980,110 @@ namespace Unigram.ViewModels
 
         public async Task LoadFirstSliceAsync(int maxId, int offset)
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
+            using (await _loadMoreLock.WaitAsync())
             {
-                return;
-            }
-
-            _isLoadingNextSlice = true;
-            _isLoadingPreviousSlice = true;
-            IsLoading = true;
-
-            Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
-
-            var lastRead = true;
-
-            //var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
-            var readMaxId = With as ITLReadMaxId;
-
-            //var maxId = readMaxId.ReadInboxMaxId > 0 ? readMaxId.ReadInboxMaxId : int.MaxValue;
-            //var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -51 : 0;
-
-            //var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
-            //var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
-            var limit = 15;
-
-            Retry:
-            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
-            if (response.IsSucceeded)
-            {
-                if (response.Result.Messages.Count == 0 && offset < 0)
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
                 {
-                    maxId = int.MaxValue;
-                    offset = 0;
-                    goto Retry;
+                    return;
                 }
 
-                if (response.Result.Messages.Count > 0)
-                {
-                    ListField.SetScrollMode(maxId == int.MaxValue ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
-                }
+                _isLoadingNextSlice = true;
+                _isLoadingPreviousSlice = true;
+                IsLoading = true;
 
-                ProcessReplies(response.Result.Messages);
+                Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
 
-                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
-                for (int i = response.Result.Messages.Count - 1; i >= 0; i--)
+                var lastRead = true;
+
+                //var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
+                var readMaxId = With as ITLReadMaxId;
+
+                //var maxId = readMaxId.ReadInboxMaxId > 0 ? readMaxId.ReadInboxMaxId : int.MaxValue;
+                //var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -51 : 0;
+
+                //var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
+                //var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
+                var limit = 15;
+
+                Retry:
+                var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
+                if (response.IsSucceeded)
                 {
-                    var item = response.Result.Messages[i];
-                    if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
+                    if (response.Result.Messages.Count == 0 && offset < 0)
                     {
-                        continue;
+                        maxId = int.MaxValue;
+                        offset = 0;
+                        goto Retry;
                     }
 
-                    var message = item as TLMessageCommonBase;
-
-                    if (item.Id > maxId && lastRead && message != null && !message.IsOut)
+                    if (response.Result.Messages.Count > 0)
                     {
-                        var unreadMessage = new TLMessageService
-                        {
-                            FromId = SettingsHelper.UserId,
-                            ToId = Peer.ToPeer(),
-                            State = TLMessageState.Sending,
-                            IsOut = true,
-                            IsUnread = true,
-                            Date = item.Date,
-                            Action = new TLMessageActionUnreadMessages(),
-                            RandomId = TLLong.Random()
-                        };
-
-                        Items.Add(unreadMessage);
-                        lastRead = false;
+                        ListField.SetScrollMode(maxId == int.MaxValue ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
                     }
 
-                    Items.Add(item);
-                }
+                    ProcessReplies(response.Result.Messages);
 
-                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
-                {
-                    var message = item as TLMessage;
-                    if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                    //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                    for (int i = response.Result.Messages.Count - 1; i >= 0; i--)
                     {
-                        var user = CacheService.GetUser(message.FromId) as TLUser;
-                        if (user != null && user.IsBot)
+                        var item = response.Result.Messages[i];
+                        if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
                         {
-                            SetReplyMarkup(message);
+                            continue;
+                        }
+
+                        var message = item as TLMessageCommonBase;
+
+                        if (item.Id > maxId && lastRead && message != null && !message.IsOut)
+                        {
+                            var unreadMessage = new TLMessageService
+                            {
+                                FromId = SettingsHelper.UserId,
+                                ToId = Peer.ToPeer(),
+                                State = TLMessageState.Sending,
+                                IsOut = true,
+                                IsUnread = true,
+                                Date = item.Date,
+                                Action = new TLMessageActionUnreadMessages(),
+                                RandomId = TLLong.Random()
+                            };
+
+                            Items.Add(unreadMessage);
+                            lastRead = false;
+                        }
+
+                        Items.Add(item);
+                    }
+
+                    foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
+                    {
+                        var message = item as TLMessage;
+                        if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                        {
+                            var user = CacheService.GetUser(message.FromId) as TLUser;
+                            if (user != null && user.IsBot)
+                            {
+                                SetReplyMarkup(message);
+                            }
                         }
                     }
+
+                    if (response.Result.Messages.Count < limit)
+                    {
+                        IsFirstSliceLoaded = maxId < int.MaxValue;
+                        IsLastSliceLoaded = maxId == int.MaxValue;
+                    }
+                    else
+                    {
+                        IsFirstSliceLoaded = false;
+                        IsLastSliceLoaded = false;
+                    }
                 }
 
-                if (response.Result.Messages.Count < limit)
-                {
-                    IsFirstSliceLoaded = maxId < int.MaxValue;
-                    IsLastSliceLoaded = maxId == int.MaxValue;
-                }
-                else
-                {
-                    IsFirstSliceLoaded = false;
-                    IsLastSliceLoaded = false;
-                }
+                _isLoadingNextSlice = false;
+                _isLoadingPreviousSlice = false;
+                IsLoading = false;
             }
-
-            _isLoadingNextSlice = false;
-            _isLoadingPreviousSlice = false;
-            IsLoading = false;
 
             //if (maxId < int.MaxValue)
             //{
