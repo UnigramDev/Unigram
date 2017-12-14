@@ -1245,22 +1245,26 @@ namespace Unigram.ViewModels
 
             var inputMedia = messages.Select(x => new TLInputSingleMedia { Media = x.Media.ToInputMedia(), RandomId = x.RandomId ?? 0 });
 
-            var group = new GroupedMessages { GroupedId = groupedId };
-            group.Messages.AddRange(messages);
-            group.Calculate();
+            //var group = new GroupedMessages { GroupedId = groupedId };
+            //group.Messages.AddRange(messages);
+            //group.Calculate();
 
-            _groupedMessages[groupedId] = group;
+            //_groupedMessages[groupedId] = group;
 
-            TLMessageBase previousMessage = null;
-            foreach (var message in messages)
-            {
-                var result = InsertSendingMessage(message, false);
-                if (previousMessage == null)
-                {
-                    previousMessage = result;
-                }
-            }
+            //TLMessageBase previousMessage = null;
+            //foreach (var message in messages)
+            //{
+            //    var result = InsertSendingMessage(message, false);
+            //    if (previousMessage == null)
+            //    {
+            //        previousMessage = result;
+            //    }
+            //}
 
+            var result = messages.Cast<TLMessageBase>().ToList();
+            ProcessReplies(result);
+
+            var previousMessage = InsertSendingMessage(result[0] as TLMessage, false);
             CacheService.SyncSendingMessages(messages, previousMessage, async msgs =>
             {
                 foreach (var op in operations)
@@ -1273,12 +1277,15 @@ namespace Unigram.ViewModels
                 {
                     var newGroupedId = messages[0].GroupedId ?? groupedId;
 
-                    group = new GroupedMessages { GroupedId = newGroupedId };
-                    group.Messages.AddRange(messages);
-                    group.Calculate();
+                    _groupedMessages[newGroupedId] = result[0] as TLMessage;
+                    _groupedMessages.TryRemove(groupedId, out TLMessage removed);
 
-                    _groupedMessages[newGroupedId] = group;
-                    _groupedMessages.Remove(groupedId);
+                    //group = new GroupedMessages { GroupedId = newGroupedId };
+                    //group.Messages.AddRange(messages);
+                    //group.Calculate();
+
+                    //_groupedMessages[newGroupedId] = group;
+                    //_groupedMessages.Remove(groupedId);
                 }
             });
         }

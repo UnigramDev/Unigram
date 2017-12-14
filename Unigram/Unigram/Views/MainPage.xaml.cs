@@ -69,6 +69,8 @@ namespace Unigram.Views
 
             #region Localizations
 
+            TabChats.Header = Strings.Resources.Chats;
+
             NavigationChats.Content = Strings.Resources.Chats;
             NavigationAbout.Content = Strings.Resources.About;
             NavigationNews.Content = Strings.Resources.News;
@@ -489,6 +491,11 @@ namespace Unigram.Views
         {
             _lastSelected = item;
 
+            if (item is TLCallGroup group)
+            {
+                item = group.Message;
+            }
+
             if (item is TLDialog dialog)
             {
                 if (dialog.IsSearchResult)
@@ -503,20 +510,9 @@ namespace Unigram.Views
 
             if (item is TLMessageCommonBase message)
             {
-                var with = default(ITLDialogWith);
-                var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
-                if (peer is TLPeerUser)
+                if (message.Parent != null)
                 {
-                    with = ViewModel.CacheService.GetUser(peer.Id);
-                }
-                else
-                {
-                    with = ViewModel.CacheService.GetChat(peer.Id);
-                }
-
-                if (with != null)
-                {
-                    MasterDetail.NavigationService.NavigateToDialog(with, message.Id);
+                    MasterDetail.NavigationService.NavigateToDialog(message.Parent, message.Id);
                 }
             }
             else
@@ -701,6 +697,26 @@ namespace Unigram.Views
             }
         }
 
+        private void Call_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var call = element.DataContext as TLCallGroup;
+
+            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Calls.CallDeleteCommand, call, Strings.Android.Delete);
+
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                flyout.ShowAt(sender, point);
+            }
+        }
+
         private void CreateFlyoutItem(ref MenuFlyout flyout, Func<TLDialog, Visibility> visibility, ICommand command, object parameter, string text)
         {
             var value = visibility(parameter as TLDialog);
@@ -792,6 +808,13 @@ namespace Unigram.Views
         private Visibility DialogDeleteAndExit_Loaded(TLDialog dialog)
         {
             return dialog.Peer is TLPeerChat && dialog.With is TLChat ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+
+
+        private Visibility CallDelete_Loaded(TLCallGroup group)
+        {
+            return Visibility.Visible;
         }
 
         #endregion

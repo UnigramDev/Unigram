@@ -30,19 +30,6 @@ namespace Unigram.Controls
                 }
                 else if (messageCommon is TLMessage message)
                 {
-                    if (message.HasGroupedId && message.GroupedId != null && PrepareContainerForItemGrouping(element, message, message.GroupedId ?? 0))
-                    {
-                        base.PrepareContainerForItemOverride(element, item);
-                        return;
-                    }
-                    else
-                    {
-                        container.HorizontalAlignment = HorizontalAlignment.Stretch;
-                        container.Width = double.NaN;
-                        container.Height = double.NaN;
-                        container.Margin = new Thickness();
-                    }
-
                     if (message.IsSaved() || message.ToId is TLPeerChat || message.ToId is TLPeerChannel && !message.IsPost)
                     {
                         if (message.IsOut && !message.IsSaved())
@@ -90,11 +77,6 @@ namespace Unigram.Controls
             }
 
             base.PrepareContainerForItemOverride(element, item);
-        }
-
-        protected virtual bool PrepareContainerForItemGrouping(DependencyObject element, TLMessage message, long groupedId)
-        {
-            return false;
         }
     }
 }

@@ -166,6 +166,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsMasksViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsWallPaperViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsLanguageViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<AttachedStickersViewModel>();
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
@@ -342,24 +343,6 @@ namespace Unigram
                 }
             }
         }
-
-        //private void OnTransportConnecting(object sender, TransportEventArgs e)
-        //{
-        //    var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-        //    if (protoService != null)
-        //    {
-        //        protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
-        //    }
-        //}
-
-        //private void OnTransportConnected(object sender, TransportEventArgs e)
-        //{
-        //    var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-        //    if (protoService != null)
-        //    {
-        //        protoService.SetMessageOnTime(0, null);
-        //    }
-        //}
 
         private void OnAuthorizationRequired(object sender, AuthorizationRequiredEventArgs e)
         {

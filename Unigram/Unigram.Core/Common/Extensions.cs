@@ -30,6 +30,19 @@ namespace Unigram.Core.Common
             return Regex.Replace(input, pattern, replacement);
         }
 
+        public static bool Equals(this string input, params string[] check)
+        {
+            foreach (var str in check)
+            {
+                if (input.Equals(str))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static TLInputGeoPointBase ToInputGeoPoint(this Geoposition position)
         {
             return new TLInputGeoPoint { Lat = position.Coordinate.Point.Position.Latitude, Long = position.Coordinate.Point.Position.Longitude };

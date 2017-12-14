@@ -218,6 +218,7 @@
                 x:Name="CaptionInput"
                 View="{x:Bind ViewModel}"
                 From="{x:Bind ViewModel.From, Mode=OneWay}"
+                Text="{x:Bind ViewModel.Query, Mode=OneWay}"
                 IsFiltering="{x:Bind ViewModel.IsFiltering, Mode=TwoWay}"
                 Autocomplete="{x:Bind ListAutocomplete}"
                 SearchCommand="{x:Bind ViewModel.SearchCommand}"

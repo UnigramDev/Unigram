@@ -125,6 +125,20 @@ namespace Unigram.Controls
 
             var constraint = Constraint;
 
+            if (constraint is TLMessage message)
+            {
+                if (message.HasGroupedId)
+                {
+                    HorizontalContentAlignment = HorizontalAlignment.Center;
+                    VerticalContentAlignment = VerticalAlignment.Center;
+                    Stretch = Stretch.UniformToFill;
+
+                    return base.MeasureOverride(availableSize);
+                }
+
+                constraint = message.Media;
+            }
+
             if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaGeoLive || constraint is TLMessageMediaVenue)
             {
                 width = 320;
@@ -142,10 +156,8 @@ namespace Unigram.Controls
 
                     goto Calculate;
                 }
-                else
-                {
-                    constraint = photoMedia.Photo;
-                }
+
+                constraint = photoMedia.Photo;
             }
 
             if (constraint is TLMessageMediaDocument documentMedia)
@@ -157,10 +169,8 @@ namespace Unigram.Controls
 
                     goto Calculate;
                 }
-                else
-                {
-                    constraint = documentMedia.Document;
-                }
+
+                constraint = documentMedia.Document;
             }
 
             if (constraint is TLMessageMediaWebPage webPageMedia)
@@ -170,7 +180,6 @@ namespace Unigram.Controls
 
             if (constraint is TLPhoto photo)
             {
-                //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
                 constraint = photo.Full;
             }
 

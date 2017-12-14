@@ -207,6 +207,13 @@ namespace Unigram.Views
         //    base.OnNavigatedTo(e);
         //}
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            TextField.FocusMaybe(FocusState.Keyboard);
+
+            base.OnNavigatedTo(e);
+        }
+
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             //if (_panel != null && ViewModel.With != null)
@@ -229,10 +236,6 @@ namespace Unigram.Views
             if (e.PropertyName.Equals("Reply"))
             {
                 CheckMessageBoxEmpty();
-            }
-            else if (e.PropertyName.Equals("SelectedItems"))
-            {
-                Messages.SelectedItems.AddRange(ViewModel.SelectedItems);
             }
         }
 
@@ -905,7 +908,7 @@ namespace Unigram.Views
         {
             if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
             {
-                ViewModel.SelectedItems = new List<TLMessageCommonBase>(Messages.SelectedItems.Cast<TLMessageCommonBase>());
+                ViewModel.ExpandSelection(Messages.SelectedItems.Cast<TLMessageCommonBase>());
             }
         }
 
@@ -1007,7 +1010,7 @@ namespace Unigram.Views
             // Stickers
             CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), messageCommon, Strings.Android.AddToStickers);
             CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, Strings.Android.AddToFavorites);
-            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, Strings.Android.RemovedFromFavorites);
+            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, Strings.Android.DeleteFromFavorites);
 
             CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, Strings.Android.SaveToGIFs);
             CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.SaveAs);
@@ -1972,94 +1975,6 @@ namespace Unigram.Views
         private void Mentions_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             ViewModel.ReadMentionsCommand.Execute();
-        }
-
-        private void Media_Loaded(object sender, RoutedEventArgs e)
-        {
-            Media_DataContextChanged(sender as FrameworkElement, null);
-        }
-
-        private void Media_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            var message = sender.DataContext as TLMessage;
-            if (message == null)
-            {
-                return;
-            }
-
-            var groupedId = message.GroupedId ?? 0;
-
-            if (ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group) &&
-                group.Positions.TryGetValue(message, out GroupedMessagePosition position) &&
-                group.Messages.Count > 1)
-            {
-                var background = sender.FindName("Background") as FrameworkElement;
-                var header = sender.FindName("Header") as FrameworkElement;
-                var footer = sender.FindName("Footer") as FrameworkElement;
-                var media = sender.FindName("Media") as FrameworkElement;
-                var photo = sender.FindName("PhotoBubble") as FrameworkElement;
-
-                var width = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 320);
-                var height = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 420);
-
-                var maxWidth = group.Width / 800d * width;
-                var maxHeight = group.Height * height;
-
-                media.Width = position.Width / 800d * width;
-                media.Height = position.Height * height;
-
-                media.Width -= 2;
-                media.Height -= 2;
-
-                if (message == group.Messages[0] && ((message.HasReplyToMsgId && message.ReplyToMsgId.HasValue) || (message.HasFwdFrom && message.FwdFrom != null) || (message.HasViaBotId && message.ViaBotId.HasValue)))
-                {
-                    var refresh = false;
-                    if (message.IsOut && sender.Resources.MergedDictionaries.IsEmpty())
-                    {
-                        sender.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/AccentOut.xaml") });
-                        refresh = true;
-                    }
-                    else if (!message.IsOut && sender.Resources.MergedDictionaries.Count > 0)
-                    {
-                        sender.Resources.MergedDictionaries.Clear();
-                        refresh = true;
-                    }
-
-                    if (refresh)
-                    {
-                        sender.RequestedTheme = ElementTheme.Dark;
-                        sender.RequestedTheme = ElementTheme.Default;
-                    }
-
-                    header.Width = maxWidth - 2;
-                    header.Margin = new Thickness(0, 0, -(maxWidth - (position.Width / 800d * width)), 0);
-
-                    var add = message.HasReplyToMsgId && message.ReplyToMsgId.HasValue ? 50 : 26;
-
-                    background.Width = maxWidth - 2;
-                    background.Height = maxHeight + add - 2;
-                    background.Margin = new Thickness(0, 0, -(maxWidth - (position.Width / 800d * width)), -(maxHeight + add - ((position.Height * height) + add)));
-
-                    header.Visibility = Visibility.Visible;
-                    background.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    header.Visibility = Visibility.Collapsed;
-                    background.Visibility = Visibility.Collapsed;
-                }
-
-                if (position.IsLast)
-                {
-                    photo.Height = message.IsOut && !message.IsSaved() ? 0 : 32;
-                    footer.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    photo.Height = 0;
-                    footer.Visibility = Visibility.Collapsed;
-                }
-            }
         }
 
         private void ItemsStackPanel_Loading(FrameworkElement sender, object args)

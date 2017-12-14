@@ -3197,7 +3197,19 @@ namespace Telegram.Api.Services.Cache
         public void DeleteChat(int? id)
         {
             _database.DeleteChat(id);
-            _database.Commit();            
+            _database.Commit();
+        }
+
+        public void DeleteUserFull(int? id)
+        {
+            _database.DeleteUserFull(id);
+            _database.Commit();
+        }
+
+        public void DeleteChatFull(int? id)
+        {
+            _database.DeleteChatFull(id);
+            _database.Commit();
         }
 
         public void DeleteMessages(TLVector<long> randomIds)

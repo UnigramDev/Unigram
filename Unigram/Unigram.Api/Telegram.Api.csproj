@@ -479,6 +479,7 @@
     <Compile Include="TL\Partial\TLFileLocationBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesDialogsBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesMessagesBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLPeerNotifySettingsBase.cs" />
     <Compile Include="TL\Partial\TLPhoneCallBase.Partial.cs" />
     <Compile Include="TL\Partial\TLPhoneConnection.Partial.cs" />
     <Compile Include="TL\Partial\TLPhoto.Partial.cs" />
@@ -1191,7 +1192,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.2</Version>
+      <Version>6.0.5</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>

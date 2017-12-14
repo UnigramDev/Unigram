@@ -59,16 +59,22 @@ namespace Unigram.ViewModels
                 //}
             }
 
+            var message31 = message as TLMessage;
+            if (message31 != null && message31.Media is TLMessageMediaGroup groupMedia)
+            {
+                message = groupMedia.Layout.Messages.FirstOrDefault();
+                message31 = message as TLMessage;
+            }
+
             if (message.Id <= 0) return;
 
-            var message31 = message as TLMessage;
             if (message31 != null && !message31.IsOut && message31.HasFromId)
             {
                 var fromId = message31.FromId.Value;
                 var user = CacheService.GetUser(fromId) as TLUser;
                 if (user != null && user.IsBot)
                 {
-                    // TODO: SetReplyMarkup(message31);
+                    SetReplyMarkup(message31);
                 }
             }
 
@@ -89,6 +95,13 @@ namespace Unigram.ViewModels
             }
 
             var message = messageBase as TLMessage;
+            if (message != null && message.Media is TLMessageMediaGroup groupMedia)
+            {
+                ExpandSelection(new[] { message });
+                MessagesDeleteExecute();
+                return;
+            }
+
             if (message != null && !message.IsOut && !message.IsPost && Peer is TLInputPeerChannel)
             {
                 var dialog = new DeleteChannelMessageDialog(1, message.From?.FullName);
@@ -254,20 +267,29 @@ namespace Unigram.ViewModels
 
             BeginOnUIThread(() =>
             {
-                var groups = new Dictionary<long, GroupedMessages>();
+                var groups = new Dictionary<long, Tuple<TLMessage, GroupedMessages>>();
 
                 for (int j = 0; j < messages.Count; j++)
                 {
-                    if (messages[j] is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out GroupedMessages group))
+                    if (messages[j] is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out TLMessage group) && group.Media is TLMessageMediaGroup groupMedia)
                     {
-                        group.Messages.Remove(grouped);
-                        groups[groupedId] = group;
+                        groupMedia.Layout.Messages.Remove(grouped);
+                        groups[groupedId] = Tuple.Create(group, groupMedia.Layout);
                     }
                 }
 
                 foreach (var group in groups.Values)
                 {
-                    group.Calculate();
+                    if (group.Item2.Messages.Count > 0)
+                    {
+                        group.Item2.Calculate();
+                        group.Item1.RaisePropertyChanged(() => group.Item1.Self);
+                    }
+                    else
+                    {
+                        _groupedMessages.TryRemove(group.Item2.GroupedId, out TLMessage removed);
+                        Items.Remove(group.Item1);
+                    }
                 }
 
                 for (int j = 0; j < messages.Count; j++)
@@ -341,6 +363,13 @@ namespace Unigram.ViewModels
         {
             if (messageBase is TLMessage message)
             {
+                if (message.Media is TLMessageMediaGroup groupMedia)
+                {
+                    ExpandSelection(new[] { message });
+                    MessagesForwardExecute();
+                    return;
+                }
+
                 Search = null;
                 SelectionMode = ListViewSelectionMode.None;
 
@@ -365,6 +394,24 @@ namespace Unigram.ViewModels
         public RelayCommand MessagesDeleteCommand { get; }
         private async void MessagesDeleteExecute()
         {
+            var messages = new List<TLMessageCommonBase>(SelectedItems);
+
+            for (int i = 0; i < messages.Count; i++)
+            {
+                if (messages[i] is TLMessage message && message.Media is TLMessageMediaGroup groupMedia)
+                {
+                    messages.RemoveAt(i);
+
+                    for (int j = 0; j < groupMedia.Layout.Messages.Count; j++)
+                    {
+                        messages.Insert(i, groupMedia.Layout.Messages[j]);
+                        i++;
+                    }
+
+                    i--;
+                }
+            }
+
             //if (messageBase == null) return;
 
             //var message = messageBase as TLMessage;
@@ -418,8 +465,6 @@ namespace Unigram.ViewModels
             //}
             //else
             {
-                var messages = new List<TLMessageCommonBase>(SelectedItems);
-
                 var dialog = new TLMessageDialog();
                 dialog.Title = Strings.Android.Message;
                 dialog.Message = string.Format(Strings.Android.AreYouSureDeleteMessages, LocaleHelper.Declension("Messages", messages.Count));
@@ -521,7 +566,7 @@ namespace Unigram.ViewModels
         public RelayCommand MessagesForwardCommand { get; }
         private async void MessagesForwardExecute()
         {
-            var messages = SelectedItems.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
+            var messages = SelectedItems.OfType<TLMessage>().Where(x => x.RandomId == null).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
                 Search = null;
@@ -700,9 +745,9 @@ namespace Unigram.ViewModels
             }
 
             SelectionMode = ListViewSelectionMode.Multiple;
+            ListField.SelectedItems.Add(message);
 
-            SelectedItems = new List<TLMessageCommonBase> { messageCommon };
-            RaisePropertyChanged("SelectedItems");
+            ExpandSelection(new[] { messageCommon });
         }
 
         #endregion
@@ -819,6 +864,11 @@ namespace Unigram.ViewModels
         private async void MessageEditExecute(TLMessage message)
         {
             Search = null;
+
+            if (message?.Media is TLMessageMediaGroup groupMedia)
+            {
+                message = groupMedia.Layout.Messages.LastOrDefault();
+            }
 
             if (message == null)
             {

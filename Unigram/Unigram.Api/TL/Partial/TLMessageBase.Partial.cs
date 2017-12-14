@@ -143,6 +143,10 @@ namespace Telegram.Api.TL
 
                 return _from;
             }
+            set
+            {
+                _from = value;
+            }
         }
 
         private ITLDialogWith _participant;

@@ -429,7 +429,7 @@ namespace Unigram.Controls.Messages
             //        constraint = webPage.Photo;
             //    }
             //}
-            else if (message.Media is TLMessageMediaGeo || message.Media is TLMessageMediaGeoLive || message.Media is TLMessageMediaVenue)
+            else if (message.Media is TLMessageMediaGeo || message.Media is TLMessageMediaGeoLive || message.Media is TLMessageMediaVenue || message.Media is TLMessageMediaGroup)
             {
                 constraint = message.Media;
             }
@@ -452,12 +452,28 @@ namespace Unigram.Controls.Messages
 
                 goto Calculate;
             }
-            else if (constraint is TLMessageMediaGroup)
+            else if (constraint is TLMessageMediaGroup groupMedia)
             {
-                width = 320;
-                height = 420;
+                if (groupMedia.Layout.Messages.Count > 1)
+                {
+                    width = groupMedia.Layout.Width / 800d * 318d;
+                    height = groupMedia.Layout.Width / 800d * 318d;
+                    // Ignoring max height for grouped media
+                    //height = groupMedia.Layout.Height * 418d;
 
-                goto Calculate;
+                    goto Calculate;
+                }
+                else if (groupMedia.Layout.Messages.Count > 0)
+                {
+                    if (groupMedia.Layout.Messages[0].Media is TLMessageMediaPhoto innerPhotoMedia)
+                    {
+                        constraint = innerPhotoMedia.Photo;
+                    }
+                    else if (groupMedia.Layout.Messages[0].Media is TLMessageMediaDocument innerDocumentMedia)
+                    {
+                        constraint = innerDocumentMedia.Document;
+                    }
+                }
             }
 
             if (constraint is TLPhoto photo)
@@ -470,15 +486,15 @@ namespace Unigram.Controls.Messages
                     goto Calculate;
                 }
 
-                //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
-                var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
-                if (photoSize != null)
-                {
-                    width = photoSize.W;
-                    height = photoSize.H;
+                constraint = photo.Full;
+            }
 
-                    goto Calculate;
-                }
+            if (constraint is TLPhotoSize photoSize)
+            {
+                width = photoSize.W;
+                height = photoSize.H;
+
+                goto Calculate;
             }
 
             if (constraint is TLDocument document)

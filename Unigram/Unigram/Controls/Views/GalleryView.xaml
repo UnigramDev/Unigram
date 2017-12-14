@@ -308,6 +308,12 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
+                <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
+                           Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           Margin="12,8"
+                           Grid.ColumnSpan="3"/>
+
                 <ListView x:Name="List"
                           ItemsSource="{x:Bind ViewModel.Group}"
                           SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
@@ -317,7 +323,8 @@
                           ScrollViewer.VerticalScrollMode="Disabled"
                           SizeChanged="ItemsStackPanel_SizeChanged"
                           SelectionChanged="List_SelectionChanged"
-                          Grid.ColumnSpan="3">
+                          Grid.ColumnSpan="3"
+                          Grid.Row="1">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel Orientation="Horizontal" />
@@ -371,13 +378,6 @@
                     </ListView.Template>
                 </ListView>
 
-                <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
-                           Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                           Style="{StaticResource BodyTextBlockStyle}"
-                           Margin="12,8"
-                           Grid.ColumnSpan="3"
-                           Grid.Row="1"/>
-
                 <Border x:Name="Details" Grid.Row="2">
                     <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0,0,0" VerticalAlignment="Center">
                         <TextBlock Text="{x:Bind ConvertFrom(ViewModel.SelectedItem.From), Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
@@ -412,7 +412,7 @@
                             <MenuFlyoutItem x:Name="FlyoutSaveAs"
                                             Command="{x:Bind ViewModel.SaveCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
-                                            Text="Save file as..." />
+                                            Text="Save as..." />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"
                                             Text="{CustomResource OpenInExternalApp}" />

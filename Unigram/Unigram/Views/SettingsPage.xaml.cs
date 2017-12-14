@@ -121,9 +121,9 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(SettingsAccountsPage));
         }
 
-        private void Wallpaper_Click(object sender, RoutedEventArgs e)
+        private void Appearance_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsWallPaperPage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsAppearancePage));
         }
 
         private void Language_Click(object sender, RoutedEventArgs e)
