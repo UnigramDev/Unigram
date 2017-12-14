@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.0
+VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram", "Unigram\Unigram.csproj", "{2235E8EE-374A-4E49-8050-9B701467775D}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -202,7 +202,6 @@ Global
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|x64.ActiveCfg = Release|x64
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|x64.Build.0 = Release|x64
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|x86.ActiveCfg = Release|Win32
-		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Release|x86.Build.0 = Release|Win32
 		{0DBCF059-2952-4809-9003-193CA0C6D499}.Debug|ARM.ActiveCfg = Debug|ARM
 		{0DBCF059-2952-4809-9003-193CA0C6D499}.Debug|ARM.Build.0 = Debug|ARM
 		{0DBCF059-2952-4809-9003-193CA0C6D499}.Debug|x64.ActiveCfg = Debug|x64
