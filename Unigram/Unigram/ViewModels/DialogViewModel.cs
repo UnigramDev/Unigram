@@ -169,6 +169,7 @@ namespace Unigram.ViewModels
             ToggleSilentCommand = new RelayCommand(ToggleSilentExecute);
             HideReportSpamCommand = new RelayCommand(HideReportSpamExecute);
             ReportSpamCommand = new RelayCommand(ReportSpamExecute);
+            ReportCommand = new RelayCommand(ReportExecute);
             OpenStickersCommand = new RelayCommand(OpenStickersExecute);
             DialogDeleteCommand = new RelayCommand(DialogDeleteExecute);
             DialogClearCommand = new RelayCommand(DialogClearExecute);
@@ -2888,10 +2889,27 @@ namespace Unigram.ViewModels
         {
             if (IsReportSpam)
             {
+                var message = Strings.Android.ReportSpamAlert;
+                if (With is TLChannel channel)
+                {
+                    message = channel.IsMegaGroup ? Strings.Android.ReportSpamAlertGroup : Strings.Android.ReportSpamAlertChannel;
+                }
+                else if (With is TLChat chat)
+                {
+                    message = Strings.Android.ReportSpamAlertGroup;
+                }
+
+                var confirm = await TLMessageDialog.ShowAsync(message, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
                 var response = await ProtoService.ReportSpamAsync(Peer);
                 if (response.IsSucceeded)
                 {
-
+                    IsReportSpam = false;
+                    DialogDeleteExecute();
                 }
             }
         }
@@ -3186,6 +3204,12 @@ namespace Unigram.ViewModels
             return !SecondaryTile.Exists(group);
         }
 
+        private void UpdatePinChatCommands()
+        {
+            CanPinChat = CanExecutePinChatCommand();
+            CanUnpinChat = !CanPinChat;
+        }
+
         #endregion
 
         #region Unpin chat
@@ -3224,12 +3248,6 @@ namespace Unigram.ViewModels
         }
 
         #endregion
-
-        private void UpdatePinChatCommands()
-        {
-            CanPinChat = CanExecutePinChatCommand();
-            CanUnpinChat = !CanPinChat;
-        }
 
         #region Start
 
@@ -3390,6 +3408,80 @@ namespace Unigram.ViewModels
             {
                 dialog.UnreadMentionsCount = 0;
                 dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+            }
+        }
+
+        #endregion
+
+        #region Report Chat
+
+        public RelayCommand ReportCommand { get; }
+        private async void ReportExecute()
+        {
+            var peer = _peer;
+            if (peer == null)
+            {
+                return;
+            }
+
+            var opt1 = new RadioButton { Content = Strings.Android.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt2 = new RadioButton { Content = Strings.Android.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt3 = new RadioButton { Content = Strings.Android.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt4 = new RadioButton { Content = Strings.Android.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
+            var stack = new StackPanel();
+            stack.Children.Add(opt1);
+            stack.Children.Add(opt2);
+            stack.Children.Add(opt3);
+            stack.Children.Add(opt4);
+            stack.Margin = new Thickness(12, 16, 12, 0);
+
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            dialog.Content = stack;
+            dialog.Title = Strings.Android.ReportChat;
+            dialog.IsPrimaryButtonEnabled = true;
+            dialog.IsSecondaryButtonEnabled = true;
+            dialog.PrimaryButtonText = Strings.Android.OK;
+            dialog.SecondaryButtonText = Strings.Android.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var reason = opt1.IsChecked == true
+                ? new TLInputReportReasonSpam()
+                : (opt2.IsChecked == true
+                    ? new TLInputReportReasonViolence()
+                    : (opt3.IsChecked == true
+                        ? new TLInputReportReasonPornography()
+                        : (TLReportReasonBase)new TLInputReportReasonOther()));
+
+            if (reason is TLInputReportReasonOther other)
+            {
+                var input = new InputDialog();
+                input.Title = Strings.Android.ReportChat;
+                input.PlaceholderText = Strings.Android.ReportChatDescription;
+                input.IsPrimaryButtonEnabled = true;
+                input.IsSecondaryButtonEnabled = true;
+                input.PrimaryButtonText = Strings.Android.OK;
+                input.SecondaryButtonText = Strings.Android.Cancel;
+
+                var inputResult = await input.ShowQueuedAsync();
+                if (inputResult == ContentDialogResult.Primary)
+                {
+                    other.Text = input.Text;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            var result = await ProtoService.ReportPeerAsync(peer, reason);
+            if (result.IsSucceeded && result.Result)
+            {
+                //await new TLMessageDialog("Resources.ReportSpamNotification", "Unigram").ShowQueuedAsync();
             }
         }
 

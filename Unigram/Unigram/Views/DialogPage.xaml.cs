@@ -919,13 +919,12 @@ namespace Unigram.Views
             var currentUser = ViewModel.With as TLUser;
             var currentChat = ViewModel.With as TLChat;
             var currentChannel = ViewModel.With as TLChannel;
-            var currentDialog = ViewModel.Dialog as TLDialog;
 
             CreateFlyoutItem(ref flyout, ViewModel.SearchCommand, Strings.Android.Search);
 
             if (currentChannel != null && !currentChannel.IsCreator && (!currentChannel.IsMegaGroup || (currentChannel.Username != null && currentChannel.Username.Length > 0)))
             {
-                CreateFlyoutItem(ref flyout, null, Strings.Android.ReportChat);
+                CreateFlyoutItem(ref flyout, ViewModel.ReportCommand, Strings.Android.ReportChat);
             }
             if (currentUser != null)
             {
@@ -954,9 +953,22 @@ namespace Unigram.Views
             {
                 CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Android.DeleteAndExit);
             }
-            if (currentDialog != null && (currentUser != null || currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup && string.IsNullOrEmpty(currentChannel.Username))))
+            if (currentUser != null || currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup))
             {
-                CreateFlyoutItem(ref flyout, ViewModel.ToggleMuteCommand, currentDialog.IsMuted ? Strings.Android.UnmuteNotifications : Strings.Android.MuteNotifications);
+                TLPeerNotifySettings notifySettings = null;
+                if (ViewModel.Full is TLUserFull userFull)
+                {
+                    notifySettings = userFull.NotifySettings as TLPeerNotifySettings;
+                }
+                else if (ViewModel.Full is TLChatFullBase chatFull)
+                {
+                    notifySettings = chatFull.NotifySettings as TLPeerNotifySettings;
+                }
+
+                if (notifySettings != null)
+                {
+                    CreateFlyoutItem(ref flyout, ViewModel.ToggleMuteCommand, notifySettings.IsMuted ? Strings.Android.UnmuteNotifications : Strings.Android.MuteNotifications);
+                }
             }
 
             //if (currentUser == null || !currentUser.IsSelf)
@@ -967,14 +979,14 @@ namespace Unigram.Views
             //{
             //    CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
             //}
-            if (currentUser != null && currentUser.IsBot && ViewModel.Full is TLUserFull userFull && userFull.HasBotInfo)
+            if (currentUser != null && currentUser.IsBot && ViewModel.Full is TLUserFull botFull && botFull.HasBotInfo)
             {
-                if (userFull.BotInfo.Commands.Any(x => x.Command.Equals("settings")))
+                if (botFull.BotInfo.Commands.Any(x => x.Command.Equals("settings")))
                 {
                     CreateFlyoutItem(ref flyout, null, Strings.Android.BotSettings);
                 }
 
-                if (userFull.BotInfo.Commands.Any(x => x.Command.Equals("help")))
+                if (botFull.BotInfo.Commands.Any(x => x.Command.Equals("help")))
                 {
                     CreateFlyoutItem(ref flyout, null, Strings.Android.BotHelp);
                 }
