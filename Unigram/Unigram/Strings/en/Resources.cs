@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 12/04/2017 13:06:30
+// 	Generated: 12/14/2017 19:12:44
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -82,28 +82,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CopyImage");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Copy message link"
-        /// </summary>
-        public static string CopyMessageLink
-        {
-            get
-            {
-                return resourceLoader.GetString("CopyMessageLink");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Copy post link"
-        /// </summary>
-        public static string CopyPostLink
-        {
-            get
-            {
-                return resourceLoader.GetString("CopyPostLink");
             }
         }
         

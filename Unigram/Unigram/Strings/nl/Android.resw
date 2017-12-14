@@ -252,6 +252,9 @@
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>Stickers niet gevonden</value>
   </data>
+  <data name="AddSubscriber" xml:space="preserve">
+    <value>Abonnee toevoegen</value>
+  </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>Toevoegen aan contacten</value>
   </data>
@@ -579,6 +582,9 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general">veelgestelde v
   <data name="AudioUnknownTitle" xml:space="preserve">
     <value>Onbekende titel</value>
   </data>
+  <data name="AutoDownloadMedia" xml:space="preserve">
+    <value>Automatisch downloaden</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Automatisch vergrendelen</value>
   </data>
@@ -590,6 +596,24 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general">veelgestelde v
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
     <value>Vraag om toegangscode indien afwezig</value>
+  </data>
+  <data name="AutodownloadChannels" xml:space="preserve">
+    <value>Kanalen</value>
+  </data>
+  <data name="AutodownloadContacts" xml:space="preserve">
+    <value>Contacten</value>
+  </data>
+  <data name="AutodownloadGroupChats" xml:space="preserve">
+    <value>Groepschats</value>
+  </data>
+  <data name="AutodownloadPrivateChats" xml:space="preserve">
+    <value>Chats</value>
+  </data>
+  <data name="AutodownloadSizeLimit" xml:space="preserve">
+    <value>MAXIMALE GROOTTE</value>
+  </data>
+  <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
+    <value>tot {0}</value>
   </data>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Automatisch media downloaden</value>
@@ -995,6 +1019,9 @@ Wil je dit niet dan kun je een privé-kanaal aanmaken.</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Stil massabericht</value>
+  </data>
+  <data name="ChannelSubscribers" xml:space="preserve">
+    <value>Abonnees</value>
   </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Kanaaltype</value>
@@ -2335,7 +2362,7 @@ over Telegram?</value>
     <value>Groepsmeldingen</value>
   </data>
   <data name="GroupPhotosHelp" xml:space="preserve">
-    <value>Geeft media als een enkel bericht weer</value>
+    <value>Geef media als een enkel bericht weer</value>
   </data>
   <data name="GroupStickers" xml:space="preserve">
     <value>Groepsstickers</value>
@@ -3683,6 +3710,9 @@ vanaf meerdere apparaten.</value>
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>Betalingsprovider kon niet worden bereikt, controleer je internetverbinding en probeer het opnieuw.</value>
   </data>
+  <data name="PaymentEmailToProvider" xml:space="preserve">
+    <value>E-mail wordt doorgegeven aan {0} als factuurinformatie.</value>
+  </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Sorry, de betaling werd geweigerd.</value>
   </data>
@@ -3715,6 +3745,12 @@ vanaf meerdere apparaten.</value>
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>Wachtwoord</value>
+  </data>
+  <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
+    <value>Telefoonnummer en E-mail worden doorgegeven aan {0} als factuurinformatie.</value>
+  </data>
+  <data name="PaymentPhoneToProvider" xml:space="preserve">
+    <value>Telefoonnummer wordt doorgegeven aan {0} als factuurinformatie.</value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>Sorry, de bot heeft je betaling geannuleerd.</value>
@@ -4108,6 +4144,12 @@ Je kunt dit proces ieder moment annuleren.</value>
   </data>
   <data name="ResetAllNotifications" xml:space="preserve">
     <value>Meldingen resetten</value>
+  </data>
+  <data name="ResetAutomaticMediaDownload" xml:space="preserve">
+    <value>Autom. downloaden resetten</value>
+  </data>
+  <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
+    <value>Instellingen voor automatisch downloaden echt resetten?</value>
   </data>
   <data name="ResetMyAccount" xml:space="preserve">
     <value>ACCOUNT RESETTEN</value>

@@ -252,6 +252,9 @@
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>Stickers não encontrados</value>
   </data>
+  <data name="AddSubscriber" xml:space="preserve">
+    <value>Adicionar Inscrito</value>
+  </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>Adicionar aos contatos</value>
   </data>
@@ -579,6 +582,9 @@ Por favor verifique a página de <![CDATA[<a href="https://telegram.org/faq#gene
   <data name="AudioUnknownTitle" xml:space="preserve">
     <value>Título desconhecido</value>
   </data>
+  <data name="AutoDownloadMedia" xml:space="preserve">
+    <value>Baixar Automaticamente</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Auto-bloquear</value>
   </data>
@@ -590,6 +596,24 @@ Por favor verifique a página de <![CDATA[<a href="https://telegram.org/faq#gene
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
     <value>Requisitar senha se estiver ausente por muito tempo.</value>
+  </data>
+  <data name="AutodownloadChannels" xml:space="preserve">
+    <value>Canais</value>
+  </data>
+  <data name="AutodownloadContacts" xml:space="preserve">
+    <value>Contatos</value>
+  </data>
+  <data name="AutodownloadGroupChats" xml:space="preserve">
+    <value>Conversas em Grupo</value>
+  </data>
+  <data name="AutodownloadPrivateChats" xml:space="preserve">
+    <value>Conversas Privadas</value>
+  </data>
+  <data name="AutodownloadSizeLimit" xml:space="preserve">
+    <value>Limitar por Tamanho</value>
+  </data>
+  <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
+    <value>até {0}</value>
   </data>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Download automático de mídia</value>
@@ -996,6 +1020,9 @@ Se não estiver interessado, sugerimos que crie um canal privado.</value>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Mensagem Silenciosa</value>
   </data>
+  <data name="ChannelSubscribers" xml:space="preserve">
+    <value>Inscritos</value>
+  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Tipo de canal</value>
   </data>
@@ -1048,7 +1075,7 @@ Se não estiver interessado, sugerimos que crie um canal privado.</value>
     <value>Histórico de conversa para novos membros</value>
   </data>
   <data name="ChatHistoryHidden" xml:space="preserve">
-    <value>Esconder</value>
+    <value>Escondido</value>
   </data>
   <data name="ChatHistoryHiddenInfo" xml:space="preserve">
     <value>Novos membros não verão mensagens anteriores.</value>
@@ -2385,10 +2412,10 @@ sobre o Telegram?</value>
     <value>O histórico foi apagado</value>
   </data>
   <data name="HoldToAudio" xml:space="preserve">
-    <value>Segure para gravar um áudio. Toque para mudar para vídeo.</value>
+    <value>Segure para gravar áudio. Toque para vídeo.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
-    <value>Segure para gravar um vídeo. Toque para mudar para áudio.</value>
+    <value>Segure para gravar vídeo. Toque para áudio.</value>
   </data>
   <data name="HoursZero" xml:space="preserve">
     <value></value>
@@ -3681,6 +3708,9 @@ de múltiplos dispositivos.</value>
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>Não foi possível encontrar o servidor de pagamento. Verifique sua conexão e tente novamente.</value>
   </data>
+  <data name="PaymentEmailToProvider" xml:space="preserve">
+    <value>O email será passado ao {0} como informação de faturamento.</value>
+  </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Desculpe, o pagamento foi recusado.</value>
   </data>
@@ -3713,6 +3743,12 @@ de múltiplos dispositivos.</value>
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>Senha</value>
+  </data>
+  <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
+    <value>Telefone e Email serão passados ao {0} como informação de faturamento.</value>
+  </data>
+  <data name="PaymentPhoneToProvider" xml:space="preserve">
+    <value>O telefone será passado ao {0} como informação de faturamento.</value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>Desculpe, o pagamento foi cancelado pelo bot.</value>
@@ -4106,6 +4142,12 @@ Você pode cancelar esse processo a qualquer momento.</value>
   </data>
   <data name="ResetAllNotifications" xml:space="preserve">
     <value>Restaurar Configurações</value>
+  </data>
+  <data name="ResetAutomaticMediaDownload" xml:space="preserve">
+    <value>Apagar Configurações de Download</value>
+  </data>
+  <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
+    <value>Tem certeza que deseja apagar as configurações de download automático?</value>
   </data>
   <data name="ResetMyAccount" xml:space="preserve">
     <value>APAGAR MINHA CONTA</value>

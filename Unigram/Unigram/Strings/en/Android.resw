@@ -330,6 +330,9 @@
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>Stickers not found</value>
   </data>
+  <data name="AddSubscriber" xml:space="preserve">
+    <value>Add subscriber</value>
+  </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>Add to contacts</value>
   </data>
@@ -363,6 +366,9 @@
   <data name="AllPhotos" xml:space="preserve">
     <value>All photos</value>
   </data>
+  <data name="AllVideo" xml:space="preserve">
+    <value>All Videos</value>
+  </data>
   <data name="AllowFillNumber" xml:space="preserve">
     <value>Please allow Telegram to receive calls and SMS so that we can fill in your phone number, send you a code, and enter it for you.</value>
   </data>
@@ -393,58 +399,58 @@
   <data name="AlwaysShowPopup" xml:space="preserve">
     <value>Always show popup</value>
   </data>
-  <data name="AndMoreTypingGroupFew" xml:space="preserve">
-    <value>{0} and {1} more are typing</value>
-  </data>
-  <data name="AndMoreTypingGroupMany" xml:space="preserve">
-    <value>{0} and {1} more are typing</value>
-  </data>
-  <data name="AndMoreTypingGroupOne" xml:space="preserve">
-    <value>{0} and {1} more are typing</value>
-  </data>
-  <data name="AndMoreTypingGroupOther" xml:space="preserve">
-    <value>{0} and {1} more are typing</value>
-  </data>
-  <data name="AndMoreTypingGroupTwo" xml:space="preserve">
-    <value>{0} and {1} more are typing</value>
-  </data>
-  <data name="AndMoreTypingGroupZero" xml:space="preserve">
-    <value>{0} and {1} more are typing</value>
-  </data>
-  <data name="AndMoreTypingFew" xml:space="preserve">
-    <value>and {0} more are typing</value>
-  </data>
-  <data name="AndMoreTypingMany" xml:space="preserve">
-    <value>and {0} more are typing</value>
+  <data name="AndMoreTypingZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="AndMoreTypingOne" xml:space="preserve">
     <value>and {0} more are typing</value>
   </data>
+  <data name="AndMoreTypingTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="AndMoreTypingFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="AndMoreTypingMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="AndMoreTypingOther" xml:space="preserve">
     <value>and {0} more are typing</value>
   </data>
-  <data name="AndMoreTypingTwo" xml:space="preserve">
-    <value>and {0} more are typing</value>
+  <data name="AndMoreTypingGroupZero" xml:space="preserve">
+    <value></value>
   </data>
-  <data name="AndMoreTypingZero" xml:space="preserve">
-    <value>and {0} more are typing</value>
+  <data name="AndMoreTypingGroupOne" xml:space="preserve">
+    <value>{0} and {1} more are typing</value>
   </data>
-  <data name="AndOtherFew" xml:space="preserve">
-    <value>and {0} others</value>
+  <data name="AndMoreTypingGroupTwo" xml:space="preserve">
+    <value></value>
   </data>
-  <data name="AndOtherMany" xml:space="preserve">
-    <value>and {0} others</value>
+  <data name="AndMoreTypingGroupFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="AndMoreTypingGroupMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="AndMoreTypingGroupOther" xml:space="preserve">
+    <value>{0} and {1} more are typing</value>
+  </data>
+  <data name="AndOtherZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="AndOtherOne" xml:space="preserve">
     <value>and {0} other</value>
   </data>
-  <data name="AndOtherOther" xml:space="preserve">
-    <value>and {0} others</value>
-  </data>
   <data name="AndOtherTwo" xml:space="preserve">
-    <value>and {0} others</value>
+    <value></value>
   </data>
-  <data name="AndOtherZero" xml:space="preserve">
+  <data name="AndOtherFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="AndOtherMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="AndOtherOther" xml:space="preserve">
     <value>and {0} others</value>
   </data>
   <data name="AppName" xml:space="preserve">
@@ -571,7 +577,7 @@ Remember, logging out kills all your Secret Chats.</value>
   <data name="AskAQuestionInfo" xml:space="preserve">
     <value>Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.
 
-Please take a look at the &lt;a href="https://telegram.org/faq#general"&gt;Telegram FAQ&lt;/a&gt;: it has answers to most questions and important tips for &lt;a href="https://telegram.org/faq#troubleshooting"&gt;troubleshooting&lt;/a&gt;.</value>
+Please take a look at the <![CDATA[<a href="https://telegram.org/faq#general">Telegram FAQ</a>]]>: it has answers to most questions and important tips for <![CDATA[<a href="https://telegram.org/faq#troubleshooting">troubleshooting</a>]]>.</value>
   </data>
   <data name="AskButton" xml:space="preserve">
     <value>Ask a volunteer</value>
@@ -604,7 +610,7 @@ Please take a look at the &lt;a href="https://telegram.org/faq#general"&gt;Teleg
     <value>Live Location</value>
   </data>
   <data name="AttachLiveLocationIsSharing" xml:space="preserve">
-    <value>{0} is sharing with {1}</value>
+    <value>{0} sharing with {1}</value>
   </data>
   <data name="AttachLocation" xml:space="preserve">
     <value>Location</value>
@@ -654,6 +660,9 @@ Please take a look at the &lt;a href="https://telegram.org/faq#general"&gt;Teleg
   <data name="AudioUnknownTitle" xml:space="preserve">
     <value>Unknown title</value>
   </data>
+  <data name="AutoDownloadMedia" xml:space="preserve">
+    <value>Auto-Download Media</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Auto-lock</value>
   </data>
@@ -665,6 +674,24 @@ Please take a look at the &lt;a href="https://telegram.org/faq#general"&gt;Teleg
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
     <value>Require passcode if away for a time.</value>
+  </data>
+  <data name="AutodownloadChannels" xml:space="preserve">
+    <value>Channels</value>
+  </data>
+  <data name="AutodownloadContacts" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="AutodownloadGroupChats" xml:space="preserve">
+    <value>Group Chats</value>
+  </data>
+  <data name="AutodownloadPrivateChats" xml:space="preserve">
+    <value>Private Chats</value>
+  </data>
+  <data name="AutodownloadSizeLimit" xml:space="preserve">
+    <value>Limit by Size</value>
+  </data>
+  <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
+    <value>up to {0}</value>
   </data>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Automatic media download</value>
@@ -808,7 +835,7 @@ Please take a look at the &lt;a href="https://telegram.org/faq#general"&gt;Teleg
     <value>Thank you for helping make Telegram calls better.</value>
   </data>
   <data name="CallText" xml:space="preserve">
-    <value>We will call you in {0}:%2$02d</value>
+    <value>Telegram will call you in {0}:%2$02d</value>
   </data>
   <data name="CallViaTelegram" xml:space="preserve">
     <value>Telegram Call</value>
@@ -1018,6 +1045,9 @@ Note: if you forget the passcode, you'll need to delete and reinstall the app. A
   <data name="ChannelMessageVideo" xml:space="preserve">
     <value>{0} posted a video</value>
   </data>
+  <data name="ChannelModerator" xml:space="preserve">
+    <value>Moderator</value>
+  </data>
   <data name="ChannelMute" xml:space="preserve">
     <value>MUTE</value>
   </data>
@@ -1028,7 +1058,7 @@ Note: if you forget the passcode, you'll need to delete and reinstall the app. A
     <value>Members will be notified when you post</value>
   </data>
   <data name="ChannelPhotoEditNotification" xml:space="preserve">
-    <value>Channel {0} updated photo</value>
+    <value>Channel {0} updated its photo</value>
   </data>
   <data name="ChannelPrivate" xml:space="preserve">
     <value>Private Channel</value>
@@ -1070,6 +1100,12 @@ If you're not interested, we suggest creating a private channel instead.</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Silent Broadcast</value>
+  </data>
+  <data name="ChannelSubscribers" xml:space="preserve">
+    <value>Subscribers</value>
+  </data>
+  <data name="ChannelType" xml:space="preserve">
+    <value>Channel Type</value>
   </data>
   <data name="ChannelUnmute" xml:space="preserve">
     <value>UNMUTE</value>
@@ -1158,22 +1194,22 @@ If you're not interested, we suggest creating a private channel instead.</value>
   <data name="ChatYourSelfTitle" xml:space="preserve">
     <value>Your cloud storage</value>
   </data>
-  <data name="ChatsFew" xml:space="preserve">
-    <value>{0} chats</value>
-  </data>
-  <data name="ChatsMany" xml:space="preserve">
-    <value>{0} chats</value>
+  <data name="ChatsZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ChatsOne" xml:space="preserve">
     <value>{0} chat</value>
   </data>
-  <data name="ChatsOther" xml:space="preserve">
-    <value>{0} chats</value>
-  </data>
   <data name="ChatsTwo" xml:space="preserve">
-    <value>{0} chats</value>
+    <value></value>
   </data>
-  <data name="ChatsZero" xml:space="preserve">
+  <data name="ChatsFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ChatsMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ChatsOther" xml:space="preserve">
     <value>{0} chats</value>
   </data>
   <data name="ChooseCountry" xml:space="preserve">
@@ -1440,41 +1476,41 @@ To go over the limit and get additional features, upgrade to a supergroup:
   <data name="DataUsage" xml:space="preserve">
     <value>Disk and network usage</value>
   </data>
-  <data name="DaysBoldFew" xml:space="preserve">
-    <value>**{0}** days</value>
-  </data>
-  <data name="DaysBoldMany" xml:space="preserve">
-    <value>**{0}** days</value>
-  </data>
-  <data name="DaysBoldOne" xml:space="preserve">
-    <value>**{0}** day</value>
-  </data>
-  <data name="DaysBoldOther" xml:space="preserve">
-    <value>**{0}** days</value>
-  </data>
-  <data name="DaysBoldTwo" xml:space="preserve">
-    <value>**{0}** days</value>
-  </data>
-  <data name="DaysBoldZero" xml:space="preserve">
-    <value>**{0}** days</value>
-  </data>
-  <data name="DaysFew" xml:space="preserve">
-    <value>{0} days</value>
-  </data>
-  <data name="DaysMany" xml:space="preserve">
-    <value>{0} days</value>
+  <data name="DaysZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="DaysOne" xml:space="preserve">
     <value>{0} day</value>
   </data>
+  <data name="DaysTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DaysFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DaysMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="DaysOther" xml:space="preserve">
     <value>{0} days</value>
   </data>
-  <data name="DaysTwo" xml:space="preserve">
-    <value>{0} days</value>
+  <data name="DaysBoldZero" xml:space="preserve">
+    <value></value>
   </data>
-  <data name="DaysZero" xml:space="preserve">
-    <value>{0} days</value>
+  <data name="DaysBoldOne" xml:space="preserve">
+    <value>**{0}** day</value>
+  </data>
+  <data name="DaysBoldTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DaysBoldFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DaysBoldMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DaysBoldOther" xml:space="preserve">
+    <value>**{0}** days</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>Debug Menu</value>
@@ -1861,6 +1897,18 @@ Learn more at telegram.org</value>
   <data name="EventLogEditedMessages" xml:space="preserve">
     <value>un1 edited this message:</value>
   </data>
+  <data name="EventLogEditedYouChannelPhoto" xml:space="preserve">
+    <value>You set new channel photo</value>
+  </data>
+  <data name="EventLogEditedYouChannelTitle" xml:space="preserve">
+    <value>You renamed the channel to "{0}"</value>
+  </data>
+  <data name="EventLogEditedYouGroupPhoto" xml:space="preserve">
+    <value>You set new group photo</value>
+  </data>
+  <data name="EventLogEditedYouGroupTitle" xml:space="preserve">
+    <value>You renamed the group to "{0}"</value>
+  </data>
   <data name="EventLogEmpty" xml:space="preserve">
     <value>**No actions here yet**
 
@@ -1889,6 +1937,9 @@ have been found.</value>
   </data>
   <data name="EventLogFilterChannelInfo" xml:space="preserve">
     <value>Channel info</value>
+  </data>
+  <data name="EventLogFilterChannelSettings" xml:space="preserve">
+    <value>Channel settings</value>
   </data>
   <data name="EventLogFilterDeletedMessages" xml:space="preserve">
     <value>Deleted messages</value>
@@ -1926,6 +1977,9 @@ have been found.</value>
   <data name="EventLogInfoTitle" xml:space="preserve">
     <value>What is the Recent Actions?</value>
   </data>
+  <data name="EventLogLeft" xml:space="preserve">
+    <value>un1 left the group</value>
+  </data>
   <data name="EventLogLeftChannel" xml:space="preserve">
     <value>un1 left the channel</value>
   </data>
@@ -1944,8 +1998,14 @@ have been found.</value>
   <data name="EventLogPinnedMessages" xml:space="preserve">
     <value>un1 pinned this message:</value>
   </data>
+  <data name="EventLogPreviousChannelLink" xml:space="preserve">
+    <value>Previous channel link</value>
+  </data>
   <data name="EventLogPreviousGroupDescription" xml:space="preserve">
     <value>Previous description</value>
+  </data>
+  <data name="EventLogPreviousGroupLink" xml:space="preserve">
+    <value>Previous group link</value>
   </data>
   <data name="EventLogPreviousLink" xml:space="preserve">
     <value>Previous link</value>
@@ -1974,11 +2034,17 @@ have been found.</value>
   <data name="EventLogPromotedEditMessages" xml:space="preserve">
     <value>Edit messages</value>
   </data>
+  <data name="EventLogPromotedInviteLink" xml:space="preserve">
+    <value>Invite via link</value>
+  </data>
   <data name="EventLogPromotedPinMessages" xml:space="preserve">
     <value>Pin messages</value>
   </data>
   <data name="EventLogPromotedPostMessages" xml:space="preserve">
     <value>Post messages</value>
+  </data>
+  <data name="EventLogRemoved" xml:space="preserve">
+    <value>un1 removed un2</value>
   </data>
   <data name="EventLogRemovedChannelLink" xml:space="preserve">
     <value>un1 removed the channel link</value>
@@ -1994,6 +2060,15 @@ have been found.</value>
   </data>
   <data name="EventLogRemovedWGroupPhoto" xml:space="preserve">
     <value>un1 removed the group photo</value>
+  </data>
+  <data name="EventLogRemovedYouChannelPhoto" xml:space="preserve">
+    <value>You removed channel photo</value>
+  </data>
+  <data name="EventLogRemovedYouGroupPhoto" xml:space="preserve">
+    <value>You removed group photo</value>
+  </data>
+  <data name="EventLogRestricted" xml:space="preserve">
+    <value>changed restrictions for {0} indefinitely</value>
   </data>
   <data name="EventLogRestrictedReadMessages" xml:space="preserve">
     <value>Read messages</value>
@@ -2038,6 +2113,21 @@ Duration: {1}</value>
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
     <value>un1 unpinned message</value>
+  </data>
+  <data name="EventLogYouChannelJoined" xml:space="preserve">
+    <value>You joined channel</value>
+  </data>
+  <data name="EventLogYouGroupJoined" xml:space="preserve">
+    <value>You joined group</value>
+  </data>
+  <data name="EventLogYouLeft" xml:space="preserve">
+    <value>You left group</value>
+  </data>
+  <data name="EventLogYouPromoted" xml:space="preserve">
+    <value>You changed privileges of un2 ({0})</value>
+  </data>
+  <data name="EventLogYouRestricted" xml:space="preserve">
+    <value>You changed restrictions for un2 ({0})</value>
   </data>
   <data name="Events" xml:space="preserve">
     <value>Events</value>
@@ -2099,187 +2189,187 @@ Duration: {1}</value>
   <data name="ForwardTo" xml:space="preserve">
     <value>Forward to...</value>
   </data>
-  <data name="ForwardedAudioFew" xml:space="preserve">
-    <value>{0} forwarded voice messages</value>
-  </data>
-  <data name="ForwardedAudioMany" xml:space="preserve">
-    <value>{0} forwarded voice messages</value>
+  <data name="ForwardedAudioZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ForwardedAudioOne" xml:space="preserve">
     <value>Forwarded voice message</value>
   </data>
+  <data name="ForwardedAudioTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedAudioFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedAudioMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="ForwardedAudioOther" xml:space="preserve">
     <value>{0} forwarded voice messages</value>
   </data>
-  <data name="ForwardedAudioTwo" xml:space="preserve">
-    <value>{0} forwarded voice messages</value>
-  </data>
-  <data name="ForwardedAudioZero" xml:space="preserve">
-    <value>{0} forwarded voice messages</value>
-  </data>
-  <data name="ForwardedContactFew" xml:space="preserve">
-    <value>{0} forwarded contacts</value>
-  </data>
-  <data name="ForwardedContactMany" xml:space="preserve">
-    <value>{0} forwarded contacts</value>
+  <data name="ForwardedContactZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ForwardedContactOne" xml:space="preserve">
     <value>Forwarded contact</value>
   </data>
+  <data name="ForwardedContactTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedContactFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedContactMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="ForwardedContactOther" xml:space="preserve">
     <value>{0} forwarded contacts</value>
   </data>
-  <data name="ForwardedContactTwo" xml:space="preserve">
-    <value>{0} forwarded contacts</value>
-  </data>
-  <data name="ForwardedContactZero" xml:space="preserve">
-    <value>{0} forwarded contacts</value>
-  </data>
-  <data name="ForwardedFileFew" xml:space="preserve">
-    <value>{0} forwarded files</value>
-  </data>
-  <data name="ForwardedFileMany" xml:space="preserve">
-    <value>{0} forwarded files</value>
+  <data name="ForwardedFileZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ForwardedFileOne" xml:space="preserve">
     <value>Forwarded file</value>
   </data>
+  <data name="ForwardedFileTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedFileFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedFileMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="ForwardedFileOther" xml:space="preserve">
     <value>{0} forwarded files</value>
   </data>
-  <data name="ForwardedFileTwo" xml:space="preserve">
-    <value>{0} forwarded files</value>
-  </data>
-  <data name="ForwardedFileZero" xml:space="preserve">
-    <value>{0} forwarded files</value>
-  </data>
-  <data name="ForwardedLocationFew" xml:space="preserve">
-    <value>{0} forwarded locations</value>
-  </data>
-  <data name="ForwardedLocationMany" xml:space="preserve">
-    <value>{0} forwarded locations</value>
+  <data name="ForwardedLocationZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ForwardedLocationOne" xml:space="preserve">
     <value>Forwarded location</value>
   </data>
-  <data name="ForwardedLocationOther" xml:space="preserve">
-    <value>{0} forwarded locations</value>
-  </data>
   <data name="ForwardedLocationTwo" xml:space="preserve">
-    <value>{0} forwarded locations</value>
+    <value></value>
   </data>
-  <data name="ForwardedLocationZero" xml:space="preserve">
+  <data name="ForwardedLocationFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedLocationMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedLocationOther" xml:space="preserve">
     <value>{0} forwarded locations</value>
   </data>
   <data name="ForwardedMessage" xml:space="preserve">
     <value>Forwarded message</value>
   </data>
-  <data name="ForwardedMessageCountFew" xml:space="preserve">
-    <value>{0} forwarded messages</value>
-  </data>
-  <data name="ForwardedMessageCountMany" xml:space="preserve">
-    <value>{0} forwarded messages</value>
+  <data name="ForwardedMessageCountZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ForwardedMessageCountOne" xml:space="preserve">
     <value>Forwarded message</value>
   </data>
+  <data name="ForwardedMessageCountTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedMessageCountFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedMessageCountMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="ForwardedMessageCountOther" xml:space="preserve">
     <value>{0} forwarded messages</value>
   </data>
-  <data name="ForwardedMessageCountTwo" xml:space="preserve">
-    <value>{0} forwarded messages</value>
-  </data>
-  <data name="ForwardedMessageCountZero" xml:space="preserve">
-    <value>{0} forwarded messages</value>
-  </data>
-  <data name="ForwardedMusicFew" xml:space="preserve">
-    <value>{0} forwarded tracks</value>
-  </data>
-  <data name="ForwardedMusicMany" xml:space="preserve">
-    <value>{0} forwarded tracks</value>
+  <data name="ForwardedMusicZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ForwardedMusicOne" xml:space="preserve">
     <value>Forwarded track</value>
   </data>
+  <data name="ForwardedMusicTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedMusicFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedMusicMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="ForwardedMusicOther" xml:space="preserve">
     <value>{0} forwarded tracks</value>
   </data>
-  <data name="ForwardedMusicTwo" xml:space="preserve">
-    <value>{0} forwarded tracks</value>
-  </data>
-  <data name="ForwardedMusicZero" xml:space="preserve">
-    <value>{0} forwarded tracks</value>
-  </data>
-  <data name="ForwardedPhotoFew" xml:space="preserve">
-    <value>{0} forwarded photos</value>
-  </data>
-  <data name="ForwardedPhotoMany" xml:space="preserve">
-    <value>{0} forwarded photos</value>
+  <data name="ForwardedPhotoZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ForwardedPhotoOne" xml:space="preserve">
     <value>Forwarded photo</value>
   </data>
+  <data name="ForwardedPhotoTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedPhotoFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedPhotoMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="ForwardedPhotoOther" xml:space="preserve">
     <value>{0} forwarded photos</value>
   </data>
-  <data name="ForwardedPhotoTwo" xml:space="preserve">
-    <value>{0} forwarded photos</value>
-  </data>
-  <data name="ForwardedPhotoZero" xml:space="preserve">
-    <value>{0} forwarded photos</value>
-  </data>
-  <data name="ForwardedRoundFew" xml:space="preserve">
-    <value>{0} forwarded video messages</value>
-  </data>
-  <data name="ForwardedRoundMany" xml:space="preserve">
-    <value>{0} forwarded video messages</value>
+  <data name="ForwardedRoundZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ForwardedRoundOne" xml:space="preserve">
     <value>Forwarded video message</value>
   </data>
+  <data name="ForwardedRoundTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedRoundFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedRoundMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="ForwardedRoundOther" xml:space="preserve">
     <value>{0} forwarded video messages</value>
   </data>
-  <data name="ForwardedRoundTwo" xml:space="preserve">
-    <value>{0} forwarded video messages</value>
-  </data>
-  <data name="ForwardedRoundZero" xml:space="preserve">
-    <value>{0} forwarded video messages</value>
-  </data>
-  <data name="ForwardedStickerFew" xml:space="preserve">
-    <value>{0} forwarded stickers</value>
-  </data>
-  <data name="ForwardedStickerMany" xml:space="preserve">
-    <value>{0} forwarded stickers</value>
+  <data name="ForwardedStickerZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ForwardedStickerOne" xml:space="preserve">
     <value>Forwarded sticker</value>
   </data>
+  <data name="ForwardedStickerTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedStickerFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedStickerMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="ForwardedStickerOther" xml:space="preserve">
     <value>{0} forwarded stickers</value>
   </data>
-  <data name="ForwardedStickerTwo" xml:space="preserve">
-    <value>{0} forwarded stickers</value>
-  </data>
-  <data name="ForwardedStickerZero" xml:space="preserve">
-    <value>{0} forwarded stickers</value>
-  </data>
-  <data name="ForwardedVideoFew" xml:space="preserve">
-    <value>{0} forwarded videos</value>
-  </data>
-  <data name="ForwardedVideoMany" xml:space="preserve">
-    <value>{0} forwarded videos</value>
+  <data name="ForwardedVideoZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ForwardedVideoOne" xml:space="preserve">
     <value>Forwarded video</value>
   </data>
-  <data name="ForwardedVideoOther" xml:space="preserve">
-    <value>{0} forwarded videos</value>
-  </data>
   <data name="ForwardedVideoTwo" xml:space="preserve">
-    <value>{0} forwarded videos</value>
+    <value></value>
   </data>
-  <data name="ForwardedVideoZero" xml:space="preserve">
+  <data name="ForwardedVideoFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedVideoMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ForwardedVideoOther" xml:space="preserve">
     <value>{0} forwarded videos</value>
   </data>
   <data name="FreeOfTotal" xml:space="preserve">
@@ -2291,23 +2381,23 @@ Duration: {1}</value>
   <data name="FromCamera" xml:space="preserve">
     <value>From camera</value>
   </data>
-  <data name="FromChatsFew" xml:space="preserve">
-    <value>from {0} chats</value>
-  </data>
-  <data name="FromChatsMany" xml:space="preserve">
-    <value>from {0} chats</value>
+  <data name="FromChatsZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="FromChatsOne" xml:space="preserve">
     <value>from {0} chat</value>
   </data>
+  <data name="FromChatsTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="FromChatsFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="FromChatsMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="FromChatsOther" xml:space="preserve">
     <value>from {0} chats</value>
-  </data>
-  <data name="FromChatsTwo" xml:space="preserve">
-    <value>from {0} chats</value>
-  </data>
-  <data name="FromChatsZero" xml:space="preserve">
-    <value>from no chats</value>
   </data>
   <data name="FromGalley" xml:space="preserve">
     <value>From gallery</value>
@@ -2361,6 +2451,9 @@ about Telegram?</value>
   <data name="GroupStickersInfo" xml:space="preserve">
     <value>You can choose a sticker set that will be available to all group members when they are chatting in this group.</value>
   </data>
+  <data name="GroupType" xml:space="preserve">
+    <value>Group Type</value>
+  </data>
   <data name="GroupUserAddLimit" xml:space="preserve">
     <value>Sorry, this group is full.</value>
   </data>
@@ -2406,41 +2499,41 @@ about Telegram?</value>
   <data name="HoldToVideo" xml:space="preserve">
     <value>Hold to record video. Tap to switch to audio.</value>
   </data>
-  <data name="HoursBoldFew" xml:space="preserve">
-    <value>**{0}** hours</value>
-  </data>
-  <data name="HoursBoldMany" xml:space="preserve">
-    <value>**{0}** hours</value>
-  </data>
-  <data name="HoursBoldOne" xml:space="preserve">
-    <value>**{0}** hour</value>
-  </data>
-  <data name="HoursBoldOther" xml:space="preserve">
-    <value>**{0}** hours</value>
-  </data>
-  <data name="HoursBoldTwo" xml:space="preserve">
-    <value>**{0}** hours</value>
-  </data>
-  <data name="HoursBoldZero" xml:space="preserve">
-    <value>**{0}** hours</value>
-  </data>
-  <data name="HoursFew" xml:space="preserve">
-    <value>{0} hours</value>
-  </data>
-  <data name="HoursMany" xml:space="preserve">
-    <value>{0} hours</value>
+  <data name="HoursZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="HoursOne" xml:space="preserve">
     <value>{0} hour</value>
   </data>
+  <data name="HoursTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="HoursFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="HoursMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="HoursOther" xml:space="preserve">
     <value>{0} hours</value>
   </data>
-  <data name="HoursTwo" xml:space="preserve">
-    <value>{0} hours</value>
+  <data name="HoursBoldZero" xml:space="preserve">
+    <value></value>
   </data>
-  <data name="HoursZero" xml:space="preserve">
-    <value>{0} hours</value>
+  <data name="HoursBoldOne" xml:space="preserve">
+    <value>**{0}** hour</value>
+  </data>
+  <data name="HoursBoldTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="HoursBoldFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="HoursBoldMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="HoursBoldOther" xml:space="preserve">
+    <value>**{0}** hours</value>
   </data>
   <data name="Hybrid" xml:space="preserve">
     <value>Hybrid</value>
@@ -2514,22 +2607,22 @@ about Telegram?</value>
   <data name="InviteText2" xml:space="preserve">
     <value>Hey, I'm using Telegram to chat. Join me! Download it here: {0}</value>
   </data>
-  <data name="InviteTextNumFew" xml:space="preserve">
-    <value>Hey, I'm using Telegram to chat – and so are {0} of our other contacts. Join us! Download it here: {1}</value>
-  </data>
-  <data name="InviteTextNumMany" xml:space="preserve">
-    <value>Hey, I'm using Telegram to chat – and so are {0} of our other contacts. Join us! Download it here: {1}</value>
+  <data name="InviteTextNumZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="InviteTextNumOne" xml:space="preserve">
     <value>Hey, I'm using Telegram to chat – and so are {0} of our other contact. Join us! Download it here: {1}</value>
   </data>
-  <data name="InviteTextNumOther" xml:space="preserve">
-    <value>Hey, I'm using Telegram to chat – and so are {0} of our other contacts. Join us! Download it here: {1}</value>
-  </data>
   <data name="InviteTextNumTwo" xml:space="preserve">
-    <value>Hey, I'm using Telegram to chat – and so are {0} of our other contacts. Join us! Download it here: {1}</value>
+    <value></value>
   </data>
-  <data name="InviteTextNumZero" xml:space="preserve">
+  <data name="InviteTextNumFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="InviteTextNumMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="InviteTextNumOther" xml:space="preserve">
     <value>Hey, I'm using Telegram to chat – and so are {0} of our other contacts. Join us! Download it here: {1}</value>
   </data>
   <data name="InviteToChannelError" xml:space="preserve">
@@ -2626,6 +2719,9 @@ All media will stay in the Telegram cloud and can be re-downloaded if you need i
   </data>
   <data name="LanguageNameInEnglish" xml:space="preserve">
     <value>English</value>
+  </data>
+  <data name="LanguageSuggested" xml:space="preserve">
+    <value>Install "{0}" language?</value>
   </data>
   <data name="LastName" xml:space="preserve">
     <value>Last name (optional)</value>
@@ -2851,29 +2947,29 @@ This operation can take a few minutes to complete.</value>
   <data name="MegaUsernameHelp" xml:space="preserve">
     <value>People can share this link with others and find your group using Telegram search.</value>
   </data>
+  <data name="MembersZero" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MembersOne" xml:space="preserve">
+    <value>{0} member</value>
+  </data>
+  <data name="MembersTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MembersFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MembersMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MembersOther" xml:space="preserve">
+    <value>{0} members</value>
+  </data>
   <data name="MembersCount" xml:space="preserve">
     <value>{0} of {1} selected</value>
   </data>
   <data name="MembersCountZero" xml:space="preserve">
     <value>up to {0}</value>
-  </data>
-  <data name="MembersFew" xml:space="preserve">
-    <value>{0} members</value>
-  </data>
-  <data name="MembersMany" xml:space="preserve">
-    <value>{0} members</value>
-  </data>
-  <data name="MembersOne" xml:space="preserve">
-    <value>{0} member</value>
-  </data>
-  <data name="MembersOther" xml:space="preserve">
-    <value>{0} members</value>
-  </data>
-  <data name="MembersTwo" xml:space="preserve">
-    <value>{0} members</value>
-  </data>
-  <data name="MembersZero" xml:space="preserve">
-    <value>{0} members</value>
   </data>
   <data name="Message" xml:space="preserve">
     <value>Message</value>
@@ -2911,82 +3007,82 @@ This operation can take a few minutes to complete.</value>
   <data name="MessagesSettings" xml:space="preserve">
     <value>Messages</value>
   </data>
-  <data name="MetersAway" xml:space="preserve">
-    <value>m away</value>
-  </data>
-  <data name="MetersFew" xml:space="preserve">
-    <value>{0} meters</value>
-  </data>
-  <data name="MetersMany" xml:space="preserve">
-    <value>{0} meters</value>
+  <data name="MetersZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="MetersOne" xml:space="preserve">
     <value>{0} meter</value>
   </data>
+  <data name="MetersTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MetersFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MetersMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="MetersOther" xml:space="preserve">
     <value>{0} meters</value>
   </data>
-  <data name="MetersTwo" xml:space="preserve">
-    <value>{0} meters</value>
+  <data name="MetersAway" xml:space="preserve">
+    <value>m away</value>
   </data>
-  <data name="MetersZero" xml:space="preserve">
-    <value>{0} meters</value>
-  </data>
-  <data name="MinutesBoldFew" xml:space="preserve">
-    <value>**{0}** minutes</value>
-  </data>
-  <data name="MinutesBoldMany" xml:space="preserve">
-    <value>**{0}** minutes</value>
-  </data>
-  <data name="MinutesBoldOne" xml:space="preserve">
-    <value>**{0}** minute</value>
-  </data>
-  <data name="MinutesBoldOther" xml:space="preserve">
-    <value>**{0}** minutes</value>
-  </data>
-  <data name="MinutesBoldTwo" xml:space="preserve">
-    <value>**{0}** minutes</value>
-  </data>
-  <data name="MinutesBoldZero" xml:space="preserve">
-    <value>**{0}** minutes</value>
-  </data>
-  <data name="MinutesFew" xml:space="preserve">
-    <value>{0} minutes</value>
-  </data>
-  <data name="MinutesMany" xml:space="preserve">
-    <value>{0} minutes</value>
+  <data name="MinutesZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="MinutesOne" xml:space="preserve">
     <value>{0} minute</value>
   </data>
+  <data name="MinutesTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MinutesFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MinutesMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="MinutesOther" xml:space="preserve">
     <value>{0} minutes</value>
   </data>
-  <data name="MinutesTwo" xml:space="preserve">
-    <value>{0} minutes</value>
+  <data name="MinutesBoldZero" xml:space="preserve">
+    <value></value>
   </data>
-  <data name="MinutesZero" xml:space="preserve">
-    <value>{0} minutes</value>
+  <data name="MinutesBoldOne" xml:space="preserve">
+    <value>**{0}** minute</value>
+  </data>
+  <data name="MinutesBoldTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MinutesBoldFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MinutesBoldMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MinutesBoldOther" xml:space="preserve">
+    <value>**{0}** minutes</value>
   </data>
   <data name="MobileUsage" xml:space="preserve">
     <value>Mobile Data Usage</value>
   </data>
-  <data name="MonthsFew" xml:space="preserve">
-    <value>{0} months</value>
-  </data>
-  <data name="MonthsMany" xml:space="preserve">
-    <value>{0} months</value>
+  <data name="MonthsZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="MonthsOne" xml:space="preserve">
     <value>{0} month</value>
   </data>
-  <data name="MonthsOther" xml:space="preserve">
-    <value>{0} months</value>
-  </data>
   <data name="MonthsTwo" xml:space="preserve">
-    <value>{0} months</value>
+    <value></value>
   </data>
-  <data name="MonthsZero" xml:space="preserve">
+  <data name="MonthsFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MonthsMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MonthsOther" xml:space="preserve">
     <value>{0} months</value>
   </data>
   <data name="MoreInfo" xml:space="preserve">
@@ -3037,23 +3133,23 @@ This operation can take a few minutes to complete.</value>
   <data name="NewMessageTitle" xml:space="preserve">
     <value>New Message</value>
   </data>
-  <data name="NewMessagesFew" xml:space="preserve">
-    <value>{0} new messages</value>
-  </data>
-  <data name="NewMessagesMany" xml:space="preserve">
-    <value>{0} new messages</value>
+  <data name="NewMessagesZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="NewMessagesOne" xml:space="preserve">
     <value>{0} new message</value>
   </data>
+  <data name="NewMessagesTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="NewMessagesFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="NewMessagesMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="NewMessagesOther" xml:space="preserve">
     <value>{0} new messages</value>
-  </data>
-  <data name="NewMessagesTwo" xml:space="preserve">
-    <value>{0} new messages</value>
-  </data>
-  <data name="NewMessagesZero" xml:space="preserve">
-    <value>no new messages</value>
   </data>
   <data name="NewSecretChat" xml:space="preserve">
     <value>New Secret Chat</value>
@@ -3077,7 +3173,7 @@ This operation can take a few minutes to complete.</value>
     <value>No banned users</value>
   </data>
   <data name="NoCallLog" xml:space="preserve">
-    <value>You didn't make any calls yet.</value>
+    <value>You haven't made any calls yet.</value>
   </data>
   <data name="NoChats" xml:space="preserve">
     <value>No chats yet...</value>
@@ -3142,7 +3238,7 @@ or tap the menu button for more options.</value>
     <value>No results</value>
   </data>
   <data name="NoSharedAudio" xml:space="preserve">
-    <value>Share music in this chat and access them on any of your devices.</value>
+    <value>Share music in this chat and access it on any of your devices.</value>
   </data>
   <data name="NoSharedAudioSecret" xml:space="preserve">
     <value>Music from this chat will be shown here.</value>
@@ -3488,22 +3584,22 @@ The Telegram Team</value>
   <data name="Online" xml:space="preserve">
     <value>online</value>
   </data>
-  <data name="OnlineCountFew" xml:space="preserve">
-    <value>{0} online</value>
-  </data>
-  <data name="OnlineCountMany" xml:space="preserve">
-    <value>{0} online</value>
+  <data name="OnlineCountZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="OnlineCountOne" xml:space="preserve">
     <value>{0} online</value>
   </data>
-  <data name="OnlineCountOther" xml:space="preserve">
-    <value>{0} online</value>
-  </data>
   <data name="OnlineCountTwo" xml:space="preserve">
-    <value>{0} online</value>
+    <value></value>
   </data>
-  <data name="OnlineCountZero" xml:space="preserve">
+  <data name="OnlineCountFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="OnlineCountMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="OnlineCountOther" xml:space="preserve">
     <value>{0} online</value>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
@@ -3519,7 +3615,7 @@ The Telegram Team</value>
     <value>Open</value>
   </data>
   <data name="OpenChannel" xml:space="preserve">
-    <value>OPEN CHANNEL</value>
+    <value>VIEW CHANNEL</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>OPEN GROUP</value>
@@ -3695,6 +3791,9 @@ from multiple devices.</value>
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>Unable to reach payment server. Please check your internet connection and try again.</value>
   </data>
+  <data name="PaymentEmailToProvider" xml:space="preserve">
+    <value>E-Mail will be passed to {0} as billing info.</value>
+  </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Sorry, the payment was declined.</value>
   </data>
@@ -3727,6 +3826,12 @@ from multiple devices.</value>
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>Password</value>
+  </data>
+  <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
+    <value>Phone and E-Mail will be passed to {0} as billing info.</value>
+  </data>
+  <data name="PaymentPhoneToProvider" xml:space="preserve">
+    <value>Phone will be passed to {0} as billing info.</value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>Sorry, the payment was cancelled by the bot.</value>
@@ -3906,22 +4011,22 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PleaseReEnterPassword" xml:space="preserve">
     <value>Please re-enter your password</value>
   </data>
-  <data name="PointsFew" xml:space="preserve">
-    <value>{0}</value>
-  </data>
-  <data name="PointsMany" xml:space="preserve">
-    <value>{0}</value>
+  <data name="PointsZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="PointsOne" xml:space="preserve">
     <value>{0}</value>
   </data>
-  <data name="PointsOther" xml:space="preserve">
-    <value>{0}</value>
-  </data>
   <data name="PointsTwo" xml:space="preserve">
-    <value>{0}</value>
+    <value></value>
   </data>
-  <data name="PointsZero" xml:space="preserve">
+  <data name="PointsFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="PointsMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="PointsOther" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="PopupDisabled" xml:space="preserve">
@@ -4008,22 +4113,22 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="RecentlyViewedHide" xml:space="preserve">
     <value>HIDE</value>
   </data>
-  <data name="RecipientFew" xml:space="preserve">
-    <value>{0} recipients</value>
-  </data>
-  <data name="RecipientMany" xml:space="preserve">
-    <value>{0} recipients</value>
+  <data name="RecipientZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="RecipientOne" xml:space="preserve">
     <value>{0} recipient</value>
   </data>
-  <data name="RecipientOther" xml:space="preserve">
-    <value>{0} recipients</value>
-  </data>
   <data name="RecipientTwo" xml:space="preserve">
-    <value>{0} recipients</value>
+    <value></value>
   </data>
-  <data name="RecipientZero" xml:space="preserve">
+  <data name="RecipientFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="RecipientMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="RecipientOther" xml:space="preserve">
     <value>{0} recipients</value>
   </data>
   <data name="RecordingAudio" xml:space="preserve">
@@ -4105,7 +4210,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Reset account</value>
   </data>
   <data name="ResetAccountButton" xml:space="preserve">
-    <value>RESET</value>
+    <value>RESET ACCOUNT</value>
   </data>
   <data name="ResetAccountCancelledAlert" xml:space="preserve">
     <value>Your recent attempts to reset this account have been cancelled by its active user. Please try again in 7 days.</value>
@@ -4121,6 +4226,12 @@ You can cancel this process at any time.</value>
   <data name="ResetAllNotifications" xml:space="preserve">
     <value>Reset All Notifications</value>
   </data>
+  <data name="ResetAutomaticMediaDownload" xml:space="preserve">
+    <value>Reset Auto-Download Settings</value>
+  </data>
+  <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
+    <value>Are you sure you want to reset auto-download settings?</value>
+  </data>
   <data name="ResetMyAccount" xml:space="preserve">
     <value>RESET MY ACCOUNT</value>
   </data>
@@ -4131,7 +4242,7 @@ You can cancel this process at any time.</value>
     <value>Warning</value>
   </data>
   <data name="ResetMyAccountWarningReset" xml:space="preserve">
-    <value>Reset</value>
+    <value>Reset account</value>
   </data>
   <data name="ResetMyAccountWarningText" xml:space="preserve">
     <value>This action can't be undone.
@@ -4162,7 +4273,7 @@ If you reset your account, all your messages and chats will be deleted.</value>
     <value>If you can't restore access to your e-mail, your remaining options are either to remember your password or to reset your account.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
-    <value>Since you haven't provided a recovery e-mail when setting up your password, your remaining options are either to remember your password or to reset your account.</value>
+    <value>Since you didn't provide a recovery e-mail when setting up your password, your remaining options are either to remember your password or to reset your account.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Sorry</value>
@@ -4278,41 +4389,41 @@ You may need to restart the app for this to take effect.</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>MESSAGES</value>
   </data>
-  <data name="SecondsBoldFew" xml:space="preserve">
-    <value>**{0}** seconds</value>
-  </data>
-  <data name="SecondsBoldMany" xml:space="preserve">
-    <value>**{0}** seconds</value>
-  </data>
-  <data name="SecondsBoldOne" xml:space="preserve">
-    <value>**{0}** second</value>
-  </data>
-  <data name="SecondsBoldOther" xml:space="preserve">
-    <value>**{0}** seconds</value>
-  </data>
-  <data name="SecondsBoldTwo" xml:space="preserve">
-    <value>**{0}** seconds</value>
-  </data>
-  <data name="SecondsBoldZero" xml:space="preserve">
-    <value>**{0}** seconds</value>
-  </data>
-  <data name="SecondsFew" xml:space="preserve">
-    <value>{0} seconds</value>
-  </data>
-  <data name="SecondsMany" xml:space="preserve">
-    <value>{0} seconds</value>
+  <data name="SecondsZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="SecondsOne" xml:space="preserve">
     <value>{0} second</value>
   </data>
+  <data name="SecondsTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SecondsFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SecondsMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="SecondsOther" xml:space="preserve">
     <value>{0} seconds</value>
   </data>
-  <data name="SecondsTwo" xml:space="preserve">
-    <value>{0} seconds</value>
+  <data name="SecondsBoldZero" xml:space="preserve">
+    <value></value>
   </data>
-  <data name="SecondsZero" xml:space="preserve">
-    <value>{0} seconds</value>
+  <data name="SecondsBoldOne" xml:space="preserve">
+    <value>**{0}** second</value>
+  </data>
+  <data name="SecondsBoldTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SecondsBoldFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SecondsBoldMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SecondsBoldOther" xml:space="preserve">
+    <value>**{0}** seconds</value>
   </data>
   <data name="SecretChat" xml:space="preserve">
     <value>Secret chats</value>
@@ -4384,7 +4495,7 @@ You may need to restart the app for this to take effect.</value>
     <value>Updated in real time as you move</value>
   </data>
   <data name="SendLocation" xml:space="preserve">
-    <value>Send My Current Location</value>
+    <value>Send your current location</value>
   </data>
   <data name="SendMessageRestricted" xml:space="preserve">
     <value>The admins of this group have restricted you from writing here until {0}</value>
@@ -4414,7 +4525,7 @@ You may need to restart the app for this to take effect.</value>
     <value>sending audio...</value>
   </data>
   <data name="SendingFile" xml:space="preserve">
-    <value>sending file...</value>
+    <value>sending a file...</value>
   </data>
   <data name="SendingGame" xml:space="preserve">
     <value>playing a game...</value>
@@ -4423,21 +4534,21 @@ You may need to restart the app for this to take effect.</value>
     <value>Sending GIF...</value>
   </data>
   <data name="SendingPhoto" xml:space="preserve">
-    <value>sending photo...</value>
+    <value>sending a photo...</value>
   </data>
   <data name="SendingVideo" xml:space="preserve">
     <value>Sending video...</value>
   </data>
   <data name="SendingVideoStatus" xml:space="preserve">
-    <value>sending video...</value>
+    <value>sending a video...</value>
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>We've sent the code to the **Telegram** app on your other device.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
-    <value>We've sent an activation call to your phone **{0}**.
+    <value>We're calling your phone **{0}**.
 
-Don't take it, Telegram will process everything automatically.</value>
+Don't accept the call, Telegram will process everything automatically.</value>
   </data>
   <data name="SentCallOnly" xml:space="preserve">
     <value>We are calling your phone **{0}** to dictate a code.</value>
@@ -4619,6 +4730,24 @@ Don't take it, Telegram will process everything automatically.</value>
   <data name="StartText" xml:space="preserve">
     <value>Please confirm your country code and enter your phone number.</value>
   </data>
+  <data name="StickersZero" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="StickersOne" xml:space="preserve">
+    <value>{0} sticker</value>
+  </data>
+  <data name="StickersTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="StickersFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="StickersMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="StickersOther" xml:space="preserve">
+    <value>{0} stickers</value>
+  </data>
   <data name="StickersCopy" xml:space="preserve">
     <value>Copy link</value>
   </data>
@@ -4636,24 +4765,6 @@ Don't take it, Telegram will process everything automatically.</value>
   </data>
   <data name="StickersShare" xml:space="preserve">
     <value>Share</value>
-  </data>
-  <data name="StickersFew" xml:space="preserve">
-    <value>{0} stickers</value>
-  </data>
-  <data name="StickersMany" xml:space="preserve">
-    <value>{0} stickers</value>
-  </data>
-  <data name="StickersOne" xml:space="preserve">
-    <value>{0} sticker</value>
-  </data>
-  <data name="StickersOther" xml:space="preserve">
-    <value>{0} stickers</value>
-  </data>
-  <data name="StickersTwo" xml:space="preserve">
-    <value>{0} stickers</value>
-  </data>
-  <data name="StickersZero" xml:space="preserve">
-    <value>{0} stickers</value>
   </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>STOP ALL</value>
@@ -4673,22 +4784,22 @@ Don't take it, Telegram will process everything automatically.</value>
   <data name="StorageUsage" xml:space="preserve">
     <value>Storage Usage</value>
   </data>
-  <data name="SubscribersFew" xml:space="preserve">
-    <value>{0} subscribers</value>
-  </data>
-  <data name="SubscribersMany" xml:space="preserve">
-    <value>{0} subscribers</value>
+  <data name="SubscribersZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="SubscribersOne" xml:space="preserve">
     <value>{0} subscriber</value>
   </data>
-  <data name="SubscribersOther" xml:space="preserve">
-    <value>{0} subscribers</value>
-  </data>
   <data name="SubscribersTwo" xml:space="preserve">
-    <value>{0} subscribers</value>
+    <value></value>
   </data>
-  <data name="SubscribersZero" xml:space="preserve">
+  <data name="SubscribersFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SubscribersMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SubscribersOther" xml:space="preserve">
     <value>{0} subscribers</value>
   </data>
   <data name="Support" xml:space="preserve">
@@ -4700,22 +4811,22 @@ Don't take it, Telegram will process everything automatically.</value>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Tap here to access saved GIFs</value>
   </data>
-  <data name="TelegramContactsFew" xml:space="preserve">
-    <value>{0} contacts on Telegram</value>
-  </data>
-  <data name="TelegramContactsMany" xml:space="preserve">
-    <value>{0} contacts on Telegram</value>
+  <data name="TelegramContactsZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="TelegramContactsOne" xml:space="preserve">
     <value>{0} contact on Telegram</value>
   </data>
-  <data name="TelegramContactsOther" xml:space="preserve">
-    <value>{0} contacts on Telegram</value>
-  </data>
   <data name="TelegramContactsTwo" xml:space="preserve">
-    <value>{0} contacts on Telegram</value>
+    <value></value>
   </data>
-  <data name="TelegramContactsZero" xml:space="preserve">
+  <data name="TelegramContactsFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="TelegramContactsMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} contacts on Telegram</value>
   </data>
   <data name="TelegramFAQ" xml:space="preserve">
@@ -4760,22 +4871,22 @@ Don't take it, Telegram will process everything automatically.</value>
   <data name="TimeToEditExpired" xml:space="preserve">
     <value>Sorry, editing time expired.</value>
   </data>
-  <data name="TimesFew" xml:space="preserve">
-    <value>{0} times</value>
-  </data>
-  <data name="TimesMany" xml:space="preserve">
-    <value>{0} times</value>
+  <data name="TimesZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="TimesOne" xml:space="preserve">
     <value>{0} time</value>
   </data>
-  <data name="TimesOther" xml:space="preserve">
-    <value>{0} times</value>
-  </data>
   <data name="TimesTwo" xml:space="preserve">
-    <value>{0} times</value>
+    <value></value>
   </data>
-  <data name="TimesZero" xml:space="preserve">
+  <data name="TimesFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="TimesMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="TimesOther" xml:space="preserve">
     <value>{0} times</value>
   </data>
   <data name="TintHighlights" xml:space="preserve">
@@ -4853,22 +4964,22 @@ Don't take it, Telegram will process everything automatically.</value>
   <data name="UpdateContactsTitle" xml:space="preserve">
     <value>Update contacts?</value>
   </data>
-  <data name="UpdatedMinutesFew" xml:space="preserve">
-    <value>updated {0} minutes ago</value>
-  </data>
-  <data name="UpdatedMinutesMany" xml:space="preserve">
-    <value>updated {0} minutes ago</value>
+  <data name="UpdatedMinutesZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="UpdatedMinutesOne" xml:space="preserve">
     <value>updated {0} minute ago</value>
   </data>
-  <data name="UpdatedMinutesOther" xml:space="preserve">
-    <value>updated {0} minutes ago</value>
-  </data>
   <data name="UpdatedMinutesTwo" xml:space="preserve">
-    <value>updated {0} minutes ago</value>
+    <value></value>
   </data>
-  <data name="UpdatedMinutesZero" xml:space="preserve">
+  <data name="UpdatedMinutesFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="UpdatedMinutesMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="UpdatedMinutesOther" xml:space="preserve">
     <value>updated {0} minutes ago</value>
   </data>
   <data name="Updating" xml:space="preserve">
@@ -4997,23 +5108,41 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="UsernamePlaceholder" xml:space="preserve">
     <value>Your Username</value>
   </data>
-  <data name="UsersFew" xml:space="preserve">
-    <value>{0} users</value>
-  </data>
-  <data name="UsersMany" xml:space="preserve">
-    <value>{0} users</value>
+  <data name="UsersZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="UsersOne" xml:space="preserve">
     <value>{0} user</value>
   </data>
+  <data name="UsersTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="UsersFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="UsersMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="UsersOther" xml:space="preserve">
     <value>{0} users</value>
   </data>
-  <data name="UsersTwo" xml:space="preserve">
-    <value>{0} users</value>
+  <data name="UsersPluralizedZero" xml:space="preserve">
+    <value></value>
   </data>
-  <data name="UsersZero" xml:space="preserve">
-    <value>{0} users</value>
+  <data name="UsersPluralizedOne" xml:space="preserve">
+    <value>%@ user</value>
+  </data>
+  <data name="UsersPluralizedTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="UsersPluralizedFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="UsersPluralizedMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="UsersPluralizedOther" xml:space="preserve">
+    <value>%@ users</value>
   </data>
   <data name="Vibrate" xml:space="preserve">
     <value>Vibrate</value>
@@ -5144,22 +5273,22 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="Warmth" xml:space="preserve">
     <value>Warmth</value>
   </data>
-  <data name="WeeksFew" xml:space="preserve">
-    <value>{0} weeks</value>
-  </data>
-  <data name="WeeksMany" xml:space="preserve">
-    <value>{0} weeks</value>
+  <data name="WeeksZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="WeeksOne" xml:space="preserve">
     <value>{0} week</value>
   </data>
-  <data name="WeeksOther" xml:space="preserve">
-    <value>{0} weeks</value>
-  </data>
   <data name="WeeksTwo" xml:space="preserve">
-    <value>{0} weeks</value>
+    <value></value>
   </data>
-  <data name="WeeksZero" xml:space="preserve">
+  <data name="WeeksFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="WeeksMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="WeeksOther" xml:space="preserve">
     <value>{0} weeks</value>
   </data>
   <data name="WhenConnectedOnWiFi" xml:space="preserve">
@@ -5205,27 +5334,27 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
     <value>last seen within a week</value>
   </data>
   <data name="WrongCountry" xml:space="preserve">
-    <value>Wrong country code</value>
+    <value>Invalid Country Code</value>
   </data>
   <data name="WrongNumber" xml:space="preserve">
     <value>Wrong number?</value>
   </data>
-  <data name="YearsFew" xml:space="preserve">
-    <value>{0} years</value>
-  </data>
-  <data name="YearsMany" xml:space="preserve">
-    <value>{0} years</value>
+  <data name="YearsZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="YearsOne" xml:space="preserve">
     <value>{0} year</value>
   </data>
-  <data name="YearsOther" xml:space="preserve">
-    <value>{0} years</value>
-  </data>
   <data name="YearsTwo" xml:space="preserve">
-    <value>{0} years</value>
+    <value></value>
   </data>
-  <data name="YearsZero" xml:space="preserve">
+  <data name="YearsFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="YearsMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="YearsOther" xml:space="preserve">
     <value>{0} years</value>
   </data>
   <data name="Yesterday" xml:space="preserve">
@@ -5296,21 +5425,6 @@ If you forget your password, you will lose access to your Telegram account. Ther
   <data name="ChatFullDate" xml:space="preserve">
     <value>MMMM d, yyyy</value>
   </data>
-  <data name="CommonOpenOnPhone" xml:space="preserve">
-    <value>Open on phone</value>
-  </data>
-  <data name="CommonSigninButtonText" xml:space="preserve">
-    <value>Sign in</value>
-  </data>
-  <data name="CommonSigninButtonTextLong" xml:space="preserve">
-    <value>Sign in with Google</value>
-  </data>
-  <data name="DefaultWebClientId" xml:space="preserve">
-    <value>760348033671-jiv412evc1r36rl4k7vhl1ba83atdmot.apps.googleusercontent.com</value>
-  </data>
-  <data name="FirebaseDatabaseUrl" xml:space="preserve">
-    <value>https://tmessages2.firebaseio.com</value>
-  </data>
   <data name="FormatDateAtTime" xml:space="preserve">
     <value>{0} at {1}</value>
   </data>
@@ -5353,61 +5467,40 @@ If you forget your password, you will lose access to your Telegram account. Ther
   <data name="FormatterYearMax" xml:space="preserve">
     <value>dd.MM.yyyy</value>
   </data>
-  <data name="GcmDefaultSenderId" xml:space="preserve">
-    <value>760348033671</value>
-  </data>
-  <data name="GoogleApiKey" xml:space="preserve">
-    <value>AIzaSyAijSIM_t8bfdRrn2-mCumXRu37pPslqkU</value>
-  </data>
-  <data name="GoogleAppId" xml:space="preserve">
-    <value>1:760348033671:android:dc022572c167a16c</value>
-  </data>
-  <data name="GoogleCrashReportingApiKey" xml:space="preserve">
-    <value>AIzaSyAijSIM_t8bfdRrn2-mCumXRu37pPslqkU</value>
-  </data>
-  <data name="GoogleStorageBucket" xml:space="preserve">
-    <value>tmessages2.appspot.com</value>
-  </data>
-  <data name="ItemsFew" xml:space="preserve">
-    <value>{0} items</value>
-  </data>
-  <data name="ItemsMany" xml:space="preserve">
-    <value>{0} items</value>
+  <data name="ItemsZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="ItemsOne" xml:space="preserve">
     <value>{0} item</value>
   </data>
+  <data name="ItemsTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ItemsFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ItemsMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="ItemsOther" xml:space="preserve">
     <value>{0} items</value>
   </data>
-  <data name="ItemsTwo" xml:space="preserve">
-    <value>{0} items</value>
-  </data>
-  <data name="ItemsZero" xml:space="preserve">
-    <value>no items</value>
-  </data>
-  <data name="MessagesFew" xml:space="preserve">
-    <value>{0} messages</value>
-  </data>
-  <data name="MessagesMany" xml:space="preserve">
-    <value>{0} messages</value>
+  <data name="MessagesZero" xml:space="preserve">
+    <value></value>
   </data>
   <data name="MessagesOne" xml:space="preserve">
     <value>{0} message</value>
   </data>
+  <data name="MessagesTwo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MessagesFew" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="MessagesMany" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="MessagesOther" xml:space="preserve">
     <value>{0} messages</value>
-  </data>
-  <data name="MessagesTwo" xml:space="preserve">
-    <value>{0} messages</value>
-  </data>
-  <data name="MessagesZero" xml:space="preserve">
-    <value>no messages</value>
-  </data>
-  <data name="ProjectId" xml:space="preserve">
-    <value>tmessages2</value>
-  </data>
-  <data name="WalletBuyButtonPlaceHolder" xml:space="preserve">
-    <value>Buy with Google</value>
   </data>
 </root>

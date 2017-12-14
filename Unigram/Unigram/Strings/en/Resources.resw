@@ -126,12 +126,6 @@
   <data name="CopyImage" xml:space="preserve">
     <value>Copy image</value>
   </data>
-  <data name="CopyMessageLink" xml:space="preserve">
-    <value>Copy message link</value>
-  </data>
-  <data name="CopyPostLink" xml:space="preserve">
-    <value>Copy post link</value>
-  </data>
   <data name="DeletedMessage" xml:space="preserve">
     <value>Deleted message</value>
   </data>

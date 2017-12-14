@@ -67,7 +67,6 @@ namespace Unigram.Controls.Views
 
             Layer.Visibility = Visibility.Collapsed;
             TopBar.Visibility = Visibility.Collapsed;
-            BotBar.Visibility = Visibility.Collapsed;
 
             //_mediaPlayer = new MediaPlayerElement();
             _mediaPlayer.AutoPlay = true;
@@ -95,23 +94,11 @@ namespace Unigram.Controls.Views
                 topShowAnimation.Target = nameof(Visual.Offset);
                 topShowAnimation.Duration = duration;
 
-                var botHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                botHideAnimation.InsertKeyFrame(0.0f, new Vector3(), easing);
-                botHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0), easing);
-                botHideAnimation.Target = nameof(Visual.Offset);
-                botHideAnimation.Duration = duration;
-
                 var topHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                 topHideAnimation.InsertKeyFrame(0.0f, new Vector3(), easing);
                 topHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0), easing);
                 topHideAnimation.Target = nameof(Visual.Offset);
                 topHideAnimation.Duration = duration;
-
-                var botShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                botShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0), easing);
-                botShowAnimation.InsertKeyFrame(1.0f, new Vector3(), easing);
-                botShowAnimation.Target = nameof(Visual.Offset);
-                botShowAnimation.Duration = duration;
 
                 var layerShowAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
                 layerShowAnimation.InsertKeyFrame(0.0f, 0.0f, easing);
@@ -127,8 +114,6 @@ namespace Unigram.Controls.Views
 
                 ElementCompositionPreview.SetImplicitShowAnimation(TopBar, topShowAnimation);
                 ElementCompositionPreview.SetImplicitHideAnimation(TopBar, topHideAnimation);
-                ElementCompositionPreview.SetImplicitShowAnimation(BotBar, botShowAnimation);
-                ElementCompositionPreview.SetImplicitHideAnimation(BotBar, botHideAnimation);
                 ElementCompositionPreview.SetImplicitShowAnimation(Layer, layerShowAnimation);
                 ElementCompositionPreview.SetImplicitHideAnimation(Layer, layerHideAnimation);
             }
@@ -257,7 +242,6 @@ namespace Unigram.Controls.Views
 
             Layer.Visibility = Visibility.Collapsed;
             TopBar.Visibility = Visibility.Collapsed;
-            BotBar.Visibility = Visibility.Collapsed;
 
             var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
             if (animation != null && _closing != null)
@@ -280,7 +264,6 @@ namespace Unigram.Controls.Views
             {
                 Layer.Visibility = Visibility.Visible;
                 TopBar.Visibility = Visibility.Visible;
-                BotBar.Visibility = Visibility.Visible;
 
                 //Flip.Opacity = 1;
                 if (animation.TryStart(Surface))
@@ -355,7 +338,6 @@ namespace Unigram.Controls.Views
         private void ImageView_Tapped(object sender, TappedRoutedEventArgs e)
         {
             TopBar.Visibility = TopBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-            BotBar.Visibility = BotBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -392,7 +374,7 @@ namespace Unigram.Controls.Views
 
         private string ConvertTitle(TLMessage message)
         {
-            return message.IsPhoto() ? "Secret Photo" : "Secret Video";
+            return message.IsPhoto() ? Strings.Android.DisappearingPhoto : Strings.Android.DisappearingVideo;
         }
 
         private string ConvertUnread(TLMessage message)

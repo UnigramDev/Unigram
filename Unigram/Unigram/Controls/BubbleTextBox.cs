@@ -248,6 +248,11 @@ namespace Unigram.Controls
                     media.Add(await StoragePhoto.CreateAsync(cache, true));
                 }
 
+                if (package.Contains(StandardDataFormats.Text))
+                {
+                    media[0].Caption = await package.GetTextAsync();
+                }
+
                 ViewModel.SendMediaExecute(media, media[0]);
             }
             else if (package.Contains(StandardDataFormats.StorageItems))

@@ -252,6 +252,9 @@
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>لا يوجد ملصقات</value>
   </data>
+  <data name="AddSubscriber" xml:space="preserve">
+    <value>إضافة مشترك </value>
+  </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>أضف لجهات الاتصال</value>
   </data>
@@ -577,6 +580,9 @@
   <data name="AudioUnknownTitle" xml:space="preserve">
     <value>العنوان غير معروف</value>
   </data>
+  <data name="AutoDownloadMedia" xml:space="preserve">
+    <value>تنزيل الوسائط تلقائياً</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>قفل تلقائي</value>
   </data>
@@ -588,6 +594,24 @@
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
     <value>اطلب رمز المرور إذا غبت فترة محددة من الزمن.</value>
+  </data>
+  <data name="AutodownloadChannels" xml:space="preserve">
+    <value>القنوات</value>
+  </data>
+  <data name="AutodownloadContacts" xml:space="preserve">
+    <value>جهات الاتصال</value>
+  </data>
+  <data name="AutodownloadGroupChats" xml:space="preserve">
+    <value>المحادثات الجماعية</value>
+  </data>
+  <data name="AutodownloadPrivateChats" xml:space="preserve">
+    <value>المحادثات الخاصة</value>
+  </data>
+  <data name="AutodownloadSizeLimit" xml:space="preserve">
+    <value>قيّد بالحجم</value>
+  </data>
+  <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
+    <value>حتى {0}</value>
   </data>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>تنزيل تلقائي للوسائط</value>
@@ -993,6 +1017,9 @@
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>رسالة جماعية صامتة</value>
+  </data>
+  <data name="ChannelSubscribers" xml:space="preserve">
+    <value>المشتركون </value>
   </data>
   <data name="ChannelType" xml:space="preserve">
     <value>نوع القناة</value>
@@ -3676,6 +3703,9 @@
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>تعذر الوصور إلى خادم الدفع. فضلًا تحقق من اتصال الانترنت وحاول مرة أخرى.</value>
   </data>
+  <data name="PaymentEmailToProvider" xml:space="preserve">
+    <value>سيتم إرسال البريد الالكتروني إلى {0} كمعلومات الدفع.</value>
+  </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>المعذرة، تم رفض عملية الدفع.</value>
   </data>
@@ -3708,6 +3738,12 @@
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>كلمة المرور</value>
+  </data>
+  <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
+    <value>سيتم إرسال الرقم والبريد الإلكتروني إلى {0} كمعلومات الدفع.</value>
+  </data>
+  <data name="PaymentPhoneToProvider" xml:space="preserve">
+    <value>سيتم إرسال الرقم إلى {0} كمعلومات الدفع.</value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>المعذرة، تم إلغاء عملية الدفع من البوت.</value>
@@ -4099,6 +4135,12 @@
   </data>
   <data name="ResetAllNotifications" xml:space="preserve">
     <value>إعادة تعيين كافة الإشعارات</value>
+  </data>
+  <data name="ResetAutomaticMediaDownload" xml:space="preserve">
+    <value>إعادة تعيين إعدادات التنزيل التلقائي </value>
+  </data>
+  <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
+    <value>هل أنت متأكد من رغبتك في إعادة تعيين إعدادات التنزيل التلقائي؟ </value>
   </data>
   <data name="ResetMyAccount" xml:space="preserve">
     <value>إعادة تعيين حسابي</value>

@@ -252,6 +252,9 @@
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>Sticker tidak ditemukan</value>
   </data>
+  <data name="AddSubscriber" xml:space="preserve">
+    <value>Tambah pelanggan</value>
+  </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>Tambahkan ke kontak</value>
   </data>
@@ -575,6 +578,9 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
   <data name="AudioUnknownTitle" xml:space="preserve">
     <value>Judul tidak diketahui</value>
   </data>
+  <data name="AutoDownloadMedia" xml:space="preserve">
+    <value>Unduh Media Otomatis</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Otomatis terkunci</value>
   </data>
@@ -586,6 +592,24 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
     <value>Dibutuhkan kode sandi jika tidak aktif dalam sementara waktu.</value>
+  </data>
+  <data name="AutodownloadChannels" xml:space="preserve">
+    <value>Channel</value>
+  </data>
+  <data name="AutodownloadContacts" xml:space="preserve">
+    <value>Kontak</value>
+  </data>
+  <data name="AutodownloadGroupChats" xml:space="preserve">
+    <value>Grup chat</value>
+  </data>
+  <data name="AutodownloadPrivateChats" xml:space="preserve">
+    <value>Chat Privat</value>
+  </data>
+  <data name="AutodownloadSizeLimit" xml:space="preserve">
+    <value>Batasi berdasarkan ukuran</value>
+  </data>
+  <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
+    <value>sampai dengan  {0}</value>
   </data>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Unduh media otomatis</value>
@@ -991,6 +1015,9 @@ Jika Anda tidak tertarik, kami sarankan untuk membuat channel privat.</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Siaran Bisu</value>
+  </data>
+  <data name="ChannelSubscribers" xml:space="preserve">
+    <value>Pelanggan</value>
   </data>
   <data name="ChannelUnmute" xml:space="preserve">
     <value>BUNYIKAN</value>
@@ -3616,6 +3643,9 @@ dari beberapa perangkat.</value>
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>Tidak dapat menjangkau server pembayaran. Mohon cek koneksi internet Anda dan coba kembali.</value>
   </data>
+  <data name="PaymentEmailToProvider" xml:space="preserve">
+    <value>Surel akan dikirimkan kepada {0} sebagai info penagihan.</value>
+  </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Maaf, pembayaran gagal.</value>
   </data>
@@ -3648,6 +3678,12 @@ dari beberapa perangkat.</value>
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>Kata Sandi</value>
+  </data>
+  <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
+    <value>Nomer ponsel dan surel akan dikirimkan kepada {0}  sebagai info penagihan.</value>
+  </data>
+  <data name="PaymentPhoneToProvider" xml:space="preserve">
+    <value>Nomer ponsel akan dikirimkan kepasa {0} sebagai info penagihan. </value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>Maaf, pembayaran telah dibatalkan oleh bot.</value>
@@ -4041,6 +4077,12 @@ dari beberapa perangkat.</value>
   </data>
   <data name="ResetAllNotifications" xml:space="preserve">
     <value>Reset Semua Notifikasi</value>
+  </data>
+  <data name="ResetAutomaticMediaDownload" xml:space="preserve">
+    <value>Reset Pengaturan Unduh Otomatis</value>
+  </data>
+  <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
+    <value>Apakah Anda yakin ingin reset pengaturan unduh otomatis? </value>
   </data>
   <data name="ResetMyAccount" xml:space="preserve">
     <value>RESET AKUN SAYA</value>
@@ -5211,7 +5253,7 @@ Jika Anda lupa katasandi Anda, Anda akan kehilangan akses akun Telegram Anda. Ti
     <value>Ponsel Anda</value>
   </data>
   <data name="ChatDate" xml:space="preserve">
-    <value>MMMM d</value>
+    <value>d MMMM</value>
   </data>
   <data name="ChatFullDate" xml:space="preserve">
     <value>MMMM d, yyyy</value>

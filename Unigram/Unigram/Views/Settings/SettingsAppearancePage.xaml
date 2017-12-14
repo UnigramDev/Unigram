@@ -226,7 +226,7 @@
                 <TextBlock Text="{CustomResource TextSize}" Margin="12,12,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                 <Slider Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
                         Minimum="0"
-                        Maximum="4"
+                        Maximum="6"
                         SmallChange="1"
                         LargeChange="1"
                         TickFrequency="1"
