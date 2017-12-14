@@ -252,6 +252,9 @@
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>Sticker tak dijumpai</value>
   </data>
+  <data name="AddSubscriber" xml:space="preserve">
+    <value>Tambah pelanggan</value>
+  </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>Tambah ke kenalan</value>
   </data>
@@ -577,6 +580,9 @@ Sila lihat  <![CDATA[<a href="https://telegram.org/faq#general">Soalan Lazim Tel
   <data name="AudioUnknownTitle" xml:space="preserve">
     <value>Tajuk tidak diketahui</value>
   </data>
+  <data name="AutoDownloadMedia" xml:space="preserve">
+    <value>Muat turun Media Automatik</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Auto-kunci</value>
   </data>
@@ -588,6 +594,24 @@ Sila lihat  <![CDATA[<a href="https://telegram.org/faq#general">Soalan Lazim Tel
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
     <value>Perlukan kod laluan sekiranya tidak aktif seketika</value>
+  </data>
+  <data name="AutodownloadChannels" xml:space="preserve">
+    <value>Channel</value>
+  </data>
+  <data name="AutodownloadContacts" xml:space="preserve">
+    <value>Kenalan</value>
+  </data>
+  <data name="AutodownloadGroupChats" xml:space="preserve">
+    <value>Chat Group</value>
+  </data>
+  <data name="AutodownloadPrivateChats" xml:space="preserve">
+    <value>Chat Peribadi</value>
+  </data>
+  <data name="AutodownloadSizeLimit" xml:space="preserve">
+    <value>Had Saiz</value>
+  </data>
+  <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
+    <value>sehingga {0}</value>
   </data>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Muat turun media automatik</value>
@@ -993,6 +1017,9 @@ Jika tidak berminat, kami cadang tubuhkan channel peribadi.</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Siaran Senyap</value>
+  </data>
+  <data name="ChannelSubscribers" xml:space="preserve">
+    <value>Pelanggan</value>
   </data>
   <data name="ChannelUnmute" xml:space="preserve">
     <value>BUNYIKAN</value>
@@ -3618,6 +3645,9 @@ dari pelbagai peranti.</value>
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>Tidak dapat menghubungi pelayan pembayaran. Sila periksa hubungan internet anda dan cuba lagi.</value>
   </data>
+  <data name="PaymentEmailToProvider" xml:space="preserve">
+    <value>Emel akan dihantar ke {0} sebagai info bayaran.</value>
+  </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Maaf, bayaran ditolak.</value>
   </data>
@@ -3650,6 +3680,12 @@ dari pelbagai peranti.</value>
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>Kata Laluan</value>
+  </data>
+  <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
+    <value>Fon dan Emel akan dihantar ke {0} sebagai info bayaran. </value>
+  </data>
+  <data name="PaymentPhoneToProvider" xml:space="preserve">
+    <value>Fon akan dihantar ke  {0} sebagai info bayaran.</value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>Maaf, bayaran dibatalkan oleh bot.</value>
@@ -4043,6 +4079,12 @@ Anda boleh batalkan proses ini bila-bila masa.</value>
   <data name="ResetAllNotifications" xml:space="preserve">
     <value>Set semula Semua Notifikasi</value>
   </data>
+  <data name="ResetAutomaticMediaDownload" xml:space="preserve">
+    <value>Set semula Aturan Muat Turun Automatik</value>
+  </data>
+  <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
+    <value>Anda pasti mahu set semula aturan muat turun automatik?</value>
+  </data>
   <data name="ResetMyAccount" xml:space="preserve">
     <value>SET SEMULA AKAUN SAYA</value>
   </data>
@@ -4056,7 +4098,7 @@ Anda boleh batalkan proses ini bila-bila masa.</value>
     <value>Set semula</value>
   </data>
   <data name="ResetMyAccountWarningText" xml:space="preserve">
-    <value>Tindakani ini tidak boleh berpatah balik.
+    <value>Tindakani ini tidak boleh ditukar balik.
 
 Sekiranya anda set semula akaun anda, kesemua mesej dan chat akan terhapus.</value>
   </data>
@@ -4740,7 +4782,7 @@ Jangan jawab, Telegram akan proses secara automatik. </value>
     <value>Untuk keluar dari sekatan tekan lama pada pengguna</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Bebaskan aturan notifikasi asal untuk semua kenalan dan group</value>
+    <value>Tukar balik aturan notifikasi tersuai untuk semua kenalan dan group</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Ralat tidak diketahui</value>
@@ -5213,7 +5255,7 @@ Sekiranya anda lupa kata laluan, akaun Telegram anda tidak lagi boleh diakses. T
     <value>Fon anda</value>
   </data>
   <data name="ChatDate" xml:space="preserve">
-    <value>MMMM d </value>
+    <value>d MMMM</value>
   </data>
   <data name="ChatFullDate" xml:space="preserve">
     <value>MMMM d, yyyy </value>

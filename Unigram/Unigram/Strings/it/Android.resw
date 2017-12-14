@@ -329,6 +329,9 @@
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>Sticker non trovati</value>
   </data>
+  <data name="AddSubscriber" xml:space="preserve">
+    <value>Aggiungi iscritto</value>
+  </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>Aggiungi ai contatti</value>
   </data>
@@ -562,10 +565,10 @@ Ricorda, uscendo eliminerai tutte le Chat Segrete.</value>
     <value>Vuoi sbloccare questo contatto?</value>
   </data>
   <data name="ArticleByAuthor" xml:space="preserve">
-    <value>di {0}</value>
+    <value>da {0}</value>
   </data>
   <data name="ArticleDateByAuthor" xml:space="preserve">
-    <value>{0} di {1}</value>
+    <value>{0} da {1}</value>
   </data>
   <data name="AskAQuestion" xml:space="preserve">
     <value>Fai una domanda</value>
@@ -656,6 +659,9 @@ Dai un'occhiata alle <![CDATA[<a href="https://telegram.org/faq/it#domande-gener
   <data name="AudioUnknownTitle" xml:space="preserve">
     <value>Titolo sconosciuto</value>
   </data>
+  <data name="AutoDownloadMedia" xml:space="preserve">
+    <value>Download automatico</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Blocco automatico</value>
   </data>
@@ -666,7 +672,25 @@ Dai un'occhiata alle <![CDATA[<a href="https://telegram.org/faq/it#domande-gener
     <value>tra {0}</value>
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
-    <value>Richiede il codice se lontano per del tempo.</value>
+    <value>Richiede il codice se assente per del tempo.</value>
+  </data>
+  <data name="AutodownloadChannels" xml:space="preserve">
+    <value>Canali</value>
+  </data>
+  <data name="AutodownloadContacts" xml:space="preserve">
+    <value>Contatti</value>
+  </data>
+  <data name="AutodownloadGroupChats" xml:space="preserve">
+    <value>Gruppi</value>
+  </data>
+  <data name="AutodownloadPrivateChats" xml:space="preserve">
+    <value>Chat private</value>
+  </data>
+  <data name="AutodownloadSizeLimit" xml:space="preserve">
+    <value>Limita per dimensione</value>
+  </data>
+  <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
+    <value>fino a {0}</value>
   </data>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Download automatico media</value>
@@ -1073,6 +1097,9 @@ Se non sei interessato, ti consigliamo di creare un canale privato.</value>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Post silenzioso</value>
   </data>
+  <data name="ChannelSubscribers" xml:space="preserve">
+    <value>Iscritti</value>
+  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Tipo di canale</value>
   </data>
@@ -1143,7 +1170,7 @@ Se non sei interessato, ti consigliamo di creare un canale privato.</value>
     <value>Video</value>
   </data>
   <data name="ChatYourSelf" xml:space="preserve">
-    <value>chat con te stesso</value>
+    <value>inoltra qui per salvare</value>
   </data>
   <data name="ChatYourSelfDescription1" xml:space="preserve">
     <value>Inoltra i messaggi qui per salvarli</value>
@@ -1515,7 +1542,7 @@ Per superare il limite e sbloccare nuove funzioni, aggiorna a supergruppo:
     <value>Se non ti connetti almeno una volta in questo periodo, il tuo account verrà eliminato insieme a tutti i gruppi, i messaggi e i contatti.</value>
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
-    <value>Se lontano per</value>
+    <value>Se assente per</value>
   </data>
   <data name="DeleteAccountTitle" xml:space="preserve">
     <value>Elimina il mio account</value>
@@ -2412,7 +2439,7 @@ su Telegram?</value>
     <value>Notifiche di gruppo</value>
   </data>
   <data name="GroupPhotosHelp" xml:space="preserve">
-    <value>Mostra le foto come messaggio unico</value>
+    <value>Mostra i media come messaggio unico</value>
   </data>
   <data name="GroupStickers" xml:space="preserve">
     <value>Sticker del gruppo</value>
@@ -2663,7 +2690,7 @@ su Telegram?</value>
   <data name="KeepMediaInfo" xml:space="preserve">
     <value>Foto, video e altri file dalle chat nel cloud che non hai **aperto** in questo periodo verranno eliminati dal dispositivo per preservare lo spazio sul disco.
 
-Tutti i media rimarranno nel cloud di Telegram e potranno essere riscaricati ogni volta che ne avrai bisogno.</value>
+Tutti i media rimarranno nel cloud Telegram e potranno essere riscaricati ogni volta che ne avrai bisogno.</value>
   </data>
   <data name="KickFromBroadcast" xml:space="preserve">
     <value>Rimuovi dalla lista broadcast</value>
@@ -3760,6 +3787,9 @@ ai tuoi messaggi da più dispositivi.</value>
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>Impossibile raggiungere il server di pagamento. Per favore controlla la tua connessione a Internet e riprova.</value>
   </data>
+  <data name="PaymentEmailToProvider" xml:space="preserve">
+    <value>L' e-mail sarà passata a  {0} come info di fatturazione.</value>
+  </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Spiacenti, il pagamento è stato rifiutato.</value>
   </data>
@@ -3792,6 +3822,12 @@ ai tuoi messaggi da più dispositivi.</value>
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>Password</value>
+  </data>
+  <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
+    <value>Il numero e l'e-mail saranno passati a  {0} come info di fatturazione.</value>
+  </data>
+  <data name="PaymentPhoneToProvider" xml:space="preserve">
+    <value>Il numero sarà passato a  {0} come info di fatturazione.</value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>Spiacenti, il pagamento è stato annullato dal bot.</value>
@@ -4185,6 +4221,12 @@ Puoi annullare questo processo in qualsiasi momento.</value>
   </data>
   <data name="ResetAllNotifications" xml:space="preserve">
     <value>Ripristina tutte le notifiche</value>
+  </data>
+  <data name="ResetAutomaticMediaDownload" xml:space="preserve">
+    <value>Ripristina download automatico</value>
+  </data>
+  <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
+    <value>Sei sicuro di voler ripristinare le impostazioni di download automatico?</value>
   </data>
   <data name="ResetMyAccount" xml:space="preserve">
     <value>RIPRISTINA IL MIO ACCOUNT</value>
@@ -4634,7 +4676,7 @@ Non rispondere, Telegram farà tutto in automatico.</value>
     <value>Casuale</value>
   </data>
   <data name="SinglePhotosHelp" xml:space="preserve">
-    <value>Mostra le foto come messaggi separati</value>
+    <value>Mostra i media come messaggi separati</value>
   </data>
   <data name="SlideToCancel" xml:space="preserve">
     <value>ANNULLA</value>
