@@ -15,6 +15,8 @@ using Unigram.Views;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage;
 using ChatCreateStep2Tuple = Telegram.Api.TL.TLTuple<string, Telegram.Api.TL.TLInputFileBase>;
+using Telegram.Api.Native.TL;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Unigram.ViewModels.Chats
 {
@@ -43,17 +45,18 @@ namespace Unigram.ViewModels.Chats
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var buffer = parameter as byte[];
-            if (buffer != null)
+            if (buffer == null)
             {
-                using (var from = new TLBinaryReader(buffer))
-                {
-                    var tuple = new ChatCreateStep2Tuple(from);
-
-                    _title = tuple.Item1;
-                    _photo = tuple.Item2;
-                }
+                return Task.CompletedTask;
             }
 
+            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            {
+                var tuple = new ChatCreateStep2Tuple(from);
+
+                _title = tuple.Item1;
+                _photo = tuple.Item2;
+            }
 
             RaisePropertyChanged(() => Title);
             return base.OnNavigatedToAsync(parameter, mode, state);
