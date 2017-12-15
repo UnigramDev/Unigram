@@ -43,6 +43,8 @@ using Telegram.Api;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Unigram.Common;
+using Unigram.Controls.Messages;
+using LinqToVisualTree;
 
 namespace Unigram.Views
 {
@@ -109,7 +111,8 @@ namespace Unigram.Views
                     }
                 }
 
-                var messageIds = new TLVector<int>();
+                var mentionIds = new TLVector<int>();
+                var unreadId = 0;
                 var dialog = ViewModel.Dialog;
 
                 var messages = new List<TLMessage>(index1 - index0);
@@ -124,10 +127,11 @@ namespace Unigram.Views
                         var item = Messages.ItemFromContainer(container);
                         if (item is TLMessageCommonBase commonMessage && !commonMessage.IsOut)
                         {
-                            //if (commonMessage.IsUnread)
+                            //if (/*commonMessage.IsUnread ||*/ commonMessage.Id > dialog?.ReadInboxMaxId)
                             //{
-                            //    Debug.WriteLine($"Messager {commonMessage.Id} is unread.");
-                            //    ViewModel.MarkAsRead(commonMessage);
+                            //    commonMessage.SetUnread(false);
+
+                            //    unreadId = commonMessage.Id > unreadId ? commonMessage.Id : unreadId;
                             //}
 
                             if (commonMessage.IsMentioned && commonMessage.IsMediaUnread)
@@ -135,13 +139,7 @@ namespace Unigram.Views
                                 commonMessage.IsMediaUnread = false;
                                 commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
 
-                                if (dialog != null)
-                                {
-                                    dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - 1);
-                                    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
-                                }
-
-                                messageIds.Add(commonMessage.Id);
+                                mentionIds.Add(commonMessage.Id);
                             }
                         }
 
@@ -157,15 +155,48 @@ namespace Unigram.Views
 
                 Play(messages, auto);
 
-                if (messageIds.Count > 0)
+                //if (unreadId > 0)
+                //{
+                //    if (dialog != null)
+                //    {
+                //        dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1 - ViewModel.Items.Count(x => x.Id > dialog.ReadInboxMaxId && x.Id < unreadId));
+                //        dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+
+                //        dialog.ReadInboxMaxId = unreadId;
+                //    }
+
+                //    var container = Messages.ContainerFromItem(ViewModel.Items.FirstOrDefault(x => x.Id == unreadId)) as ListViewItem;
+                //    var bubble = container.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
+                //    if (bubble != null)
+                //    {
+                //        bubble.Highlight();
+                //    }
+
+                //    if (ViewModel.With is TLChannel channel)
+                //    {
+                //        ViewModel.ProtoService.ReadHistoryAsync(channel, unreadId, null);
+                //    }
+                //    else
+                //    {
+                //        ViewModel.ProtoService.ReadHistoryAsync(ViewModel.Peer, unreadId, 0, null);
+                //    }
+                //}
+
+                if (mentionIds.Count > 0)
                 {
+                    if (dialog != null)
+                    {
+                        dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - mentionIds.Count);
+                        dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+                    }
+
                     if (ViewModel.With is TLChannel channel)
                     {
-                        ViewModel.ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), messageIds, null);
+                        ViewModel.ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), mentionIds, null);
                     }
                     else
                     {
-                        ViewModel.ProtoService.ReadMessageContentsAsync(messageIds, null);
+                        ViewModel.ProtoService.ReadMessageContentsAsync(mentionIds, null);
                     }
                 }
             }
