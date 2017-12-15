@@ -5,7 +5,7 @@ using System.Text;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Native.Diagnostics;
-using Execute = Telegram.Api.Helpers.Execute; 
+using Execute = Telegram.Api.Helpers.Execute;
 
 namespace Telegram.Logs
 {
@@ -117,7 +117,14 @@ namespace Telegram.Logs
 
         void ILogger.Log(LogLevel logLevel, string message)
         {
-            Write(message);
+#if DEBUG
+            System.Diagnostics.Debug.Write(message);
+#endif 
+
+            if (logLevel != LogLevel.Information)
+            {
+                Write(message);
+            }
         }
 
         #endregion

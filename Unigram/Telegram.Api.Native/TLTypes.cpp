@@ -41,6 +41,7 @@ RegisterTLObjectConstructor(TLMsgResendReq);
 RegisterTLObjectConstructor(TLMsgDetailedInfo);
 RegisterTLObjectConstructor(TLMsgNewDetailedInfo);
 RegisterTLObjectConstructor(TLMsgsAllInfo);
+RegisterTLObjectConstructor(TLMsgsStateInfo);
 RegisterTLObjectConstructor(TLGZipPacked);
 RegisterTLObjectConstructor(TLAuthExportedAuthorization);
 RegisterTLObjectConstructor(TLNewSessionCreated);
@@ -1217,6 +1218,20 @@ HRESULT TLMsgsAllInfo::ReadBody(ITLBinaryReaderEx* reader)
 }
 
 
+HRESULT TLMsgsStateInfo::HandleResponse(MessageContext const* messageContext, Connection* connection)
+{
+	return connection->OnMsgsStateInfoResponse(this);
+}
+
+HRESULT TLMsgsStateInfo::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt64(&m_messageId));
+
+	return reader->ReadString(m_info.GetAddressOf());
+}
+
+
 HRESULT TLGZipPacked::RuntimeClassInitialize(ITLObject* object)
 {
 	if (object == nullptr)
@@ -1307,7 +1322,7 @@ HRESULT TLAuthExportedAuthorization::ReadBody(ITLBinaryReaderEx* reader)
 
 
 TLNewSessionCreated::TLNewSessionCreated() :
-	m_firstMesssageId(0),
+	m_firstMessageId(0),
 	m_uniqueId(0),
 	m_serverSalt(0)
 {
@@ -1325,7 +1340,7 @@ HRESULT TLNewSessionCreated::HandleResponse(MessageContext const* messageContext
 HRESULT TLNewSessionCreated::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, reader->ReadInt64(&m_firstMesssageId));
+	ReturnIfFailed(result, reader->ReadInt64(&m_firstMessageId));
 	ReturnIfFailed(result, reader->ReadInt64(&m_uniqueId));
 
 	return reader->ReadInt64(&m_serverSalt);

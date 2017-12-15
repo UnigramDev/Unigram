@@ -17,8 +17,6 @@
 #include "Wrappers\OpenSSL.h"
 #include "Helpers\COMHelper.h"
 
-#include "MethodLogger.h"
-
 #define ENCRYPT_KEY_IV_PARAM 0
 #define DECRYPT_KEY_IV_PARAM 8
 #define FLAGS_GET_HANDSHAKESTATE(flags) static_cast<Datacenter::HandshakeState>((flags) & DatacenterFlag::HandshakeState)
@@ -1285,15 +1283,18 @@ HRESULT Datacenter::OnBadMessageResponse(Connection* connection, INT64 messageId
 	case 33:
 	case 64:
 	{
-		//RecreateSessions();
+		RecreateSessions();
 
-		connection->RecreateSession();
+		//connection->RecreateSession();
 
 		return m_connectionManager->OnDatacenterBadMessage(this, response->GetBadMessageContext()->Id, messageId);
 	}
-	default:
-		return S_OK;
+	case 20:
+		connection->ConfirmAndResetRequest(response->GetBadMessageContext()->Id);
+		break;
 	}
+
+	return S_OK;
 }
 
 HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, UINT32 padding, INT32* quickAckId)
@@ -1512,7 +1513,7 @@ HRESULT Datacenter::ReadSettingsEndpoints(ITLBinaryReaderEx* reader, std::vector
 	{
 		ReturnIfFailed(result, reader->ReadWString(endpoints[i].Address));
 		ReturnIfFailed(result, reader->ReadUInt32(&endpoints[i].Port));
-}
+	}
 
 #ifdef _WIN64
 	return reader->ReadUInt64(currentIndex);
@@ -1530,7 +1531,7 @@ HRESULT Datacenter::WriteSettingsEndpoints(ITLBinaryWriterEx* writer, std::vecto
 	{
 		ReturnIfFailed(result, writer->WriteWString(endpoint.Address));
 		ReturnIfFailed(result, writer->WriteUInt32(endpoint.Port));
-}
+	}
 
 #ifdef _WIN64
 	return writer->WriteUInt64(currentIndex);

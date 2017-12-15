@@ -85,6 +85,7 @@ namespace Telegram
 				class TLNewSessionCreated;
 				class TLMsgDetailedInfo;
 				class TLMsgNewDetailedInfo;
+				class TLMsgsStateInfo;
 
 			}
 
@@ -104,6 +105,7 @@ namespace Telegram
 				friend class TL::TLNewSessionCreated;
 				friend class TL::TLMsgDetailedInfo;
 				friend class TL::TLMsgNewDetailedInfo;
+				friend class TL::TLMsgsStateInfo;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_Connection, BaseTrust);
 
@@ -172,9 +174,11 @@ namespace Telegram
 				HRESULT SendEncryptedMessageWithConfirmation(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _Outptr_opt_ INT32* quickAckId);
 				HRESULT SendUnencryptedMessage(_In_ ITLObject* messageBody, bool reportAck);
 				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody);
+				void ConfirmAndResetRequest(INT64 messageId);
 				HRESULT OnNewSessionCreatedResponse(_In_ TL::TLNewSessionCreated* response);
 				HRESULT OnMsgDetailedInfoResponse(_In_ TL::TLMsgDetailedInfo* response);
 				HRESULT OnMsgNewDetailedInfoResponse(_In_ TL::TLMsgNewDetailedInfo* response);
+				HRESULT OnMsgsStateInfoResponse(_In_ TL::TLMsgsStateInfo* response);
 				HRESULT OnMessageReceived(_In_ TL::TLMemoryBinaryReader* messageReader, UINT32 messageLength);
 				HRESULT OnDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length);
 				HRESULT OnProxyConnected();

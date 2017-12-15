@@ -772,6 +772,7 @@ HRESULT ConnectionManager::Reset()
 		m_requestsQueue.clear();
 		m_runningRequests.clear();
 		m_quickAckRequests.clear();
+		m_resendRequests.clear();
 
 		ZeroMemory(m_runningRequestCount, sizeof(m_runningRequestCount));
 	}
@@ -1599,7 +1600,6 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 			request->Reset(false);
 
 			{
-#pragma message ("Potential deadlock")
 				auto requestsLock = m_requestsCriticalSection.Lock();
 				m_requestsQueue.push_back(std::move(request));
 			}
@@ -1642,18 +1642,6 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 	static const std::wstring knownErrors[] = { L"NETWORK_MIGRATE_", L"PHONE_MIGRATE_", L"USER_MIGRATE_", L"MSG_WAIT_FAILED", L"SESSION_PASSWORD_NEEDED", L"AUTH_KEY_UNREGISTERED", L"FLOOD_WAIT_" };
 
 	auto errorMessage = message.GetRawBuffer(nullptr);
-
-	{
-		auto& obejct = request->GetObject();
-
-		HString className;
-		obejct->GetRuntimeClassName(className.GetAddressOf());
-
-		UINT32 constructor;
-		obejct->get_Constructor(&constructor);
-
-#pragma message ("Log error")
-	}
 
 	switch (code)
 	{
@@ -1773,6 +1761,28 @@ void ConnectionManager::ResetRequests(std::function<bool(INT32, ComPtr<MessageRe
 	}
 }
 
+HRESULT ConnectionManager::ExecuteActionForRequest(std::function<HRESULT(INT32, ComPtr<MessageRequest>)> action)
+{
+	HRESULT result = S_OK;
+	auto requestsLock = m_requestsCriticalSection.Lock();
+
+	auto requestIterator = m_runningRequests.begin();
+	while (requestIterator != m_runningRequests.end())
+	{
+		if ((result = action(requestIterator->first, requestIterator->second)) != S_OK)
+		{
+			if (FAILED(result))
+			{
+				return result;
+			}
+
+			break;
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT ConnectionManager::AdjustCurrentTime(INT64 messageId)
 {
 	auto lock = LockCriticalSection();
@@ -1821,7 +1831,6 @@ HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 
 	if (processRequestQueue)
 	{
-#pragma message ("Potential deadlock")
 		auto requestsLock = m_requestsCriticalSection.Lock();
 
 		ResetRequests([](auto datacenterId, auto const& request) -> bool
@@ -2112,6 +2121,29 @@ bool ConnectionManager::GetCDNPublicKey(INT32 datacenterId, std::vector<INT64> c
 	}
 
 	return false;
+}
+
+void ConnectionManager::PushResendRequest(INT64 messageId, INT64 answerMessageId)
+{
+	auto requestsLock = m_requestsCriticalSection.Lock();
+
+	m_resendRequests[messageId] = answerMessageId;
+}
+
+bool ConnectionManager::PopResendRequest(INT64 messageId, INT64* answerMessageId)
+{
+	auto requestsLock = m_requestsCriticalSection.Lock();
+
+	auto& requestIterator = m_resendRequests.find(messageId);
+	if (requestIterator == m_resendRequests.end())
+	{
+		return false;
+	}
+
+	*answerMessageId = requestIterator->second;
+
+	m_resendRequests.erase(requestIterator);
+	return true;
 }
 
 INT64 ConnectionManager::GenerateMessageId()

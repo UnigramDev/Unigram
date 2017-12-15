@@ -55,6 +55,7 @@ namespace Telegram
 				class TLMsgDetailedInfo;
 				class TLMsgNewDetailedInfo;
 				class TLMsgsAllInfo;
+				class TLMsgsStateInfo;
 				class TLGZipPacked;
 				class TLAuthExportedAuthorization;
 				class TLNewSessionCreated;
@@ -100,6 +101,7 @@ namespace Telegram
 					MakeTLTypeTraits(TLMsgDetailedInfo, 0x276d3ec6);
 					MakeTLTypeTraits(TLMsgNewDetailedInfo, 0x809db6df);
 					MakeTLTypeTraits(TLMsgsAllInfo, 0x8cc0d131);
+					MakeTLTypeTraits(TLMsgsStateInfo, 0x04deb57d);
 					MakeTLTypeTraits(TLGZipPacked, 0x3072cfa1);
 					MakeTLTypeTraits(TLAuthExportedAuthorization, 0xdf969c2d);
 					MakeTLTypeTraits(TLNewSessionCreated, 0x9ec20908);
@@ -947,7 +949,7 @@ namespace Telegram
 
 				public:
 					//Internal methods
-					inline std::vector<INT64> const& GetMessages() const
+					inline std::vector<INT64> const& GetMessagesIds() const
 					{
 						return m_messagesIds;
 					}
@@ -962,6 +964,33 @@ namespace Telegram
 
 				private:
 					std::vector<INT64> m_messagesIds;
+					HString m_info;
+				};
+
+				class TLMsgsStateInfo WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLMsgsStateInfoTraits>, CloakedIid<IMessageResponseHandler>>
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				public:
+					//COM exported methods
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
+
+					//Internal methods
+					inline INT64 GetMessageId() const
+					{
+						return m_messageId;
+					}
+
+					inline HString const& GetInfo() const
+					{
+						return m_info;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+
+				private:
+					INT64 m_messageId;
 					HString m_info;
 				};
 
@@ -1032,7 +1061,7 @@ namespace Telegram
 					//Internal methods
 					inline INT64 GetFirstMessageId() const
 					{
-						return m_firstMesssageId;
+						return m_firstMessageId;
 					}
 
 					inline INT64 GetUniqueId() const
@@ -1049,7 +1078,7 @@ namespace Telegram
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
 
 				private:
-					INT64 m_firstMesssageId;
+					INT64 m_firstMessageId;
 					INT64 m_uniqueId;
 					INT64 m_serverSalt;
 				};

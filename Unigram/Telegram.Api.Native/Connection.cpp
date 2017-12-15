@@ -11,8 +11,6 @@
 #include "ConnectionManager.h"
 #include "Helpers\StringHelper.h"
 
-#include "MethodLogger.h"
-
 #if FALSE && _DEBUG
 #define NEXT_ENDPOINT_CONNECTION_TIMEOUT INFINITE
 #define ACTIVE_CONNECTION_TIMEOUT INFINITE
@@ -25,16 +23,12 @@
 #define UPLOAD_CONNECTION_TIMEOUT -25000
 #endif
 
-
 #define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>((flags) & ConnectionFlag::ConnectionState)
 #define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) ((flags) & ~ConnectionFlag::ConnectionState) | static_cast<ConnectionFlag>(connectionState)
 #define FLAGS_GET_PROXYHANDSHAKESTATE(flags) static_cast<ProxyHandshakeState>((flags) & ConnectionFlag::ProxyHandshakeState)
 #define FLAGS_SET_PROXYHANDSHAKESTATE(flags, proxyHandshakeState) ((flags) & ~ConnectionFlag::ProxyHandshakeState) | static_cast<ConnectionFlag>(proxyHandshakeState)
 #define FLAGS_GET_CURRENTNETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>((flags) & ConnectionFlag::CurrentNeworkType) >> 8)
 #define FLAGS_SET_CURRENTNETWORKTYPE(flags, networkType) ((flags) & ~ConnectionFlag::CurrentNeworkType) | static_cast<ConnectionFlag>(static_cast<int>(networkType) << 8)
-
-//#define FLAGS_GET_CURRENTNETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>((flags) & ConnectionFlag::CurrentNeworkType) >> 4)
-//#define FLAGS_SET_CURRENTNETWORKTYPE(flags, networkType) ((flags) & ~ConnectionFlag::CurrentNeworkType) | static_cast<ConnectionFlag>(static_cast<int>(networkType) << 4)
 
 #define CONNECTION_MAX_ATTEMPTS 5
 #define CONNECTION_MAX_PACKET_LENGTH 2 * 1024 * 1024
@@ -523,6 +517,31 @@ HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, 
 	return S_OK;
 }
 
+void Connection::ConfirmAndResetRequest(INT64 messageId)
+{
+	auto& connectionManager = m_datacenter->GetConnectionManager();
+
+	{
+		auto lock = LockCriticalSection();
+
+		AddMessageToConfirm(messageId);
+	}
+
+	connectionManager->ExecuteActionForRequest([messageId](INT32 token, ComPtr<MessageRequest> request) -> HRESULT
+	{
+		if (request->MatchesMessage(messageId))
+		{
+			request->Reset(true);
+
+			return S_FALSE;
+		}
+		else
+		{
+			return S_OK;
+		}
+	});
+}
+
 HRESULT Connection::OnNewSessionCreatedResponse(TLNewSessionCreated* response)
 {
 	auto& connectionManager = m_datacenter->GetConnectionManager();
@@ -551,27 +570,31 @@ HRESULT Connection::OnNewSessionCreatedResponse(TLNewSessionCreated* response)
 HRESULT Connection::OnMsgDetailedInfoResponse(TLMsgDetailedInfo* response)
 {
 	bool requestResend = false;
+	bool confirm = true;
 	auto& connectionManager = m_datacenter->GetConnectionManager();
 
-	ComPtr<MessageRequest> request;
-	if (connectionManager->GetRequestByMessageId(response->GetMessageId(), request))
+	connectionManager->ExecuteActionForRequest([response, &requestResend, &confirm](INT32 requestId, ComPtr<MessageRequest> request) -> HRESULT
 	{
-		auto currentTime = static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000);
-
-		if (currentTime - request->GetStartTime() >= 60)
+		if (requestId == response->GetMessageId())
 		{
-			request->SetStartTime(currentTime);
-			requestResend = true;
+			auto currentTime = static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000);
+			if (std::abs(currentTime - request->GetStartTime()) >= 60)
+			{
+				request->SetStartTime(currentTime);
+				requestResend = true;
+			}
+			else
+			{
+				confirm = false;
+			}
+
+			return S_FALSE;
 		}
 		else
 		{
 			return S_OK;
 		}
-	}
-	else
-	{
-		requestResend = true;
-	}
+	});
 
 	if (requestResend)
 	{
@@ -580,15 +603,20 @@ HRESULT Connection::OnMsgDetailedInfoResponse(TLMsgDetailedInfo* response)
 		auto resendReq = Make<TLMsgResendReq>();
 		resendReq->GetMessagesIds().push_back(response->GetAnswerMessageId());
 
-		return SendEncryptedMessageWithConfirmation(&messageContext, resendReq.Get(), nullptr);
+		connectionManager->PushResendRequest(response->GetMessageId(), response->GetAnswerMessageId());
+
+		return SendEncryptedMessage(&messageContext, resendReq.Get(), nullptr);
+
+		//return SendEncryptedMessageWithConfirmation(&messageContext, resendReq.Get(), nullptr);
 	}
-	else
+	else if (confirm)
 	{
 		auto lock = LockCriticalSection();
 
 		AddMessageToConfirm(response->GetAnswerMessageId());
-		return S_OK;
 	}
+
+	return S_OK;
 }
 
 HRESULT Connection::OnMsgNewDetailedInfoResponse(TLMsgNewDetailedInfo* response)
@@ -600,6 +628,19 @@ HRESULT Connection::OnMsgNewDetailedInfoResponse(TLMsgNewDetailedInfo* response)
 	resendReq->GetMessagesIds().push_back(response->GetAnswerMessageId());
 
 	return SendEncryptedMessageWithConfirmation(&messageContext, resendReq.Get(), nullptr);
+}
+
+HRESULT Connection::OnMsgsStateInfoResponse(TLMsgsStateInfo* response)
+{
+	auto& connectionManager = m_datacenter->GetConnectionManager();
+
+	INT64 answerMessageId;
+	if (connectionManager->PopResendRequest(response->GetMessageId(), &answerMessageId))
+	{
+		ConfirmAndResetRequest(answerMessageId);
+	}
+
+	return S_OK;
 }
 
 HRESULT Connection::OnSocketConnected()

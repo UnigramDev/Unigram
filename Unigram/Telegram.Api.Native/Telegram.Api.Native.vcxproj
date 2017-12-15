@@ -293,11 +293,8 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="Datacenter.h" />
     <ClInclude Include="DatacenterCryptography.h" />
     <ClInclude Include="DatacenterServer.h" />
-    <ClInclude Include="DebugCriticalSection.h" />
-    <ClInclude Include="DebugExtensions.h" />
     <ClInclude Include="LoggingProvider.h" />
     <ClInclude Include="MessageError.h" />
-    <ClInclude Include="MethodLogger.h" />
     <ClInclude Include="UserConfiguration.h" />
     <ClInclude Include="ProxySettings.h" />
     <ClInclude Include="ThreadpoolObject.h" />
@@ -327,10 +324,8 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClCompile Include="ConnectionSession.cpp" />
     <ClCompile Include="Datacenter.cpp" />
     <ClCompile Include="DatacenterCryptography.cpp" />
-    <ClCompile Include="DebugExtensions.cpp" />
     <ClCompile Include="UserConfiguration.cpp" />
     <ClCompile Include="MessageError.cpp" />
-    <ClCompile Include="MethodLogger.cpp" />
     <ClCompile Include="NetworkExtensions.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

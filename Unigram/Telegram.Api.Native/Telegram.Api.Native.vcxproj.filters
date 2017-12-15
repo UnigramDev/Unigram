@@ -53,12 +53,6 @@
     <ClCompile Include="MessageError.cpp" />
     <ClCompile Include="ProxySettings.cpp" />
     <ClCompile Include="UserConfiguration.cpp" />
-    <ClCompile Include="MethodLogger.cpp">
-      <Filter>Diagnostics</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugExtensions.cpp">
-      <Filter>Diagnostics</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -113,16 +107,7 @@
     <ClInclude Include="ThreadpoolObject.h">
       <Filter>Threading</Filter>
     </ClInclude>
-    <ClInclude Include="MethodLogger.h">
-      <Filter>Diagnostics</Filter>
-    </ClInclude>
     <ClInclude Include="LoggingProvider.h">
-      <Filter>Diagnostics</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugExtensions.h">
-      <Filter>Diagnostics</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugCriticalSection.h">
       <Filter>Diagnostics</Filter>
     </ClInclude>
   </ItemGroup>

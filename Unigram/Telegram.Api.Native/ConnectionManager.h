@@ -225,6 +225,7 @@ namespace Telegram
 				HRESULT ProcessConnectionRequest(_In_ Connection* connection, _In_ MessageRequest* request);
 				void ResetContextRequests(_In_ ProcessRequestsContext const* context);
 				void ResetRequests(std::function<bool(INT32, ComPtr<MessageRequest> const&)> selector, bool resetStartTime);
+				HRESULT ExecuteActionForRequest(std::function<HRESULT(INT32, ComPtr<MessageRequest>)> action);
 				HRESULT CompleteMessageRequest(INT64 requestMessageId, _In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
 				HRESULT HandleRequestError(_In_ Datacenter* datacenter, _In_ MessageRequest* request, INT32 code, _In_ HString const& message);
 				HRESULT OnUnprocessedMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
@@ -243,6 +244,8 @@ namespace Telegram
 				bool GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);
 				bool GetRequestByMessageId(INT64 messageId, _Out_ ComPtr<MessageRequest>& request);
 				bool GetCDNPublicKey(INT32 datacenterId, _In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
+				void PushResendRequest(INT64 messageId, INT64 answerMessageId);
+				bool PopResendRequest(INT64 messageId, INT64* answerMessageId);
 
 				inline bool IsCurrentDatacenter(INT32 datacenterId)
 				{
@@ -290,6 +293,7 @@ namespace Telegram
 				CriticalSection m_requestsCriticalSection;
 				std::list<ComPtr<MessageRequest>> m_requestsQueue;
 				std::list<std::pair<INT32, ComPtr<MessageRequest>>> m_runningRequests;
+				std::map<INT64, INT64> m_resendRequests;
 				std::map<INT32, std::vector<ComPtr<MessageRequest>>> m_quickAckRequests;
 				UINT32 m_runningRequestCount[3];
 				ConnectionNetworkStatistics m_connectionsStatistics[3];

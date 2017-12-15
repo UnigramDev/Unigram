@@ -73,10 +73,6 @@ namespace Telegram
 							logger = m_logger;
 						}
 
-#if _DEBUG
-						OutputDebugString(WindowsGetStringRawBuffer(message, nullptr));
-#endif
-
 						return logger->Log(logLevel, message);
 					}
 
