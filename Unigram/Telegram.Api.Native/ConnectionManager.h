@@ -265,13 +265,13 @@ namespace Telegram
 				inline void IncrementConnectionSentBytes(ConnectionType connectionType, UINT32 sentBytes)
 				{
 					auto lock = LockCriticalSection();
-					m_connectionsStatistics[static_cast<UINT32>(connectionType) << 1].TotalBytesSent += sentBytes;
+					m_connectionsStatistics[static_cast<UINT32>(connectionType) >> 1].TotalBytesSent += sentBytes;
 				}
 
 				inline void IncrementConnectionReceivedBytes(ConnectionType connectionType, UINT32 receivedBytes)
 				{
 					auto lock = LockCriticalSection();
-					m_connectionsStatistics[static_cast<UINT32>(connectionType) << 1].TotalBytesReceived += receivedBytes;
+					m_connectionsStatistics[static_cast<UINT32>(connectionType) >> 1].TotalBytesReceived += receivedBytes;
 				}
 
 				static HRESULT IsIPv6Enabled(_In_ INetworkInformationStatics* networkInformation, _In_ INetworkAdapter* networkAdapter, _Out_ bool* enabled);
@@ -296,7 +296,6 @@ namespace Telegram
 				INT32 m_userId;
 				INT32 m_lastRequestToken;
 				INT64 m_lastOutgoingMessageId;
-				INT32 m_reserved1;
 				INT32 m_timeDifference;
 				ComPtr<IProxySettings> m_proxySettings;
 				std::wstring m_settingsFolderPath;

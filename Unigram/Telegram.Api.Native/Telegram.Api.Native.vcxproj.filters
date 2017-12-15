@@ -59,9 +59,6 @@
     <ClCompile Include="DebugExtensions.cpp">
       <Filter>Diagnostics</Filter>
     </ClCompile>
-    <ClCompile Include="DebugContext.cpp">
-      <Filter>Diagnostics</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -126,9 +123,6 @@
       <Filter>Diagnostics</Filter>
     </ClInclude>
     <ClInclude Include="DebugCriticalSection.h">
-      <Filter>Diagnostics</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugContext.h">
       <Filter>Diagnostics</Filter>
     </ClInclude>
   </ItemGroup>

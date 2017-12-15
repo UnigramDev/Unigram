@@ -317,8 +317,6 @@ HRESULT ConnectionManager::get_ProxySettings(IProxySettings** value)
 
 	auto lock = LockCriticalSection();
 
-	return S_OK;
-
 	return m_proxySettings.CopyTo(value);
 }
 
@@ -425,8 +423,6 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 	}
 
 	LOG_TRACE(this, LogLevel::Information, L"Enqueuing request with token=%d for connection with type=%d in datacenter=%d\n", requestToken, connectionType, datacenterId);
-
-#pragma message("Potential deadlock")
 
 	ReturnIfFailed(result, SubmitWork([this, flags, request]() -> HRESULT
 	{
@@ -818,7 +814,7 @@ HRESULT ConnectionManager::GetConnectionStatistics(ConnectionType connectionType
 
 	auto lock = LockCriticalSection();
 
-	*value = m_connectionsStatistics[static_cast<UINT32>(connectionType) << 1];
+	*value = m_connectionsStatistics[static_cast<UINT32>(connectionType) >> 1];
 	return S_OK;
 }
 
@@ -1779,8 +1775,6 @@ HRESULT ConnectionManager::AdjustCurrentTime(INT64 messageId)
 	m_timeDifference = static_cast<INT32>((static_cast<double>(messageTime - currentTime) - static_cast<double>(m_currentRoundTripTime) / 2.0) / 1000.0);
 	m_lastOutgoingMessageId = 0;
 
-	LOG_TRACE(this, LogLevel::Information, L"AdjustCurrentTime m_timeDifference: %d\n", m_reserved1);
-
 	return SaveSettings();
 }
 
@@ -1946,8 +1940,6 @@ HRESULT ConnectionManager::OnDatacenterHandshakeCompleted(Datacenter* datacenter
 		if (datacenter->GetId() == m_currentDatacenterId || datacenter->GetId() == m_movingToDatacenterId)
 		{
 			m_timeDifference = timeDifference;
-
-			LOG_TRACE(this, LogLevel::Information, L"OnDatacenterHandshakeCompleted m_timeDifference: %d\n", m_reserved1);
 
 			HRESULT result;
 			ReturnIfFailed(result, SaveSettings());
@@ -2118,8 +2110,6 @@ INT64 ConnectionManager::GenerateMessageId()
 {
 	auto lock = LockCriticalSection();
 
-	LOG_TRACE(this, LogLevel::Information, L"GenerateMessageId m_timeDifference: %d\n", m_reserved1);
-
 	auto messageId = static_cast<INT64>((static_cast<double>(ConnectionManager::GetCurrentSystemTime()) / 1000.0 + static_cast<double>(m_timeDifference)) * 4294967296.0);
 	if (messageId <= m_lastOutgoingMessageId)
 	{
@@ -2254,8 +2244,6 @@ HRESULT ConnectionManager::LoadSettings()
 	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
 	m_datacentersExpirationTime = datacentersExpirationTime;
 	m_timeDifference = timeDifference;
-
-	LOG_TRACE(this, LogLevel::Information, L"LoadSettings m_timeDifference: %d\n", m_reserved1);
 
 	for (auto& datacenter : m_datacenters)
 	{
