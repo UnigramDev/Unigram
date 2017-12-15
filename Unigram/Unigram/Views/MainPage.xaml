@@ -342,7 +342,7 @@
                         <ColumnDefinition Width="48"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
+                    <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
                         <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
                             <Run Text="{CustomResource AttachLiveLocation}" FontWeight="SemiBold"/>
                             <Run Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}"/>

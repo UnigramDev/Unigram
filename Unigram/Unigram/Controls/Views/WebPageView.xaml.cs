@@ -49,6 +49,16 @@ namespace Unigram.Controls.Views
             {
                 return AsyncInfo.Run(async token =>
                 {
+                    var w = webPage.EmbedWidth ?? 340;
+                    var h = webPage.EmbedHeight ?? 200;
+
+                    double ratioX = (double)340 / w;
+                    double ratioY = (double)340 / h;
+                    double ratio = Math.Min(ratioX, ratioY);
+
+                    var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+                    preferences.CustomSize = new Size(w * ratio, h * ratio);
+
                     var newView = CoreApplication.CreateNewView();
                     var newViewId = 0;
                     await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -60,12 +70,34 @@ namespace Unigram.Controls.Views
                         view.NavigateWithHttpRequestMessage(request);
                         //view.Navigate(new Uri(webPage.EmbedUrl));
 
+                        var yolo = new GlyphButton();
+                        yolo.HorizontalAlignment = HorizontalAlignment.Right;
+                        yolo.VerticalAlignment = VerticalAlignment.Bottom;
+                        yolo.Glyph = "\uE740";
+                        yolo.Click += async (s, args) =>
+                        {
+                            var current = ApplicationView.GetForCurrentView();
+                            if (current.ViewMode == ApplicationViewMode.CompactOverlay)
+                            {
+                                current.TryEnterFullScreenMode();
+                            }
+                            else
+                            {
+                                await current.TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, preferences);
+                            }
+                        };
+
+                        var ciccio = new Grid();
+                        ciccio.RequestedTheme = ElementTheme.Dark;
+                        ciccio.Children.Add(view);
+                        ciccio.Children.Add(yolo);
+
                         view.Unloaded += (s, args) =>
                         {
                             view.NavigateToString(string.Empty);
                         };
 
-                        Window.Current.Content = view;
+                        Window.Current.Content = ciccio;
                         Window.Current.Activate();
                         newViewId = ApplicationView.GetForCurrentView().Id;
 
@@ -78,16 +110,6 @@ namespace Unigram.Controls.Views
                         titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
                         titleBar.ButtonInactiveForegroundColor = Colors.White;
                     });
-
-                    var w = webPage.EmbedWidth ?? 340;
-                    var h = webPage.EmbedHeight ?? 200;
-
-                    double ratioX = (double)340 / w;
-                    double ratioY = (double)340 / h;
-                    double ratio = Math.Min(ratioX, ratioY);
-
-                    var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
-                    preferences.CustomSize = new Size(w * ratio, h * ratio);
 
                     var viewShown = await ApplicationViewSwitcher.TryShowAsViewModeAsync(newViewId, ApplicationViewMode.CompactOverlay, preferences);
 
