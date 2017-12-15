@@ -27,7 +27,7 @@ namespace Unigram.ViewModels.Channels
     public class ChannelDetailsViewModel : ChannelParticipantsViewModelBase, IHandle<TLUpdateChannel>, IHandle<TLUpdateNotifySettings>
     {
         public ChannelDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator, null)
+            : base(protoService, cacheService, aggregator, new TLChannelParticipantsRecent(), query => new TLChannelParticipantsSearch { Q = query })
         {
             EditCommand = new RelayCommand(EditExecute);
             InviteCommand = new RelayCommand(InviteExecute);

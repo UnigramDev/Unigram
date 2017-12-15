@@ -15,7 +15,7 @@ namespace Unigram.ViewModels.Channels
     public class ChannelBannedViewModel : ChannelParticipantsViewModelBase
     {
         public ChannelBannedViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator, new TLChannelParticipantsBanned())
+            : base(protoService, cacheService, aggregator, null, query => new TLChannelParticipantsBanned { Q = query })
         {
             ParticipantDismissCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantDismissExecute);
         }

@@ -16,11 +16,13 @@ namespace Unigram.ViewModels.Channels
     public class ChannelParticipantsViewModelBase : UnigramViewModelBase
     {
         private readonly TLChannelParticipantsFilterBase _filter;
+        private readonly Func<string, TLChannelParticipantsFilterBase> _search;
 
-        public ChannelParticipantsViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, TLChannelParticipantsFilterBase filter)
+        public ChannelParticipantsViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, TLChannelParticipantsFilterBase filter, Func<string, TLChannelParticipantsFilterBase> search)
             : base(protoService, cacheService, aggregator)
         {
             _filter = filter;
+            _search = search;
         }
 
         protected TLChannel _item;
@@ -51,14 +53,22 @@ namespace Unigram.ViewModels.Channels
             {
                 Item = channel;
 
-                Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), _filter, null);
+                Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), _filter ?? _search(null), null);
                 RaisePropertyChanged(() => Participants);
             }
 
             return Task.CompletedTask;
         }
 
+        public void Find(string query)
+        {
+            Search = new ItemsCollection(ProtoService, _item.ToInputChannel(), _search(query), null);
+            RaisePropertyChanged(() => Search);
+        }
+
         public ItemsCollection Participants { get; protected set; }
+
+        public ItemsCollection Search { get; protected set; }
 
         public class ItemsCollection : IncrementalCollection<TLChannelParticipantBase>
         {
