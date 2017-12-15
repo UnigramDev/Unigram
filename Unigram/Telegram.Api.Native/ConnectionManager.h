@@ -296,7 +296,7 @@ namespace Telegram
 				INT32 m_userId;
 				INT32 m_lastRequestToken;
 				INT64 m_lastOutgoingMessageId;
-				INT32 m_alignment;
+				INT32 m_reserved1;
 				INT32 m_timeDifference;
 				ComPtr<IProxySettings> m_proxySettings;
 				std::wstring m_settingsFolderPath;
