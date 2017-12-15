@@ -1304,9 +1304,13 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 			return S_FALSE;
 		}
 
+		auto connectionIndex = request->GetConnectionIndex();
+
 		HRESULT result;
 		ComPtr<Connection> connection;
-		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetDownloadConnection(true, connection));
+		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetDownloadConnection(true, connection, connectionIndex));
+
+		request->SetConnectionIndex(connectionIndex);
 
 		if ((result = connection->EnsureConnected()) != S_OK)
 		{
@@ -1326,9 +1330,13 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 			return S_FALSE;
 		}
 
+		auto connectionIndex = request->GetConnectionIndex();
+
 		HRESULT result;
 		ComPtr<Connection> connection;
-		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetUploadConnection(true, connection));
+		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetUploadConnection(true, connection, connectionIndex));
+
+		request->SetConnectionIndex(connectionIndex);
 
 		if ((result = connection->EnsureConnected()) != S_OK)
 		{

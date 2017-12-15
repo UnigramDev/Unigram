@@ -10,8 +10,9 @@
 #include "ConnectionManager.h"
 
 #define DEFAULT_DATACENTER_ID INT_MAX
-#define DOWNLOAD_CONNECTIONS_COUNT 1
-#define UPLOAD_CONNECTIONS_COUNT 1
+#define DOWNLOAD_CONNECTIONS_COUNT 2
+#define UPLOAD_CONNECTIONS_COUNT 2
+#define CONNECTION_INDEX_AUTO UINT16_MAX
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -119,8 +120,8 @@ namespace Telegram
 				STDMETHODIMP RuntimeClassInitialize(_In_ ConnectionManager* connectionManager, INT32 id, bool isCdn);
 				STDMETHODIMP RuntimeClassInitialize(_In_ ConnectionManager* connectionManager, _In_ ITLBinaryReaderEx* reader);
 				HRESULT GetGenericConnection(boolean create, _Out_  ComPtr<Connection>& value);
-				HRESULT GetDownloadConnection(boolean create, _Out_ ComPtr<Connection>& value);
-				HRESULT GetUploadConnection(boolean create, _Out_  ComPtr<Connection>& value);
+				HRESULT GetDownloadConnection(boolean create, _Out_ ComPtr<Connection>& value, _Inout_ UINT16& index);
+				HRESULT GetUploadConnection(boolean create, _Out_  ComPtr<Connection>& value, _Inout_ UINT16& index);
 
 				inline INT32 GetId() const
 				{

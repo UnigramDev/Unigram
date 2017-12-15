@@ -23,7 +23,7 @@ HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, C
 	m_datacenterId = datacenterId;
 	m_sendCompletedCallback = sendCompletedCallback;
 	m_quickAckReceivedCallback = quickAckReceivedCallback;
-	m_flags = flags;
+	m_flags = flags | REQUEST_FLAG_CONNECTION_INDEX;
 	m_startTime = 0;
 	m_attemptCount = 0;
 
@@ -91,14 +91,14 @@ HRESULT MessageRequest::get_Flags(RequestFlag* value)
 		return E_POINTER;
 	}
 
-	*value = m_flags & ~(REQUEST_FLAG_INIT_CONNECTION | REQUEST_FLAG_NO_LAYER);
+	*value = m_flags & ~(REQUEST_FLAG_INIT_CONNECTION | REQUEST_FLAG_NO_LAYER | REQUEST_FLAG_CONNECTION_INDEX);
 	return S_OK;
 }
 
 void MessageRequest::Reset(bool resetStartTime)
 {
 	m_messageContext.reset();
-	m_flags &= ~REQUEST_FLAG_INIT_CONNECTION;
+	m_flags = m_flags & ~(REQUEST_FLAG_INIT_CONNECTION | REQUEST_FLAG_CONNECTION_INDEX);
 
 	if (resetStartTime)
 	{

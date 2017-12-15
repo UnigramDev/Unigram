@@ -8,6 +8,7 @@
 #define REQUEST_TIMEOUT 30
 #define REQUEST_FLAG_NO_LAYER static_cast<RequestFlag>(0x4000)
 #define REQUEST_FLAG_INIT_CONNECTION static_cast<RequestFlag>(0x8000)
+#define REQUEST_FLAG_CONNECTION_INDEX static_cast<RequestFlag>(0xFFFF0000)
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -27,9 +28,9 @@ namespace Telegram
 
 			enum class DatacenterRequestContextFlag
 			{
-				None = 0,
-				RequiresHandshake = 1,
-				RequiresAuthorization = 2
+				None = 0x0,
+				RequiresHandshake = 0x1,
+				RequiresAuthorization = 0x2
 			};
 
 			struct DatacenterRequestContext
@@ -227,6 +228,11 @@ namespace Telegram
 					return m_sendCompletedCallback;
 				}
 
+				inline UINT16 GetConnectionIndex() const
+				{
+					return static_cast<UINT32>(m_flags & REQUEST_FLAG_CONNECTION_INDEX) >> 16;
+				}
+
 			private:
 				void Reset(bool resetStartTime);
 
@@ -247,7 +253,15 @@ namespace Telegram
 
 				inline void SetInitConnection()
 				{
-					m_flags |= REQUEST_FLAG_INIT_CONNECTION;
+					m_flags = m_flags | REQUEST_FLAG_INIT_CONNECTION;
+				}
+
+				inline void SetConnectionIndex(UINT16 connectionIndex)
+				{
+					if (m_connectionType == ConnectionType::Download || m_connectionType == ConnectionType::Upload)
+					{
+						m_flags = m_flags | static_cast<RequestFlag>(static_cast<UINT32>(connectionIndex) << 16);
+					}
 				}
 
 				ComPtr<ITLObject> m_object;

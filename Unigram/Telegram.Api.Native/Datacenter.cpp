@@ -557,7 +557,7 @@ HRESULT Datacenter::GetGenericConnection(boolean create, ComPtr<Connection>& val
 	return S_OK;
 }
 
-HRESULT Datacenter::GetDownloadConnection(boolean create, ComPtr<Connection>& value)
+HRESULT Datacenter::GetDownloadConnection(boolean create, ComPtr<Connection>& value, UINT16& index)
 {
 	auto lock = LockCriticalSection();
 
@@ -566,20 +566,28 @@ HRESULT Datacenter::GetDownloadConnection(boolean create, ComPtr<Connection>& va
 		return RO_E_CLOSED;
 	}
 
-	auto& connection = m_downloadConnections[m_nextDownloadConnectionIndex];
+	if (index == CONNECTION_INDEX_AUTO)
+	{
+		index = m_nextDownloadConnectionIndex;
+		m_nextDownloadConnectionIndex = (m_nextDownloadConnectionIndex + 1) % DOWNLOAD_CONNECTIONS_COUNT;
+	}
+	else if (index >= UPLOAD_CONNECTIONS_COUNT)
+	{
+		return E_BOUNDS;
+	}
+
+	auto& connection = m_downloadConnections[index];
 	if (connection == nullptr && create)
 	{
 		HRESULT result;
 		ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, this, ConnectionType::Download));
 	}
 
-	m_nextDownloadConnectionIndex = (m_nextDownloadConnectionIndex + 1) % DOWNLOAD_CONNECTIONS_COUNT;
-
 	value = connection;
 	return S_OK;
 }
 
-HRESULT Datacenter::GetUploadConnection(boolean create, ComPtr<Connection>& value)
+HRESULT Datacenter::GetUploadConnection(boolean create, ComPtr<Connection>& value, UINT16& index)
 {
 	auto lock = LockCriticalSection();
 
@@ -588,14 +596,22 @@ HRESULT Datacenter::GetUploadConnection(boolean create, ComPtr<Connection>& valu
 		return RO_E_CLOSED;
 	}
 
-	auto& connection = m_uploadConnections[m_nextUploadConnectionIndex];
+	if (index == CONNECTION_INDEX_AUTO)
+	{
+		index = m_nextUploadConnectionIndex;
+		m_nextUploadConnectionIndex = (m_nextUploadConnectionIndex + 1) % UPLOAD_CONNECTIONS_COUNT;
+	}
+	else if (index >= UPLOAD_CONNECTIONS_COUNT)
+	{
+		return E_BOUNDS;
+	}
+
+	auto& connection = m_uploadConnections[index];
 	if (connection == nullptr && create)
 	{
 		HRESULT result;
 		ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, this, ConnectionType::Upload));
 	}
-
-	m_nextUploadConnectionIndex = (m_nextUploadConnectionIndex + 1) % UPLOAD_CONNECTIONS_COUNT;
 
 	value = connection;
 	return S_OK;
@@ -1496,7 +1512,7 @@ HRESULT Datacenter::ReadSettingsEndpoints(ITLBinaryReaderEx* reader, std::vector
 	{
 		ReturnIfFailed(result, reader->ReadWString(endpoints[i].Address));
 		ReturnIfFailed(result, reader->ReadUInt32(&endpoints[i].Port));
-	}
+}
 
 #ifdef _WIN64
 	return reader->ReadUInt64(currentIndex);
@@ -1514,7 +1530,7 @@ HRESULT Datacenter::WriteSettingsEndpoints(ITLBinaryWriterEx* writer, std::vecto
 	{
 		ReturnIfFailed(result, writer->WriteWString(endpoint.Address));
 		ReturnIfFailed(result, writer->WriteUInt32(endpoint.Port));
-	}
+}
 
 #ifdef _WIN64
 	return writer->WriteUInt64(currentIndex);
