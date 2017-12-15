@@ -165,7 +165,7 @@ namespace Unigram.ViewModels
                 };
 
                 var musicProps = await file.Properties.GetMusicPropertiesAsync();
-                if (musicProps.Duration > TimeSpan.Zero)
+                if (musicProps.Duration > TimeSpan.Zero && !file.Name.EndsWith(".mp4"))
                 {
                     document.Attributes.Add(new TLDocumentAttributeAudio
                     {
