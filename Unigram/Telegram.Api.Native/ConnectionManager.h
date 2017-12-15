@@ -295,6 +295,7 @@ namespace Telegram
 				ConnectionNetworkStatistics m_connectionsStatistics[3];
 				INT32 m_lastRequestToken;
 				INT64 m_lastOutgoingMessageId;
+				INT32 m_reserved1;
 				INT32 m_timeDifference;
 				INT32 m_userId;
 				ComPtr<IProxySettings> m_proxySettings;
