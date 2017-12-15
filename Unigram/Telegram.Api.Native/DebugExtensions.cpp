@@ -77,3 +77,11 @@ VOID WINAPI RtlCaptureContext(PCONTEXT ContextRecord)
 
 	return procRtlCaptureContext(ContextRecord);
 }
+
+BOOL WINAPI SetThreadContext(_In_ HANDLE hThread, _In_ const CONTEXT* lpContext)
+{
+	typedef BOOL(WINAPI *pSetThreadContext)(_In_ HANDLE, _In_ const CONTEXT*);
+	static const auto procSetThreadContext = reinterpret_cast<pSetThreadContext>(GetProcAddress(GetModuleHandle(L"kernel32.dll"), "SetThreadContext"));
+
+	return procSetThreadContext(hThread, lpContext);
+}

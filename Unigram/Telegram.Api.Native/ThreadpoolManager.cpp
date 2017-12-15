@@ -65,7 +65,6 @@ HRESULT ThreadpoolManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 
 	SetThreadpoolCallbackPool(&m_threadpoolEnvironment, m_threadpool);
 	SetThreadpoolCallbackCleanupGroup(&m_threadpoolEnvironment, m_threadpoolCleanupGroup, ThreadpoolManager::GroupCleanupCallback);
-
 	return S_OK;
 }
 

@@ -317,8 +317,6 @@ HRESULT ConnectionManager::get_ProxySettings(IProxySettings** value)
 
 	auto lock = LockCriticalSection();
 
-	return S_OK;
-
 	return m_proxySettings.CopyTo(value);
 }
 
@@ -1776,9 +1774,7 @@ HRESULT ConnectionManager::AdjustCurrentTime(INT64 messageId)
 	INT64 currentTime = ConnectionManager::GetCurrentSystemTime();
 	INT64 messageTime = static_cast<INT64>((static_cast<double>(messageId) / 4294967296.0) * 1000.0);
 
-	auto delta = messageTime - currentTime;
-
-	m_timeDifference = static_cast<INT32>((static_cast<double>(delta) - (static_cast<double>(m_currentRoundTripTime) / 2.0)) / 1000.0);
+	m_timeDifference = static_cast<INT32>((static_cast<double>(messageTime - currentTime) - static_cast<double>(m_currentRoundTripTime) / 2.0) / 1000.0);
 	m_lastOutgoingMessageId = 0;
 
 	return SaveSettings();
@@ -2115,7 +2111,7 @@ bool ConnectionManager::GetCDNPublicKey(INT32 datacenterId, std::vector<INT64> c
 INT64 ConnectionManager::GenerateMessageId()
 {
 	auto lock = LockCriticalSection();
-	auto messageId = static_cast<INT64>(((static_cast<double>(ConnectionManager::GetCurrentSystemTime()) + static_cast<double>(m_timeDifference) * 1000) * 4294967296.0) / 1000.0);
+	auto messageId = static_cast<INT64>((static_cast<double>(ConnectionManager::GetCurrentSystemTime()) / 1000.0 + static_cast<double>(m_timeDifference)) * 4294967296.0);
 	if (messageId <= m_lastOutgoingMessageId)
 	{
 		messageId = m_lastOutgoingMessageId + 1;

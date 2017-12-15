@@ -130,3 +130,4 @@ BOOL WINAPI SymGetSymFromAddr64(_In_ HANDLE hProcess, _In_ DWORD64 Address, _Out
 BOOL IMAGEAPI SymGetLineFromAddr64(_In_ HANDLE hProcess, _In_ DWORD64 dwAddr, _Out_ PDWORD pdwDisplacement, _Out_ PIMAGEHLP_LINE64 Line);
 
 VOID WINAPI RtlCaptureContext(_Out_ PCONTEXT ContextRecord);
+BOOL WINAPI SetThreadContext( _In_ HANDLE hThread, _In_ const CONTEXT* lpContext);

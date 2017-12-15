@@ -123,6 +123,7 @@ namespace Telegram
 
 				inline ComPtr<Datacenter> const& GetDatacenter() const
 				{
+					//auto lock = LockCriticalSection();
 					return m_datacenter;
 				}
 
@@ -133,13 +134,13 @@ namespace Telegram
 
 				inline bool IsConnected()
 				{
-					//auto lock = LockCriticalSection();
+					auto lock = LockCriticalSection();
 					return static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) > ConnectionState::Disconnected;
 				}
 
 				inline bool IsHandshaking()
 				{
-					//auto lock = LockCriticalSection();
+					auto lock = LockCriticalSection();
 					return static_cast<ProxyHandshakeState>(m_flags & ConnectionFlag::ProxyHandshakeState) != ProxyHandshakeState::None;
 				}
 
@@ -188,7 +189,7 @@ namespace Telegram
 				static HRESULT GetProxyEndpoint(_In_ IProxySettings* proxySettings, _Out_ ServerEndpoint* endpoint);
 
 				ConnectionType m_type;
-				std::atomic<ConnectionFlag> m_flags;
+				ConnectionFlag m_flags;
 				ComPtr<Datacenter> m_datacenter;
 				ComPtr<NativeBuffer> m_partialPacketBuffer;
 				UINT32 m_failedConnectionCount;

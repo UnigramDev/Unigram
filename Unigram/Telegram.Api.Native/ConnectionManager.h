@@ -293,10 +293,11 @@ namespace Telegram
 				std::map<INT32, std::vector<ComPtr<MessageRequest>>> m_quickAckRequests;
 				UINT32 m_runningRequestCount[3];
 				ConnectionNetworkStatistics m_connectionsStatistics[3];
+				INT32 m_userId;
 				INT32 m_lastRequestToken;
 				INT64 m_lastOutgoingMessageId;
+				INT32 m_alignment;
 				INT32 m_timeDifference;
-				INT32 m_userId;
 				ComPtr<IProxySettings> m_proxySettings;
 				std::wstring m_settingsFolderPath;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_sessionCreatedEventSource;

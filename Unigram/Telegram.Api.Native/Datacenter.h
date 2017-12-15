@@ -2,12 +2,12 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <atomic>
 #include <wrl.h>
 #include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
 #include "DatacenterServer.h"
 #include "MultiThreadObject.h"
+#include "ConnectionManager.h"
 
 #define DEFAULT_DATACENTER_ID INT_MAX
 #define DOWNLOAD_CONNECTIONS_COUNT 1
@@ -129,36 +129,37 @@ namespace Telegram
 
 				inline ComPtr<ConnectionManager> const& GetConnectionManager() const
 				{
+					//auto lock = LockCriticalSection();
 					return m_connectionManager;
 				}
 
 				inline bool IsCDN()
 				{
-					//auto lock = LockCriticalSection();
+					auto lock = LockCriticalSection();
 					return (m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN;
 				}
 
 				inline bool IsHandshaking()
 				{
-					//auto lock = LockCriticalSection();
+					auto lock = LockCriticalSection();
 					return static_cast<INT32>(m_flags & static_cast<DatacenterFlag>(0x11)) == 0x1;
 				}
 
 				inline bool IsAuthenticated()
 				{
-					//auto lock = LockCriticalSection();
+					auto lock = LockCriticalSection();
 					return static_cast<HandshakeState>(m_flags & DatacenterFlag::HandshakeState) == HandshakeState::Authenticated;
 				}
 
 				inline bool IsConnectionInitialized()
 				{
-					//auto lock = LockCriticalSection();
+					auto lock = LockCriticalSection();
 					return (m_flags & DatacenterFlag::ConnectionInitialized) == DatacenterFlag::ConnectionInitialized;
 				}
 
 				inline bool IsAuthorized()
 				{
-					//auto lock = LockCriticalSection();
+					auto lock = LockCriticalSection();
 					return static_cast<AuthorizationState>(m_flags & DatacenterFlag::AuthorizationState) == AuthorizationState::Authorized;
 				}
 
@@ -230,30 +231,25 @@ namespace Telegram
 
 				inline void SetConnectionInitialized()
 				{
-					//auto lock = LockCriticalSection();
-					//m_flags |= DatacenterFlag::ConnectionInitialized;
+					auto lock = LockCriticalSection();
 					m_flags = m_flags | DatacenterFlag::ConnectionInitialized;
 				}
 
 				inline void SetImportingAuthorization()
 				{
-					//auto lock = LockCriticalSection();
+					auto lock = LockCriticalSection();
 					m_flags = (m_flags & ~DatacenterFlag::AuthorizationState) | static_cast<DatacenterFlag>(AuthorizationState::Importing);
 				}
 
 				inline void SetAuthorized()
 				{
-					//auto lock = LockCriticalSection();
-					//m_flags |= static_cast<DatacenterFlag>(AuthorizationState::Authorized);
-
+					auto lock = LockCriticalSection();
 					m_flags = m_flags | static_cast<DatacenterFlag>(AuthorizationState::Authorized);
 				}
 
 				inline void SetUnauthorized()
 				{
-					//auto lock = LockCriticalSection();
-					//m_flags &= ~DatacenterFlag::AuthorizationState;
-
+					auto lock = LockCriticalSection();
 					m_flags = m_flags & ~DatacenterFlag::AuthorizationState;
 				}
 
@@ -284,7 +280,7 @@ namespace Telegram
 				static HRESULT SendAckRequest(_In_ Connection* connection, INT64 messageId);
 
 				INT32 m_id;
-				std::atomic<DatacenterFlag> m_flags;
+				DatacenterFlag m_flags;
 				std::unique_ptr<AuthenticationContext> m_authenticationContext;
 				std::vector<ServerEndpoint> m_ipv4Endpoints;
 				std::vector<ServerEndpoint> m_ipv4DownloadEndpoints;
