@@ -14,7 +14,7 @@ namespace Unigram.ViewModels.Channels
     public class ChannelAdminLogFilterViewModel : ChannelParticipantsViewModelBase
     {
         public ChannelAdminLogFilterViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator, new TLChannelParticipantsAdmins())
+            : base(protoService, cacheService, aggregator, new TLChannelParticipantsAdmins(), null)
         {
             GroupedItems = new ObservableCollection<ChannelAdminLogFilterViewModel> { this };
         }

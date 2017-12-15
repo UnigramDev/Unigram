@@ -15,7 +15,7 @@ namespace Unigram.ViewModels.Channels
     public class ChannelParticipantsViewModel : ChannelParticipantsViewModelBase
     {
         public ChannelParticipantsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator, new TLChannelParticipantsRecent())
+            : base(protoService, cacheService, aggregator, new TLChannelParticipantsRecent(), query => new TLChannelParticipantsSearch { Q = query })
         {
             ParticipantPromoteCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantPromoteExecute);
             ParticipantRemoveCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantRemoveExecute);

@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using Telegram.Api.TL;
+using Template10.Common;
+using Unigram.Controls;
 using Unigram.ViewModels.Channels;
 using Unigram.Views.Users;
 using Windows.Foundation;
@@ -19,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Channels
 {
-    public sealed partial class ChannelBannedPage : Page
+    public sealed partial class ChannelBannedPage : Page, IMasterDetailPage
     {
         public ChannelBannedViewModel ViewModel => DataContext as ChannelBannedViewModel;
 
@@ -27,6 +30,29 @@ namespace Unigram.Views.Channels
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<ChannelBannedViewModel>();
+
+            var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            {
+                if (string.IsNullOrWhiteSpace(SearchField.Text))
+                {
+                    ViewModel.Search.Clear();
+                }
+                else
+                {
+                    ViewModel.Find(SearchField.Text);
+                }
+            });
+        }
+
+        public void OnBackRequested(HandledEventArgs args)
+        {
+            if (ContentPanel.Visibility == Visibility.Collapsed)
+            {
+                SearchField.Text = string.Empty;
+                Search_LostFocus(null, null);
+                args.Handled = true;
+            }
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -91,5 +117,36 @@ namespace Unigram.Views.Channels
         }
 
         #endregion
+
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            MainHeader.Visibility = Visibility.Collapsed;
+            SearchField.Visibility = Visibility.Visible;
+
+            SearchField.Focus(FocusState.Keyboard);
+        }
+
+        private void Search_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(SearchField.Text))
+            {
+                MainHeader.Visibility = Visibility.Visible;
+                SearchField.Visibility = Visibility.Collapsed;
+
+                Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void Search_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(SearchField.Text))
+            {
+                ContentPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ContentPanel.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }
