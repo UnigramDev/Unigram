@@ -190,9 +190,9 @@
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,8" ContextRequested="Message_ContextRequested">
-                <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                <controls:SimpleButton Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Margin="0,8,0,8" Style="{StaticResource ServiceButtonStyle}">
                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
-                </Border>
+                </controls:SimpleButton>
 
                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
                     <controls:ProfilePicture Click="Media_Click" Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
@@ -201,10 +201,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <controls:SimpleButton Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Margin="0,8,0,8" HorizontalAlignment="Center" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
-                <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
-                    <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
-                </Border>
+            <controls:SimpleButton Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Margin="0,8,0,8" Style="{StaticResource ServiceButtonStyle}">
+                <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
             </controls:SimpleButton>
         </DataTemplate>
 
