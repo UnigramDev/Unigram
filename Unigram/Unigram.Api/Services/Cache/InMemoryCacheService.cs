@@ -3582,7 +3582,7 @@ namespace Telegram.Api.Services.Cache
             {
                 if (_config == null)
                 {
-                    _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
+                    _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig ?? TLConfig.Default;
                 }
 
                 return _config;
@@ -3593,7 +3593,7 @@ namespace Telegram.Api.Services.Cache
         {
             if (_config == null)
             {
-                _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
+                _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig ?? TLConfig.Default;
             }
 
             return _config;
@@ -3604,7 +3604,7 @@ namespace Telegram.Api.Services.Cache
 #if SILVERLIGHT || WIN_RT
             if (_config == null)
             {
-                _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
+                _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig ?? TLConfig.Default;
             }
 #endif
             callback?.Invoke(_config);

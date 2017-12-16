@@ -734,6 +734,14 @@ namespace Unigram.Views
 
         private Visibility DialogPin_Loaded(TLDialog dialog)
         {
+            if (!dialog.IsPinned)
+            {
+                var count = ViewModel.Dialogs.Items.Where(x => x.IsPinned).Count();
+                var max = ViewModel.CacheService.Config.PinnedDialogsCountMax;
+
+                return count < max ? Visibility.Visible : Visibility.Collapsed;
+            }
+
             return Visibility.Visible;
         }
 
