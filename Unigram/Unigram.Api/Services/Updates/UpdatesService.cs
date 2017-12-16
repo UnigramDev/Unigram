@@ -3052,8 +3052,7 @@ namespace Telegram.Api.Services.Updates
                     IsOut = false,
                     IsUnread = false,
                     Date = updateContactRegistered.Date,
-                    // TODO: local object 
-                    // Action = new TLMessageActionContactRegistered { UserId = user.Id },
+                    Action = new TLMessageActionContactRegistered { UserId = user.Id },
                     RandomId = TLLong.Random()
                 };
 
