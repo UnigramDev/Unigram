@@ -203,7 +203,7 @@ namespace Telegram
 				{
 				}
 
-				AtomicFlag(TFlags& value) :
+				AtomicFlag(TFlag& value) :
 					m_value(value)
 				{
 				}
@@ -230,19 +230,19 @@ namespace Telegram
 					return *this;
 				}
 
-				inline AtomicFlag& operator ^=(const TFlags& rhs)
+				inline AtomicFlag& operator ^=(const TFlag& rhs)
 				{
 					Details::AtomicXor<IntegralType>(reinterpret_cast<IntegralType*>(&m_value), static_cast<IntegralType>(rhs));
 					return *this;
 				}
 
-				inline AtomicFlag& operator =(const TFlags& rhs)
+				inline AtomicFlag& operator =(const TFlag& rhs)
 				{
 					Details::AtomicWrite<IntegralType>(reinterpret_cast<IntegralType*>(&m_value), static_cast<IntegralType>(rhs));
 					return *this;
 				}
 
-				inline TFlag operator |(const TFla& rhs)
+				inline TFlag operator |(const TFlag& rhs)
 				{
 					return static_cast<TFlag>(Details::AtomicRead<IntegralType>(reinterpret_cast<IntegralType*>(&m_value))) | rhs;
 				}
