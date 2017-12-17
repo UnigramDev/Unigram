@@ -262,7 +262,7 @@ namespace Unigram.Views
                 }
 
                 var document = message.GetDocument();
-                if (document == null || !TLMessage.IsGif(document))
+                if (document == null || !(TLMessage.IsGif(document) /*|| TLMessage.IsRoundVideo(document)*/))
                 {
                     continue;
                 }
@@ -288,6 +288,10 @@ namespace Unigram.Views
                     {
                         panel = panel.FindName("Media") as FrameworkElement;
                     }
+                    //else if (message.IsRoundVideo())
+                    //{
+                    //    panel = panel.FindName("Inner") as FrameworkElement;
+                    //}
 
                     if (panel is Grid final)
                     {
@@ -506,7 +510,7 @@ namespace Unigram.Views
                 //}
                 else if (serviceMessage.Action is TLMessageActionPhoneCall)
                 {
-                    return serviceMessage.IsOut ? "ServiceUserCallTemplate" : "ServiceFriendCallTemplate";
+                    return serviceMessage.IsOut ? "ServiceUserCallMessageTemplate" : "ServiceFriendCallMessageTemplate";
                 }
 
                 return "ServiceMessageTemplate";

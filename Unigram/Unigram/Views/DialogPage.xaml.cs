@@ -97,8 +97,8 @@ namespace Unigram.Views
             _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
             //_typeToItemHashSetMapping.Add("ServiceMessageLocalTemplate", new HashSet<SelectorItem>());
             //_typeToItemHashSetMapping.Add("ServiceMessageDateTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ServiceUserCallTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ServiceFriendCallTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceUserCallMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceFriendCallMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
 
             Messages.ChoosingItemContainer += OnChoosingItemContainer;
