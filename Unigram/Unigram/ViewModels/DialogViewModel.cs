@@ -1618,21 +1618,6 @@ namespace Unigram.ViewModels
                     BotCommands = commands;
                     HasBotCommands = BotCommands.Count > 0;
                 }
-                //    participantCount = chatDetails.Result.Users.Count;
-                //    if (participantCount < 200)
-                //    {
-                //        foreach (TLUserBase now in chatDetails.Result.Users)
-                //        {
-                //            TLUser tempUser = now as TLUser;
-                //            if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
-                //        }
-                //    }
-                //    else
-                //    {
-                //        online = -2;
-                //    }
-                //    LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
-                //}
             }
             else if (participant is TLChatForbidden forbiddenChat)
             {

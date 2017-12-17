@@ -33,6 +33,8 @@ namespace Unigram.Services
         void Pause();
         void Play();
 
+        void SetPosition(TimeSpan span);
+
         void Clear();
 
         void Enqueue(TLMessage message);
@@ -103,10 +105,10 @@ namespace Unigram.Services
         {
             if (args.NewItem == null)
             {
-                Execute.BeginOnUIThread(() => CurrentItem = null);
-                Dispose();
+                //Execute.BeginOnUIThread(() => CurrentItem = null);
+                //Dispose();
 
-                Debug.WriteLine("PlaybackService: Playback completed");
+                //Debug.WriteLine("PlaybackService: Playback completed");
             }
             else if (_mapping.TryGetValue(args.NewItem, out TLMessage message))
             {
@@ -167,6 +169,21 @@ namespace Unigram.Services
             _mediaPlayer.Play();
         }
 
+        public void SetPosition(TimeSpan span)
+        {
+            var index = _playlist.CurrentItemIndex;
+            var playing = _mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing;
+
+            _mediaPlayer.Pause();
+            _playlist.MoveTo(index);
+            _mediaPlayer.PlaybackSession.Position = span;
+
+            if (playing)
+            {
+                _mediaPlayer.Play();
+            }
+        }
+
         public void Clear()
         {
             Execute.BeginOnUIThread(() => CurrentItem = null);
@@ -191,8 +208,8 @@ namespace Unigram.Services
             var voice = message.IsVoice();
 
             _mediaPlayer.CommandManager.IsEnabled = !voice;
-            _mediaPlayer.AudioDeviceType = voice ? MediaPlayerAudioDeviceType.Communications : MediaPlayerAudioDeviceType.Multimedia;
-            _mediaPlayer.AudioCategory = voice ? MediaPlayerAudioCategory.Communications : MediaPlayerAudioCategory.Media;
+            //_mediaPlayer.AudioDeviceType = voice ? MediaPlayerAudioDeviceType.Communications : MediaPlayerAudioDeviceType.Multimedia;
+            //_mediaPlayer.AudioCategory = voice ? MediaPlayerAudioCategory.Communications : MediaPlayerAudioCategory.Media;
 
             if (peer != null)
             {

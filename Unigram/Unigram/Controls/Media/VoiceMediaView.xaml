@@ -135,7 +135,8 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <!--<Slider x:Name="Slide" Value="50" Style="{StaticResource SliderStyle}" IsThumbToolTipEnabled="False" VerticalAlignment="Center"/>-->
-            <controls:ProgressVoice x:Name="Slide" Value="50" Media="{Binding Media}"/>
+            <controls:ProgressVoice x:Name="Progress" Value="50" Media="{Binding Media}"/>
+            <!--<Slider x:Name="Slider" Opacity="0"/>-->
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,4,0,0" RequestedTheme="Light" Grid.Row="1">
                 <TextBlock x:Name="DurationLabel" Text="00:01" Foreground="{ThemeResource MessageSubtleForegroundBrush}" Style="{ThemeResource CaptionTextBlockStyle}"/>
