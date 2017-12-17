@@ -285,6 +285,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AtomicFlag.h" />
     <ClInclude Include="Collections.h" />
     <ClInclude Include="Connection.h" />
     <ClInclude Include="ConnectionCryptography.h" />

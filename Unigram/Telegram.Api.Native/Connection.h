@@ -7,6 +7,7 @@
 #include "ConnectionSession.h"
 #include "ConnectionSocket.h"
 #include "ConnectionCryptography.h"
+#include "AtomicFlag.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -54,12 +55,6 @@ namespace Telegram
 				CryptographyInitialized = 0x800,
 				TryingNextEndpoint = 0x1000,
 				Closed = 0x2000
-
-				/*CurrentNeworkType = 0x70,
-				IPv6 = 0x80,
-				CryptographyInitialized = 0x100,
-				TryingNextEndpoint = 0x200,
-				Closed = 0x400*/
 			};
 
 		}
