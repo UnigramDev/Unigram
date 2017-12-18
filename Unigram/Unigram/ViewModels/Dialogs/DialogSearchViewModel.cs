@@ -17,11 +17,13 @@ namespace Unigram.ViewModels.Dialogs
     public class DialogSearchViewModel : UnigramViewModelBase
     {
         private readonly DialogViewModel _dialog;
+        private readonly DisposableMutex _loadMoreLock;
 
         public DialogSearchViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, DialogViewModel viewModel)
             : base(protoService, cacheService, aggregator)
         {
             _dialog = viewModel;
+            _loadMoreLock = new DisposableMutex();
 
             FilterCommand = new RelayCommand(FilterExecute);
             NextCommand = new RelayCommand(NextExecute, NextCanExecute);
@@ -250,6 +252,22 @@ namespace Unigram.ViewModels.Dialogs
             if (Items == null || SelectedIndex >= TotalItems)
             {
                 return;
+            }
+
+            using (await _loadMoreLock.WaitAsync())
+            {
+                if (SelectedIndex >= Items.Count - 1)
+                {
+                    var response = await ProtoService.SearchAsync(_dialog.Peer, _query, _from?.ToInputUser(), null, 0, 0, Items.Count, 0, 100);
+                    if (response.IsSucceeded)
+                    {
+                        Items.AddRange(response.Result.Messages);
+                    }
+                    else
+                    {
+                        // TODO
+                    }
+                }
             }
 
             SelectedItem = Items[SelectedIndex + 1];
