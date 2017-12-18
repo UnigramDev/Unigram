@@ -1778,6 +1778,10 @@ HRESULT ConnectionManager::ExecuteActionForRequest(std::function<HRESULT(INT32, 
 
 			break;
 		}
+		else
+		{
+			requestIterator++;
+		}
 	}
 
 	return S_OK;
