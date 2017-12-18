@@ -1124,6 +1124,8 @@ namespace Unigram.ViewModels
                     {
                         _groupedMessages.TryGetValue(groupedId, out TLMessage group);
 
+                        var next = false;
+
                         if (group == null)
                         {
                             var media = new TLMessageMediaGroup();
@@ -1140,6 +1142,7 @@ namespace Unigram.ViewModels
                         }
                         else
                         {
+                            next = true;
                             messages.RemoveAt(i);
                             i--;
                         }
@@ -1185,6 +1188,11 @@ namespace Unigram.ViewModels
                                 group.RaisePropertyChanged(() => group.EditDate);
                                 group.RaisePropertyChanged(() => group.Self);
                             }
+                        }
+
+                        if (next)
+                        {
+                            continue;
                         }
                     }
 
@@ -1400,26 +1408,29 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        ProcessReplies(history);
-
-                        IsLastSliceLoaded = false;
-                        IsFirstSliceLoaded = false;
-
-                        ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Items.AddRange(history.Reverse());
-
-                        foreach (var item in history.OrderByDescending(x => x.Date))
+                        using (await _loadMoreLock.WaitAsync())
                         {
-                            var message = item as TLMessage;
-                            if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                            ProcessReplies(history);
+
+                            IsLastSliceLoaded = false;
+                            IsFirstSliceLoaded = false;
+
+                            ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                            Items.AddRange(history.Reverse());
+
+                            foreach (var item in history.OrderByDescending(x => x.Date))
                             {
-                                var bot = CacheService.GetUser(message.FromId) as TLUser;
-                                if (bot != null && bot.IsBot)
+                                var message = item as TLMessage;
+                                if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
                                 {
-                                    SetReplyMarkup(message);
+                                    var bot = CacheService.GetUser(message.FromId) as TLUser;
+                                    if (bot != null && bot.IsBot)
+                                    {
+                                        SetReplyMarkup(message);
+                                    }
                                 }
                             }
-                        }
+                        };
                     }
                 }
                 else
