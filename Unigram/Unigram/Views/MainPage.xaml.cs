@@ -205,6 +205,12 @@ namespace Unigram.Views
                 return;
             }
 
+            if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
+            {
+                Activate(scheme);
+                return;
+            }
+
             var data = Toast.SplitArguments(parameter);
             if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
             {
