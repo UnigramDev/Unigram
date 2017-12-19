@@ -700,7 +700,8 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 			{
 				m_flags = m_flags | ConnectionFlag::TryingNextEndpoint;
 				m_failedConnectionCount = 0;
-				m_datacenter->NextEndpoint(m_type, (m_flags & ConnectionFlag::IPv6) == ConnectionFlag::IPv6);
+
+				return m_datacenter->NextEndpoint(m_type, (m_flags & ConnectionFlag::IPv6) == ConnectionFlag::IPv6);
 			}
 		}
 	}

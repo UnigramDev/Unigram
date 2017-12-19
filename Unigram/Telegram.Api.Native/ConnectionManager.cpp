@@ -1769,18 +1769,17 @@ HRESULT ConnectionManager::ExecuteActionForRequest(std::function<HRESULT(INT32, 
 	auto requestIterator = m_runningRequests.begin();
 	while (requestIterator != m_runningRequests.end())
 	{
-		if ((result = action(requestIterator->first, requestIterator->second)) != S_OK)
+		if ((result = action(requestIterator->first, requestIterator->second)) == S_OK)
 		{
-			if (FAILED(result))
-			{
-				return result;
-			}
-
-			break;
+			requestIterator++;
+		}
+		else if (FAILED(result))
+		{
+			return result;
 		}
 		else
 		{
-			requestIterator++;
+			break;
 		}
 	}
 
