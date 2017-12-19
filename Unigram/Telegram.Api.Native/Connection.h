@@ -7,7 +7,6 @@
 #include "ConnectionSession.h"
 #include "ConnectionSocket.h"
 #include "ConnectionCryptography.h"
-#include "AtomicFlag.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;

@@ -110,9 +110,6 @@
     <ClInclude Include="LoggingProvider.h">
       <Filter>Diagnostics</Filter>
     </ClInclude>
-    <ClInclude Include="AtomicFlag.h">
-      <Filter>Threading</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
