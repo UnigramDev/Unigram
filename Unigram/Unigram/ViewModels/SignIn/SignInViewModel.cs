@@ -22,6 +22,7 @@ using System.Diagnostics;
 using Unigram.Views;
 using Unigram.Controls.Views;
 using Windows.UI.Xaml.Controls;
+using System.Linq;
 
 namespace Unigram.ViewModels.SignIn
 {
@@ -135,7 +136,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public IList<Country> Countries { get; } = Country.Countries;
+        public IList<Country> Countries { get; } = Country.Countries.OrderBy(x => x.DisplayName).ToList();
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()

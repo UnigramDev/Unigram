@@ -68,7 +68,7 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        public IList<Country> Countries { get; } = Country.Countries;
+        public IList<Country> Countries { get; } = Country.Countries.OrderBy(x => x.DisplayName).ToList();
 
         private Country _selectedCountry = Country.Countries[0];
         public Country SelectedCountry
