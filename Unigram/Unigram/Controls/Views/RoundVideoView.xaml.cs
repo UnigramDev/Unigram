@@ -38,27 +38,9 @@ namespace Unigram.Controls.Views
         {
             this.InitializeComponent();
 
-
-            var visual = ElementCompositionPreview.GetElementVisual(this);
-            visual.Clip = visual.Compositor.CreateInsetClip(0, 0, 0, 48);
-
-            var capture = ElementCompositionPreview.GetElementVisual(Capture);
-            _compositor = capture.Compositor;
-            _capture = _compositor.CreateSpriteVisual();
-            _capture.Size = new Vector2(200, 200);
-
-            ImageLoader.Initialize(_compositor);
-            ElementCompositionPreview.SetElementChildVisual(Capture, _capture);
-
             //Loaded += OnLoaded;
             //Unloaded += RoundVideoView_Unloaded;
         }
-
-        private MediaPlayer _player;
-        private MediaPlayerSurface _surface;
-        private MediaCapturePreviewSource _preview;
-        private Compositor _compositor;
-        private SpriteVisual _capture;
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -66,45 +48,13 @@ namespace Unigram.Controls.Views
             InnerClip.Center = new Point(e.NewSize.Width / 2, e.NewSize.Height / 2);
         }
 
-        public IAsyncAction SetAsync(MediaCapture media)
+        public IAsyncAction SetAsync(MediaCapture media, bool mirror)
         {
             return Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
-                //var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
-                //profile.Audio = null;
-                //profile.Container = null;
-
-                //_preview = MediaCapturePreviewSource.CreateFromVideoEncodingProperties(profile.Video);
-                //await media.StartPreviewToCustomSinkAsync(profile, _preview.MediaSink);
-
-                //_player = new MediaPlayer();
-                //_player.RealTimePlayback = true;
-                //_player.AutoPlay = true;
-                //_player.Source = _preview.MediaSource as IMediaPlaybackSource;
-
-                //_surface = _player.GetSurface(_compositor);
-
-                //var brush = _compositor.CreateSurfaceBrush(_surface.CompositionSurface);
-                //brush.Stretch = CompositionStretch.UniformToFill;
-
-                //var mask = ImageLoader.Instance.LoadCircle(200, Colors.White).Brush;
-                //var graphicsEffect = new AlphaMaskEffect
-                //{
-                //    Source = new CompositionEffectSourceParameter("image"),
-                //    AlphaMask = new CompositionEffectSourceParameter("mask")
-                //};
-
-                //var effectFactory = _compositor.CreateEffectFactory(graphicsEffect);
-                //var effectBrush = effectFactory.CreateBrush();
-                //effectBrush.SetSourceParameter("image", brush);
-                //effectBrush.SetSourceParameter("mask", mask);
-
-                //_capture.Brush = effectBrush;
-
-
-
-
                 Capture.Source = media;
+                Capture.FlowDirection = mirror ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+
                 await media.StartPreviewAsync();
             });
         }

@@ -436,6 +436,7 @@ namespace Unigram.ViewModels
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, _peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+            message.IsMediaUnread = round;
 
             if (Reply != null)
             {
@@ -911,6 +912,7 @@ namespace Unigram.ViewModels
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+            message.IsMediaUnread = true;
 
             if (Reply != null)
             {
