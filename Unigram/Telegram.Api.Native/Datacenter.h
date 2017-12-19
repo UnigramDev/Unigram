@@ -209,7 +209,7 @@ namespace Telegram
 				void ClearServerSalts();
 				HRESULT AddEndpoint(_In_ ServerEndpoint const& endpoint, ConnectionType connectionType, bool ipv6);
 				HRESULT ReplaceEndpoints(_In_ std::vector<ServerEndpoint> const& endpoints, ConnectionType connectionType, bool ipv6);
-				void NextEndpoint(ConnectionType connectionType, bool ipv6);
+				HRESULT NextEndpoint(ConnectionType connectionType, bool ipv6);
 				void ResetEndpoint();
 				void ResetConnections();
 				IFACEMETHODIMP Close();

@@ -348,36 +348,6 @@ void Datacenter::GetSessionsIds(std::vector<INT64>& sessionIds)
 	}
 }
 
-void Datacenter::NextEndpoint(ConnectionType connectionType, bool ipv6)
-{
-	auto lock = LockCriticalSection();
-
-	switch (connectionType)
-	{
-	case ConnectionType::Generic:
-	case ConnectionType::Upload:
-		if (ipv6)
-		{
-			m_currentIPv6EndpointIndex = (m_currentIPv6EndpointIndex + 1) % m_ipv6Endpoints.size();
-		}
-		else
-		{
-			m_currentIPv4EndpointIndex = (m_currentIPv4EndpointIndex + 1) % m_ipv4Endpoints.size();
-		}
-		break;
-	case ConnectionType::Download:
-		if (ipv6)
-		{
-			m_currentIPv6DownloadEndpointIndex = (m_currentIPv6DownloadEndpointIndex + 1) % m_ipv6DownloadEndpoints.size();
-		}
-		else
-		{
-			m_currentIPv4DownloadEndpointIndex = (m_currentIPv4DownloadEndpointIndex + 1) % m_ipv4DownloadEndpoints.size();
-		}
-		break;
-	}
-}
-
 void Datacenter::ResetEndpoint()
 {
 	auto lock = LockCriticalSection();
@@ -481,6 +451,58 @@ void Datacenter::ClearServerSalts()
 	m_serverSalts.clear();
 }
 
+HRESULT Datacenter::NextEndpoint(ConnectionType connectionType, bool ipv6)
+{
+	auto lock = LockCriticalSection();
+
+	switch (connectionType)
+	{
+	case ConnectionType::Generic:
+	case ConnectionType::Upload:
+		if (ipv6)
+		{
+			if (m_ipv6Endpoints.empty())
+			{
+				return E_NOT_VALID_STATE;
+			}
+
+			m_currentIPv6EndpointIndex = (m_currentIPv6EndpointIndex + 1) % m_ipv6Endpoints.size();
+		}
+		else
+		{
+			if (m_ipv4Endpoints.empty())
+			{
+				return E_NOT_VALID_STATE;
+			}
+
+			m_currentIPv4EndpointIndex = (m_currentIPv4EndpointIndex + 1) % m_ipv4Endpoints.size();
+		}
+		break;
+	case ConnectionType::Download:
+		if (ipv6)
+		{
+			if (m_ipv6DownloadEndpoints.empty())
+			{
+				return NextEndpoint(ConnectionType::Generic, true);
+			}
+
+			m_currentIPv6DownloadEndpointIndex = (m_currentIPv6DownloadEndpointIndex + 1) % m_ipv6DownloadEndpoints.size();
+		}
+		else
+		{
+			if (m_ipv4DownloadEndpoints.empty())
+			{
+				return NextEndpoint(ConnectionType::Generic, false);
+			}
+
+			m_currentIPv4DownloadEndpointIndex = (m_currentIPv4DownloadEndpointIndex + 1) % m_ipv4DownloadEndpoints.size();
+		}
+		break;
+	}
+
+	return S_OK;
+}
+
 HRESULT Datacenter::AddEndpoint(ServerEndpoint const& endpoint, ConnectionType connectionType, bool ipv6)
 {
 #if _DEBUG
@@ -534,7 +556,7 @@ HRESULT Datacenter::ReplaceEndpoints(std::vector<ServerEndpoint> const& newEndpo
 
 	*endpoints = newEndpoints;
 	return S_OK;
-}
+		}
 
 HRESULT Datacenter::GetGenericConnection(boolean create, ComPtr<Connection>& value)
 {
