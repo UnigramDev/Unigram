@@ -190,7 +190,7 @@
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,8" ContextRequested="Message_ContextRequested">
-                <controls:SimpleButton Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Margin="0,8,0,8" Style="{StaticResource ServiceButtonStyle}">
+                <controls:SimpleButton Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Style="{StaticResource ServiceButtonStyle}">
                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                 </controls:SimpleButton>
 

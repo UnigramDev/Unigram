@@ -710,7 +710,7 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var call = element.DataContext as TLCallGroup;
 
-            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Calls.CallDeleteCommand, call, Strings.Android.Delete);
+            CreateFlyoutItem(ref flyout, _ => Visibility.Visible, ViewModel.Calls.CallDeleteCommand, call, Strings.Android.Delete);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {

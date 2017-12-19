@@ -1435,15 +1435,20 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
-        public void SyncPeerMessages(TLPeerBase peer, TLMessagesMessagesBase messages, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesMessagesBase> callback)
+        public void SyncPeerMessages(TLPeerBase peer, TLMessagesMessagesBase messagesBase, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesMessagesBase> callback)
         {
+            if (messagesBase is TLMessagesMessagesNotModified)
+            {
+                callback(messagesBase);
+                return;
+            }
+
+            var messages = messagesBase as ITLMessages;
             if (messages == null)
             {
                 callback(new TLMessagesMessages());
                 return;
             }
-
-            var timer = Stopwatch.StartNew();
 
             var result = messages.GetEmptyObject();
             if (_database == null) Init();
@@ -1457,10 +1462,10 @@ namespace Telegram.Api.Services.Cache
             _database.Commit();
 
             //TLUtils.WritePerformance("SyncPeerMessages time: " + timer.Elapsed);
-            callback(result);
+            callback(result as TLMessagesMessagesBase);
         }
 
-        private void ProcessPeerReading(TLPeerBase peer, TLMessagesMessagesBase messages)
+        private void ProcessPeerReading(TLPeerBase peer, ITLMessages messages)
         {
             ITLReadMaxId readMaxId = null;
             if (peer is TLPeerUser)
@@ -1502,15 +1507,20 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
-        public void AddMessagesToContext(TLMessagesMessagesBase messages, Action<TLMessagesMessagesBase> callback)
+        public void AddMessagesToContext(TLMessagesMessagesBase messagesBase, Action<TLMessagesMessagesBase> callback)
         {
+            if (messagesBase is TLMessagesMessagesNotModified)
+            {
+                callback(messagesBase);
+                return;
+            }
+
+            var messages = messagesBase as ITLMessages;
             if (messages == null)
             {
                 callback(new TLMessagesMessages());
                 return;
             }
-
-            var timer = Stopwatch.StartNew();
 
             var result = messages.GetEmptyObject();
             if (_database == null) Init();
@@ -1528,7 +1538,7 @@ namespace Telegram.Api.Services.Cache
             _database.Commit();
 
             //TLUtils.WritePerformance("SyncPeerMessages time: " + timer.Elapsed);
-            callback(result);
+            callback(result as TLMessagesMessagesBase);
         }
 
         public void SyncStatuses(TLVector<TLContactStatus> contactStatuses, Action<TLVector<TLContactStatus>> callback)

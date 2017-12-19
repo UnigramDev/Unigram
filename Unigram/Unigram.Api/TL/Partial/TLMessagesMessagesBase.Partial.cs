@@ -8,12 +8,12 @@ namespace Telegram.Api.TL.Messages
 {
     public abstract partial class TLMessagesMessagesBase
     {
-        public abstract TLMessagesMessagesBase GetEmptyObject();
+        public abstract ITLMessages GetEmptyObject();
     }
 
-    public partial class TLMessagesMessages
+    public partial class TLMessagesMessages : ITLMessages
     {
-        public override TLMessagesMessagesBase GetEmptyObject()
+        public override ITLMessages GetEmptyObject()
         {
             return new TLMessagesMessages
             {
@@ -24,9 +24,9 @@ namespace Telegram.Api.TL.Messages
         }
     }
 
-    public partial class TLMessagesMessagesSlice
+    public partial class TLMessagesMessagesSlice : ITLMessages
     {
-        public override TLMessagesMessagesBase GetEmptyObject()
+        public override ITLMessages GetEmptyObject()
         {
             return new TLMessagesMessagesSlice
             {
@@ -38,11 +38,10 @@ namespace Telegram.Api.TL.Messages
         }
     }
 
-    public partial class TLMessagesChannelMessages
+    public partial class TLMessagesChannelMessages : ITLMessages
     {
-        public override TLMessagesMessagesBase GetEmptyObject()
+        public override ITLMessages GetEmptyObject()
         {
-            // TODO: Verify
             return new TLMessagesChannelMessages
             {
                 Count = Count,
@@ -50,6 +49,14 @@ namespace Telegram.Api.TL.Messages
                 Chats = new TLVector<TLChatBase>(Chats.Count),
                 Users = new TLVector<TLUserBase>(Users.Count)
             };
+        }
+    }
+
+    public partial class TLMessagesMessagesNotModified
+    {
+        public override ITLMessages GetEmptyObject()
+        {
+            throw new NotImplementedException();
         }
     }
 }

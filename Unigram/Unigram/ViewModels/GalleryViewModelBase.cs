@@ -136,14 +136,6 @@ namespace Unigram.ViewModels
 
         protected virtual void OnSelectedItemChanged(GalleryItem item) { }
 
-        public virtual bool CanView
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public virtual bool CanDelete
         {
             get
@@ -195,8 +187,6 @@ namespace Unigram.ViewModels
         public RelayCommand ViewCommand { get; }
         protected virtual void ViewExecute()
         {
-            NavigationService.GoBack();
-
             TLMessageCommonBase messageCommon = null;
             if (_selectedItem is GalleryMessageItem messageItem)
             {
@@ -207,8 +197,15 @@ namespace Unigram.ViewModels
                 messageCommon = serviceItem.Message;
             }
 
+            if (messageCommon == null)
+            {
+                return;
+            }
+
+            NavigationService.GoBack();
+
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-            if (service != null && messageCommon != null)
+            if (service != null)
             {
                 service.NavigateToDialog(messageCommon.Parent, messageCommon.Id);
             }
@@ -327,19 +324,19 @@ namespace Unigram.ViewModels
 
         public virtual ITLTransferable Source { get; private set; }
 
-        public virtual string Caption { get; private set; }
-
         public virtual ITLDialogWith From { get; private set; }
+
+        public virtual string Caption { get; private set; }
 
         public virtual int Date { get; private set; }
 
         public virtual bool IsVideo { get; private set; }
-
         public virtual bool IsLoop { get; private set; }
-
         public virtual bool IsShareEnabled { get; private set; }
 
         public virtual bool HasStickers { get; private set; }
+
+        public virtual bool CanView { get; private set; }
 
         public virtual TLInputStickeredMediaBase ToInputStickeredMedia()
         {
@@ -438,6 +435,8 @@ namespace Unigram.ViewModels
                 return false;
             }
         }
+
+        public override bool CanView => true;
 
         public override TLInputStickeredMediaBase ToInputStickeredMedia()
         {
@@ -581,6 +580,8 @@ namespace Unigram.ViewModels
                 return false;
             }
         }
+
+        public override bool CanView => true;
 
         public override TLInputStickeredMediaBase ToInputStickeredMedia()
         {

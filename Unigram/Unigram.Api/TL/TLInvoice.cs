@@ -15,6 +15,8 @@ namespace Telegram.Api.TL
 			EmailRequested = (1 << 3),
 			ShippingAddressRequested = (1 << 4),
 			Flexible = (1 << 5),
+			PhoneToProvider = (1 << 6),
+			EmailToProvider = (1 << 7),
 		}
 
 		public bool IsTest { get { return Flags.HasFlag(Flag.Test); } set { Flags = value ? (Flags | Flag.Test) : (Flags & ~Flag.Test); } }
@@ -23,6 +25,8 @@ namespace Telegram.Api.TL
 		public bool IsEmailRequested { get { return Flags.HasFlag(Flag.EmailRequested); } set { Flags = value ? (Flags | Flag.EmailRequested) : (Flags & ~Flag.EmailRequested); } }
 		public bool IsShippingAddressRequested { get { return Flags.HasFlag(Flag.ShippingAddressRequested); } set { Flags = value ? (Flags | Flag.ShippingAddressRequested) : (Flags & ~Flag.ShippingAddressRequested); } }
 		public bool IsFlexible { get { return Flags.HasFlag(Flag.Flexible); } set { Flags = value ? (Flags | Flag.Flexible) : (Flags & ~Flag.Flexible); } }
+		public bool IsPhoneToProvider { get { return Flags.HasFlag(Flag.PhoneToProvider); } set { Flags = value ? (Flags | Flag.PhoneToProvider) : (Flags & ~Flag.PhoneToProvider); } }
+		public bool IsEmailToProvider { get { return Flags.HasFlag(Flag.EmailToProvider); } set { Flags = value ? (Flags | Flag.EmailToProvider) : (Flags & ~Flag.EmailToProvider); } }
 
 		public Flag Flags { get; set; }
 		public String Currency { get; set; }

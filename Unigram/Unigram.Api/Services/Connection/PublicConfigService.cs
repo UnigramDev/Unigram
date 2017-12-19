@@ -23,7 +23,7 @@ namespace Telegram.Api.Services.Connection
 {
     public class MockupPublicConfigService : IPublicConfigService
     {
-        public void GetAsync(Action<TLHelpConfigSimple> callback, Action<Exception> faultCallback = null)
+        public void GetAsync(Action<TLConfigSimple> callback, Action<Exception> faultCallback = null)
         {
 
         }
@@ -38,7 +38,7 @@ namespace Telegram.Api.Services.Connection
 
         public bool Test { get; set; }
 
-        private void PerformAppRequestAsync(Action<TLHelpConfigSimple> callback, Action<Exception> faultCallback)
+        private void PerformAppRequestAsync(Action<TLConfigSimple> callback, Action<Exception> faultCallback)
         {
             var request = Test ? WebRequest.Create("https://google.com/test/") : WebRequest.Create("https://google.com/");
             request.Headers["Host"] = "dns-telegram.appspot.com";
@@ -78,7 +78,7 @@ namespace Telegram.Api.Services.Connection
                 request);
         }
 
-        private void PerformDnsRequestAsync(Action<TLHelpConfigSimple> callback, Action<Exception> faultCallback)
+        private void PerformDnsRequestAsync(Action<TLConfigSimple> callback, Action<Exception> faultCallback)
         {
             var request = Test ? WebRequest.Create("https://google.com/resolve?name=tap.stel.com&type=16") : WebRequest.Create("https://google.com/resolve?name=ap.stel.com&type=16");
             request.Headers["Host"] = "dns.google.com";
@@ -118,9 +118,9 @@ namespace Telegram.Api.Services.Connection
                 request);
         }
 
-        private static TLHelpConfigSimple DecryptSimpleConfig(string dataString)
+        private static TLConfigSimple DecryptSimpleConfig(string dataString)
         {
-            TLHelpConfigSimple result = null;
+            TLConfigSimple result = null;
 
             var base64Chars = dataString.Where(ch =>
             {
@@ -235,7 +235,7 @@ namespace Telegram.Api.Services.Connection
 
                 try
                 {
-                    result = TLFactory.Read<TLHelpConfigSimple>(from);
+                    result = TLFactory.Read<TLConfigSimple>(from);
                 }
                 catch (Exception ex)
                 {
@@ -253,7 +253,7 @@ namespace Telegram.Api.Services.Connection
             return result;
         }
 
-        public void GetAsync(Action<TLHelpConfigSimple> callback, Action<Exception> faultCallback = null)
+        public void GetAsync(Action<TLConfigSimple> callback, Action<Exception> faultCallback = null)
         {
             PerformDnsRequestAsync(
                 result =>
@@ -306,7 +306,7 @@ namespace Telegram.Api.Services.Connection
 
     public interface IPublicConfigService
     {
-        void GetAsync(Action<TLHelpConfigSimple> callback, Action<Exception> faultCallback = null);
+        void GetAsync(Action<TLConfigSimple> callback, Action<Exception> faultCallback = null);
     }
 
     public class Question

@@ -15,6 +15,9 @@ namespace Telegram.Api.TL.Messages
 		public Flag Flags { get; set; }
 		public Int32 Pts { get; set; }
 		public Int32 Count { get; set; }
+		public TLVector<TLMessageBase> Messages { get; set; }
+		public TLVector<TLChatBase> Chats { get; set; }
+		public TLVector<TLUserBase> Users { get; set; }
 
 		public TLMessagesChannelMessages() { }
 		public TLMessagesChannelMessages(TLBinaryReader from)

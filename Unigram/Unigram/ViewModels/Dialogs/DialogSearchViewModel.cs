@@ -191,7 +191,7 @@ namespace Unigram.ViewModels.Dialogs
             Query = query;
 
             var response = await ProtoService.SearchAsync(_dialog.Peer, _query, _from?.ToInputUser(), null, 0, 0, 0, 0, 100);
-            if (response.IsSucceeded)
+            if (response.IsSucceeded && response.Result is ITLMessages result)
             {
                 if (response.Result is TLMessagesMessagesSlice slice)
                 {
@@ -203,10 +203,10 @@ namespace Unigram.ViewModels.Dialogs
                 }
                 else
                 {
-                    TotalItems = response.Result.Messages.Count;
+                    TotalItems = result.Messages.Count;
                 }
 
-                Items = new MvxObservableCollection<TLMessageBase>(response.Result.Messages);
+                Items = new MvxObservableCollection<TLMessageBase>(result.Messages);
                 SelectedItem = Items.FirstOrDefault();
 
                 if (_selectedItem != null)
@@ -259,9 +259,9 @@ namespace Unigram.ViewModels.Dialogs
                 if (SelectedIndex >= Items.Count - 1)
                 {
                     var response = await ProtoService.SearchAsync(_dialog.Peer, _query, _from?.ToInputUser(), null, 0, 0, Items.Count, 0, 100);
-                    if (response.IsSucceeded)
+                    if (response.IsSucceeded && response.Result is ITLMessages result)
                     {
-                        Items.AddRange(response.Result.Messages);
+                        Items.AddRange(result.Messages);
                     }
                     else
                     {

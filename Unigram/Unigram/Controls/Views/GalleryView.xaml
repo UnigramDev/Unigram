@@ -407,7 +407,7 @@
                     <Button.Flyout>
                         <MenuFlyout>
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanView}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanView, Mode=OneWay}"
                                             Text="{CustomResource ShowInChat}"/>
                             <MenuFlyoutItem x:Name="FlyoutSaveAs"
                                             Command="{x:Bind ViewModel.SaveCommand}"

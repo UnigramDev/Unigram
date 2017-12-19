@@ -6,6 +6,10 @@ namespace Telegram.Api.TL.Messages
 {
 	public partial class TLMessagesMessages : TLMessagesMessagesBase 
 	{
+		public TLVector<TLMessageBase> Messages { get; set; }
+		public TLVector<TLChatBase> Chats { get; set; }
+		public TLVector<TLUserBase> Users { get; set; }
+
 		public TLMessagesMessages() { }
 		public TLMessagesMessages(TLBinaryReader from)
 		{

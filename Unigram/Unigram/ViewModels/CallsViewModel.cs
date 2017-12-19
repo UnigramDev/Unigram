@@ -48,11 +48,11 @@ namespace Unigram.ViewModels
             public override async Task<IList<TLCallGroup>> LoadDataAsync()
             {
                 var response = await _protoService.SearchAsync(new TLInputPeerEmpty(), null, null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
-                if (response.IsSucceeded)
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    if (response.Result.Messages.Count > 0)
+                    if (result.Messages.Count > 0)
                     {
-                        _lastMaxId = response.Result.Messages.Min(x => x.Id);
+                        _lastMaxId = result.Messages.Min(x => x.Id);
                     }
 
                     List<TLCallGroup> groups = new List<TLCallGroup>();
@@ -61,14 +61,14 @@ namespace Unigram.ViewModels
                     bool currentFailed = false;
                     DateTime? currentTime = null;
 
-                    foreach (TLMessageService message in response.Result.Messages)
+                    foreach (TLMessageService message in result.Messages)
                     {
                         var action = message.Action as TLMessageActionPhoneCall;
 
                         var peer = _cacheService.GetUser(message.IsOut ? message.ToId.Id : message.FromId) as TLUser;
                         if (peer == null)
                         {
-                            peer = response.Result.Users.FirstOrDefault(x => x.Id == (message.IsOut ? message.ToId.Id : message.FromId)) as TLUser;
+                            peer = result.Users.FirstOrDefault(x => x.Id == (message.IsOut ? message.ToId.Id : message.FromId)) as TLUser;
                         }
 
                         if (peer == null)
