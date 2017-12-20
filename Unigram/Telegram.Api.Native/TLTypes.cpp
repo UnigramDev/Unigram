@@ -57,6 +57,8 @@ RegisterTLObjectConstructor(TLResPQ);
 RegisterTLObjectConstructor(TLFutureSalts);
 RegisterTLObjectConstructor(TLFutureSalt);
 
+ActivatableStaticOnlyFactory(TLConfigStatics);
+
 
 TLDCOption::TLDCOption() :
 	m_flags(TLDCOptionFlag::None),

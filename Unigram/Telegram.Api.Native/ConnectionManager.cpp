@@ -1911,7 +1911,7 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection, int wsaErr
 {
 	auto datacenter = connection->GetDatacenter();
 
-	LOG_TRACE(this, LogLevel::Information, L"Connection with type=%d in datacenter=%d closed, WSAError: 0x%08X\n", connection->GetType(), datacenter->GetId(), wsaError);
+	LOG_TRACE(this, LogLevel::Information, L"Connection with type=%d in datacenter=%d closed, WSAError: 0x%08X\n", connection->GetType(), datacenter->GetId(), HRESULT_FROM_WIN32(wsaError));
 
 	ResetRequests([datacenter, connection](auto datacenterId, auto const& request) -> bool
 	{
