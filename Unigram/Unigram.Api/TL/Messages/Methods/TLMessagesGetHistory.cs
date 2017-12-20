@@ -17,6 +17,7 @@ namespace Telegram.Api.TL.Messages.Methods
 		public Int32 Limit { get; set; }
 		public Int32 MaxId { get; set; }
 		public Int32 MinId { get; set; }
+		public Int32 Hash { get; set; }
 
 		public TLMessagesGetHistory() { }
 		public TLMessagesGetHistory(TLBinaryReader from)
@@ -35,6 +36,7 @@ namespace Telegram.Api.TL.Messages.Methods
 			Limit = from.ReadInt32();
 			MaxId = from.ReadInt32();
 			MinId = from.ReadInt32();
+			Hash = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -46,6 +48,7 @@ namespace Telegram.Api.TL.Messages.Methods
 			to.WriteInt32(Limit);
 			to.WriteInt32(MaxId);
 			to.WriteInt32(MinId);
+			to.WriteInt32(Hash);
 		}
 	}
 }

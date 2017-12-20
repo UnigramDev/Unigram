@@ -277,14 +277,14 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.GetHistoryAsync(args.Dialog.ToInputPeer(), args.Dialog.Peer, true, 0, 0, int.MaxValue, 1);
-            if (response.IsSucceeded && response.Result.Messages.Count > 0)
+            var response = await ProtoService.GetHistoryAsync(args.Dialog.ToInputPeer(), args.Dialog.Peer, true, 0, 0, int.MaxValue, 1, 0);
+            if (response.IsSucceeded && response.Result is ITLMessages result && result.Messages.Count > 0)
             {
-                args.Dialog.TopMessageItem = response.Result.Messages[0];
-                args.Dialog.TopMessage = response.Result.Messages[0].Id;
+                args.Dialog.TopMessageItem = result.Messages[0];
+                args.Dialog.TopMessage = result.Messages[0].Id;
                 args.Dialog.TopMessageRandomId = null;
 
-                Handle(new TopMessageUpdatedEventArgs(args.Dialog, response.Result.Messages[0]));
+                Handle(new TopMessageUpdatedEventArgs(args.Dialog, result.Messages[0]));
                 return;
             }
 
@@ -1098,12 +1098,12 @@ namespace Unigram.ViewModels
 
         private async Task<KeyedList<string, TLObject>> SearchMessagesAsync(string query)
         {
-            var result = await ProtoService.SearchGlobalAsync(query, 0, new TLInputPeerEmpty(), 0, 20);
-            if (result.IsSucceeded)
+            var response = await ProtoService.SearchGlobalAsync(query, 0, new TLInputPeerEmpty(), 0, 20);
+            if (response.IsSucceeded && response.Result is ITLMessages result)
             {
                 KeyedList<string, TLObject> parent;
 
-                var slice = result.Result as TLMessagesMessagesSlice;
+                var slice = response.Result as TLMessagesMessagesSlice;
                 if (slice != null)
                 {
                     //parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", slice.Count));
@@ -1111,7 +1111,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    if (result.Result.Messages.Count > 0)
+                    if (result.Messages.Count > 0)
                     {
                         //parent = new KeyedList<string, TLObject>(string.Format("Found {0} messages", result.Result.Messages.Count));
                         parent = new KeyedList<string, TLObject>(Strings.Android.SearchMessages);
@@ -1123,16 +1123,16 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                CacheService.SyncUsersAndChats(result.Result.Users, result.Result.Chats,
+                CacheService.SyncUsersAndChats(result.Users, result.Chats,
                     tuple =>
                     {
-                        result.Result.Users = tuple.Item1;
-                        result.Result.Chats = tuple.Item2;
+                        result.Users = tuple.Item1;
+                        result.Chats = tuple.Item2;
 
-                        foreach (var message in result.Result.Messages.OfType<TLMessageCommonBase>())
+                        foreach (var message in result.Messages.OfType<TLMessageCommonBase>())
                         {
                             var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
-                            var with = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (ITLDialogWith)result.Result.Chats.FirstOrDefault(x => x.Id == peer.Id);
+                            var with = result.Users.FirstOrDefault(x => x.Id == peer.Id) ?? (ITLDialogWith)result.Chats.FirstOrDefault(x => x.Id == peer.Id);
                             var item = new TLDialog
                             {
                                 IsSearchResult = true,

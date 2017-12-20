@@ -11,12 +11,14 @@ namespace Telegram.Api.TL.Messages
 		{
 			Alert = (1 << 1),
 			HasUrl = (1 << 3),
+			NativeUi = (1 << 4),
 			Message = (1 << 0),
 			Url = (1 << 2),
 		}
 
 		public bool IsAlert { get { return Flags.HasFlag(Flag.Alert); } set { Flags = value ? (Flags | Flag.Alert) : (Flags & ~Flag.Alert); } }
 		public bool IsHasUrl { get { return Flags.HasFlag(Flag.HasUrl); } set { Flags = value ? (Flags | Flag.HasUrl) : (Flags & ~Flag.HasUrl); } }
+		public bool IsNativeUi { get { return Flags.HasFlag(Flag.NativeUi); } set { Flags = value ? (Flags | Flag.NativeUi) : (Flags & ~Flag.NativeUi); } }
 		public bool HasMessage { get { return Flags.HasFlag(Flag.Message); } set { Flags = value ? (Flags | Flag.Message) : (Flags & ~Flag.Message); } }
 		public bool HasUrl { get { return Flags.HasFlag(Flag.Url); } set { Flags = value ? (Flags | Flag.Url) : (Flags & ~Flag.Url); } }
 

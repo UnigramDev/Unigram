@@ -661,22 +661,22 @@ namespace Unigram.ViewModels
 
                 //return;
 
-                var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, maxId, limit);
-                if (response.IsSucceeded)
+                var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, maxId, limit, 0);
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    if (response.Result.Messages.Count > 0)
+                    if (result.Messages.Count > 0)
                     {
                         ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
                     }
 
-                    ProcessReplies(response.Result.Messages);
+                    ProcessReplies(result.Messages);
 
                     Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Replies processed");
 
                     //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
-                    for (int i = 0; i < response.Result.Messages.Count; i++)
+                    for (int i = 0; i < result.Messages.Count; i++)
                     {
-                        var item = response.Result.Messages[i];
+                        var item = result.Messages[i];
                         if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
                         {
                             continue;
@@ -688,7 +688,7 @@ namespace Unigram.ViewModels
 
                     Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Items added");
 
-                    foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
+                    foreach (var item in result.Messages.OrderByDescending(x => x.Date))
                     {
                         var message = item as TLMessage;
                         if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
@@ -701,7 +701,7 @@ namespace Unigram.ViewModels
                         }
                     }
 
-                    if (response.Result.Messages.Count < limit)
+                    if (result.Messages.Count < limit)
                     {
                         IsLastSliceLoaded = true;
                     }
@@ -748,21 +748,21 @@ namespace Unigram.ViewModels
 
                 maxId = Items.LastOrDefault()?.Id ?? 1;
 
-                var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit - 1, 0, maxId, limit);
-                if (response.IsSucceeded)
+                var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit - 1, 0, maxId, limit, 0);
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    if (response.Result.Messages.Count > 0)
+                    if (result.Messages.Count > 0)
                     {
                         //ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
                         ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                     }
 
-                    ProcessReplies(response.Result.Messages);
+                    ProcessReplies(result.Messages);
 
                     //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
-                    for (int i = response.Result.Messages.Count - 1; i >= 0; i--)
+                    for (int i = result.Messages.Count - 1; i >= 0; i--)
                     {
-                        var item = response.Result.Messages[i];
+                        var item = result.Messages[i];
                         if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
                         {
                             continue;
@@ -775,7 +775,7 @@ namespace Unigram.ViewModels
                         //InsertMessage(item as TLMessageCommonBase);
                     }
 
-                    foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
+                    foreach (var item in result.Messages.OrderByDescending(x => x.Date))
                     {
                         var message = item as TLMessage;
                         if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
@@ -788,7 +788,7 @@ namespace Unigram.ViewModels
                         }
                     }
 
-                    if (response.Result.Messages.Count < limit)
+                    if (result.Messages.Count < limit)
                     {
                         IsFirstSliceLoaded = true;
                     }
@@ -809,7 +809,7 @@ namespace Unigram.ViewModels
             }
 
             var response = await ProtoService.GetUnreadMentionsAsync(_peer, 0, dialog.UnreadMentionsCount - 1, 1, 0, 0);
-            if (response.IsSucceeded)
+            if (response.IsSucceeded && response.Result is ITLMessages result)
             {
                 var count = 0;
                 if (response.Result is TLMessagesChannelMessages channelMessages)
@@ -827,7 +827,7 @@ namespace Unigram.ViewModels
                 //    return;
                 //}
 
-                var commonMessage = response.Result.Messages.FirstOrDefault() as TLMessageCommonBase;
+                var commonMessage = result.Messages.FirstOrDefault() as TLMessageCommonBase;
                 if (commonMessage == null)
                 {
                     return;
@@ -900,20 +900,20 @@ namespace Unigram.ViewModels
             var offset = -25;
             var limit = 50;
 
-            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
-            if (response.IsSucceeded)
+            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit, 0);
+            if (response.IsSucceeded && response.Result is ITLMessages result)
             {
-                if (response.Result.Messages.Count > 0)
+                if (result.Messages.Count > 0)
                 {
                     ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                 }
 
-                ProcessReplies(response.Result.Messages);
+                ProcessReplies(result.Messages);
 
                 //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
-                for (int i = response.Result.Messages.Count - 1; i >= 0; i--)
+                for (int i = result.Messages.Count - 1; i >= 0; i--)
                 {
-                    var item = response.Result.Messages[i];
+                    var item = result.Messages[i];
                     if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
                     {
                         continue;
@@ -922,7 +922,7 @@ namespace Unigram.ViewModels
                     Items.Add(item);
                 }
 
-                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
+                foreach (var item in result.Messages.OrderByDescending(x => x.Date))
                 {
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
@@ -961,11 +961,11 @@ namespace Unigram.ViewModels
             var obj = new TLMessagesGetHistory { Peer = Peer, OffsetId = 0, OffsetDate = dateOffset - 1, AddOffset = offset, Limit = limit, MaxId = 0, MinId = 0 };
             ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.getHistory", obj, result =>
             {
-                if (result.Messages.Count > 0)
+                if (result is ITLMessages messages && messages.Messages.Count > 0)
                 {
                     BeginOnUIThread(async () =>
                     {
-                        await LoadMessageSliceAsync(null, result.Messages[0].Id);
+                        await LoadMessageSliceAsync(null, messages.Messages[0].Id);
                     });
                 }
             });
@@ -1006,27 +1006,27 @@ namespace Unigram.ViewModels
                 var limit = 15;
 
                 Retry:
-                var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
-                if (response.IsSucceeded)
+                var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit, 0);
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    if (response.Result.Messages.Count == 0 && offset < 0)
+                    if (result.Messages.Count == 0 && offset < 0)
                     {
                         maxId = int.MaxValue;
                         offset = 0;
                         goto Retry;
                     }
 
-                    if (response.Result.Messages.Count > 0)
+                    if (result.Messages.Count > 0)
                     {
                         ListField.SetScrollMode(maxId == int.MaxValue ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
                     }
 
-                    ProcessReplies(response.Result.Messages);
+                    ProcessReplies(result.Messages);
 
                     //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
-                    for (int i = response.Result.Messages.Count - 1; i >= 0; i--)
+                    for (int i = result.Messages.Count - 1; i >= 0; i--)
                     {
-                        var item = response.Result.Messages[i];
+                        var item = result.Messages[i];
                         if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
                         {
                             continue;
@@ -1055,7 +1055,7 @@ namespace Unigram.ViewModels
                         Items.Add(item);
                     }
 
-                    foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
+                    foreach (var item in result.Messages.OrderByDescending(x => x.Date))
                     {
                         var message = item as TLMessage;
                         if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
@@ -1068,7 +1068,7 @@ namespace Unigram.ViewModels
                         }
                     }
 
-                    if (response.Result.Messages.Count < limit)
+                    if (result.Messages.Count < limit)
                     {
                         IsFirstSliceLoaded = maxId < int.MaxValue;
                         IsLastSliceLoaded = maxId == int.MaxValue;
@@ -1261,20 +1261,20 @@ namespace Unigram.ViewModels
                 }
 
                 var response = await task;
-                if (response.IsSucceeded)
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
                     //CacheService.AddChats(result.Result.Chats, (results) => { });
                     //CacheService.AddUsers(result.Result.Users, (results) => { });
-                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
 
-                    for (int j = 0; j < response.Result.Messages.Count; j++)
+                    for (int j = 0; j < result.Messages.Count; j++)
                     {
                         for (int k = 0; k < replyToMsgs.Count; k++)
                         {
                             var message = replyToMsgs[k];
-                            if (message != null && message.ReplyToMsgId.Value == response.Result.Messages[j].Id)
+                            if (message != null && message.ReplyToMsgId.Value == result.Messages[j].Id)
                             {
-                                replyToMsgs[k].Reply = response.Result.Messages[j];
+                                replyToMsgs[k].Reply = result.Messages[j];
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].Reply);
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].ReplyInfo);
 
@@ -1577,9 +1577,9 @@ namespace Unigram.ViewModels
                         if (pinned == null && update)
                         {
                             var y = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int>() { full.PinnedMsgId ?? 0 });
-                            if (y.IsSucceeded)
+                            if (y.IsSucceeded && y.Result is ITLMessages result)
                             {
-                                pinned = y.Result.Messages.FirstOrDefault();
+                                pinned = result.Messages.FirstOrDefault();
                             }
                         }
 
@@ -1693,14 +1693,14 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var respponse = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int> { channel.PinnedMsgId.Value });
-                if (respponse.IsSucceeded)
+                var response = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int> { channel.PinnedMsgId.Value });
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    PinnedMessage = respponse.Result.Messages.FirstOrDefault(x => x.Id == channel.PinnedMsgId.Value);
+                    PinnedMessage = result.Messages.FirstOrDefault(x => x.Id == channel.PinnedMsgId.Value);
                 }
                 else
                 {
-                    Telegram.Api.Helpers.Execute.ShowDebugMessage("channels.getMessages error " + respponse.Error);
+                    Telegram.Api.Helpers.Execute.ShowDebugMessage("channels.getMessages error " + response.Error);
                 }
             }
         }
@@ -1925,17 +1925,17 @@ namespace Unigram.ViewModels
                 }
 
                 var response = await task;
-                if (response.IsSucceeded)
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
                     //CacheService.AddChats(result.Result.Chats, (results) => { });
                     //CacheService.AddUsers(result.Result.Users, (results) => { });
-                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
 
-                    for (int j = 0; j < response.Result.Messages.Count; j++)
+                    for (int j = 0; j < result.Messages.Count; j++)
                     {
-                        if (draft.ReplyToMsgId.Value == response.Result.Messages[j].Id)
+                        if (draft.ReplyToMsgId.Value == result.Messages[j].Id)
                         {
-                            Reply = response.Result.Messages[j];
+                            Reply = result.Messages[j];
                         }
                     }
                 }

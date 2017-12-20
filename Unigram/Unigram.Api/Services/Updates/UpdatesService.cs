@@ -1422,7 +1422,13 @@ namespace Telegram.Api.Services.Updates
                     {
                         Execute.BeginOnUIThread(() =>
                         {
-                            foreach (var commonMessage in result.Messages.OfType<TLMessageCommonBase>())
+                            var history = result as ITLMessages;
+                            if (history == null)
+                            {
+                                return;
+                            }
+
+                            foreach (var commonMessage in history.Messages.OfType<TLMessageCommonBase>())
                             {
                                 commonMessage.IsMediaUnread = false;
                                 commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
@@ -1512,7 +1518,13 @@ namespace Telegram.Api.Services.Updates
                     {
                         Execute.BeginOnUIThread(() =>
                         {
-                            foreach (var message in result.Messages.OfType<TLMessageCommonBase>())
+                            var history = result as ITLMessages;
+                            if (history == null)
+                            {
+                                return;
+                            }
+
+                            foreach (var message in history.Messages.OfType<TLMessageCommonBase>())
                             {
                                 message.IsMediaUnread = false;
                                 message.RaisePropertyChanged(() => message.IsMediaUnread);

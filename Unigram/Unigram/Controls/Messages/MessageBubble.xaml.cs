@@ -238,6 +238,7 @@ namespace Unigram.Controls.Messages
 
             if (sticker || round)
             {
+                ImageLoader.Initialize(overlay.Compositor);
                 ManagedSurface surface = null;
                 if (sticker)
                 {

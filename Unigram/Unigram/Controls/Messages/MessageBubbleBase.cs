@@ -173,6 +173,7 @@ namespace Unigram.Controls.Messages
 
             var sticker = message.IsSticker();
             var light = sticker || message.IsRoundVideo();
+            var shown = false;
 
             if (!light && message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
             {
@@ -183,6 +184,7 @@ namespace Unigram.Controls.Messages
                 hyperlink.Click += (s, args) => From_Click(message);
 
                 paragraph.Inlines.Add(hyperlink);
+                shown = true;
             }
             else if (!light && message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
             {
@@ -193,6 +195,7 @@ namespace Unigram.Controls.Messages
                 hyperlink.Click += (s, args) => From_Click(message);
 
                 paragraph.Inlines.Add(hyperlink);
+                shown = true;
             }
             else if (!light && message.IsFirst && message.IsSaved())
             {
@@ -203,9 +206,10 @@ namespace Unigram.Controls.Messages
                 hyperlink.Click += (s, args) => FwdFrom_Click(message);
 
                 paragraph.Inlines.Add(hyperlink);
+                shown = true;
             }
 
-            if (paragraph.Inlines.Count > 0)
+            if (shown)
             {
                 if (admin != null && !message.IsOut && message.IsAdmin())
                 {
@@ -281,7 +285,7 @@ namespace Unigram.Controls.Messages
 
             if (paragraph.Inlines.Count > 0)
             {
-                if (admin != null && !message.IsOut && message.IsAdmin())
+                if (admin != null && shown && !message.IsOut && message.IsAdmin())
                 {
                     admin.Visibility = Visibility.Visible;
                 }

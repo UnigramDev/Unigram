@@ -267,6 +267,7 @@
     <Compile Include="TL\Core\ITLInputPeer.cs" />
     <Compile Include="TL\Core\ITLMessageMediaCaption.cs" />
     <Compile Include="TL\Core\ITLMessageMediaDestruct.cs" />
+    <Compile Include="TL\Core\ITLMessages.cs" />
     <Compile Include="TL\Core\ITLMultiChannelPts.cs" />
     <Compile Include="TL\Core\ITLRandomId.cs" />
     <Compile Include="TL\Core\ITLReadMaxId.cs" />
@@ -294,7 +295,6 @@
     <Compile Include="TL\Help\Methods\TLHelpSetBotUpdatesStatus.cs" />
     <Compile Include="TL\Help\TLHelpAppUpdate.cs" />
     <Compile Include="TL\Help\TLHelpAppUpdateBase.cs" />
-    <Compile Include="TL\Help\TLHelpConfigSimple.cs" />
     <Compile Include="TL\Help\TLHelpInviteText.cs" />
     <Compile Include="TL\Help\TLHelpNoAppUpdate.cs" />
     <Compile Include="TL\Help\TLHelpRecentMeUrls.cs" />
@@ -396,6 +396,7 @@
     <Compile Include="TL\Messages\Methods\TLMessagesToggleChatAdmins.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesToggleDialogPin.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesUninstallStickerSet.cs" />
+    <Compile Include="TL\Messages\Methods\TLMessagesUploadEncryptedFile.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesUploadMedia.cs" />
     <Compile Include="TL\Messages\TLMessagesAffectedHistory.cs" />
     <Compile Include="TL\Messages\TLMessagesAffectedMessages.cs" />
@@ -427,6 +428,7 @@
     <Compile Include="TL\Messages\TLMessagesMessageEditData.cs" />
     <Compile Include="TL\Messages\TLMessagesMessages.cs" />
     <Compile Include="TL\Messages\TLMessagesMessagesBase.cs" />
+    <Compile Include="TL\Messages\TLMessagesMessagesNotModified.cs" />
     <Compile Include="TL\Messages\TLMessagesMessagesSlice.cs" />
     <Compile Include="TL\Messages\TLMessagesPeerDialogs.cs" />
     <Compile Include="TL\Messages\TLMessagesRecentStickers.cs" />
@@ -462,7 +464,6 @@
     <Compile Include="TL\Partial\TLInputFileLocationBase.Partial.cs" />
     <Compile Include="TL\Partial\TLInputGeoPointBase.cs" />
     <Compile Include="TL\Partial\TLInputPeerBase.Partial.cs" />
-    <Compile Include="TL\Partial\TLIpPort.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaContact.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaDocument.Partial.cs" />
@@ -736,7 +737,6 @@
     <Compile Include="TL\TLInputMessagesFilterPhoneCalls.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotos.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotoVideo.cs" />
-    <Compile Include="TL\TLInputMessagesFilterPhotoVideoDocuments.cs" />
     <Compile Include="TL\TLInputMessagesFilterRoundVideo.cs" />
     <Compile Include="TL\TLInputMessagesFilterRoundVoice.cs" />
     <Compile Include="TL\TLInputMessagesFilterUrl.cs" />
@@ -748,6 +748,8 @@
     <Compile Include="TL\TLInputNotifyPeerBase.cs" />
     <Compile Include="TL\TLInputNotifyUsers.cs" />
     <Compile Include="TL\TLInputPaymentCredentials.cs" />
+    <Compile Include="TL\TLInputPaymentCredentialsAndroidPay.cs" />
+    <Compile Include="TL\TLInputPaymentCredentialsApplePay.cs" />
     <Compile Include="TL\TLInputPaymentCredentialsBase.cs" />
     <Compile Include="TL\TLInputPaymentCredentialsSaved.cs" />
     <Compile Include="TL\TLInputPeerBase.cs" />
@@ -796,7 +798,6 @@
     <Compile Include="TL\TLInputWebDocument.cs" />
     <Compile Include="TL\TLInputWebFileLocation.cs" />
     <Compile Include="TL\TLInvoice.cs" />
-    <Compile Include="TL\TLIpPort.cs" />
     <Compile Include="TL\TLKeyboardButton.cs" />
     <Compile Include="TL\TLKeyboardButtonBase.cs" />
     <Compile Include="TL\TLKeyboardButtonBuy.cs" />

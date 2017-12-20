@@ -7,6 +7,9 @@ namespace Telegram.Api.TL.Messages
 	public partial class TLMessagesMessagesSlice : TLMessagesMessagesBase 
 	{
 		public Int32 Count { get; set; }
+		public TLVector<TLMessageBase> Messages { get; set; }
+		public TLVector<TLChatBase> Chats { get; set; }
+		public TLVector<TLUserBase> Users { get; set; }
 
 		public TLMessagesMessagesSlice() { }
 		public TLMessagesMessagesSlice(TLBinaryReader from)

@@ -196,9 +196,10 @@ namespace Telegram.Api.TL
 				case TLType.MessagesGetFavedStickers: return (T)(Object)new TLMessagesGetFavedStickers(from);
 				case TLType.MessagesFaveSticker: return (T)(Object)new TLMessagesFaveSticker(from);
 				case TLType.MessagesGetUnreadMentions: return (T)(Object)new TLMessagesGetUnreadMentions(from);
-				case TLType.MessagesGetRecentLocations: return (T)(Object)new TLMessagesGetRecentLocations(from);
 				case TLType.MessagesReadMentions: return (T)(Object)new TLMessagesReadMentions(from);
+				case TLType.MessagesGetRecentLocations: return (T)(Object)new TLMessagesGetRecentLocations(from);
 				case TLType.MessagesSendMultiMedia: return (T)(Object)new TLMessagesSendMultiMedia(from);
+				case TLType.MessagesUploadEncryptedFile: return (T)(Object)new TLMessagesUploadEncryptedFile(from);
 				case TLType.UpdatesGetState: return (T)(Object)new TLUpdatesGetState(from);
 				case TLType.UpdatesGetDifference: return (T)(Object)new TLUpdatesGetDifference(from);
 				case TLType.UpdatesGetChannelDifference: return (T)(Object)new TLUpdatesGetChannelDifference(from);
@@ -305,7 +306,6 @@ namespace Telegram.Api.TL
 				case TLType.InputMediaGame: return (T)(Object)new TLInputMediaGame(from);
 				case TLType.InputMediaInvoice: return (T)(Object)new TLInputMediaInvoice(from);
 				case TLType.InputMediaGeoLive: return (T)(Object)new TLInputMediaGeoLive(from);
-				case TLType.InputSingleMedia: return (T)(Object)new TLInputSingleMedia(from);
 				case TLType.InputChatPhotoEmpty: return (T)(Object)new TLInputChatPhotoEmpty(from);
 				case TLType.InputChatUploadedPhoto: return (T)(Object)new TLInputChatUploadedPhoto(from);
 				case TLType.InputChatPhoto: return (T)(Object)new TLInputChatPhoto(from);
@@ -432,6 +432,7 @@ namespace Telegram.Api.TL
 				case TLType.MessagesMessages: return (T)(Object)new TLMessagesMessages(from);
 				case TLType.MessagesMessagesSlice: return (T)(Object)new TLMessagesMessagesSlice(from);
 				case TLType.MessagesChannelMessages: return (T)(Object)new TLMessagesChannelMessages(from);
+				case TLType.MessagesMessagesNotModified: return (T)(Object)new TLMessagesMessagesNotModified(from);
 				case TLType.MessagesChats: return (T)(Object)new TLMessagesChats(from);
 				case TLType.MessagesChatsSlice: return (T)(Object)new TLMessagesChatsSlice(from);
 				case TLType.MessagesChatFull: return (T)(Object)new TLMessagesChatFull(from);
@@ -440,7 +441,6 @@ namespace Telegram.Api.TL
 				case TLType.InputMessagesFilterPhotos: return (T)(Object)new TLInputMessagesFilterPhotos(from);
 				case TLType.InputMessagesFilterVideo: return (T)(Object)new TLInputMessagesFilterVideo(from);
 				case TLType.InputMessagesFilterPhotoVideo: return (T)(Object)new TLInputMessagesFilterPhotoVideo(from);
-				case TLType.InputMessagesFilterPhotoVideoDocuments: return (T)(Object)new TLInputMessagesFilterPhotoVideoDocuments(from);
 				case TLType.InputMessagesFilterDocument: return (T)(Object)new TLInputMessagesFilterDocument(from);
 				case TLType.InputMessagesFilterUrl: return (T)(Object)new TLInputMessagesFilterUrl(from);
 				case TLType.InputMessagesFilterGif: return (T)(Object)new TLInputMessagesFilterGif(from);
@@ -451,8 +451,8 @@ namespace Telegram.Api.TL
 				case TLType.InputMessagesFilterRoundVoice: return (T)(Object)new TLInputMessagesFilterRoundVoice(from);
 				case TLType.InputMessagesFilterRoundVideo: return (T)(Object)new TLInputMessagesFilterRoundVideo(from);
 				case TLType.InputMessagesFilterMyMentions: return (T)(Object)new TLInputMessagesFilterMyMentions(from);
-				case TLType.InputMessagesFilterContacts: return (T)(Object)new TLInputMessagesFilterContacts(from);
 				case TLType.InputMessagesFilterGeo: return (T)(Object)new TLInputMessagesFilterGeo(from);
+				case TLType.InputMessagesFilterContacts: return (T)(Object)new TLInputMessagesFilterContacts(from);
 				case TLType.UpdateNewMessage: return (T)(Object)new TLUpdateNewMessage(from);
 				case TLType.UpdateMessageID: return (T)(Object)new TLUpdateMessageID(from);
 				case TLType.UpdateDeleteMessages: return (T)(Object)new TLUpdateDeleteMessages(from);
@@ -815,6 +815,8 @@ namespace Telegram.Api.TL
 				case TLType.PaymentsSavedInfo: return (T)(Object)new TLPaymentsSavedInfo(from);
 				case TLType.InputPaymentCredentialsSaved: return (T)(Object)new TLInputPaymentCredentialsSaved(from);
 				case TLType.InputPaymentCredentials: return (T)(Object)new TLInputPaymentCredentials(from);
+				case TLType.InputPaymentCredentialsApplePay: return (T)(Object)new TLInputPaymentCredentialsApplePay(from);
+				case TLType.InputPaymentCredentialsAndroidPay: return (T)(Object)new TLInputPaymentCredentialsAndroidPay(from);
 				case TLType.AccountTmpPassword: return (T)(Object)new TLAccountTmpPassword(from);
 				case TLType.ShippingOption: return (T)(Object)new TLShippingOption(from);
 				case TLType.InputStickerSetItem: return (T)(Object)new TLInputStickerSetItem(from);
@@ -860,12 +862,13 @@ namespace Telegram.Api.TL
 				case TLType.CdnFileHash: return (T)(Object)new TLCdnFileHash(from);
 				case TLType.MessagesFavedStickersNotModified: return (T)(Object)new TLMessagesFavedStickersNotModified(from);
 				case TLType.MessagesFavedStickers: return (T)(Object)new TLMessagesFavedStickers(from);
-				case TLType.HelpRecentMeUrls: return (T)(Object)new TLHelpRecentMeUrls(from);
+				case TLType.RecentMeUrlUnknown: return (T)(Object)new TLRecentMeUrlUnknown(from);
 				case TLType.RecentMeUrlUser: return (T)(Object)new TLRecentMeUrlUser(from);
 				case TLType.RecentMeUrlChat: return (T)(Object)new TLRecentMeUrlChat(from);
-				case TLType.RecentMeUrlStickerSet: return (T)(Object)new TLRecentMeUrlStickerSet(from);
 				case TLType.RecentMeUrlChatInvite: return (T)(Object)new TLRecentMeUrlChatInvite(from);
-				case TLType.RecentMeUrlUnknown: return (T)(Object)new TLRecentMeUrlUnknown(from);
+				case TLType.RecentMeUrlStickerSet: return (T)(Object)new TLRecentMeUrlStickerSet(from);
+				case TLType.HelpRecentMeUrls: return (T)(Object)new TLHelpRecentMeUrls(from);
+				case TLType.InputSingleMedia: return (T)(Object)new TLInputSingleMedia(from);
 				case TLType.Message: return (T)(Object)new TLMessage(from);
 				case TLType.MessageService: return (T)(Object)new TLMessageService(from);
 				case TLType.Null: return (T)(Object)null;

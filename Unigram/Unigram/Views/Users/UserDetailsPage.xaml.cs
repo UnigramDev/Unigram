@@ -89,7 +89,7 @@ namespace Unigram.Views.Users
                 if (user.IsContact)
                 {
                     CreateFlyoutItem(ref flyout, null, Strings.Android.ShareContact);
-                    CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.BlockCommand, !full.IsBlocked ? Strings.Android.BlockContact : Strings.Android.Unblock);
+                    CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, !full.IsBlocked ? Strings.Android.BlockContact : Strings.Android.Unblock);
                     CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.EditContact);
                     CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Android.DeleteContact);
                 }

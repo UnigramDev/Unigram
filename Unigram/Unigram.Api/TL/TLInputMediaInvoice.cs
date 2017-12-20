@@ -21,6 +21,7 @@ namespace Telegram.Api.TL
 		public TLInvoice Invoice { get; set; }
 		public Byte[] Payload { get; set; }
 		public String Provider { get; set; }
+		public TLDataJSON ProviderData { get; set; }
 		public String StartParam { get; set; }
 
 		public TLInputMediaInvoice() { }
@@ -40,6 +41,7 @@ namespace Telegram.Api.TL
 			Invoice = TLFactory.Read<TLInvoice>(from);
 			Payload = from.ReadByteArray();
 			Provider = from.ReadString();
+			ProviderData = TLFactory.Read<TLDataJSON>(from);
 			StartParam = from.ReadString();
 		}
 
@@ -54,6 +56,7 @@ namespace Telegram.Api.TL
 			to.WriteObject(Invoice);
 			to.WriteByteArray(Payload);
 			to.WriteString(Provider ?? string.Empty);
+			to.WriteObject(ProviderData);
 			to.WriteString(StartParam ?? string.Empty);
 		}
 

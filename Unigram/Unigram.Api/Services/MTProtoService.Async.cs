@@ -1166,20 +1166,6 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit)
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            GetChannelHistoryAsync(debugInfo, inputPeer, peer, sync, offset, maxId, limit, (callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUpdatesBase>> DeleteChatUserAsync(int chatId, TLInputUserBase userId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
@@ -1838,10 +1824,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit)
+        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit, int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            GetHistoryAsync(inputPeer, peer, sync, offset, offsetDate, maxId, limit, (callback) =>
+            GetHistoryAsync(inputPeer, peer, sync, offset, offsetDate, maxId, limit, hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
             }, (faultCallback) =>

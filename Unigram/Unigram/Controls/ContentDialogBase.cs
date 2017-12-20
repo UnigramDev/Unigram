@@ -267,6 +267,19 @@ namespace Unigram.Controls
             Closing?.Invoke(this, EventArgs.Empty);
         }
 
+        public void TryHide(ContentDialogBaseResult result)
+        {
+            var e = new HandledEventArgs();
+            OnBackRequestedOverride(this, e);
+
+            if (e.Handled)
+            {
+                return;
+            }
+
+            Hide(result);
+        }
+
         public void Hide()
         {
             Hide(ContentDialogBaseResult.None);
@@ -457,7 +470,7 @@ namespace Unigram.Controls
 
         public void GoBack(NavigationTransitionInfo infoOverride = null)
         {
-            _contentDialog.Hide(ContentDialogBaseResult.None);
+            _contentDialog.TryHide(ContentDialogBaseResult.None);
         }
 
         public object Content => throw new NotImplementedException();

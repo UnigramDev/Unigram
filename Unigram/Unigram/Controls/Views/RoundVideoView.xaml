@@ -76,7 +76,7 @@
                         </GeometryGroup>
                     </Path.Data>
                 </Path>
-        
+
                 <!--<MediaPlayerElement x:Name="PlayerElement"/>-->
                 <controls:ProgressBarRing Value="0.5"/>
             </Grid>

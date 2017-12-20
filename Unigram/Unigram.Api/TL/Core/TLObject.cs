@@ -51,9 +51,8 @@ namespace Telegram.Api.TL
             TLObjectSerializer.RegisterObjectConstructor(0x922AEC1, () => new TLInputMediaPhotoExternal());
             TLObjectSerializer.RegisterObjectConstructor(0xB6F74335, () => new TLInputMediaDocumentExternal());
             TLObjectSerializer.RegisterObjectConstructor(0xD33F43F3, () => new TLInputMediaGame());
-            TLObjectSerializer.RegisterObjectConstructor(0x92153685, () => new TLInputMediaInvoice());
+            TLObjectSerializer.RegisterObjectConstructor(0xF4E096C3, () => new TLInputMediaInvoice());
             TLObjectSerializer.RegisterObjectConstructor(0x7B1A118F, () => new TLInputMediaGeoLive());
-            TLObjectSerializer.RegisterObjectConstructor(0x5EAA7809, () => new TLInputSingleMedia());
             TLObjectSerializer.RegisterObjectConstructor(0x1CA48F57, () => new TLInputChatPhotoEmpty());
             TLObjectSerializer.RegisterObjectConstructor(0x927C55B4, () => new TLInputChatUploadedPhoto());
             TLObjectSerializer.RegisterObjectConstructor(0x8953AD37, () => new TLInputChatPhoto());
@@ -180,6 +179,7 @@ namespace Telegram.Api.TL
             TLObjectSerializer.RegisterObjectConstructor(0x8C718E87, () => new TLMessagesMessages());
             TLObjectSerializer.RegisterObjectConstructor(0xB446AE3, () => new TLMessagesMessagesSlice());
             TLObjectSerializer.RegisterObjectConstructor(0x99262E37, () => new TLMessagesChannelMessages());
+            TLObjectSerializer.RegisterObjectConstructor(0x74535F21, () => new TLMessagesMessagesNotModified());
             TLObjectSerializer.RegisterObjectConstructor(0x64FF9FD5, () => new TLMessagesChats());
             TLObjectSerializer.RegisterObjectConstructor(0x9CD81144, () => new TLMessagesChatsSlice());
             TLObjectSerializer.RegisterObjectConstructor(0xE5D7D19C, () => new TLMessagesChatFull());
@@ -188,7 +188,6 @@ namespace Telegram.Api.TL
             TLObjectSerializer.RegisterObjectConstructor(0x9609A51C, () => new TLInputMessagesFilterPhotos());
             TLObjectSerializer.RegisterObjectConstructor(0x9FC00E65, () => new TLInputMessagesFilterVideo());
             TLObjectSerializer.RegisterObjectConstructor(0x56E9F0E4, () => new TLInputMessagesFilterPhotoVideo());
-            TLObjectSerializer.RegisterObjectConstructor(0xD95E73BB, () => new TLInputMessagesFilterPhotoVideoDocuments());
             TLObjectSerializer.RegisterObjectConstructor(0x9EDDF188, () => new TLInputMessagesFilterDocument());
             TLObjectSerializer.RegisterObjectConstructor(0x7EF0DD87, () => new TLInputMessagesFilterUrl());
             TLObjectSerializer.RegisterObjectConstructor(0xFFC86587, () => new TLInputMessagesFilterGif());
@@ -199,8 +198,8 @@ namespace Telegram.Api.TL
             TLObjectSerializer.RegisterObjectConstructor(0x7A7C17A4, () => new TLInputMessagesFilterRoundVoice());
             TLObjectSerializer.RegisterObjectConstructor(0xB549DA53, () => new TLInputMessagesFilterRoundVideo());
             TLObjectSerializer.RegisterObjectConstructor(0xC1F8E69A, () => new TLInputMessagesFilterMyMentions());
-            TLObjectSerializer.RegisterObjectConstructor(0xE062DB83, () => new TLInputMessagesFilterContacts());
             TLObjectSerializer.RegisterObjectConstructor(0xE7026D0D, () => new TLInputMessagesFilterGeo());
+            TLObjectSerializer.RegisterObjectConstructor(0xE062DB83, () => new TLInputMessagesFilterContacts());
             TLObjectSerializer.RegisterObjectConstructor(0x1F2B0AFD, () => new TLUpdateNewMessage());
             TLObjectSerializer.RegisterObjectConstructor(0x4E90BFD6, () => new TLUpdateMessageID());
             TLObjectSerializer.RegisterObjectConstructor(0xA20DB0E5, () => new TLUpdateDeleteMessages());
@@ -563,6 +562,8 @@ namespace Telegram.Api.TL
             TLObjectSerializer.RegisterObjectConstructor(0xFB8FE43C, () => new TLPaymentsSavedInfo());
             TLObjectSerializer.RegisterObjectConstructor(0xC10EB2CF, () => new TLInputPaymentCredentialsSaved());
             TLObjectSerializer.RegisterObjectConstructor(0x3417D728, () => new TLInputPaymentCredentials());
+            TLObjectSerializer.RegisterObjectConstructor(0xAA1C39F, () => new TLInputPaymentCredentialsApplePay());
+            TLObjectSerializer.RegisterObjectConstructor(0x795667A6, () => new TLInputPaymentCredentialsAndroidPay());
             TLObjectSerializer.RegisterObjectConstructor(0xDB64FD34, () => new TLAccountTmpPassword());
             TLObjectSerializer.RegisterObjectConstructor(0xB6213CDF, () => new TLShippingOption());
             TLObjectSerializer.RegisterObjectConstructor(0xFFA0A496, () => new TLInputStickerSetItem());
@@ -608,12 +609,13 @@ namespace Telegram.Api.TL
             TLObjectSerializer.RegisterObjectConstructor(0x77EEC38F, () => new TLCdnFileHash());
             TLObjectSerializer.RegisterObjectConstructor(0x9E8FA6D3, () => new TLMessagesFavedStickersNotModified());
             TLObjectSerializer.RegisterObjectConstructor(0xF37F2F16, () => new TLMessagesFavedStickers());
-            TLObjectSerializer.RegisterObjectConstructor(0xE0310D7, () => new TLHelpRecentMeUrls());
+            TLObjectSerializer.RegisterObjectConstructor(0x46E1D13D, () => new TLRecentMeUrlUnknown());
             TLObjectSerializer.RegisterObjectConstructor(0x8DBC3336, () => new TLRecentMeUrlUser());
             TLObjectSerializer.RegisterObjectConstructor(0xA01B22F9, () => new TLRecentMeUrlChat());
-            TLObjectSerializer.RegisterObjectConstructor(0xBC0A57DC, () => new TLRecentMeUrlStickerSet());
             TLObjectSerializer.RegisterObjectConstructor(0xEB49081D, () => new TLRecentMeUrlChatInvite());
-            TLObjectSerializer.RegisterObjectConstructor(0x46E1D13D, () => new TLRecentMeUrlUnknown());
+            TLObjectSerializer.RegisterObjectConstructor(0xBC0A57DC, () => new TLRecentMeUrlStickerSet());
+            TLObjectSerializer.RegisterObjectConstructor(0xE0310D7, () => new TLHelpRecentMeUrls());
+            TLObjectSerializer.RegisterObjectConstructor(0x5EAA7809, () => new TLInputSingleMedia());
             TLObjectSerializer.RegisterObjectConstructor(0x44F9B43D, () => new TLMessage());
             TLObjectSerializer.RegisterObjectConstructor(0x9E19A1F6, () => new TLMessageService());
         }

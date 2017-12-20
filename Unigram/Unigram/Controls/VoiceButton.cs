@@ -14,6 +14,7 @@ using Unigram.Core.Common;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Devices.Enumeration;
+using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Capture;
@@ -200,16 +201,43 @@ namespace Unigram.Controls
                     _recorder.m_mediaCapture = new MediaCapture();
 
                     var cameraDevice = await _recorder.FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel.Front);
+                    if (cameraDevice == null)
+                    {
+                        // TODO: ...
+                    }
+
+                    // Figure out where the camera is located
+                    if (cameraDevice.EnclosureLocation == null || cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Unknown)
+                    {
+                        // No information on the location of the camera, assume it's an external camera, not integrated on the device
+                        _recorder._externalCamera = true;
+                    }
+                    else
+                    {
+                        // Camera is fixed on the device
+                        _recorder._externalCamera = false;
+
+                        // Only mirror the preview if the camera is on the front panel
+                        _recorder._mirroringPreview = (cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Front);
+                    }
 
                     _recorder.settings.VideoDeviceId = cameraDevice.Id;
                     await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
 
-                    if (_video)
+                    this.BeginOnUIThread(async () =>
                     {
-                        await _roundView.SetAsync(_recorder.m_mediaCapture);
-                    }
+                        if (_video)
+                        {
+                            // Initialize rotationHelper
+                            _recorder._rotationHelper = new CameraRotationHelper(cameraDevice.EnclosureLocation);
+                            _recorder._rotationHelper.OrientationChanged += RotationHelper_OrientationChanged;
 
-                    await _recorder.StartAsync();
+                            await _roundView.SetAsync(_recorder.m_mediaCapture, _recorder._mirroringPreview);
+                            await _recorder.SetPreviewRotationAsync();
+                        }
+
+                        await _recorder.StartAsync();
+                    });
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -230,6 +258,14 @@ namespace Unigram.Controls
                 Debug.WriteLine("Start: " + _start);
                 Debug.WriteLine("Stop unlocked");
             });
+        }
+
+        private async void RotationHelper_OrientationChanged(object sender, bool updatePreview)
+        {
+            if (updatePreview)
+            {
+                await _recorder.SetPreviewRotationAsync();
+            }
         }
 
         private void Stop()
@@ -304,6 +340,7 @@ namespace Unigram.Controls
                             var transform = new VideoTransformEffectDefinition();
                             transform.CropRectangle = new Windows.Foundation.Rect(x, y, width, height);
                             transform.OutputSize = new Windows.Foundation.Size(240, 240);
+                            transform.Mirror = _recorder._mirroringPreview ? MediaMirroringOptions.Horizontal : MediaMirroringOptions.None;
 
                             var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
                             profile.Video.Width = 240;
@@ -335,6 +372,13 @@ namespace Unigram.Controls
             private LowLagMediaRecording m_lowLag;
             public MediaCapture m_mediaCapture;
             public MediaCaptureInitializationSettings settings;
+
+            // Information about the camera device
+            public bool _mirroringPreview;
+            public bool _externalCamera;
+
+            // Rotation Helper to simplify handling rotation compensation for the camera streams
+            public CameraRotationHelper _rotationHelper;
 
             #endregion
 
@@ -393,7 +437,9 @@ namespace Unigram.Controls
 
                 if (m_isVideo)
                 {
-                    var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
+                    var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
+                    var rotationAngle = CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(_rotationHelper.GetCameraCaptureOrientation());
+                    profile.Video.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), PropertyValue.CreateInt32(rotationAngle));
 
                     m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
 
@@ -434,6 +480,18 @@ namespace Unigram.Controls
             }
 
             #endregion
+
+            public async Task SetPreviewRotationAsync()
+            {
+                // Only need to update the orientation if the camera is mounted on the device
+                if (_externalCamera) return;
+
+                // Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
+                var rotation = _rotationHelper.GetCameraPreviewOrientation();
+                var props = m_mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
+                props.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(rotation));
+                await m_mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
+            }
         }
 
         public event EventHandler RecordingStarted;
