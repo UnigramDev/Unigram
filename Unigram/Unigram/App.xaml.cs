@@ -53,6 +53,7 @@ using Windows.System;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Resources;
 using Unigram.Services;
+using Unigram.Core.Helpers;
 
 namespace Unigram
 {

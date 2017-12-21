@@ -34,6 +34,7 @@ using Unigram.Common;
 using Windows.UI.Xaml;
 using Windows.UI.ViewManagement;
 using Unigram.ViewModels.Dialogs;
+using Unigram.Core.Helpers;
 
 namespace Unigram
 {
@@ -63,6 +64,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<TransportService>().As<ITransportService>().SingleInstance();
             container.ContainerBuilder.RegisterType<ConnectionService>().As<IConnectionService>().SingleInstance();
             container.ContainerBuilder.RegisterType<PublicConfigService>().As<IPublicConfigService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<UserActivityHelper>().As<IUserActivityHelper>().SingleInstance();
 
             // Files
             container.ContainerBuilder.RegisterType<DownloadFileManager>().As<IDownloadFileManager>().SingleInstance();
