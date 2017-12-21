@@ -205,35 +205,45 @@ namespace Unigram.Views
                 return;
             }
 
+            if (parameter.StartsWith("tg:toast"))
+            {
+                parameter = parameter.Substring("tg:toast?".Length);
+            }
+            else if (parameter.StartsWith("tg://toast"))
+            {
+                parameter = parameter.Substring("tg://toast?".Length);
+            }
+
             if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
             {
                 Activate(scheme);
-                return;
             }
-
-            var data = Toast.SplitArguments(parameter);
-            if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
+            else
             {
-                var user = ViewModel.CacheService.GetUser(from_id);
-                if (user != null)
+                var data = Toast.SplitArguments(parameter);
+                if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
                 {
-                    MasterDetail.NavigationService.NavigateToDialog(user);
+                    var user = ViewModel.CacheService.GetUser(from_id);
+                    if (user != null)
+                    {
+                        MasterDetail.NavigationService.NavigateToDialog(user);
+                    }
                 }
-            }
-            else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
-            {
-                var chat = ViewModel.CacheService.GetChat(chat_id);
-                if (chat != null)
+                else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
                 {
-                    MasterDetail.NavigationService.NavigateToDialog(chat);
+                    var chat = ViewModel.CacheService.GetChat(chat_id);
+                    if (chat != null)
+                    {
+                        MasterDetail.NavigationService.NavigateToDialog(chat);
+                    }
                 }
-            }
-            else if (data.ContainsKey("channel_id") && int.TryParse(data["channel_id"], out int channel_id))
-            {
-                var channel = ViewModel.CacheService.GetChat(channel_id);
-                if (channel != null)
+                else if (data.ContainsKey("channel_id") && int.TryParse(data["channel_id"], out int channel_id))
                 {
-                    MasterDetail.NavigationService.NavigateToDialog(channel);
+                    var channel = ViewModel.CacheService.GetChat(channel_id);
+                    if (channel != null)
+                    {
+                        MasterDetail.NavigationService.NavigateToDialog(channel);
+                    }
                 }
             }
         }
