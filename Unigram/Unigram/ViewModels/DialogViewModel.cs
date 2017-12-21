@@ -1777,6 +1777,8 @@ namespace Unigram.ViewModels
                 Dispatcher.Dispatch(SaveDraft);
             }
 
+            CurrentActivity?.Dispose();
+
             return Task.CompletedTask;
         }
 
