@@ -1279,6 +1279,13 @@ namespace Unigram.ViewModels
                 {
                     var newGroupedId = messages[0].GroupedId ?? groupedId;
 
+                    if (result[0] is TLMessage group && group.Media is TLMessageMediaGroup groupMedia)
+                    {
+                        groupMedia.Layout.Messages.Clear();
+                        groupMedia.Layout.Messages.AddRange(messages);
+                        groupMedia.Layout.Calculate();
+                    }
+
                     _groupedMessages[newGroupedId] = result[0] as TLMessage;
                     _groupedMessages.TryRemove(groupedId, out TLMessage removed);
 

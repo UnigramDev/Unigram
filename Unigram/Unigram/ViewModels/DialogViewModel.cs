@@ -126,6 +126,7 @@ namespace Unigram.ViewModels
         private readonly ConcurrentDictionary<long, TLMessage> _groupedMessages = new ConcurrentDictionary<long, TLMessage>();
 
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+        private readonly DisposableMutex _insertLock = new DisposableMutex();
 
         private readonly DialogStickersViewModel _stickers;
         private readonly IStickersService _stickersService;
@@ -670,6 +671,7 @@ namespace Unigram.ViewModels
                     }
 
                     ProcessReplies(result.Messages);
+                    MessageCollection.ProcessReplies(result.Messages);
 
                     Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Replies processed");
 
@@ -758,6 +760,7 @@ namespace Unigram.ViewModels
                     }
 
                     ProcessReplies(result.Messages);
+                    MessageCollection.ProcessReplies(result.Messages);
 
                     //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
                     for (int i = result.Messages.Count - 1; i >= 0; i--)
@@ -909,6 +912,7 @@ namespace Unigram.ViewModels
                 }
 
                 ProcessReplies(result.Messages);
+                MessageCollection.ProcessReplies(result.Messages);
 
                 //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
                 for (int i = result.Messages.Count - 1; i >= 0; i--)
@@ -1022,6 +1026,7 @@ namespace Unigram.ViewModels
                     }
 
                     ProcessReplies(result.Messages);
+                    MessageCollection.ProcessReplies(result.Messages);
 
                     //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
                     for (int i = result.Messages.Count - 1; i >= 0; i--)
@@ -1158,10 +1163,9 @@ namespace Unigram.ViewModels
                             groupMedia.Layout.Calculate();
 
                             var first = groupMedia.Layout.Messages.FirstOrDefault();
-                            var last = groupMedia.Layout.Messages.LastOrDefault();
-
                             if (first != null)
                             {
+                                group.Id = first.Id;
                                 group.Flags = first.Flags;
                                 group.HasEditDate = false;
                                 group.FromId = first.FromId;
@@ -1178,10 +1182,10 @@ namespace Unigram.ViewModels
                                 group.GroupedId = first.GroupedId;
                             }
 
-                            if (last.Media is ITLMessageMediaCaption caption)
+                            if (first.Media is ITLMessageMediaCaption caption)
                             {
-                                group.HasEditDate = last.HasEditDate;
-                                group.EditDate = last.EditDate;
+                                group.HasEditDate = first.HasEditDate;
+                                group.EditDate = first.EditDate;
 
                                 groupMedia.Caption = caption.Caption;
 
@@ -1323,12 +1327,6 @@ namespace Unigram.ViewModels
             Peer = participant.ToInputPeer();
             With = participant;
             Dialog = CacheService.GetDialog(Peer.ToPeer());
-            UpdatePinChatCommands();
-
-            if (CanUnpinChat)
-            {
-                ResetTile();
-            }
 
             //Aggregator.Subscribe(this);
 
@@ -1366,8 +1364,7 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    IList<TLChannelParticipantBase> participants = null;
-                    Admins.TryGetValue(before.Id, out participants);
+                    Admins.TryGetValue(before.Id, out IList<TLChannelParticipantBase> participants);
 
                     if (participants == null)
                     {
@@ -1411,6 +1408,7 @@ namespace Unigram.ViewModels
                         using (await _loadMoreLock.WaitAsync())
                         {
                             ProcessReplies(history);
+                            MessageCollection.ProcessReplies(history);
 
                             IsLastSliceLoaded = false;
                             IsFirstSliceLoaded = false;
@@ -1430,6 +1428,25 @@ namespace Unigram.ViewModels
                                     }
                                 }
                             }
+
+                            var hash = 0L;
+                            var hashable = history.SelectMany(x =>
+                            {
+                                if (x is TLMessage msg)
+                                {
+                                    return new[] { x.Id, msg.EditDate ?? x.Date };
+                                }
+
+                                return new[] { x.Id, x.Date };
+                            });
+
+                            foreach (var item in hashable)
+                            {
+                                hash = ((hash * 20261) + 0x80000000L + item) % 0x80000000L;
+                            }
+
+                            //var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, history[0].Id, history.Count, (int)hash);
+                            //var ciccio = response.IsSucceeded;
                         };
                     }
                 }
@@ -1667,6 +1684,16 @@ namespace Unigram.ViewModels
             if (settings.IsSucceeded)
             {
                 IsReportSpam = settings.Result.IsReportSpam;
+            }
+
+
+
+            // Moved to the end: calls to notifications APIs are slow some times
+            UpdatePinChatCommands();
+
+            if (CanUnpinChat)
+            {
+                ResetTile();
             }
         }
 
@@ -3497,21 +3524,29 @@ namespace Unigram.ViewModels
 
     public class MessageCollection : ObservableCollection<TLMessageBase>
     {
+        public static void ProcessReplies(IList<TLMessageBase> items)
+        {
+            for (int index = 0; index < items.Count; index++)
+            {
+                var item = items[index];
+
+                var previous = index > 0 ? items[index - 1] : null;
+                var next = index < items.Count - 1 ? items[index + 1] : null;
+
+                //UpdateSeparatorOnInsert(items, item, next, index);
+                //UpdateSeparatorOnInsert(items, previous, item, index - 1);
+
+                UpdateAttach(next, item, index + 1);
+                UpdateAttach(item, previous, index);
+            }
+        }
+
         protected override void InsertItem(int index, TLMessageBase item)
         {
             base.InsertItem(index, item);
 
             var previous = index > 0 ? this[index - 1] : null;
             var next = index < Count - 1 ? this[index + 1] : null;
-
-            //if (next is TLMessageEmpty)
-            //{
-            //    next = index > 1 ? this[index - 2] : null;
-            //}
-            //if (previous is TLMessageEmpty)
-            //{
-            //    previous = index < Count - 2 ? this[index + 2] : null;
-            //}
 
             UpdateSeparatorOnInsert(item, next, index);
             UpdateSeparatorOnInsert(previous, item, index - 1);
@@ -3532,7 +3567,7 @@ namespace Unigram.ViewModels
             UpdateSeparatorOnRemove(next, previous, index);
         }
 
-        private void UpdateSeparatorOnInsert(TLMessageBase item, TLMessageBase previous, int index)
+        private static TLMessageService ShouldUpdateSeparatorOnInsert(TLMessageBase item, TLMessageBase previous, int index)
         {
             if (item != null && previous != null)
             {
@@ -3552,12 +3587,33 @@ namespace Unigram.ViewModels
                         }
                     };
 
-                    base.InsertItem(index + 1, service);
+                    //base.InsertItem(index + 1, service);
+                    return service;
                 }
+            }
+
+            return null;
+        }
+
+        private void UpdateSeparatorOnInsert(TLMessageBase item, TLMessageBase previous, int index)
+        {
+            var service = ShouldUpdateSeparatorOnInsert(item, previous, index);
+            if (service != null)
+            {
+                base.InsertItem(index + 1, service);
             }
         }
 
-        private void UpdateSeparatorOnRemove(TLMessageBase next, TLMessageBase previous, int index)
+        private static void UpdateSeparatorOnInsert(IList<TLMessageBase> items, TLMessageBase item, TLMessageBase previous, int index)
+        {
+            var service = ShouldUpdateSeparatorOnInsert(item, previous, index);
+            if (service != null)
+            {
+                items.Insert(index + 1, service);
+            }
+        }
+
+        private static bool ShouldUpdateSeparatorOnRemove(TLMessageBase next, TLMessageBase previous, int index)
         {
             if (next is TLMessageService && previous != null)
             {
@@ -3568,7 +3624,8 @@ namespace Unigram.ViewModels
                     var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
                     if (previousDate.Date != itemDate.Date)
                     {
-                        base.RemoveItem(index - 1);
+                        //base.RemoveItem(index - 1);
+                        return true;
                     }
                 }
             }
@@ -3577,12 +3634,31 @@ namespace Unigram.ViewModels
                 var action = ((TLMessageService)next).Action as TLMessageActionDate;
                 if (action != null)
                 {
-                    base.RemoveItem(index - 1);
+                    //base.RemoveItem(index - 1);
+                    return true;
                 }
+            }
+
+            return false;
+        }
+
+        private void UpdateSeparatorOnRemove(TLMessageBase next, TLMessageBase previous, int index)
+        {
+            if (ShouldUpdateSeparatorOnRemove(next, previous, index))
+            {
+                base.RemoveItem(index - 1);
             }
         }
 
-        private void UpdateAttach(TLMessageBase item, TLMessageBase previous, int index)
+        private static void UpdateSeparatorOnRemove(IList<TLMessageBase> items, TLMessageBase next, TLMessageBase previous, int index)
+        {
+            if (ShouldUpdateSeparatorOnRemove(next, previous, index))
+            {
+                items.RemoveAt(index - 1);
+            }
+        }
+
+        private static void UpdateAttach(TLMessageBase item, TLMessageBase previous, int index)
         {
             if (item == null)
             {
@@ -3631,7 +3707,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private bool AreTogether(TLMessageBase item1, TLMessageBase item2)
+        private static bool AreTogether(TLMessageBase item1, TLMessageBase item2)
         {
             if (item1 is TLMessage message1 && item2 is TLMessage message2)
             {
@@ -3672,19 +3748,6 @@ namespace Unigram.ViewModels
             }
 
             OnCollectionChanged(args);
-        }
-
-        class TLMessageComparer : IComparer<TLMessage>
-        {
-            public int Compare(TLMessage x, TLMessage y)
-            {
-                if (x.RandomId is long xid && y.RandomId is long yid)
-                {
-                    return xid.CompareTo(yid);
-                }
-
-                return x.Id.CompareTo(y.Id);
-            }
         }
     }
 
