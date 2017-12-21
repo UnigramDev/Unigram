@@ -67,6 +67,7 @@ using Unigram.ViewModels.Dialogs;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.Collections.Concurrent;
 using Windows.ApplicationModel.UserActivities;
+using Template10.Services.NavigationService;
 
 namespace Unigram.ViewModels
 {
@@ -421,12 +422,7 @@ namespace Unigram.ViewModels
         private DispatcherTimer _informativeTimer;
 
 
-        private UserActivitySession _currentActivity;
-        public UserActivitySession CurrentActivity
-        {
-            get => _currentActivity;
-            private set => Set(ref _currentActivity, value);
-        }
+        static UserActivitySession CurrentActivity { get; set; }
 
         private TLMessageBase _informativeMessage;
         public TLMessageBase InformativeMessage
@@ -1512,6 +1508,19 @@ namespace Unigram.ViewModels
                         HasBotCommands = false;
                     }
                 }
+
+                if (!user.IsSelf && !user.IsDeleted && ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+                {
+                    var activityService = UnigramContainer.Current.ResolveType<IUserActivityHelper>();
+
+                    if (CurrentActivity != null)
+                    {
+                        CurrentActivity?.Dispose();
+                    }
+
+                    CurrentActivity = await activityService.GenerateActivityAsync(new UserActivityInfo($"user{ user.Id }", user.FullName, new Uri($"tg://toast?user_id={ user.Id }")));
+
+                }
             }
             else if (participant is TLChannel channel)
             {
@@ -1592,6 +1601,18 @@ namespace Unigram.ViewModels
                     }
                 }
 
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+                {
+                    var activityService = UnigramContainer.Current.ResolveType<IUserActivityHelper>();
+
+                    if (CurrentActivity != null)
+                    {
+                        CurrentActivity?.Dispose();
+                    }
+
+                    CurrentActivity = await activityService.GenerateActivityAsync(new UserActivityInfo($"channel{ channel.Id }", channel.Title, new Uri($"tg://toast?channel_id={channel.Id}")));
+
+                }
             }
             else if (participant is TLChat chat)
             {
@@ -1642,6 +1663,19 @@ namespace Unigram.ViewModels
                 //    }
                 //    LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
                 //}
+
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+                {
+                    var activityService = UnigramContainer.Current.ResolveType<IUserActivityHelper>();
+
+                    if (CurrentActivity != null)
+                    {
+                        CurrentActivity?.Dispose();
+                    }
+
+                    CurrentActivity = await activityService.GenerateActivityAsync(new UserActivityInfo($"chat{ chat.Id }", chat.Title, new Uri($"tg://toast?chat_id={chat.Id}")));
+
+                }
             }
             else if (participant is TLChatForbidden forbiddenChat)
             {
@@ -1775,9 +1809,7 @@ namespace Unigram.ViewModels
             if (Dispatcher != null)
             {
                 Dispatcher.Dispatch(SaveDraft);
-            }
-
-            CurrentActivity?.Dispose();
+            }           
 
             return Task.CompletedTask;
         }

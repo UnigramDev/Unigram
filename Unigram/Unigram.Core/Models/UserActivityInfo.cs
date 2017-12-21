@@ -21,8 +21,10 @@ namespace Unigram.Core.Models
         public UserActivityInfo(string id, string title,
             Uri uri, string details = null, Color? cardBg = null) : this(id, title, uri)
         {
-            Details = details ?? "";
-
+            if (!string.IsNullOrEmpty(details))
+            {
+                Details = details;
+            }
             if (cardBg != null)
             {
                 ActivityCardBackground = cardBg.Value;

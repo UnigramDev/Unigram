@@ -39,8 +39,17 @@ namespace Unigram.Core.Helpers
                     await Channel.GetOrCreateUserActivityAsync(info.ActivityId);
 
                 activity.VisualElements.DisplayText = info.Title;
-                activity.VisualElements.Description = info.Details;
-                activity.VisualElements.BackgroundColor = info.ActivityCardBackground;
+
+                if (info.Details != null)
+                {
+                    activity.VisualElements.Description = info.Details;
+                }
+
+                if (info.ActivityCardBackground != null)
+                {
+                    activity.VisualElements.BackgroundColor = info.ActivityCardBackground;
+                }
+
                 activity.ActivationUri = info.ActivationUri;
 
                 await activity.SaveAsync();
