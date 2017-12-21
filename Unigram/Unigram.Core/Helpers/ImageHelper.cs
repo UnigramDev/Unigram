@@ -406,7 +406,11 @@ namespace Unigram.Core.Helpers
                 transform.ScaledWidth = width;
                 transform.ScaledHeight = height;
                 transform.InterpolationMode = BitmapInterpolationMode.Linear;
-                transform.Flip = effect.Mirror == MediaMirroringOptions.Horizontal ? BitmapFlip.Horizontal : BitmapFlip.None;
+
+                if (effect != null)
+                {
+                    transform.Flip = effect.Mirror == MediaMirroringOptions.Horizontal ? BitmapFlip.Horizontal : BitmapFlip.None;
+                }
 
                 var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 

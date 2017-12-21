@@ -392,8 +392,8 @@ namespace Unigram.ViewModels
 
             if (profile != null)
             {
-                videoWidth = (int)profile.Video.Width;
-                videoHeight = (int)profile.Video.Height;
+                videoWidth = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Width : (int)profile.Video.Height;
+                videoHeight = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Height : (int)profile.Video.Width;
             }
 
             var document = new TLDocument
