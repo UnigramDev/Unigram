@@ -66,6 +66,7 @@ using Unigram.Core.Common;
 using Unigram.ViewModels.Dialogs;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.Collections.Concurrent;
+using Windows.ApplicationModel.UserActivities;
 
 namespace Unigram.ViewModels
 {
@@ -418,6 +419,14 @@ namespace Unigram.ViewModels
         }
 
         private DispatcherTimer _informativeTimer;
+
+
+        private UserActivitySession _currentActivity;
+        public UserActivitySession CurrentActivity
+        {
+            get => _currentActivity;
+            private set => Set(ref _currentActivity, value);
+        }
 
         private TLMessageBase _informativeMessage;
         public TLMessageBase InformativeMessage
