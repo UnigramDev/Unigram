@@ -22,7 +22,7 @@ namespace Unigram.Helpers
             var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
-                var resultName = "photo" + BindConvert.Current.DateTime(date).ToString("_yyyyMMdd_HH_mm_ss") + ".jpg";
+                var resultName = "photo_" + DateTime.Now.ToString("_yyyy-MM-dd_HH-mm-ss") + ".jpg";
 
                 if (downloads)
                 {
@@ -71,7 +71,7 @@ namespace Unigram.Helpers
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
                 var extension = document.GetFileExtension();
-                var resultName = "document" + BindConvert.Current.DateTime(date).ToString("_yyyyMMdd_HH_mm_ss") + extension;
+                var resultName = "document_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + extension;
 
                 var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
                 if (fileNameAttribute != null)
