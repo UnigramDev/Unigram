@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" IgnorableNamespaces="uap uap3 uap4 uap5 mp rescap desktop">
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+         xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
+         xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+         IgnorableNamespaces="uap uap3 uap4 uap5 mp rescap desktop">
   <Identity Name="38833FF26BA1D.UnigramPreview" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="0.13.1101.0" />
   <mp:PhoneIdentity PhoneProductId="7cee5e5f-3643-4af8-b03b-4ef88223724a" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
@@ -87,6 +94,11 @@
         <!--<uap4:Extension Category="windows.contactPanel" />-->
         <uap5:Extension Category="windows.startupTask" Executable="Unigram.exe" EntryPoint="Unigram.App">
           <uap5:StartupTask TaskId="Telegram" Enabled="false" DisplayName="Unigram" />
+        </uap5:Extension>
+        <uap5:Extension Category="windows.appExecutionAlias" Executable="Unigram.exe" EntryPoint="Unigram.App">
+          <uap5:AppExecutionAlias>
+            <uap5:ExecutionAlias Alias="Unigram.exe" />
+          </uap5:AppExecutionAlias>
         </uap5:Extension>
         <!--<desktop:Extension Category="windows.fullTrustProcess" Executable="Unigram.DesktopService.exe" />-->
       </Extensions>
