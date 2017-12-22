@@ -198,36 +198,69 @@ namespace Unigram.Views
 
         public void Activate(string parameter)
         {
+            Debug.WriteLine("Activate() : Initializing MainPage...");
             Initialize();
 
+
+            Debug.WriteLine("Activate() : Checking for null parameter...");
             if (parameter == null)
             {
+                Debug.WriteLine("Activate() : Null parameter detected. Canceling...");
                 return;
             }
 
-            var data = Toast.SplitArguments(parameter);
-            if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
+            Debug.WriteLine("Activate() : Checking for tg:toast...");
+            if (parameter.StartsWith("tg:toast"))
             {
-                var user = ViewModel.CacheService.GetUser(from_id);
-                if (user != null)
-                {
-                    MasterDetail.NavigationService.NavigateToDialog(user);
-                }
+                Debug.WriteLine("Activate() : tg:toast URI found. Substringing...");
+                parameter = parameter.Substring("tg:toast?".Length);
             }
-            else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
+            else if (parameter.StartsWith("tg://toast"))
             {
-                var chat = ViewModel.CacheService.GetChat(chat_id);
-                if (chat != null)
-                {
-                    MasterDetail.NavigationService.NavigateToDialog(chat);
-                }
+                Debug.WriteLine("Activate() : tg://toast URI found. Substringing...");
+                parameter = parameter.Substring("tg://toast?".Length);
             }
-            else if (data.ContainsKey("channel_id") && int.TryParse(data["channel_id"], out int channel_id))
+
+            Debug.WriteLine("Activate() : Checking for absolute URI...");
+
+            if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
             {
-                var channel = ViewModel.CacheService.GetChat(channel_id);
-                if (channel != null)
+                Debug.WriteLine("Activate() : Absolute URI found. Rerouting to Activate(Uri)");
+                Activate(scheme);
+            }
+            else
+            {
+                Debug.WriteLine("Activate() : Parsing ID...");
+
+                var data = Toast.SplitArguments(parameter);
+                if (data.ContainsKey("user_id") && int.TryParse(data["user_id"], out int from_id))
                 {
-                    MasterDetail.NavigationService.NavigateToDialog(channel);
+                    Debug.WriteLine($"Activate() : User ID found. User ID is: { from_id }");
+                    var user = ViewModel.CacheService.GetUser(from_id);
+
+                    Debug.WriteLine("Activate() : TLUser object generated. Checking validity...");
+                    if (user != null)
+                    {
+                        Debug.WriteLine("Activate() : TLUser object is valid. Navigating...");
+                        MasterDetail.NavigationService.NavigateToDialog(user);
+                    }
+                    else { Debug.WriteLine("Activate() : TLUser object is invalid (null value)."); }
+                }
+                else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
+                {
+                    var chat = ViewModel.CacheService.GetChat(chat_id);
+                    if (chat != null)
+                    {
+                        MasterDetail.NavigationService.NavigateToDialog(chat);
+                    }
+                }
+                else if (data.ContainsKey("channel_id") && int.TryParse(data["channel_id"], out int channel_id))
+                {
+                    var channel = ViewModel.CacheService.GetChat(channel_id);
+                    if (channel != null)
+                    {
+                        MasterDetail.NavigationService.NavigateToDialog(channel);
+                    }
                 }
             }
         }
@@ -333,6 +366,24 @@ namespace Unigram.Views
                     port = query.GetParameter("port");
                     user = query.GetParameter("user");
                     pass = query.GetParameter("pass");
+                }
+                else if (scheme.AbsoluteUri.StartsWith("tg:toast") || scheme.AbsoluteUri.StartsWith("tg://toast"))
+                {
+                    if (query.ContainsKey("user_id") && int.TryParse(query.GetParameter("user_id"), out int userId))
+                    {
+                        TLUser requestedUser = (TLUser)ViewModel.CacheService.GetUser(userId);
+                        MasterDetail.NavigationService.NavigateToDialog(requestedUser);
+                    }
+                    else if (query.ContainsKey("chat_id") && int.TryParse(query.GetParameter("chat_id"), out int chatId))
+                    {
+                        TLChat requestedChat = (TLChat)ViewModel.CacheService.GetChat(chatId);
+                        MasterDetail.NavigationService.NavigateToDialog(requestedChat);
+                    }
+                    else if (query.ContainsKey("channel_id") && int.TryParse(query.GetParameter("channel_id"), out int channelId))
+                    {
+                        TLChannel requestedChannel = (TLChannel)ViewModel.CacheService.GetChat(channelId);
+                        MasterDetail.NavigationService.NavigateToDialog(requestedChannel);
+                    }
                 }
 
                 if (message != null && message.StartsWith("@"))
@@ -609,7 +660,7 @@ namespace Unigram.Views
             }
         }
 
-        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
             var activePanel = rpMasterTitlebar.SelectedIndex == 0 ? DialogsPanel : ContactsPanel;
 
@@ -632,7 +683,7 @@ namespace Unigram.Views
             }
         }
 
-        private void txtSearch_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void Search_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             var activePanel = rpMasterTitlebar.SelectedIndex == 0 ? DialogsPanel : ContactsPanel;
             var activeList = rpMasterTitlebar.SelectedIndex == 0 ? DialogsSearchListView : ContactsSearchListView;
@@ -704,7 +755,7 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var call = element.DataContext as TLCallGroup;
 
-            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Calls.CallDeleteCommand, call, Strings.Android.Delete);
+            CreateFlyoutItem(ref flyout, _ => Visibility.Visible, ViewModel.Calls.CallDeleteCommand, call, Strings.Android.Delete);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -734,6 +785,14 @@ namespace Unigram.Views
 
         private Visibility DialogPin_Loaded(TLDialog dialog)
         {
+            if (!dialog.IsPinned)
+            {
+                var count = ViewModel.Dialogs.Items.Where(x => x.IsPinned).Count();
+                var max = ViewModel.CacheService.Config.PinnedDialogsCountMax;
+
+                return count < max ? Visibility.Visible : Visibility.Collapsed;
+            }
+
             return Visibility.Visible;
         }
 
@@ -918,8 +977,8 @@ namespace Unigram.Views
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             MainHeader.Visibility = Visibility.Collapsed;
-
             SearchDialogs.Visibility = Visibility.Visible;
+
             SearchDialogs.Focus(FocusState.Keyboard);
         }
 
@@ -928,9 +987,9 @@ namespace Unigram.Views
             if (string.IsNullOrEmpty(SearchDialogs.Text))
             {
                 MainHeader.Visibility = Visibility.Visible;
-                rpMasterTitlebar.Focus(FocusState.Programmatic);
-
                 SearchDialogs.Visibility = Visibility.Collapsed;
+
+                rpMasterTitlebar.Focus(FocusState.Programmatic);
             }
         }
 

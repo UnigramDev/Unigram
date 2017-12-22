@@ -66,6 +66,8 @@ using Unigram.Core.Common;
 using Unigram.ViewModels.Dialogs;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.Collections.Concurrent;
+using Windows.ApplicationModel.UserActivities;
+using Template10.Services.NavigationService;
 
 namespace Unigram.ViewModels
 {
@@ -418,6 +420,9 @@ namespace Unigram.ViewModels
         }
 
         private DispatcherTimer _informativeTimer;
+
+
+        static UserActivitySession CurrentActivity { get; set; }
 
         private TLMessageBase _informativeMessage;
         public TLMessageBase InformativeMessage
@@ -1582,7 +1587,6 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
-
             }
             else if (participant is TLChat chat)
             {
@@ -1632,7 +1636,7 @@ namespace Unigram.ViewModels
                 //        online = -2;
                 //    }
                 //    LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
-                //}
+                //}                
             }
             else if (participant is TLChatForbidden forbiddenChat)
             {
@@ -1671,6 +1675,19 @@ namespace Unigram.ViewModels
             if (settings.IsSucceeded)
             {
                 IsReportSpam = settings.Result.IsReportSpam;
+            }
+
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+            {
+                UserActivitySession session = 
+                    await UserActivityHelper.GenerateActivityAsync(participant.ToPeer());
+
+                if (session != null)
+                {
+                    CurrentActivity?.Dispose();
+                }
+
+                CurrentActivity = session;
             }
         }
 
@@ -1766,7 +1783,7 @@ namespace Unigram.ViewModels
             if (Dispatcher != null)
             {
                 Dispatcher.Dispatch(SaveDraft);
-            }
+            }           
 
             return Task.CompletedTask;
         }

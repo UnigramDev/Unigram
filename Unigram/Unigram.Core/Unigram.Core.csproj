@@ -98,12 +98,14 @@
     <Compile Include="EncryptionKeyEmojifier.cs" />
     <Compile Include="Helpers\ColorsHelper.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
+    <Compile Include="Helpers\UserActivityHelper.cs" />
     <Compile Include="Managers\BackgroundTaskManager.cs" />
     <Compile Include="Managers\ResourcesManager.cs" />
     <Compile Include="Media\JSExtractor.cs" />
     <Compile Include="Media\VideoPlayerTask.cs" />
     <Compile Include="Media\VimeoVideoPlayerTask.cs" />
     <Compile Include="Media\YouTubeVideoPlayerTask.cs" />
+    <Compile Include="Models\UserActivityInfo.cs" />
     <Compile Include="Models\FoursquareRootObject.cs" />
     <Compile Include="Notifications\LiveTile.cs" />
     <Compile Include="Notifications\Toast.cs" />
