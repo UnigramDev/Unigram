@@ -198,36 +198,53 @@ namespace Unigram.Views
 
         public void Activate(string parameter)
         {
+            Debug.WriteLine("Activate() : Initializing MainPage...");
             Initialize();
 
+
+            Debug.WriteLine("Activate() : Checking for null parameter...");
             if (parameter == null)
             {
+                Debug.WriteLine("Activate() : Null parameter detected. Canceling...");
                 return;
             }
 
+            Debug.WriteLine("Activate() : Checking for tg:toast...");
             if (parameter.StartsWith("tg:toast"))
             {
+                Debug.WriteLine("Activate() : tg:toast URI found. Substringing...");
                 parameter = parameter.Substring("tg:toast?".Length);
             }
             else if (parameter.StartsWith("tg://toast"))
             {
+                Debug.WriteLine("Activate() : tg://toast URI found. Substringing...");
                 parameter = parameter.Substring("tg://toast?".Length);
             }
 
+            Debug.WriteLine("Activate() : Checking for absolute URI...");
+
             if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
             {
+                Debug.WriteLine("Activate() : Absolute URI found. Rerouting to Activate(Uri)");
                 Activate(scheme);
             }
             else
             {
+                Debug.WriteLine("Activate() : Parsing ID...");
+
                 var data = Toast.SplitArguments(parameter);
-                if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
+                if (data.ContainsKey("user_id") && int.TryParse(data["user_id"], out int from_id))
                 {
+                    Debug.WriteLine($"Activate() : User ID found. User ID is: { from_id }");
                     var user = ViewModel.CacheService.GetUser(from_id);
+
+                    Debug.WriteLine("Activate() : TLUser object generated. Checking validity...");
                     if (user != null)
                     {
+                        Debug.WriteLine("Activate() : TLUser object is valid. Navigating...");
                         MasterDetail.NavigationService.NavigateToDialog(user);
                     }
+                    else { Debug.WriteLine("Activate() : TLUser object is invalid (null value)."); }
                 }
                 else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
                 {
@@ -349,6 +366,24 @@ namespace Unigram.Views
                     port = query.GetParameter("port");
                     user = query.GetParameter("user");
                     pass = query.GetParameter("pass");
+                }
+                else if (scheme.AbsoluteUri.StartsWith("tg:toast") || scheme.AbsoluteUri.StartsWith("tg://toast"))
+                {
+                    if (query.ContainsKey("user_id") && int.TryParse(query.GetParameter("user_id"), out int userId))
+                    {
+                        TLUser requestedUser = (TLUser)ViewModel.CacheService.GetUser(userId);
+                        MasterDetail.NavigationService.NavigateToDialog(requestedUser);
+                    }
+                    else if (query.ContainsKey("chat_id") && int.TryParse(query.GetParameter("chat_id"), out int chatId))
+                    {
+                        TLChat requestedChat = (TLChat)ViewModel.CacheService.GetChat(chatId);
+                        MasterDetail.NavigationService.NavigateToDialog(requestedChat);
+                    }
+                    else if (query.ContainsKey("channel_id") && int.TryParse(query.GetParameter("channel_id"), out int channelId))
+                    {
+                        TLChannel requestedChannel = (TLChannel)ViewModel.CacheService.GetChat(channelId);
+                        MasterDetail.NavigationService.NavigateToDialog(requestedChannel);
+                    }
                 }
 
                 if (message != null && message.StartsWith("@"))

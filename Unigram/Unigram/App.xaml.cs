@@ -433,6 +433,7 @@ namespace Unigram
                 {
                     Execute.Initialize();
 
+                    Debug.WriteLine("OnStartAsync() : Unigram activated via URI.");
                     if (ShareOperation != null)
                     {
                         ShareOperation.ReportCompleted();
@@ -441,10 +442,14 @@ namespace Unigram
 
                     if (NavigationService?.Frame?.Content is MainPage page)
                     {
+                        Debug.WriteLine("OnStartAsync() : MainPage is already active.");
+                        Debug.WriteLine("OnStartAsync() : Rerunning MainPage.Activate() to navigate to the requested page...");
+                        Debug.WriteLine($"OnStartAsync() : Requested page: { protocol.Uri }");
                         page.Activate(protocol.Uri);
                     }
                     else
                     {
+                        Debug.WriteLine("OnStartAsync() : Navigating to MainPage with the requested URI...");
                         NavigationService.NavigateToMain(protocol.Uri.ToString());
                     }
                 }
@@ -452,16 +457,19 @@ namespace Unigram
                 {
                     Execute.Initialize();
 
+                    Debug.WriteLine("OnStartAsync() : Activated using standard process.");
                     var activate = args as ToastNotificationActivatedEventArgs;
                     var launched = args as LaunchActivatedEventArgs;
                     var launch = activate?.Argument ?? launched?.Arguments;
 
                     if (NavigationService?.Frame?.Content is MainPage page)
                     {
+                        Debug.WriteLine("OnStartAsync() : MainPage already active. Reinitializing...");
                         page.Activate(launch);
                     }
                     else
                     {
+                        Debug.WriteLine("OnStartAsync() : Navigating to MainPage...");
                         NavigationService.NavigateToMain(launch);
                     }
                 }

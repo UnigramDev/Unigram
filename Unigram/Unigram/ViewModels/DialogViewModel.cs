@@ -1685,8 +1685,9 @@ namespace Unigram.ViewModels
                 if (session != null)
                 {
                     CurrentActivity?.Dispose();
-                    CurrentActivity = session;
                 }
+
+                CurrentActivity = session;
             }
         }
 
