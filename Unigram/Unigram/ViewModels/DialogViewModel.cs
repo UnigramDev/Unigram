@@ -1407,6 +1407,8 @@ namespace Unigram.ViewModels
                     {
                         using (await _loadMoreLock.WaitAsync())
                         {
+                            var verify = history.ToList();
+
                             ProcessReplies(history);
                             MessageCollection.ProcessReplies(history);
 
@@ -1430,7 +1432,7 @@ namespace Unigram.ViewModels
                             }
 
                             var hash = 0L;
-                            var hashable = history.SelectMany(x =>
+                            var hashable = verify.SelectMany(x =>
                             {
                                 if (x is TLMessage msg)
                                 {
@@ -1445,8 +1447,55 @@ namespace Unigram.ViewModels
                                 hash = ((hash * 20261) + 0x80000000L + item) % 0x80000000L;
                             }
 
-                            //var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, history[0].Id, history.Count, (int)hash);
-                            //var ciccio = response.IsSucceeded;
+                            //var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -1, 0, history[0].Id, history.Count, (int)hash);
+                            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, int.MaxValue, verify.Count, (int)hash);
+                            if (response.IsSucceeded && response.Result is ITLMessages result)
+                            {
+                                Items.Clear();
+
+                                if (result.Messages.Count > 0)
+                                {
+                                    ListField.SetScrollMode(maxId == int.MaxValue ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
+                                }
+
+                                ProcessReplies(result.Messages);
+                                MessageCollection.ProcessReplies(result.Messages);
+
+                                for (int i = result.Messages.Count - 1; i >= 0; i--)
+                                {
+                                    var item = result.Messages[i];
+                                    if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
+                                    {
+                                        continue;
+                                    }
+
+                                    Items.Add(item);
+                                }
+
+                                foreach (var item in result.Messages.OrderByDescending(x => x.Date))
+                                {
+                                    var message = item as TLMessage;
+                                    if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                                    {
+                                        var bot = CacheService.GetUser(message.FromId) as TLUser;
+                                        if (bot != null && bot.IsBot)
+                                        {
+                                            SetReplyMarkup(message);
+                                        }
+                                    }
+                                }
+
+                                if (result.Messages.Count < history.Count)
+                                {
+                                    IsFirstSliceLoaded = maxId < int.MaxValue;
+                                    IsLastSliceLoaded = maxId == int.MaxValue;
+                                }
+                                else
+                                {
+                                    IsFirstSliceLoaded = false;
+                                    IsLastSliceLoaded = false;
+                                }
+                            }
                         };
                     }
                 }
@@ -1596,6 +1645,8 @@ namespace Unigram.ViewModels
                             var y = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int>() { full.PinnedMsgId ?? 0 });
                             if (y.IsSucceeded && y.Result is ITLMessages result)
                             {
+                                CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
+
                                 pinned = result.Messages.FirstOrDefault();
                             }
                         }
@@ -1723,6 +1774,8 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int> { channel.PinnedMsgId.Value });
                 if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
+                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
+
                     PinnedMessage = result.Messages.FirstOrDefault(x => x.Id == channel.PinnedMsgId.Value);
                 }
                 else
@@ -3530,8 +3583,8 @@ namespace Unigram.ViewModels
             {
                 var item = items[index];
 
-                var previous = index > 0 ? items[index - 1] : null;
-                var next = index < items.Count - 1 ? items[index + 1] : null;
+                var next = index > 0 ? items[index - 1] : null;
+                var previous = index < items.Count - 1 ? items[index + 1] : null;
 
                 //UpdateSeparatorOnInsert(items, item, next, index);
                 //UpdateSeparatorOnInsert(items, previous, item, index - 1);
