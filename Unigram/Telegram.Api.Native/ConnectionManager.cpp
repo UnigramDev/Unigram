@@ -90,7 +90,7 @@ ConnectionManager::~ConnectionManager()
 	WSACleanup();
 }
 
-HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount)
+HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 account, UINT32 minimumThreadCount, UINT32 maximumThreadCount)
 {
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
@@ -119,7 +119,7 @@ HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 	ReturnIfFailed(result, networkInformation->add_NetworkStatusChanged(Callback<INetworkStatusChangedEventHandler>(this, &ConnectionManager::OnNetworkStatusChanged).Get(), &m_eventTokens[0]));
 	ReturnIfFailed(result, UpdateNetworkStatus(networkInformation.Get(), false));
 
-	return InitializeSettings();
+	return InitializeSettings(account);
 }
 
 HRESULT ConnectionManager::add_SessionCreated(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
@@ -2174,7 +2174,7 @@ INT32 ConnectionManager::GetCurrentTime()
 	return static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000) + m_timeDifference;
 }
 
-HRESULT ConnectionManager::InitializeSettings()
+HRESULT ConnectionManager::InitializeSettings(UINT32 account)
 {
 	HRESULT result;
 	ComPtr<IApplicationDataStatics> applicationDataStatics;
@@ -2193,7 +2193,7 @@ HRESULT ConnectionManager::InitializeSettings()
 	ReturnIfFailed(result, localStorageItem->get_Path(localStorageFolderPath.GetAddressOf()));
 
 	m_settingsFolderPath.resize(MAX_PATH);
-	m_settingsFolderPath.resize(swprintf_s(&m_settingsFolderPath[0], MAX_PATH, L"%s\\Telegram.Api.Native", localStorageFolderPath.GetRawBuffer(nullptr)));
+	m_settingsFolderPath.resize(swprintf_s(&m_settingsFolderPath[0], MAX_PATH, L"%s\\%d", localStorageFolderPath.GetRawBuffer(nullptr), account));
 
 	CreateDirectory(m_settingsFolderPath.data(), nullptr);
 
@@ -2462,7 +2462,7 @@ HRESULT ConnectionManagerStatics::RuntimeClassInitialize()
 {
 	if (s_instance == nullptr)
 	{
-		return MakeAndInitialize<ConnectionManager>(&s_instance);
+		return MakeAndInitialize<ConnectionManager>(&s_instance, 0);
 	}
 
 	return S_OK;

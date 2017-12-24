@@ -315,6 +315,7 @@
     <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
     <Compile Include="Helpers\TLFileHelper.cs" />
+    <Compile Include="Helpers\UserActivityHelper.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\StorageDocument.cs" />
     <Compile Include="Models\StorageMedia.cs" />

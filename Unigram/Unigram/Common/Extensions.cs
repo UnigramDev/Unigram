@@ -413,7 +413,7 @@ namespace Unigram.Common
     // Modified from: https://stackoverflow.com/a/32559623/1680863
     public static class ListViewExtensions
     {
-        public async static Task ScrollToItem(this ListViewBase listViewBase, object item, SnapPointsAlignment alignment)
+        public async static Task ScrollToItem(this ListViewBase listViewBase, object item, SnapPointsAlignment alignment, bool highlight, double? pixel = null)
         {
             // get the ScrollViewer withtin the ListView/GridView
             var scrollViewer = listViewBase.GetScrollViewer();
@@ -439,7 +439,13 @@ namespace Unigram.Common
             var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
             var position = transform.TransformPoint(new Point(0, 0));
 
-            if (alignment == SnapPointsAlignment.Near) { }
+            if (alignment == SnapPointsAlignment.Near)
+            {
+                if (pixel is double adjust)
+                {
+                    position.Y -= adjust;
+                }
+            }
             else if (alignment == SnapPointsAlignment.Center)
             {
                 position.Y -= (listViewBase.ActualHeight - selectorItem.ActualHeight) / 2d;
@@ -447,14 +453,24 @@ namespace Unigram.Common
             else if (alignment == SnapPointsAlignment.Far)
             {
                 position.Y -= listViewBase.ActualHeight - selectorItem.ActualHeight;
+
+                if (pixel is double adjust)
+                {
+                    position.Y += adjust;
+                }
             }
 
             // scroll to desired position with animation!
-            scrollViewer.ChangeView(position.X, position.Y, null);
+            scrollViewer.ChangeView(position.X, position.Y, null, alignment != SnapPointsAlignment.Center);
 
-            var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
-            if (bubble != null)
+            if (highlight)
             {
+                var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
+                if (bubble == null)
+                {
+                    return;
+                }
+
                 bubble.Highlight();
             }
         }

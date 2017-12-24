@@ -121,7 +121,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 		auto loc_key = data->GetNamedString("loc_key");
 		auto loc_args = data->GetNamedArray("loc_args");
 		auto custom = data->GetNamedObject("custom", nullptr);
-		
+
 		//time_t rawtime = time(NULL);
 		//struct tm timeinfo;
 		//wchar_t buffer[80];
@@ -146,6 +146,11 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 		auto picture = GetPicture(custom, group);
 		auto date = GetDate(notification);
 
+		if (message == nullptr)
+		{
+			message = data->GetNamedString("text", "New Notification");
+		}
+
 		//if (loc_key->Equals(L"PHONE_CALL_MISSED"))
 		//{
 		//	ToastNotificationManager::History->Remove(L"phoneCall");
@@ -159,7 +164,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 		else
 		{
 			auto tag = GetTag(custom);
-			UpdateToast(caption, message, sound, launch, tag, group, picture, date, loc_key);	
+			UpdateToast(caption, message, sound, launch, tag, group, picture, date, loc_key);
 			UpdatePrimaryBadge(data->GetNamedNumber("badge"));
 
 			if (loc_key != L"DC_UPDATE")
@@ -206,20 +211,25 @@ String^ NotificationTask::GetMessage(JsonArray^ loc_args, String^ loc_key)
 {
 	auto resourceLoader = ResourceLoader::GetForViewIndependentUse("Unigram.Tasks/Resources");
 	auto text = resourceLoader->GetString(loc_key);
-	std::wstring wtext = text->Data();
-
-	for (int i = 0; i < loc_args->Size; i++)
+	if (text->Length())
 	{
-		wchar_t* code = new wchar_t[4];
-		swprintf_s(code, 4, L"{%d}", i);
-		std::string::size_type index = wtext.find(code);
-		if (index != std::string::npos)
+		std::wstring wtext = text->Data();
+
+		for (int i = 0; i < loc_args->Size; i++)
 		{
-			wtext = wtext.replace(wtext.find(code), 3, loc_args->GetStringAt(i)->Data());
+			wchar_t* code = new wchar_t[4];
+			swprintf_s(code, 4, L"{%d}", i);
+			std::string::size_type index = wtext.find(code);
+			if (index != std::string::npos)
+			{
+				wtext = wtext.replace(wtext.find(code), 3, loc_args->GetStringAt(i)->Data());
+			}
 		}
+
+		return ref new String(wtext.c_str());
 	}
 
-	return ref new String(wtext.c_str());
+	return nullptr;
 }
 
 String^ NotificationTask::GetLaunch(JsonObject^ custom, String^ loc_key)
@@ -326,16 +336,25 @@ String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
 
 			auto temp = ApplicationData::Current->LocalFolder->Path;
 
-			auto settings = ApplicationData::Current->LocalSettings;
-			if (settings->Values->HasKey("SessionGuid"))
-			{
-				auto guid = safe_cast<String^>(settings->Values->Lookup("SessionGuid"));
+			std::wstringstream path;
+			path << temp->Data()
+				<< L"\\temp\\"
+				<< volumeLL
+				<< L"_"
+				<< local_id->Data()
+				<< L"_"
+				<< secretLL
+				<< L".jpg";
 
-				std::wstringstream path;
-				path << temp->Data()
-					<< L"\\"
-					<< guid->Data()
-					<< L"\\temp\\"
+			WIN32_FIND_DATA FindFileData;
+			HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
+			int found = handle != INVALID_HANDLE_VALUE;
+			if (found)
+			{
+				FindClose(handle);
+
+				std::wstringstream almost;
+				almost << L"ms-appdata:///local/temp/"
 					<< volumeLL
 					<< L"_"
 					<< local_id->Data()
@@ -343,46 +362,17 @@ String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
 					<< secretLL
 					<< L".jpg";
 
-				WIN32_FIND_DATA FindFileData;
-				HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
-				int found = handle != INVALID_HANDLE_VALUE;
-				if (found)
-				{
-					FindClose(handle);
-
-					std::wstringstream almost;
-					almost << L"ms-appdata:///local/"
-						<< guid->Data()
-						<< "/temp/"
-						<< volumeLL
-						<< L"_"
-						<< local_id->Data()
-						<< L"_"
-						<< secretLL
-						<< L".jpg";
-
-					return ref new String(almost.str().c_str());
-				}
+				return ref new String(almost.str().c_str());
 			}
 		}
 	}
 
-	auto settings = ApplicationData::Current->LocalSettings;
-	if (settings->Values->HasKey("SessionGuid"))
-	{
-		auto guid = safe_cast<String^>(settings->Values->Lookup("SessionGuid"));
+	std::wstringstream almost;
+	almost << L"ms-appdata:///local/temp/placeholders/"
+		<< group->Data()
+		<< L"_placeholder.png";
 
-		std::wstringstream almost;
-		almost << L"ms-appdata:///local/"
-			<< guid->Data()
-			<< L"/temp/placeholders/"
-			<< group->Data()
-			<< L"_placeholder.png";
-
-		return ref new String(almost.str().c_str());
-	}
-
-	return ref new String();
+	return ref new String(almost.str().c_str());
 }
 
 String^ NotificationTask::GetDate(JsonObject^ notification)
@@ -440,12 +430,12 @@ std::wstring NotificationTask::Escape(std::wstring data)
 	{
 		switch (data[pos])
 		{
-			case '&':  buffer.append(L"&amp;");       break;
-			case '\"': buffer.append(L"&quot;");      break;
-			case '\'': buffer.append(L"&apos;");      break;
-			case '<':  buffer.append(L"&lt;");        break;
-			case '>':  buffer.append(L"&gt;");        break;
-			default:   buffer.append(&data[pos], 1); break;
+		case '&':  buffer.append(L"&amp;");       break;
+		case '\"': buffer.append(L"&quot;");      break;
+		case '\'': buffer.append(L"&apos;");      break;
+		case '<':  buffer.append(L"&lt;");        break;
+		case '>':  buffer.append(L"&gt;");        break;
+		default:   buffer.append(&data[pos], 1); break;
 		}
 	}
 	return buffer;

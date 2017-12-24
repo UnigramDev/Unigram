@@ -121,7 +121,7 @@ namespace Telegram.Logs
             System.Diagnostics.Debug.Write(message);
 #endif 
 
-            if (logLevel != LogLevel.Information)
+            //if (logLevel != LogLevel.Information)
             {
                 Write(message);
             }

@@ -17,10 +17,7 @@
     DataContextChanged="OnDataContextChanged"
     Unloaded="OnUnloaded">
 
-    <!-- TODO: not the right way -->
-    <Border Height="2" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=Collapsed}"/>
-
-    <UserControl x:Name="LayoutRoot">
+    <UserControl x:Name="LayoutRoot" Margin="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=0}">
         <Grid x:Name="ContentPanel"
                 Padding="{ThemeResource MessageContentPadding}"
                 CornerRadius="{ThemeResource MessageCornerRadius}"

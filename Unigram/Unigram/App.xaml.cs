@@ -110,10 +110,10 @@ namespace Unigram
             m_mediaExtensionManager = new MediaExtensionManager();
             m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
 
-            if (SettingsHelper.SwitchGuid != null)
+            if (SettingsHelper.SwitchAccount >= 0)
             {
-                SettingsHelper.SessionGuid = SettingsHelper.SwitchGuid;
-                SettingsHelper.SwitchGuid = null;
+                SettingsHelper.SelectedAccount = SettingsHelper.SwitchAccount;
+                SettingsHelper.SwitchAccount = -1;
             }
 
             FileUtils.CreateTemporaryFolder();

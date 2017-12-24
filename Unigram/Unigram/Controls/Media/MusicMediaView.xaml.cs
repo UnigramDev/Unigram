@@ -105,7 +105,7 @@ namespace Unigram.Controls.Media
         {
             if (DataContext is TLMessage message && Equals(Playback.CurrentItem, message))
             {
-                DurationLabel.Text = Playback.Session.Position.ToString("mm\\:ss") + " / " + Playback.Session.NaturalDuration.ToString("mm\\:ss");
+                DurationLabel.Text = FormatTime(Playback.Session.Position) + " / " + FormatTime(Playback.Session.NaturalDuration);
             }
         }
 
@@ -116,8 +116,20 @@ namespace Unigram.Controls.Media
                 var audioAttribute = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
                 if (audioAttribute != null)
                 {
-                    DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
+                    DurationLabel.Text = FormatTime(TimeSpan.FromSeconds(audioAttribute.Duration));
                 }
+            }
+        }
+
+        private string FormatTime(TimeSpan span)
+        {
+            if (span.TotalHours >= 1)
+            {
+                return span.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return span.ToString("mm\\:ss");
             }
         }
 

@@ -528,6 +528,11 @@ namespace Telegram.Api.TL
         {
             try
             {
+                if (!File.Exists(FileUtils.GetFileName(fileName)))
+                {
+                    return default(T);
+                }
+
                 lock (syncRoot)
                 {
                     //using (var fileStream = FileUtils.GetLocalFileStreamForRead(fileName))
@@ -549,6 +554,7 @@ namespace Telegram.Api.TL
                 WriteLine("MTPROTO FILE ERROR: cannot read " + typeof(T) + " from file " + fileName, LogSeverity.Error);
                 WriteException(e);
             }
+
             return default(T);
         }
 

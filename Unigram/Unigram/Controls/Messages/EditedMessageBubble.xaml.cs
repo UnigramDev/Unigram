@@ -43,10 +43,10 @@ namespace Unigram.Controls.Messages
 
         #region Adaptive part
 
-        private Visibility UpdateFirst(bool isFirst)
+        private Thickness UpdateFirst(bool isFirst)
         {
             OnMessageChanged(HeaderLabel, null, Header);
-            return isFirst ? Visibility.Visible : Visibility.Collapsed;
+            return isFirst ? new Thickness(0, 2, 0, 0) : new Thickness();
         }
 
         private void OnMediaChanged(object sender, EventArgs e)
