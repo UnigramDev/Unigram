@@ -439,9 +439,12 @@ namespace Unigram.Common
             var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
             var position = transform.TransformPoint(new Point(0, 0));
 
-            if (alignment == SnapPointsAlignment.Near && pixel is double adjust)
+            if (alignment == SnapPointsAlignment.Near)
             {
-                position.Y -= adjust;
+                if (pixel is double adjust)
+                {
+                    position.Y -= adjust;
+                }
             }
             else if (alignment == SnapPointsAlignment.Center)
             {
@@ -450,10 +453,15 @@ namespace Unigram.Common
             else if (alignment == SnapPointsAlignment.Far)
             {
                 position.Y -= listViewBase.ActualHeight - selectorItem.ActualHeight;
+
+                if (pixel is double adjust)
+                {
+                    position.Y += adjust;
+                }
             }
 
             // scroll to desired position with animation!
-            scrollViewer.ChangeView(position.X, position.Y, null, alignment == SnapPointsAlignment.Near);
+            scrollViewer.ChangeView(position.X, position.Y, null, alignment != SnapPointsAlignment.Center);
 
             if (highlight)
             {

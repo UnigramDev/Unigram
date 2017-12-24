@@ -885,7 +885,7 @@ namespace Unigram.ViewModels
             if (already != null)
             {
                 //ListField.ScrollIntoView(already);
-                await ListField.ScrollToItem(already, highlight ? SnapPointsAlignment.Center : SnapPointsAlignment.Near, highlight, pixel);
+                await ListField.ScrollToItem(already, highlight ? SnapPointsAlignment.Center : SnapPointsAlignment.Far, highlight, pixel);
                 return;
             }
 
@@ -1878,20 +1878,21 @@ namespace Unigram.ViewModels
                 //pageState["visible"] = Items[panel.FirstVisibleIndex].Id;
                 if (Items[panel.LastVisibleIndex].Id != Items[Items.Count - 1].Id || !IsLastSliceLoaded)
                 {
-                    var container = ListField.ContainerFromIndex(panel.FirstVisibleIndex) as ListViewItem;
+                    _scrollingIndex[peer] = Items[panel.LastVisibleIndex].Id;
+
+                    var container = ListField.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
                     if (container != null)
                     {
                         var transform = container.TransformToVisual(ListField);
                         var position = transform.TransformPoint(new Point());
 
-                        _scrollingPixel[peer] = position.Y;
+                        _scrollingPixel[peer] = ListField.ActualHeight - (position.Y + container.ActualHeight);
                     }
-
-                    _scrollingIndex[peer] = Items[panel.FirstVisibleIndex].Id;
                 }
                 else
                 {
                     _scrollingIndex.Remove(peer);
+                    _scrollingPixel.Remove(peer);
                 }
             }
 
