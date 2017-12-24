@@ -116,6 +116,7 @@ namespace Telegram.Api.Services
             _connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
             _connectionManager.AuthenticationRequired += ConnectionManager_AuthenticationRequired;
             _connectionManager.UserConfigurationRequired += ConnectionManager_UserConfigurationRequired;
+            _connectionManager.SessionCreated += ConnectionManager_SessionCreated;
 
             CurrentUserId = SettingsHelper.UserId;
 
@@ -209,11 +210,11 @@ namespace Telegram.Api.Services
         {
             if (sender.ConnectionState == ConnectionState.Connected && _connectionLost)
             {
-                if (SettingsHelper.IsAuthorized)
-                {
-                    _connectionLost = false;
-                    _updatesService.LoadStateAndUpdate(() => Debug.WriteLine("State updated"));
-                }
+                //if (SettingsHelper.IsAuthorized)
+                //{
+                //    _connectionLost = false;
+                //    _updatesService.LoadStateAndUpdate(() => Debug.WriteLine("State updated"));
+                //}
             }
         }
 
@@ -241,6 +242,11 @@ namespace Telegram.Api.Services
         private void ConnectionManager_UserConfigurationRequired(ConnectionManager sender, UserConfiguration args)
         {
             args.AppId = Constants.ApiId;
+        }
+
+        private void ConnectionManager_SessionCreated(ConnectionManager sender, object args)
+        {
+            _updatesService.LoadStateAndUpdate(() => Debug.WriteLine("State updated"));
         }
 
         public static IMTProtoService Current { get; protected set; }
