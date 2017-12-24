@@ -310,7 +310,7 @@ namespace Unigram
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
                 Theme.Current.Update();
-                App.RaiseThemeChanged();
+                NotifyThemeChanged();
             }
 
             return base.OnInitializeAsync(args);
@@ -484,7 +484,7 @@ namespace Unigram
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Theme.Current.Update();
-            App.RaiseThemeChanged();
+            NotifyThemeChanged();
 
             Task.Run(() => OnStartSync());
             //return Task.CompletedTask;
@@ -608,14 +608,14 @@ namespace Unigram
             var current = _uiSettings.GetColorValue(UIColorType.Background);
 
             // Apply buttons feedback based on Light or Dark theme
-            if (current == Colors.Black || ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark)
+            if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark || current == Colors.Black)
             {
                 background = Color.FromArgb(255, 31, 31, 31);
                 foreground = Colors.White;
                 buttonHover = Color.FromArgb(255, 53, 53, 53);
                 buttonPressed = Color.FromArgb(255, 76, 76, 76);
             }
-            else if (current == Colors.White || ApplicationSettings.Current.CurrentTheme == ElementTheme.Light)
+            else if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Light || current == Colors.White)
             {
                 background = Color.FromArgb(255, 230, 230, 230);
                 foreground = Colors.Black;
@@ -624,31 +624,24 @@ namespace Unigram
             }
 
             // Desktop Title Bar
-            try
-            {
-                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
 
-                // Background
-                titleBar.BackgroundColor = background;
-                titleBar.InactiveBackgroundColor = background;
+            // Background
+            titleBar.BackgroundColor = background;
+            titleBar.InactiveBackgroundColor = background;
 
-                // Foreground
-                titleBar.ForegroundColor = foreground;
-                titleBar.ButtonForegroundColor = foreground;
+            // Foreground
+            titleBar.ForegroundColor = foreground;
+            titleBar.ButtonForegroundColor = foreground;
 
-                // Buttons
-                titleBar.ButtonBackgroundColor = background;
-                titleBar.ButtonInactiveBackgroundColor = background;
+            // Buttons
+            titleBar.ButtonBackgroundColor = background;
+            titleBar.ButtonInactiveBackgroundColor = background;
 
-                // Buttons feedback
-                titleBar.ButtonPressedBackgroundColor = buttonPressed;
-                titleBar.ButtonHoverBackgroundColor = buttonHover;
-            }
-            catch
-            {
-                Debug.WriteLine("Device does not have a Titlebar");
-            }
+            // Buttons feedback
+            titleBar.ButtonPressedBackgroundColor = buttonPressed;
+            titleBar.ButtonHoverBackgroundColor = buttonHover;
 
             // Mobile Status Bar
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
@@ -665,7 +658,7 @@ namespace Unigram
         //    ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrush"]).Color = e.WindowActivationState != CoreWindowActivationState.Deactivated ? ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushBase"]).Color : ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushDeactivated"]).Color;
         //}
 
-        public static void RaiseThemeChanged()
+        public static void NotifyThemeChanged()
         {
             var frame = Window.Current.Content as Frame;
             if (frame == null)
