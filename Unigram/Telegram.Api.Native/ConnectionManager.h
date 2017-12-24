@@ -168,7 +168,7 @@ namespace Telegram
 				IFACEMETHODIMP GetConnectionStatistics(ConnectionType connectionType, _Out_ ConnectionNetworkStatistics* value);
 
 				//Internal methods
-				STDMETHODIMP RuntimeClassInitialize(UINT32 minimumThreadCount = MIN_THREAD_COUNT, UINT32 maximumThreadCount = MAX_THREAD_COUNT);
+				STDMETHODIMP RuntimeClassInitialize(UINT32 account, UINT32 minimumThreadCount = MIN_THREAD_COUNT, UINT32 maximumThreadCount = MAX_THREAD_COUNT);
 				INT32 GetCurrentTime();
 				INT64 GenerateMessageId();
 
@@ -206,7 +206,7 @@ namespace Telegram
 				};
 
 				HRESULT InitializeDefaultDatacenters();
-				HRESULT InitializeSettings();
+				HRESULT InitializeSettings(UINT32 account);
 				HRESULT LoadSettings();
 				HRESULT SaveSettings();
 				HRESULT LoadCDNPublicKeys();
