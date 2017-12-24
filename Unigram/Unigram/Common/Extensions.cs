@@ -413,7 +413,7 @@ namespace Unigram.Common
     // Modified from: https://stackoverflow.com/a/32559623/1680863
     public static class ListViewExtensions
     {
-        public async static Task ScrollToItem(this ListViewBase listViewBase, object item, SnapPointsAlignment alignment)
+        public async static Task ScrollToItem(this ListViewBase listViewBase, object item, SnapPointsAlignment alignment, bool highlight)
         {
             // get the ScrollViewer withtin the ListView/GridView
             var scrollViewer = listViewBase.GetScrollViewer();
@@ -452,9 +452,14 @@ namespace Unigram.Common
             // scroll to desired position with animation!
             scrollViewer.ChangeView(position.X, position.Y, null);
 
-            var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
-            if (bubble != null)
+            if (highlight)
             {
+                var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
+                if (bubble == null)
+                {
+                    return;
+                }
+
                 bubble.Highlight();
             }
         }

@@ -66,6 +66,7 @@ using Unigram.Core.Common;
 using Unigram.ViewModels.Dialogs;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.Collections.Concurrent;
+using Windows.ApplicationModel.UserActivities;
 
 namespace Unigram.ViewModels
 {
@@ -125,6 +126,8 @@ namespace Unigram.ViewModels
 
         private readonly ConcurrentDictionary<long, TLMessage> _groupedMessages = new ConcurrentDictionary<long, TLMessage>();
 
+        private static readonly Dictionary<TLPeerBase, int> _scrollingIndex = new Dictionary<TLPeerBase, int>();
+
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly DisposableMutex _insertLock = new DisposableMutex();
 
@@ -138,8 +141,7 @@ namespace Unigram.ViewModels
         private readonly IUploadVideoManager _uploadVideoManager;
         private readonly IPushService _pushService;
 
-        public int participantCount = 0;
-        public int online = 0;
+        private UserActivitySession _timelineSession;
 
         public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, ILiveLocationService liveLocationService, IPushService pushService)
             : base(protoService, cacheService, aggregator)
@@ -870,7 +872,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task LoadMessageSliceAsync(int? previousId, int maxId)
+        public async Task LoadMessageSliceAsync(int? previousId, int maxId, bool highlight = true)
         {
             if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
             {
@@ -881,7 +883,7 @@ namespace Unigram.ViewModels
             if (already != null)
             {
                 //ListField.ScrollIntoView(already);
-                await ListField.ScrollToItem(already, SnapPointsAlignment.Center);
+                await ListField.ScrollToItem(already, highlight ? SnapPointsAlignment.Center : SnapPointsAlignment.Near, highlight);
                 return;
             }
 
@@ -954,7 +956,7 @@ namespace Unigram.ViewModels
 
             //await Task.Delay(200);
             //await LoadNextSliceAsync(true);
-            await LoadMessageSliceAsync(null, maxId);
+            await LoadMessageSliceAsync(null, maxId, highlight);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -1328,6 +1330,13 @@ namespace Unigram.ViewModels
             With = participant;
             Dialog = CacheService.GetDialog(Peer.ToPeer());
 
+            var highlight = true;
+            if (_scrollingIndex.TryGetValue(participant.ToPeer(), out int visible))
+            {
+                messageId = visible;
+                highlight = false;
+            }
+
             //Aggregator.Subscribe(this);
 
             //var storage = ApplicationSettings.Current.GetValueOrDefault(TLSerializationService.Current.Serialize(parameter), -1);
@@ -1387,9 +1396,9 @@ namespace Unigram.ViewModels
                 });
             }
 
-            if (messageId.HasValue)
+            if (messageId is int slice)
             {
-                LoadMessageSliceAsync(null, messageId.Value);
+                LoadMessageSliceAsync(null, slice, highlight);
             }
             else
             {
@@ -1746,6 +1755,8 @@ namespace Unigram.ViewModels
             {
                 ResetTile();
             }
+
+            _timelineSession = await UserActivityHelper.GenerateActivityAsync(participant.ToPeer());
         }
 
         private async void ShowPinnedMessage(TLChannel channel)
@@ -1842,6 +1853,19 @@ namespace Unigram.ViewModels
             if (Dispatcher != null)
             {
                 Dispatcher.Dispatch(SaveDraft);
+            }
+
+            if (_timelineSession != null)
+            {
+                _timelineSession.Dispose();
+                _timelineSession = null;
+            }
+
+            var panel = ListField.ItemsPanelRoot as ItemsStackPanel;
+            if (panel.FirstVisibleIndex < Items.Count)
+            {
+                //pageState["visible"] = Items[panel.FirstVisibleIndex].Id;
+                _scrollingIndex[Peer.ToPeer()] = Items[panel.FirstVisibleIndex].Id;
             }
 
             return Task.CompletedTask;
