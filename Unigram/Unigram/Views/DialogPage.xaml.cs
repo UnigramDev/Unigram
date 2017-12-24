@@ -58,7 +58,6 @@ using Unigram.Native;
 using LinqToVisualTree;
 using Unigram.Models;
 using System.Windows.Input;
-using Unigram.Strings;
 using Unigram.Views.Dialogs;
 
 namespace Unigram.Views
@@ -1036,7 +1035,7 @@ namespace Unigram.Views
             CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.SaveAs);
 
             CreateFlyoutItem(ref flyout, MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, messageCommon, Strings.Android.AddContactTitle);
-            //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, AppResources.MessageSaveDownload);
+            //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Android.SaveToDownloads);
 
             //sender.ContextFlyout = menu;
 

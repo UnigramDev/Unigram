@@ -11,6 +11,7 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.System;
+using Windows.UI.ViewManagement;
 
 namespace Unigram.Helpers
 {
@@ -22,10 +23,16 @@ namespace Unigram.Helpers
             var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
-                var resultName = "photo_" + DateTime.Now.ToString("_yyyy-MM-dd_HH-mm-ss") + ".jpg";
+                var resultName = "photo_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".jpg";
 
                 if (downloads)
                 {
+                    var folder = await GetDownloadsAsync();
+                    if (folder == null)
+                    {
+                        return;
+                    }
+
                     StorageFile file;
                     if (StorageApplicationPermissions.FutureAccessList.ContainsItem(fileName))
                     {
@@ -33,20 +40,20 @@ namespace Unigram.Helpers
                     }
                     else
                     {
-                        file = await DownloadsFolder.CreateFileAsync(resultName, CreationCollisionOption.GenerateUniqueName);
-                        var result = await FileUtils.GetTempFileAsync(fileName);
-
-                        var boh = file.Path.ToString();
-                        var folder = await StorageFolder.GetFolderFromPathAsync(Path.GetDirectoryName(boh));
-
-                        await result.CopyAndReplaceAsync(file);
+                        file = await folder.CreateFileAsync(resultName, CreationCollisionOption.GenerateUniqueName);
                         StorageApplicationPermissions.FutureAccessList.AddOrReplace(fileName, file);
+
+                        var result = await FileUtils.GetTempFileAsync(fileName);
+                        await result.CopyAndReplaceAsync(file);
                     }
 
-                    //var options = new FolderLauncherOptions();
-                    //options.ItemsToSelect.Add(file);
+                    if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                    {
+                        var options = new FolderLauncherOptions();
+                        options.ItemsToSelect.Add(file);
 
-                    //await Launcher.LaunchFolderAsync(file.)
+                        await Launcher.LaunchFolderAsync(folder, options);
+                    }
                 }
                 else
                 {
@@ -70,6 +77,7 @@ namespace Unigram.Helpers
             var fileName = document.GetFileName();
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
+
                 var extension = document.GetFileExtension();
                 var resultName = "document_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + extension;
 
@@ -81,10 +89,33 @@ namespace Unigram.Helpers
 
                 if (downloads)
                 {
-                    var folder = await DownloadsFolder.CreateFolderAsync("Unigram", CreationCollisionOption.OpenIfExists);
-                    var result = await FileUtils.GetTempFileAsync(fileName);
+                    var folder = await GetDownloadsAsync();
+                    if (folder == null)
+                    {
+                        return;
+                    }
 
-                    await result.CopyAsync(folder, resultName, NameCollisionOption.GenerateUniqueName);
+                    StorageFile file;
+                    if (StorageApplicationPermissions.FutureAccessList.ContainsItem(fileName))
+                    {
+                        file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(fileName);
+                    }
+                    else
+                    {
+                        file = await folder.CreateFileAsync(resultName, CreationCollisionOption.GenerateUniqueName);
+                        StorageApplicationPermissions.FutureAccessList.AddOrReplace(fileName, file);
+
+                        var result = await FileUtils.GetTempFileAsync(fileName);
+                        await result.CopyAndReplaceAsync(file);
+                    }
+
+                    if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                    {
+                        var options = new FolderLauncherOptions();
+                        options.ItemsToSelect.Add(file);
+
+                        await Launcher.LaunchFolderAsync(folder, options);
+                    }
                 }
                 else
                 {
@@ -110,6 +141,32 @@ namespace Unigram.Helpers
                     }
                 }
             }
+        }
+
+        private static async Task<StorageFolder> GetDownloadsAsync()
+        {
+            StorageFolder folder;
+            if (StorageApplicationPermissions.FutureAccessList.ContainsItem("Downloads"))
+            {
+                folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync("Downloads");
+            }
+            else
+            {
+                var picker = new FolderPicker();
+                picker.SuggestedStartLocation = PickerLocationId.Downloads;
+                picker.FileTypeFilter.Add("*");
+
+                var picked = await picker.PickSingleFolderAsync();
+                if (picked == null)
+                {
+                    return null;
+                }
+
+                folder = picked;
+                StorageApplicationPermissions.FutureAccessList.AddOrReplace("Downloads", folder);
+            }
+
+            return folder;
         }
     }
 }
