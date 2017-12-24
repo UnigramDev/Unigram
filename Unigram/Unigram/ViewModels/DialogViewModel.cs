@@ -874,13 +874,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task LoadMessageSliceAsync(int? previousId, int maxId, bool highlight = true, double? pixel = null)
+        public async Task LoadMessageSliceAsync(int? previousId, int maxId, bool highlight = true, double? pixel = null, bool second = false)
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
-            {
-                return;
-            }
-
             var already = Items.FirstOrDefault(x => x.Id == maxId);
             if (already != null)
             {
@@ -888,77 +883,92 @@ namespace Unigram.ViewModels
                 await ListField.ScrollToItem(already, highlight ? SnapPointsAlignment.Center : SnapPointsAlignment.Far, highlight, pixel);
                 return;
             }
-
-            _isLoadingNextSlice = true;
-            _isLoadingPreviousSlice = true;
-            IsLoading = true;
-            IsLastSliceLoaded = false;
-            IsFirstSliceLoaded = false;
-
-            Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
-
-            if (previousId.HasValue)
+            else if (second)
             {
-                _goBackStack.Push(previousId.Value);
+                var max = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
+                var offset = _dialog?.UnreadCount > 0 && max > 0 ? -16 : 0;
+                await LoadFirstSliceAsync(max, offset);
+                return;
             }
 
-            Items.Clear();
-
-            var offset = -25;
-            var limit = 50;
-
-            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit, 0);
-            if (response.IsSucceeded && response.Result is ITLMessages result)
+            using (await _loadMoreLock.WaitAsync())
             {
-                if (result.Messages.Count > 0)
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
                 {
-                    ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                    return;
                 }
 
-                ProcessReplies(result.Messages);
-                MessageCollection.ProcessReplies(result.Messages);
-
-                //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
-                for (int i = result.Messages.Count - 1; i >= 0; i--)
-                {
-                    var item = result.Messages[i];
-                    if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
-                    {
-                        continue;
-                    }
-
-                    Items.Add(item);
-                }
-
-                foreach (var item in result.Messages.OrderByDescending(x => x.Date))
-                {
-                    var message = item as TLMessage;
-                    if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
-                    {
-                        var user = CacheService.GetUser(message.FromId) as TLUser;
-                        if (user != null && user.IsBot)
-                        {
-                            SetReplyMarkup(message);
-                        }
-                    }
-                }
-
-                //if (response.Result.Messages.Count < limit)
-                //{
-                //    IsFirstSliceLoaded = true;
-                //}
-
+                _isLoadingNextSlice = true;
+                _isLoadingPreviousSlice = true;
+                IsLoading = true;
                 IsLastSliceLoaded = false;
                 IsFirstSliceLoaded = false;
-            }
 
-            _isLoadingNextSlice = false;
-            _isLoadingPreviousSlice = false;
-            IsLoading = false;
+                Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
+
+                if (previousId.HasValue)
+                {
+                    _goBackStack.Push(previousId.Value);
+                }
+
+                Items.Clear();
+
+                var offset = -25;
+                var limit = 50;
+
+                var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit, 0);
+                if (response.IsSucceeded && response.Result is ITLMessages result)
+                {
+                    if (result.Messages.Count > 0)
+                    {
+                        ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                    }
+
+                    ProcessReplies(result.Messages);
+                    MessageCollection.ProcessReplies(result.Messages);
+
+                    //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
+                    for (int i = result.Messages.Count - 1; i >= 0; i--)
+                    {
+                        var item = result.Messages[i];
+                        if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
+                        {
+                            continue;
+                        }
+
+                        Items.Add(item);
+                    }
+
+                    foreach (var item in result.Messages.OrderByDescending(x => x.Date))
+                    {
+                        var message = item as TLMessage;
+                        if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                        {
+                            var user = CacheService.GetUser(message.FromId) as TLUser;
+                            if (user != null && user.IsBot)
+                            {
+                                SetReplyMarkup(message);
+                            }
+                        }
+                    }
+
+                    //if (response.Result.Messages.Count < limit)
+                    //{
+                    //    IsFirstSliceLoaded = true;
+                    //}
+
+                    IsLastSliceLoaded = false;
+                    IsFirstSliceLoaded = false;
+                }
+
+                _isLoadingNextSlice = false;
+                _isLoadingPreviousSlice = false;
+                IsLoading = false;
+            }
 
             //await Task.Delay(200);
             //await LoadNextSliceAsync(true);
-            await LoadMessageSliceAsync(null, maxId, highlight, pixel);
+            await LoadMessageSliceAsync(null, maxId, highlight, pixel, true);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -1873,27 +1883,23 @@ namespace Unigram.ViewModels
             var peer = Peer.ToPeer();
 
             var panel = ListField.ItemsPanelRoot as ItemsStackPanel;
-            if (panel.LastVisibleIndex < Items.Count)
+            if (panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
             {
-                //pageState["visible"] = Items[panel.FirstVisibleIndex].Id;
-                if (Items[panel.LastVisibleIndex].Id != Items[Items.Count - 1].Id || !IsLastSliceLoaded)
-                {
-                    _scrollingIndex[peer] = Items[panel.LastVisibleIndex].Id;
+                _scrollingIndex[peer] = Items[panel.LastVisibleIndex].Id;
 
-                    var container = ListField.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
-                    if (container != null)
-                    {
-                        var transform = container.TransformToVisual(ListField);
-                        var position = transform.TransformPoint(new Point());
-
-                        _scrollingPixel[peer] = ListField.ActualHeight - (position.Y + container.ActualHeight);
-                    }
-                }
-                else
+                var container = ListField.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
+                if (container != null)
                 {
-                    _scrollingIndex.Remove(peer);
-                    _scrollingPixel.Remove(peer);
+                    var transform = container.TransformToVisual(ListField);
+                    var position = transform.TransformPoint(new Point());
+
+                    _scrollingPixel[peer] = ListField.ActualHeight - (position.Y + container.ActualHeight);
                 }
+            }
+            else
+            {
+                _scrollingIndex.Remove(peer);
+                _scrollingPixel.Remove(peer);
             }
 
             return Task.CompletedTask;
@@ -3638,8 +3644,8 @@ namespace Unigram.ViewModels
                 var next = index > 0 ? items[index - 1] : null;
                 var previous = index < items.Count - 1 ? items[index + 1] : null;
 
-                //UpdateSeparatorOnInsert(items, item, next, index);
-                //UpdateSeparatorOnInsert(items, previous, item, index - 1);
+                //UpdateSeparatorOnInsert(items, item, next, index - 1);
+                //UpdateSeparatorOnInsert(items, previous, item, index);
 
                 UpdateAttach(next, item, index + 1);
                 UpdateAttach(item, previous, index);

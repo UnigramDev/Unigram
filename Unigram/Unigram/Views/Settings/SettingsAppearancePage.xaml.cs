@@ -91,7 +91,7 @@ namespace Unigram.Views.Settings
             await file.CopyAndReplaceAsync(palette);
 
             Theme.Current.Update();
-            App.RaiseThemeChanged();
+            App.NotifyThemeChanged();
 
             UpdatePreview(true);
         }
@@ -128,7 +128,7 @@ namespace Unigram.Views.Settings
             await palette.DeleteAsync();
 
             Theme.Current.Update();
-            App.RaiseThemeChanged();
+            App.NotifyThemeChanged();
 
             UpdatePreview(true);
         }

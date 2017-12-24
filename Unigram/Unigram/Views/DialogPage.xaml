@@ -249,11 +249,11 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture x:Phase="3"
-                                             x:Name="PhotoBubble"
-                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                             Source="{x:Bind Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                             Click="Photo_Click"/>
+                                         x:Name="PhotoBubble"
+                                         Style="{StaticResource MessageBubbleProfilePictureStyle}"
+                                         Source="{x:Bind Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                         Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
+                                         Click="Photo_Click"/>
                 <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" Grid.Column="1"/>
 
                 <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
@@ -292,13 +292,13 @@
         </DataTemplate>
 
         <!--<selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
-                                           UserMessageTemplate="{StaticResource UserMessageTemplate}"
-                                           FriendMessageTemplate="{StaticResource FriendMessageTemplate}"
-                                           ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
-                                           ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
-                                           ServiceMessagePhotoTemplate="{StaticResource ServiceMessagePhotoTemplate}"
-                                           ServiceUserCallTemplate="{StaticResource ServiceUserCallMessageTemplate}"
-                                           ServiceFriendCallTemplate="{StaticResource ServiceFriendCallMessageTemplate}"/>-->
+             UserMessageTemplate="{StaticResource UserMessageTemplate}"
+             FriendMessageTemplate="{StaticResource FriendMessageTemplate}"
+             ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
+             ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
+             ServiceMessagePhotoTemplate="{StaticResource ServiceMessagePhotoTemplate}"
+             ServiceUserCallTemplate="{StaticResource ServiceUserCallMessageTemplate}"
+             ServiceFriendCallTemplate="{StaticResource ServiceFriendCallMessageTemplate}"/>-->
     </Page.Resources>
 
     <Grid x:Name="LayoutRoot"
@@ -651,10 +651,10 @@
                 <controls:PlaybackHeader/>
 
                 <Grid x:Name="PinnedMessage"
-                        Visibility="{x:Bind ViewModel.PinnedMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                        Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                        MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                        Grid.Row="1">
+                      Visibility="{x:Bind ViewModel.PinnedMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                      Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="48"/>
@@ -669,10 +669,10 @@
                     <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
                 </Grid>
                 <Grid x:Name="InformativeMessage"
-                        Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                        Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                        MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                        Grid.Row="1">
+                      Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                      Grid.Row="1">
                     <messages:MessageReference Message="{x:Bind ViewModel.InformativeMessage, Mode=TwoWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
 
                     <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
@@ -704,13 +704,13 @@
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,6">
                 <StackPanel Visibility="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
                             RightTapped="Mentions_RightTapped">
-                    <Border  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
-                             MinWidth="20"
-                             Height="20"
-                             CornerRadius="10"
-                             HorizontalAlignment="Center"
-                             Margin="0,0,0,-12"
-                             Canvas.ZIndex="1">
+                    <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                            MinWidth="20"
+                            Height="20"
+                            CornerRadius="10"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,-12"
+                            Canvas.ZIndex="1">
                         <TextBlock Text="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay}"
                                    Style="{ThemeResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
@@ -731,14 +731,15 @@
                 </StackPanel>
 
                 <StackPanel x:Name="Arrow" Visibility="Collapsed">
-                    <Border  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
-                             Visibility="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
-                             MinWidth="20"
-                             Height="20"
-                             CornerRadius="10"
-                             HorizontalAlignment="Center"
-                             Margin="0,6,0,-12"
-                             Canvas.ZIndex="1">
+                    <!--Visibility="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"-->
+                    <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                            Visibility="Collapsed"
+                            MinWidth="20"
+                            Height="20"
+                            CornerRadius="10"
+                            HorizontalAlignment="Center"
+                            Margin="0,6,0,-12"
+                            Canvas.ZIndex="1">
                         <TextBlock Text="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay}"
                                    Style="{ThemeResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"

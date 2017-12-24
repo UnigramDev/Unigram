@@ -21,6 +21,6 @@
             PasswordChanged="Confirm_Changed"
             KeyDown="Password_KeyDown"
             InputScope="NumericPin"
-            Margin="12,16,12,12"/>
+            Margin="12,12,12,12"/>
     </StackPanel>
 </ContentDialog>
