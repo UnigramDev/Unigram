@@ -45,140 +45,139 @@ namespace Unigram
         {
             InitializeLayer();
 
-            container.Reset();
-
-            // .SingleIstance() is required to register a singleton service.
-            container.ContainerBuilder.RegisterType<MTProtoService>().As<IMTProtoService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<TelegramEventAggregator>().As<ITelegramEventAggregator>().SingleInstance();
-            container.ContainerBuilder.RegisterType<InMemoryCacheService>().As<ICacheService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<DeviceInfoService>().As<IDeviceInfoService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<UpdatesService>().As<IUpdatesService>().SingleInstance();
-            //container.ContainerBuilder.RegisterType<TransportService>().As<ITransportService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<ConnectionService>().As<IConnectionService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<PublicConfigService>().As<IPublicConfigService>().SingleInstance();
-
-            // Files
-            container.ContainerBuilder.RegisterType<DownloadFileManager>().As<IDownloadFileManager>().SingleInstance();
-            container.ContainerBuilder.Register((ctx) => new DownloadDocumentFileManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Audios)).As<IDownloadAudioFileManager>().SingleInstance();
-            container.ContainerBuilder.Register((ctx) => new DownloadDocumentFileManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Videos)).As<IDownloadVideoFileManager>().SingleInstance();
-            container.ContainerBuilder.Register((ctx) => new DownloadDocumentFileManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Files)).As<IDownloadDocumentFileManager>().SingleInstance();
-            container.ContainerBuilder.RegisterType<DownloadWebFileManager>().As<IDownloadWebFileManager>().SingleInstance();
-            container.ContainerBuilder.Register((ctx) => new UploadManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Photos)).As<IUploadFileManager>().SingleInstance();
-            container.ContainerBuilder.Register((ctx) => new UploadManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Audios)).As<IUploadAudioManager>().SingleInstance();
-            container.ContainerBuilder.Register((ctx) => new UploadManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Videos)).As<IUploadVideoManager>().SingleInstance();
-            container.ContainerBuilder.Register((ctx) => new UploadManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Files)).As<IUploadDocumentManager>().SingleInstance();
-
-            container.ContainerBuilder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<LiveLocationService>().As<ILiveLocationService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
-            //container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<StatsService>().As<IStatsService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<PasscodeService>().As<IPasscodeService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
-
-            // Disabled due to crashes on Mobile: 
-            // The RPC server is unavailable.
-            //if (ApiInformation.IsTypePresent("Windows.Devices.Haptics.VibrationDevice") || ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
-            //{
-            //    // Introduced in Creators Update
-            //    container.ContainerBuilder.RegisterType<VibrationService>().As<IVibrationService>().SingleInstance();
-            //}
-            //else
-            if (ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
+            container.Build((builder, account) =>
             {
-                // To keep vibration compatibility with Anniversary Update
-                container.ContainerBuilder.RegisterType<WindowsPhoneVibrationService>().As<IVibrationService>().SingleInstance();
-            }
-            else
-            {
-                container.ContainerBuilder.RegisterType<FakeVibrationService>().As<IVibrationService>().SingleInstance();
-            }
+                builder.RegisterType<MTProtoService>().WithParameter("account", account).As<IMTProtoService>().SingleInstance();
+                builder.RegisterType<InMemoryCacheService>().As<ICacheService>().SingleInstance();
+                builder.RegisterType<DeviceInfoService>().As<IDeviceInfoService>().SingleInstance();
+                builder.RegisterType<UpdatesService>().As<IUpdatesService>().SingleInstance();
+                builder.RegisterType<ConnectionService>().As<IConnectionService>().SingleInstance();
+                builder.RegisterType<PublicConfigService>().As<IPublicConfigService>().SingleInstance();
+                builder.RegisterType<TelegramEventAggregator>().As<ITelegramEventAggregator>().SingleInstance();
 
-            // ViewModels
-            container.ContainerBuilder.RegisterType<SignInViewModel>();
-            container.ContainerBuilder.RegisterType<SignUpViewModel>();
-            container.ContainerBuilder.RegisterType<SignInSentCodeViewModel>();
-            container.ContainerBuilder.RegisterType<SignInPasswordViewModel>();
-            container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<PlaybackViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<ShareViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<ForwardViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<DialogShareLocationViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<DialogsViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
-            container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
-            container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
-            container.ContainerBuilder.RegisterType<UserCreateViewModel>();
-            container.ContainerBuilder.RegisterType<ChannelManageViewModel>();
-            container.ContainerBuilder.RegisterType<ChannelAdminLogViewModel>();
-            container.ContainerBuilder.RegisterType<ChannelAdminLogFilterViewModel>();
-            container.ContainerBuilder.RegisterType<ChannelAdminRightsViewModel>();
-            container.ContainerBuilder.RegisterType<ChannelBannedRightsViewModel>();
-            container.ContainerBuilder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<ChatEditViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<ChatInviteLinkViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<ChannelDetailsViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<ChannelEditViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<ChannelEditStickerSetViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<ChannelAdminsViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<ChannelBannedViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<ChannelKickedViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<ChannelParticipantsViewModel>();// .SingleInstance();
-            container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
-            container.ContainerBuilder.RegisterType<UsersSelectionViewModel>(); //.SingleInstance();
-            container.ContainerBuilder.RegisterType<ChannelCreateStep1ViewModel>(); //.SingleInstance();
-            container.ContainerBuilder.RegisterType<ChannelCreateStep2ViewModel>(); //.SingleInstance();
-            container.ContainerBuilder.RegisterType<ChannelCreateStep3ViewModel>(); //.SingleInstance();
-            container.ContainerBuilder.RegisterType<ChatCreateStep1ViewModel>(); //.SingleInstance();
-            container.ContainerBuilder.RegisterType<ChatCreateStep2ViewModel>(); //.SingleInstance();
-            container.ContainerBuilder.RegisterType<InstantViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsGeneralViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsPhoneIntroViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsPhoneViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsPhoneSentCodeViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsStorageViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsStatsViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<FeaturedStickersViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsUsernameViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsEditNameViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsSessionsViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsBlockUserViewModel>();
-            container.ContainerBuilder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsDataAndStorageViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsPrivacyAndSecurityViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsPrivacyStatusTimestampViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsPrivacyPhoneCallViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsPrivacyChatInviteViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsSecurityChangePasswordViewModel>(); //.SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsSecurityPasscodeViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsAccountsViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsStickersViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsStickersFeaturedViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsStickersArchivedViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsMasksViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsWallPaperViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<SettingsLanguageViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<AttachedStickersViewModel>();
-            container.ContainerBuilder.RegisterType<StickerSetViewModel>();
-            container.ContainerBuilder.RegisterType<AboutViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<PaymentFormStep1ViewModel>();
-            container.ContainerBuilder.RegisterType<PaymentFormStep2ViewModel>();
-            container.ContainerBuilder.RegisterType<PaymentFormStep3ViewModel>();
-            container.ContainerBuilder.RegisterType<PaymentFormStep4ViewModel>();
-            container.ContainerBuilder.RegisterType<PaymentFormStep5ViewModel>();
-            container.ContainerBuilder.RegisterType<PaymentReceiptViewModel>();
+                // Files
+                builder.RegisterType<DownloadFileManager>().As<IDownloadFileManager>().SingleInstance();
+                builder.Register((ctx) => new DownloadDocumentFileManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Audios)).As<IDownloadAudioFileManager>().SingleInstance();
+                builder.Register((ctx) => new DownloadDocumentFileManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Videos)).As<IDownloadVideoFileManager>().SingleInstance();
+                builder.Register((ctx) => new DownloadDocumentFileManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Files)).As<IDownloadDocumentFileManager>().SingleInstance();
+                builder.RegisterType<DownloadWebFileManager>().As<IDownloadWebFileManager>().SingleInstance();
+                builder.Register((ctx) => new UploadManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Photos)).As<IUploadFileManager>().SingleInstance();
+                builder.Register((ctx) => new UploadManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Audios)).As<IUploadAudioManager>().SingleInstance();
+                builder.Register((ctx) => new UploadManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Videos)).As<IUploadVideoManager>().SingleInstance();
+                builder.Register((ctx) => new UploadManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Files)).As<IUploadDocumentManager>().SingleInstance();
 
-            container.Build();
+                builder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
+                builder.RegisterType<LiveLocationService>().As<ILiveLocationService>().SingleInstance();
+                builder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
+                builder.RegisterType<PushService>().As<IPushService>().SingleInstance();
+                builder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();
+                builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
+                //container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
+                builder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
+                builder.RegisterType<StatsService>().As<IStatsService>().SingleInstance();
+                builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
+                builder.RegisterType<PasscodeService>().As<IPasscodeService>().SingleInstance();
+                builder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
+
+                // Disabled due to crashes on Mobile: 
+                // The RPC server is unavailable.
+                //if (ApiInformation.IsTypePresent("Windows.Devices.Haptics.VibrationDevice") || ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
+                //{
+                //    // Introduced in Creators Update
+                //    container.ContainerBuilder.RegisterType<VibrationService>().As<IVibrationService>().SingleInstance();
+                //}
+                //else
+                if (ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
+                {
+                    // To keep vibration compatibility with Anniversary Update
+                    builder.RegisterType<WindowsPhoneVibrationService>().As<IVibrationService>().SingleInstance();
+                }
+                else
+                {
+                    builder.RegisterType<FakeVibrationService>().As<IVibrationService>().SingleInstance();
+                }
+
+                // ViewModels
+                builder.RegisterType<SignInViewModel>();
+                builder.RegisterType<SignUpViewModel>();
+                builder.RegisterType<SignInSentCodeViewModel>();
+                builder.RegisterType<SignInPasswordViewModel>();
+                builder.RegisterType<MainViewModel>().SingleInstance();
+                builder.RegisterType<PlaybackViewModel>().SingleInstance();
+                builder.RegisterType<ShareViewModel>().SingleInstance();
+                builder.RegisterType<ForwardViewModel>().SingleInstance();
+                builder.RegisterType<DialogShareLocationViewModel>().SingleInstance();
+                builder.RegisterType<DialogsViewModel>().SingleInstance();
+                builder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
+                builder.RegisterType<UserDetailsViewModel>();
+                builder.RegisterType<UserCommonChatsViewModel>();
+                builder.RegisterType<UserCreateViewModel>();
+                builder.RegisterType<ChannelManageViewModel>();
+                builder.RegisterType<ChannelAdminLogViewModel>();
+                builder.RegisterType<ChannelAdminLogFilterViewModel>();
+                builder.RegisterType<ChannelAdminRightsViewModel>();
+                builder.RegisterType<ChannelBannedRightsViewModel>();
+                builder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
+                builder.RegisterType<ChatEditViewModel>();// .SingleInstance();
+                builder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
+                builder.RegisterType<ChatInviteLinkViewModel>();// .SingleInstance();
+                builder.RegisterType<ChannelDetailsViewModel>();// .SingleInstance();
+                builder.RegisterType<ChannelEditViewModel>();// .SingleInstance();
+                builder.RegisterType<ChannelEditStickerSetViewModel>();// .SingleInstance();
+                builder.RegisterType<ChannelAdminsViewModel>();// .SingleInstance();
+                builder.RegisterType<ChannelBannedViewModel>();// .SingleInstance();
+                builder.RegisterType<ChannelKickedViewModel>();// .SingleInstance();
+                builder.RegisterType<ChannelParticipantsViewModel>();// .SingleInstance();
+                builder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
+                builder.RegisterType<UsersSelectionViewModel>(); //.SingleInstance();
+                builder.RegisterType<ChannelCreateStep1ViewModel>(); //.SingleInstance();
+                builder.RegisterType<ChannelCreateStep2ViewModel>(); //.SingleInstance();
+                builder.RegisterType<ChannelCreateStep3ViewModel>(); //.SingleInstance();
+                builder.RegisterType<ChatCreateStep1ViewModel>(); //.SingleInstance();
+                builder.RegisterType<ChatCreateStep2ViewModel>(); //.SingleInstance();
+                builder.RegisterType<InstantViewModel>().SingleInstance();
+                builder.RegisterType<SettingsViewModel>().SingleInstance();
+                builder.RegisterType<SettingsGeneralViewModel>().SingleInstance();
+                builder.RegisterType<SettingsPhoneIntroViewModel>().SingleInstance();
+                builder.RegisterType<SettingsPhoneViewModel>().SingleInstance();
+                builder.RegisterType<SettingsPhoneSentCodeViewModel>().SingleInstance();
+                builder.RegisterType<SettingsStorageViewModel>().SingleInstance();
+                builder.RegisterType<SettingsStatsViewModel>().SingleInstance();
+                builder.RegisterType<FeaturedStickersViewModel>().SingleInstance();
+                builder.RegisterType<SettingsUsernameViewModel>().SingleInstance();
+                builder.RegisterType<SettingsEditNameViewModel>().SingleInstance();
+                builder.RegisterType<SettingsSessionsViewModel>().SingleInstance();
+                builder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
+                builder.RegisterType<SettingsBlockUserViewModel>();
+                builder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
+                builder.RegisterType<SettingsDataAndStorageViewModel>().SingleInstance();
+                builder.RegisterType<SettingsPrivacyAndSecurityViewModel>().SingleInstance();
+                builder.RegisterType<SettingsPrivacyStatusTimestampViewModel>().SingleInstance();
+                builder.RegisterType<SettingsPrivacyPhoneCallViewModel>().SingleInstance();
+                builder.RegisterType<SettingsPrivacyChatInviteViewModel>().SingleInstance();
+                builder.RegisterType<SettingsSecurityChangePasswordViewModel>(); //.SingleInstance();
+                builder.RegisterType<SettingsSecurityPasscodeViewModel>().SingleInstance();
+                builder.RegisterType<SettingsAccountsViewModel>().SingleInstance();
+                builder.RegisterType<SettingsStickersViewModel>().SingleInstance();
+                builder.RegisterType<SettingsStickersFeaturedViewModel>().SingleInstance();
+                builder.RegisterType<SettingsStickersArchivedViewModel>().SingleInstance();
+                builder.RegisterType<SettingsMasksViewModel>().SingleInstance();
+                builder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
+                builder.RegisterType<SettingsWallPaperViewModel>().SingleInstance();
+                builder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
+                builder.RegisterType<SettingsLanguageViewModel>().SingleInstance();
+                builder.RegisterType<AttachedStickersViewModel>();
+                builder.RegisterType<StickerSetViewModel>();
+                builder.RegisterType<AboutViewModel>().SingleInstance();
+                builder.RegisterType<PaymentFormStep1ViewModel>();
+                builder.RegisterType<PaymentFormStep2ViewModel>();
+                builder.RegisterType<PaymentFormStep3ViewModel>();
+                builder.RegisterType<PaymentFormStep4ViewModel>();
+                builder.RegisterType<PaymentFormStep5ViewModel>();
+                builder.RegisterType<PaymentReceiptViewModel>();
+
+                return builder.Build();
+            });
 
             Task.Run(() => LoadStateAndUpdate());
         }

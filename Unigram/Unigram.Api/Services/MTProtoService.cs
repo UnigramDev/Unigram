@@ -105,7 +105,7 @@ namespace Telegram.Api.Services
         private Timer _deviceLockedTimer;
         private Timer _checkTransportTimer;
 
-        public MTProtoService(IDeviceInfoService deviceInfo, IUpdatesService updatesService, ICacheService cacheService, IConnectionService connectionService, IStatsService statsService)
+        public MTProtoService(int account, IDeviceInfoService deviceInfo, IUpdatesService updatesService, ICacheService cacheService, IConnectionService connectionService, IStatsService statsService)
         {
             var isBackground = deviceInfo != null && deviceInfo.IsBackground;
 
