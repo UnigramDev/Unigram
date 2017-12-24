@@ -31,12 +31,12 @@ namespace Telegram.Api.Helpers
 
         public static string GetTempFileName(string fileName)
         {
-            return Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp", fileName);
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp", fileName);
         }
 
         public static string GetTempFilePath(string fileName)
         {
-            return Path.Combine(SettingsHelper.SessionGuid, "temp", fileName);
+            return Path.Combine("temp", fileName);
         }
 
         public static string GetFilePath(string fileName)
@@ -51,27 +51,27 @@ namespace Telegram.Api.Helpers
 
         public static string GetTempFileUrl(string fileName)
         {
-            return $"ms-appdata:///local/{SettingsHelper.SessionGuid}/temp/{fileName}";
+            return $"ms-appdata:///local/temp/{fileName}";
         }
 
-        public static IAsyncOperation<StorageFile> CreateFileAsync(string fileName)
+        public static IAsyncOperation<StorageFile> CreateFileAsync(string fileName, CreationCollisionOption options = CreationCollisionOption.ReplaceExisting)
         {
-            return ApplicationData.Current.LocalFolder.CreateFileAsync($"{SettingsHelper.SessionGuid}\\{fileName}", CreationCollisionOption.ReplaceExisting);
+            return ApplicationData.Current.LocalFolder.CreateFileAsync($"{SettingsHelper.SessionGuid}\\{fileName}", options);
         }
 
-        public static IAsyncOperation<StorageFile> CreateTempFileAsync(string fileName)
+        public static IAsyncOperation<StorageFile> CreateTempFileAsync(string fileName, CreationCollisionOption options = CreationCollisionOption.ReplaceExisting)
         {
-            return ApplicationData.Current.LocalFolder.CreateFileAsync($"{SettingsHelper.SessionGuid}\\temp\\{fileName}", CreationCollisionOption.ReplaceExisting);
+            return ApplicationData.Current.LocalFolder.CreateFileAsync($"temp\\{fileName}", options);
         }
 
         public static IAsyncOperation<StorageFile> GetTempFileAsync(string fileName)
         {
-            return ApplicationData.Current.LocalFolder.GetFileAsync($"{SettingsHelper.SessionGuid}\\temp\\{fileName}");
+            return ApplicationData.Current.LocalFolder.GetFileAsync($"temp\\{fileName}");
         }
 
         public static IAsyncOperation<IStorageItem> TryGetTempItemAsync(string fileName)
         {
-            return ApplicationData.Current.LocalFolder.TryGetItemAsync($"{SettingsHelper.SessionGuid}\\temp\\{fileName}");
+            return ApplicationData.Current.LocalFolder.TryGetItemAsync($"temp\\{fileName}");
         }
 
         public static IAsyncOperation<IStorageItem> TryGetItemAsync(string fileName)
@@ -81,11 +81,17 @@ namespace Telegram.Api.Helpers
 
         public static void CreateTemporaryFolder()
         {
-            if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp\\parts")) == false)
+            if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp")))
             {
-                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp"));
-                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp\\parts"));
-                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp\\placeholders"));
+                // Delete old temp folder if it exists
+                Directory.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp"), true);
+            }
+
+            if (!Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\parts")))
+            {
+                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp"));
+                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\parts"));
+                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\placeholders"));
             }
         }
 
