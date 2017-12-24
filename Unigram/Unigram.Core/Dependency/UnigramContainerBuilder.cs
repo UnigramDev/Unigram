@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 
 namespace Unigram.Views
 {
@@ -11,11 +12,8 @@ namespace Unigram.Views
     {
         private static UnigramContainer _instance = new UnigramContainer();
 
-        private ContainerBuilder _builder;
-        private IContainer _container;
-        private bool _isInitialized;
-
-        private Dictionary<object, object> _cachedServices = new Dictionary<object, object>();
+        //private Dictionary<int, IContainer> _containers = new Dictionary<int, IContainer>();
+        private IContainer[] _containers = new IContainer[3];
 
         private UnigramContainer() { }
 
@@ -27,65 +25,51 @@ namespace Unigram.Views
             }
         }
 
-        public ContainerBuilder ContainerBuilder
+        public void Build(Func<ContainerBuilder, int, IContainer> factory)
         {
-            get
+            for (int i = 0; i < Telegram.Api.Constants.AccountsMaxCount; i++)
             {
-                return _builder;
+                //if (_containers.ContainsKey(i))
+                if (_containers[i] != null)
+                {
+                    continue;
+                }
+
+                _containers[i] = factory(new ContainerBuilder(), i);
             }
         }
 
-        public void Reset()
+        public TService ResolveType<TService>(int account = int.MaxValue)
         {
-            _isInitialized = false;
-            _container?.Dispose();
-            _builder = new ContainerBuilder();
-        }
-
-        public void Build()
-        {
-            if (!_isInitialized)
+            if (account == int.MaxValue)
             {
-                _isInitialized = true;
-                _container = _builder.Build();
+                account = SettingsHelper.SelectedAccount;
             }
-        }
 
-        public TService ResolveType<TService>()
-        {
             var result = default(TService);
-            if (_container != null)
+            //if (_containers.TryGetValue(account, out IContainer container))
+            var container = _containers[account];
             {
-                result = _container.Resolve<TService>();
+                result = container.Resolve<TService>();
             }
 
             return result;
         }
 
-        public object ResolveType(Type type)
+        public object ResolveType(Type type, int account = int.MaxValue)
         {
-            if (_container != null)
+            if (account == int.MaxValue)
             {
-                return _container.Resolve(type);
+                account = SettingsHelper.SelectedAccount;
+            }
+
+            //if (_containers.TryGetValue(account, out IContainer container))
+            var container = _containers[account];
+            {
+                return container.Resolve(type);
             }
 
             return null;
-        }
-
-        public TService ResolveType<TService>(object key)
-        {
-            if (_cachedServices.ContainsKey(key))
-            {
-                return (TService)_cachedServices[key];
-            }
-
-            var service = ResolveType<TService>();
-            if (service != null)
-            {
-                _cachedServices[key] = service;
-            }
-
-            return service;
         }
     }
 }
