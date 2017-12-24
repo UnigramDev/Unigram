@@ -188,7 +188,7 @@ namespace Unigram.Views
                     await remove.DeleteAsync();
 
                     Theme.Current.Update();
-                    App.RaiseThemeChanged();
+                    App.NotifyThemeChanged();
                 }
 
                 return;
@@ -204,7 +204,7 @@ namespace Unigram.Views
                 await file.CopyAndReplaceAsync(result);
 
                 Theme.Current.Update();
-                App.RaiseThemeChanged();
+                App.NotifyThemeChanged();
 
                 //var text = await FileIO.ReadTextAsync(file);
 
