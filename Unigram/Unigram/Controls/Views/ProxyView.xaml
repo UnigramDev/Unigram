@@ -41,7 +41,7 @@
             Content="{CustomResource UseProxySettings}"
             Checked="Enable_Toggled"
             Unchecked="Enable_Toggled"
-            Margin="12"/>
+            Margin="12,6,12,0"/>
 
         <TextBox
             x:Name="FieldServer"
