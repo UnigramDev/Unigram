@@ -186,6 +186,8 @@
             </Setter>
         </Style>
 
+        <DataTemplate x:Key="EmptyMessageTemplate"/>
+
         <!-- Region Service -->
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">

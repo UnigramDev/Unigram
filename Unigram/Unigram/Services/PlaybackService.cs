@@ -192,7 +192,12 @@ namespace Unigram.Services
 
         public void Enqueue(TLMessage message)
         {
-            if (_mediaPlayer.Source == _playlist && _mediaPlayer.Source != null && _inverse.TryGetValue(message, out MediaPlaybackItem item) && _playlist.Items.Contains(item))
+            if (message == null)
+            {
+                return;
+            }
+
+            if (_mediaPlayer.Source == _playlist && _mediaPlayer.Source != null && _playlist != null && _inverse.TryGetValue(message, out MediaPlaybackItem item) && _playlist.Items.Contains(item))
             {
                 var index = _playlist.Items.IndexOf(item);
                 if (index >= 0)
