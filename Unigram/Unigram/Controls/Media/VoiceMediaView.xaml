@@ -138,7 +138,7 @@
             <controls:ProgressVoice x:Name="Progress" Value="50" Media="{Binding Media}"/>
             <!--<Slider x:Name="Slider" Opacity="0"/>-->
 
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,4,0,0" RequestedTheme="Light" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,1,0,0" RequestedTheme="Light" Grid.Row="1">
                 <TextBlock x:Name="DurationLabel" Text="00:01" Foreground="{ThemeResource MessageSubtleForegroundBrush}" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 <!--<TextBlock Visibility="{x:Bind (Visibility)ViewModel.IsMediaUnread, Mode=OneWay}" Text=" ●" Foreground="{ThemeResource SliderTrackFill}" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,-1,0,0"/>-->
                 <Ellipse Visibility="{x:Bind (Visibility)ViewModel.IsMediaUnread, Mode=OneWay}" Width="6" Height="6" Fill="{ThemeResource MessageSubtleForegroundBrush}" Margin="6,2,0,0"/>
