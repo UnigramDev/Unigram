@@ -67,6 +67,7 @@ using Unigram.ViewModels.Dialogs;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.Collections.Concurrent;
 using Windows.ApplicationModel.UserActivities;
+using Windows.Foundation;
 
 namespace Unigram.ViewModels
 {
@@ -127,6 +128,7 @@ namespace Unigram.ViewModels
         private readonly ConcurrentDictionary<long, TLMessage> _groupedMessages = new ConcurrentDictionary<long, TLMessage>();
 
         private static readonly Dictionary<TLPeerBase, int> _scrollingIndex = new Dictionary<TLPeerBase, int>();
+        private static readonly Dictionary<TLPeerBase, double> _scrollingPixel = new Dictionary<TLPeerBase, double>();
 
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly DisposableMutex _insertLock = new DisposableMutex();
@@ -872,7 +874,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task LoadMessageSliceAsync(int? previousId, int maxId, bool highlight = true)
+        public async Task LoadMessageSliceAsync(int? previousId, int maxId, bool highlight = true, double? pixel = null)
         {
             if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
             {
@@ -883,7 +885,7 @@ namespace Unigram.ViewModels
             if (already != null)
             {
                 //ListField.ScrollIntoView(already);
-                await ListField.ScrollToItem(already, highlight ? SnapPointsAlignment.Center : SnapPointsAlignment.Near, highlight);
+                await ListField.ScrollToItem(already, highlight ? SnapPointsAlignment.Center : SnapPointsAlignment.Near, highlight, pixel);
                 return;
             }
 
@@ -956,7 +958,7 @@ namespace Unigram.ViewModels
 
             //await Task.Delay(200);
             //await LoadNextSliceAsync(true);
-            await LoadMessageSliceAsync(null, maxId, highlight);
+            await LoadMessageSliceAsync(null, maxId, highlight, pixel);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -1331,10 +1333,17 @@ namespace Unigram.ViewModels
             Dialog = CacheService.GetDialog(Peer.ToPeer());
 
             var highlight = true;
+            var pixel = new double?();
+
             if (_scrollingIndex.TryGetValue(participant.ToPeer(), out int visible))
             {
                 messageId = visible;
                 highlight = false;
+            }
+
+            if (_scrollingPixel.TryGetValue(participant.ToPeer(), out double kpixel))
+            {
+                pixel = kpixel;
             }
 
             //Aggregator.Subscribe(this);
@@ -1398,7 +1407,7 @@ namespace Unigram.ViewModels
 
             if (messageId is int slice)
             {
-                LoadMessageSliceAsync(null, slice, highlight);
+                LoadMessageSliceAsync(null, slice, highlight, pixel);
             }
             else
             {
@@ -1861,11 +1870,29 @@ namespace Unigram.ViewModels
                 _timelineSession = null;
             }
 
+            var peer = Peer.ToPeer();
+
             var panel = ListField.ItemsPanelRoot as ItemsStackPanel;
-            if (panel.FirstVisibleIndex < Items.Count)
+            if (panel.LastVisibleIndex < Items.Count)
             {
                 //pageState["visible"] = Items[panel.FirstVisibleIndex].Id;
-                _scrollingIndex[Peer.ToPeer()] = Items[panel.FirstVisibleIndex].Id;
+                if (Items[panel.LastVisibleIndex].Id != Items[Items.Count - 1].Id || !IsLastSliceLoaded)
+                {
+                    var container = ListField.ContainerFromIndex(panel.FirstVisibleIndex) as ListViewItem;
+                    if (container != null)
+                    {
+                        var transform = container.TransformToVisual(ListField);
+                        var position = transform.TransformPoint(new Point());
+
+                        _scrollingPixel[peer] = position.Y;
+                    }
+
+                    _scrollingIndex[peer] = Items[panel.FirstVisibleIndex].Id;
+                }
+                else
+                {
+                    _scrollingIndex.Remove(peer);
+                }
             }
 
             return Task.CompletedTask;
