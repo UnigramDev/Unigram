@@ -26,7 +26,7 @@ namespace Telegram.Api.Helpers
     {
         public static string GetFileName(string fileName)
         {
-            return Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, fileName);
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SelectedAccount.ToString(), fileName);
         }
 
         public static string GetTempFileName(string fileName)
@@ -36,12 +36,12 @@ namespace Telegram.Api.Helpers
 
         public static string GetTempFilePath(string fileName)
         {
-            return Path.Combine("temp", fileName);
+            return $"temp\\{fileName}";
         }
 
         public static string GetFilePath(string fileName)
         {
-            return Path.Combine(SettingsHelper.SessionGuid, fileName);
+            return $"{SettingsHelper.SelectedAccount}\\{fileName}";
         }
 
         public static Uri GetTempFileUri(string fileName)
@@ -56,7 +56,7 @@ namespace Telegram.Api.Helpers
 
         public static IAsyncOperation<StorageFile> CreateFileAsync(string fileName, CreationCollisionOption options = CreationCollisionOption.ReplaceExisting)
         {
-            return ApplicationData.Current.LocalFolder.CreateFileAsync($"{SettingsHelper.SessionGuid}\\{fileName}", options);
+            return ApplicationData.Current.LocalFolder.CreateFileAsync($"{SettingsHelper.SelectedAccount}\\{fileName}", options);
         }
 
         public static IAsyncOperation<StorageFile> CreateTempFileAsync(string fileName, CreationCollisionOption options = CreationCollisionOption.ReplaceExisting)
@@ -76,22 +76,22 @@ namespace Telegram.Api.Helpers
 
         public static IAsyncOperation<IStorageItem> TryGetItemAsync(string fileName)
         {
-            return ApplicationData.Current.LocalFolder.TryGetItemAsync($"{SettingsHelper.SessionGuid}\\{fileName}");
+            return ApplicationData.Current.LocalFolder.TryGetItemAsync($"{SettingsHelper.SelectedAccount}\\{fileName}");
         }
 
         public static void CreateTemporaryFolder()
         {
-            if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp")))
-            {
-                // Delete old temp folder if it exists
-                Directory.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp"), true);
-            }
-
             if (!Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\parts")))
             {
                 Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp"));
                 Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\parts"));
                 Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, "temp\\placeholders"));
+            }
+
+            if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SettingsHelper.SelectedAccount}\\temp")))
+            {
+                // Delete old temp folder if it exists
+                Directory.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SettingsHelper.SelectedAccount}\\temp"), true);
             }
         }
 

@@ -12,6 +12,7 @@ using Telegram.Api.Services.Cache;
 using Unigram.Common;
 using Unigram.Views;
 using Unigram.Views;
+using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
@@ -25,7 +26,7 @@ namespace Unigram.ViewModels.Settings
         public SettingsAccountsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new ObservableCollection<string>();
+            Items = new ObservableCollection<int>();
 
             NewAccountCommand = new RelayCommand(NewAccountExecute);
         }
@@ -37,21 +38,21 @@ namespace Unigram.ViewModels.Settings
             var folders = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
             foreach (var folder in folders)
             {
-                if (Guid.TryParse(Path.GetFileName(folder), out Guid guid))
+                if (int.TryParse(Path.GetFileName(folder), out int guid))
                 {
-                    Items.Add(guid.ToString());
+                    Items.Add(guid);
                 }
             }
 
-            SelectedItem = SettingsHelper.SessionGuid;
+            SelectedItem = SettingsHelper.SelectedAccount;
 
             return Task.CompletedTask;
         }
 
-        public ObservableCollection<string> Items { get; private set; }
+        public ObservableCollection<int> Items { get; private set; }
 
-        private string _selectedItem;
-        public string SelectedItem
+        private int _selectedItem;
+        public int SelectedItem
         {
             get
             {
@@ -67,19 +68,23 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand NewAccountCommand { get; }
         private void NewAccountExecute()
         {
-            SettingsHelper.SwitchGuid = Guid.NewGuid().ToString();
+            var index = 0;
+            // TODO: implement
+            index++;
+
+            SettingsHelper.SwitchAccount = index;
             SettingsHelper.IsAuthorized = false;
             SettingsHelper.IsTestMode = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
             App.Current.Exit();
         }
 
-        private void SwitchAccount()
+        private async void SwitchAccount()
         {
-            if (_selectedItem != SettingsHelper.SessionGuid && _selectedItem != null)
+            if (_selectedItem != SettingsHelper.SelectedAccount && _selectedItem >= 0)
             {
-                SettingsHelper.SwitchGuid = _selectedItem;
-                App.Current.Exit();
+                SettingsHelper.SwitchAccount = _selectedItem;
+                await CoreApplication.RequestRestartAsync(string.Empty);
             }
         }
     }
