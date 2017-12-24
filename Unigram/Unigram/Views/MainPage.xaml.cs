@@ -51,6 +51,7 @@ using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI;
 using System.Windows.Input;
 using Unigram.Strings;
+using Telegram.Api.Native;
 
 namespace Unigram.Views
 {
@@ -349,6 +350,36 @@ namespace Unigram.Views
                     port = query.GetParameter("port");
                     user = query.GetParameter("user");
                     pass = query.GetParameter("pass");
+                }
+                else if (scheme.AbsoluteUri.StartsWith("tg:toast") || scheme.AbsoluteUri.StartsWith("tg://toast"))
+                {
+                    if (query.ContainsKey("from_id") && int.TryParse(query.GetParameter("from_id"), out int userId))
+                    {
+                        TLUser requestedUser = (TLUser)ViewModel.CacheService.GetUser(userId);
+
+                        if (requestedUser != null)
+                        {
+                            Execute.BeginOnUIThread(() => MasterDetail.NavigationService.NavigateToDialog(requestedUser));
+                        }
+                    }
+                    else if (query.ContainsKey("chat_id") && int.TryParse(query.GetParameter("chat_id"), out int chatId))
+                    {
+                        TLChat requestedChat = (TLChat)ViewModel.CacheService.GetChat(chatId);
+
+                        if (requestedChat != null)
+                        {
+                            Execute.BeginOnUIThread(() => MasterDetail.NavigationService.NavigateToDialog(requestedChat));
+                        }
+                    }
+                    else if (query.ContainsKey("channel_id") && int.TryParse(query.GetParameter("channel_id"), out int channelId))
+                    {
+                        TLChannel requestedChannel = (TLChannel)ViewModel.CacheService.GetChat(channelId);
+
+                        if (requestedChannel != null)
+                        {
+                            Execute.BeginOnUIThread(() => MasterDetail.NavigationService.NavigateToDialog(requestedChannel));
+                        }
+                    }
                 }
 
                 if (message != null && message.StartsWith("@"))

@@ -66,6 +66,7 @@ using Unigram.Core.Common;
 using Unigram.ViewModels.Dialogs;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.Collections.Concurrent;
+using Windows.ApplicationModel.UserActivities;
 
 namespace Unigram.ViewModels
 {
@@ -1694,6 +1695,34 @@ namespace Unigram.ViewModels
             if (CanUnpinChat)
             {
                 ResetTile();
+            }
+
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+            {
+                CurrentActivity?.Dispose();
+                CurrentActivity = await UserActivityHelper.GenerateUserActivityAsync(participant.ToPeer());
+            }
+        }
+
+        private UserActivitySession _currentActivity;
+        public UserActivitySession CurrentActivity
+        {
+            get
+            {
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+                {
+                    return _currentActivity;
+                }
+
+                return null;
+            }
+
+            private set
+            {
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+                {
+                    Set(ref _currentActivity, value);
+                }
             }
         }
 
