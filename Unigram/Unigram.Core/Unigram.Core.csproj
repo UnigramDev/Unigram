@@ -98,7 +98,6 @@
     <Compile Include="EncryptionKeyEmojifier.cs" />
     <Compile Include="Helpers\ColorsHelper.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
-    <Compile Include="Helpers\UserActivityHelper.cs" />
     <Compile Include="Managers\BackgroundTaskManager.cs" />
     <Compile Include="Managers\ResourcesManager.cs" />
     <Compile Include="Media\JSExtractor.cs" />
