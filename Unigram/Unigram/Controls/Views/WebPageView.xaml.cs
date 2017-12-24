@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -92,13 +93,18 @@ namespace Unigram.Controls.Views
                         ciccio.Children.Add(view);
                         ciccio.Children.Add(yolo);
 
-                        view.Unloaded += (s, args) =>
+                        Window.Current.Content = ciccio;
+                        Window.Current.Activate();
+                        Window.Current.VisibilityChanged += (s, args) =>
                         {
+                            if (args.Visible)
+                            {
+                                return;
+                            }
+
                             view.NavigateToString(string.Empty);
                         };
 
-                        Window.Current.Content = ciccio;
-                        Window.Current.Activate();
                         newViewId = ApplicationView.GetForCurrentView().Id;
 
                         var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
