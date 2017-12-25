@@ -68,6 +68,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using System.Collections.Concurrent;
 using Windows.ApplicationModel.UserActivities;
 using Windows.Foundation;
+using Template10.Services.NavigationService;
 
 namespace Unigram.ViewModels
 {
@@ -1867,19 +1868,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
         {
-            if (Dispatcher != null)
-            {
-                Dispatcher.Dispatch(SaveDraft);
-            }
-
-            if (_timelineSession != null)
-            {
-                _timelineSession.Dispose();
-                _timelineSession = null;
-            }
-
             var peer = Peer.ToPeer();
 
             var panel = ListField.ItemsPanelRoot as ItemsStackPanel;
@@ -1900,6 +1890,22 @@ namespace Unigram.ViewModels
             {
                 _scrollingIndex.Remove(peer);
                 _scrollingPixel.Remove(peer);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            if (Dispatcher != null)
+            {
+                Dispatcher.Dispatch(SaveDraft);
+            }
+
+            if (_timelineSession != null)
+            {
+                _timelineSession.Dispose();
+                _timelineSession = null;
             }
 
             return Task.CompletedTask;
