@@ -166,14 +166,14 @@ namespace Telegram.Api.Helpers
             get
             {
                 if (_isAuthorized == null)
-                    _isAuthorized = GetValueOrDefault("IsAuthorized", false);
+                    _isAuthorized = GetValueOrDefault("Authorized", false);
 
                 return _isAuthorized ?? false;
             }
             set
             {
                 _isAuthorized = value;
-                AddOrUpdateValue("IsAuthorized", value);
+                AddOrUpdateValue("Authorized", value);
             }
         }
 
