@@ -78,14 +78,14 @@
                                         InputScope="TelephoneNumber"
                                         PlaceholderText="+"
                                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
-                <controls:UpdateTextBox x:Name="PrimaryInput"
-                                        Text="{Binding PhoneNumber, Mode=TwoWay}"
-                                        MinWidth="200"
-                                        InputScope="TelephoneNumber"
-                                        IsTextPredictionEnabled="False"
-                                        KeyDown="PhoneNumber_KeyDown"
-                                        PlaceholderText="Enter your phone number"
-                                        Grid.Column="1"/>
+                <controls:PhoneTextBox x:Name="PrimaryInput"
+                                       Text="{Binding PhoneNumber, Mode=TwoWay}"
+                                       PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
+                                       MinWidth="200"
+                                       InputScope="TelephoneNumber"
+                                       IsTextPredictionEnabled="False"
+                                       KeyDown="PhoneNumber_KeyDown"
+                                       Grid.Column="1"/>
 
             </Grid>
 

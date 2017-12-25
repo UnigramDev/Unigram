@@ -16,8 +16,6 @@ namespace Unigram.Core.Models
 
         public string Name { get; set; }
 
-        public string Format { get; set; }
-
         public string DisplayName { get; set; }
 
         public string GetKey()
@@ -34,24 +32,9 @@ namespace Unigram.Core.Models
             {
                 try
                 {
-                    switch (c.Code)
-                    {
-                        case "ic":
-                            {
-                                c.DisplayName = new GeographicRegion("IS").DisplayName;
-                                break;
-                            }
-                        default:
-                            {
-                                c.DisplayName = new GeographicRegion(c.Code.ToUpper()).DisplayName;
-                                break;
-                            }
-                    }
+                    c.DisplayName = new GeographicRegion(c.Code.ToUpper()).DisplayName;
                 }
-                catch
-                {
-
-                }
+                catch { }
 
                 if (string.IsNullOrWhiteSpace(c.DisplayName))
                 {
@@ -173,7 +156,6 @@ namespace Unigram.Core.Models
             new Country { Code = "hr", PhoneCode = "385", Name = "Croatia" },
             new Country { Code = "ht", PhoneCode = "509", Name = "Haiti" },
             new Country { Code = "hu", PhoneCode = "36", Name = "Hungary" },
-            new Country { Code = "ic", PhoneCode = "354", Name = "Iceland" },
             new Country { Code = "id", PhoneCode = "62", Name = "Indonesia" },
             new Country { Code = "ie", PhoneCode = "353", Name = "Ireland" },
             new Country { Code = "il", PhoneCode = "972", Name = "Israel" },
@@ -181,6 +163,7 @@ namespace Unigram.Core.Models
             new Country { Code = "io", PhoneCode = "246", Name = "Diego Garcia" },
             new Country { Code = "iq", PhoneCode = "964", Name = "Iraq" },
             new Country { Code = "ir", PhoneCode = "98", Name = "Iran" },
+            new Country { Code = "is", PhoneCode = "354", Name = "Iceland" },
             new Country { Code = "it", PhoneCode = "39", Name = "Italy" },
             new Country { Code = "jm", PhoneCode = "1876", Name = "Jamaica" },
             new Country { Code = "jo", PhoneCode = "962", Name = "Jordan" },
@@ -280,7 +263,7 @@ namespace Unigram.Core.Models
             new Country { Code = "st", PhoneCode = "239", Name = "São Tomé & Príncipe" },
             new Country { Code = "sv", PhoneCode = "503", Name = "El Salvador" },
             new Country { Code = "sx", PhoneCode = "1721", Name = "Sint Maarten" },
-            new Country { Code = "sy", PhoneCode = "963", Name = "Syrian Arab Republic" },
+            new Country { Code = "sy", PhoneCode = "963", Name = "Syria" },
             new Country { Code = "sz", PhoneCode = "268", Name = "Swaziland" },
             new Country { Code = "tc", PhoneCode = "1649", Name = "Turks & Caicos Islands" },
             new Country { Code = "td", PhoneCode = "235", Name = "Chad" },
@@ -288,7 +271,7 @@ namespace Unigram.Core.Models
             new Country { Code = "th", PhoneCode = "66", Name = "Thailand" },
             new Country { Code = "tj", PhoneCode = "992", Name = "Tajikistan" },
             new Country { Code = "tk", PhoneCode = "690", Name = "Tokelau" },
-            new Country { Code = "tl", PhoneCode = "670", Name = "Timor-leste" },
+            new Country { Code = "tl", PhoneCode = "670", Name = "Timor-Leste" },
             new Country { Code = "tm", PhoneCode = "993", Name = "Turkmenistan" },
             new Country { Code = "tn", PhoneCode = "216", Name = "Tunisia" },
             new Country { Code = "to", PhoneCode = "676", Name = "Tonga" },
@@ -299,7 +282,7 @@ namespace Unigram.Core.Models
             new Country { Code = "tz", PhoneCode = "255", Name = "Tanzania" },
             new Country { Code = "ua", PhoneCode = "380", Name = "Ukraine" },
             new Country { Code = "ug", PhoneCode = "256", Name = "Uganda" },
-            new Country { Code = "us", PhoneCode = "1", Name = "United States" },
+            new Country { Code = "us", PhoneCode = "1", Name = "USA" },
             new Country { Code = "uy", PhoneCode = "598", Name = "Uruguay" },
             new Country { Code = "uz", PhoneCode = "998", Name = "Uzbekistan" },
             new Country { Code = "vc", PhoneCode = "1784", Name = "Saint Vincent & the Grenadines" },
@@ -311,9 +294,10 @@ namespace Unigram.Core.Models
             new Country { Code = "wf", PhoneCode = "681", Name = "Wallis & Futuna" },
             new Country { Code = "ws", PhoneCode = "685", Name = "Samoa" },
             new Country { Code = "ye", PhoneCode = "967", Name = "Yemen" },
+            new Country { Code = "yl", PhoneCode = "42", Name = "Y-land" },
             new Country { Code = "za", PhoneCode = "27", Name = "South Africa" },
             new Country { Code = "zm", PhoneCode = "260", Name = "Zambia" },
-            new Country { Code = "zw", PhoneCode = "263", Name = "Zimbabwe" },
+            new Country { Code = "zw", PhoneCode = "263", Name = "Zimbabwe" }
         };
 
         #endregion

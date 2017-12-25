@@ -181,6 +181,7 @@
     </Compile>
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
+    <Compile Include="Controls\PhoneTextBox.cs" />
     <Compile Include="Controls\PeriodTimer.cs" />
     <Compile Include="Controls\PlaybackHeader.xaml.cs">
       <DependentUpon>PlaybackHeader.xaml</DependentUpon>

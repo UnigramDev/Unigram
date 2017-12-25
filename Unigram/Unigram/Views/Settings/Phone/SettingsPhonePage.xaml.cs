@@ -17,6 +17,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 using Unigram.Common;
+using Unigram.Core.Models;
+using Telegram.Helpers;
+using System.Text;
 
 namespace Unigram.Views.Settings
 {
@@ -64,5 +67,36 @@ namespace Unigram.Views.Settings
                 e.Handled = true;
             }
         }
+
+        #region Binding
+
+        private string ConvertFormat(Country country)
+        {
+            if (country == null)
+            {
+                return null;
+            }
+
+            var groups = PhoneNumber.Parse(country.PhoneCode);
+            var builder = new StringBuilder();
+
+            for (int i = 1; i < groups.Length; i++)
+            {
+                for (int j = 0; j < groups[i]; j++)
+                {
+                    builder.Append('-');
+                }
+
+                if (i + 1 < groups.Length)
+                {
+                    builder.Append(' ');
+                }
+            }
+
+            return builder.ToString();
+        }
+
+        #endregion
+
     }
 }
