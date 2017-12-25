@@ -3810,7 +3810,8 @@
     <value>Безопасный</value>
   </data>
   <data name="Page5Message" xml:space="preserve">
-    <value>**Telegram** не ограничивает размер\n Ваших файлов и чатов.</value>
+    <value>**Telegram** не ограничивает размер
+Ваших файлов и чатов.</value>
   </data>
   <data name="Page5Title" xml:space="preserve">
     <value>Мощный</value>
@@ -4924,7 +4925,7 @@
     <value>Начать общение</value>
   </data>
   <data name="StartText" xml:space="preserve">
-    <value>Проверьте код страны\nи введите свой номер телефона.</value>
+    <value>Проверьте код страны и введите свой номер телефона.</value>
   </data>
   <data name="StickersZero" xml:space="preserve">
     <value>{0} стикеров</value>
