@@ -26,8 +26,7 @@ namespace Telegram.Api.TL
                     return;
                 }
 
-                var operation = manager.DownloadFileAsync(FileName, DCId, ToInputFileLocation(), Size);
-                var download = await operation.AsTask(Download());
+                var download = await manager.DownloadFileAsync(FileName, DCId, ToInputFileLocation(), Size, Download());
                 if (download != null)
                 {
                     //UploadingProgress = 0;

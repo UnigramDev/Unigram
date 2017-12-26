@@ -16,7 +16,7 @@ namespace Telegram.Api.Services.FileManager
 {
     public interface IDownloadEncryptedFileManager
     {
-        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLEncryptedFile file);
+        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLEncryptedFile file, IProgress<double> test = null);
 
         void DownloadFile(TLEncryptedFile file, TLObject owner);
 
@@ -205,7 +205,7 @@ namespace Telegram.Api.Services.FileManager
             return result;
         }
 
-        public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLEncryptedFile file)
+        public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLEncryptedFile file, IProgress<double> test = null)
         {
             return AsyncInfo.Run<DownloadableItem, double>((token, progress) =>
             {
@@ -214,7 +214,7 @@ namespace Telegram.Api.Services.FileManager
                 var inputFile = new TLInputEncryptedFileLocation { Id = file.Id, AccessHash = file.AccessHash };
                 var downloadableItem = GetDownloadableItem(file.DCId, inputFile, null, file.Size);
                 downloadableItem.Callback = tsc;
-                downloadableItem.Progress = progress;
+                downloadableItem.Progress = test ?? progress;
 
                 lock (_itemsSyncRoot)
                 {

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Telegram.Api.TL;
+using Windows.Foundation;
 
 namespace Telegram.Api.TL
 {
@@ -16,6 +17,19 @@ namespace Telegram.Api.TL
             }
 
             return result;
+        }
+
+        public static IAsyncOperationWithProgress<TResult, TProgress> Handle<TResult, TProgress>(this IAsyncOperationWithProgress<TResult, TProgress> op, IProgress<TProgress> handler)
+        {
+            if (handler != null)
+            {
+                op.Progress = (s, args) =>
+                {
+                    handler.Report(args);
+                };
+            }
+
+            return op;
         }
 
         public static string Substr(this string source, int startIndex, int endIndex)

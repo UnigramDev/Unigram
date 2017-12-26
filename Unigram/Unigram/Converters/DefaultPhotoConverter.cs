@@ -446,7 +446,7 @@ namespace Unigram.Converters
                 //Execute.BeginOnThreadPool(() => manager.DownloadFile(location, owner, fileSize));
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(location, fileSize).AsTask(mediaPhoto?.Photo.Download());
+                    await manager.DownloadFileAsync(location, fileSize, mediaPhoto?.Photo.Download());
                     Execute.BeginOnUIThread(() =>
                     {
                         bitmap.UriSource = FileUtils.GetTempFileUri(fileName);

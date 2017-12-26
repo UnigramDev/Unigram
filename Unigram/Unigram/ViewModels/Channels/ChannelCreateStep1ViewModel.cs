@@ -124,7 +124,7 @@ namespace Unigram.ViewModels.Channels
             Preview = new BitmapImage(FileUtils.GetTempFileUri(fileName));
 
             var fileId = TLLong.Random();
-            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false);
+            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name);
             if (upload != null)
             {
                 _photo = upload.ToInputFile();

@@ -17,8 +17,7 @@ namespace Telegram.Api.Services.FileManager
 {
     public interface IUploadManager
     {
-        IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, string fileName, bool forceBigFile);
-        IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, string fileName);
+        IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, string fileName, IProgress<double> test = null);
 
         void UploadFile(long fileId, TLObject owner, string fileName, bool forceBigFile);
         void UploadFile(long fileId, TLObject owner, string fileName);
@@ -249,12 +248,7 @@ namespace Telegram.Api.Services.FileManager
             return result;
         }
 
-        public IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, string fileName)
-        {
-            return UploadFileAsync(fileId, fileName, false);
-        }
-
-        public IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, string fileName, bool forceBigFile)
+        public IAsyncOperationWithProgress<UploadableItem, double> UploadFileAsync(long fileId, string fileName, IProgress<double> test = null)
         {
             return AsyncInfo.Run<UploadableItem, double>((token, progress) =>
             {
@@ -265,12 +259,12 @@ namespace Telegram.Api.Services.FileManager
 
                 var item = GetUploadableItem(fileId, null, fileName, fileLength);
                 item.Callback = tsc;
-                item.Progress = progress;
+                item.Progress = test ?? progress;
 
-                if (forceBigFile)
-                {
-                    item.IsSmallFile = false;
-                }
+                //if (forceBigFile)
+                //{
+                //    item.IsSmallFile = false;
+                //}
 
                 var uploadedCount = item.Parts.Count(x => x.Status == PartStatus.Processed);
                 var count = item.Parts.Count;

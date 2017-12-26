@@ -136,7 +136,7 @@ namespace Unigram.ViewModels
             var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
 
             var fileId = TLLong.Random();
-            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false);
+            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name);
             if (upload != null)
             {
                 var response = await ProtoService.UploadProfilePhotoAsync(upload.ToInputFile() as TLInputFile);

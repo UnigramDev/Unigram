@@ -389,7 +389,7 @@ namespace Unigram.ViewModels.Channels
             var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
 
             var fileId = TLLong.Random();
-            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false);
+            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name);
             if (upload != null)
             {
                 var response = await ProtoService.EditPhotoAsync(_item, new TLInputChatUploadedPhoto { File = upload.ToInputFile() });

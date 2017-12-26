@@ -19,7 +19,7 @@ namespace Telegram.Api.Services.FileManager
 {
     public interface IDownloadWebManager
     {
-        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string fileName, int dcId, TLInputWebFileLocation file, int fileSize);
+        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string fileName, int dcId, TLInputWebFileLocation file, int fileSize, IProgress<double> test = null);
 
         void DownloadFile(string fileName, int dcId, TLInputWebFileLocation file, TLObject owner, int fileSize);
 
@@ -239,7 +239,7 @@ namespace Telegram.Api.Services.FileManager
             return result;
         }
 
-        public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string originalFileName, int dcId, TLInputWebFileLocation fileLocation, int fileSize)
+        public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string originalFileName, int dcId, TLInputWebFileLocation fileLocation, int fileSize, IProgress<double> test = null)
         {
             return AsyncInfo.Run<DownloadableItem, double>((token, progress) =>
             {
@@ -247,7 +247,7 @@ namespace Telegram.Api.Services.FileManager
 
                 var downloadableItem = GetDownloadableItem(originalFileName, dcId, fileLocation, null, fileSize);
                 downloadableItem.Callback = tsc;
-                downloadableItem.Progress = progress;
+                downloadableItem.Progress = test ?? progress;
 
                 var downloadedCount = downloadableItem.Parts.Count(x => x.Status == PartStatus.Processed);
                 var count = downloadableItem.Parts.Count;

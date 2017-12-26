@@ -132,8 +132,7 @@ namespace Telegram.Api.TL
                     return;
                 }
 
-                var operation = manager.DownloadFileAsync(location, photoSize.Size);
-                var download = await operation.AsTask(Download());
+                var download = await manager.DownloadFileAsync(location, photoSize.Size, Download());
                 if (download != null)
                 {
                     completed(this);
