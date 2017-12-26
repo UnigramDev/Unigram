@@ -233,7 +233,7 @@
                 <Border Visibility="{x:Bind ViewModel.IsMuted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"/>
                 <Border Visibility="{x:Bind ViewModel.IsMuted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"/>
                 <TextBlock x:Name="UnreadBadge"
-                           Text="{Binding UnreadCount}"
+                           Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
                            Style="{ThemeResource CaptionTextBlockStyle}"
                            Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                            TextAlignment="Center"

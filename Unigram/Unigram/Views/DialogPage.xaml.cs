@@ -586,8 +586,6 @@ namespace Unigram.Views
             }
         }
 
-        private void SendShrug() => TextField.InsertText("¯\\_(ツ)_/¯");
-
         private void AttachPickerFlyout_ItemClick(object sender, MediaSelectedEventArgs e)
         {
             var flyout = FlyoutBase.GetAttachedFlyout(ButtonAttach) as MenuFlyout;

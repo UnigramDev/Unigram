@@ -70,7 +70,7 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock Text="{Binding Set.Title}" VerticalAlignment="Bottom" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Bind Set.Title}" VerticalAlignment="Bottom" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
                                     <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Margin="12,0" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1">
                                         <Run Text="{x:Bind Set.Count}"/>
                                         <Run Text="stickers"/>

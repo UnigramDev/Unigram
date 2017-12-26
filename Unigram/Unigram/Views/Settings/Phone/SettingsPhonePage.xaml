@@ -42,8 +42,8 @@
                 Padding="0,8,0,16"
                 Grid.Row="1"/>
 
-            <ComboBox ItemsSource="{Binding Countries}"
-                      SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
+            <ComboBox ItemsSource="{x:Bind ViewModel.Countries}"
+                      SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
                       PlaceholderText="{CustomResource ChooseCountry}"
                       MinWidth="280"
                       HorizontalAlignment="Stretch"
