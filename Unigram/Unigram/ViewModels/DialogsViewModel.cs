@@ -196,7 +196,11 @@ namespace Unigram.ViewModels
 
                 foreach (var item in response.Result.Dialogs)
                 {
-                    if ((item.With is TLChat chat && chat.HasMigratedTo) /*|| (item.With is TLUser user && user.IsSelf)*/)
+                    if (item.With is TLChat chat && chat.HasMigratedTo /*|| (item.With is TLUser user && user.IsSelf)*/)
+                    {
+                        continue;
+                    }
+                    else if (item.With is TLChannel channel && channel.IsLeft)
                     {
                         continue;
                     }
@@ -219,17 +223,6 @@ namespace Unigram.ViewModels
                     PinnedDialogsCountMax = config.PinnedDialogsCountMax;
                 });
             }
-            else
-            {
-                BeginOnUIThread(async () =>
-                {
-                    var confirm = await TLMessageDialog.ShowAsync("Failed fetching dialogs, press OK to retry.", "Telegram", "OK", "Cancel");
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        Execute.BeginOnThreadPool(LoadFirstSlice);
-                    }
-                });
-            }
 
             Aggregator.Subscribe(this);
         }
@@ -249,6 +242,7 @@ namespace Unigram.ViewModels
         public void Handle(TopMessageUpdatedEventArgs eventArgs)
         {
             eventArgs.Dialog.RaisePropertyChanged(() => eventArgs.Dialog.With);
+            eventArgs.Dialog.RaisePropertyChanged(() => eventArgs.Dialog.TopMessageItem);
             OnTopMessageUpdated(this, eventArgs);
         }
 
@@ -331,6 +325,10 @@ namespace Unigram.ViewModels
                 foreach (var item in dialogs)
                 {
                     if (item.With is TLChat chat && chat.HasMigratedTo)
+                    {
+                        continue;
+                    }
+                    else if (item.With is TLChannel channel && channel.IsLeft)
                     {
                         continue;
                     }
