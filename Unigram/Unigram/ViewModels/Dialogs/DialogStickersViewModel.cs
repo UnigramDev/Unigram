@@ -21,6 +21,7 @@ using System.ComponentModel;
 using Telegram.Api.TL.Messages;
 using System.Collections.Specialized;
 using Windows.Storage;
+using System.Runtime.CompilerServices;
 
 namespace Unigram.ViewModels.Dialogs
 {
@@ -78,6 +79,8 @@ namespace Unigram.ViewModels.Dialogs
 
             SyncStickers();
             SyncGifs();
+
+            InstallCommand = new RelayCommand<TLFeaturedStickerSet>(InstallExecute);
         }
 
         public IStickersService StickersService
@@ -111,6 +114,7 @@ namespace Unigram.ViewModels.Dialogs
             if (e.Type == StickerType.Image)
             {
                 ProcessStickers();
+                ProcessFeaturedStickers();
             }
         }
 
@@ -219,7 +223,6 @@ namespace Unigram.ViewModels.Dialogs
             var unread = _stickersService.GetUnreadStickerSets();
             BeginOnUIThread(() =>
             {
-
                 FeaturedUnreadCount = unread.Count;
                 FeaturedStickers.ReplaceWith(stickers.Select(set => new TLFeaturedStickerSet
                 {
@@ -561,6 +564,33 @@ namespace Unigram.ViewModels.Dialogs
             }
         }
 
+        public RelayCommand<TLFeaturedStickerSet> InstallCommand { get; }
+        private async void InstallExecute(TLFeaturedStickerSet featured)
+        {
+            if (_stickersService.IsStickerPackInstalled(featured.Set.Id) == false)
+            {
+                var response = await ProtoService.InstallStickerSetAsync(new TLInputStickerSetID { Id = featured.Set.Id, AccessHash = featured.Set.AccessHash }, false);
+                if (response.IsSucceeded)
+                {
+                    _stickersService.LoadStickers(featured.Set.IsMasks ? StickerType.Mask : StickerType.Image, false, true);
+
+                    featured.Set.IsInstalled = true;
+                    featured.Set.IsArchived = false;
+                    featured.Set.RaisePropertyChanged(() => featured.Set.IsInstalled);
+                }
+            }
+            else
+            {
+                _stickersService.RemoveStickersSet(featured.Set, featured.Set.IsOfficial ? 1 : 0, true);
+
+                featured.Set.IsInstalled = featured.Set.IsOfficial;
+                featured.Set.IsArchived = featured.Set.IsOfficial;
+                featured.Set.RaisePropertyChanged(() => featured.Set.IsInstalled);
+
+                NavigationService.GoBack();
+            }
+        }
+
         protected override void BeginOnUIThread(Action action)
         {
             // This is somehow needed because this viewmodel requires a Dispatcher
@@ -575,10 +605,8 @@ namespace Unigram.ViewModels.Dialogs
         public TLChannelFull Full { get; set; }
     }
 
-    public class TLFeaturedStickerSet : INotifyPropertyChanged
+    public class TLFeaturedStickerSet : TLObject, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public TLStickerSet Set { get; set; }
 
         private TLVector<TLDocumentBase> _covers;
@@ -627,6 +655,12 @@ namespace Unigram.ViewModels.Dialogs
             {
                 return _isUnread ? "\u2022" : string.Empty;
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public override void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
     }
 
