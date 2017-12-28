@@ -2848,7 +2848,7 @@ namespace Telegram.Api.Services.Cache
             messagesChatFull.Chats = chatsResult;
 
             SyncFullChatInternal(messagesChatFull.FullChat, out TLChatFullBase fullChatResult);
-            SyncChatInternal(currentChat, out TLChatBase chatResult);
+            SyncChatInternal(messagesChatFull.FullChat.ToChat(currentChat), out TLChatBase chatResult);
             messagesChatFull.FullChat = fullChatResult;
 
             var channel = currentChat as TLChannel;

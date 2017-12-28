@@ -75,13 +75,13 @@ namespace Telegram.Api.TL
                 this.BannedRights = channel.BannedRights;
                 this.ParticipantsCount = channel.ParticipantsCount;
 
-                if (channel.ReadInboxMaxId != 0 && (ReadInboxMaxId == 0 || ReadInboxMaxId < channel.ReadInboxMaxId))
+                if (channel.ReadInboxMaxId != null)
                 {
-                    ReadInboxMaxId = channel.ReadInboxMaxId;
+                    this.ReadInboxMaxId = channel.ReadInboxMaxId;
                 }
-                if (channel.ReadOutboxMaxId != 0 && (ReadOutboxMaxId == 0 || ReadOutboxMaxId < channel.ReadOutboxMaxId))
+                if (channel.ReadOutboxMaxId != null && (this.ReadOutboxMaxId == null || this.ReadOutboxMaxId.Value < channel.ReadOutboxMaxId.Value))
                 {
-                    ReadOutboxMaxId = channel.ReadOutboxMaxId;
+                    this.ReadOutboxMaxId = channel.ReadOutboxMaxId;
                 }
             }
         }

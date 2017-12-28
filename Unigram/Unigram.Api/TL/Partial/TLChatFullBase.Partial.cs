@@ -36,6 +36,26 @@ namespace Telegram.Api.TL
 
         //    return chat;
         //}
+
+        public virtual TLChatBase ToChat(TLChatBase chat)
+        {
+            //chat.NotifySettings = NotifySettings;
+            //chat.Participants = Participants;
+            //chat.ChatPhoto = ChatPhoto;
+
+            //var channel = chat as TLChannel;
+            //if (channel != null)
+            //{
+            //    channel.ExportedInvite = ExportedInvite;
+            //    channel.About = About;
+            //    channel.ParticipantsCount = ParticipantsCount;
+            //    channel.AdminsCount = AdminsCount;
+            //    channel.KickedCount = KickedCount;
+            //    channel.ReadInboxMaxId = ReadInboxMaxId;
+            //}
+
+            return chat;
+        }
     }
 
     public partial class TLChatFull
@@ -73,6 +93,17 @@ namespace Telegram.Api.TL
             }
 
             base.Update(chatFull);
+        }
+
+        public override TLChatBase ToChat(TLChatBase chat)
+        {
+            if (chat is TLChannel channel)
+            {
+                channel.ReadInboxMaxId = this.ReadInboxMaxId;
+                channel.ReadOutboxMaxId = this.ReadOutboxMaxId;
+            }
+
+            return base.ToChat(chat);
         }
     }
 }
