@@ -867,7 +867,7 @@ namespace Unigram.ViewModels
 
             if (message?.Media is TLMessageMediaGroup groupMedia)
             {
-                message = groupMedia.Layout.Messages.LastOrDefault();
+                message = groupMedia.Layout.Messages.FirstOrDefault();
             }
 
             if (message == null)

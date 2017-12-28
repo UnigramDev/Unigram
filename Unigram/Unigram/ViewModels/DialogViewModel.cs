@@ -652,16 +652,22 @@ namespace Unigram.ViewModels
 
                 Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
-                var maxId = int.MaxValue;
+                var first = Items.FirstOrDefault(x => x.Id != 0);
+                if (first is TLMessage firstMessage && firstMessage.Media is TLMessageMediaGroup groupMedia)
+                {
+                    first = groupMedia.Layout.Messages.FirstOrDefault();
+                }
+
+                var maxId = first?.Id ?? int.MaxValue;
                 var limit = 50;
 
-                for (int i = 0; i < Items.Count; i++)
-                {
-                    if (Items[i].Id != 0 && Items[i].Id < maxId)
-                    {
-                        maxId = Items[i].Id;
-                    }
-                }
+                //for (int i = 0; i < Items.Count; i++)
+                //{
+                //    if (Items[i].Id != 0 && Items[i].Id < maxId)
+                //    {
+                //        maxId = Items[i].Id;
+                //    }
+                //}
 
                 Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
 
@@ -719,7 +725,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task LoadPreviousSliceAsync(bool force = false, bool last = false)
+        public async Task LoadPreviousSliceAsync(bool force = false, bool reserved = false)
         {
             using (await _loadMoreLock.WaitAsync())
             {
@@ -742,7 +748,13 @@ namespace Unigram.ViewModels
 
                 Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
-                var maxId = int.MaxValue;
+                var last = Items.LastOrDefault();
+                if (last is TLMessage lastMessage && lastMessage.Media is TLMessageMediaGroup groupMedia)
+                {
+                    last = groupMedia.Layout.Messages.LastOrDefault();
+                }
+
+                var maxId = last?.Id ?? 1;
                 var limit = 50;
 
                 //for (int i = 0; i < Messages.Count; i++)
@@ -752,8 +764,6 @@ namespace Unigram.ViewModels
                 //        maxId = Messages[i].Id;
                 //    }
                 //}
-
-                maxId = Items.LastOrDefault()?.Id ?? 1;
 
                 var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit - 1, 0, maxId, limit, 0);
                 if (response.IsSucceeded && response.Result is ITLMessages result)
@@ -1436,7 +1446,7 @@ namespace Unigram.ViewModels
                     {
                         using (await _loadMoreLock.WaitAsync())
                         {
-                            var verify = history.ToList();
+                            var verify = history.Where(x => x.RandomId == null).ToList();
 
                             ProcessReplies(history);
                             MessageCollection.ProcessReplies(history);
@@ -1870,23 +1880,35 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
         {
-            var peer = Peer.ToPeer();
-
-            var panel = ListField.ItemsPanelRoot as ItemsStackPanel;
-            if (panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
+            var peer = Peer?.ToPeer();
+            if (peer == null)
             {
-                _scrollingIndex[peer] = Items[panel.LastVisibleIndex].Id;
+                return Task.CompletedTask;
+            }
 
-                var container = ListField.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
-                if (container != null)
+            try
+            {
+                var panel = ListField.ItemsPanelRoot as ItemsStackPanel;
+                if (panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
                 {
-                    var transform = container.TransformToVisual(ListField);
-                    var position = transform.TransformPoint(new Point());
+                    _scrollingIndex[peer] = Items[panel.LastVisibleIndex].Id;
 
-                    _scrollingPixel[peer] = ListField.ActualHeight - (position.Y + container.ActualHeight);
+                    var container = ListField.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
+                    if (container != null)
+                    {
+                        var transform = container.TransformToVisual(ListField);
+                        var position = transform.TransformPoint(new Point());
+
+                        _scrollingPixel[peer] = ListField.ActualHeight - (position.Y + container.ActualHeight);
+                    }
+                }
+                else
+                {
+                    _scrollingIndex.Remove(peer);
+                    _scrollingPixel.Remove(peer);
                 }
             }
-            else
+            catch
             {
                 _scrollingIndex.Remove(peer);
                 _scrollingPixel.Remove(peer);
