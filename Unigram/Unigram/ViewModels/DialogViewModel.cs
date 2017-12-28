@@ -2846,47 +2846,51 @@ namespace Unigram.ViewModels
             {
                 RaisePropertyChanged(() => With);
 
-                if (channel.IsMegaGroup)
+                if (response.Result is TLUpdates update)
                 {
-                    if (response.Result is TLUpdates update)
+                    var newChannelMessage = update.Updates.FirstOrDefault(x => x is TLUpdateNewChannelMessage) as TLUpdateNewChannelMessage;
+                    if (newChannelMessage != null)
                     {
-                        var newChannelMessage = update.Updates.FirstOrDefault(x => x is TLUpdateNewChannelMessage) as TLUpdateNewChannelMessage;
-                        if (newChannelMessage != null)
+                        Items.Add(newChannelMessage.Message);
+
+                        if (_dialog == null)
                         {
-                            Items.Add(newChannelMessage.Message);
+                            _dialog = CacheService.GetDialog(channel.ToPeer());
+                        }
+
+                        Aggregator.Publish(new TopMessageUpdatedEventArgs(_dialog, newChannelMessage.Message));
+                    }
+                    else
+                    {
+                        var message = new TLMessageService
+                        {
+                            RandomId = TLLong.Random(),
+                            FromId = SettingsHelper.UserId,
+                            ToId = new TLPeerChannel
+                            {
+                                Id = channel.Id
+                            },
+                            State = TLMessageState.Confirmed,
+                            IsOut = true,
+                            IsUnread = false,
+                            Date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, System.DateTime.Now),
+                            Action = new TLMessageActionChatAddUser
+                            {
+                                Users = new TLVector<int> { SettingsHelper.UserId }
+                            }
+                        };
+
+                        CacheService.SyncMessage(message, true, true, cachedMessage =>
+                        {
+                            Items.Add(cachedMessage);
 
                             if (_dialog == null)
                             {
                                 _dialog = CacheService.GetDialog(channel.ToPeer());
                             }
 
-                            Aggregator.Publish(new TopMessageUpdatedEventArgs(this._dialog, newChannelMessage.Message));
-                        }
-                        else
-                        {
-                            var message = new TLMessageService
-                            {
-                                RandomId = TLLong.Random(),
-                                FromId = SettingsHelper.UserId,
-                                ToId = new TLPeerChannel
-                                {
-                                    Id = channel.Id
-                                },
-                                State = TLMessageState.Confirmed,
-                                IsOut = true,
-                                IsUnread = false,
-                                Date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, System.DateTime.Now),
-                                Action = new TLMessageActionChatAddUser
-                                {
-                                    Users = new TLVector<int> { SettingsHelper.UserId }
-                                }
-                            };
-
-                            CacheService.SyncMessage(message, true, true, cachedMessage =>
-                            {
-                                Items.Add(cachedMessage);
-                            });
-                        }
+                            Aggregator.Publish(new TopMessageUpdatedEventArgs(_dialog, newChannelMessage.Message));
+                        });
                     }
                 }
             }
