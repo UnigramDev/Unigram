@@ -13,6 +13,8 @@ namespace Telegram.Api.TL
 {
     public partial class TLPhotoBase : ITLTransferable, INotifyPropertyChanged
     {
+        public long? UploadId { get; set; }
+
         public virtual TLInputPhotoBase ToInputPhoto()
         {
             throw new NotImplementedException();
@@ -141,14 +143,26 @@ namespace Telegram.Api.TL
         }
         public void Cancel(IDownloadFileManager manager, IUploadManager uploadManager)
         {
+            var photoSize = Full as TLPhotoSize;
+            if (photoSize == null)
+            {
+                return;
+            }
+
+            var location = photoSize.Location as TLFileLocation;
+            if (location == null)
+            {
+                return;
+            }
+
             if (manager != null)
             {
-                manager.CancelDownloadFile(this);
+                manager.Cancel(location);
             }
 
             if (uploadManager != null)
             {
-                uploadManager.CancelUploadFile(Id);
+                uploadManager.Cancel(UploadId ?? 0);
             }
 
             DownloadingProgress = 0;

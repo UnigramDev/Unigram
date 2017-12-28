@@ -21,7 +21,7 @@ namespace Telegram.Api.Services.FileManager
 
         void UploadFile(long fileId, TLObject owner, string fileName, bool forceBigFile);
         void UploadFile(long fileId, TLObject owner, string fileName);
-        void CancelUploadFile(long fileId);
+        void Cancel(long fileId);
     }
 
     public interface IUploadFileManager : IUploadManager { }
@@ -382,7 +382,7 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        public void CancelUploadFile(long fileId)
+        public void Cancel(long fileId)
         {
             lock (_itemsSyncRoot)
             {

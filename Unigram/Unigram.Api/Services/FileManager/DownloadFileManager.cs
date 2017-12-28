@@ -26,6 +26,7 @@ namespace Telegram.Api.Services.FileManager
         void DownloadFile(TLFileLocation file, int fileSize, Action<DownloadableItem> callback);
 
         void CancelDownloadFile(TLObject owner);
+        void Cancel(TLFileLocation file);
     }
 
     public class DownloadFileManager : IDownloadFileManager
@@ -626,6 +627,22 @@ namespace Telegram.Api.Services.FileManager
                     item.IsCancelled = true;
                 }
             }
+        }
+
+        public void Cancel(TLFileLocation file)
+        {
+            Execute.BeginOnThreadPool(() =>
+            {
+                lock (_itemsSyncRoot)
+                {
+                    var items = _items.Where(x => x.Location.VolumeId == file.VolumeId && x.Location.LocalId == file.LocalId);
+
+                    foreach (var item in items)
+                    {
+                        item.IsCancelled = true;
+                    }
+                }
+            });
         }
     }
 }

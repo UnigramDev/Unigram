@@ -40,12 +40,12 @@ namespace Telegram.Api.TL
         {
             if (manager != null)
             {
-                manager.CancelDownloadFile(this);
+                manager.Cancel(this);
             }
 
             if (uploadManager != null)
             {
-                uploadManager.CancelUploadFile(Id);
+                uploadManager.Cancel(UploadId ?? 0);
             }
 
             UploadingProgress = 0;

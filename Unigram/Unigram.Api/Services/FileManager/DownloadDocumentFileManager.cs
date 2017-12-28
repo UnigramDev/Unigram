@@ -26,7 +26,7 @@ namespace Telegram.Api.Services.FileManager
 
         void DownloadFile(string fileName, int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize);
 
-        void CancelDownloadFile(TLDocument document);
+        void Cancel(TLDocument document);
     }
 
     public interface IDownloadVideoFileManager : IDownloadManager
@@ -624,7 +624,7 @@ namespace Telegram.Api.Services.FileManager
             return parts;
         }
 
-        public void CancelDownloadFile(TLDocument document)
+        public void Cancel(TLDocument document)
         {
             Execute.BeginOnThreadPool(() =>
             {
