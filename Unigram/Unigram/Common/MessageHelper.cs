@@ -798,7 +798,7 @@ namespace Unigram.Common
                 var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                 if (service != null && service.Content is DialogPage page)
                 {
-                    page.ViewModel.Search = new DialogSearchViewModel(MTProtoService.Current, InMemoryCacheService.Current, TelegramEventAggregator.Instance, page.ViewModel);
+                    page.ViewModel.Search = new DialogSearchViewModel(page.ViewModel.ProtoService, page.ViewModel.CacheService, page.ViewModel.Aggregator, page.ViewModel);
                     page.ViewModel.Search.SearchCommand.Execute((string)data);
                 }
             }
@@ -1160,7 +1160,7 @@ namespace Unigram.Common
             await StickerSetView.Current.ShowAsync(new TLInputStickerSetShortName { ShortName = text });
         }
 
-        public static async void NavigateToUsername(string username, string accessToken, string post, string game)
+        public static void NavigateToUsername(string username, string accessToken, string post, string game)
         {
             NavigateToUsername(MTProtoService.Current, username, accessToken, post, game);
         }

@@ -58,22 +58,24 @@ namespace Unigram.Themes
         {
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
-            var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
 
-            if (bubble != null && bubble.Context != null)
+            var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
+            if (bubble == null)
             {
-                if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+                return;
+            }
+
+            if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+            {
+                if (webPage.HasCachedPage)
                 {
-                    if (webPage.HasCachedPage)
-                    {
-                        bubble.Context.NavigationService.Navigate(typeof(InstantPage), message.Media);
-                    }
-                    else if (webPage.HasType && (webPage.Type.Equals("telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
-                                                 webPage.Type.Equals("telegram_channel", StringComparison.OrdinalIgnoreCase) ||
-                                                 webPage.Type.Equals("telegram_message", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        MessageHelper.HandleTelegramUrl(webPage.Url);
-                    }
+                    bubble.Context.NavigationService.Navigate(typeof(InstantPage), message.Media);
+                }
+                else if (webPage.HasType && (webPage.Type.Equals("telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
+                                             webPage.Type.Equals("telegram_channel", StringComparison.OrdinalIgnoreCase) ||
+                                             webPage.Type.Equals("telegram_message", StringComparison.OrdinalIgnoreCase)))
+                {
+                    MessageHelper.HandleTelegramUrl(webPage.Url);
                 }
             }
         }
@@ -134,6 +136,13 @@ namespace Unigram.Themes
         public static async void Download_Click(FrameworkElement sender, TransferCompletedEventArgs e)
         {
             var element = sender as FrameworkElement;
+
+            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
+            if (bubble == null)
+            {
+                return;
+            }
+
             if (element.DataContext is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionChatEditPhoto editPhotoAction)
             {
                 var media = element.Parent as FrameworkElement;
@@ -151,7 +160,7 @@ namespace Unigram.Themes
                 var chatFull = InMemoryCacheService.Current.GetFullChat(chat.Id);
                 if (chatFull != null && chatFull.ChatPhoto is TLPhoto && chat != null)
                 {
-                    var viewModel = new ChatPhotosViewModel(MTProtoService.Current, InMemoryCacheService.Current, chatFull, chat, serviceMessage);
+                    var viewModel = new ChatPhotosViewModel(bubble.ContextBase.ProtoService, bubble.ContextBase.CacheService, chatFull, chat, serviceMessage);
                     await GalleryView.Current.ShowAsync(viewModel, () => media);
                 }
 
@@ -167,12 +176,6 @@ namespace Unigram.Themes
             var document = message.GetDocument();
             if (TLMessage.IsGif(document) && !ApplicationSettings.Current.IsAutoPlayEnabled)
             {
-                var bubble = element.Ancestors<MessageBubble>().FirstOrDefault() as MessageBubble;
-                if (bubble == null)
-                {
-                    return;
-                }
-
                 var page = bubble.Ancestors<IGifPlayback>().FirstOrDefault() as IGifPlayback;
                 if (page == null)
                 {
@@ -201,7 +204,7 @@ namespace Unigram.Themes
                 }
                 else
                 {
-                    viewModel = new DialogGalleryViewModel(MTProtoService.Current, InMemoryCacheService.Current, message.Parent.ToInputPeer(), message);
+                    viewModel = new DialogGalleryViewModel(bubble.ContextBase.ProtoService, bubble.ContextBase.CacheService, message.Parent.ToInputPeer(), message);
                 }
 
                 await GalleryView.Current.ShowAsync(viewModel, () => media);
@@ -228,13 +231,19 @@ namespace Unigram.Themes
                 return;
             }
 
+            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
+            if (bubble == null)
+            {
+                return;
+            }
+
             if (message.IsMediaUnread && !message.IsOut)
             {
                 var vector = new TLVector<int> { message.Id };
                 if (message.Parent is TLChannel channel)
                 {
-                    TelegramEventAggregator.Instance.Publish(new TLUpdateChannelReadMessagesContents { ChannelId = channel.Id, Messages = vector });
-                    MTProtoService.Current.ReadMessageContentsAsync(channel.ToInputChannel(), vector, result =>
+                    bubble.ContextBase.Aggregator.Publish(new TLUpdateChannelReadMessagesContents { ChannelId = channel.Id, Messages = vector });
+                    bubble.ContextBase.ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), vector, result =>
                     {
                         message.IsMediaUnread = false;
                         message.RaisePropertyChanged(() => message.IsMediaUnread);
@@ -242,8 +251,8 @@ namespace Unigram.Themes
                 }
                 else
                 {
-                    TelegramEventAggregator.Instance.Publish(new TLUpdateReadMessagesContents { Messages = vector });
-                    MTProtoService.Current.ReadMessageContentsAsync(vector, result =>
+                    bubble.ContextBase.Aggregator.Publish(new TLUpdateReadMessagesContents { Messages = vector });
+                    bubble.ContextBase.ProtoService.ReadMessageContentsAsync(vector, result =>
                     {
                         message.IsMediaUnread = false;
                         message.RaisePropertyChanged(() => message.IsMediaUnread);
@@ -265,7 +274,7 @@ namespace Unigram.Themes
 
             if (message.Parent != null)
             {
-                var viewModel = new GallerySecretViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current, InMemoryCacheService.Current, TelegramEventAggregator.Instance);
+                var viewModel = new GallerySecretViewModel(message.Parent.ToInputPeer(), message, bubble.ContextBase.ProtoService, bubble.ContextBase.CacheService, bubble.ContextBase.Aggregator);
                 await GallerySecretView.Current.ShowAsync(viewModel, () => media);
             }
         }
@@ -304,20 +313,23 @@ namespace Unigram.Themes
 
         private void Unsupported_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
-            MessageHelper.HandleTelegramUrl("t.me/unigram");
+            MessageHelper.NavigateToUsername("unigram", null, null, null);
         }
 
         private void Contact_Click(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;
             var message = element.DataContext as TLMessage;
+
             var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
-            if (bubble != null && bubble.Context != null)
+            if (bubble == null)
             {
-                if (message.Media is TLMessageMediaContact contactMedia && contactMedia.User.HasAccessHash)
-                {
-                    bubble.Context.NavigationService.Navigate(typeof(UserDetailsPage), contactMedia.User.ToPeer());
-                }
+                return;
+            }
+
+            if (message.Media is TLMessageMediaContact contactMedia && contactMedia.User.HasAccessHash)
+            {
+                bubble.Context.NavigationService.Navigate(typeof(UserDetailsPage), contactMedia.User.ToPeer());
             }
         }
     }
