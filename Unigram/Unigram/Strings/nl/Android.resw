@@ -48,8 +48,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>Toegangsfout</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>Dit account heeft al een actieve sessie in deze app.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>Accountinstellingen</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>Wissel</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>Nauwkeurig tot op {0}</value>
@@ -200,6 +206,9 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>Toevoegen</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Account toevoegen</value>
   </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>Je mag geen leden deblokkeren, deze gebruiker is geblokkeerd en kan daarom niet worden toegevoegd als beheerder.</value>
@@ -497,9 +506,9 @@ Let op! Als je uitlogt worden al je geheime chats verwijderd.</value>
     <value>Een vraag stellen</value>
   </data>
   <data name="AskAQuestionInfo" xml:space="preserve">
-    <value>De ondersteuning van Telegram wordt gedaan door vrijwilligers. We doen ons best om zo snel mogelijk te antwoorden.
+    <value>De ondersteuning van Telegram wordt gedaan door vrijwilligers. We doen ons best om zo snel mogelijk te antwoorden, maar het kan even duren.
 
-Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general">veelgestelde vragen</a>]]>: Hier staan de antwoorden op de meeste vragen en belangrijke tips voor <![CDATA[<a href="https://telegram.org/faq#troubleshooting">het oplossen van problemen</a>]]>.</value>
+Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general-questions">veelgestelde vragen</a>]]>: Hier staan de antwoorden op de meeste vragen en belangrijke tips voor <![CDATA[<a href="https://telegram.org/faq#troubleshooting">het oplossen van problemen</a>]]>.</value>
   </data>
   <data name="AskButton" xml:space="preserve">
     <value>Vraag een vrijwilliger</value>
@@ -757,7 +766,7 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general">veelgestelde v
     <value>Bedankt voor je hulp bij het verbeteren van Telegram-oproepen.</value>
   </data>
   <data name="CallText" xml:space="preserve">
-    <value>We bellen je over {0}:%2$02d</value>
+    <value>Telegram belt je over {0}:%2$02d min</value>
   </data>
   <data name="CallViaTelegram" xml:space="preserve">
     <value>Telegram-oproep</value>
@@ -942,6 +951,9 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
   </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} plaatste een GIF</value>
+  </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>%1$ plaatste een live-locatie</value>
   </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} plaatste een locatie</value>
@@ -1966,13 +1978,13 @@ voor je zoekopdracht.</value>
     <value>un1 heeft un2 verwijderd</value>
   </data>
   <data name="EventLogRemovedChannelLink" xml:space="preserve">
-    <value>un1 heeft de link verwijderd</value>
+    <value>kanaallink door un1 verwijderd</value>
   </data>
   <data name="EventLogRemovedChannelPhoto" xml:space="preserve">
     <value>kanaalfoto door un1 verwijderd</value>
   </data>
   <data name="EventLogRemovedGroupLink" xml:space="preserve">
-    <value>un1 heeft de link verwijderd</value>
+    <value>groepslink door un1 verwijderd</value>
   </data>
   <data name="EventLogRemovedStickersSet" xml:space="preserve">
     <value>groepsstickers door un1 verwijderd</value>
@@ -3092,7 +3104,7 @@ Dit kan enkele minuten duren.</value>
     <value>Geen geblokkeerde gebruikers</value>
   </data>
   <data name="NoCallLog" xml:space="preserve">
-    <value>Je hebt nog geen oproepen</value>
+    <value>Je hebt nog geen oproepen gedaan.</value>
   </data>
   <data name="NoChats" xml:space="preserve">
     <value>Nog geen chats</value>
@@ -3157,7 +3169,7 @@ of druk op de menuknop voor meer opties.</value>
     <value>Geen resultaten</value>
   </data>
   <data name="NoSharedAudio" xml:space="preserve">
-    <value>Deel muziek in deze chat om ze op al je apparaten te kunnen benaderen.</value>
+    <value>Deel muziek in deze chat om er vanaf al je apparaten gebruik van te maken.</value>
   </data>
   <data name="NoSharedAudioSecret" xml:space="preserve">
     <value>Muziek van deze chat verschijnt hier</value>
@@ -3348,6 +3360,9 @@ of druk op de menuknop voor meer opties.</value>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} heeft een GIF gestuurd naar de groep {1}</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} deelt een live-locatie met groep {1}</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} heeft een locatie gestuurd naar de groep {1}</value>
   </data>
@@ -3374,6 +3389,9 @@ of druk op de menuknop voor meer opties.</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} heeft een video gestuurd naar de groep {1}</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} deelt een live-locatie met je</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} heeft je een locatie gestuurd</value>
@@ -3537,13 +3555,16 @@ Het Telegram-team</value>
     <value>KANAAL OPENEN</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>GROEP OPENEN</value>
+    <value>BEKIJK GROEP</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>OPENEN IN...</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Open met...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>BEKIJK BERICHT</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>URL {0} openen?</value>
@@ -4129,7 +4150,7 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
     <value>Account resetten</value>
   </data>
   <data name="ResetAccountButton" xml:space="preserve">
-    <value>RESETTEN</value>
+    <value>RESET ACCOUNT</value>
   </data>
   <data name="ResetAccountCancelledAlert" xml:space="preserve">
     <value>De actieve gebruiker heeft de recente poging om dit account te resetten geannuleerd. Probeer het over 7 dagen nog eens.</value>
@@ -4161,7 +4182,7 @@ Je kunt dit proces ieder moment annuleren.</value>
     <value>Waarschuwing</value>
   </data>
   <data name="ResetMyAccountWarningReset" xml:space="preserve">
-    <value>Resetten</value>
+    <value>Reset Account</value>
   </data>
   <data name="ResetMyAccountWarningText" xml:space="preserve">
     <value>Je kunt dit niet ongedaan maken.
@@ -4230,9 +4251,6 @@ Het kanaal "**{1}**" zal privé worden.</value>
   </data>
   <data name="RoamingUsage" xml:space="preserve">
     <value>Roamen datagebruik </value>
-  </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>Instellingen</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>Satelliet</value>
@@ -4465,9 +4483,9 @@ Herstart de app om deze optie actief te maken.</value>
     <value>We hebben de code naar je andere  **Telegram**-app gestuurd.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
-    <value>We doen een activatie-oproep naar **{0}**.
+    <value>We bellen je op nummer **{0}**.
 
-Neem niet op, Telegram verwerkt de oproep automatisch.</value>
+Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="SentCallOnly" xml:space="preserve">
     <value>We bellen je op **{0}** om een code te dicteren.</value>
@@ -4516,6 +4534,9 @@ Neem niet op, Telegram verwerkt de oproep automatisch.</value>
   </data>
   <data name="SetTimer" xml:space="preserve">
     <value>Zelfvernietigingstimer instellen</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Instellingen</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>Schaduwen</value>
@@ -4724,6 +4745,24 @@ Neem niet op, Telegram verwerkt de oproep automatisch.</value>
   <data name="Support" xml:space="preserve">
     <value>Ondersteuning</value>
   </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>Contacten synchroniseren</value>
+  </data>
+  <data name="SyncContactsAdded" xml:space="preserve">
+    <value>Contacten van dit apparaat zijn aan je account toegevoegd.</value>
+  </data>
+  <data name="SyncContactsInfoOff" xml:space="preserve">
+    <value>Inschakelen om contacten van dit apparaat naar je account te importeren.</value>
+  </data>
+  <data name="SyncContactsInfoOn" xml:space="preserve">
+    <value>Contacten van dit apparaat worden aan je account toegevoegd.</value>
+  </data>
+  <data name="SyncContactsOff" xml:space="preserve">
+    <value>Contacten van dit apparaat worden niet aan dit account toegevoegd.</value>
+  </data>
+  <data name="SyncContactsOn" xml:space="preserve">
+    <value>Contacten van dit apparaat worden aan dit account toegevoegd</value>
+  </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>Systeemmap</value>
   </data>
@@ -4748,7 +4787,7 @@ Neem niet op, Telegram verwerkt de oproep automatisch.</value>
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} contacten op Telegram</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
+  <data name="TelegramFaq" xml:space="preserve">
     <value>Veelgestelde vragen</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
@@ -5068,6 +5107,9 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Opnemen</value>
+  </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>Antwoorden als %s</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>

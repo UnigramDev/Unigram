@@ -1,64 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -126,8 +67,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>Erreur d'accès</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>Ce compte est déjà connecté dans l'application.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>Paramètres de compte</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>Changer</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>Avec une précision de {0}</value>
@@ -278,6 +225,9 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>Ajouter</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Ajouter un compte</value>
   </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>Vous ne pouvez pas ajouter cet utilisateur aux administrateurs car il est sur liste noire et vous ne pouvez pas le débannir.</value>
@@ -832,7 +782,7 @@ La <![CDATA[<a href="https://telegram.org/faq#general">FAQ Telegram</a>]]> répo
     <value>En vous remerciant d'aider à rendre les appels Telegram meilleurs.</value>
   </data>
   <data name="CallText" xml:space="preserve">
-    <value>Nous vous appellerons dans {0}:%2$02d</value>
+    <value>Telegram vous appellera dans {0}:%2$02d</value>
   </data>
   <data name="CallViaTelegram" xml:space="preserve">
     <value>Appel Telegram</value>
@@ -1018,6 +968,9 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} a publié un GIF</value>
   </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>{0} a publié une position en temps réel</value>
+  </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} a publié une position</value>
   </data>
@@ -1055,7 +1008,7 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
     <value>Le canal {0} a changé sa photo </value>
   </data>
   <data name="ChannelPrivate" xml:space="preserve">
-    <value>Canal Privé</value>
+    <value>Canal privé</value>
   </data>
   <data name="ChannelPrivateInfo" xml:space="preserve">
     <value>Seules les personnes possédant un lien d'invitation peuvent rejoindre un canal privé.</value>
@@ -1064,7 +1017,7 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
     <value>Il est possible de rejoindre votre canal en suivant ce lien. Vous pouvez le révoquer à tout moment.</value>
   </data>
   <data name="ChannelPublic" xml:space="preserve">
-    <value>Canal Public</value>
+    <value>Canal public</value>
   </data>
   <data name="ChannelPublicEmptyUsername" xml:space="preserve">
     <value>Choisissez un lien pour que votre canal public puisse être trouvé et partagé.
@@ -1102,7 +1055,7 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
     <value>ENLEVER LA SOURDINE</value>
   </data>
   <data name="ChannelUserAddLimit" xml:space="preserve">
-    <value>Vous pouvez seulement ajouter les 200 premiers membres du canal. Un nombre illimité de personnes pourra le rejoindre via le lien.</value>
+    <value>Vous pouvez seulement ajouter les 200 premiers membres du canal. Un nombre illimité de personnes pourra le rejoindre avec un lien.</value>
   </data>
   <data name="ChannelUserCantAdd" xml:space="preserve">
     <value>Vous ne pouvez pas ajouter cet utilisateur aux canaux.</value>
@@ -1450,7 +1403,7 @@ Pour aller au delà et accéder à plus, passez à un super-groupe :
     <value>Ces utilisateurs pourront vous appeler ou non indépendamment des paramètres plus haut.</value>
   </data>
   <data name="CustomHelp" xml:space="preserve">
-    <value>Vous ne pouvez pas voir la date de dernière visite des personnes qui ne peuvent pas voir la vôtre. Une approximation sera affichée à la place (récemment, cette semaine, ce mois-ci).</value>
+    <value>Vous ne pouvez pas voir la date de dernière connexion des personnes qui ne peuvent pas voir la vôtre. Une approximation sera affichée à la place (récemment, cette semaine, ce mois-ci).</value>
   </data>
   <data name="CustomNotifications" xml:space="preserve">
     <value>Notifications personnalisées</value>
@@ -1534,7 +1487,7 @@ Pour aller au delà et accéder à plus, passez à un super-groupe :
     <value>Supprimer</value>
   </data>
   <data name="DeleteAccountHelp" xml:space="preserve">
-    <value>Si vous ne vous connectez pas au moins une fois durant cette période, votre compte sera effacé ainsi que tous vos groupes, vos messages et vos contacts.</value>
+    <value>Si vous ne vous connectez pas au moins une fois durant cette période, votre compte sera supprimé, ainsi que tous vos groupes, messages, et contacts.</value>
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>Si vous êtes absent pendant</value>
@@ -1663,7 +1616,7 @@ Pour aller au delà et accéder à plus, passez à un super-groupe :
     <value>Ajouter des utilisateurs</value>
   </data>
   <data name="EditAdminAddUsersViaLink" xml:space="preserve">
-    <value>Inviter des utilisateurs via un lien</value>
+    <value>Inviter des utilisateurs avec un lien</value>
   </data>
   <data name="EditAdminBanUsers" xml:space="preserve">
     <value>Bannir des utilisateurs</value>
@@ -1728,7 +1681,7 @@ Pour aller au delà et accéder à plus, passez à un super-groupe :
     <value>Dessiner un seul grand émoji</value>
   </data>
   <data name="EmojiUseDefault" xml:space="preserve">
-    <value>Utiliser les émojis par défaut</value>
+    <value>Utiliser les émojis système</value>
   </data>
   <data name="EmpryUsersPlaceholder" xml:space="preserve">
     <value>Personne</value>
@@ -1945,7 +1898,7 @@ Aucune action récente correspondant
     <value>un1 a rejoint le groupe</value>
   </data>
   <data name="EventLogInfoDetail" xml:space="preserve">
-    <value>C'est une liste de toutes les actions prises par les membres et administrateurs du groupe au cours des dernières 48 heures.</value>
+    <value>Ceci est une liste de toutes les actions des membres et administrateurs durant les dernières 48 heures.</value>
   </data>
   <data name="EventLogInfoDetailChannel" xml:space="preserve">
     <value>C'est la liste des actions des administrateurs du canal au cours des dernières 48 heures.</value>
@@ -2658,7 +2611,7 @@ Tous les médias restent sur les serveurs Telegram et peuvent être télécharg�
     <value>Nom (facultatif)</value>
   </data>
   <data name="LastSeen" xml:space="preserve">
-    <value>vu</value>
+    <value>en ligne</value>
   </data>
   <data name="LastSeenContacts" xml:space="preserve">
     <value>Mes contacts</value>
@@ -2688,7 +2641,7 @@ Tous les médias restent sur les serveurs Telegram et peuvent être télécharg�
     <value>Personne (+{0})</value>
   </data>
   <data name="LastSeenTitle" xml:space="preserve">
-    <value>Qui peut voir votre dernière visite ?</value>
+    <value>Qui peut voir votre dernière connexion ?</value>
   </data>
   <data name="Lately" xml:space="preserve">
     <value>en ligne récemment</value>
@@ -3360,6 +3313,9 @@ ou ouvrez le menu pour plus d'options.</value>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} a envoyé un GIF au groupe {1}</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} a envoyé une position en temps réel au groupe {1}</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} a envoyé une position au groupe {1}</value>
   </data>
@@ -3386,6 +3342,9 @@ ou ouvrez le menu pour plus d'options.</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} a envoyé une vidéo au groupe {1}</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} vous a envoyé une position en temps réel</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} vous a envoyé une position</value>
@@ -3510,7 +3469,7 @@ L'équipe Telegram</value>
     <value>OK</value>
   </data>
   <data name="Of" xml:space="preserve">
-    <value>{0} de {1}</value>
+    <value>{0} sur {1}</value>
   </data>
   <data name="Online" xml:space="preserve">
     <value>en ligne</value>
@@ -3549,13 +3508,16 @@ L'équipe Telegram</value>
     <value>VOIR LE CANAL</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>OUVRIR LE GROUPE</value>
+    <value>VOIR LE GROUPE</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>OUVRIR DANS...</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Ouvrir dans...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>VOIR LE MESSAGE</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Ouvrir le lien {0} ?</value>
@@ -3722,6 +3684,9 @@ messages depuis plusieurs appareils.</value>
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>Serveur de paiement injoignable. Vérifiez votre connexion Internet et réessayez.</value>
   </data>
+  <data name="PaymentEmailToProvider" xml:space="preserve">
+    <value>Votre courriel sera transféré à {0} comme donnée de facturation.</value>
+  </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Le paiement a été refusé.</value>
   </data>
@@ -3754,6 +3719,12 @@ messages depuis plusieurs appareils.</value>
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>Mot de passe</value>
+  </data>
+  <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
+    <value>Votre numéro et courriel seront transférés à {0} comme données de facturation.</value>
+  </data>
+  <data name="PaymentPhoneToProvider" xml:space="preserve">
+    <value>Votre numéro sera transféré à {0} comme donnée de facturation.</value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>Le paiement a été annulé par le bot.</value>
@@ -3982,7 +3953,7 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
     <value>Trop de requêtes. Vos paramètres de confidentialité n'ont pas été changés, patientez.</value>
   </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
-    <value>Dernière visite</value>
+    <value>Dernière connexion</value>
   </data>
   <data name="PrivacyPayments" xml:space="preserve">
     <value>Paiements</value>
@@ -4027,7 +3998,7 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
     <value>RÉCENTS</value>
   </data>
   <data name="RecentStickers" xml:space="preserve">
-    <value>Récemment utilisés</value>
+    <value>Récents</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>En ligne récemment</value>
@@ -4234,9 +4205,6 @@ Le canal "**{1}**" deviendra privé.</value>
   <data name="RoamingUsage" xml:space="preserve">
     <value>Utilisation des données en itinérance</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>Paramètres</value>
-  </data>
   <data name="Satellite" xml:space="preserve">
     <value>Satellite</value>
   </data>
@@ -4282,7 +4250,7 @@ Il est possible que vous deviez redémarrer l'application pour que cela prenne e
     <value>Carte SD</value>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Recherche</value>
+    <value>Rechercher</value>
   </data>
   <data name="SearchFriends" xml:space="preserve">
     <value>Rechercher des amis</value>
@@ -4468,9 +4436,9 @@ Il est possible que vous deviez redémarrer l'application pour que cela prenne e
     <value>Nous avons envoyé le code à l'application **Telegram** sur votre autre appareil.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
-    <value>Nous avons envoyé un appel d'activation sur votre téléphone **{0}**.
+    <value>Nous appelons votre téléphone **{0}**.
 
-N'y répondez pas, Telegram le traitera automatiquement.</value>
+Ne répondez pas, Telegram traitera tout automatiquement.</value>
   </data>
   <data name="SentCallOnly" xml:space="preserve">
     <value>Nous appelons votre téléphone **{0}** pour vous dicter un code.</value>
@@ -4519,6 +4487,9 @@ N'y répondez pas, Telegram le traitera automatiquement.</value>
   </data>
   <data name="SetTimer" xml:space="preserve">
     <value>Délai d'autodestruction</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Paramètres</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>Ombres</value>
@@ -4727,6 +4698,24 @@ N'y répondez pas, Telegram le traitera automatiquement.</value>
   <data name="Support" xml:space="preserve">
     <value>Support</value>
   </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>Synchroniser les contacts</value>
+  </data>
+  <data name="SyncContactsAdded" xml:space="preserve">
+    <value>Les contacts de cet appareil ont été ajoutés à votre compte.</value>
+  </data>
+  <data name="SyncContactsInfoOff" xml:space="preserve">
+    <value>Activez pour importer les contacts de cet appareil vers votre compte.</value>
+  </data>
+  <data name="SyncContactsInfoOn" xml:space="preserve">
+    <value>Les contacts de cet appareil seront ajoutés à votre compte.</value>
+  </data>
+  <data name="SyncContactsOff" xml:space="preserve">
+    <value>Les contacts de cet appareil ne seront pas ajoutés à ce compte.</value>
+  </data>
+  <data name="SyncContactsOn" xml:space="preserve">
+    <value>Les contacts de cet appareil seront ajoutés à ce compte.</value>
+  </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>Racine du système</value>
   </data>
@@ -4751,7 +4740,7 @@ N'y répondez pas, Telegram le traitera automatiquement.</value>
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} contacts sur Telegram</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
+  <data name="TelegramFaq" xml:space="preserve">
     <value>FAQ Telegram</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
@@ -5073,6 +5062,9 @@ Caractères autorisés : **a-z**, **0-9** et "_".
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Répondre</value>
   </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>Répondre en tant que %s</value>
+  </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
   </data>
@@ -5095,7 +5087,7 @@ Caractères autorisés : **a-z**, **0-9** et "_".
     <value>Refuser</value>
   </data>
   <data name="VoipEndCall" xml:space="preserve">
-    <value>Fin d'appel</value>
+    <value>Raccrocher</value>
   </data>
   <data name="VoipExchangingKeys" xml:space="preserve">
     <value>Échange des clés de chiffrement...</value>
@@ -5239,7 +5231,7 @@ Caractères autorisés : **a-z**, **0-9** et "_".
     <value>en ligne cette semaine</value>
   </data>
   <data name="WrongCountry" xml:space="preserve">
-    <value>Indicatif national incorrect</value>
+    <value>Indicatif national invalide</value>
   </data>
   <data name="WrongNumber" xml:space="preserve">
     <value>Numéro erroné ?</value>

@@ -48,8 +48,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>خطأ في الوصول</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>تم تسجيل الدخول إلى هذا الحساب من البرنامج هذا.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>إعدادات الحساب</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>تبديل</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>دقيق لدرجة {0}</value>
@@ -200,6 +206,9 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>إضافة</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>أضف حساب</value>
   </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>المعذرة، لا يمكنك إضافة هذا المستخدم كمشرف لأنه في قائمة المحظورين ولا يمكنك رفع الحظر عنه.</value>
@@ -940,6 +949,9 @@
   </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} قام بنشر صورة متحركة</value>
+  </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>%1$@ قام بنشر موقعاً حي</value>
   </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} قام بإرسال موقع</value>
@@ -3343,6 +3355,9 @@
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} أرسل صورة متحركة للمجموعة {1}</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} أرسل موقعاً حي إلى المجموعة {1}</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} قام بإرسال موقع للمجموعة {1}</value>
   </data>
@@ -3369,6 +3384,9 @@
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} قام بإرسال مقطع مرئي للمجموعة {1}</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} أرسل لك موقعاً حي</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} قام بإرسال موقع لك</value>
@@ -3537,6 +3555,9 @@
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>افتح باستخدام...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>افتح الرسالة</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>هل ترغب في فتح الرابط باستخدام {0} ؟</value>
@@ -4221,9 +4242,6 @@
   <data name="RoamingUsage" xml:space="preserve">
     <value>استخدام تجوال البيانات</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>الإعدادات</value>
-  </data>
   <data name="Satellite" xml:space="preserve">
     <value>قمر صناعي</value>
   </data>
@@ -4455,7 +4473,7 @@
     <value>لقد قمنا بإرسال رمز الدخول إلى تطبيق **تيليجرام** على جهازك الآخر</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
-    <value>تم إرسال مكالمة تفعيل على رقمك **{0}**.
+    <value>جاري الاتصال على رقمك **{0}**.
 
 لا داعي للرد عليها، تيليجرام سيقوم بعملية التفعيل تلقائيًا.</value>
   </data>
@@ -4506,6 +4524,9 @@
   </data>
   <data name="SetTimer" xml:space="preserve">
     <value>عداد التدمير الذاتي</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>الإعدادات</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>الظل</value>
@@ -4738,8 +4759,8 @@
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} جهة اتصال على تيليجرام</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
-    <value>الأسئلة المتكررة</value>
+  <data name="TelegramFaq" xml:space="preserve">
+    <value>الأسئلة الشائعة عن تيليجرام</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq/ar</value>
@@ -5058,6 +5079,9 @@
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>رد</value>
+  </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>الرد كـ %s</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>بلوتوث</value>

@@ -1,63 +1,4 @@
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -125,8 +66,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>Errore di accesso </value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>Questo account è già collegato in questa app.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>Impostazioni account</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>Cambia</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>Precisione di {0}</value>
@@ -277,6 +224,9 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>Aggiungi</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Aggiungi account</value>
   </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>Spiacenti, non puoi aggiungere questo utente come amministratore perché è bloccato e non puoi sbloccarlo.</value>
@@ -574,7 +524,7 @@ Ricorda, uscendo eliminerai tutte le Chat Segrete.</value>
     <value>Fai una domanda</value>
   </data>
   <data name="AskAQuestionInfo" xml:space="preserve">
-    <value>Per favore nota che l'assistenza di Telegram è fornita da volontari. Proviamo a rispondere quanto prima, ma potrebbe volerci del tempo.
+    <value>Per favore nota che l'assistenza di Telegram è gestita da volontari. Proviamo a rispondere quanto prima, ma potrebbe volerci del tempo.
 
 Dai un'occhiata alle <![CDATA[<a href="https://telegram.org/faq/it#domande-generali">domande frequenti di Telegram</a>]]>: contengono suggerimenti importanti per <![CDATA[<a href="https://telegram.org/faq/it#risoluzione-dei-problemi">risolvere i  problemi</a>]]> e risposte a quasi tutte le domande.</value>
   </data>
@@ -834,7 +784,7 @@ Dai un'occhiata alle <![CDATA[<a href="https://telegram.org/faq/it#domande-gener
     <value>Grazie per aver contribuito a rendere le chiamate di Telegram migliori.</value>
   </data>
   <data name="CallText" xml:space="preserve">
-    <value>Ti chiameremo tra {0}:%2$02d</value>
+    <value>Telegram ti chiamerà tra {0}:%2$02d</value>
   </data>
   <data name="CallViaTelegram" xml:space="preserve">
     <value>Chiamata Telegram</value>
@@ -1020,6 +970,9 @@ Nota: se ti dimentichi il codice, dovrai disinstallare e reinstallare l'app. Tut
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} ha pubblicato una GIF</value>
   </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>{0} ha pubblicato una posizione attuale</value>
+  </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} ha pubblicato una posizione</value>
   </data>
@@ -1054,7 +1007,7 @@ Nota: se ti dimentichi il codice, dovrai disinstallare e reinstallare l'app. Tut
     <value>I post saranno notificati ai membri</value>
   </data>
   <data name="ChannelPhotoEditNotification" xml:space="preserve">
-    <value>Il canale {0} ha aggiornato la foto</value>
+    <value>Il canale {0} ha aggiornato la sua foto</value>
   </data>
   <data name="ChannelPrivate" xml:space="preserve">
     <value>Canale privato</value>
@@ -3425,6 +3378,9 @@ o apri il menù per avere più opzioni.</value>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} ha inviato una GIF al gruppo {1}</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} ha inviato una posizione attuale nel gruppo {1}</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} ha inviato una posizione al gruppo {1}</value>
   </data>
@@ -3451,6 +3407,9 @@ o apri il menù per avere più opzioni.</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} ha inviato un video al gruppo {1}</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} ti ha inviato una posizione attuale</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} ti ha inviato una posizione</value>
@@ -3621,6 +3580,9 @@ il team di Telegram</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Apri in...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>APRI MESSAGGIO</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Aprire url {0}?</value>
@@ -4206,7 +4168,7 @@ I pagamenti saranno inviati direttamente allo sviluppatore di {0}. Telegram non 
     <value>Ripristino account</value>
   </data>
   <data name="ResetAccountButton" xml:space="preserve">
-    <value>RIPRISTINA</value>
+    <value>RIPRISTINA ACCOUNT</value>
   </data>
   <data name="ResetAccountCancelledAlert" xml:space="preserve">
     <value>I tuoi tentativi recenti di ripristinare questo account sono stati annullati dal suo utente attivo. Per favore riprova tra 7 giorni.</value>
@@ -4238,7 +4200,7 @@ Puoi annullare questo processo in qualsiasi momento.</value>
     <value>Attenzione</value>
   </data>
   <data name="ResetMyAccountWarningReset" xml:space="preserve">
-    <value>Ripristina</value>
+    <value>Ripristina account</value>
   </data>
   <data name="ResetMyAccountWarningText" xml:space="preserve">
     <value>Questa azione non può essere annullata.
@@ -4307,9 +4269,6 @@ Il canale "**{1}**" diventerà privato.</value>
   </data>
   <data name="RoamingUsage" xml:space="preserve">
     <value>Utilizzo dati roaming</value>
-  </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>Impostazioni</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>Satellite</value>
@@ -4542,9 +4501,9 @@ Potresti dover riavviare l'app per rendere effettive le modifiche.</value>
     <value>Abbiamo inviato il codice su **Telegram** nel tuo altro dispositivo.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
-    <value>Abbiamo inviato una chiamata di attivazione al tuo numero **{0}**.
+    <value> Stiamo chiamando il tuo numero **{0}**.
 
-Non rispondere, Telegram farà tutto in automatico.</value>
+Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   </data>
   <data name="SentCallOnly" xml:space="preserve">
     <value>Stiamo chiamando il tuo numero **{0}** per dettarti un codice.</value>
@@ -4593,6 +4552,9 @@ Non rispondere, Telegram farà tutto in automatico.</value>
   </data>
   <data name="SetTimer" xml:space="preserve">
     <value>Timer di autodistruzione</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Impostazioni</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>Ombre</value>
@@ -4801,6 +4763,24 @@ Non rispondere, Telegram farà tutto in automatico.</value>
   <data name="Support" xml:space="preserve">
     <value>Assistenza</value>
   </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>Sincronizza contatti</value>
+  </data>
+  <data name="SyncContactsAdded" xml:space="preserve">
+    <value>I contatti da questo dispositivo sono stati aggiunti al tuo account.</value>
+  </data>
+  <data name="SyncContactsInfoOff" xml:space="preserve">
+    <value>Attiva per importare i contatti da questo dispositivo nel tuo account.</value>
+  </data>
+  <data name="SyncContactsInfoOn" xml:space="preserve">
+    <value>I contatti da questo dispositivo saranno aggiunti al tuo account.</value>
+  </data>
+  <data name="SyncContactsOff" xml:space="preserve">
+    <value>I contatti da questo dispositivo non saranno aggiunti a questo account.</value>
+  </data>
+  <data name="SyncContactsOn" xml:space="preserve">
+    <value>I contatti da questo dispositivo saranno aggiunti a questo account.</value>
+  </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>Root di sistema</value>
   </data>
@@ -4825,7 +4805,7 @@ Non rispondere, Telegram farà tutto in automatico.</value>
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} contatti su Telegram</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
+  <data name="TelegramFaq" xml:space="preserve">
     <value>Domande frequenti</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
@@ -5146,6 +5126,9 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è di **5** ca
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Rispondi</value>
   </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>Rispondi come %s</value>
+  </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
   </data>
@@ -5312,7 +5295,7 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è di **5** ca
     <value>ultimo accesso entro una settimana</value>
   </data>
   <data name="WrongCountry" xml:space="preserve">
-    <value>Prefisso errato</value>
+    <value>Prefisso internazionale non valido</value>
   </data>
   <data name="WrongNumber" xml:space="preserve">
     <value>Numero errato?</value>

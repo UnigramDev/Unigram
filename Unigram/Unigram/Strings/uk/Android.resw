@@ -48,8 +48,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>Помилка доступу</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>Цей акаунт уже додано до застосунку.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>Налаштування акаунта</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>Перемкнути</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>З точністю до {0}</value>
@@ -200,6 +206,9 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>Додати</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Додати акаунт</value>
   </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>Ви не можете додати цього користувача як адміна, тому що він у чорному списку і ви не можете його розблокувати.</value>
@@ -498,7 +507,7 @@
   <data name="AskAQuestionInfo" xml:space="preserve">
     <value>Підтримка Telegram здійснюється добровольцями. Ми намагаємося відповідати якомога швидше, але, іноді, доведеться трохи зачекати.
 
-Ознайомтеся з <![CDATA[<a href="https://telegram.org/faq#general">ЧаПи Telegram</a>]]>: там є важливі поради щодо усунення <![CDATA[<a href="https://telegram.org/faq#troubleshooting">несправностей</a>]]> та відповіді на поширені запитання.</value>
+Ознайомтеся з <![CDATA[<a href="https://telegram.org/faq#general-questions">ЧаПи Telegram</a>]]>: там є важливі поради щодо усунення <![CDATA[<a href="https://telegram.org/faq#troubleshooting">несправностей</a>]]> та відповіді на поширені запитання.</value>
   </data>
   <data name="AskButton" xml:space="preserve">
     <value>Запитати</value>
@@ -756,7 +765,7 @@
     <value>Дякуємо за допомогу у покращенні викликів Telegram.</value>
   </data>
   <data name="CallText" xml:space="preserve">
-    <value>Ми зателефонуємо вам за {0}:%2$02d</value>
+    <value>Telegram зателефонує вам за {0}:%2$02d</value>
   </data>
   <data name="CallViaTelegram" xml:space="preserve">
     <value>Виклик Telegram</value>
@@ -941,6 +950,9 @@
   </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} публікує GIF</value>
+  </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>%1$@ публікує маячок</value>
   </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} публікує розташування</value>
@@ -3056,7 +3068,7 @@
     <value>Діліться фото й відео в цьому чаті і майте до них доступ з будь-якого з ваших пристроїв.</value>
   </data>
   <data name="NoMediaAutoDownload" xml:space="preserve">
-    <value>Немає медіа</value>
+    <value>Жодних медіа</value>
   </data>
   <data name="NoMediaSecret" xml:space="preserve">
     <value>Фото та відео з цього чату з’являтимуться тут.</value>
@@ -3283,6 +3295,9 @@
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} надсилає GIF групі {1}</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} надсилає маячок групі {1}</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} надсилає розташування групі {1}</value>
   </data>
@@ -3309,6 +3324,9 @@
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} надсилає відео групі {1}</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} надсилає вам маячок</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} надсилає вам розташування</value>
@@ -3472,13 +3490,16 @@
     <value>ВІДКРИТИ КАНАЛ</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>ВІДКРИТИ ГРУПУ</value>
+    <value>ПЕРЕГЛЯНУТИ ГРУПУ</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>ВІДКРИТИ У...</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Відкрити у...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>ПЕРЕГЛЯНУТИ ПОВІДОМЛЕННЯ</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Відкрити url {0}?</value>
@@ -3742,7 +3763,7 @@
     <value>Ви успішно передали {0} до {1} за {2}</value>
   </data>
   <data name="PaymentSuccessfullyPaidNoItem" xml:space="preserve">
-    <value>Ви успішно передали {0} to {1}</value>
+    <value>Ви успішно передали {0} до {1}</value>
   </data>
   <data name="PaymentTestInvoice" xml:space="preserve">
     <value>ТЕСТОВИЙ РАХУНОК</value>
@@ -4064,7 +4085,7 @@
     <value>Скинути акаунт</value>
   </data>
   <data name="ResetAccountButton" xml:space="preserve">
-    <value>СКИНУТИ</value>
+    <value>СКИНУТИ АКАУНТ</value>
   </data>
   <data name="ResetAccountCancelledAlert" xml:space="preserve">
     <value>Активний користувач скасував ваші недавні спроби скидання акаунта. Спробуйте ще за 7 днів.</value>
@@ -4081,7 +4102,7 @@
     <value>Скинути всі сповіщення</value>
   </data>
   <data name="ResetAutomaticMediaDownload" xml:space="preserve">
-    <value>Скинути налаштування автозавантаження</value>
+    <value>Скинути ці налаштування</value>
   </data>
   <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
     <value>Ви дійно хочете скинути налаштування автозавантаження?</value>
@@ -4096,7 +4117,7 @@
     <value>Попередження</value>
   </data>
   <data name="ResetMyAccountWarningReset" xml:space="preserve">
-    <value>Скинути</value>
+    <value>Скинути акаунт</value>
   </data>
   <data name="ResetMyAccountWarningText" xml:space="preserve">
     <value>Це незворотня дія.
@@ -4165,9 +4186,6 @@
   </data>
   <data name="RoamingUsage" xml:space="preserve">
     <value>Використання даних у роумінгу</value>
-  </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>Налаштування</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>Супутникова</value>
@@ -4400,7 +4418,7 @@
     <value>Ми надіслали код до **Telegram** на вашому іншому пристрої.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
-    <value>Ми телефонуємо з кодом на ваш номер **{0}**.
+    <value>Ми телефонуємо на ваш номер **{0}**.
 
 Не піднімайте слухавку, Telegram зробить все за вас.</value>
   </data>
@@ -4451,6 +4469,9 @@
   </data>
   <data name="SetTimer" xml:space="preserve">
     <value>Встановити таймер самознищення</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Налаштування</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>Тіні</value>
@@ -4660,6 +4681,24 @@
   <data name="Support" xml:space="preserve">
     <value>Підтримка</value>
   </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>Синхронізувати контакти</value>
+  </data>
+  <data name="SyncContactsAdded" xml:space="preserve">
+    <value>Контакти з цього пристрою додані до вашого акаунта.</value>
+  </data>
+  <data name="SyncContactsInfoOff" xml:space="preserve">
+    <value>Увімкніть для імпорту контактів з цього пристрою на ваш акаунт.</value>
+  </data>
+  <data name="SyncContactsInfoOn" xml:space="preserve">
+    <value>Контакти з цього пристрою будуть додані до вашого акаунта.</value>
+  </data>
+  <data name="SyncContactsOff" xml:space="preserve">
+    <value>Контакти з цього пристрою не будуть додані до вашого акаунта.</value>
+  </data>
+  <data name="SyncContactsOn" xml:space="preserve">
+    <value>Контакти з цього пристрою будуть додані до цього акаунта.</value>
+  </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>Корінь системи</value>
   </data>
@@ -4684,7 +4723,7 @@
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} контактів у Telegram</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
+  <data name="TelegramFaq" xml:space="preserve">
     <value>ЧаПи Telegram</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
@@ -5005,6 +5044,9 @@ http://telegram.org/update</value>
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Відповісти</value>
+  </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>Відповідаєте як %s</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>

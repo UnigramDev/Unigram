@@ -48,8 +48,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>Ralat ekses</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>Akaun ini telah dilog masuk daripada aplikasi ini.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>Aturan Akaun</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>Tukar</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>Tepat ke {0}</value>
@@ -200,6 +206,9 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>Tambah</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Tambah Akaun</value>
   </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>Maaf, anda tidak boleh tambah pengguna ini sebagai pentadbir kerana ia berada dalam senarai hitam dan anda tidak boleh batalkan larangan terhadap mereka.</value>
@@ -755,7 +764,7 @@ Sila lihat  <![CDATA[<a href="https://telegram.org/faq#general">Soalan Lazim Tel
     <value>Terima kasih kerana menolong menjadikan panggilan Telegram lebih baik.</value>
   </data>
   <data name="CallText" xml:space="preserve">
-    <value>Kita akan panggil anda dalam masa {0}:%2$02d</value>
+    <value>Telegram akan panggil anda dalam masa {0}:%2$02d</value>
   </data>
   <data name="CallViaTelegram" xml:space="preserve">
     <value>Panggilan Telegram</value>
@@ -941,6 +950,9 @@ Nota: kalau anda lupa kod laluan, anda terpaksa hapus dan pasangkan balik aplika
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} poskan GIF</value>
   </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>%1$@ telah pos lokasi secara langsung</value>
+  </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} poskan lokasi</value>
   </data>
@@ -975,7 +987,7 @@ Nota: kalau anda lupa kod laluan, anda terpaksa hapus dan pasangkan balik aplika
     <value>Ahli akan diberitahu bila anda pos</value>
   </data>
   <data name="ChannelPhotoEditNotification" xml:space="preserve">
-    <value>Channel {0} foto terkini</value>
+    <value>Channel {0} kemas kini foto</value>
   </data>
   <data name="ChannelPrivate" xml:space="preserve">
     <value>Channel Peribadi</value>
@@ -1932,13 +1944,13 @@ telah dijumpai.</value>
     <value>Pos mesej</value>
   </data>
   <data name="EventLogRemovedChannelLink" xml:space="preserve">
-    <value>un1 keluarkan link channel</value>
+    <value>un1 hapuskan link channel</value>
   </data>
   <data name="EventLogRemovedChannelPhoto" xml:space="preserve">
     <value>un1 keluarkan foto channel</value>
   </data>
   <data name="EventLogRemovedGroupLink" xml:space="preserve">
-    <value>un1 keluarkan link group</value>
+    <value>un1 hapuskan link group</value>
   </data>
   <data name="EventLogRemovedStickersSet" xml:space="preserve">
     <value>un1 keluarkan set sticker untuk group</value>
@@ -1959,7 +1971,7 @@ telah dijumpai.</value>
     <value>Kirim mesej</value>
   </data>
   <data name="EventLogRestrictedSendStickers" xml:space="preserve">
-    <value>Kirim sticker &amp; GIFs</value>
+    <value>Kirim sticker &amp; GIF</value>
   </data>
   <data name="EventLogRestrictedUntil" xml:space="preserve">
     <value>tukar sekatan untuk {0}
@@ -3028,7 +3040,7 @@ Operasi ini akan mengambil masa beberapa minit.</value>
     <value>Tiada pengguna dilarang</value>
   </data>
   <data name="NoCallLog" xml:space="preserve">
-    <value>Anda belum lagi membuat panggilan.</value>
+    <value>Anda belum lagi membuat sebarang panggilan.</value>
   </data>
   <data name="NoChats" xml:space="preserve">
     <value>Belum ada chat...</value>
@@ -3093,7 +3105,7 @@ tekan butang menu untuk pilihan lain.</value>
     <value>Tiada keputusan</value>
   </data>
   <data name="NoSharedAudio" xml:space="preserve">
-    <value>Kongsi muzik dalam chat ini dan akses dari mana-mana peranti.</value>
+    <value>Kongsi muzik dalam chat ini dan aksesnya dari mana-mana peranti.</value>
   </data>
   <data name="NoSharedAudioSecret" xml:space="preserve">
     <value>Muzik dari chat ini akan dipaparkan di sini.</value>
@@ -3284,6 +3296,9 @@ tekan butang menu untuk pilihan lain.</value>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} kirim GIF ke group {1}</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} telah hantar lokasi langsung ke group {1}</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} kirim lokasi ke group {1}</value>
   </data>
@@ -3310,6 +3325,9 @@ tekan butang menu untuk pilihan lain.</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} kirim video ke group {1}</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} telah hantar kepada anda lokasi langsung</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} kirim lokasi</value>
@@ -3473,13 +3491,16 @@ Pasukan Telegram </value>
     <value>LIHAT CHANNEL</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>BUKA GROUP</value>
+    <value>LIHAT GROUP</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>BUKA DALAM...</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Buka dalam...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>LIHAT MESEJ</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Buka url {0}? </value>
@@ -3491,7 +3512,7 @@ Pasukan Telegram </value>
     <value>Panggilan keluar</value>
   </data>
   <data name="Page1Message" xml:space="preserve">
-    <value>Aplikasi mesej **di dunia** terpantas.
+    <value>Aplikasi mesej **terpantas** di dunia.
 Ianya  **percuma** dan **selamat**.</value>
   </data>
   <data name="Page1Title" xml:space="preserve">
@@ -3589,7 +3610,7 @@ dari pelbagai peranti.</value>
     <value>Kod Sekuriti (CVV)</value>
   </data>
   <data name="PaymentCardExpireDate" xml:space="preserve">
-    <value>MM/YY</value>
+    <value>BB/TT</value>
   </data>
   <data name="PaymentCardInfo" xml:space="preserve">
     <value>Maklumat pembayaran</value>
@@ -4063,7 +4084,7 @@ Pembayaran akan dibuat terus kepada pemaju {0}. Telegram tidak memberikan sebara
     <value>Set semula akaun</value>
   </data>
   <data name="ResetAccountButton" xml:space="preserve">
-    <value>SET SEMULA</value>
+    <value>SET SEMULA AKAUN</value>
   </data>
   <data name="ResetAccountCancelledAlert" xml:space="preserve">
     <value>Percubaan anda untuk set semula akaun ini telah dibatalkan oleh pengguna aktif. Sila cuba lagi dalam tempoh 7 hari.</value>
@@ -4095,7 +4116,7 @@ Anda boleh batalkan proses ini bila-bila masa.</value>
     <value>Amaran</value>
   </data>
   <data name="ResetMyAccountWarningReset" xml:space="preserve">
-    <value>Set semula</value>
+    <value>Set semula akaun</value>
   </data>
   <data name="ResetMyAccountWarningText" xml:space="preserve">
     <value>Tindakani ini tidak boleh ditukar balik.
@@ -4126,7 +4147,7 @@ Sekiranya anda set semula akaun anda, kesemua mesej dan chat akan terhapus.</val
     <value>Sekiranya anda tidak boleh memulihkan akses ke emel ada, pilihan anda hanyalah samaada menghafal kata laluan atau menetapkan semula akaun anda.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
-    <value>Oleh kerana anda tidak memberi emel pemulihan ketika membuat aturan kata laluan, pilihan anda hanyalah samaada menghafal kata laluan atau menetapkan semula akaun anda.</value>
+    <value>Oleh kerana anda tidak memberi emel pemulihan ketika membuat aturan kata laluan, pilihan anda hanyalah samaada menghafal kata laluan atau set semula akaun anda.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Maaf</value>
@@ -4164,9 +4185,6 @@ channel ini "**{1}**" akan bertukar ke peribadi.</value>
   </data>
   <data name="RoamingUsage" xml:space="preserve">
     <value>Kegunaan Data Perayauan</value>
-  </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>Aturan</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>Satelit</value>
@@ -4399,9 +4417,9 @@ Anda mungkin diminta untuk mula semula aplikasi bagi mengaktfikannya.</value>
     <value>Kita sudah hantar kod ke **Telegram** aplikasi di peranti lain anda.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
-    <value>Kita sudah hantar satu panggilan ke fon anda **{0}**.
+    <value>Kita membuat panggilan ke fon anda **{0}**.
 
-Jangan jawab, Telegram akan proses secara automatik. </value>
+Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   </data>
   <data name="SentCallOnly" xml:space="preserve">
     <value>Kita sedang panggil fon anda **{0}** dengan kod pengesahan.</value>
@@ -4450,6 +4468,9 @@ Jangan jawab, Telegram akan proses secara automatik. </value>
   </data>
   <data name="SetTimer" xml:space="preserve">
     <value>Set pemasa musnah-sendiri </value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Aturan</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>Bayangan</value>
@@ -4658,6 +4679,24 @@ Jangan jawab, Telegram akan proses secara automatik. </value>
   <data name="Support" xml:space="preserve">
     <value>Bantuan</value>
   </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>Selaras Kenalan</value>
+  </data>
+  <data name="SyncContactsAdded" xml:space="preserve">
+    <value>Kenalan dari peranti ini ditambah ke akaun anda.</value>
+  </data>
+  <data name="SyncContactsInfoOff" xml:space="preserve">
+    <value>Hidupkan untuk impot kenalan dari peranti ini ke akaun anda.</value>
+  </data>
+  <data name="SyncContactsInfoOn" xml:space="preserve">
+    <value>Kenalan dari peranti ini akan ditambah ke akaun anda.</value>
+  </data>
+  <data name="SyncContactsOff" xml:space="preserve">
+    <value>Kenalan dari peranti ini tak akan ditambah ke akaun ini.</value>
+  </data>
+  <data name="SyncContactsOn" xml:space="preserve">
+    <value>Kenalan dari peranti ini akan ditambah ke akaun ini.</value>
+  </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>Akar Sistem</value>
   </data>
@@ -4682,8 +4721,8 @@ Jangan jawab, Telegram akan proses secara automatik. </value>
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} kenalan di Telegram</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
-    <value>Soalan Lazim Telegram</value>
+  <data name="TelegramFaq" xml:space="preserve">
+    <value>Soalan Lazim Telegram </value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq </value>
@@ -4914,7 +4953,7 @@ Jangan jawab, Telegram akan proses secara automatik. </value>
     <value>Kirim Media</value>
   </data>
   <data name="UserRestrictionsSendStickers" xml:space="preserve">
-    <value>Kirim Sticker &amp; GIFs</value>
+    <value>Kirim Sticker &amp; GIF</value>
   </data>
   <data name="UserRestrictionsUntil" xml:space="preserve">
     <value>Dilarang hingga</value>
@@ -5002,6 +5041,9 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Jawab</value>
+  </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>Menjawab sebagai %s</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
@@ -5169,7 +5211,7 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
     <value>dilihat minggu ini </value>
   </data>
   <data name="WrongCountry" xml:space="preserve">
-    <value>Kod negara salah</value>
+    <value>Kod Negara Salah</value>
   </data>
   <data name="WrongNumber" xml:space="preserve">
     <value>Salah nombor?</value>

@@ -48,8 +48,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>Akses error</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>Akun ini sudah masuk dalam aplikasi.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>Pengaturan Akun</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>Tukar</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>Akurasi hingga {0}</value>
@@ -200,6 +206,9 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>Tambahkan</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Tambah Akun</value>
   </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>Maaf, Anda tidak dapat menambah pengguna ini sebagai admin karena mereka berada dalam daftar hitam dan Anda tidak dapat membuka blokir.</value>
@@ -939,6 +948,9 @@ Catatan: jika Anda lupa kode sandi, Anda perlu menghapus dan memasang ulang apli
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} mengeposkan GIF</value>
   </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>{0}  mengeposkan live location</value>
+  </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} mengeposkan lokasi</value>
   </data>
@@ -1461,7 +1473,7 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergroup:
     <value>Jika Anda pergi selama</value>
   </data>
   <data name="DeleteAccountTitle" xml:space="preserve">
-    <value>Akun hancur otomatis</value>
+    <value>Penghancuran akun otomatis</value>
   </data>
   <data name="DeleteAllFrom" xml:space="preserve">
     <value>Hapus semua dari {0}</value>
@@ -1935,7 +1947,7 @@ perintah Anda ditemukan.</value>
     <value>un1 menghapus foto channel</value>
   </data>
   <data name="EventLogRemovedGroupLink" xml:space="preserve">
-    <value>un1 menghapus link group</value>
+    <value>un1 menghapus tautan grup</value>
   </data>
   <data name="EventLogRemovedStickersSet" xml:space="preserve">
     <value>un1 hapus set sticker group</value>
@@ -3281,6 +3293,9 @@ atau tekan tombol menu untuk opsi lain.</value>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} kirim GIF ke group {1}</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0}  mengeposkan live location dalam grup  {1}</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} kirim lokasi pada group {1}</value>
   </data>
@@ -3307,6 +3322,9 @@ atau tekan tombol menu untuk opsi lain.</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} kirim video pada group {1}</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} mengirim live location untuk Anda</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} kirim lokasi untuk Anda</value>
@@ -3351,7 +3369,7 @@ Kami mendeteksi login akun Anda dari perangkat baru pada {1}
 Perangkat: {2}
 Lokasi: {3}
 
-Jika ini bukan Anda, Anda dapat menuju Pengaturan -&gt; Privasi dan Keamanan -&gt; Sesi Aktif, lalu pilih "putuskan sesi" tersebut.
+Jika ini bukan Anda, Anda dapat menuju Pengaturan -&amp;gt; Privasi dan Keamanan -&amp;gt; Sesi Aktif, lalu pilih "putuskan sesi" tersebut.
 
 Jika menurut Anda seseorang telah masuk akun Anda tanpa sepengetahuan Anda, Anda dapat mengaktifkan Verifikasi 2 Langkah di Pengaturan Privasi dan Keamanan.
 
@@ -3477,6 +3495,9 @@ Tim Telegram</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Buka di...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>BUKA PESAN</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Buka url {0}?</value>
@@ -4062,7 +4083,7 @@ dari beberapa perangkat.</value>
     <value>Reset akun</value>
   </data>
   <data name="ResetAccountButton" xml:space="preserve">
-    <value>RESET</value>
+    <value>SETEL ULANG</value>
   </data>
   <data name="ResetAccountCancelledAlert" xml:space="preserve">
     <value>Percobaan terakhir untuk reset akun ini telah dibatalkan oleh pengguna aktif. Silakan coba kembali dalam 7 hari.</value>
@@ -4094,7 +4115,7 @@ dari beberapa perangkat.</value>
     <value>Peringatan</value>
   </data>
   <data name="ResetMyAccountWarningReset" xml:space="preserve">
-    <value>Reset</value>
+    <value>Setel Ulang</value>
   </data>
   <data name="ResetMyAccountWarningText" xml:space="preserve">
     <value>Tindakan ini tidak bisa dibatalkan.
@@ -4125,7 +4146,7 @@ Jika Anda me-reset akun Anda, semua pesan dan chats Anda akan dihapus.</value>
     <value>Jika Anda tidak dapat membuka e-mail, pilihan Anda adalah mengingat kata sandi Anda atau reset akun Anda.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
-    <value>Sejak Anda tidak menyediakan e-mail pemulihan ketika memasang sandi Anda, Anda mempunyai pilihan untuk mengingat sandi Anda atau reset akun Anda.</value>
+    <value>Sejak Anda tidak menyediakan surel pemulihan ketika memasang sandi Anda, Anda hanya mempunyai pilihan untuk mengingat sandi Anda atau reset akun Anda.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Maaf</value>
@@ -4163,9 +4184,6 @@ Channel "**{1}**" akan menjadi privat.</value>
   </data>
   <data name="RoamingUsage" xml:space="preserve">
     <value>Pemakaian Data Roaming</value>
-  </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>Pengaturan</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>Satelit</value>
@@ -4450,6 +4468,9 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Atur waktu penghancur otomatis</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Pengaturan</value>
+  </data>
   <data name="Shadows" xml:space="preserve">
     <value>Bayangan</value>
   </data>
@@ -4657,6 +4678,24 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="Support" xml:space="preserve">
     <value>Dukungan</value>
   </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>Sinkron Kontak</value>
+  </data>
+  <data name="SyncContactsAdded" xml:space="preserve">
+    <value>Kontak dari perangkat ini sudah ditambahkan ke akun Anda.</value>
+  </data>
+  <data name="SyncContactsInfoOff" xml:space="preserve">
+    <value>Nyalakan untuk memasukkan kontak dari perangkat ke akun Anda. </value>
+  </data>
+  <data name="SyncContactsInfoOn" xml:space="preserve">
+    <value>Kontak dari perangkat ini akan ditambahkan ke akun Anda.</value>
+  </data>
+  <data name="SyncContactsOff" xml:space="preserve">
+    <value>Kontak dari perangkat ini tidak akan ditambahkan ke akun ini.</value>
+  </data>
+  <data name="SyncContactsOn" xml:space="preserve">
+    <value>Kontak dari akun ini akan ditambahkan ke akun. </value>
+  </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>Sistem Root </value>
   </data>
@@ -4681,7 +4720,7 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0}kontak di Telegram</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
+  <data name="TelegramFaq" xml:space="preserve">
     <value>FAQ Telegram</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
@@ -5001,6 +5040,9 @@ Anda dapat menggunakan **a–z**, **0–9** dan underscore. Panjang minimal **5*
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Jawab</value>
+  </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>Jawab sebagai  %s</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>

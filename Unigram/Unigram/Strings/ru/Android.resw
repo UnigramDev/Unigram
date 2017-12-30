@@ -48,8 +48,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>Ошибка доступа</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>Вы уже зашли в этот аккаунт.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>Настройки аккаунта</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>Переключиться</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>С точностью до {0}</value>
@@ -201,8 +207,11 @@
   <data name="Add" xml:space="preserve">
     <value>Добавить</value>
   </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Добавить аккаунт</value>
+  </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
-    <value>К сожалению, Вы не можете назначить этого пользователя администратором, поскольку он находится в чёрном списке, а Вы не имеете прав, чтобы убирать людей из чёрного списка.</value>
+    <value>К сожалению, Вы не можете назначить этого пользователя администратором, поскольку он находится в чёрном списке, а Вы не можете убирать людей из чёрного списка.</value>
   </data>
   <data name="AddAdminErrorNotAMember" xml:space="preserve">
     <value>Вы не можете назначить этого пользователя администратором, потому что он не состоит в группе и Вы не можете его пригласить.</value>
@@ -1003,6 +1012,9 @@
   </data>
   <data name="ChannelMessageGroupVideo" xml:space="preserve">
     <value>{0} опубликовал(а) видео на канале {1}</value>
+  </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>В канале {0} новая трансляция геопозиции</value>
   </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>В канале {0} новая геопозиция</value>
@@ -2733,7 +2745,7 @@
     <value>К сожалению, группа переполнена.</value>
   </data>
   <data name="JoinToGroupErrorNotExist" xml:space="preserve">
-    <value>Кажется, такого чата не существует.</value>
+    <value>Похоже, такого чата не существует.</value>
   </data>
   <data name="JumpToDate" xml:space="preserve">
     <value>Перейти к дате</value>
@@ -3554,6 +3566,9 @@
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} отправил(а) GIF в «{1}»</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} отправил(а) трансляцию геопозиции в «{1}»</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} отправил(а) геопозицию в «{1}»</value>
   </data>
@@ -3580,6 +3595,9 @@
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} отправил(а) видео в «{1}»</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} прислал(а) трансляцию геопозиции</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} прислал(а) геопозицию</value>
@@ -3762,16 +3780,19 @@
     <value>Открыть</value>
   </data>
   <data name="OpenChannel" xml:space="preserve">
-    <value>ПЕРЕЙТИ К КАНАЛУ</value>
+    <value>ПЕРЕЙТИ В КАНАЛ</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>ПЕРЕЙТИ К ГРУППЕ</value>
+    <value>ПЕРЕЙТИ В ГРУППУ</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>ОТКРЫТЬ В...</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Открыть в...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>ПЕРЕЙТИ К СООБЩЕНИЮ</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Открыть URL {0}?</value>
@@ -3810,8 +3831,7 @@
     <value>Безопасный</value>
   </data>
   <data name="Page5Message" xml:space="preserve">
-    <value>**Telegram** не ограничивает размер
-Ваших файлов и чатов.</value>
+    <value>**Telegram** не ограничивает размер\n Ваших файлов и чатов.</value>
   </data>
   <data name="Page5Title" xml:space="preserve">
     <value>Мощный</value>
@@ -4000,7 +4020,7 @@
     <value>К сожалению, бот отменил платёж.</value>
   </data>
   <data name="PaymentReceipt" xml:space="preserve">
-    <value>Квитанция</value>
+    <value>Чек</value>
   </data>
   <data name="PaymentShippingAddress" xml:space="preserve">
     <value>Адрес доставки</value>
@@ -4334,7 +4354,7 @@
     <value>Электронная почта</value>
   </data>
   <data name="RegisterText" xml:space="preserve">
-    <value>Укажите ваше имя и фамилию</value>
+    <value>Укажите имя и фамилию</value>
   </data>
   <data name="Regular" xml:space="preserve">
     <value>Обычный</value>
@@ -4364,7 +4384,7 @@
     <value>Ответить пользователю {0}</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
-    <value>Сообщить</value>
+    <value>Пожаловаться</value>
   </data>
   <data name="ReportChatDescription" xml:space="preserve">
     <value>Описание</value>
@@ -4504,9 +4524,6 @@
   </data>
   <data name="RoamingUsage" xml:space="preserve">
     <value>Использование сети в роуминге</value>
-  </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>Настройки</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>Спутник</value>
@@ -4791,6 +4808,9 @@
   <data name="SetTimer" xml:space="preserve">
     <value>Включить удаление по таймеру</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
   <data name="Shadows" xml:space="preserve">
     <value>Тени</value>
   </data>
@@ -4925,7 +4945,7 @@
     <value>Начать общение</value>
   </data>
   <data name="StartText" xml:space="preserve">
-    <value>Проверьте код страны и введите свой номер телефона.</value>
+    <value>Проверьте код страны\nи введите свой номер телефона.</value>
   </data>
   <data name="StickersZero" xml:space="preserve">
     <value>{0} стикеров</value>
@@ -5002,6 +5022,24 @@
   <data name="Support" xml:space="preserve">
     <value>Поддержка</value>
   </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>Синхронизировать контакты</value>
+  </data>
+  <data name="SyncContactsAdded" xml:space="preserve">
+    <value>Контакты с этого устройства были добавлены к Вашему аккаунту.</value>
+  </data>
+  <data name="SyncContactsInfoOff" xml:space="preserve">
+    <value>Включите, чтобы импортировать контакты с этого устройства.</value>
+  </data>
+  <data name="SyncContactsInfoOn" xml:space="preserve">
+    <value>Контакты с этого устройства будут импортироваться в Ваш аккаунт.</value>
+  </data>
+  <data name="SyncContactsOff" xml:space="preserve">
+    <value>Контакты с этого устройства не будут импортироваться для этого аккаунта.</value>
+  </data>
+  <data name="SyncContactsOn" xml:space="preserve">
+    <value>Контакты с этого устройства будут импортироваться для этого аккаунта.</value>
+  </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>Корневой каталог</value>
   </data>
@@ -5029,7 +5067,7 @@
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} контактов в Telegram</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
+  <data name="TelegramFaq" xml:space="preserve">
     <value>Вопросы о Telegram</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
@@ -5377,6 +5415,9 @@
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Ответить</value>
   </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>Ответить как %s</value>
+  </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
   </data>
@@ -5504,13 +5545,13 @@
     <value>{0} нед.</value>
   </data>
   <data name="WhenConnectedOnWiFi" xml:space="preserve">
-    <value>По Wi-Fi</value>
+    <value>Через сети Wi-Fi</value>
   </data>
   <data name="WhenRoaming" xml:space="preserve">
     <value>В роуминге</value>
   </data>
   <data name="WhenUsingMobileData" xml:space="preserve">
-    <value>По мобильной сети</value>
+    <value>Через мобильную сеть</value>
   </data>
   <data name="WhoCanAddMe" xml:space="preserve">
     <value>Кто может добавлять меня в группы?</value>

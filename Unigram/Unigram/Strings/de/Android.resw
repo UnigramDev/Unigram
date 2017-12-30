@@ -48,8 +48,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>Zugriffsfehler</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>Dieses Konto ist bereits in der App angemeldet.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>Kontoeinstellungen</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>Wechseln</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>Auf {0} genau</value>
@@ -200,6 +206,9 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>Hinzufügen</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Konto hinzufügen</value>
   </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>Du kannst diesen Nutzer nicht als Admin festlegen, da er sich in der Sperrliste befindet und du ihn nicht entsperren darfst.</value>
@@ -757,7 +766,7 @@ Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemein
     <value>Danke, dass du uns hilfst, Telegram-Anrufe zu verbessern.</value>
   </data>
   <data name="CallText" xml:space="preserve">
-    <value>Wir rufen dich an in {0}:%2$02d</value>
+    <value>Telegram ruft dich in {0}:%2$02d an</value>
   </data>
   <data name="CallViaTelegram" xml:space="preserve">
     <value>Telegram-Anruf</value>
@@ -940,6 +949,9 @@ Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemein
   </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} hat ein GIF gesendet</value>
+  </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>%1$@ hat einen Live-Standort geteilt</value>
   </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} hat einen Standort gesendet</value>
@@ -3350,6 +3362,9 @@ um die restlichen Optionen zu öffnen.</value>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} hat ein GIF an die Gruppe {1} gesendet</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} hat einen Live-Standort mit der Gruppe {1} geteilt</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} hat einen Standort an die Gruppe {1} gesendet</value>
   </data>
@@ -3376,6 +3391,9 @@ um die restlichen Optionen zu öffnen.</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} hat ein Video an die Gruppe {1} gesendet</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} hat dir einen Live-Standort gesendet</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} hat dir einen Standort gesendet</value>
@@ -3545,6 +3563,9 @@ Dein Telegram Team</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Öffnen in...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>NACHRICHT ÖFFNEN</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>URL {0} öffnen?</value>
@@ -4131,7 +4152,7 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
     <value>Konto zurücksetzen</value>
   </data>
   <data name="ResetAccountButton" xml:space="preserve">
-    <value>ZURÜCKSETZEN</value>
+    <value>KONTO ZURÜCKSETZEN</value>
   </data>
   <data name="ResetAccountCancelledAlert" xml:space="preserve">
     <value>Deine vorherigen Versuche das Konto zurückzusetzen wurden durch den aktiven Nutzer abgebrochen. Bitte in 7 Tagen erneut probieren.</value>
@@ -4163,7 +4184,7 @@ Du kannst den Vorgang jederzeit abbrechen.</value>
     <value>Warnung</value>
   </data>
   <data name="ResetMyAccountWarningReset" xml:space="preserve">
-    <value>Zurücksetzen</value>
+    <value>Konto zurücksetzen</value>
   </data>
   <data name="ResetMyAccountWarningText" xml:space="preserve">
     <value>Dies kann nicht rückgängig gemacht werden.
@@ -4464,7 +4485,9 @@ Du musst die App nach der Änderung neu starten.</value>
     <value>Code wurde dir per **Telegram** an deine aktive App geschickt.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
-    <value>Wir rufen dich jetzt unter **{0}** an.  Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
+    <value>Wir rufen dich jetzt unter **{0}** an.
+
+Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   </data>
   <data name="SentCallOnly" xml:space="preserve">
     <value>Wir rufen **{0}** an, um dir einen Code zu diktieren.</value>
@@ -4724,6 +4747,24 @@ Du musst die App nach der Änderung neu starten.</value>
   <data name="Support" xml:space="preserve">
     <value>Support</value>
   </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>Kontakte synchronisieren</value>
+  </data>
+  <data name="SyncContactsAdded" xml:space="preserve">
+    <value>Kontakte von diesem Gerät wurden deinem Konto hinzugefügt.</value>
+  </data>
+  <data name="SyncContactsInfoOff" xml:space="preserve">
+    <value>Einschalten, um Kontakte von diesem Gerät deinem Konto hinzuzufügen.</value>
+  </data>
+  <data name="SyncContactsInfoOn" xml:space="preserve">
+    <value>Kontakte von diesem Gerät werden deinem Konto hinzugefügt.</value>
+  </data>
+  <data name="SyncContactsOff" xml:space="preserve">
+    <value>Kontakte von diesem Gerät werden deinem Konto nicht hinzugefügt.</value>
+  </data>
+  <data name="SyncContactsOn" xml:space="preserve">
+    <value>Kontakte von diesem Gerät werden deinem Konto hinzugefügt.</value>
+  </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>Systemverzeichnis</value>
   </data>
@@ -4748,8 +4789,8 @@ Du musst die App nach der Änderung neu starten.</value>
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} Kontakte bei Telegram</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
-    <value>Telegram FAQ</value>
+  <data name="TelegramFaq" xml:space="preserve">
+    <value>Fragen und Antworten</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq/de</value>
@@ -5068,6 +5109,9 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Annehmen</value>
+  </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>Mit %s beantworten</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>

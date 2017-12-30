@@ -126,8 +126,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>Access error</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>This account is already logged in from this app.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>Account Settings</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>Switch</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>Accurate to {0}</value>
@@ -278,6 +284,9 @@
   </data>
   <data name="Add" xml:space="preserve">
     <value>Add</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Add Account</value>
   </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>Sorry, you can't add this user as an admin because they are in the blacklist and you can't unban them.</value>
@@ -577,7 +586,7 @@ Remember, logging out kills all your Secret Chats.</value>
   <data name="AskAQuestionInfo" xml:space="preserve">
     <value>Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.
 
-Please take a look at the <![CDATA[<a href="https://telegram.org/faq#general">Telegram FAQ</a>]]>: it has answers to most questions and important tips for <![CDATA[<a href="https://telegram.org/faq#troubleshooting">troubleshooting</a>]]>.</value>
+Please take a look at the <![CDATA[<a href="https://telegram.org/faq#general-questions">Telegram FAQ</a>]]>: it has answers to most questions and important tips for <![CDATA[<a href="https://telegram.org/faq#troubleshooting">troubleshooting</a>]]>.</value>
   </data>
   <data name="AskButton" xml:space="preserve">
     <value>Ask a volunteer</value>
@@ -1020,6 +1029,9 @@ Note: if you forget the passcode, you'll need to delete and reinstall the app. A
   </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} posted a GIF</value>
+  </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>{0} posted a live location</value>
   </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} posted a location</value>
@@ -3429,6 +3441,9 @@ or tap the menu button for more options.</value>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} sent a GIF to the group {1}</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} sent a live location to the group {1}</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} sent a location to the group {1}</value>
   </data>
@@ -3455,6 +3470,9 @@ or tap the menu button for more options.</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} sent a video to the group {1}</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} sent you a live location</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} sent you a location</value>
@@ -3618,13 +3636,16 @@ The Telegram Team</value>
     <value>VIEW CHANNEL</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>OPEN GROUP</value>
+    <value>VIEW GROUP</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>OPEN IN...</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Open in...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>VIEW MESSAGE</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Open url {0}?</value>
@@ -4312,9 +4333,6 @@ The channel "**{1}**" will become private.</value>
   <data name="RoamingUsage" xml:space="preserve">
     <value>Roaming Data Usage</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>Settings</value>
-  </data>
   <data name="Satellite" xml:space="preserve">
     <value>Satellite</value>
   </data>
@@ -4598,6 +4616,9 @@ Don't accept the call, Telegram will process everything automatically.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Set self-destruct timer</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="Shadows" xml:space="preserve">
     <value>Shadows</value>
   </data>
@@ -4805,6 +4826,24 @@ Don't accept the call, Telegram will process everything automatically.</value>
   <data name="Support" xml:space="preserve">
     <value>Support</value>
   </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>Sync Contacts</value>
+  </data>
+  <data name="SyncContactsAdded" xml:space="preserve">
+    <value>Contacts from this device were added to your account.</value>
+  </data>
+  <data name="SyncContactsInfoOff" xml:space="preserve">
+    <value>Turn on to import contacts from this device to your account.</value>
+  </data>
+  <data name="SyncContactsInfoOn" xml:space="preserve">
+    <value>Contacts from this device will be added to your account.</value>
+  </data>
+  <data name="SyncContactsOff" xml:space="preserve">
+    <value>Contacts from this device will not be added to this account.</value>
+  </data>
+  <data name="SyncContactsOn" xml:space="preserve">
+    <value>Contacts from this device will be added to this account.</value>
+  </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>System Root</value>
   </data>
@@ -4829,7 +4868,7 @@ Don't accept the call, Telegram will process everything automatically.</value>
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} contacts on Telegram</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
+  <data name="TelegramFaq" xml:space="preserve">
     <value>Telegram FAQ</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
@@ -5167,6 +5206,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Answer</value>
+  </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>Answering as %s</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>

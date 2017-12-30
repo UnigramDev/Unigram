@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 12/14/2017 18:52:07
+// 	Generated: 12/30/2017 13:11:13
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -86,6 +86,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "This account is already logged in from this app."
+        /// </summary>
+        public static string AccountAlreadyLoggedIn
+        {
+            get
+            {
+                return resourceLoader.GetString("AccountAlreadyLoggedIn");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Account Settings"
         /// </summary>
         public static string AccountSettings
@@ -93,6 +104,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccountSettings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Switch"
+        /// </summary>
+        public static string AccountSwitch
+        {
+            get
+            {
+                return resourceLoader.GetString("AccountSwitch");
             }
         }
         
@@ -643,6 +665,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Add");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Account"
+        /// </summary>
+        public static string AddAccount
+        {
+            get
+            {
+                return resourceLoader.GetString("AddAccount");
             }
         }
         
@@ -1720,7 +1753,7 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.
         ///
-        ///Please take a look at the <a href="https://telegram.org/faq#general">Telegram FAQ</a>: it has answers to most questions and important tips for <a href="https://telegram.org/faq#troubleshooting">troubleshooting</a>."
+        ///Please take a look at the <a href="https://telegram.org/faq#general-questions">Telegram FAQ</a>: it has answers to most questions and important tips for <a href="https://telegram.org/faq#troubleshooting">troubleshooting</a>."
         /// </summary>
         public static string AskAQuestionInfo
         {
@@ -3337,6 +3370,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChannelMessageGIF");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} posted a live location"
+        /// </summary>
+        public static string ChannelMessageLiveLocation
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelMessageLiveLocation");
             }
         }
         
@@ -12045,6 +12089,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} sent a live location to the group {1}"
+        /// </summary>
+        public static string NotificationMessageGroupLiveLocation
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationMessageGroupLiveLocation");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} sent a location to the group {1}"
         /// </summary>
         public static string NotificationMessageGroupMap
@@ -12140,6 +12195,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationMessageGroupVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sent you a live location"
+        /// </summary>
+        public static string NotificationMessageLiveLocation
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationMessageLiveLocation");
             }
         }
         
@@ -12705,7 +12771,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "OPEN GROUP"
+        /// Localized resource similar to "VIEW GROUP"
         /// </summary>
         public static string OpenGroup
         {
@@ -12734,6 +12800,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("OpenInExternalApp");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "VIEW MESSAGE"
+        /// </summary>
+        public static string OpenMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("OpenMessage");
             }
         }
         
@@ -15200,17 +15277,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Settings"
-        /// </summary>
-        public static string SETTINGS
-        {
-            get
-            {
-                return resourceLoader.GetString("SETTINGS");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Satellite"
         /// </summary>
         public static string Satellite
@@ -16238,6 +16304,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Settings"
+        /// </summary>
+        public static string Settings
+        {
+            get
+            {
+                return resourceLoader.GetString("Settings");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Shadows"
         /// </summary>
         public static string Shadows
@@ -16997,6 +17074,72 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Sync Contacts"
+        /// </summary>
+        public static string SyncContacts
+        {
+            get
+            {
+                return resourceLoader.GetString("SyncContacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Contacts from this device were added to your account."
+        /// </summary>
+        public static string SyncContactsAdded
+        {
+            get
+            {
+                return resourceLoader.GetString("SyncContactsAdded");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Turn on to import contacts from this device to your account."
+        /// </summary>
+        public static string SyncContactsInfoOff
+        {
+            get
+            {
+                return resourceLoader.GetString("SyncContactsInfoOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Contacts from this device will be added to your account."
+        /// </summary>
+        public static string SyncContactsInfoOn
+        {
+            get
+            {
+                return resourceLoader.GetString("SyncContactsInfoOn");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Contacts from this device will not be added to this account."
+        /// </summary>
+        public static string SyncContactsOff
+        {
+            get
+            {
+                return resourceLoader.GetString("SyncContactsOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Contacts from this device will be added to this account."
+        /// </summary>
+        public static string SyncContactsOn
+        {
+            get
+            {
+                return resourceLoader.GetString("SyncContactsOn");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "System Root"
         /// </summary>
         public static string SystemRoot
@@ -17087,11 +17230,11 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Telegram FAQ"
         /// </summary>
-        public static string TelegramFAQ
+        public static string TelegramFaq
         {
             get
             {
-                return resourceLoader.GetString("TelegramFAQ");
+                return resourceLoader.GetString("TelegramFaq");
             }
         }
         
@@ -18316,6 +18459,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipAnswerCall");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Answering as %s"
+        /// </summary>
+        public static string VoipAnsweringAsAccount
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipAnsweringAsAccount");
             }
         }
         
