@@ -1195,6 +1195,10 @@ namespace Telegram.Api.Services.Updates
                             {
                                 commonMessage.SetUnreadSilent(false);
                             }
+                            else
+                            {
+                                commonMessage.SetUnreadSilent(true);
+                            }
                         }
                         else
                         {
@@ -1203,6 +1207,10 @@ namespace Telegram.Api.Services.Updates
                             if (commonMessage.Id <= readOutboxMaxId)
                             {
                                 commonMessage.SetUnreadSilent(false);
+                            }
+                            else
+                            {
+                                commonMessage.SetUnreadSilent(true);
                             }
                         }
 
