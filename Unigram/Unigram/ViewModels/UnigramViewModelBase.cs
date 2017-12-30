@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Template10.Common;
 using Template10.Mvvm;
 
 namespace Unigram.ViewModels
@@ -20,12 +21,33 @@ namespace Unigram.ViewModels
         private readonly ICacheService _cacheService;
         private readonly ITelegramEventAggregator _aggregator;
 
+        private readonly IDispatcherWrapper _dispatcher;
+
         public UnigramViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+            : this(protoService, cacheService, aggregator, null)
+        {
+        }
+
+        public UnigramViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IDispatcherWrapper dispatcher)
         {
             _protoService = protoService;
             _cacheService = cacheService;
             _aggregator = aggregator;
+
+            _dispatcher = dispatcher;
         }
+
+        //public override IDispatcherWrapper Dispatcher
+        //{
+        //    get
+        //    {
+        //        return _dispatcher;
+        //    }
+        //    set
+        //    {
+
+        //    }
+        //}
 
         /// <summary>
         /// Gets a reference to the <see cref="Telegram.Api.Services.IMTProtoService"/> 

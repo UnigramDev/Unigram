@@ -117,14 +117,14 @@ namespace Telegram.Logs
 
         void ILogger.Log(LogLevel logLevel, string message)
         {
-#if DEBUG
-            System.Diagnostics.Debug.Write(message);
-#endif 
+//#if DEBUG
+//            System.Diagnostics.Debug.Write(message);
+//#endif 
 
-            //if (logLevel != LogLevel.Information)
-            {
-                Write(message);
-            }
+//            if (logLevel != LogLevel.Information)
+//            {
+//                Write(message);
+//            }
         }
 
         #endregion

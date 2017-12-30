@@ -9,6 +9,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.Views;
 using Unigram.Views;
@@ -83,8 +84,13 @@ namespace Unigram.ViewModels.Settings
         {
             if (_selectedItem != SettingsHelper.SelectedAccount && _selectedItem >= 0)
             {
-                SettingsHelper.SwitchAccount = _selectedItem;
-                await CoreApplication.RequestRestartAsync(string.Empty);
+                //SettingsHelper.SwitchAccount = _selectedItem;
+                //await CoreApplication.RequestRestartAsync(string.Empty);
+
+
+
+                WindowWrapper.Current().NavigationServices.Remove(NavigationService);
+                BootStrapper.Current.NavigationService.Reset();
             }
         }
     }

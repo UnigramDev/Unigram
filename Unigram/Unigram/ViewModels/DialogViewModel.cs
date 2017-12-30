@@ -144,7 +144,7 @@ namespace Unigram.ViewModels
         private readonly IUploadVideoManager _uploadVideoManager;
         private readonly IPushService _pushService;
 
-        private UserActivitySession _timelineSession;
+        //private UserActivitySession _timelineSession;
 
         public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, ILiveLocationService liveLocationService, IPushService pushService)
             : base(protoService, cacheService, aggregator)
@@ -1788,7 +1788,7 @@ namespace Unigram.ViewModels
                 ResetTile();
             }
 
-            _timelineSession = await UserActivityHelper.GenerateActivityAsync(participant.ToPeer());
+            //_timelineSession = await UserActivityHelper.GenerateActivityAsync(participant.ToPeer());
         }
 
         private async void ShowPinnedMessage(TLChannel channel)
@@ -1926,11 +1926,11 @@ namespace Unigram.ViewModels
                 Dispatcher.Dispatch(SaveDraft);
             }
 
-            if (_timelineSession != null)
-            {
-                _timelineSession.Dispose();
-                _timelineSession = null;
-            }
+            //if (_timelineSession != null)
+            //{
+            //    _timelineSession.Dispose();
+            //    _timelineSession = null;
+            //}
 
             return Task.CompletedTask;
         }

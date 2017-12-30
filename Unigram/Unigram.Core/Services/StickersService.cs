@@ -2019,7 +2019,6 @@ namespace Unigram.Services
         Fave = 2
     }
 
-    public delegate void NeedReloadArchivedStickersEventHandler(object sender, NeedReloadArchivedStickersEventArgs e);
     public class NeedReloadArchivedStickersEventArgs : EventArgs
     {
         public StickerType Type { get; private set; }
@@ -2030,7 +2029,6 @@ namespace Unigram.Services
         }
     }
 
-    public delegate void StickersDidLoadedEventHandler(object sender, StickersDidLoadedEventArgs e);
     public class StickersDidLoadedEventArgs : EventArgs
     {
         public StickerType Type { get; private set; }
@@ -2041,7 +2039,6 @@ namespace Unigram.Services
         }
     }
 
-    public delegate void FeaturedStickersDidLoadedEventHandler(object sender, FeaturedStickersDidLoadedEventArgs e);
     public class FeaturedStickersDidLoadedEventArgs : EventArgs
     {
         public FeaturedStickersDidLoadedEventArgs()
@@ -2049,7 +2046,6 @@ namespace Unigram.Services
         }
     }
 
-    public delegate void RecentsDidLoadedEventHandler(object sender, RecentsDidLoadedEventArgs e);
     public class RecentsDidLoadedEventArgs : EventArgs
     {
         public bool IsGifs { get; private set; }
@@ -2063,7 +2059,6 @@ namespace Unigram.Services
         }
     }
 
-    public delegate void ArchivedStickersCountDidLoadedEventHandler(object sender, ArchivedStickersCountDidLoadedEventArgs e);
     public class ArchivedStickersCountDidLoadedEventArgs : EventArgs
     {
         public StickerType Type { get; private set; }
@@ -2074,7 +2069,6 @@ namespace Unigram.Services
         }
     }
 
-    public delegate void GroupStickersDidLoadedEventHandler(object sender, GroupStickersDidLoadedEventArgs e);
     public class GroupStickersDidLoadedEventArgs : EventArgs
     {
         public long Id { get; private set; }

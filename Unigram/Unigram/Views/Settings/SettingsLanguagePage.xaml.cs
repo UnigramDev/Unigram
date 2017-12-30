@@ -49,13 +49,8 @@ namespace Unigram.Views.Settings
             ResourceContext.GetForCurrentView().Reset();
             ResourceContext.GetForViewIndependentUse().Reset();
 
-            var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-            if (service != null)
-            {
-                WindowWrapper.Current().NavigationServices.Remove(service);
-            }
-
-            App.Current.NavigationService.Reset();
+            WindowWrapper.Current().NavigationServices.Remove(ViewModel.NavigationService);
+            BootStrapper.Current.NavigationService.Reset();
 
             //new LocaleService(ViewModel.ProtoService).applyRemoteLanguage(e.ClickedItem as TLLangPackLanguage, true);
         }

@@ -77,7 +77,7 @@ namespace Unigram.Core.Services
         {
             get
             {
-                //return "4.6";
+                //return "4.7";
 
                 var v = Package.Current.Id.Version;
                 return $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
