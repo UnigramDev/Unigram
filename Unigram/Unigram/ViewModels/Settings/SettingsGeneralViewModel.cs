@@ -63,38 +63,5 @@ namespace Unigram.ViewModels.Settings
                 RaisePropertyChanged();
             }
         }
-
-        public bool IsContactsSyncEnabled
-        {
-            get
-            {
-                return ApplicationSettings.Current.IsContactsSyncEnabled;
-            }
-            set
-            {
-                ApplicationSettings.Current.IsContactsSyncEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override async void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            base.RaisePropertyChanged(propertyName);
-
-            if (propertyName.Equals(nameof(IsContactsSyncEnabled)))
-            {
-                if (IsContactsSyncEnabled)
-                {
-                    var contacts = CacheService.GetContacts();
-                    var response = new TLContactsContacts { Users = new TLVector<TLUserBase>(contacts) };
-
-                    await _contactsService.ExportAsync(response);
-                }
-                else
-                {
-                    await _contactsService.RemoveAsync();
-                }
-            }
-        }
     }
 }

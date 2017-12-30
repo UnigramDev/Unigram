@@ -38,11 +38,6 @@
                         Header="{CustomResource AutoplayGifs}"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
-                    <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
-                        Header="Sync contacts"
-                        Style="{ThemeResource CheckButtonStyle}"/>
-
                     <controls:StartupSwitch Margin="0,24"/>
                 </local:TableStackPanel>
             </StackPanel>

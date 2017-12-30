@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -10,8 +11,10 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Account;
+using Telegram.Api.TL.Contacts;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Core.Services;
 using Unigram.Strings;
 using Unigram.Views.Settings;
 using Windows.UI.Xaml;
@@ -22,13 +25,17 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsPrivacyAndSecurityViewModel : UnigramViewModelBase
     {
+        private readonly IContactsService _contactsService;
+
         private readonly SettingsPrivacyStatusTimestampViewModel _statusTimestampRules;
         private readonly SettingsPrivacyPhoneCallViewModel _phoneCallRules;
         private readonly SettingsPrivacyChatInviteViewModel _chatInviteRules;
 
-        public SettingsPrivacyAndSecurityViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, SettingsPrivacyStatusTimestampViewModel statusTimestamp, SettingsPrivacyPhoneCallViewModel phoneCall, SettingsPrivacyChatInviteViewModel chatInvite)
+        public SettingsPrivacyAndSecurityViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IContactsService contactsService, SettingsPrivacyStatusTimestampViewModel statusTimestamp, SettingsPrivacyPhoneCallViewModel phoneCall, SettingsPrivacyChatInviteViewModel chatInvite)
             : base(protoService, cacheService, aggregator)
         {
+            _contactsService = contactsService;
+
             _statusTimestampRules = statusTimestamp;
             _phoneCallRules = phoneCall;
             _chatInviteRules = chatInvite;
@@ -77,6 +84,19 @@ namespace Unigram.ViewModels.Settings
             set
             {
                 ApplicationSettings.Current.PeerToPeerMode = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsContactsSyncEnabled
+        {
+            get
+            {
+                return ApplicationSettings.Current.IsContactsSyncEnabled;
+            }
+            set
+            {
+                ApplicationSettings.Current.IsContactsSyncEnabled = value;
                 RaisePropertyChanged();
             }
         }
@@ -248,6 +268,26 @@ namespace Unigram.ViewModels.Settings
                 }
 
                 PeerToPeerMode = mode;
+            }
+        }
+
+        public override async void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.RaisePropertyChanged(propertyName);
+
+            if (propertyName.Equals(nameof(IsContactsSyncEnabled)))
+            {
+                if (IsContactsSyncEnabled)
+                {
+                    var contacts = CacheService.GetContacts();
+                    var response = new TLContactsContacts { Users = new TLVector<TLUserBase>(contacts) };
+
+                    await _contactsService.ExportAsync(response);
+                }
+                else
+                {
+                    await _contactsService.RemoveAsync();
+                }
             }
         }
     }
