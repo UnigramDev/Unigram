@@ -168,6 +168,11 @@ namespace Unigram.Controls.Views
         {
             ViewModel.NavigationService.Navigate(typeof(SettingsStickersPage));
         }
+
+        private void Install_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Stickers.InstallCommand.Execute(((Button)sender).DataContext);
+        }
     }
 
     public class ItemsTestPanel : Panel

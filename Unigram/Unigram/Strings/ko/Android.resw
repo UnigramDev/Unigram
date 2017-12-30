@@ -48,50 +48,56 @@
   <data name="AccessError" xml:space="preserve">
     <value>접근 오류</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>이 계정은 이미 이 앱에 로그인되어 있습니다.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>계정설정</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>바꾸기</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>{0} 반경 내 정확함</value>
   </data>
   <data name="ActionAddUser" xml:space="preserve">
-    <value>un1님이 un2님을 초대했습니다</value>
+    <value>un1 님이 un2 님을 초대했습니다</value>
   </data>
   <data name="ActionAddUserSelf" xml:space="preserve">
-    <value>un1 님께서 그룹에 돌아오셨습니다</value>
+    <value>un1 님이 그룹에 돌아왔습니다</value>
   </data>
   <data name="ActionAddUserSelfMega" xml:space="preserve">
-    <value>un1 님이 그룹에 참여했습니다</value>
+    <value>un1 님이 그룹에 들어왔습니다</value>
   </data>
   <data name="ActionAddUserSelfYou" xml:space="preserve">
     <value>그룹에 돌아오셨습니다</value>
   </data>
   <data name="ActionAddUserYou" xml:space="preserve">
-    <value>un1님이 그룹에 초대했습니다</value>
+    <value>un1 님을 초대하셨습니다</value>
   </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
-    <value>un1님이 그룹 사진을 변경했습니다</value>
+    <value>un1 님이 그룹 사진을 바꿨습니다</value>
   </data>
   <data name="ActionChangedTitle" xml:space="preserve">
-    <value>un1님이 그룹 이름을 un2 그룹으로 변경했습니다</value>
+    <value>un1 님이 그룹명을 un2(으)로 바꿨습니다</value>
   </data>
   <data name="ActionChannelChangedPhoto" xml:space="preserve">
-    <value>채널 사진 바뀜</value>
+    <value>채널 사진이 바뀌었습니다</value>
   </data>
   <data name="ActionChannelChangedTitle" xml:space="preserve">
-    <value>채널명이 un2(으)로 바뀜</value>
+    <value>채널명이 un2(으)로 바뀌었습니다</value>
   </data>
   <data name="ActionChannelRemovedPhoto" xml:space="preserve">
-    <value>채널 사진 지워짐</value>
+    <value>채널 사진이 지워졌습니다</value>
   </data>
   <data name="ActionCreateChannel" xml:space="preserve">
     <value>채널 만들어짐</value>
   </data>
   <data name="ActionCreateGroup" xml:space="preserve">
-    <value>un1님이 그룹을 만들었습니다</value>
+    <value>un1 님이 그룹을 만들었습니다</value>
   </data>
   <data name="ActionCreateMega" xml:space="preserve">
-    <value>그룹 생성됨</value>
+    <value>그룹 만들어짐</value>
   </data>
   <data name="ActionInviteUser" xml:space="preserve">
     <value>un1 님이 초대 링크를 통해 그룹에 들어왔습니다</value>
@@ -100,67 +106,67 @@
     <value>초대 링크를 통해 그룹에 들어오셨습니다</value>
   </data>
   <data name="ActionKickUser" xml:space="preserve">
-    <value>un1 님이 un2 님을 제명했습니다</value>
+    <value>un1 님이 un2 님을 추방했습니다</value>
   </data>
   <data name="ActionKickUserYou" xml:space="preserve">
-    <value>un1 님이 회원님을 제명했습니다</value>
+    <value>un1 님이 회원님을 추방했습니다</value>
   </data>
   <data name="ActionLeftUser" xml:space="preserve">
-    <value>un1님이 그룹에서 나갔습니다.</value>
+    <value>un1 님이 그룹에서 나갔습니다</value>
   </data>
   <data name="ActionMigrateFromGroup" xml:space="preserve">
-    <value>이 그룹은 슈퍼그룹으로 업그레이드 되었습니다.</value>
+    <value>이 그룹이 슈퍼그룹으로 업그레이드됐습니다.</value>
   </data>
   <data name="ActionMigrateFromGroupNotify" xml:space="preserve">
-    <value>{0} 그룹은 슈퍼그룹으로 업그레이드 되었습니다.</value>
+    <value>{0} 그룹이 슈퍼그룹으로 업그레이드됐습니다</value>
   </data>
   <data name="ActionPinnedContact" xml:space="preserve">
-    <value>un1 님이 연락처를 고정함</value>
+    <value>un1 님이 연락처를 고정했습니다</value>
   </data>
   <data name="ActionPinnedFile" xml:space="preserve">
-    <value>un1 님이 파일을 고정함</value>
+    <value>un1 님이 파일을 고정했습니다</value>
   </data>
   <data name="ActionPinnedGame" xml:space="preserve">
-    <value>un1 님이  {0} 고정함</value>
+    <value>un1 님이  {0}을(를) 고정했습니다</value>
   </data>
   <data name="ActionPinnedGeo" xml:space="preserve">
-    <value>un1 님이 위치를 고정함</value>
+    <value>un1 님이 위치를 고정했습니다</value>
   </data>
   <data name="ActionPinnedGeoLive" xml:space="preserve">
-    <value>un1님이 실시간 위치를 고정했습니다.</value>
+    <value>un1 님이 실시간 위치를 고정했습니다</value>
   </data>
   <data name="ActionPinnedGif" xml:space="preserve">
-    <value>un1 님이 GIF를 고정함</value>
+    <value>un1 님이 GIF를 고정했습니다</value>
   </data>
   <data name="ActionPinnedMusic" xml:space="preserve">
-    <value>un1 님이 트랙을 고정함</value>
+    <value>un1 님이 트랙을 고정했습니다</value>
   </data>
   <data name="ActionPinnedNoText" xml:space="preserve">
-    <value>un1 님이 메시지를 고정함</value>
+    <value>un1 님이 메시지를 고정했습니다</value>
   </data>
   <data name="ActionPinnedPhoto" xml:space="preserve">
-    <value>un1 님이 사진을 고정함</value>
+    <value>un1 님이 사진을 고정했습니다</value>
   </data>
   <data name="ActionPinnedRound" xml:space="preserve">
-    <value>un1 님이 영상메시지를 고정함</value>
+    <value>un1 님이 동영상 메시지를 고정했습니다</value>
   </data>
   <data name="ActionPinnedSticker" xml:space="preserve">
-    <value>un1 님이 스티커를 고정함</value>
+    <value>un1 님이 스티커를 고정했습니다</value>
   </data>
   <data name="ActionPinnedText" xml:space="preserve">
-    <value>un1 님이  "{0}" 를 고정함</value>
+    <value>un1 님이 "{0}"을(를) 고정했습니다</value>
   </data>
   <data name="ActionPinnedVideo" xml:space="preserve">
-    <value>un1 님이 비디오를 고정함</value>
+    <value>un1 님이 동영상을 고정했습니다</value>
   </data>
   <data name="ActionPinnedVoice" xml:space="preserve">
-    <value>un1 님이 음성메시지를 고정함</value>
+    <value>un1 님이 음성 메시지를 고정했습니다</value>
   </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 님이 그룹 사진을 지웠습니다</value>
   </data>
   <data name="ActionTakeScreenshoot" xml:space="preserve">
-    <value>un1님이 화면을 캡처했습니다!</value>
+    <value>un1 님이 화면을 캡처했습니다!</value>
   </data>
   <data name="ActionTakeScreenshootYou" xml:space="preserve">
     <value>화면을 캡처했습니다!</value>
@@ -172,19 +178,19 @@
     <value>un1님이 un2에서 {0}점 획득</value>
   </data>
   <data name="ActionYouAddUser" xml:space="preserve">
-    <value>un2님을 초대했습니다</value>
+    <value>un2 님을 초대했습니다</value>
   </data>
   <data name="ActionYouChangedPhoto" xml:space="preserve">
-    <value>그룹 사진을 변경했습니다</value>
+    <value>그룹 사진을 바꾸셨습니다</value>
   </data>
   <data name="ActionYouChangedTitle" xml:space="preserve">
-    <value>그룹 이름을 un2 그룹으로 변경했습니다</value>
+    <value>그룹명을 un2(으)로 바꾸셨습니다</value>
   </data>
   <data name="ActionYouCreateGroup" xml:space="preserve">
-    <value>그룹을 만들었습니다</value>
+    <value>그룹을 만드셨습니다</value>
   </data>
   <data name="ActionYouKickUser" xml:space="preserve">
-    <value>un2 님을 제명했습니다</value>
+    <value>un2 님을 추방했습니다</value>
   </data>
   <data name="ActionYouLeftUser" xml:space="preserve">
     <value>그룹에서 나갔습니다.</value>
@@ -201,6 +207,9 @@
   <data name="Add" xml:space="preserve">
     <value>추가</value>
   </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>계정 추가</value>
+  </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>죄송합니다, 이 사용자는 블랙리스트에 있으며 해제가 가능하지 않기 떄문에 관리자로 추가할 수 없습니다.</value>
   </data>
@@ -211,7 +220,7 @@
     <value>죄송합니다, 이 사용자는 그룹의 관리자이며 해제권한이 없으시기 떄문에 차단할 수 없습니다.</value>
   </data>
   <data name="AddCaption" xml:space="preserve">
-    <value>설명 추가...</value>
+    <value>설명을 추가하세요...</value>
   </data>
   <data name="AddContact" xml:space="preserve">
     <value>추가</value>
@@ -235,22 +244,25 @@
     <value>참가자 추가</value>
   </data>
   <data name="AddMutual" xml:space="preserve">
-    <value>채널에 친구 추가</value>
+    <value>채널에 연락 상대 추가</value>
   </data>
   <data name="AddRecipient" xml:space="preserve">
     <value>받는 사람 추가</value>
   </data>
   <data name="AddShortcut" xml:space="preserve">
-    <value>바로 가기 추가</value>
+    <value>바로가기 추가</value>
   </data>
   <data name="AddStickers" xml:space="preserve">
     <value>스티커 추가</value>
   </data>
   <data name="AddStickersInstalled" xml:space="preserve">
-    <value>새로운 스티커가 추가되었습니다.</value>
+    <value>새로운 스티커가 추가됐습니다</value>
   </data>
   <data name="AddStickersNotFound" xml:space="preserve">
-    <value>스티커를 찾을 수 없음</value>
+    <value>스티커를 찾지 못함</value>
+  </data>
+  <data name="AddSubscriber" xml:space="preserve">
+    <value>구독자 추가</value>
   </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>연락처에 추가</value>
@@ -274,7 +286,7 @@
     <value>{1} 대화방에 {0} 님을 추가할까요?</value>
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
-    <value>즐겨찾기에 스티커가 추가됬습니다.</value>
+    <value>스티커가 즐겨찾기에 추가됐습니다</value>
   </data>
   <data name="Alert" xml:space="preserve">
     <value>알림 사용</value>
@@ -307,16 +319,16 @@
     <value>항상 허용..</value>
   </data>
   <data name="AlwaysShareWith" xml:space="preserve">
-    <value>항상 공유할 대화상대</value>
+    <value>항상 공유</value>
   </data>
   <data name="AlwaysShareWithPlaceholder" xml:space="preserve">
-    <value>항상 공유할 대화상대...</value>
+    <value>항상 공유할 사용자...</value>
   </data>
   <data name="AlwaysShareWithTitle" xml:space="preserve">
     <value>항상 공유</value>
   </data>
   <data name="AlwaysShowPopup" xml:space="preserve">
-    <value>항상 표시</value>
+    <value>항상 받음</value>
   </data>
   <data name="AndMoreTypingZero" xml:space="preserve">
     <value></value>
@@ -334,7 +346,7 @@
     <value></value>
   </data>
   <data name="AndMoreTypingOther" xml:space="preserve">
-    <value>외 {0}분이 입력하는 중</value>
+    <value>외 {0}명이 입력하는 중</value>
   </data>
   <data name="AndMoreTypingGroupZero" xml:space="preserve">
     <value></value>
@@ -352,7 +364,7 @@
     <value></value>
   </data>
   <data name="AndMoreTypingGroupOther" xml:space="preserve">
-    <value>{0} 님 외 {1}분이 입력하는 중</value>
+    <value>{0} 님 외 {1}명이 입력하는 중</value>
   </data>
   <data name="AndOtherZero" xml:space="preserve">
     <value></value>
@@ -397,7 +409,7 @@
     <value>보관된 마스크</value>
   </data>
   <data name="ArchivedMasksEmpty" xml:space="preserve">
-    <value>보관된 마스크가 없음</value>
+    <value>보관된 마스크 없음</value>
   </data>
   <data name="ArchivedMasksInfo" xml:space="preserve">
     <value>최대 200개의 마스크를 설치 할 수 있습니다. 사용하지 않는 마스크는 새로추가시 보관됩니다.</value>
@@ -406,7 +418,7 @@
     <value>보관된 스티커</value>
   </data>
   <data name="ArchivedStickersAlertInfo" xml:space="preserve">
-    <value>오래된 스티커중 일부가 보관되어집니다. 스티커 설정에서 다시 재설정이 가능합니다.</value>
+    <value>몇몇 오래된 스티커 묶음을 보관하고 있습니다. 스티커 설정에서 다시 활성화시키실 수 있습니다.</value>
   </data>
   <data name="ArchivedStickersAlertTitle" xml:space="preserve">
     <value>보관된 스티커</value>
@@ -415,7 +427,7 @@
     <value>보관된 스티커 없음</value>
   </data>
   <data name="ArchivedStickersInfo" xml:space="preserve">
-    <value>최대 200개의 스티커를 설치 할 수 있습니다. 사용하지 않는 스티커는 새로추가시 보관됩니다.</value>
+    <value>최대 200개의 스티커 묶음을 설치하실 수 있습니다. 사용되지 않는 스티커는 새로운 묶음을 추가하실 때 보관됩니다.</value>
   </data>
   <data name="AreTyping" xml:space="preserve">
     <value>님이 입력 중...</value>
@@ -427,16 +439,16 @@
     <value>확실합니까?</value>
   </data>
   <data name="AreYouSureBlockContact" xml:space="preserve">
-    <value>대화상대를 차단할까요?</value>
+    <value>이 연락처를 정말 차단하시겠습니까?</value>
   </data>
   <data name="AreYouSureClearHistory" xml:space="preserve">
     <value>대화 내용을 정말 지우시겠습니까?</value>
   </data>
   <data name="AreYouSureClearHistoryChannel" xml:space="preserve">
-    <value>이 채널 속 문자와 미디어의 캐시를 모두 지울까요?</value>
+    <value>이 채널에 있는 문자와 미디어 캐시를 모두 지울까요?</value>
   </data>
   <data name="AreYouSureClearHistoryGroup" xml:space="preserve">
-    <value>이 그룹 속 문자와 미디어의 캐시를 모두 지울까요?</value>
+    <value>이 그룹에 있는 문자와 미디어 캐시를 모두 지울까요?</value>
   </data>
   <data name="AreYouSureDeleteAndExit" xml:space="preserve">
     <value>이 그룹에서 정말 나가시겠습니까?</value>
@@ -448,13 +460,13 @@
     <value>{0}를 정말 지우시겠습니까?</value>
   </data>
   <data name="AreYouSureDeletePhoto" xml:space="preserve">
-    <value>이 사진을 지우시겠습니까?</value>
+    <value>이 사진을 정말 지우시겠습니까?</value>
   </data>
   <data name="AreYouSureDeleteThisChat" xml:space="preserve">
     <value>이 대화방을 정말 지우시겠습니까?</value>
   </data>
   <data name="AreYouSureDeleteVideo" xml:space="preserve">
-    <value>이 동영상을 지우시겠습니까?</value>
+    <value>이 동영상을 정말 지우시겠습니까?</value>
   </data>
   <data name="AreYouSureLogout" xml:space="preserve">
     <value>정말 로그아웃하시겠습니까?
@@ -494,12 +506,12 @@
     <value>질문하기</value>
   </data>
   <data name="AskAQuestionInfo" xml:space="preserve">
-    <value>텔레그램에 관한 질문은 자원봉사자들이 답변해 드립니다. 신속한 답변을 위해 노력하지만 답변이 다소 늦을 수 있습니다.
+    <value>텔레그램 지원 사항은 자원봉사자분들이 처리합니다. 가능한 한 빨리 답변해드리고자 노력하지만 답변이 조금 늦어질 수도 있습니다.
 
-일반적인 문제와 해결방법에 대해서는<![CDATA[<a href="https://telegram.org/faq#general"> '자주 묻는 질문'</a>]]>을 확인해 보세요 : FAQ에는 <![CDATA[<a href="https://telegram.org/faq#troubleshooting">문제해결</a>]]> 관련된 정보와 팁이 있습니다.</value>
+일반적인 문제와 해결방법에 대해서는 <![CDATA[<a href="https://telegram.org/faq#general"> 자주 묻는 질문</a>]]>을 확인해보세요. 잦은 질문에 대한 답과 <![CDATA[<a href="https://telegram.org/faq#troubleshooting">문제 해결</a>]]>을 위한 중요한 팁이 여기에 있습니다.</value>
   </data>
   <data name="AskButton" xml:space="preserve">
-    <value>질문하기</value>
+    <value>봉사자에게 질문</value>
   </data>
   <data name="AttachAudio" xml:space="preserve">
     <value>음성 메시지</value>
@@ -517,7 +529,7 @@
     <value>게임</value>
   </data>
   <data name="AttachGif" xml:space="preserve">
-    <value>GIF파일</value>
+    <value>GIF</value>
   </data>
   <data name="AttachInlineRestricted" xml:space="preserve">
     <value>그룹 관리자가 회원님의 인라인 명령어 전송을 {0}까지 제한했습니다.</value>
@@ -547,16 +559,16 @@
     <value>사진</value>
   </data>
   <data name="AttachPhotoExpired" xml:space="preserve">
-    <value>사진이 만료되었습니다</value>
+    <value>사진이 만료했습니다</value>
   </data>
   <data name="AttachRound" xml:space="preserve">
-    <value>영상 메시지</value>
+    <value>동영상 메시지</value>
   </data>
   <data name="AttachSticker" xml:space="preserve">
     <value>스티커</value>
   </data>
   <data name="AttachStickersRestricted" xml:space="preserve">
-    <value>그룹 관리자가 회원님의 스티커 전송을 {0}까지 제한했습니다.</value>
+    <value>그룹 관리자가 회원님의 스티커 전송을 {0}까지 제한합니다</value>
   </data>
   <data name="AttachStickersRestrictedForever" xml:space="preserve">
     <value>그룹 관리자가 회원님의 스티커 전송을 제한했습니다.</value>
@@ -565,7 +577,7 @@
     <value>동영상</value>
   </data>
   <data name="AttachVideoExpired" xml:space="preserve">
-    <value>동영상이 만료되었습니다</value>
+    <value>동영상이 만료했습니다</value>
   </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>음성 메시지</value>
@@ -574,31 +586,52 @@
     <value>공유된 음악</value>
   </data>
   <data name="AudioUnknownArtist" xml:space="preserve">
-    <value>알수 없는 아티스트</value>
+    <value>알 수 없는 아티스트</value>
   </data>
   <data name="AudioUnknownTitle" xml:space="preserve">
     <value>알 수 없는 제목</value>
+  </data>
+  <data name="AutoDownloadMedia" xml:space="preserve">
+    <value>미디어 자동 다운로드</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
     <value>자동 잠금</value>
   </data>
   <data name="AutoLockDisabled" xml:space="preserve">
-    <value>비활성화됨</value>
+    <value>사용 안 함</value>
   </data>
   <data name="AutoLockInTime" xml:space="preserve">
-    <value>{0} 후에</value>
+    <value>{0} 뒤</value>
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
     <value>일정 시간이 지나면 텔레그램을 잠급니다.</value>
   </data>
+  <data name="AutodownloadChannels" xml:space="preserve">
+    <value>채널</value>
+  </data>
+  <data name="AutodownloadContacts" xml:space="preserve">
+    <value>연락처</value>
+  </data>
+  <data name="AutodownloadGroupChats" xml:space="preserve">
+    <value>그룹 대화방</value>
+  </data>
+  <data name="AutodownloadPrivateChats" xml:space="preserve">
+    <value>비밀 대화</value>
+  </data>
+  <data name="AutodownloadSizeLimit" xml:space="preserve">
+    <value>용량 제한</value>
+  </data>
+  <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
+    <value>최대 {0}</value>
+  </data>
   <data name="AutomaticMediaDownload" xml:space="preserve">
-    <value>사진/동영상 자동 다운로드</value>
+    <value>미디어 자동 다운로드</value>
   </data>
   <data name="AutoplayGifs" xml:space="preserve">
-    <value>GIF 자동재생</value>
+    <value>GIF 자동 재생</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>%s님을 기다리는 중...</value>
+    <value>%s 님을 기다리고 있습니다...</value>
   </data>
   <data name="BadgeNumber" xml:space="preserve">
     <value>앱 아이콘에 알림 개수 표시</value>
@@ -643,7 +676,7 @@
     <value>그룹에 추가</value>
   </data>
   <data name="BotPermissionGameAlert" xml:space="preserve">
-    <value>이 bot을 통하여 {0}이 텔레그램 이름과 아이디를(전화번호 아님) 웹페이지로 전달하시기를 허락하시나요?</value>
+    <value>{0}이(가) 앞으로 여실 페이지로 회원님의 텔레그램 이름과 아이디(비밀번호 아님)를 전달할 수 있도록 허락할까요?</value>
   </data>
   <data name="BotRestart" xml:space="preserve">
     <value>봇 살리기</value>
@@ -679,10 +712,10 @@
     <value>비우기</value>
   </data>
   <data name="CacheEmpty" xml:space="preserve">
-    <value>없음</value>
+    <value>비어 있음</value>
   </data>
   <data name="CalculatingSize" xml:space="preserve">
-    <value>계산중...</value>
+    <value>계산 중...</value>
   </data>
   <data name="Call" xml:space="preserve">
     <value>전화 걸기</value>
@@ -694,7 +727,7 @@
     <value>전화 회신</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>{0}님과 이모티콘이 일치한다면, 이 통화는 100%% 안전합니다</value>
+    <value>화면 속 이모지가 {0} 님과 같다면 이 통화는 100% 안전합니다</value>
   </data>
   <data name="CallMessageIncoming" xml:space="preserve">
     <value>수신 전화</value>
@@ -733,13 +766,13 @@
     <value>텔레그램 전화가 개선될 수 있도록 도와주셔서 감사합니다.</value>
   </data>
   <data name="CallText" xml:space="preserve">
-    <value>텔레그램이 {0}:%2$02d 후에는 전화를 겁니다.</value>
+    <value>텔레그램이 {0}:%2$02d 뒤에 전화를 걸 것입니다</value>
   </data>
   <data name="CallViaTelegram" xml:space="preserve">
     <value>텔레그램 전화</value>
   </data>
   <data name="Calling" xml:space="preserve">
-    <value>텔레그램이 전화 거는 중...</value>
+    <value>회원님에게 전화 거는 중...</value>
   </data>
   <data name="Calls" xml:space="preserve">
     <value>전화</value>
@@ -762,7 +795,7 @@
  만약 본인이 아니실 경우 방금 보내드린 코드를 본인 번호에 SMS로 전송해주세요.</value>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">
-    <value>링크가 유효기간이 만료되었거나 폐기됨</value>
+    <value>링크가 폐기됐거나 만료했습니다.</value>
   </data>
   <data name="CancelLinkSuccess" xml:space="preserve">
     <value> 회원님의 {0} 계정을 없애는 작업이 취소됐습니다. 이제 이 창을 닫으셔도 좋습니다.</value>
@@ -774,18 +807,18 @@
     <value>설명</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
-    <value>나중에 설정에서 언어 변경이 가능합니다.</value>
+    <value>언어는 설정에서 바꾸실 수 있습니다.</value>
   </data>
   <data name="ChangePasscode" xml:space="preserve">
-    <value>암호 변경</value>
+    <value>암호 바꾸기</value>
   </data>
   <data name="ChangePasscodeInfo" xml:space="preserve">
-    <value>암호를 설정하시면 대화방에 잠금 아이콘이 표시됩니다. 잠금 아이콘을 탭하면 텔레그램을 잠그거나 잠금 해제할 수 있습니다.
+    <value>암호를 설정하시면 대화창에 잠금 아이콘이 표시됩니다. 텔레그램을 잠그거나 잠금 해제하려면 이 아이콘을 누르세요.
 
-주의: 암호를 잊어버리셨다면 앱을 삭제하고 재설치해주셔야 합니다. 이 경우 비밀 대화 내용은 삭제됩니다.</value>
+주의: 암호를 잊어버리면 앱을 지우고 재설치하셔야 합니다. 이 경우 모든 비밀 대화가 사라집니다.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>비밀번호 변경</value>
+    <value>비밀번호 바꾸기</value>
   </data>
   <data name="ChangePhoneHelp" xml:space="preserve">
     <value>인증코드 메시지를 새 번호로 전송하겠습니다.</value>
@@ -797,16 +830,16 @@
     <value>그 번호는 이미 텔레그램 계정에 연결되어 있습니다. 새 번호로 이동하기 전에 {0} 계정에서 탈퇴해 주세요.</value>
   </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
-    <value>죄송하지만, 너무 많은 공개 사용자명을 가지셨습니다. 다른 그룹이나 채널의 링크를 하나 폐지하거나, 비공개로 바꾸세요.</value>
+    <value>죄송하지만, 너무 많은 공개 사용자명을 가지셨습니다. 다른 그룹이나 채널의 링크를 하나 폐기하거나 비공개로 바꾸세요.</value>
   </data>
   <data name="ChangeRecoveryEmail" xml:space="preserve">
-    <value>복구 이메일 변경</value>
+    <value>복구 이메일 바꾸기</value>
   </data>
   <data name="ChannelAddAdmin" xml:space="preserve">
     <value>관리자 추가</value>
   </data>
   <data name="ChannelAddMembers" xml:space="preserve">
-    <value>구성원 추가</value>
+    <value>참가자 추가</value>
   </data>
   <data name="ChannelAddTo" xml:space="preserve">
     <value>{0} 님을 이 채널에 추가할까요</value>
@@ -821,16 +854,16 @@
     <value>관리자</value>
   </data>
   <data name="ChannelAdminsInfo" xml:space="preserve">
-    <value>채널을 관리하는 데 도움을 줄 만한 관리자를 추가하실 수 있습니다. 사용자를 길게 눌러 관리자에서 제명하실 수 있습니다.</value>
+    <value>채널을 관리하는 데 도움을 줄 만한 관리자를 추가하실 수 있습니다. 관리자를 제명하려면 길게 누르세요.</value>
   </data>
   <data name="ChannelAlertCreate" xml:space="preserve">
     <value>채널 만들기</value>
   </data>
   <data name="ChannelAlertText" xml:space="preserve">
-    <value>채널은 많은 유저들에게 메시지를 한번에 전송 할 수 있는 새로운 기능입니다.</value>
+    <value>채널이란 회원님의 메시지를 많은 관중들에게 퍼뜨릴 수 있는 새로운 도구입니다.</value>
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
-    <value>채널이 무엇인가요?</value>
+    <value>채널이란 무엇인가요?</value>
   </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>블랙리스트</value>
@@ -842,16 +875,16 @@
     <value>차단된 사용자</value>
   </data>
   <data name="ChannelBroadcast" xml:space="preserve">
-    <value>모두에게 메시지 전달</value>
+    <value>알리기</value>
   </data>
   <data name="ChannelCantOpenBanned" xml:space="preserve">
-    <value>안타깝지만, 공개그룹 참여에 제한 되었습니다.</value>
+    <value>안타깝지만, 공개 그룹에 참여하실 수 없습니다.</value>
   </data>
   <data name="ChannelCantOpenNa" xml:space="preserve">
-    <value>죄송합니다. 이 대화방에는 더이상 접근하실 수 없습니다.</value>
+    <value>죄송합니다. 이 대화방에는 더 이상 접근하실 수 없습니다.</value>
   </data>
   <data name="ChannelCantOpenPrivate" xml:space="preserve">
-    <value>죄송합니다. 이 대화방에는 더이상 접근하실 수 없습니다.</value>
+    <value>죄송합니다. 이 대화방에는 더 이상 접근하실 수 없습니다.</value>
   </data>
   <data name="ChannelCantSendMessage" xml:space="preserve">
     <value>죄송합니다. 이 채널에 메시지를 보내실 수 없습니다.</value>
@@ -872,7 +905,7 @@
     <value>채널 없애기</value>
   </data>
   <data name="ChannelEdit" xml:space="preserve">
-    <value>편집</value>
+    <value>수정</value>
   </data>
   <data name="ChannelInviteLinkTitle" xml:space="preserve">
     <value>초대 링크</value>
@@ -881,10 +914,10 @@
     <value>링크를 통해 초대</value>
   </data>
   <data name="ChannelJoin" xml:space="preserve">
-    <value>입장</value>
+    <value>들어가기</value>
   </data>
   <data name="ChannelJoinTo" xml:space="preserve">
-    <value>'{0}'채널에 참여하시겠습니까?</value>
+    <value>'{0}' 채널에 들어가시겠습니까?</value>
   </data>
   <data name="ChannelJoined" xml:space="preserve">
     <value>채널에 들어오셨습니다</value>
@@ -893,19 +926,19 @@
     <value>채널에서 나가시겠습니까?</value>
   </data>
   <data name="ChannelLinkInfo" xml:space="preserve">
-    <value>텔레그램이 설치된 분들은 링크를 타고 채널에 참여가 가능합니다.</value>
+    <value>텔레그램을 설치한 사람이 위 링크를 통해 회원님의 채널에 들어올 수 있습니다.</value>
   </data>
   <data name="ChannelLinkTitle" xml:space="preserve">
     <value>링크</value>
   </data>
   <data name="ChannelMegaJoined" xml:space="preserve">
-    <value>그룹에 참여하였습니다.</value>
+    <value>그룹에 들어오셨습니다</value>
   </data>
   <data name="ChannelMembers" xml:space="preserve">
-    <value>구성원</value>
+    <value>참가자</value>
   </data>
   <data name="ChannelMembersInfo" xml:space="preserve">
-    <value>채널 관리자만 리스트를 볼 수 있습니다.</value>
+    <value>채널 관리자만 이 목록을 볼 수 있습니다.</value>
   </data>
   <data name="ChannelMessageAudio" xml:space="preserve">
     <value>{0}님이 음성메시지를 보냈습니다</value>
@@ -917,7 +950,10 @@
     <value>{0} 님이 파일을 보냈습니다</value>
   </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
-    <value>{0} 님이 GIF파일을 보냈습니다</value>
+    <value>{0} 님이 GIF를 올렸습니다</value>
+  </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>{0} 님이 실시간 위치를 올렸습니다</value>
   </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0}님이 위치를 보냈습니다</value>
@@ -929,16 +965,16 @@
     <value>{0} 님이 메시지를 보냈습니다</value>
   </data>
   <data name="ChannelMessagePhoto" xml:space="preserve">
-    <value>{0} 님이 사진을 보냈습니다</value>
+    <value>{0} 님이 사진을 올렸습니다</value>
   </data>
   <data name="ChannelMessageRound" xml:space="preserve">
-    <value>{0}님이 영상메시지를 보냈습니다</value>
+    <value>{0} 님이 동영상 메시지를 올렸습니다</value>
   </data>
   <data name="ChannelMessageSticker" xml:space="preserve">
-    <value>{0}님이 스티커를 보냈습니다</value>
+    <value>{0} 님이 스티커를 올렸습니다</value>
   </data>
   <data name="ChannelMessageStickerEmoji" xml:space="preserve">
-    <value>{0}님이 {1}스티커를 작성하였습니다</value>
+    <value>{0} 님이 {1} 스티커를 올렸습니다</value>
   </data>
   <data name="ChannelMessageVideo" xml:space="preserve">
     <value>{0} 님이 동영상을 보냈습니다</value>
@@ -947,22 +983,22 @@
     <value>음소거</value>
   </data>
   <data name="ChannelNotifyMembersInfoOff" xml:space="preserve">
-    <value>메시지 미알림 대상</value>
+    <value>글을 올리셔도 참가자들이 알림을 받지 않습니다</value>
   </data>
   <data name="ChannelNotifyMembersInfoOn" xml:space="preserve">
-    <value>메시지 알림 대상</value>
+    <value>글을 올리시면 참가자들이 알림을 받습니다</value>
   </data>
   <data name="ChannelPhotoEditNotification" xml:space="preserve">
-    <value>{0} 채널 사진이 새로 올라왔습니다.</value>
+    <value>{0} 채널 사진이 업데이트됐습니다</value>
   </data>
   <data name="ChannelPrivate" xml:space="preserve">
     <value>비공개 채널</value>
   </data>
   <data name="ChannelPrivateInfo" xml:space="preserve">
-    <value>비공개 채널은 초대 링크로만 입장 가능합니다.</value>
+    <value>비공개 채널에는 초대 링크로만 들어올 수 있습니다.</value>
   </data>
   <data name="ChannelPrivateLinkHelp" xml:space="preserve">
-    <value>이 링크를 통하여 다른 유저들이 채널에 입장 할 수 있습니다. 이 링크는 언제든지 폐기 가능합니다.</value>
+    <value>사람들이 위 링크를 통해 회원님의 채널에 들어올 수 있습니다. 링크는 언제든지 폐기하실 수 있습니다.</value>
   </data>
   <data name="ChannelPublic" xml:space="preserve">
     <value>공개 채널</value>
@@ -973,10 +1009,10 @@
 이를 꺼리신다면 비공개 채널을 추천해드립니다.</value>
   </data>
   <data name="ChannelPublicInfo" xml:space="preserve">
-    <value>공개 채널은 검색이 가능하며, 누구나 입장 가능합니다</value>
+    <value>공개 채널은 검색으로 찾을 수 있으며 누구나 들어올 수 있습니다.</value>
   </data>
   <data name="ChannelRemoveUser" xml:space="preserve">
-    <value>채널에서 제명</value>
+    <value>채널에서 추방</value>
   </data>
   <data name="ChannelRemoveUserAdmin" xml:space="preserve">
     <value>관리자 해고</value>
@@ -996,6 +1032,9 @@
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>조용한 공지</value>
   </data>
+  <data name="ChannelSubscribers" xml:space="preserve">
+    <value>구독자</value>
+  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>채널 종류</value>
   </data>
@@ -1003,7 +1042,7 @@
     <value>음소거 취소</value>
   </data>
   <data name="ChannelUserAddLimit" xml:space="preserve">
-    <value>죄송합니다. 처음 200명까지만 채널에 추가하실 수 있습니다. 채널 링크로는 무한정 들이실 수 있는 점 알아두세요.</value>
+    <value>죄송합니다. 처음 200명까지만 채널에 추가하실 수 있습니다. 채널 링크로는 사람들을 무한정 들이실 수 있는 점 알아두세요.</value>
   </data>
   <data name="ChannelUserCantAdd" xml:space="preserve">
     <value>죄송합니다, 이 유저를 채널에 추가 할 수 없습니다.</value>
@@ -1015,10 +1054,10 @@
     <value>죄송합니다. 이 채널에는 봇이 너무 많습니다.</value>
   </data>
   <data name="ChannelUserLeftError" xml:space="preserve">
-    <value>죄송합니다. 사용자가 스스로 이 채널에서 나갔기에 다시 초대하실 수 없습니다.</value>
+    <value>죄송합니다. 이 사용자는 스스로 채널에서 나갔기에 다시 초대하실 수 없습니다.</value>
   </data>
   <data name="ChannelUsernameHelp" xml:space="preserve">
-    <value>사람들이 위 링크를 공유할 수 있으며, 텔레그램 검색으로 회원님의 채널을 찾을 수 있습니다.</value>
+    <value>사람들이 위 링크를 공유하며 텔레그램 검색으로 회원님의 채널을 찾을 수 있습니다.</value>
   </data>
   <data name="ChannelUsernamePlaceholder" xml:space="preserve">
     <value>링크</value>
@@ -1048,13 +1087,13 @@
     <value>새로운 참가자에게 이전 대화 내용을</value>
   </data>
   <data name="ChatHistoryHidden" xml:space="preserve">
-    <value>숨기기</value>
+    <value>숨김</value>
   </data>
   <data name="ChatHistoryHiddenInfo" xml:space="preserve">
     <value>새로운 참가자는 이전 메시지를 볼 수 없습니다.</value>
   </data>
   <data name="ChatHistoryVisible" xml:space="preserve">
-    <value>보이기</value>
+    <value>보임</value>
   </data>
   <data name="ChatHistoryVisibleInfo" xml:space="preserve">
     <value> 새로운 참가자는 들어오기 전부터 있던 메시지를 볼 수 있습니다.</value>
@@ -1132,43 +1171,43 @@
     <value>기타</value>
   </data>
   <data name="ChromeCustomTabs" xml:space="preserve">
-    <value>크롬 커스텀 탭</value>
+    <value>앱 안 브라우저</value>
   </data>
   <data name="ChromeCustomTabsInfo" xml:space="preserve">
     <value>앱 안에서 외부 링크 열기</value>
   </data>
   <data name="ClearButton" xml:space="preserve">
-    <value>지우기</value>
+    <value>비우기</value>
   </data>
   <data name="ClearHistory" xml:space="preserve">
     <value>대화 내용 비우기</value>
   </data>
   <data name="ClearHistoryCache" xml:space="preserve">
-    <value>대화방 캐시 지우기</value>
+    <value>캐시 지우기</value>
   </data>
   <data name="ClearMediaCache" xml:space="preserve">
     <value>캐시 비우기</value>
   </data>
   <data name="ClearOtherSessionsHelp" xml:space="preserve">
-    <value>이 기기를 제외한 다른 기기에서 로그아웃합니다.</value>
+    <value>이 밖의 모든 기기를 로그아웃시킵니다.</value>
   </data>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>최근에 사용한 이모지를 비울까요?</value>
   </data>
   <data name="ClearSearch" xml:space="preserve">
-    <value>검색기록을 지우시겠습니까?</value>
+    <value>검색 기록을 비울까요?</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>닫기</value>
   </data>
   <data name="CloseEditor" xml:space="preserve">
-    <value>에디터 닫기</value>
+    <value>편집기 닫기</value>
   </data>
   <data name="Code" xml:space="preserve">
     <value>코드</value>
   </data>
   <data name="CodeExpired" xml:space="preserve">
-    <value>코드가 만료되었습니다. 다시 로그인하세요</value>
+    <value>코드가 만료했습니다. 다시 로그인하세요.</value>
   </data>
   <data name="ColorBlue" xml:space="preserve">
     <value>파란색</value>
@@ -1177,7 +1216,7 @@
     <value>청록색</value>
   </data>
   <data name="ColorDark" xml:space="preserve">
-    <value>다크</value>
+    <value>어둡게</value>
   </data>
   <data name="ColorGreen" xml:space="preserve">
     <value>초록색</value>
@@ -1186,13 +1225,13 @@
     <value>주황색</value>
   </data>
   <data name="ColorPink" xml:space="preserve">
-    <value>핑크색</value>
+    <value>분홍색</value>
   </data>
   <data name="ColorRed" xml:space="preserve">
     <value>빨간색</value>
   </data>
   <data name="ColorSepia" xml:space="preserve">
-    <value>세피아</value>
+    <value>적갈색</value>
   </data>
   <data name="ColorViolet" xml:space="preserve">
     <value>보라색</value>
@@ -1221,7 +1260,7 @@
     <value>비활성화</value>
   </data>
   <data name="ConnectingToProxyDisableAlert" xml:space="preserve">
-    <value>{0} 프록시 서버를 비활성화 하겠습니까? 나중에 설정에서 변경 할 수 있습니다. (데이터 및 저장소)</value>
+    <value>{0} 프록시 서버를 정말 비활성화하겠습니까? 프록시 서버는 설정(데이터 및 저장소)에서 바꾸실 수 있습니다.</value>
   </data>
   <data name="ConnectingToProxyEnable" xml:space="preserve">
     <value>활성화</value>
@@ -1230,7 +1269,7 @@
     <value>프록시를 비활성화하려면 여기를 탭하세요..</value>
   </data>
   <data name="ContactJoined" xml:space="preserve">
-    <value>친구의 텔레그램 가입 알림</value>
+    <value>친구의 텔레그램 가입</value>
   </data>
   <data name="ContactNotRegistered" xml:space="preserve">
     <value>아직 {0}님이 텔레그램에 가입하시지 않았습니다. 초대하시겠습니까?</value>
@@ -1239,13 +1278,13 @@
     <value>연락처</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>**Telegram**에 권한을 부여하여 연락처에 있는 분들과 연결하세요.</value>
+    <value>알고 지내는 모두와 계속해서 연락하려면, **텔레그램**이 회원님의 연락처에 접근할 수 있도록 승낙해주세요.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>계속</value>
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
-    <value>아직 안됨</value>
+    <value>나중에</value>
   </data>
   <data name="ContinueOnThisLanguage" xml:space="preserve">
     <value>한국어로 진행</value>
@@ -1257,27 +1296,27 @@
     <value>슈퍼그룹으로 변환</value>
   </data>
   <data name="ConvertGroupAlert" xml:space="preserve">
-    <value>이 작업은 되돌릴 수 없습니다. 슈퍼그룹에서 일반그룹으로 다운그레이드는 불가능 합니다.</value>
+    <value>이 작업은 되돌릴 수 없습니다. 슈퍼그룹에서 일반 그룹으로 내리기는 불가능합니다.</value>
   </data>
   <data name="ConvertGroupAlertWarning" xml:space="preserve">
     <value>경고</value>
   </data>
   <data name="ConvertGroupInfo" xml:space="preserve">
-    <value>**구성원이 최대치입니다.**
+    <value>**참가자 수 제한에 다다랐습니다.**
 
-추가 기능 및 더 많은 구성원을 추가하려면 슈퍼그룹으로 업그레이드하세요:
+더 많은 참가자를 추가하고 추가 기능을 사용하려면, 슈퍼그룹으로 업그레이드하세요.
 
-• 슈퍼그룹은 {0}명까지 초대가능합니다.
-• 새로운 구성원은 모든 대화내역을 볼 수 있습니다.
-• 메시지 삭제시 모두에게 삭제가 됩니다.
-• 방 생성자는 그룹 공개링크 생성이 가능합니다.</value>
+• 슈퍼그룹은 {0}명 까지도 수용할 수 있습니다
+• 새로운 참가자가 대화 내용 전체를 볼 수 있습니다
+• 한 사람이 메시지를 지우면 모두에게서도 사라집니다
+• 생성자는 그룹의 공개 링크를 둘 수 있습니다</value>
   </data>
   <data name="ConvertGroupInfo2" xml:space="preserve">
-    <value>**슈퍼그룹:**
+    <value>**슈퍼그룹에서는**
 
-• 새로운 구성원은 모든 대화내역을 볼 수 있습니다.
-• 메시지 삭제시 모두에게 삭제가 됩니다.
-• 방 생성자는 그룹 공개링크 생성이 가능합니다.</value>
+• 새로운 참가자가 대화 내용 전체를 볼 수 있습니다
+• 한 사람이 메시지를 지우면 모두에게서도 사라집니다
+• 생성자는 그룹의 공개 링크를 둘 수 있습니다</value>
   </data>
   <data name="ConvertGroupInfo3" xml:space="preserve">
     <value>**주의:** 이 작업은 되돌릴 수 없습니다.</value>
@@ -1301,16 +1340,16 @@
     <value>오류가 발생했습니다.</value>
   </data>
   <data name="CreateGroupError" xml:space="preserve">
-    <value>죄송합니다,  이 이용자들의 개인 설정으로 인하여 그룹을 생성 할 수 없습니다.</value>
+    <value>죄송합니다. 이 사용자들의 개인 설정으로 인해 함께 그룹을 만드실 수 없습니다.</value>
   </data>
   <data name="CreateNewTheme" xml:space="preserve">
-    <value>새로운 테마 생성</value>
+    <value>새로운 테마 만들기</value>
   </data>
   <data name="CreateNewThemeHelp" xml:space="preserve">
-    <value>팔레트 아이콘을 클릭하여 화면 구성 리스트를 볼 수 있으며 - 편집을 할 수 있습니다.</value>
+    <value>각 화면의 구성 요소 목록을 보려면 갤판 아이콘을 누르세요. 수정하실 수도 있습니다.</value>
   </data>
   <data name="CreateNewThemeInfo" xml:space="preserve">
-    <value>앱내에 색상을 변경하여 원하는 테마를 생성할 수 있습니다. 여기에서 언제든지 기존 텔레그램 테마로 복원이 가능합니다.</value>
+    <value>앱 안의 색깔들을 바꿔 회원님만의 테마를 만드실 수 있습니다. 여기서 언제든지 텔레그램을 기본으로 복원하실 수 있습니다.</value>
   </data>
   <data name="Crop" xml:space="preserve">
     <value>자르기</value>
@@ -1328,7 +1367,7 @@
     <value>정사각형</value>
   </data>
   <data name="CurrentGroupStickers" xml:space="preserve">
-    <value>그룹스티커</value>
+    <value>그룹 스티커</value>
   </data>
   <data name="CurrentSession" xml:space="preserve">
     <value>현재 세션</value>
@@ -1346,19 +1385,19 @@
     <value>빨강</value>
   </data>
   <data name="CustomCallInfo" xml:space="preserve">
-    <value>이 사용자들은 위의 설정과 무관하게 전화가 되거나 안될 수 있습니다.</value>
+    <value>위 사용자는 앞선 설정과 무관하게 회원님에게 전화를 걸지 못합니다.</value>
   </data>
   <data name="CustomHelp" xml:space="preserve">
-    <value>주의: 회원님의 마지막 접속 시간을 공유받지 않는 사람의 마지막 접속 시간은 확인할 수 없습니다. 대신 일주일 이내, 한달 이내 등으로 간략하게 표시됩니다.</value>
+    <value>주의: 회원님의 마지막 접속 시간을 공유 받지 않는 사람의 마지막 접속 시간은 확인하실 수 없습니다. 대신 최근, 일주일 이내, 한달 이내와 같이 간략하게 표시됩니다.</value>
   </data>
   <data name="CustomNotifications" xml:space="preserve">
-    <value>개별 알림</value>
+    <value>맞춤 알림</value>
   </data>
   <data name="CustomShareInfo" xml:space="preserve">
-    <value>위의 설정과 무관하게 해당 사용자는 회원님을 그룹 및 채널에 초대 할 수 없습니다.</value>
+    <value>위 사용자는 앞선 설정과 무관하게 회원님을 그룹과 채널에 추가하지 못합니다.</value>
   </data>
   <data name="CustomShareSettingsHelp" xml:space="preserve">
-    <value>이 설정은 위의 내용을 무시하고 작동합니다.</value>
+    <value>이는 앞선 설정을 무시하고 작동합니다.</value>
   </data>
   <data name="DataSettings" xml:space="preserve">
     <value>데이터 및 저장소</value>
@@ -1406,10 +1445,10 @@
     <value>디버그 메뉴</value>
   </data>
   <data name="DebugMenuDisableCamera" xml:space="preserve">
-    <value>앱 속 카메라 비활성화</value>
+    <value>앱 안 카메라 사용 안 함</value>
   </data>
   <data name="DebugMenuEnableCamera" xml:space="preserve">
-    <value>앱 속 카메라 활성화</value>
+    <value>앱 안 카메라 사용</value>
   </data>
   <data name="DebugMenuImportContacts" xml:space="preserve">
     <value>연락처 가져오기</value>
@@ -1424,16 +1463,16 @@
     <value>대화 초기화</value>
   </data>
   <data name="Default" xml:space="preserve">
-    <value>기본값</value>
+    <value>기본</value>
   </data>
   <data name="DefaultRingtone" xml:space="preserve">
-    <value>기본값</value>
+    <value>기본</value>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>지우기</value>
   </data>
   <data name="DeleteAccountHelp" xml:space="preserve">
-    <value>이 기간 동안 최소 한 번 이상 로그인을 하지 않으면 자동으로 모든 메시지, 연락처와 대화상대를 삭제하고 텔레그램을 탈퇴합니다.</value>
+    <value>이 기간 안에 최소 한 번 이상 들어오시지 않으면, 모든 그룹, 메시지, 연락처와 더불어 회원님의 계정이 사라집니다.</value>
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>자동 회원 탈퇴</value>
@@ -1457,13 +1496,13 @@
     <value>대화방 나가기</value>
   </data>
   <data name="DeleteChatUser" xml:space="preserve">
-    <value>대화방 없애기</value>
+    <value>대화방 지우기</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>지우기</value>
   </data>
   <data name="DeleteForAll" xml:space="preserve">
-    <value>모두에게서 지우기</value>
+    <value>모든 참가자에게서 지우기</value>
   </data>
   <data name="DeleteForUser" xml:space="preserve">
     <value>{0} 님에게서 지우기</value>
@@ -1493,13 +1532,13 @@
     <value>이 테마를 지우시겠습니까?</value>
   </data>
   <data name="DeleteThisChat" xml:space="preserve">
-    <value>이 대화방 지우기</value>
+    <value>이 대화방을 지웁니다</value>
   </data>
   <data name="DeleteThisGroup" xml:space="preserve">
-    <value>이 그룹 지우기</value>
+    <value>이 그룹을 지웁니다</value>
   </data>
   <data name="DescriptionInfo" xml:space="preserve">
-    <value>채널에 추가 설명을 제공 할 수 있습니다.</value>
+    <value>채널에 설명을 제공하실 수 있습니다.</value>
   </data>
   <data name="DescriptionOptionalPlaceholder" xml:space="preserve">
     <value>설명 (선택)</value>
@@ -1511,10 +1550,10 @@
     <value>코드를 받지 못하셨나요?</value>
   </data>
   <data name="DirectShare" xml:space="preserve">
-    <value>직접 공유</value>
+    <value>바로 공유</value>
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
-    <value>공유 메뉴에서 최근 대화 보기</value>
+    <value>공유 메뉴에 최근 대화 보이기</value>
   </data>
   <data name="DisappearingPhoto" xml:space="preserve">
     <value>비밀 사진</value>
@@ -1523,13 +1562,13 @@
     <value>비밀 동영상</value>
   </data>
   <data name="DiscardChanges" xml:space="preserve">
-    <value>변경을 취소하시겠습니까?</value>
+    <value>원상태로 되돌릴까요?</value>
   </data>
   <data name="DiscardVideoMessageDescription" xml:space="preserve">
-    <value>녹화를 중단하고 영상 메시지를 지우시겠습니까?</value>
+    <value>정말 녹화를 그만두고 동영상 메시지를 버리시겠습니까?</value>
   </data>
   <data name="DiscardVideoMessageTitle" xml:space="preserve">
-    <value>영상 메시지 지우기</value>
+    <value>동영상 메시지 버리기</value>
   </data>
   <data name="DiscardVoiceMessageAction" xml:space="preserve">
     <value>버리기</value>
@@ -1541,7 +1580,7 @@
     <value>음성 메시지 지우기</value>
   </data>
   <data name="DocumentsTitle" xml:space="preserve">
-    <value>공유한 파일</value>
+    <value>공유된 파일</value>
   </data>
   <data name="Done" xml:space="preserve">
     <value>완료</value>
@@ -1550,7 +1589,7 @@
     <value>임시저장</value>
   </data>
   <data name="Edit" xml:space="preserve">
-    <value>편집</value>
+    <value>수정</value>
   </data>
   <data name="EditAdmin" xml:space="preserve">
     <value>관리자 수정</value>
@@ -1568,7 +1607,7 @@
     <value>사용자 차단</value>
   </data>
   <data name="EditAdminCantEdit" xml:space="preserve">
-    <value>이 관리자의 권한을 수정할 수 없습니다.</value>
+    <value>이 관리자의 권한을 수정하실 수 없습니다.</value>
   </data>
   <data name="EditAdminChangeChannelInfo" xml:space="preserve">
     <value>채널 정보 수정</value>
@@ -1589,25 +1628,25 @@
     <value>메시지 고정</value>
   </data>
   <data name="EditAdminPostMessages" xml:space="preserve">
-    <value>메시지 작성</value>
+    <value>메시지 올리기</value>
   </data>
   <data name="EditAdminPromotedBy" xml:space="preserve">
-    <value>{0} 님이 추가</value>
+    <value>{0} 님이 추가함</value>
   </data>
   <data name="EditAdminRemoveAdmin" xml:space="preserve">
     <value>관리자 해고</value>
   </data>
   <data name="EditAdminWhatCanDo" xml:space="preserve">
-    <value>관리자는 무엇을 할 수 있나요?</value>
+    <value>이 관리자는 무엇을 할 수 있나요?</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>편집</value>
+    <value>수정</value>
   </data>
   <data name="EditMessageError" xml:space="preserve">
-    <value>죄송합니다, 메시지 수정을 할 수 없습니다.</value>
+    <value>죄송합니다. 메시지를 수정할 수 없습니다.</value>
   </data>
   <data name="EditName" xml:space="preserve">
-    <value>이름 편집</value>
+    <value>이름 수정</value>
   </data>
   <data name="EditedMessage" xml:space="preserve">
     <value>수정됨</value>
@@ -1621,13 +1660,13 @@
 2.인증 링크 클릭</value>
   </data>
   <data name="Emoji" xml:space="preserve">
-    <value>이모티콘</value>
+    <value>이모지</value>
   </data>
   <data name="EmojiBigSize" xml:space="preserve">
-    <value>한개의 큰 이모티콘 그리기</value>
+    <value>큰 이모지 하나 그리기</value>
   </data>
   <data name="EmojiUseDefault" xml:space="preserve">
-    <value>기본 시스템 이모티콘 사용</value>
+    <value>시스템 기본 이모지 사용</value>
   </data>
   <data name="EmpryUsersPlaceholder" xml:space="preserve">
     <value>사용자 추가</value>
@@ -1639,7 +1678,7 @@
     <value>이 프록시를 비활성화 하겠습니까?</value>
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
-    <value>나중에 설정에서 프록시 서버를 변경 할 수 있습니다. (데이터 및 저장소)</value>
+    <value>프록시 서버는 설정(데이터 및 저장소)에서 바꾸실 수 있습니다.</value>
   </data>
   <data name="EnabledPasswordText" xml:space="preserve">
     <value>2단계 인증을 활성화 하였습니다.
@@ -1676,7 +1715,7 @@
     <value>암호화 키</value>
   </data>
   <data name="EncryptionKeyDescription" xml:space="preserve">
-    <value>이 이미지와 문자는 **{0}**님과의 비밀 대화에 사용된 암호화 키에서 파생되었습니다.
+    <value>이 이미지와 문자는 **{0}**님과의 비밀 대화에 사용된 암호화 키에서 파생됐습니다.
 
 이 이미지와 문자가 **{1}'s** 님 기기의 것과 같다면, 기기 간(end-to-end) 암호화에 문제가 없음을 보장합니다.
 
@@ -1686,7 +1725,7 @@
     <value>https://telegram.org/faq#secret-chats</value>
   </data>
   <data name="EncryptionProcessing" xml:space="preserve">
-    <value>암호키 교환중...</value>
+    <value>암호 키 교환 중...</value>
   </data>
   <data name="EncryptionRejected" xml:space="preserve">
     <value>비밀 대화가 끝났습니다</value>
@@ -1704,7 +1743,7 @@
     <value>현재 암호를 입력해주세요.</value>
   </data>
   <data name="EnterGroupNamePlaceholder" xml:space="preserve">
-    <value>그룹 이름 입력</value>
+    <value>그룹명 입력</value>
   </data>
   <data name="EnterListName" xml:space="preserve">
     <value>리스트 이름을 입력하세요</value>
@@ -1719,7 +1758,7 @@
     <value>테마명을 입력하세요</value>
   </data>
   <data name="EnterYourPasscode" xml:space="preserve">
-    <value>암호 입력</value>
+    <value>암호를 입력하세요</value>
   </data>
   <data name="ErrorOccurred" xml:space="preserve">
     <value>오류가 발생했습니다.</value>
@@ -1734,7 +1773,7 @@
     <value>최근 활동</value>
   </data>
   <data name="EventLogAdded" xml:space="preserve">
-    <value>un1님이 un2님을 초대했습니다</value>
+    <value>un1 님이 un2 님을 추가했습니다</value>
   </data>
   <data name="EventLogAllAdmins" xml:space="preserve">
     <value>모든 관리자</value>
@@ -1743,13 +1782,13 @@
     <value>모든 활동</value>
   </data>
   <data name="EventLogChangedChannelLink" xml:space="preserve">
-    <value>un1님이 채널링크를 변경했습니다:</value>
+    <value>un1 님이 채널 링크를 바꿨습니다:</value>
   </data>
   <data name="EventLogChangedGroupLink" xml:space="preserve">
-    <value>un1님이 그룹링크를 변경했습니다:</value>
+    <value>un1 님이 그룹 링크를 바꿨습니다:</value>
   </data>
   <data name="EventLogChangedStickersSet" xml:space="preserve">
-    <value>un1님이 그룹 스티커 세트를 변경했습니다.</value>
+    <value>un1 님이 그룹 스티커 묶음을 바꿨습니다</value>
   </data>
   <data name="EventLogChannelJoined" xml:space="preserve">
     <value>un1 님이 채널에 들어왔습니다</value>
@@ -1761,31 +1800,31 @@
     <value>{0} 님을 차단 해제함</value>
   </data>
   <data name="EventLogDeletedMessages" xml:space="preserve">
-    <value>un1 님이 이 메시지를 지우셨습니다:</value>
+    <value>un1 님이 아래 메시지를 지웠습니다:</value>
   </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
     <value>un1님이 캡션을 수정했습니다:</value>
   </data>
   <data name="EventLogEditedChannelDescription" xml:space="preserve">
-    <value>un1님이 채널정보를 변경했습니다:</value>
+    <value>un1 님이 채널 설명을 바꿨습니다:</value>
   </data>
   <data name="EventLogEditedChannelPhoto" xml:space="preserve">
-    <value>un1님이 채널 사진 을 새로 설정했습니다.</value>
+    <value>un1 님이 새 채널 사진을 설정했습니다</value>
   </data>
   <data name="EventLogEditedChannelTitle" xml:space="preserve">
-    <value>un1님이 채널명을 "{0}" 로 변경하였습니다.</value>
+    <value>un1 님이 채널명을 "{0}"(으)로 바꿨습니다</value>
   </data>
   <data name="EventLogEditedGroupDescription" xml:space="preserve">
-    <value>un1님이 그룹정보를 변경했습니다:</value>
+    <value>un1 님이 그룹 설명을 바꿨습니다:</value>
   </data>
   <data name="EventLogEditedGroupPhoto" xml:space="preserve">
     <value>un1님이 그룹 사진 을 새로 설정했습니다.</value>
   </data>
   <data name="EventLogEditedGroupTitle" xml:space="preserve">
-    <value>un1님이 그룹명을 "{0}" 로 변경하였습니다.</value>
+    <value>un1 님이 그룹명을 "{0}"(으)로 바꿨습니다</value>
   </data>
   <data name="EventLogEditedMessages" xml:space="preserve">
-    <value>un1님이 이 메시지를 편집했습니다.</value>
+    <value>un1 님이 아래 메시지를 수정했습니다:</value>
   </data>
   <data name="EventLogEditedYouChannelPhoto" xml:space="preserve">
     <value></value>
@@ -1800,18 +1839,18 @@
     <value></value>
   </data>
   <data name="EventLogEmpty" xml:space="preserve">
-    <value>**아직 이벤트가 없습니다.**
+    <value>**활동 없음**
 
-그룹 사용자나 관리자가
-지난 48시간내에
- 아무런 활동이 없었습니다.</value>
+지난 48시간 사이에
+그룹 참가자와 관리자가
+활동한 기록이 없습니다.</value>
   </data>
   <data name="EventLogEmptyChannel" xml:space="preserve">
-    <value>**아직 이벤트가 없습니다.**
+    <value>**활동 없음**
 
-이 채널 관리자는
-지난 48시간내에
- 아무런 활동이 없었습니다.</value>
+지난 48시간 사이에
+채널 관리자가
+활동한 기록이 없습니다.</value>
   </data>
   <data name="EventLogEmptySearch" xml:space="preserve">
     <value>**이벤트를 찾을 수 없습니다.**
@@ -1819,7 +1858,7 @@
 검색한 이벤트를 찾을 수 없습니다.</value>
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
-    <value>'**{0}**' 에 대한 최근 이벤트를 찾을 수 없습니다.</value>
+    <value>'**{0}**' 에 대한 최근 활동을 찾지 못했습니다.</value>
   </data>
   <data name="EventLogFilterAll" xml:space="preserve">
     <value>모든 활동</value>
@@ -1840,7 +1879,7 @@
     <value>그룹 정보</value>
   </data>
   <data name="EventLogFilterLeavingMembers" xml:space="preserve">
-    <value>퇴장한 사용자</value>
+    <value>나간 참가자</value>
   </data>
   <data name="EventLogFilterNewAdmins" xml:space="preserve">
     <value>새로운 관리자</value>
@@ -1855,13 +1894,13 @@
     <value>메시지 고정</value>
   </data>
   <data name="EventLogGroupJoined" xml:space="preserve">
-    <value>un1 님이 그룹에 참여했습니다</value>
+    <value>un1 님이 그룹에 들어왔습니다</value>
   </data>
   <data name="EventLogInfoDetail" xml:space="preserve">
-    <value>그룹 사용자와 관리자의 지난 48시간동안 활동 리스트입니다.</value>
+    <value>지난 48시간 사이에 채널 참가자와 관리자가 활동한 기록입니다.</value>
   </data>
   <data name="EventLogInfoDetailChannel" xml:space="preserve">
-    <value>채널 관리자의 지난 48시간동안 활동 리스트입니다.</value>
+    <value>지난 48시간 사이에 채널 관리자가 활동한 기록입니다.</value>
   </data>
   <data name="EventLogInfoTitle" xml:space="preserve">
     <value>최근 활동이란 무엇인가요?</value>
@@ -1873,13 +1912,13 @@
     <value>un1님이 채널에서 나갔습니다.</value>
   </data>
   <data name="EventLogLeftGroup" xml:space="preserve">
-    <value>un1님이 그룹에서 나갔습니다.</value>
+    <value>un1 님이 그룹에서 나갔습니다</value>
   </data>
   <data name="EventLogOriginalCaption" xml:space="preserve">
     <value>원본 캡션</value>
   </data>
   <data name="EventLogOriginalCaptionEmpty" xml:space="preserve">
-    <value>없음</value>
+    <value>비어 있음</value>
   </data>
   <data name="EventLogOriginalMessages" xml:space="preserve">
     <value>원본 메시지</value>
@@ -1900,7 +1939,7 @@
     <value>기존 링크</value>
   </data>
   <data name="EventLogPromoted" xml:space="preserve">
-    <value>{0}님의 권한을 수정했습니다.</value>
+    <value>{0} 님의 권한 정도를 바꿨습니다</value>
   </data>
   <data name="EventLogPromotedAddAdmins" xml:space="preserve">
     <value>관리자 추가</value>
@@ -1942,7 +1981,7 @@
     <value>un1 님이 채널 사진을 지웠습니다</value>
   </data>
   <data name="EventLogRemovedGroupLink" xml:space="preserve">
-    <value>un1 님이 그룹 링크를 없앴습니다.</value>
+    <value>un1 님이 그룹 링크를 없앴습니다</value>
   </data>
   <data name="EventLogRemovedStickersSet" xml:space="preserve">
     <value>un1 님이 그룹 스티커 묶음을 없앴습니다</value>
@@ -1975,7 +2014,7 @@
     <value>스티커 및 GIF 보내기</value>
   </data>
   <data name="EventLogRestrictedUntil" xml:space="preserve">
-    <value>{0} 님에 대한 제한을 변경했습니다.
+    <value>{0} 님에 대한 제한 정도를 바꿨습니다
 
 기한: {1}</value>
   </data>
@@ -2019,7 +2058,7 @@
     <value></value>
   </data>
   <data name="Events" xml:space="preserve">
-    <value>이벤트</value>
+    <value>확인할 일</value>
   </data>
   <data name="Exposure" xml:space="preserve">
     <value>노출</value>
@@ -2037,7 +2076,7 @@
     <value>인기 스티커</value>
   </data>
   <data name="FeaturedStickersInfo" xml:space="preserve">
-    <value>현재 텔레그램에서 인기있는 스티커입니다. @stickers 봇을 통하여 커스텀 스티커 추가가 가능합니다.</value>
+    <value>현재 텔레그램에서 인기를 끌고 있는 스티커들입니다. @sticker 봇으로 맞춤 스티커를 추가하실 수 있습니다.</value>
   </data>
   <data name="FileUploadLimit" xml:space="preserve">
     <value>파일 크기는 {0}보다 작아야 합니다</value>
@@ -2049,19 +2088,19 @@
     <value>터치 센서</value>
   </data>
   <data name="FingerprintInfo" xml:space="preserve">
-    <value>지문인식 후 진행해주세요</value>
+    <value>계속하려면 지문인식 절차를 거치세요</value>
   </data>
   <data name="FingerprintNotRecognized" xml:space="preserve">
-    <value>지문인식이 실패하였습니다. 다시 시도해주세요.</value>
+    <value>지문인식에 실패했습니다. 다시 시도해주세요.</value>
   </data>
   <data name="FirstName" xml:space="preserve">
-    <value>이름 (필수)</value>
+    <value>이름(필수)</value>
   </data>
   <data name="FloodWait" xml:space="preserve">
     <value>너무 많이 시도하셨습니다. 나중에 다시 시도하세요</value>
   </data>
   <data name="FloodWaitTime" xml:space="preserve">
-    <value>너무 많이 시도하셨습니다. {0} 초 후에 다시 시도하세요.</value>
+    <value>너무 많이 시도하셨습니다. {0}초 뒤에 다시 시도하세요.</value>
   </data>
   <data name="Folder" xml:space="preserve">
     <value>폴더</value>
@@ -2094,7 +2133,8 @@
     <value></value>
   </data>
   <data name="ForwardedAudioOther" xml:space="preserve">
-    <value>{0} 개의 전달된 음성 메시지</value>
+    <value>전달되는 음성 메시지
+전달되는 음성 메시지 {0}개</value>
   </data>
   <data name="ForwardedContactZero" xml:space="preserve">
     <value></value>
@@ -2112,7 +2152,8 @@
     <value></value>
   </data>
   <data name="ForwardedContactOther" xml:space="preserve">
-    <value>{0} 개의 전달된 연락처</value>
+    <value>전달되는 연락처
+전달되는 연락처 {0}개</value>
   </data>
   <data name="ForwardedFileZero" xml:space="preserve">
     <value></value>
@@ -2130,7 +2171,8 @@
     <value></value>
   </data>
   <data name="ForwardedFileOther" xml:space="preserve">
-    <value>{0} 개의 전달된 파일</value>
+    <value>전달되는 파일
+전달되는 파일 {0}개</value>
   </data>
   <data name="ForwardedLocationZero" xml:space="preserve">
     <value></value>
@@ -2148,7 +2190,8 @@
     <value></value>
   </data>
   <data name="ForwardedLocationOther" xml:space="preserve">
-    <value>{0} 개의 전달된 위치</value>
+    <value>전달되는 위치
+전달되는 위치 {0}곳</value>
   </data>
   <data name="ForwardedMessage" xml:space="preserve">
     <value>전달된 메시지</value>
@@ -2169,7 +2212,8 @@
     <value></value>
   </data>
   <data name="ForwardedMessageCountOther" xml:space="preserve">
-    <value>{0} 개의 전달된 메시지</value>
+    <value>전달되는 메시지
+전달되는 메시지 {0}개</value>
   </data>
   <data name="ForwardedMusicZero" xml:space="preserve">
     <value></value>
@@ -2187,7 +2231,8 @@
     <value></value>
   </data>
   <data name="ForwardedMusicOther" xml:space="preserve">
-    <value>{0} 전달된 트랙</value>
+    <value>전달되는 트랙
+전달되는 트랙 {0}개</value>
   </data>
   <data name="ForwardedPhotoZero" xml:space="preserve">
     <value></value>
@@ -2205,7 +2250,8 @@
     <value></value>
   </data>
   <data name="ForwardedPhotoOther" xml:space="preserve">
-    <value>{0} 개의 전달된 사진</value>
+    <value>전달되는 사진
+전달되는 사진 {0}개</value>
   </data>
   <data name="ForwardedRoundZero" xml:space="preserve">
     <value></value>
@@ -2223,7 +2269,8 @@
     <value></value>
   </data>
   <data name="ForwardedRoundOther" xml:space="preserve">
-    <value>{0} 개의 전달된 영상메시지</value>
+    <value>전달되는 동영상 메시지
+전달되는 동영상 메시지 {0}개</value>
   </data>
   <data name="ForwardedStickerZero" xml:space="preserve">
     <value></value>
@@ -2241,7 +2288,8 @@
     <value></value>
   </data>
   <data name="ForwardedStickerOther" xml:space="preserve">
-    <value>{0} 개의 전달된 스티커</value>
+    <value>전달되는 스티커
+전달되는 스티커 {0}개</value>
   </data>
   <data name="ForwardedVideoZero" xml:space="preserve">
     <value></value>
@@ -2259,7 +2307,8 @@
     <value></value>
   </data>
   <data name="ForwardedVideoOther" xml:space="preserve">
-    <value>{0} 개의 전달된 비디오</value>
+    <value>전달되는 동영상
+전달되는 동영상 {0}개</value>
   </data>
   <data name="FreeOfTotal" xml:space="preserve">
     <value>{1} 중 {0} 남음</value>
@@ -2314,19 +2363,19 @@
   </data>
   <data name="GotAQuestion" xml:space="preserve">
     <value>텔레그램에 관해
-궁금한 사항이 있나요?</value>
+궁금한 점이 있으신가요?</value>
   </data>
   <data name="GpsDisabledAlert" xml:space="preserve">
-    <value>위치 기반 서비스를 사용하시려면 GPS기능을 활성화 해주셔야합니다.</value>
+    <value>GPS가 꺼져 있습니다. 위치 기반 서비스를 사용하려면 GPS를 켜세요.</value>
   </data>
   <data name="Grain" xml:space="preserve">
     <value>그레인</value>
   </data>
   <data name="GroupMembers" xml:space="preserve">
-    <value>대화상대</value>
+    <value>참가자</value>
   </data>
   <data name="GroupName" xml:space="preserve">
-    <value>그룹 이름</value>
+    <value>그룹명</value>
   </data>
   <data name="GroupNotifications" xml:space="preserve">
     <value>그룹 알림</value>
@@ -2362,7 +2411,7 @@
     <value>그룹</value>
   </data>
   <data name="GroupsAndChannelsHelp" xml:space="preserve">
-    <value>그룹 및 채널에 초대가능한 사용자 변경</value>
+    <value>회원님을 그룹이나 채널에 추가할 수 있는 사람을 정하세요.</value>
   </data>
   <data name="GroupsInCommon" xml:space="preserve">
     <value>공통 그룹</value>
@@ -2380,13 +2429,13 @@
     <value>하이라이트</value>
   </data>
   <data name="HistoryCleared" xml:space="preserve">
-    <value>내역이 초기화 됨</value>
+    <value>대화 내용 비움</value>
   </data>
   <data name="HoldToAudio" xml:space="preserve">
-    <value>꾹 눌러 음성을 녹음하세요. 탭하여 영상으로 전환하세요.</value>
+    <value>꾹 눌러 음성을 녹음하세요. 짧게 눌러 동영상으로 바꾸세요.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
-    <value>꾹 눌러 영상을 녹화하세요. 탭하여 음성으로 전환하세요.</value>
+    <value>꾹 눌러 동영상을 녹화하세요. 짧게 눌러 음성으로 바꾸세요.</value>
   </data>
   <data name="HoursZero" xml:space="preserve">
     <value></value>
@@ -2431,19 +2480,19 @@
     <value>연락처 가져오기</value>
   </data>
   <data name="InAppNotifications" xml:space="preserve">
-    <value>앱 내 알림</value>
+    <value>앱 안 알림</value>
   </data>
   <data name="InAppPreview" xml:space="preserve">
-    <value>실행 중일 때 미리보기</value>
+    <value>앱 안 미리보기</value>
   </data>
   <data name="InAppSounds" xml:space="preserve">
-    <value>실행 중일 때 알림음</value>
+    <value>앱 안 소리</value>
   </data>
   <data name="InAppVibrate" xml:space="preserve">
-    <value>실행 중일 때 진동</value>
+    <value>앱 안 진동</value>
   </data>
   <data name="InChatSound" xml:space="preserve">
-    <value>채팅중 소리 설정</value>
+    <value>대화 중 소리</value>
   </data>
   <data name="IncomingCalls" xml:space="preserve">
     <value>수신 전화</value>
@@ -2467,7 +2516,7 @@
     <value>내부 저장소</value>
   </data>
   <data name="InvalidCode" xml:space="preserve">
-    <value>올바른 코드를 입력해 주세요</value>
+    <value>올바른 코드를 입력해주세요</value>
   </data>
   <data name="InvalidFirstName" xml:space="preserve">
     <value>올바른 이름을 입력해 주세요</value>
@@ -2488,13 +2537,13 @@
     <value>친구 초대</value>
   </data>
   <data name="InviteFriendsHelp" xml:space="preserve">
-    <value>텔레그램으로 초대할 연락처 선택</value>
+    <value>텔레그램으로 초대할 연락 상대를 선택하세요</value>
   </data>
   <data name="InviteLink" xml:space="preserve">
     <value>초대 링크</value>
   </data>
   <data name="InviteText2" xml:space="preserve">
-    <value>안녕하세요, 전 텔레그램을 사용하고 있습니다. 같이 사용해봐요! 여기에서 다운로드 받을 수 있습니다. : {0}</value>
+    <value>안녕하세요, 전 텔레그램이라는 메신저를 사용하고 있어요. 함께 사용해요! 여기서 다운로드하실 수 있어요.  {0}</value>
   </data>
   <data name="InviteTextNumZero" xml:space="preserve">
     <value></value>
@@ -2512,7 +2561,7 @@
     <value></value>
   </data>
   <data name="InviteTextNumOther" xml:space="preserve">
-    <value>안녕하세요, {0}명의 친구들과 같이 텔레그램을 사용하고 있어요. 같이 사용해요! 여기에서 다운로드 받아주세요: {1}</value>
+    <value>안녕하세요, {0}명의 친구와 텔레그램이라는 메신저를 사용하고 있어요. 함께 사용해요! 여기서 다운로드하세요: {1}</value>
   </data>
   <data name="InviteToChannelError" xml:space="preserve">
     <value>죄송합니다,  이 이용자는 개인 설정으로 인하여 채널에 초대 할 수 없습니다.</value>
@@ -2524,7 +2573,7 @@
     <value>죄송합니다,  이 이용자는 개인 설정으로 인하여 그룹에 초대 할 수 없습니다.</value>
   </data>
   <data name="InviteToTelegram" xml:space="preserve">
-    <value>텔레그램에 초대</value>
+    <value>텔레그램으로 초대</value>
   </data>
   <data name="InviteUser" xml:space="preserve">
     <value>지인분이 아직 텔레그램을 설치하지 않았습니다. 초대장을 보낼까요?</value>
@@ -2533,7 +2582,7 @@
     <value>{0}님이 음성메시지를 녹음중입니다...</value>
   </data>
   <data name="IsRecordingRound" xml:space="preserve">
-    <value>{0}님이 영상메시지를 녹화중입니다...</value>
+    <value>{0} 님이 동영상 메시지를 녹화하는 중...</value>
   </data>
   <data name="IsSendingAudio" xml:space="preserve">
     <value>{0} 님이 녹음을 보내는 중...</value>
@@ -2554,16 +2603,16 @@
     <value>님이 입력 중...</value>
   </data>
   <data name="IsTypingGroup" xml:space="preserve">
-    <value>{0} 님이 입력하는 중...</value>
+    <value>{0} 님이 입력 중...</value>
   </data>
   <data name="Italic" xml:space="preserve">
     <value>기울림</value>
   </data>
   <data name="JoinGroup" xml:space="preserve">
-    <value>그룹 입장</value>
+    <value>그룹 들어가기</value>
   </data>
   <data name="JoinToGroupErrorFull" xml:space="preserve">
-    <value>죄송합니다, 그룹의 인원이 최대치입니다.</value>
+    <value>죄송합니다. 그룹이 가득 차 있습니다.</value>
   </data>
   <data name="JoinToGroupErrorNotExist" xml:space="preserve">
     <value>죄송합니다. 대화방이 없어진 모양입니다.</value>
@@ -2583,13 +2632,13 @@
   <data name="KeepMediaInfo" xml:space="preserve">
     <value>이 기간 동안 회원님이 **접근하지 않은** 클라우드 대화방의 사진, 동영상과 그 밖의 파일들이 디스크 공간 절약을 위해 이 기기에서 지워집니다.
 
-모든 미디어는 텔레그램 클라우드에 남으며 필요할 때 언제든 다시 다운로드하실 수 있습니다.</value>
+모든 미디어는 텔레그램 클라우드에 남으며 언제든지 다시 다운로드하실 수 있습니다.</value>
   </data>
   <data name="KickFromBroadcast" xml:space="preserve">
     <value>방송 목록에서 지우기</value>
   </data>
   <data name="KickFromGroup" xml:space="preserve">
-    <value>그룹에서 제명</value>
+    <value>그룹에서 추방</value>
   </data>
   <data name="KickFromSupergroup" xml:space="preserve">
     <value>사용자 제한</value>
@@ -2619,37 +2668,37 @@
     <value>마지막 접속: </value>
   </data>
   <data name="LastSeenContacts" xml:space="preserve">
-    <value>내 대화상대</value>
+    <value>내 연락 상대만</value>
   </data>
   <data name="LastSeenContactsMinus" xml:space="preserve">
-    <value>내 대화상대 (-{0})</value>
+    <value>내 연락 상대만 (-{0})</value>
   </data>
   <data name="LastSeenContactsMinusPlus" xml:space="preserve">
-    <value>내 대화상대 (-{0}, +{1})</value>
+    <value>내 연락 상대만 (-{0}, +{1})</value>
   </data>
   <data name="LastSeenContactsPlus" xml:space="preserve">
-    <value>내 대화상대 (+{0})</value>
+    <value>내 연락 상대만 (+{0})</value>
   </data>
   <data name="LastSeenDate" xml:space="preserve">
     <value>마지막 접속: </value>
   </data>
   <data name="LastSeenEverybody" xml:space="preserve">
-    <value>전체 공개</value>
+    <value>모두</value>
   </data>
   <data name="LastSeenEverybodyMinus" xml:space="preserve">
     <value>전체 공개 (-{0})</value>
   </data>
   <data name="LastSeenNobody" xml:space="preserve">
-    <value>비공개</value>
+    <value>아무도 없음</value>
   </data>
   <data name="LastSeenNobodyPlus" xml:space="preserve">
     <value>비공개 (+{0})</value>
   </data>
   <data name="LastSeenTitle" xml:space="preserve">
-    <value>마지막 접속 시간을 누구에게 공개할까요?</value>
+    <value>내 마지막 접속 시간을 볼 수 있는 사람</value>
   </data>
   <data name="Lately" xml:space="preserve">
-    <value>최근에 접속</value>
+    <value>최근에 접속함</value>
   </data>
   <data name="LeaveChannel" xml:space="preserve">
     <value>채널 나가기</value>
@@ -2664,49 +2713,49 @@
     <value>LED 색상</value>
   </data>
   <data name="LedDisabled" xml:space="preserve">
-    <value>비활성화됨</value>
+    <value>사용 안 함</value>
   </data>
   <data name="LinkAvailable" xml:space="preserve">
-    <value>{0}은 사용 가능합니다.</value>
+    <value>{0} :사용하실 수 있습니다.</value>
   </data>
   <data name="LinkChecking" xml:space="preserve">
     <value>이름 확인 중..</value>
   </data>
   <data name="LinkCopied" xml:space="preserve">
-    <value>클립보드로 링크가 복사되었습니다.</value>
+    <value>링크가 클립보드로 복사되었습니다</value>
   </data>
   <data name="LinkInUse" xml:space="preserve">
-    <value>이미 사용 중인 이름입니다.</value>
+    <value>이미 사용되고 있는 이름입니다.</value>
   </data>
   <data name="LinkInfo" xml:space="preserve">
-    <value>텔레그램이 설치된 분들은 링크를 타고 그룹에 참여가 가능합니다.</value>
+    <value>텔레그램을 설치한 누구나 위 링크를 통해 그룹에 참여할 수 있습니다.</value>
   </data>
   <data name="LinkInvalid" xml:space="preserve">
     <value>올바르지 않은 이름입니다.</value>
   </data>
   <data name="LinkInvalidLong" xml:space="preserve">
-    <value>이름은 최대 32자까지만 가능합니다.</value>
+    <value>이름은 32자를 넘길 수 없습니다.</value>
   </data>
   <data name="LinkInvalidShort" xml:space="preserve">
-    <value>채널명은 최소 5 글자 이상 입력해야 합니다.</value>
+    <value>채널명은 최소 5자로 이루어져야 합니다.</value>
   </data>
   <data name="LinkInvalidShortMega" xml:space="preserve">
     <value>그룹명은 최소 5 글자 이상 입력해야 합니다.</value>
   </data>
   <data name="LinkInvalidStartNumber" xml:space="preserve">
-    <value>채널명은 숫자로 시작 할 수 없습니다.</value>
+    <value>채널명은 숫자로 시작할 수 없습니다.</value>
   </data>
   <data name="LinkInvalidStartNumberMega" xml:space="preserve">
     <value>그룹명은 숫자로 시작 할 수 없습니다.</value>
   </data>
   <data name="LinkPreview" xml:space="preserve">
-    <value>링크 미리복</value>
+    <value>링크 미리보기</value>
   </data>
   <data name="LinksTitle" xml:space="preserve">
-    <value>공유한 링크</value>
+    <value>공유된 링크</value>
   </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
-    <value>이 대화방에 있는 사람들이 얼마 동안 회원님의 정확한 위치를 볼 수 있도록 할지 고르세요.</value>
+    <value>이 대화방에 있는 사람들이 얼마 동안 회원님의 정확한 위치를 볼 수 있도록 할지 선택하세요.</value>
   </data>
   <data name="LiveLocationAlertPrivate" xml:space="preserve">
     <value>{0} 님이 얼마 동안 회원님의 정확한 위치를 볼 수 있도록 할지 고르세요.</value>
@@ -2718,7 +2767,7 @@
     <value>불러오는 중...</value>
   </data>
   <data name="LocalAudioCache" xml:space="preserve">
-    <value>음성/영상 메시지</value>
+    <value>음성/동영상 메시지</value>
   </data>
   <data name="LocalCache" xml:space="preserve">
     <value>다른 파일</value>
@@ -2738,7 +2787,7 @@
     <value>문서</value>
   </data>
   <data name="LocalGifCache" xml:space="preserve">
-    <value>GIF파일</value>
+    <value>GIF</value>
   </data>
   <data name="LocalMusicCache" xml:space="preserve">
     <value>음악</value>
@@ -2750,7 +2799,7 @@
     <value>동영상</value>
   </data>
   <data name="LocationUpdated" xml:space="preserve">
-    <value>갱신됨</value>
+    <value>업데이트됨</value>
   </data>
   <data name="LocationUpdatedJustNow" xml:space="preserve">
     <value>방금 갱신됨</value>
@@ -2768,7 +2817,7 @@
     <value>길게</value>
   </data>
   <data name="LowDiskSpaceMessage" xml:space="preserve">
-    <value>기기에 남은 공간이 거의 없습니다. 텔레그램에서 최근 미디어만 저장하도록 하면 여유 공간을 확보할 수 있습니다.</value>
+    <value>기기에 남은 공간이 거의 없습니다. 텔레그램이 최근 미디어의 캐시만 저장하도록 설정하면 여유 공간을 확보하실 수 있습니다.</value>
   </data>
   <data name="LowDiskSpaceNeverRemove" xml:space="preserve">
     <value>지우지 말기</value>
@@ -2798,19 +2847,19 @@
     <value>마스크</value>
   </data>
   <data name="MasksInfo" xml:space="preserve">
-    <value>전송하시려는 사진에 마스크를 추가 할 수 있습니다. 사진 에디터를 전송하시기 전에 실행해주시면 됩니다.</value>
+    <value>보내고자 하는 사진에 마스크를 추가하실 수 있습니다. 사진을 보내기 전에 사진 편집기를 여시면 됩니다.</value>
   </data>
   <data name="MasksRemoved" xml:space="preserve">
-    <value>마스크 지워짐</value>
+    <value>마스크 없앰</value>
   </data>
   <data name="MegaAddedBy" xml:space="preserve">
     <value>un1 님이 이 그룹에 초대하셨습니다.</value>
   </data>
   <data name="MegaAdminsInfo" xml:space="preserve">
-    <value>그룹을 관리하는 데 도움을 줄 만한 관리자를 추가하실 수 있습니다. 사용자를 길게 눌러 관리자에서 제명하실 수 있습니다.</value>
+    <value>그룹을 관리하는 데 도움을 줄 만한 관리자를 추가하실 수 있습니다. 관리자를 제명하려면 길게 누르세요.</value>
   </data>
   <data name="MegaDeleteAlert" xml:space="preserve">
-    <value>잠깐만요! 이 그룹을 없애시면 안에 있는 모든 참가자과 메시지가 사라집니다. 무시하고 없앨까요?</value>
+    <value>잠깐만요! 이 그룹을 없애시면 안에 있는 모든 참가자와 메시지가 사라집니다. 무시하고 없앨까요?</value>
   </data>
   <data name="MegaDeleteInfo" xml:space="preserve">
     <value>그룹에 있는 모든 메시지가 사라집니다.</value>
@@ -2822,19 +2871,19 @@
     <value>비공개 그룹</value>
   </data>
   <data name="MegaPrivateInfo" xml:space="preserve">
-    <value>비공개 그룹은 초대 링크로만 입장 가능합니다.</value>
+    <value>비공개 그룹에는 초대되었거나 초대 링크가 있는 경우에만 들어올 수 있습니다.</value>
   </data>
   <data name="MegaPrivateLinkHelp" xml:space="preserve">
-    <value>이 링크를 통하여 다른 유저들이 그룹에 입장 할 수 있습니다. 이 링크는 언제든지 폐기 가능합니다.</value>
+    <value>사람들이 위 링크를 통해 회원님의 그룹에 들어올 수 있습니다. 링크는 언제든지 폐기하실 수 있습니다.</value>
   </data>
   <data name="MegaPublic" xml:space="preserve">
     <value>공개 그룹</value>
   </data>
   <data name="MegaPublicInfo" xml:space="preserve">
-    <value>공개 그룹은 검색이 가능하며, 누구나 입장 가능합니다</value>
+    <value>공개 그룹은 검색으로 찾을 수 있으며 누구나 들어올 수 있습니다.</value>
   </data>
   <data name="MegaUsernameHelp" xml:space="preserve">
-    <value>텔레그램 검색을 통하여 다른 유저들이 그룹을 찾을 수 있습니다.</value>
+    <value>사람들이 위 링크를 공유하며 텔레그램 검색으로 회원님의 그룹을 찾을 수 있습니다.</value>
   </data>
   <data name="MembersZero" xml:space="preserve">
     <value></value>
@@ -2852,10 +2901,10 @@
     <value></value>
   </data>
   <data name="MembersOther" xml:space="preserve">
-    <value>대화상대 {0}명</value>
+    <value>참가자 {0}명</value>
   </data>
   <data name="MembersCount" xml:space="preserve">
-    <value>{1}명 중 {0}명을 고름</value>
+    <value>{1}명 중 {0}명 선택됨</value>
   </data>
   <data name="MembersCountZero" xml:space="preserve">
     <value>최대 {0}</value>
@@ -2867,10 +2916,10 @@
     <value>자동 지우기 타이머</value>
   </data>
   <data name="MessageLifetimeChanged" xml:space="preserve">
-    <value>{0} 님이, {1} 뒤 저절로 지워지도록 타이머를 맞추셨습니다</value>
+    <value>{0} 님이 자동 지우기를 {1} 뒤로 맞췄습니다</value>
   </data>
   <data name="MessageLifetimeChangedOutgoing" xml:space="preserve">
-    <value>앞으로의 대화가 {0} 뒤 지워지도록 맞추셨습니다</value>
+    <value>자동 지우기를 {0} 뒤로 맞추셨습니다</value>
   </data>
   <data name="MessageLifetimePhoto" xml:space="preserve">
     <value>타이머를 설정하시면 사진이 열람된 뒤 자동으로 지워집니다.</value>
@@ -2978,7 +3027,7 @@
     <value>더 보기</value>
   </data>
   <data name="MuteDisable" xml:space="preserve">
-    <value>비활성화</value>
+    <value>사용 안 함</value>
   </data>
   <data name="MuteFor" xml:space="preserve">
     <value>{0} 동안 음소거</value>
@@ -2996,13 +3045,13 @@
     <value>항상 거부</value>
   </data>
   <data name="NeverAllowPlaceholder" xml:space="preserve">
-    <value>항상 거부..</value>
+    <value>항상 거부...</value>
   </data>
   <data name="NeverShareWith" xml:space="preserve">
-    <value>절대 공유하지 않을 대화 상대</value>
+    <value>절대 공유하지 않음</value>
   </data>
   <data name="NeverShareWithPlaceholder" xml:space="preserve">
-    <value>절대 공유하지 않을 대화상대...</value>
+    <value>절대 공유하지 않을 사용자...</value>
   </data>
   <data name="NeverShareWithTitle" xml:space="preserve">
     <value>절대 공유하지 않음</value>
@@ -3020,7 +3069,7 @@
     <value>그룹 만들기</value>
   </data>
   <data name="NewMessageTitle" xml:space="preserve">
-    <value>새 메시지</value>
+    <value>새로운 메시지</value>
   </data>
   <data name="NewMessagesZero" xml:space="preserve">
     <value></value>
@@ -3053,16 +3102,16 @@
     <value>차단한 친구가 없습니다</value>
   </data>
   <data name="NoBlockedChannel" xml:space="preserve">
-    <value>블랙리스트에 적힌 사용자는 채널에서 제명되며, 관리자가 초대해야만 다시 들어올 수 있습니다. 해당 사용자에게는 초대 링크도 작동하지 않습니다.</value>
+    <value>블랙리스트에 적힌 사용자는 그룹에서 추방되며, 관리자가 초대해야만 다시 들어올 수 있습니다. 이 사용자에게는 초대 링크도 작동하지 않습니다.</value>
   </data>
   <data name="NoBlockedGroup" xml:space="preserve">
-    <value>블랙리스트에 적힌 사용자는 그룹에서 제명되며, 관리자가 초대해야만 다시 들어올 수 있습니다. 해당 사용자에게는 초대 링크도 작동하지 않습니다.</value>
+    <value>블랙리스트에 적힌 사용자는 그룹에서 추방되며, 관리자가 초대해야만 다시 들어올 수 있습니다. 이 사용자에게는 초대 링크도 작동하지 않습니다.</value>
   </data>
   <data name="NoBlockedUsers" xml:space="preserve">
-    <value>차단한 사용자 없음</value>
+    <value>차단된 사용자 없음</value>
   </data>
   <data name="NoCallLog" xml:space="preserve">
-    <value>아직 전화 내역이 없습니다.</value>
+    <value>전화를 걸거나 받으신 적이 없습니다.</value>
   </data>
   <data name="NoChats" xml:space="preserve">
     <value>대화방이 없습니다...</value>
@@ -3073,10 +3122,10 @@
 메뉴 버튼을 눌러 보세요.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
-    <value>대화상대가 없습니다</value>
+    <value>연락처 없음</value>
   </data>
   <data name="NoGroupsInCommon" xml:space="preserve">
-    <value>아직 공통 그룹이 없습니다</value>
+    <value>공통 그룹 없음</value>
   </data>
   <data name="NoHandleAppInstalled" xml:space="preserve">
     <value>'{0}' 파일 형식을 처리할 앱이 없습니다. 계속하려면 앱을 설치해 주세요.</value>
@@ -3085,40 +3134,40 @@
     <value>발생한 문제에 대하여 sms@stel.com 주소로 이메일을 보내주세요.</value>
   </data>
   <data name="NoMasks" xml:space="preserve">
-    <value>마스크가 아직 없음</value>
+    <value>마스크 없음</value>
   </data>
   <data name="NoMedia" xml:space="preserve">
     <value>이 대화방에 사진과 동영상을 공유해두면 회원님의 모든 기기에서 접근하실 수 있습니다.</value>
   </data>
   <data name="NoMediaAutoDownload" xml:space="preserve">
-    <value>다운로드 안함</value>
+    <value>다운로드하지 않음</value>
   </data>
   <data name="NoMediaSecret" xml:space="preserve">
-    <value>이 대화에서 공유한 사진과 비디오파일이 표시됩니다.</value>
+    <value>이 대화방에서 공유된 사진과 동영상이 여기에 표시됩니다.</value>
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>메시지가 없습니다...</value>
   </data>
   <data name="NoOtherSessions" xml:space="preserve">
-    <value>활성화된 세션이 없음</value>
+    <value>활성화된 세션 없음</value>
   </data>
   <data name="NoOtherSessionsInfo" xml:space="preserve">
     <value>동일한 휴대번호로 다른 휴대기기,태블릿과 데스크탑에서 텔레그램 로그인이 가능합니다. 모든 데이터는 즉시 동기화 됩니다.</value>
   </data>
   <data name="NoPhotos" xml:space="preserve">
-    <value>사진이 없습니다.</value>
+    <value>사진 없음</value>
   </data>
   <data name="NoPlayerInstalled" xml:space="preserve">
-    <value>동영상 재생 앱이 없습니다. 계속하려면 앱을 설치해 주세요.</value>
+    <value>동영상 재생기가 없습니다. 계속하려면 앱을 설치하세요.</value>
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>사용 안 함</value>
   </data>
   <data name="NoRecent" xml:space="preserve">
-    <value>최근에 사용한 이모티콘</value>
+    <value>최근 이모지 없음</value>
   </data>
   <data name="NoRecentGIFs" xml:space="preserve">
-    <value>최근에 검색한 GIF</value>
+    <value>최근 GIF 없음</value>
   </data>
   <data name="NoRecentPhotos" xml:space="preserve">
     <value>최근 사진 없음</value>
@@ -3130,142 +3179,142 @@
     <value>이 대화방에 음악을 공유해두면 회원님의 모든 기기에서 접근하실 수 있습니다.</value>
   </data>
   <data name="NoSharedAudioSecret" xml:space="preserve">
-    <value>이 대화에서 공유한 음악파일이 표시됩니다.</value>
+    <value>이 대화에서 공유된 음악이 여기에 표시됩니다.</value>
   </data>
   <data name="NoSharedFiles" xml:space="preserve">
     <value>이 대화방에 파일과 문서를 공유해두면 회원님의 모든 기기에서 접근하실 수 있습니다.</value>
   </data>
   <data name="NoSharedFilesSecret" xml:space="preserve">
-    <value>이 대화에서 공유한 문서파일이 표시됩니다.</value>
+    <value>이 대화에서 공유된 문서가 여기에 표시됩니다.</value>
   </data>
   <data name="NoSharedLinks" xml:space="preserve">
     <value>이 대화방에 링크를 공유해두면 회원님의 모든 기기에서 접근하실 수 있습니다.</value>
   </data>
   <data name="NoSharedLinksSecret" xml:space="preserve">
-    <value>이 대화에서 공유한 링크가 표시됩니다.</value>
+    <value>이 대화에서 공유된 링크가 여기에 표시됩니다.</value>
   </data>
   <data name="NoSound" xml:space="preserve">
-    <value>알림음 없음</value>
+    <value>무음</value>
   </data>
   <data name="NoStickers" xml:space="preserve">
-    <value>스티커가 아직 없음</value>
+    <value>스티커 없음</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>이 사용자명을 가진 텔레그램 계정이 없습니다.</value>
   </data>
   <data name="NobodyLikesSpam1" xml:space="preserve">
-    <value>죄송합니다, 서로 연락처가 추가된 경우에만 메시지 전송이 가능합니다.</value>
+    <value>죄송합니다. 서로의 연락처를 공유해야만 메시지를 보내실 수 있습니다.</value>
   </data>
   <data name="NobodyLikesSpam2" xml:space="preserve">
-    <value>죄송합니다, 서로 연락처가 추가된 경우에만 그룹에 구성원을 추가 할 수 있습니다.</value>
+    <value>죄송합니다. 서로의 연락처를 공유해야만 그룹에 초대하실 수 있습니다.</value>
   </data>
   <data name="NotMounted" xml:space="preserve">
     <value>스토리지가 마운트되지 않음</value>
   </data>
   <data name="NotificationActionPinnedContact" xml:space="preserve">
-    <value>{0} 님이 연락처를 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 연락처를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedContactChannel" xml:space="preserve">
-    <value>{0} 님이 연락처를 고정함</value>
+    <value>{0} 님이 연락처를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedFile" xml:space="preserve">
-    <value>{0} 님이 파일을 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 파일을 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedFileChannel" xml:space="preserve">
-    <value>{0} 님이 파일을 고정함</value>
+    <value>{0} 님이 파일을 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedGame" xml:space="preserve">
-    <value>{0} 님이 게임을 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 게임을 고정함</value>
   </data>
   <data name="NotificationActionPinnedGameChannel" xml:space="preserve">
-    <value>{0}님이 게임을 고정함</value>
+    <value>{0} 님이 게임을 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedGeo" xml:space="preserve">
-    <value>{0} 님이 지도를 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 지도를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedGeoChannel" xml:space="preserve">
-    <value>{0} 님이 지도를 고정함</value>
+    <value>{0} 님이 지도를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedGeoLive" xml:space="preserve">
-    <value>{0}님이 {1} 그룹에 실시간 위치를 고정했습니다.</value>
+    <value>{0} 님이 {1} 그룹에 실시간 위치를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedGeoLiveChannel" xml:space="preserve">
-    <value>%1$@님이 실시간 위치를 고정했습니다.</value>
+    <value>{0} 님이 실시간 위치를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedGif" xml:space="preserve">
-    <value>{0} 님이 GIF를 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 GIF를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
-    <value>{0} 님이 GIF를 고정함</value>
+    <value>{0} 님이 GIF를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
-    <value>{0} 님이 트랙을 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 트랙을 고정함</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
-    <value>{0} 님이 트랙을 고정함</value>
+    <value>{0} 님이 트랙을 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
-    <value>{0} 님이 메시지를 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 메시지를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedNoTextChannel" xml:space="preserve">
-    <value>{0} 님이 메시지를 고정함</value>
+    <value>{0} 님이 메시지를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedPhoto" xml:space="preserve">
-    <value>{0} 님이 사진을 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 사진을 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedPhotoChannel" xml:space="preserve">
-    <value>{0} 님이 사진을 고정함</value>
+    <value>{0} 님이 사진을 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
-    <value>{0} 님이 영상 메시지를 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 동영상 메시지를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedRoundChannel" xml:space="preserve">
-    <value>{0} 님이 영상메시지를 고정함</value>
+    <value>{0} 님이 동영상 메시지를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedSticker" xml:space="preserve">
-    <value>{0} 님이 스티커를 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 스티커를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedStickerChannel" xml:space="preserve">
-    <value>{0} 님이 스티커를 고정함</value>
+    <value>{0} 님이 스티커를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedStickerEmoji" xml:space="preserve">
-    <value>{0} 님이 {2} 스티커를 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 {2} 스티커를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedStickerEmojiChannel" xml:space="preserve">
-    <value>{0} 님이 {1} 스티커를 고정함</value>
+    <value>{0} 님이 {1} 스티커를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedText" xml:space="preserve">
-    <value>{0} 님이 "{1}" 메시지를  {2} 그룹에 고정함</value>
+    <value>{0} 님이 {2} 그룹에 "{1}"을(를) 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedTextChannel" xml:space="preserve">
-    <value>{0} 님이 "{1}" 를 고정함</value>
+    <value>{0} 님이 "{1}"을(를) 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedVideo" xml:space="preserve">
-    <value>{0} 님이 비디오를 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에  동영상을 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedVideoChannel" xml:space="preserve">
-    <value>{0} 님이 비디오를 고정함</value>
+    <value>{0} 님이 동영상을 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedVoice" xml:space="preserve">
-    <value>{0} 님이 음성 메시지를 {1} 그룹에 고정함</value>
+    <value>{0} 님이 {1} 그룹에 음성 메시지를 고정했습니다</value>
   </data>
   <data name="NotificationActionPinnedVoiceChannel" xml:space="preserve">
-    <value>{0} 님이 음성메시지를 고정함</value>
+    <value>{0} 님이 음성 메시지를 고정했습니다</value>
   </data>
   <data name="NotificationContactJoined" xml:space="preserve">
     <value>{0} 님이 텔레그램에 가입했습니다!</value>
   </data>
   <data name="NotificationContactNewPhoto" xml:space="preserve">
-    <value>{0} 님이 프로필 사진을 새로 올렸습니다</value>
+    <value>{0} 님이 프로필 사진을 업데이트했습니다</value>
   </data>
   <data name="NotificationEditedGroupName" xml:space="preserve">
-    <value>{0} 님이 {1} 그룹명을 변경하였습니다.</value>
+    <value>{0} 님이 {1} 그룹명을 바꿨습니다</value>
   </data>
   <data name="NotificationEditedGroupPhoto" xml:space="preserve">
-    <value>{0} 님이 {1} 그룹 사진을 변경하였습니다.</value>
+    <value>{0} 님이 {1} 그룹 사진을 바꿨습니다</value>
   </data>
   <data name="NotificationGroupAddMember" xml:space="preserve">
-    <value>{0}님이 {2}님을 {1} 그룹에 초대했습니다</value>
+    <value>{0} 님이 {2} 님을 {1} 그룹에 초대했습니다</value>
   </data>
   <data name="NotificationGroupAddSelf" xml:space="preserve">
     <value>{0} 님이 {1} 그룹에 돌아왔습니다</value>
@@ -3274,13 +3323,13 @@
     <value>{0} 님이 {1} 그룹에 들어왔습니다</value>
   </data>
   <data name="NotificationGroupKickMember" xml:space="preserve">
-    <value>{0} 님이 {2} 님을 {1} 그룹에서 제명했습니다</value>
+    <value>{0} 님이 {2} 님을 {1} 그룹에서 추방했습니다</value>
   </data>
   <data name="NotificationGroupKickYou" xml:space="preserve">
-    <value>{0} 님이 회원님을 {1} 그룹에서 제명했습니다.</value>
+    <value>{0} 님이 회원님을 {1} 그룹에서 추방했습니다</value>
   </data>
   <data name="NotificationGroupLeftMember" xml:space="preserve">
-    <value>{0}님이 {1} 그룹을 떠났습니다</value>
+    <value>{0} 님이 {1} 그룹을 나갔습니다</value>
   </data>
   <data name="NotificationInvitedToGroup" xml:space="preserve">
     <value>{0}님이 {1} 그룹에 초대했습니다</value>
@@ -3301,7 +3350,7 @@
     <value>{0}님이 {1} 게임으로 초대했습니다</value>
   </data>
   <data name="NotificationMessageGif" xml:space="preserve">
-    <value>{0} 님께서 GIF파일을 보내셨습니다</value>
+    <value>{0} 님이 회원님에게 GIF를 보냈습니다</value>
   </data>
   <data name="NotificationMessageGroupAudio" xml:space="preserve">
     <value>{0}님이 {1} 그룹에 음성메시지를 보냈습니다</value>
@@ -3316,7 +3365,10 @@
     <value>{0} 님이 {1} 그룹에 {2} 게임으로 초대했습니다</value>
   </data>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
-    <value>{0} 님께서 {1} 그룹에 GIF파일을 보냈습니다</value>
+    <value>{0} 님이 {1} 그룹에 GIF를 보냈습니다</value>
+  </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} 님이 {1} 그룹에 실시간 위치를 보냈습니다</value>
   </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0}님이 {1} 그룹에 위치를 보냈습니다</value>
@@ -3328,13 +3380,13 @@
     <value>{0}님이 {1} 그룹에 메시지를 보냈습니다</value>
   </data>
   <data name="NotificationMessageGroupPhoto" xml:space="preserve">
-    <value>{0}님이 {1} 그룹에 사진을 보냈습니다</value>
+    <value>{0} 님이 {1} 그룹에 사진을 보냈습니다</value>
   </data>
   <data name="NotificationMessageGroupRound" xml:space="preserve">
-    <value>{0} 님이 {1} 그룹에 영상 메시지를 보냈습니다</value>
+    <value>{0} 님이 {1} 그룹에 동영상 메시지를 보냈습니다</value>
   </data>
   <data name="NotificationMessageGroupSticker" xml:space="preserve">
-    <value>{0}님이 {1} 그룹에 스티커를 보냈습니다</value>
+    <value>{0} 님이 {1} 그룹에 스티커를 보냈습니다</value>
   </data>
   <data name="NotificationMessageGroupStickerEmoji" xml:space="preserve">
     <value>{0}님이 {1} 그룹에 {2} 스티커를 보냈습니다</value>
@@ -3344,6 +3396,9 @@
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0}님이 {1} 그룹에 동영상을 보냈습니다</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} 님이 실시간 위치를 보냈습니다</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0}님이 위치를 보냈습니다</value>
@@ -3358,7 +3413,7 @@
     <value>{0}님이 사진을 보냈습니다</value>
   </data>
   <data name="NotificationMessageRound" xml:space="preserve">
-    <value>{0} 님이 영상 메시지를 보냈습니다</value>
+    <value>{0} 님이 동영상 메시지를 보냈습니다</value>
   </data>
   <data name="NotificationMessageSDPhoto" xml:space="preserve">
     <value>{0} 님이 자동으로 지워지는 사진을 보냈습니다</value>
@@ -3367,10 +3422,10 @@
     <value>{0} 님이 자동으로 지워지는 동영상을 보냈습니다</value>
   </data>
   <data name="NotificationMessageSticker" xml:space="preserve">
-    <value>{0}님이 스티커를 보냈습니다</value>
+    <value>{0} 님이 스티커를 보냈습니다</value>
   </data>
   <data name="NotificationMessageStickerEmoji" xml:space="preserve">
-    <value>{0}님이 {1}스티커를 보냈습니다</value>
+    <value>{0} 님이 {1} 스티커를 보냈습니다</value>
   </data>
   <data name="NotificationMessageText" xml:space="preserve">
     <value>{0}: {1}</value>
@@ -3382,18 +3437,17 @@
     <value>{1} {0}</value>
   </data>
   <data name="NotificationUnrecognizedDevice" xml:space="preserve">
-    <value>{0}님,
-{1}에 새 기기에서 회원님의 계정 로그인이 감지되었습니다. 
+    <value>{0} 님,
+{1}에 새로운 기기에서 회원님 계정으로 로그인한 것이 감지됐습니다.
 
 기기: {2}
 위치: {3}
 
-본인의 접속이 아니라면  '설정' 창에서 '모든 세션 종료' 기능을 실행하세요.
+본인이 접속하지 않았다면, '개인 정보 및 보안' 설정에서 해당 세션을 종료하세요.
 
-만약 강제접속 의심이 되신다면 2단계 인증을 설정 - 개인정보 및 보안에서 설정할 수 있습니다.
+만약 누군가 강제로 접속했다는 의심이 가신다면, '개인 정보 및 보안' 설정에서 2단계 인증을 활성화하실 수 있습니다.
 
-감사합니다.
-텔레그램 팀</value>
+텔레그램 팀 드림</value>
   </data>
   <data name="Notifications" xml:space="preserve">
     <value>알림</value>
@@ -3402,22 +3456,22 @@
     <value>알림 및 소리</value>
   </data>
   <data name="NotificationsCustom" xml:space="preserve">
-    <value>개별</value>
+    <value>맞춤</value>
   </data>
   <data name="NotificationsCustomize" xml:space="preserve">
-    <value>개인화</value>
+    <value>맞춤 설정</value>
   </data>
   <data name="NotificationsEnableCustom" xml:space="preserve">
-    <value>개별 알림 활성화</value>
+    <value>맞춤 알림 사용</value>
   </data>
   <data name="NotificationsLed" xml:space="preserve">
     <value>LED</value>
   </data>
   <data name="NotificationsLedColor" xml:space="preserve">
-    <value>색깔</value>
+    <value>색상</value>
   </data>
   <data name="NotificationsLedInfo" xml:space="preserve">
-    <value>LED는 일부 기기에서 새로운 메시지가 수신될때 반짝입니는 빛입니다</value>
+    <value>LED는 일부 기기에서 새로운 메시지가 수신될 때 반짝이는 빛입니다.</value>
   </data>
   <data name="NotificationsOff" xml:space="preserve">
     <value>끄기</value>
@@ -3450,10 +3504,10 @@
     <value>백그라운드 연결</value>
   </data>
   <data name="NotificationsServiceConnectionInfo" xml:space="preserve">
-    <value>알림을 받기 위하여 텔레그램 백그라운드 연결을 최소화로 유지합니다. 안정적인 알림을 유지합니다.</value>
+    <value>알림을 받기 위해 텔레그램의 백그라운드 연결을 최소로 유지합니다. 안정적인 알림이 가능합니다.</value>
   </data>
   <data name="NotificationsServiceInfo" xml:space="preserve">
-    <value>시스템이나 사용자에 의하여 닫힌 앱을 재시작합니다. 해당 작업은 알림을 보여지게 합니다.</value>
+    <value>앱이 시스템이나 사용자에 의해 닫힐 때 재시작합니다. 이 작업은 알림이 보이도록 합니다.</value>
   </data>
   <data name="NotificationsTurnOff" xml:space="preserve">
     <value>끄기</value>
@@ -3492,7 +3546,7 @@
     <value>온라인 {0}명</value>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
-    <value>음소거일 중에만</value>
+    <value>음소거일 때만</value>
   </data>
   <data name="OnlyWhenScreenOff" xml:space="preserve">
     <value>화면이 꺼져 있을 때만</value>
@@ -3504,16 +3558,19 @@
     <value>열기</value>
   </data>
   <data name="OpenChannel" xml:space="preserve">
-    <value>채널 엿보기</value>
+    <value>채널로 이동</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>공개 그룹</value>
+    <value>그룹 보기</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>다음으로 열기..</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>다른 앱으로 열기...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>메시지 보기</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>{0} 링크를 여시겠습니까?</value>
@@ -3526,42 +3583,42 @@
   </data>
   <data name="Page1Message" xml:space="preserve">
     <value>세상에서 가장 **빠른** 메신저입니다.
- **무료** 이며 **안전합니다**.</value>
+ **무료**이며 **안전합니다**.</value>
   </data>
   <data name="Page1Title" xml:space="preserve">
     <value>텔레그램</value>
   </data>
   <data name="Page2Message" xml:space="preserve">
-    <value>**텔레그램**은 어떤 메신저보다도
-빠르게 메시지를 전송합니다.</value>
+    <value>**텔레그램**은 그 어떤 메신저보다도
+빠르게 메시지를 전달합니다.</value>
   </data>
   <data name="Page2Title" xml:space="preserve">
     <value>눈부신 속도</value>
   </data>
   <data name="Page3Message" xml:space="preserve">
     <value>**텔레그램**은 영원히 무료입니다. 
-광고도 없고 이용료도 없습니다.</value>
+광고도, 이용료도 없습니다.</value>
   </data>
   <data name="Page3Title" xml:space="preserve">
-    <value>완전 무료</value>
+    <value>평생 무료</value>
   </data>
   <data name="Page4Message" xml:space="preserve">
-    <value>**텔레그램**은 그 어떤 누구로부터도
-메시지를 안전하게 보호합니다.</value>
+    <value>**텔레그램**은 회원님의 메시지를
+해커의 공격으로부터 안전하게 지켜냅니다.</value>
   </data>
   <data name="Page4Title" xml:space="preserve">
-    <value>보안성</value>
+    <value>철통 보안</value>
   </data>
   <data name="Page5Message" xml:space="preserve">
     <value>**텔레그램**은 대화나 미디어의 용량에
-제한이 없습니다.</value>
+제한을 두지 않습니다.</value>
   </data>
   <data name="Page5Title" xml:space="preserve">
     <value>강력함</value>
   </data>
   <data name="Page6Message" xml:space="preserve">
-    <value>**텔레그램**은 다른 기기에서도
-동시에 사용할 수 있습니다.</value>
+    <value>**텔레그램**은 어느 기기에서든지
+자유롭게 사용하실 수 있습니다.</value>
   </data>
   <data name="Page6Title" xml:space="preserve">
     <value>클라우드 기반</value>
@@ -3576,13 +3633,13 @@
     <value>수정</value>
   </data>
   <data name="PaintOutlined" xml:space="preserve">
-    <value>아웃라인</value>
+    <value>외곽선</value>
   </data>
   <data name="PaintRegular" xml:space="preserve">
-    <value>레귤러</value>
+    <value>일반</value>
   </data>
   <data name="Passcode" xml:space="preserve">
-    <value>암호 설정</value>
+    <value>암호 잠금</value>
   </data>
   <data name="PasscodeDoNotMatch" xml:space="preserve">
     <value>암호가 일치하지 않습니다.</value>
@@ -3609,7 +3666,7 @@
     <value>비밀번호 힌트</value>
   </data>
   <data name="PasswordHintText" xml:space="preserve">
-    <value>비밀번호 힌트를 생성해주세요</value>
+    <value>비밀번호 힌트를 만드세요</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>비밀번호 복구</value>
@@ -3627,7 +3684,7 @@
     <value>MM/YY</value>
   </data>
   <data name="PaymentCardInfo" xml:space="preserve">
-    <value>결제정보</value>
+    <value>결제 정보</value>
   </data>
   <data name="PaymentCardName" xml:space="preserve">
     <value>성</value>
@@ -3680,14 +3737,17 @@
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>결제 서버로 연결을 할 수 없습니다. 인터넷 연결을 확인해주시고 다시 시도해주세요.</value>
   </data>
+  <data name="PaymentEmailToProvider" xml:space="preserve">
+    <value>이메일이 {0} 님에게 청구서 정보로서 전달됩니다.</value>
+  </data>
   <data name="PaymentFailed" xml:space="preserve">
-    <value>죄송합니다, 결제가 거절되었습니다.</value>
+    <value>죄송합니다. 결제가 거절됐습니다.</value>
   </data>
   <data name="PaymentInvoice" xml:space="preserve">
     <value>인보이스</value>
   </data>
   <data name="PaymentNoShippingMethod" xml:space="preserve">
-    <value>죄송합니다. 이 주소로 배송이 가능하지 않습니다.</value>
+    <value>죄송합니다. 회원님의 주소로는 배송이 어렵습니다.</value>
   </data>
   <data name="PaymentPassword" xml:space="preserve">
     <value>비밀번호 &amp; 이메일</value>
@@ -3712,6 +3772,12 @@
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>비밀번호</value>
+  </data>
+  <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
+    <value>전화와 이메일이 {0} 님에게 청구서 정보로서 전달됩니다.</value>
+  </data>
+  <data name="PaymentPhoneToProvider" xml:space="preserve">
+    <value>전화가 {0} 님에게 청구서 정보로서 전달됩니다.</value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>죄송합니다. 봇에 의해 결제가 취소됐습니다.</value>
@@ -3738,7 +3804,7 @@
     <value>이메일</value>
   </data>
   <data name="PaymentShippingInfo" xml:space="preserve">
-    <value>배송정보</value>
+    <value>배송 정보</value>
   </data>
   <data name="PaymentShippingMethod" xml:space="preserve">
     <value>배송방법</value>
@@ -3753,10 +3819,10 @@
     <value>수신자</value>
   </data>
   <data name="PaymentShippingSave" xml:space="preserve">
-    <value>배송정보 저장</value>
+    <value>배송 정보 저장</value>
   </data>
   <data name="PaymentShippingSaveInfo" xml:space="preserve">
-    <value>향후 사용을 위하여 배송정보를 저장 할 수 있습니다.</value>
+    <value>향후 사용을 대비하여 배송 정보를 저장하실 수 있습니다.</value>
   </data>
   <data name="PaymentShippingStatePlaceholder" xml:space="preserve">
     <value>주</value>
@@ -3794,31 +3860,31 @@
     <value>복구 이메일 {0} 이 아직 활성화 되지 않았으며 미승인 상태입니다.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram은 여러 기기에서 친구와 메시지를 주고받을 수 있도록 회원님의 연락처 접근이 필요합니다.</value>
+    <value>모든 기기에서 친구들과 연락하려면 텔레그램에게 연락처 접근 권한을 부여하셔야 합니다.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
-    <value>Telegram이 화면 속 화면 모드로 동영상을 재생하기 위해 다른 앱 위에 그릴 권한이 필요합니다.</value>
+    <value>화면속화면 모드로 동영상을 재생하려면 텔레그램에게 다른 앱 위에 그릴 수 있는 권한을 부여하셔야 합니다.</value>
   </data>
   <data name="PermissionNoAudio" xml:space="preserve">
-    <value>Telegram이 음성 메시지를 보내기 위하여 마이크에 대한 접근이 필요합니다.</value>
+    <value>음성 메시지를 보내려면 텔레그램에게 마이크 접근 권한을 부여하셔야 합니다.</value>
   </data>
   <data name="PermissionNoAudioVideo" xml:space="preserve">
-    <value>Telegram이 비디오 녹화를 위하여 마이크에 대한 접근이 필요합니다.</value>
+    <value>동영상을 녹화하려면 텔레그램에게 마이크 접근 권한을 부여하셔야 합니다.</value>
   </data>
   <data name="PermissionNoCamera" xml:space="preserve">
-    <value>사진과 동영상을 촬영하시려면 텔레그램에게 카메라 접근 권한이 필요합니다.</value>
+    <value>사진과 동영상을 촬영하려면 텔레그램에게 카메라 접근 권한을 부여하셔야 합니다.</value>
   </data>
   <data name="PermissionNoLocation" xml:space="preserve">
-    <value>Telegram이 위치를 친구분들과 공유하기 위해 위치에 대한 접근 권한을 필요로 합니다.</value>
+    <value>회원님의 위치를 친구들과 공유하려면 텔레그램에게 위치 접근 권한을 부여하셔야 합니다.</value>
   </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
-    <value>텔레그램이 위치에 대한 권한이 필요합니다.</value>
+    <value>텔레그램에게 위치 접근 권한이 필요합니다.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
     <value>설정</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
-    <value>Telegram은 사진, 비디오, 음악 및 다양한 미디어를 공유 및 저장하기 위하여 스토리지 접근이 필요합니다.</value>
+    <value>사진, 동영상, 음악과 그 밖의 미디어를 보내고 저장하려면 텔레그램에게 저장소 접근 권한을 부여하셔야 합니다.</value>
   </data>
   <data name="Phone" xml:space="preserve">
     <value>전화번호</value>
@@ -3836,15 +3902,15 @@
     <value>회원님의 옛 전화번호를 알고 있으며 회원님이 차단한 대화상대가 아니라면, 텔레그램 대화상대 모두의 연락처에 회원님의 새 전화번호가 추가됩니다.</value>
   </data>
   <data name="PhoneNumberChange" xml:space="preserve">
-    <value>번호 변경</value>
+    <value>번호 바꾸기</value>
   </data>
   <data name="PhoneNumberFlood" xml:space="preserve">
-    <value>죄송합니다, 최근에 계정 재가입을 너무 많이 시도하였습니다. 며칠 후에 다시 시도해주세요.</value>
+    <value>죄송합니다. 최근 들어 계정 재가입을 너무 많이 하셨습니다. 다시 가입하려면 며칠 기다리셔야 합니다.</value>
   </data>
   <data name="PhoneNumberHelp" xml:space="preserve">
-    <value>텔레그램 가입 번호를 여기서 변경할 수 있습니다. 계정 및 클라우드에 저장된 메시지나 사진/동영상, 대화상대 등이 새 번호로 이동됩니다.
+    <value>텔레그램 번호를 여기서 바꾸실 수 있습니다. 계정과 클라우드에 저장된 메시지나 미디어, 연락처 등이 새 번호로 옮겨집니다.
 
-**주의:** 회원님의 옛 전화번호를 알고 있으며 회원님이 차단한 대화상대가 아니라면, 텔레그램 대화상대 모두의 연락처에 회원님의 **새 전화번호**가 추가됩니다.</value>
+**중요:** 회원님의 옛 전화번호가 있으며 차단되지 않은 텔레그램 연락 상대 모두에게 회원님의 **새 전화번호**가 추가됩니다.</value>
   </data>
   <data name="PhoneOther" xml:space="preserve">
     <value>기타</value>
@@ -3865,7 +3931,7 @@
     <value>채널에 이 메시지를 고정하시겠습니까?</value>
   </data>
   <data name="PinNotify" xml:space="preserve">
-    <value>모두에게 알림</value>
+    <value>모든 참가자에게 알리기</value>
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>맨 위로 고정</value>
@@ -3877,7 +3943,7 @@
     <value>고정된 메시지</value>
   </data>
   <data name="PleaseDownload" xml:space="preserve">
-    <value>사진/동영상을 먼저 다운로드하세요</value>
+    <value>먼저 미디어를 다운로드하세요</value>
   </data>
   <data name="PleaseEnterCurrentPassword" xml:space="preserve">
     <value>비밀번호를 입력해주세요</value>
@@ -3910,34 +3976,34 @@
     <value>{0}</value>
   </data>
   <data name="PopupDisabled" xml:space="preserve">
-    <value>비활성화</value>
+    <value>사용 안 함</value>
   </data>
   <data name="PopupEnabled" xml:space="preserve">
-    <value>활성화</value>
+    <value>사용</value>
   </data>
   <data name="PopupNotification" xml:space="preserve">
-    <value>알림 팝업</value>
+    <value>팝업 알림</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>미리보기에 대한 의견 남기기</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
-    <value>우선수위가 높은 알림은 휴대폰 기기가 무음이더라도 알림이 작동합니다.</value>
+    <value>우선순위가 높은 알림은 휴대폰이 방해 금지 상태이더라도 알림이 작동합니다.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
-    <value>사용자의 아이피 주소 노출을 제한하기 위하여 모든 단-대-단 기능을 텔레그램 서버로 릴레이하지만, 음성 품질이 약간 저하됩니다.</value>
+    <value>회원님의 IP 주소 노출을 제한하기 위해, 피어투피어를 비활성화하시면 모든 전화는 텔레그램 서버를 통해 전달됩니다. 다만 음성 품질이 약간 저하될 수 있습니다.</value>
   </data>
   <data name="PrivacyCallsP2PTitle" xml:space="preserve">
-    <value>단-대-단</value>
+    <value>피어투피어</value>
   </data>
   <data name="PrivacyClearPayment" xml:space="preserve">
-    <value>결제정보</value>
+    <value>결제 정보</value>
   </data>
   <data name="PrivacyClearShipping" xml:space="preserve">
     <value>배송 정보</value>
   </data>
   <data name="PrivacyFloodControlError" xml:space="preserve">
-    <value>죄송합니다. 너무 많이 변경하셨습니다. 개인정보 설정을 변경할 수 없으니 잠시 기다려 주세요.</value>
+    <value>죄송합니다. 개인 정보 설정을 너무 많이 바꾸셨습니다. 잠시 기다리세요.</value>
   </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
     <value>마지막 접속</value>
@@ -3946,28 +4012,28 @@
     <value>결제</value>
   </data>
   <data name="PrivacyPaymentsClear" xml:space="preserve">
-    <value>결제 및 배송정보 초기화</value>
+    <value>결제 및 배송 정보 비우기</value>
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
-    <value>배송 정보를 지우며, 결제사에게 저장된 신용카드 정보를 없애달라 요청하실 수 있습니다. 텔레그램은 절대로 회원님의 신용카드 정보를 저장하지 않습니다.</value>
+    <value>배송 정보를 지우며 결제사에게 저장된 신용카드 정보를 없애달라 요청하실 수 있습니다. 텔레그램은 회원님의 신용카드 정보를 절대 저장하지 않습니다.</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>개인정보 정책</value>
+    <value>개인 정보 정책</value>
   </data>
   <data name="PrivacyPolicyUrl" xml:space="preserve">
     <value>https://telegram.org/privacy</value>
   </data>
   <data name="PrivacySettings" xml:space="preserve">
-    <value>개인정보 및 보안</value>
+    <value>개인 정보 및 보안</value>
   </data>
   <data name="PrivacyTitle" xml:space="preserve">
-    <value>개인정보</value>
+    <value>개인 정보</value>
   </data>
   <data name="ProfilePopupNotification" xml:space="preserve">
-    <value>알림 팝업</value>
+    <value>팝업 알림</value>
   </data>
   <data name="ProfilePopupNotificationInfo" xml:space="preserve">
-    <value>이 연락처로 부터 수신되는 메시지는 텔레그램 미사용 중일시 화면에 뜨게 됩니다.</value>
+    <value>이 연락 상대에게서 수신되는 메시지는 텔레그램이 꺼져 있을 때도 화면에 뜹니다.</value>
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>프록시</value>
@@ -3976,16 +4042,16 @@
     <value>프록시 설정</value>
   </data>
   <data name="RaiseToSpeak" xml:space="preserve">
-    <value>기기를 들어 말하기</value>
+    <value>기기 들어 말하기</value>
   </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>암호를 다시 입력해주세요.</value>
   </data>
   <data name="Recent" xml:space="preserve">
-    <value>최신</value>
+    <value>최근</value>
   </data>
   <data name="RecentStickers" xml:space="preserve">
-    <value>최근사용</value>
+    <value>최근 사용</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>최근 방문</value>
@@ -4012,10 +4078,10 @@
     <value>{0}명의 수신자</value>
   </data>
   <data name="RecordingAudio" xml:space="preserve">
-    <value>영상메시지를 녹화중...</value>
+    <value>동영상 메시지 녹화 중...</value>
   </data>
   <data name="RecordingRound" xml:space="preserve">
-    <value>영상메시지를 녹화중...</value>
+    <value>동영상 메시지 녹화 중...</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
     <value>복구 이메일</value>
@@ -4030,7 +4096,7 @@
     <value>사용자를 길게 눌러 지우세요</value>
   </data>
   <data name="RemovedFromFavorites" xml:space="preserve">
-    <value>즐겨찾기에서 스티커가 지워졌습니다</value>
+    <value>스티커가 즐겨찾기에서 지워졌습니다</value>
   </data>
   <data name="RepeatDisabled" xml:space="preserve">
     <value>끔</value>
@@ -4045,10 +4111,10 @@
     <value>답장</value>
   </data>
   <data name="ReplyToGroup" xml:space="preserve">
-    <value>{0} 그룹에 답장하기</value>
+    <value>{0} 그룹에 답장</value>
   </data>
   <data name="ReplyToUser" xml:space="preserve">
-    <value>{0}님에게 답장하기</value>
+    <value>{0} 님에게 답장</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>신고하기</value>
@@ -4090,41 +4156,46 @@
     <value>계정 초기화</value>
   </data>
   <data name="ResetAccountButton" xml:space="preserve">
-    <value>재설정</value>
+    <value>초기화</value>
   </data>
   <data name="ResetAccountCancelledAlert" xml:space="preserve">
-    <value>활성화된 사용자가 계정취소를 취소하였습니다. 7일후에 다시 시도해주세요.</value>
+    <value>이 계정으로 활동 중인 사용자가 계정 초기화를 취소했습니다. 7일 뒤 다시 시도하세요.</value>
   </data>
   <data name="ResetAccountInfo" xml:space="preserve">
-    <value>보안목적으로, 계정  **{0}**이 비밀번호 설정이 되어져 있어, 약 1주일 후에 삭제를 할 예정입니다.
+    <value>계정 **{0}**이 비밀번호로 보호되어 있기에, 보안 목적으로 1주일 뒤에 이 계정을 삭제할 것입니다.
 
- 삭제는 언제든지 쥐소가 가능합니다.</value>
+이 작업은 언제든지 취소하실 수 있습니다.</value>
   </data>
   <data name="ResetAccountStatus" xml:space="preserve">
-    <value>다음 이후 계정 초기화 가능 :</value>
+    <value>아래 시간이 지나야 계정을 초기화하실 수 있습니다:</value>
   </data>
   <data name="ResetAllNotifications" xml:space="preserve">
     <value>모든 알림 설정 초기화</value>
+  </data>
+  <data name="ResetAutomaticMediaDownload" xml:space="preserve">
+    <value>자동 다운로드 설정 초기화</value>
+  </data>
+  <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
+    <value>자동 다운로드 설정을 정말 초기화하시겠습니까?</value>
   </data>
   <data name="ResetMyAccount" xml:space="preserve">
     <value>계정 초기화</value>
   </data>
   <data name="ResetMyAccountText" xml:space="preserve">
-    <value>계정 초기화 진행시 모든 대화,메시지 및 공유받은 미디어와 파일이 삭제가 됩니다.</value>
+    <value>계정 초기화를 진행하시면 대화방과 메시지, 공유 받은 파일 모두가 사라집니다.</value>
   </data>
   <data name="ResetMyAccountWarning" xml:space="preserve">
     <value>경고</value>
   </data>
   <data name="ResetMyAccountWarningReset" xml:space="preserve">
-    <value>초기화</value>
+    <value>계정 초기화</value>
   </data>
   <data name="ResetMyAccountWarningText" xml:space="preserve">
-    <value>진행하실 경우 취소가 불가능합니다.
-
-계정 초기화 진행시 모든 대화 및 메시지가 삭제됩니다.</value>
+    <value>이 작업은 도중에 그만두실 수 없습니다.
+회원님의 계정을 초기화하시면 메시지와 대화방 모두가 지워집니다.</value>
   </data>
   <data name="ResetNotificationsText" xml:space="preserve">
-    <value>모든 알림 설정이 초기화되었습니다</value>
+    <value>모든 알림 설정이 초기화됐습니다</value>
   </data>
   <data name="ResetStatistics" xml:space="preserve">
     <value>통계 초기화</value>
@@ -4147,36 +4218,36 @@
     <value>이메일 접근을 하실 수 없을 경우, 비밀번호를 기억해내시거나 계정 초기화를 진행해주셔야 합니다.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
-    <value>비밀번호 복구 이메일을 설정하지 않았기때문에, 비밀번호를 기억해내시거나 계정 초기화를 진행해주셔야합니다.</value>
+    <value>비밀번호 복구 이메일을 등록하지 않았기에, 비밀번호를 기억해내거나 계정 초기화하실 수밖에 없습니다.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
-    <value>죄송합니다.</value>
+    <value>죄송합니다</value>
   </data>
   <data name="Retry" xml:space="preserve">
     <value>재전송</value>
   </data>
   <data name="ReturnToCall" xml:space="preserve">
-    <value>전화로 이동</value>
+    <value>전화로 돌아가기</value>
   </data>
   <data name="ReverseOrder" xml:space="preserve">
     <value>역순</value>
   </data>
   <data name="RevokeAlert" xml:space="preserve">
-    <value>현재 사용중인 초대 링크를 삭제할까요? 이후에는 이 초대 링크를 이용하여 대화방에 접근할 수 없습니다.</value>
+    <value>정말 이 초대 링크를 폐기할까요? 앞으로는 아무도 이 링크를 통해서 들어올 수 없습니다.</value>
   </data>
   <data name="RevokeAlertNewLink" xml:space="preserve">
-    <value>이전 초대 링크는 비활성화되었습니다. 새로운 초대 링크가 생성됐습니다.</value>
+    <value>이전 초대 링크는 현재 비활성화됐습니다. 새 초대 링크가 만들어졌습니다.</value>
   </data>
   <data name="RevokeButton" xml:space="preserve">
-    <value>폐지하기</value>
+    <value>폐기</value>
   </data>
   <data name="RevokeLink" xml:space="preserve">
-    <value>링크 폐지</value>
+    <value>링크 폐기</value>
   </data>
   <data name="RevokeLinkAlert" xml:space="preserve">
-    <value>초링크 **{0}**를 폐기하시겠습니까?
+    <value>정말 **{0}** 링크를 폐기하시겠습니까?
 
- "**{1}**" 그룹은 비공개로 전환됩니다.</value>
+"**{1}**" 그룹은 비공개가 됩니다.</value>
   </data>
   <data name="RevokeLinkAlertChannel" xml:space="preserve">
     <value>**{0}** 링크를 폐지하시겠습니까?
@@ -4185,9 +4256,6 @@
   </data>
   <data name="RoamingUsage" xml:space="preserve">
     <value>로밍 데이터 사용량</value>
-  </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>설정</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>위성</value>
@@ -4205,7 +4273,7 @@
     <value>다운로드 폴더에 저장</value>
   </data>
   <data name="SaveToGIFs" xml:space="preserve">
-    <value>GIF파일로 저장</value>
+    <value>GIF로 저장</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>갤러리에 저장</value>
@@ -4258,7 +4326,7 @@
     <value>웹 검색</value>
   </data>
   <data name="SearchMembers" xml:space="preserve">
-    <value>사용자 검색</value>
+    <value>참가자 검색</value>
   </data>
   <data name="SearchMessages" xml:space="preserve">
     <value>메시지</value>
@@ -4306,10 +4374,10 @@
     <value>인라인 봇은 제3자 개발자로 부터 제공이 됩니다. 봇이 작동을 하려면 봇의 아이디 및 뒤의 메시지가 담당 개발자에게 전송이 됩니다.</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
-    <value>비밀 대화에서 링크 미리보기를 활성화하시겠습니까? 링크 미리보기는 텔레그램 서버에서 생성되는 점을 유의하시길 바랍니다.</value>
+    <value>비밀 대화에서 링크 미리보기를 활성화하시겠습니까? 링크 미리보기는 텔레그램 서버에서 만들어지는 점을 유의하시기 바랍니다.</value>
   </data>
   <data name="SecretWebPage" xml:space="preserve">
-    <value>링크 프리뷰</value>
+    <value>링크 미리보기</value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>보안</value>
@@ -4336,7 +4404,7 @@
     <value>파일로 보내기</value>
   </data>
   <data name="SendByEnter" xml:space="preserve">
-    <value>엔터 키로 보내기</value>
+    <value>엔터 글쇠로 보내기</value>
   </data>
   <data name="SendContactTo" xml:space="preserve">
     <value>{0} 님에게 연락처를 보낼까요?</value>
@@ -4354,7 +4422,7 @@
     <value>보내기 {0}</value>
   </data>
   <data name="SendLiveLocation" xml:space="preserve">
-    <value>나의 실시간 위치를 공유...</value>
+    <value>다음과 나의 실시간 위치 공유...</value>
   </data>
   <data name="SendLiveLocationFor15m" xml:space="preserve">
     <value>15분 동안</value>
@@ -4378,7 +4446,7 @@
     <value>이 그룹의 관리자가 회원님이 글을 올리실 수 없도록 제한했습니다.</value>
   </data>
   <data name="SendMessageTo" xml:space="preserve">
-    <value>초대하기...</value>
+    <value>추가...</value>
   </data>
   <data name="SendMessagesTo" xml:space="preserve">
     <value>{0} 님에게 메시지를 보낼까요?</value>
@@ -4396,25 +4464,25 @@
     <value>스티커 보내기</value>
   </data>
   <data name="SendingAudio" xml:space="preserve">
-    <value>녹음을 보내는 중...</value>
+    <value>음성 녹음 보내는 중...</value>
   </data>
   <data name="SendingFile" xml:space="preserve">
-    <value>파일을 보내는 중...</value>
+    <value>파일 보내는 중...</value>
   </data>
   <data name="SendingGame" xml:space="preserve">
-    <value>게임을 플레이하는 중...</value>
+    <value>게임 플레이 중...</value>
   </data>
   <data name="SendingGif" xml:space="preserve">
-    <value>GIF를 보내는 중...</value>
+    <value>GIF 보내는 중...</value>
   </data>
   <data name="SendingPhoto" xml:space="preserve">
-    <value>사진을 보내는 중...</value>
+    <value>사진 보내는 중...</value>
   </data>
   <data name="SendingVideo" xml:space="preserve">
-    <value>동영상을 보내는 중...</value>
+    <value>동영상 보내는 중...</value>
   </data>
   <data name="SendingVideoStatus" xml:space="preserve">
-    <value>동영상을 보내는 중...</value>
+    <value>동영상 보내는 중...</value>
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>회원님 기기에 설치된 **Telegram**앱으로 코드를 전송했습니다.</value>
@@ -4422,7 +4490,7 @@
   <data name="SentCallCode" xml:space="preserve">
     <value>**{0}** 번호로 인증 전화를 걸었습니다. 
 
-텔레그램이 자동으로 인증을 처리하기에 전화를 안 받으셔도 됩니다.</value>
+전화를 받지 마세요. 텔레그램이 모든 것을 자동으로 처리합니다.</value>
   </data>
   <data name="SentCallOnly" xml:space="preserve">
     <value>**{0}** 번호로 인증코드 안내 전화를 걸고 있습니다.</value>
@@ -4452,13 +4520,13 @@
     <value>관리자 설정</value>
   </data>
   <data name="SetAdminsAll" xml:space="preserve">
-    <value>모든 구성원이 관리자입니다.</value>
+    <value>참가자 모두가 관리자입니다</value>
   </data>
   <data name="SetAdminsAllInfo" xml:space="preserve">
-    <value>그룹에 있는 모든 구성원은 상대 초대, 이름 및 사진을 수정할 수 있습니다.</value>
+    <value>모든 참가자는 새로운 참가자를 추가할 수 있으며 그룹의 이름과 사진을 바꿀 수 있습니다.</value>
   </data>
   <data name="SetAdminsNotAllInfo" xml:space="preserve">
-    <value>관리자만이 참가자를 추가하고 제명하며, 그룹 이름과 사진을 수정할 수 있습니다.</value>
+    <value>관리자만이 참가자를 추가하고 추방하며 그룹의 이름과 사진을 수정할 수 있습니다.</value>
   </data>
   <data name="SetAdminsTitle" xml:space="preserve">
     <value>관리자 대화</value>
@@ -4471,6 +4539,9 @@
   </data>
   <data name="SetTimer" xml:space="preserve">
     <value>자동 지우기 타이머 맞추기</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>설정</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>그림자</value>
@@ -4518,7 +4589,7 @@
     <value>전화번호를 공유하겠습니까?</value>
   </data>
   <data name="SharedMedia" xml:space="preserve">
-    <value>공유한 미디어</value>
+    <value>공유된 미디어</value>
   </data>
   <data name="SharedMediaTitle" xml:space="preserve">
     <value>공유된 미디어</value>
@@ -4527,10 +4598,10 @@
     <value>장소</value>
   </data>
   <data name="SharingLiveLocationTitle" xml:space="preserve">
-    <value>{0}님과 위치를 실시간으로 공유중입니다.</value>
+    <value>{0} 님과 위치를 실시간으로 공유 중입니다.</value>
   </data>
   <data name="SharingYouAndOtherName" xml:space="preserve">
-    <value>회원님과 {0}님</value>
+    <value>회원님과 {0} 님</value>
   </data>
   <data name="Sharpen" xml:space="preserve">
     <value>선명</value>
@@ -4542,10 +4613,10 @@
     <value>해제</value>
   </data>
   <data name="ShowAllMedia" xml:space="preserve">
-    <value>모든 미디어 보기</value>
+    <value>모든 미디어 보이기</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
-    <value>대화내에서 보기</value>
+    <value>대화 안에서 보이기</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>위로 올려 근처 장소 확인</value>
@@ -4569,7 +4640,7 @@
     <value>{1} 이내 {0} </value>
   </data>
   <data name="SmartNotificationsDisabled" xml:space="preserve">
-    <value>비활성화됨</value>
+    <value>사용 안 함</value>
   </data>
   <data name="SmartNotificationsInfo" xml:space="preserve">
     <value>{0} / {1}</value>
@@ -4578,7 +4649,7 @@
     <value>{0}:%2$02d 뒤 SMS를 보낼 것입니다.</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
-    <value>이 그룹 생성을 완료하시고 슈퍼그룹으로 전환하시면 더 많은 구성원을 추가 할 수 있습니다.</value>
+    <value>이 그룹을 마저 만들고 슈퍼그룹으로 전환한 뒤 사용자를 더 추가하실 수 있습니다.</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>정렬</value>
@@ -4590,10 +4661,10 @@
     <value>성</value>
   </data>
   <data name="Sound" xml:space="preserve">
-    <value>알림음</value>
+    <value>소리</value>
   </data>
   <data name="SoundDefault" xml:space="preserve">
-    <value>기본값</value>
+    <value>기본</value>
   </data>
   <data name="StartEncryptedChat" xml:space="preserve">
     <value>비밀 대화 시작</value>
@@ -4632,10 +4703,10 @@
     <value>스티커</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
-    <value>지우기</value>
+    <value>없애기</value>
   </data>
   <data name="StickersRemoved" xml:space="preserve">
-    <value>스티커 지워짐</value>
+    <value>스티커 없앰</value>
   </data>
   <data name="StickersShare" xml:space="preserve">
     <value>공유</value>
@@ -4650,10 +4721,10 @@
     <value>실시간 위치 공유를 중단하겠습니까?</value>
   </data>
   <data name="StopLiveLocationAlertToGroup" xml:space="preserve">
-    <value>{0}?님과 실시간 위치 공유를 중단하겠습니까?</value>
+    <value>{0} 님과의 실시간 위치 공유를 정말 그만두시겠습니까?</value>
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
-    <value>{0}?님과 실시간 위치 공유를 중단하겠습니까?</value>
+    <value>{0} 님과의 실시간 공유를 정말 그만두시겠습니까?</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>저장소 사용량</value>
@@ -4674,10 +4745,13 @@
     <value></value>
   </data>
   <data name="SubscribersOther" xml:space="preserve">
-    <value>{0} 명의 구독자</value>
+    <value>구독자 {0}명</value>
   </data>
   <data name="Support" xml:space="preserve">
     <value>지원</value>
+  </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>연락처 동기화</value>
   </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>시스템 루트</value>
@@ -4703,8 +4777,8 @@
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>텔레그램에 {0}개의 연락처가 있음</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
-    <value>Telegram FAQ</value>
+  <data name="TelegramFaq" xml:space="preserve">
+    <value>자주 묻는 질문</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq/ko</value>
@@ -4722,10 +4796,10 @@
     <value>해당 세션을 종료하시겠습니까?</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
-    <value>클립보드로 텍스트가 복사되었습니다.</value>
+    <value>글이 클립보드로 복사되었습니다</value>
   </data>
   <data name="TextSize" xml:space="preserve">
-    <value>채팅 글자 크기</value>
+    <value>메시지 글자 크기</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>테마</value>
@@ -4743,7 +4817,7 @@
     <value>{0}</value>
   </data>
   <data name="TimeToEditExpired" xml:space="preserve">
-    <value>죄송합니다, 수정가능시간이 만료되었습니다.</value>
+    <value>죄송합니다. 수정 시간이 만료했습니다.</value>
   </data>
   <data name="TimesZero" xml:space="preserve">
     <value></value>
@@ -4794,22 +4868,22 @@
     <value>차단 해제</value>
   </data>
   <data name="UnbanText" xml:space="preserve">
-    <value>차단을 해제하려면 대화상대를 길게 누르세요.</value>
+    <value>차단을 해제하려면 사용자를 길게 누르세요.</value>
   </data>
   <data name="Unblock" xml:space="preserve">
     <value>차단 해제</value>
   </data>
   <data name="UnblockText" xml:space="preserve">
-    <value>차단을 해제하려면 대화상대를 길게 누르세요.</value>
+    <value>차단을 해제하려면 사용자를 길게 누르세요.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>연락처와 그룹에 대한 모든 알림 설정을 처음 상태로 되돌립니다.</value>
+    <value>연락처와 그룹에 대한 모든 알림 설정을 처음 상태로 되돌립니다</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>알 수 없는 오류</value>
   </data>
   <data name="UnlockFingerprint" xml:space="preserve">
-    <value>지문으로 언락하기</value>
+    <value>지문으로 잠금 해제</value>
   </data>
   <data name="UnmuteNotifications" xml:space="preserve">
     <value>음소거 해제</value>
@@ -4836,7 +4910,7 @@
     <value>텔레그램이 아직 동기화되지 않은 여러 연락처를 찾아냈습니다. 연락처를 동기화하시겠습니까? 본인의 기기, SIM 카드와 Google 계정을 사용하는 중이라면 '확인'을 누르십시오.</value>
   </data>
   <data name="UpdateContactsTitle" xml:space="preserve">
-    <value>연락처를 갱신하시겠습니까?</value>
+    <value>연락처를 업데이트할까요?</value>
   </data>
   <data name="UpdatedMinutesZero" xml:space="preserve">
     <value></value>
@@ -4854,7 +4928,7 @@
     <value></value>
   </data>
   <data name="UpdatedMinutesOther" xml:space="preserve">
-    <value>{0}분 전 갱신됨</value>
+    <value>{0}분 전 업데이트됨</value>
   </data>
   <data name="Updating" xml:space="preserve">
     <value>업데이트 중...</value>
@@ -4905,16 +4979,16 @@
     <value>없음</value>
   </data>
   <data name="UserBioInfo" xml:space="preserve">
-    <value>자기소개에 대한 몇줄을 추가 할 수 있습니다. 회원님 정보를 보시는 분들에게 표시가 됩니다</value>
+    <value>자신에 대한 짤막한 소개를 적으실 수 있습니다. 회원님의 프로필을 여는 누구에게나 보입니다.</value>
   </data>
   <data name="UserRestricted" xml:space="preserve">
-    <value>죄송합니다, 이 작업이 제한되었습니다.</value>
+    <value>죄송합니다. 이 작업은 진행하실 수 없습니다.</value>
   </data>
   <data name="UserRestrictions" xml:space="preserve">
     <value>사용자 제한</value>
   </data>
   <data name="UserRestrictionsBlock" xml:space="preserve">
-    <value>차단한 뒤 그룹에서 제명</value>
+    <value>차단한 뒤 그룹에서 추방</value>
   </data>
   <data name="UserRestrictionsBy" xml:space="preserve">
     <value>{0} 님이 제한함</value>
@@ -4947,7 +5021,7 @@
     <value>사용자명</value>
   </data>
   <data name="UsernameAvailable" xml:space="preserve">
-    <value>{0}: 사용 가능합니다.</value>
+    <value>{0}: 사용하실 수 있습니다.</value>
   </data>
   <data name="UsernameChecking" xml:space="preserve">
     <value>사용자명 확인 중...</value>
@@ -4956,16 +5030,16 @@
     <value>없음</value>
   </data>
   <data name="UsernameHelp" xml:space="preserve">
-    <value>**텔레그램** 사용자명을 설정할 수 있습니다. 회원님의 전화번호를 모르는 사람이더라도 이 사용자명만 있으면 회원님을 찾아 연락할 수 있습니다.
+    <value>**텔레그램** 사용자명을 정하실 수 있습니다. 회원님의 전화번호를 모르는 사람도 이 사용자명만 있으면 회원님을 찾아 연락할 수 있습니다.
 
-사용자명은 **a부터 z 사이 글자**, **0부터 9 사이 숫자**와 밑줄로 이루어집니다. 최소 길이는 **5자**입니다.</value>
+**a부터 z 사이 글자**, **0부터 9 사이 숫자**와 밑줄을 사용하실 수 있습니다. 최소 길이는 **다섯 자**입니다.</value>
   </data>
   <data name="UsernameHelpLink" xml:space="preserve">
-    <value>이 링크는 다음 상대와 텔레그램 대화를 열게 됩니다:
+    <value>회원님과의 텔레그램 대화방 링크입니다:
 {0}</value>
   </data>
   <data name="UsernameInUse" xml:space="preserve">
-    <value>이미 쓰이고 있는 사용자명입니다.</value>
+    <value>이미 사용되고 있는 사용자명입니다.</value>
   </data>
   <data name="UsernameInvalid" xml:space="preserve">
     <value>올바른 사용자명을 입력하세요.</value>
@@ -4974,7 +5048,7 @@
     <value>사용자명은 32자를 넘길 수 없습니다.</value>
   </data>
   <data name="UsernameInvalidShort" xml:space="preserve">
-    <value>사용자명은 최소 5자이어야 합니다.</value>
+    <value>사용자명은 최소 다섯 자이어야 합니다.</value>
   </data>
   <data name="UsernameInvalidStartNumber" xml:space="preserve">
     <value>사용자명은 숫자로 시작할 수 없습니다.</value>
@@ -4998,22 +5072,22 @@
     <value></value>
   </data>
   <data name="UsersOther" xml:space="preserve">
-    <value>{0}명의 대화상대</value>
+    <value>사용자 {0}명</value>
   </data>
   <data name="Vibrate" xml:space="preserve">
     <value>진동</value>
   </data>
   <data name="VibrationDefault" xml:space="preserve">
-    <value>기본값</value>
+    <value>기본</value>
   </data>
   <data name="VibrationDisabled" xml:space="preserve">
-    <value>비활성화됨</value>
+    <value>꺼짐</value>
   </data>
   <data name="VideoCaption" xml:space="preserve">
     <value>동영상 설명</value>
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
-    <value>영상 메시지</value>
+    <value>동영상 메시지</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>팩 보기</value>
@@ -5023,6 +5097,9 @@
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>받기</value>
+  </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>%s로 대답하기</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>블루투스</value>
@@ -5067,7 +5144,7 @@
     <value>수신 전화</value>
   </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
-    <value>텔레그램으로 전화를 걸려면 마이크에 대한 접근 권한이 필요합니다.</value>
+    <value>전화를 걸려면 텔레그램에게 마이크 접근 권한을 부여하셔야 합니다.</value>
   </data>
   <data name="VoipNotificationSettings" xml:space="preserve">
     <value>음성 전화</value>
@@ -5091,10 +5168,10 @@
     <value>현재 **{0}**와 통화중입니다.  전화를 끊고 **{1}**와 새로운 통화를 하시겠습니까?</value>
   </data>
   <data name="VoipOngoingAlertTitle" xml:space="preserve">
-    <value>다른 전화가 진행중입니다</value>
+    <value>이미 전화받고 계십니다</value>
   </data>
   <data name="VoipOutgoingCall" xml:space="preserve">
-    <value>진행중인 텔레그램 전화</value>
+    <value>텔레그램으로 통화 중</value>
   </data>
   <data name="VoipPeerIncompatible" xml:space="preserve">
     <value>**{0}** 님의 앱은 현재 호환되지 않는 프로토콜을 사용중입니다. 앱을 업데이트한 뒤 전화할 수 있습니다.</value>
@@ -5112,10 +5189,10 @@
     <value>전화 거는 중</value>
   </data>
   <data name="VoipRingtoneInfo" xml:space="preserve">
-    <value>텔레그램으로 전화 수신 시 이 연락처에 대한 개별 통화음을 설정할 수 있습니다.</value>
+    <value>이 연락처에서 전화가 걸려올 때 울리는 벨소리를 맞춤 설정하실 수 있습니다.</value>
   </data>
   <data name="VoipSettingsRingtone" xml:space="preserve">
-    <value>통화음</value>
+    <value>벨소리</value>
   </data>
   <data name="VoipUseLessData" xml:space="preserve">
     <value>전화에 적은 데이터 사용</value>
@@ -5148,40 +5225,40 @@
     <value>{0}주</value>
   </data>
   <data name="WhenConnectedOnWiFi" xml:space="preserve">
-    <value>Wi-Fi에 연결 중일 때</value>
+    <value>Wi-Fi에 연결할 때</value>
   </data>
   <data name="WhenRoaming" xml:space="preserve">
-    <value>로밍 중일 때</value>
+    <value>로밍할 때</value>
   </data>
   <data name="WhenUsingMobileData" xml:space="preserve">
-    <value>모바일 데이터를 사용 중일 때</value>
+    <value>모바일 데이터를 사용할 때</value>
   </data>
   <data name="WhoCanAddMe" xml:space="preserve">
-    <value>나를 그룹에 초대가능한 사용자</value>
+    <value>나를 그룹 대화방에 추가할 수 있는 사람</value>
   </data>
   <data name="WhoCanAddMeInfo" xml:space="preserve">
-    <value>회원님을 그룹 및 채널에 초대할 수 있는 상대방을 세세하게 설정 가능합니다.</value>
+    <value>회원님을 그룹과 채널에 추가할 수 있는 사람을 세세하게 정하실 수 있습니다.</value>
   </data>
   <data name="WhoCanAddMembers" xml:space="preserve">
-    <value>누가 새로운 참가자를 초대할 수 있나요?</value>
+    <value>새로운 참가자를 추가할 수 있는 사람</value>
   </data>
   <data name="WhoCanAddMembersAdmins" xml:space="preserve">
-    <value>관리자만 가능</value>
+    <value>관리자만</value>
   </data>
   <data name="WhoCanAddMembersAllMembers" xml:space="preserve">
-    <value>모든 구성원</value>
+    <value>모든 참가자</value>
   </data>
   <data name="WhoCanCallMe" xml:space="preserve">
-    <value>나에게 전화가 가능한 사람은?</value>
+    <value>나에게 전화할 수 있는 사람</value>
   </data>
   <data name="WhoCanCallMeInfo" xml:space="preserve">
-    <value>전화차단 설정이 가능합니다.</value>
+    <value>회원님에게 전화할 수 있는 사람을 정하실 수 있습니다.</value>
   </data>
   <data name="WiFiUsage" xml:space="preserve">
     <value>WIFI 데이터 사용량</value>
   </data>
   <data name="WillUnmuteIn" xml:space="preserve">
-    <value>{0} 후</value>
+    <value>{0} 뒤</value>
   </data>
   <data name="WithinAMonth" xml:space="preserve">
     <value>한 달 이내 마지막으로 접속</value>
@@ -5226,13 +5303,13 @@
     <value>단체 메시지 리스트를 만들었습니다</value>
   </data>
   <data name="YouHaveNewMessage" xml:space="preserve">
-    <value>새 메시지가 있습니다</value>
+    <value>새로운 메시지</value>
   </data>
   <data name="YouLeft" xml:space="preserve">
     <value>그룹을 떠났습니다</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
-    <value>그룹에서 제명되셨습니다</value>
+    <value>그룹에서 추방되셨습니다</value>
   </data>
   <data name="YourCode" xml:space="preserve">
     <value>휴대폰 인증</value>
@@ -5241,7 +5318,7 @@
     <value>이메일</value>
   </data>
   <data name="YourEmailAlmostThere" xml:space="preserve">
-    <value>거의 마무리 되었습니다!</value>
+    <value>거의 다 됐어요!</value>
   </data>
   <data name="YourEmailAlmostThereText" xml:space="preserve">
     <value>2단계 인증을 완료하시려면 이메일(스팸 폴더도 확인)을 확인해주세요.</value>
@@ -5271,7 +5348,7 @@
     <value>성공!</value>
   </data>
   <data name="YourPasswordSuccessText" xml:space="preserve">
-    <value>2단계 인증 비밀번호가 활성화 되었습니다.</value>
+    <value>2단계 인증 비밀번호가 활성화됐습니다.</value>
   </data>
   <data name="YourPhone" xml:space="preserve">
     <value>전화번호 입력</value>
@@ -5280,16 +5357,16 @@
     <value>M'월' d'일' EEEE</value>
   </data>
   <data name="ChatFullDate" xml:space="preserve">
-    <value>yyyy'년' M'월' d'일' EEEE</value>
+    <value>yyyy년 MMMM d일</value>
   </data>
   <data name="FormatDateAtTime" xml:space="preserve">
     <value>{0} {1}</value>
   </data>
   <data name="FormatterBannedUntil12H" xml:space="preserve">
-    <value>MMM dd yyyy, h:mm a</value>
+    <value>yyyy.MM.dd, a h:mm</value>
   </data>
   <data name="FormatterBannedUntil24H" xml:space="preserve">
-    <value>MMM dd yyyy, HH:mm</value>
+    <value>yyyy.MMM.dd, HH:mm</value>
   </data>
   <data name="FormatterBannedUntilThisYear12H" xml:space="preserve">
     <value>MMM dd, h:mm a</value>
@@ -5307,13 +5384,13 @@
     <value>M'월' d'일'</value>
   </data>
   <data name="FormatterMonthYear" xml:space="preserve">
-    <value>MMMM yyyy</value>
+    <value>yyyy년 MMMM</value>
   </data>
   <data name="FormatterStats12H" xml:space="preserve">
-    <value>MMM dd yyyy, h:mm a</value>
+    <value>yyyy년 MMM dd일, a h:mm</value>
   </data>
   <data name="FormatterStats24H" xml:space="preserve">
-    <value>MMM dd yyyy, HH:mm</value>
+    <value>yyyy년 MM dd일, HH:mm</value>
   </data>
   <data name="FormatterWeek" xml:space="preserve">
     <value>EEEE</value>
@@ -5322,7 +5399,7 @@
     <value>yyyy.MM.dd.</value>
   </data>
   <data name="FormatterYearMax" xml:space="preserve">
-    <value>yyyy. MM. dd.</value>
+    <value>yyyy.MM.dd.</value>
   </data>
   <data name="ItemsZero" xml:space="preserve">
     <value></value>
@@ -5350,15 +5427,6 @@
   </data>
   <data name="MessagesTwo" xml:space="preserve">
     <value></value>
-  </data>
-  <data name="MessagesFew" xml:space="preserve">
-    <value></value>
-  </data>
-  <data name="MessagesMany" xml:space="preserve">
-    <value></value>
-  </data>
-  <data name="MessagesOther" xml:space="preserve">
-    <value>메시지 {0}개</value>
   </data>
   <data name="MessagesFew" xml:space="preserve">
     <value></value>

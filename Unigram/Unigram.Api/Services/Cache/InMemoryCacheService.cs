@@ -6,6 +6,7 @@ using System.Linq;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
@@ -1434,15 +1435,20 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
-        public void SyncPeerMessages(TLPeerBase peer, TLMessagesMessagesBase messages, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesMessagesBase> callback)
+        public void SyncPeerMessages(TLPeerBase peer, TLMessagesMessagesBase messagesBase, bool notifyNewDialog, bool notifyTopMessageUpdated, Action<TLMessagesMessagesBase> callback)
         {
+            if (messagesBase is TLMessagesMessagesNotModified)
+            {
+                callback(messagesBase);
+                return;
+            }
+
+            var messages = messagesBase as ITLMessages;
             if (messages == null)
             {
                 callback(new TLMessagesMessages());
                 return;
             }
-
-            var timer = Stopwatch.StartNew();
 
             var result = messages.GetEmptyObject();
             if (_database == null) Init();
@@ -1456,10 +1462,10 @@ namespace Telegram.Api.Services.Cache
             _database.Commit();
 
             //TLUtils.WritePerformance("SyncPeerMessages time: " + timer.Elapsed);
-            callback(result);
+            callback(result as TLMessagesMessagesBase);
         }
 
-        private void ProcessPeerReading(TLPeerBase peer, TLMessagesMessagesBase messages)
+        private void ProcessPeerReading(TLPeerBase peer, ITLMessages messages)
         {
             ITLReadMaxId readMaxId = null;
             if (peer is TLPeerUser)
@@ -1501,15 +1507,20 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
-        public void AddMessagesToContext(TLMessagesMessagesBase messages, Action<TLMessagesMessagesBase> callback)
+        public void AddMessagesToContext(TLMessagesMessagesBase messagesBase, Action<TLMessagesMessagesBase> callback)
         {
+            if (messagesBase is TLMessagesMessagesNotModified)
+            {
+                callback(messagesBase);
+                return;
+            }
+
+            var messages = messagesBase as ITLMessages;
             if (messages == null)
             {
                 callback(new TLMessagesMessages());
                 return;
             }
-
-            var timer = Stopwatch.StartNew();
 
             var result = messages.GetEmptyObject();
             if (_database == null) Init();
@@ -1527,7 +1538,7 @@ namespace Telegram.Api.Services.Cache
             _database.Commit();
 
             //TLUtils.WritePerformance("SyncPeerMessages time: " + timer.Elapsed);
-            callback(result);
+            callback(result as TLMessagesMessagesBase);
         }
 
         public void SyncStatuses(TLVector<TLContactStatus> contactStatuses, Action<TLVector<TLContactStatus>> callback)
@@ -2837,7 +2848,7 @@ namespace Telegram.Api.Services.Cache
             messagesChatFull.Chats = chatsResult;
 
             SyncFullChatInternal(messagesChatFull.FullChat, out TLChatFullBase fullChatResult);
-            SyncChatInternal(currentChat, out TLChatBase chatResult);
+            SyncChatInternal(messagesChatFull.FullChat.ToChat(currentChat), out TLChatBase chatResult);
             messagesChatFull.FullChat = fullChatResult;
 
             var channel = currentChat as TLChannel;
@@ -3581,7 +3592,7 @@ namespace Telegram.Api.Services.Cache
             {
                 if (_config == null)
                 {
-                    _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
+                    _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig ?? TLConfig.Default;
                 }
 
                 return _config;
@@ -3592,7 +3603,7 @@ namespace Telegram.Api.Services.Cache
         {
             if (_config == null)
             {
-                _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
+                _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig ?? TLConfig.Default;
             }
 
             return _config;
@@ -3603,7 +3614,7 @@ namespace Telegram.Api.Services.Cache
 #if SILVERLIGHT || WIN_RT
             if (_config == null)
             {
-                _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
+                _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig ?? TLConfig.Default;
             }
 #endif
             callback?.Invoke(_config);
@@ -3619,23 +3630,23 @@ namespace Telegram.Api.Services.Cache
 
         public void ClearConfigImportAsync()
         {
-            GetConfigAsync(config =>
-            {
-                foreach (var option in config.DCOptions)
-                {
-                    option.IsAuthorized = false;
-                    //if (config.ThisDC.Value != option.Id.Value)
-                    //{
-                    //    option.IsAuthorized = false;
-                    //}
-                    //else
-                    //{
-                    //    option.IsAuthorized = true;
-                    //}
-                }
+            //GetConfigAsync(config =>
+            //{
+            //    foreach (var option in config.DCOptions)
+            //    {
+            //        option.IsAuthorized = false;
+            //        //if (config.ThisDC.Value != option.Id.Value)
+            //        //{
+            //        //    option.IsAuthorized = false;
+            //        //}
+            //        //else
+            //        //{
+            //        //    option.IsAuthorized = true;
+            //        //}
+            //    }
 
-                SetConfig(config);
-            });
+            //    SetConfig(config);
+            //});
         }
 
         #endregion

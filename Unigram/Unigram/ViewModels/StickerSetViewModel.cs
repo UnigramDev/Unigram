@@ -22,7 +22,7 @@ namespace Unigram.ViewModels
     {
         private readonly IStickersService _stickersService;
 
-        public StickerSetViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService) 
+        public StickerSetViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService)
             : base(protoService, cacheService, aggregator)
         {
             _stickersService = stickersService;
@@ -41,9 +41,6 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.GetStickerSetAsync(set);
                 if (response.IsSucceeded)
                 {
-                    StickerSet = response.Result.Set;
-                    Items.ReplaceWith(response.Result.Documents);
-
                     IsLoading = false;
 
                     if (_stickersService.IsStickerPackInstalled(response.Result.Set.Id))
@@ -51,8 +48,21 @@ namespace Unigram.ViewModels
                         var existing = _stickersService.GetStickerSetById(response.Result.Set.Id);
                         if (existing.Set.Hash != response.Result.Set.Hash)
                         {
+                            StickerSet = response.Result.Set;
+                            Items.ReplaceWith(response.Result.Documents);
+
                             _stickersService.LoadStickers(response.Result.Set.IsMasks ? StickerType.Mask : StickerType.Image, false, true);
                         }
+                        else
+                        {
+                            StickerSet = existing.Set;
+                            Items.ReplaceWith(existing.Documents);
+                        }
+                    }
+                    else
+                    {
+                        StickerSet = response.Result.Set;
+                        Items.ReplaceWith(response.Result.Documents);
                     }
                 }
                 else
@@ -94,64 +104,21 @@ namespace Unigram.ViewModels
 
                     _stickerSet.IsInstalled = true;
                     _stickerSet.IsArchived = false;
+                    _stickerSet.RaisePropertyChanged(() => _stickerSet.IsInstalled);
 
                     NavigationService.GoBack();
                 }
             }
             else
             {
-                if (_stickerSet.IsOfficial)
-                {
-                    _stickersService.RemoveStickersSet(_stickerSet, 1, true);
-                    NavigationService.GoBack();
-                }
-                else
-                {
-                    _stickersService.RemoveStickersSet(_stickerSet, 0, true);
-                    NavigationService.GoBack();
-                }
+                _stickersService.RemoveStickersSet(_stickerSet, _stickerSet.IsOfficial ? 1 : 0, true);
+
+                _stickerSet.IsInstalled = _stickerSet.IsOfficial;
+                _stickerSet.IsArchived = _stickerSet.IsOfficial;
+                _stickerSet.RaisePropertyChanged(() => _stickerSet.IsInstalled);
+
+                NavigationService.GoBack();
             }
-
-            //if (_stickerSet.IsInstalled && !_stickerSet.IsArchived && !_stickerSet.IsOfficial)
-            //{
-            //    var response = await ProtoService.UninstallStickerSetAsync(new TLInputStickerSetID { Id = _stickerSet.Id, AccessHash = _stickerSet.AccessHash });
-            //    if (response.IsSucceeded)
-            //    {
-            //        _stickersService.LoadStickers(_stickerSet.IsMasks ? StickersService.TYPE_MASK : StickersService.TYPE_IMAGE, false, true);
-
-            //        _stickerSet.IsInstalled = false;
-            //        _stickerSet.IsArchived = false;
-
-            //        RaisePropertyChanged(() => StickerSet);
-            //        IsLoading = false;
-            //    }
-            //}
-            //else
-            //{
-            //    var archive = _stickerSet.IsOfficial && !_stickerSet.IsArchived;
-
-            //    var response = await ProtoService.InstallStickerSetAsync(new TLInputStickerSetID { Id = _stickerSet.Id, AccessHash = _stickerSet.AccessHash }, archive);
-            //    if (response.IsSucceeded)
-            //    {
-            //        _stickersService.LoadStickers(_stickerSet.IsMasks ? StickersService.TYPE_MASK : StickersService.TYPE_IMAGE, false, true);
-
-            //        _stickerSet.IsInstalled = true;
-            //        _stickerSet.IsArchived = archive;
-
-            //        //if (response.Result is TLMessagesStickerSetInstallResultArchive archived)
-            //        //{
-            //        //    Debugger.Break();
-            //        //}
-            //        //else
-            //        //{
-            //        //    _stickerSet.IsInstalled = true;
-            //        //    _stickerSet.IsArchived = archive;
-            //        //}
-
-            //        RaisePropertyChanged(() => StickerSet);
-            //        IsLoading = false;
-            //    }
-            //}
         }
     }
 }

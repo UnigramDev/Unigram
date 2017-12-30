@@ -2,6 +2,7 @@
 
 #include "pch.h"
 #include "ReadFramesAsyncOperation.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Unigram::Native;
 
@@ -77,14 +78,18 @@ task<ComPtr<FramesCacheStore>> ReadFramesAsyncOperation::Start(cancellation_toke
 
 	HRESULT result;
 	if (FAILED(result = m_sourceReader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, nullptr, nullptr, nullptr, nullptr)))
+	{
 		m_taskCompletionEvent.set_exception(Exception::CreateException(result));
+	}
 
 	auto cancellationTokenRegistration = ct.register_callback([this]
 	{
 		auto lock = m_criticalSection.Lock();
 
 		if (m_sourceReader != nullptr)
+		{
 			m_sourceReader->Flush(MF_SOURCE_READER_FIRST_VIDEO_STREAM);
+		}
 	});
 
 	return task.then([ct, cancellationTokenRegistration](auto& result)
@@ -112,7 +117,9 @@ HRESULT ReadFramesAsyncOperation::OnReadSample(HRESULT result, DWORD dwStreamInd
 
 			LONGLONG delay;
 			if (FAILED(pSample->GetSampleDuration(&delay)))
+			{
 				delay = 10000000;
+			}
 
 			BreakIfFailed(result, m_framesCacheStore->WriteBitmapEntry(bufferLock.GetBuffer(),
 				bufferLock.GetLength(), m_frameSize.width * sizeof(DWORD), delay));
@@ -164,7 +171,9 @@ HRESULT ReadFramesAsyncOperation::CreateUncompressedMediaType(IMFMediaType* pTyp
 	GUID majorType;
 	ReturnIfFailed(result, pType->GetMajorType(&majorType));
 	if (majorType != MFMediaType_Video)
+	{
 		return MF_E_INVALIDMEDIATYPE;
+	}
 
 	ComPtr<IMFMediaType> uncompressedType;
 	ReturnIfFailed(result, MFCreateMediaType(&uncompressedType));
@@ -195,7 +204,9 @@ HRESULT ReadFramesAsyncOperation::CreateUncompressedMediaType(IMFMediaType* pTyp
 	ReturnIfFailed(result, MFSetAttributeSize(uncompressedType.Get(), MF_MT_FRAME_SIZE, frameSize->width, frameSize->height));
 
 	if (FAILED(MFGetAttributeRatio(uncompressedType.Get(), MF_MT_PIXEL_ASPECT_RATIO, &width, &height)))
+	{
 		ReturnIfFailed(result, MFSetAttributeRatio(uncompressedType.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1));
+	}
 
 	*ppType = uncompressedType.Detach();
 	return S_OK;

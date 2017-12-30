@@ -200,7 +200,6 @@ namespace Unigram.ViewModels
         {
             BeginOnUIThread(async () =>
             {
-                Items.Clear();
                 IsFirstSliceLoaded = false;
                 IsLastSliceLoaded = false;
 
@@ -550,24 +549,28 @@ namespace Unigram.ViewModels
             //this.IsEmptyDialog = (base.Items.get_Count() == 0 && this.LazyItems.get_Count() == 0);
         }
 
-        private void InsertMessage(TLMessageCommonBase messageCommon)
+        private async void InsertMessage(TLMessageCommonBase messageCommon)
         {
-            var result = new List<TLMessageBase> { messageCommon };
-            ProcessReplies(result);
-
-            messageCommon = result.FirstOrDefault() as TLMessageCommonBase;
-            if (messageCommon == null)
+            using (await _insertLock.WaitAsync())
             {
-                return;
-            }
+                var result = new List<TLMessageBase> { messageCommon };
+                ProcessReplies(result);
 
-            BeginOnUIThread(() =>
-            {
-                var index = InsertMessageInOrder(Items, messageCommon);
-                if (index != -1)
+                messageCommon = result.FirstOrDefault() as TLMessageCommonBase;
+                if (messageCommon == null)
                 {
-                    var message = messageCommon as TLMessage;
-                    if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
+                    return;
+                }
+
+                BeginOnUIThread(() =>
+                {
+                    var index = InsertMessageInOrder(Items, messageCommon);
+                    if (index < 0)
+                    {
+                        return;
+                    }
+
+                    if (messageCommon is TLMessage message && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
                     {
                         var user = CacheService.GetUser(message.FromId) as TLUser;
                         if (user != null && user.IsBot)
@@ -581,7 +584,7 @@ namespace Unigram.ViewModels
                         }
                     }
 
-                    Execute.BeginOnThreadPool(delegate
+                    Execute.BeginOnThreadPool(() =>
                     {
                         MarkAsRead(messageCommon);
 
@@ -590,8 +593,8 @@ namespace Unigram.ViewModels
                             InputTypingManager.RemoveTypingUser(messageCommon.FromId ?? 0);
                         }
                     });
-                }
-            });
+                });
+            }
         }
 
         public static int InsertMessageInOrder(IList<TLMessageBase> messages, TLMessageBase message)
@@ -671,6 +674,11 @@ namespace Unigram.ViewModels
                 }
             }
 #endif
+
+            if (messageCommon is TLMessage message && message.Media is TLMessageMediaGroup groupMedia)
+            {
+                messageCommon = groupMedia.Layout.Messages.LastOrDefault();
+            }
 
             if (messageCommon != null && !messageCommon.IsOut && messageCommon.IsUnread)
             {

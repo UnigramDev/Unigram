@@ -24,6 +24,8 @@ namespace Telegram.Api
 
         public const int SecretSupportedLayer = 23;
 
+        public const int AccountsMaxCount = 3;
+
         public const int LongPollReattemptDelay = 5000;     //ms
         public const double MessageSendingInterval =
 #if DEBUG

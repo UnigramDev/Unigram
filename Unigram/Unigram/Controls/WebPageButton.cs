@@ -57,7 +57,7 @@ namespace Unigram.Controls
                         if (run1 != null)
                         {
                             run1.Text = run3.Text = "\uE611";
-                            run2.Text = "  INSTANT VIEW  ";
+                            run2.Text = $"  {Strings.Android.InstantView}  ";
                             run3.Foreground = null;
                         }
 
@@ -69,7 +69,7 @@ namespace Unigram.Controls
                     if (run1 != null)
                     {
                         run1.Text = run3.Text = string.Empty;
-                        run2.Text = "VIEW GROUP";
+                        run2.Text = Strings.Android.OpenGroup;
                         run3.Foreground = null;
                     }
 
@@ -80,7 +80,7 @@ namespace Unigram.Controls
                     if (run1 != null)
                     {
                         run1.Text = run3.Text = string.Empty;
-                        run2.Text = "VIEW CHANNEL";
+                        run2.Text = Strings.Android.OpenChannel;
                         run3.Foreground = null;
                     }
 
@@ -91,7 +91,7 @@ namespace Unigram.Controls
                     if (run1 != null)
                     {
                         run1.Text = run3.Text = string.Empty;
-                        run2.Text = "VIEW MESSAGE";
+                        run2.Text = Strings.Android.OpenMessage;
                         run3.Foreground = null;
                     }
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" IgnorableNamespaces="uap uap3 uap4 uap5 mp rescap desktop">
-  <Identity Name="38833FF26BA1D.UnigramPreview" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="1.1.0.0" />
+  <Identity Name="38833FF26BA1D.UnigramPreview" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="0.13.1144.0" />
   <mp:PhoneIdentity PhoneProductId="7cee5e5f-3643-4af8-b03b-4ef88223724a" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Unigram</DisplayName>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Unigram.App">
-      <uap:VisualElements DisplayName="ms-resource:/Branding/ApplicationDisplayName" Square150x150Logo="Assets\Logos\Square150x150Logo\Square150x150Logo.png" Square44x44Logo="Assets\Logos\Square44x44Logo\Square44x44Logo.png" Description="ms-resource:/Branding/ApplicationDescription" BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="Unigram Beta" Square150x150Logo="Assets\Logos\Square150x150Logo\Square150x150Logo.png" Square44x44Logo="Assets\Logos\Square44x44Logo\Square44x44Logo.png" Description="Unigram" BackgroundColor="transparent">
         <uap:LockScreen Notification="badgeAndTileText" BadgeLogo="Assets\Logos\LockScreenLogo\LockScreenLogo.png" />
         <uap:DefaultTile Wide310x150Logo="Assets\Logos\Wide310x150Logo\Wide310x150Logo.png" Square71x71Logo="Assets\Logos\Square71x71Logo\Square71x71Logo.png" Square310x310Logo="Assets\Logos\Square310x310Logo\Square310x310Logo.png">
           <uap:ShowNameOnTiles>
@@ -27,44 +27,6 @@
         <uap:SplashScreen uap5:Optional="true" Image="Assets\Logos\SplashScreen\SplashScreen.png" BackgroundColor="transparent" />
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.appService" EntryPoint="Unigram.Tasks.VoIPServiceTask">
-          <uap:AppService Name="VoIPServiceTask" ServerName="BackgroundHost" />
-        </uap:Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
-          <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="pushNotification" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.VoIPCallTask">
-          <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="systemEvent" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
-          <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="systemEvent" />
-          </BackgroundTasks>
-        </Extension>
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="tg">
-            <uap:DisplayName>Unigram</uap:DisplayName>
-          </uap:Protocol>
-        </uap:Extension>
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="ms-voip-call">
-            <uap:DisplayName>Unigram</uap:DisplayName>
-          </uap:Protocol>
-        </uap:Extension>
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="ms-ipmessaging">
-            <uap:DisplayName>Unigram</uap:DisplayName>
-          </uap:Protocol>
-        </uap:Extension>
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="ms-contact-profile">
-            <uap:DisplayName>Unigram</uap:DisplayName>
-          </uap:Protocol>
-        </uap:Extension>
         <uap:Extension Category="windows.shareTarget">
           <uap:ShareTarget>
             <uap:SupportedFileTypes>
@@ -75,6 +37,44 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
             <uap:DataFormat>Bitmap</uap:DataFormat>
           </uap:ShareTarget>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-contact-profile">
+            <uap:DisplayName>Unigram</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-ipmessaging">
+            <uap:DisplayName>Unigram</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-voip-call">
+            <uap:DisplayName>Unigram</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="tg">
+            <uap:DisplayName>Unigram</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
+          <BackgroundTasks ServerName="BackgroundHost">
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.VoIPCallTask">
+          <BackgroundTasks ServerName="BackgroundHost">
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
+          <BackgroundTasks ServerName="BackgroundHost">
+            <Task Type="pushNotification" />
+          </BackgroundTasks>
+        </Extension>
+        <uap:Extension Category="windows.appService" EntryPoint="Unigram.Tasks.VoIPServiceTask">
+          <uap:AppService Name="VoIPServiceTask" ServerName="BackgroundHost" />
         </uap:Extension>
         <uap:Extension Category="windows.voipCall" />
         <uap3:Extension Category="windows.appUriHandler">
@@ -87,6 +87,11 @@
         <!--<uap4:Extension Category="windows.contactPanel" />-->
         <uap5:Extension Category="windows.startupTask" Executable="Unigram.exe" EntryPoint="Unigram.App">
           <uap5:StartupTask TaskId="Telegram" Enabled="false" DisplayName="Unigram" />
+        </uap5:Extension>
+        <uap5:Extension Category="windows.appExecutionAlias" Executable="Unigram.exe" EntryPoint="Unigram.App">
+          <uap5:AppExecutionAlias>
+            <uap5:ExecutionAlias Alias="Unigram.exe" />
+          </uap5:AppExecutionAlias>
         </uap5:Extension>
         <!--<desktop:Extension Category="windows.fullTrustProcess" Executable="Unigram.DesktopService.exe" />-->
       </Extensions>

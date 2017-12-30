@@ -7,6 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -151,7 +152,7 @@ namespace Unigram.Common
                         }
                         else
                         {
-                            await args.Request.SendResponseAsync(new ValueSet { { "error", TLSerializationService.Current.Serialize(new TLRPCError { ErrorMessage = "USER_NOT_FOUND", ErrorCode = 404 }) } });
+                            //await args.Request.SendResponseAsync(new ValueSet { { "error", TLSerializationService.Current.Serialize(new TLRPCError { ErrorMessage = "USER_NOT_FOUND", ErrorCode = 404 }) } });
                         }
                     }
                     else if (caption.Equals("voip.getConfig"))
@@ -161,7 +162,7 @@ namespace Unigram.Common
                     }
                     else if (caption.Equals("voip.callInfo") && req is byte[] data)
                     {
-                        using (var from = new TLBinaryReader(data))
+                        using (var from = TLObjectSerializer.CreateReader(data.AsBuffer()))
                         {
                             var tupleBase = new TLTuple<int, TLPhoneCallBase, TLUserBase, string>(from);
                             var tuple = new TLTuple<TLPhoneCallState, TLPhoneCallBase, TLUserBase, string>((TLPhoneCallState)tupleBase.Item1, tupleBase.Item2, tupleBase.Item3, tupleBase.Item4);
@@ -201,7 +202,7 @@ namespace Unigram.Common
 
                                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                                 {
-                                    if (ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
+                                    if (ApplicationView.GetForCurrentView().IsCompactOverlaySupported())
                                     {
                                         var newView = CoreApplication.CreateNewView();
                                         var newViewId = 0;
@@ -251,7 +252,7 @@ namespace Unigram.Common
                     }
                     else if (caption.Equals("voip.signalBars") && req is byte[] data2)
                     {
-                        using (var from = new TLBinaryReader(data2))
+                        using (var from = TLObjectSerializer.CreateReader(data2.AsBuffer()))
                         {
                             var tuple = new TLTuple<int>(from);
 

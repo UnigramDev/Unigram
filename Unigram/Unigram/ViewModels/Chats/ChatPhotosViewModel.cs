@@ -69,9 +69,9 @@ namespace Unigram.ViewModels.Chats
 
                 //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterChatPhotos(), 0, 0, 0, _lastMaxId, 15);
                 var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                if (response.IsSucceeded)
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
 
                     var current = 1;
                     if (response.Result is TLMessagesMessagesSlice slice)
@@ -84,10 +84,10 @@ namespace Unigram.ViewModels.Chats
                     }
                     else
                     {
-                        TotalItems = response.Result.Messages.Count + current;
+                        TotalItems = result.Messages.Count + current;
                     }
 
-                    foreach (var photo in response.Result.Messages.Where(x => x.Id < offset))
+                    foreach (var photo in result.Messages.Where(x => x.Id < offset))
                     {
                         if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
                         {
@@ -100,7 +100,7 @@ namespace Unigram.ViewModels.Chats
                         }
                     }
 
-                    foreach (var photo in response.Result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
+                    foreach (var photo in result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
                     {
                         if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
                         {
@@ -140,11 +140,11 @@ namespace Unigram.ViewModels.Chats
 
                 //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
                 var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                if (response.IsSucceeded)
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
 
-                    foreach (var photo in response.Result.Messages.Where(x => x.Id < offset))
+                    foreach (var photo in result.Messages.Where(x => x.Id < offset))
                     {
                         if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
                         {
@@ -185,11 +185,11 @@ namespace Unigram.ViewModels.Chats
 
                 //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
                 var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                if (response.IsSucceeded)
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
 
-                    foreach (var photo in response.Result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
+                    foreach (var photo in result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
                     {
                         if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
                         {
@@ -209,8 +209,6 @@ namespace Unigram.ViewModels.Chats
         public override int Position => TotalItems - (Items.Count - base.Position);
 
         public override MvxObservableCollection<GalleryItem> Group => this.Items;
-
-        public override bool CanView => true;
     }
 
     //public class GalleryChatPhotoItem : GalleryItem

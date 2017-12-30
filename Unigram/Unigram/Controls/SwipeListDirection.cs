@@ -9,11 +9,6 @@ namespace Unigram.Controls
     public enum SwipeListDirection
     {
         /// <summary>
-        /// <see cref="SwipeListViewItem"/> swiped from the left.
-        /// </summary>
-        Left,
-
-        /// <summary>
         /// <see cref="SwipeListViewItem"/> swiped from the right.
         /// </summary>
         Right,

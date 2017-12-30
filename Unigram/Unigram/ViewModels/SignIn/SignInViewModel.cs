@@ -22,7 +22,7 @@ using System.Diagnostics;
 using Unigram.Views;
 using Unigram.Controls.Views;
 using Windows.UI.Xaml.Controls;
-using Telegram.Api.Transport;
+using System.Linq;
 
 namespace Unigram.ViewModels.SignIn
 {
@@ -136,7 +136,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public IList<Country> Countries { get; } = Country.Countries;
+        public IList<Country> Countries { get; } = Country.Countries.OrderBy(x => x.DisplayName).ToList();
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
@@ -226,8 +226,7 @@ namespace Unigram.ViewModels.SignIn
 
                 if (SettingsHelper.IsProxyEnabled || SettingsHelper.IsProxyEnabled != enabled)
                 {
-                    UnigramContainer.Current.ResolveType<ITransportService>().Close();
-                    UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
+                    UnigramContainer.Current.ResolveType<IMTProtoService>().ToggleProxy();
                 }
             }
         }

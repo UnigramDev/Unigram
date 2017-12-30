@@ -374,8 +374,7 @@ namespace Unigram.Core.Services
                     var from = message.FromId;
                     if (from != null)
                     {
-                        int currentUserId = MTProtoService.Current.CurrentUserId;
-                        if (currentUserId == from)
+                        if (message.IsOut)
                         {
                             if (message.Parent.ToPeer().Id != from && !message.IsPost)
                             {

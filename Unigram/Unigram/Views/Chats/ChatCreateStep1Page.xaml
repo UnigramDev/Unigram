@@ -1,0 +1,50 @@
+﻿<Page
+    x:Class="Unigram.Views.Chats.ChatCreateStep1Page"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Chats"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:ButtonPageHeader
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource NewGroup}"
+            Glyph="&#xE10B;"/>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid Height="64" Width="64" CornerRadius="32" Margin="12" Grid.RowSpan="2">
+                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="32"/>
+                    <controls:GlyphButton Click="EditPhoto_Click" Glyph="&#xE114;" FontSize="16" CornerRadius="32" Width="64" Height="64"/>
+                    <controls:ProfilePicture Click="EditPhoto_Click" Source="{x:Bind ViewModel.Preview, Mode=OneWay}"/>
+                </Grid>
+                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
+                    <controls:UpdateTextBox
+                        Text="{Binding Title, Mode=TwoWay}"
+                        MaxLength="{StaticResource ChatTitleMaxLength}"
+                        PlaceholderText="{CustomResource EnterGroupNamePlaceholder}"/>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

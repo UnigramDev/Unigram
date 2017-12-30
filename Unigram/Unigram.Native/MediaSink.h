@@ -2,6 +2,7 @@
 
 #pragma once
 #include <queue>
+#include <memory>
 #include <windows.media.core.h>
 #include <windows.media.h>
 #include <windows.foundation.h>
@@ -31,22 +32,22 @@ namespace Unigram
 			MediaSink();
 			virtual ~MediaSink();
 
-			STDMETHODIMP AddStreamSink(DWORD dwStreamSinkIdentifier, IMFMediaType* pMediaType, IMFStreamSink** ppStreamSink);
-			STDMETHODIMP GetCharacteristics(DWORD* pdwCharacteristics);
-			STDMETHODIMP GetPresentationClock(IMFPresentationClock** ppPresentationClock);
-			STDMETHODIMP GetStreamSinkById(DWORD dwIdentifier, IMFStreamSink** ppStreamSink);
-			STDMETHODIMP GetStreamSinkByIndex(DWORD dwIndex, IMFStreamSink** ppStreamSink);
-			STDMETHODIMP GetStreamSinkCount(DWORD* pcStreamSinkCount);
-			STDMETHODIMP RemoveStreamSink(DWORD dwStreamSinkIdentifier);
-			STDMETHODIMP SetPresentationClock(IMFPresentationClock* pPresentationClock);
-			STDMETHODIMP Shutdown();
-			STDMETHODIMP OnClockPause(MFTIME hnsSystemTime);
-			STDMETHODIMP OnClockRestart(MFTIME hnsSystemTime);
-			STDMETHODIMP OnClockSetRate(MFTIME hnsSystemTime, float flRate);
-			STDMETHODIMP OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffset);
-			STDMETHODIMP OnClockStop(MFTIME hnsSystemTime);
-			STDMETHODIMP BeginFinalize(IMFAsyncCallback* pCallback, IUnknown* punkState);
-			STDMETHODIMP EndFinalize(IMFAsyncResult* pResult);
+			IFACEMETHODIMP AddStreamSink(DWORD dwStreamSinkIdentifier, IMFMediaType* pMediaType, IMFStreamSink** ppStreamSink);
+			IFACEMETHODIMP GetCharacteristics(DWORD* pdwCharacteristics);
+			IFACEMETHODIMP GetPresentationClock(IMFPresentationClock** ppPresentationClock);
+			IFACEMETHODIMP GetStreamSinkById(DWORD dwIdentifier, IMFStreamSink** ppStreamSink);
+			IFACEMETHODIMP GetStreamSinkByIndex(DWORD dwIndex, IMFStreamSink** ppStreamSink);
+			IFACEMETHODIMP GetStreamSinkCount(DWORD* pcStreamSinkCount);
+			IFACEMETHODIMP RemoveStreamSink(DWORD dwStreamSinkIdentifier);
+			IFACEMETHODIMP SetPresentationClock(IMFPresentationClock* pPresentationClock);
+			IFACEMETHODIMP Shutdown();
+			IFACEMETHODIMP OnClockPause(MFTIME hnsSystemTime);
+			IFACEMETHODIMP OnClockRestart(MFTIME hnsSystemTime);
+			IFACEMETHODIMP OnClockSetRate(MFTIME hnsSystemTime, float flRate);
+			IFACEMETHODIMP OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffset);
+			IFACEMETHODIMP OnClockStop(MFTIME hnsSystemTime);
+			IFACEMETHODIMP BeginFinalize(IMFAsyncCallback* pCallback, IUnknown* punkState);
+			IFACEMETHODIMP EndFinalize(IMFAsyncResult* pResult);
 
 		protected:
 			enum class MediaSinkState
@@ -83,8 +84,8 @@ namespace Unigram
 			virtual HRESULT OnSetProperties(_In_ ABI::Windows::Foundation::Collections::IPropertySet* configuration) = 0;
 
 		private:
-			STDMETHODIMP SetProperties(ABI::Windows::Foundation::Collections::IPropertySet* pConfiguration);
-			STDMETHODIMP Close();
+			IFACEMETHODIMP SetProperties(ABI::Windows::Foundation::Collections::IPropertySet* pConfiguration);
+			IFACEMETHODIMP Close();
 
 			CriticalSection m_criticalSection;
 			MediaSinkState m_state;
@@ -100,23 +101,23 @@ namespace Unigram
 			StreamSink();
 			virtual ~StreamSink();
 
-			STDMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
-			STDMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
-			STDMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
-			STDMETHODIMP QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, PROPVARIANT const* pvValue);
-			STDMETHODIMP GetMediaSink(IMFMediaSink** ppMediaSink);
-			STDMETHODIMP GetIdentifier(DWORD* pdwIdentifier);
-			STDMETHODIMP GetMediaTypeHandler(IMFMediaTypeHandler** ppHandler);
-			STDMETHODIMP ProcessSample(IMFSample* pSample);
-			STDMETHODIMP PlaceMarker(MFSTREAMSINK_MARKER_TYPE eMarkerType, PROPVARIANT const* pvarMarkerValue, PROPVARIANT const* pvarContextValue);
-			STDMETHODIMP Flush();
-			STDMETHODIMP IsMediaTypeSupported(IMFMediaType* pMediaType, IMFMediaType** ppMediaType);
-			STDMETHODIMP GetMediaTypeCount(DWORD* pdwTypeCount);
-			STDMETHODIMP GetMediaTypeByIndex(DWORD dwIndex, IMFMediaType** ppType);
-			STDMETHODIMP SetCurrentMediaType(IMFMediaType* pMediaType);
-			STDMETHODIMP GetCurrentMediaType(IMFMediaType** ppMediaType);
-			STDMETHODIMP GetMajorType(GUID* pguidMajorType);
-			STDMETHODIMP Shutdown();
+			IFACEMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
+			IFACEMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, PROPVARIANT const* pvValue);
+			IFACEMETHODIMP GetMediaSink(IMFMediaSink** ppMediaSink);
+			IFACEMETHODIMP GetIdentifier(DWORD* pdwIdentifier);
+			IFACEMETHODIMP GetMediaTypeHandler(IMFMediaTypeHandler** ppHandler);
+			IFACEMETHODIMP ProcessSample(IMFSample* pSample);
+			IFACEMETHODIMP PlaceMarker(MFSTREAMSINK_MARKER_TYPE eMarkerType, PROPVARIANT const* pvarMarkerValue, PROPVARIANT const* pvarContextValue);
+			IFACEMETHODIMP Flush();
+			IFACEMETHODIMP IsMediaTypeSupported(IMFMediaType* pMediaType, IMFMediaType** ppMediaType);
+			IFACEMETHODIMP GetMediaTypeCount(DWORD* pdwTypeCount);
+			IFACEMETHODIMP GetMediaTypeByIndex(DWORD dwIndex, IMFMediaType** ppType);
+			IFACEMETHODIMP SetCurrentMediaType(IMFMediaType* pMediaType);
+			IFACEMETHODIMP GetCurrentMediaType(IMFMediaType** ppMediaType);
+			IFACEMETHODIMP GetMajorType(GUID* pguidMajorType);
+			IFACEMETHODIMP Shutdown();
 
 		protected:
 			enum class StreamSinkState
@@ -211,8 +212,8 @@ namespace Unigram
 				std::unique_ptr<PROPVARIANT> ContextValue;
 			};
 
-			STDMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
-			STDMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
+			IFACEMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
+			IFACEMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
 			HRESULT Start(MFTIME position, LONGLONG clockStartOffset);
 			HRESULT Restart(MFTIME position);
 			HRESULT Pause();

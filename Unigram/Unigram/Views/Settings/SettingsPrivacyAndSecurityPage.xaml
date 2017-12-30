@@ -113,7 +113,25 @@
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,0"/>
                 </StackPanel>
-                
+
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource Contacts}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <!--<controls:BadgeButton
+                        Content="{CustomResource PrivacyCallsP2PTitle}"
+                        Badge="{x:Bind ViewModel.PeerToPeerMode, Mode=OneWay, Converter={StaticResource PeerToPeerModeConverter}}"
+                        Command="{x:Bind ViewModel.PeerToPeerCommand}"/>-->
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
+                        Header="{CustomResource SyncContacts}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+
+                    <TextBlock
+                        Text="{x:Bind ConvertSync(ViewModel.IsContactsSyncEnabled), Mode=OneWay}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,0"/>
+                </StackPanel>
+
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource Calls}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton

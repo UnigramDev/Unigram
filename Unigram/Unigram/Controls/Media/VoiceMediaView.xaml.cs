@@ -9,6 +9,7 @@ using Windows.Foundation;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -33,7 +34,38 @@ namespace Unigram.Controls.Media
                 Loading?.Invoke(s, null);
                 UpdateGlyph();
             };
+
+            //Slider.AddHandler(PointerPressedEvent, new PointerEventHandler(Slider_PointerPressed), true);
+            //Slider.AddHandler(PointerReleasedEvent, new PointerEventHandler(Slider_PointerReleased), true);
+            //Slider.ValueChanged += Slider_ValueChanged;
+            //Slider.AddHandler(PointerCaptureLostEvent, new PointerEventHandler(Slider_PointerReleased), true);
+            //Slider.AddHandler(PointerCanceledEvent, new PointerEventHandler(Slider_PointerReleased), true);
         }
+
+        //private bool _pressed;
+
+        //private void Slider_PointerPressed(object sender, PointerRoutedEventArgs e)
+        //{
+        //    _pressed = true;
+        //}
+
+        //private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
+        //{
+        //    if (Playback.Session.CanSeek)
+        //    {
+        //        Playback.SetPosition(TimeSpan.FromMilliseconds(Slider.Value));
+        //    }
+
+        //    _pressed = false;
+        //}
+
+        //private void Slider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        //{
+        //    if (_pressed)
+        //    {
+        //        Progress.Value = e.NewValue;
+        //    }
+        //}
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -80,6 +112,8 @@ namespace Unigram.Controls.Media
 
             if (DataContext is TLMessage message && Equals(Playback.CurrentItem, message))
             {
+                //Slider.IsEnabled = true;
+
                 PlaybackPanel.Visibility = Visibility.Visible;
                 PlaybackButton.Glyph = Playback.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
                 UpdatePosition();
@@ -88,6 +122,8 @@ namespace Unigram.Controls.Media
             }
             else
             {
+                //Slider.IsEnabled = false;
+
                 PlaybackPanel.Visibility = Visibility.Collapsed;
                 UpdateDuration();
             }
@@ -95,11 +131,11 @@ namespace Unigram.Controls.Media
 
         private void UpdatePosition()
         {
-            if (DataContext is TLMessage message && Equals(Playback.CurrentItem, message))
+            if (DataContext is TLMessage message && Equals(Playback.CurrentItem, message) /*&& !_pressed*/)
             {
-                DurationLabel.Text = Playback.Session.Position.ToString("mm\\:ss") + " / " + Playback.Session.NaturalDuration.ToString("mm\\:ss");
-                Slide.Maximum = Playback.Session.NaturalDuration.TotalMilliseconds;
-                Slide.Value = Playback.Session.Position.TotalMilliseconds;
+                DurationLabel.Text = FormatTime(Playback.Session.Position) + " / " + FormatTime(Playback.Session.NaturalDuration);
+                Progress.Maximum = /*Slider.Maximum =*/ Playback.Session.NaturalDuration.TotalMilliseconds;
+                Progress.Value = /*Slider.Value =*/ Playback.Session.Position.TotalMilliseconds;
             }
         }
 
@@ -110,10 +146,22 @@ namespace Unigram.Controls.Media
                 var audioAttribute = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
                 if (audioAttribute != null)
                 {
-                    DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
-                    Slide.Maximum = int.MaxValue;
-                    Slide.Value = message.IsMediaUnread && !message.IsOut ? int.MaxValue : 0;
+                    DurationLabel.Text = FormatTime(TimeSpan.FromSeconds(audioAttribute.Duration));
+                    Progress.Maximum = /*Slider.Maximum =*/ int.MaxValue;
+                    Progress.Value = /*Slider.Value =*/ message.IsMediaUnread && !message.IsOut ? int.MaxValue : 0;
                 }
+            }
+        }
+
+        private string FormatTime(TimeSpan span)
+        {
+            if (span.TotalHours >= 1)
+            {
+                return span.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return span.ToString("mm\\:ss");
             }
         }
 

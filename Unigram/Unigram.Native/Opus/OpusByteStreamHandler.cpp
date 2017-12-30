@@ -3,6 +3,7 @@
 #include "pch.h"
 #include "OpusMediaSource.h"
 #include "OpusByteStreamHandler.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Unigram::Native;
 
@@ -16,7 +17,6 @@ QWORD OpusByteStreamHandler::GetMaxNumberOfBytesRequiredForResolution() noexcept
 HRESULT OpusByteStreamHandler::CreateMediaSource(IMFByteStream* byteStream, IPropertyStore* properties, IMFMediaSource** ppMediaSource)
 {
 	HRESULT result;
-
 	ComPtr<OpusInputByteStream> opusStream;
 	ReturnIfFailed(result, MakeAndInitialize<OpusInputByteStream>(&opusStream, byteStream));
 
@@ -29,7 +29,9 @@ HRESULT OpusByteStreamHandler::CreateMediaSource(IMFByteStream* byteStream, IPro
 HRESULT OpusByteStreamHandler::ValidateURL(LPCWSTR url)
 {
 	if (CheckExtension(url, L".ogg"))
+	{
 		return S_OK;
+	}
 
 	return E_INVALIDARG;
 }
@@ -41,7 +43,9 @@ HRESULT OpusByteStreamHandler::ValidateByteStream(IMFByteStream* byteStream)
 	ReturnIfFailed(result, byteStream->GetCapabilities(&capabilities));
 
 	if (capabilities & MFBYTESTREAM_IS_READABLE)
+	{
 		return S_OK;
+	}
 
 	return MF_E_UNSUPPORTED_BYTESTREAM_TYPE;
 }

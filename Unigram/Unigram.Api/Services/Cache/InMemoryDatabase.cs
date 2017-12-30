@@ -233,12 +233,6 @@ namespace Telegram.Api.Services.Cache
         {
             if (user != null)
             {
-                // TODO: remove
-                if (user is TLUser userFull && userFull.Id.Equals(38475861))
-                {
-                    userFull.IsVerified = true;
-                }
-
                 UsersContext[user.Id] = user;
             }
         }
@@ -255,12 +249,6 @@ namespace Telegram.Api.Services.Cache
         {
             if (chat != null)
             {
-                // TODO: remove
-                if (chat is TLChannel channel && (channel.Id.Equals(1060755082) || channel.Id.Equals(1057176757)))
-                {
-                    channel.IsVerified = true;
-                }
-
                 ChatsContext[chat.Id] = chat;
             }
         }

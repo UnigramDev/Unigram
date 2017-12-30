@@ -42,8 +42,8 @@
                 Padding="0,8,0,16"
                 Grid.Row="1"/>
 
-            <ComboBox ItemsSource="{Binding Countries}"
-                      SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
+            <ComboBox ItemsSource="{x:Bind ViewModel.Countries}"
+                      SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
                       PlaceholderText="{CustomResource ChooseCountry}"
                       MinWidth="280"
                       HorizontalAlignment="Stretch"
@@ -73,15 +73,14 @@
                     InputScope="TelephoneNumber"
                     PlaceholderText="+"
                     Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
-                <controls:UpdateTextBox
-                    x:Name="PrimaryInput"
-                    Text="{Binding PhoneNumber, Mode=TwoWay}"
-                    MinWidth="200"
-                    InputScope="TelephoneNumber"
-                    IsTextPredictionEnabled="False"
-                    KeyDown="PhoneNumber_KeyDown"
-                    Grid.Column="1"/>
-
+                <controls:PhoneTextBox x:Name="PrimaryInput"
+                                       Text="{Binding PhoneNumber, Mode=TwoWay}"
+                                       PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
+                                       MinWidth="200"
+                                       InputScope="TelephoneNumber"
+                                       IsTextPredictionEnabled="False"
+                                       KeyDown="PhoneNumber_KeyDown"
+                                       Grid.Column="1"/>
             </Grid>
 
             <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>

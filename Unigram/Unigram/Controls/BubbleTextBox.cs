@@ -245,7 +245,23 @@ namespace Unigram.Controls
                     reader.ReadBytes(buffer);
                     await FileIO.WriteBytesAsync(cache, buffer);
 
-                    media.Add(await StoragePhoto.CreateAsync(cache, true));
+                    var photo = await StoragePhoto.CreateAsync(cache, true) as StorageMedia;
+                    if (photo == null)
+                    {
+                        photo = await StorageVideo.CreateAsync(cache, true);
+                    }
+
+                    if (photo == null)
+                    {
+                        return;
+                    }
+
+                    media.Add(photo);
+                }
+
+                if (package.Contains(StandardDataFormats.Text))
+                {
+                    media[0].Caption = await package.GetTextAsync();
                 }
 
                 ViewModel.SendMediaExecute(media, media[0]);

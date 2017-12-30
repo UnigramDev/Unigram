@@ -114,55 +114,49 @@ namespace Telegram.Api.Helpers
             get
             {
                 if (_userId == null)
-                    _userId = GetValueOrDefault(SessionGuid + "UserId", 0);
+                    _userId = GetValueOrDefault(SelectedAccount + "UserId", 0);
 
                 return _userId ?? 0;
             }
             set
             {
                 _userId = value;
-                AddOrUpdateValue(SessionGuid + "UserId", value);
+                AddOrUpdateValue(SelectedAccount + "UserId", value);
             }
         }
 
-        private static string _sessionGuid;
-        public static string SessionGuid
+        private static int? _selectedAccount;
+        public static int SelectedAccount
         {
             get
             {
-                if (_sessionGuid == null)
-                    _sessionGuid = GetValueOrDefault<string>("SessionGuid", null);
+                if (_selectedAccount == null)
+                    _selectedAccount = GetValueOrDefault("SelectedAccount", 0);
 
-                if (_sessionGuid == null)
-                {
-                    _sessionGuid = Guid.NewGuid().ToString();
-                    AddOrUpdateValue("SessionGuid", _sessionGuid);
-                }
-
-                return _sessionGuid;
+                return _selectedAccount ?? 0;
             }
             set
             {
-                _sessionGuid = value;
-                AddOrUpdateValue("SessionGuid", value);
+                _selectedAccount = value;
+                AddOrUpdateValue("SelectedAccount", value);
             }
         }
 
-        public static string SwitchGuid
+        public static int SwitchAccount
         {
             get
             {
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SwitchGuid"))
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SwitchAccount"))
                 {
-                    return (string)ApplicationData.Current.LocalSettings.Values["SwitchGuid"];
+                    return (int)ApplicationData.Current.LocalSettings.Values["SwitchAccount"];
                 }
 
 
-                return null;
+                return -1;
             }
             set
             {
-                ApplicationData.Current.LocalSettings.Values["SwitchGuid"] = value;
+                ApplicationData.Current.LocalSettings.Values["SwitchAccount"] = value;
             }
         }
 
@@ -172,14 +166,14 @@ namespace Telegram.Api.Helpers
             get
             {
                 if (_isAuthorized == null)
-                    _isAuthorized = GetValueOrDefault("IsAuthorized", false);
+                    _isAuthorized = GetValueOrDefault("Authorized", false);
 
                 return _isAuthorized ?? false;
             }
             set
             {
                 _isAuthorized = value;
-                AddOrUpdateValue("IsAuthorized", value);
+                AddOrUpdateValue("Authorized", value);
             }
         }
 

@@ -31,7 +31,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Views.SignIn;
 using Telegram.Api.Aggregator;
-using Telegram.Api.Transport;
 using Windows.Foundation;
 using Windows.UI.Xaml.Input;
 using Unigram.ViewModels.Dialogs;
@@ -799,7 +798,7 @@ namespace Unigram.Common
                 var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                 if (service != null && service.Content is DialogPage page)
                 {
-                    page.ViewModel.Search = new DialogSearchViewModel(MTProtoService.Current, InMemoryCacheService.Current, TelegramEventAggregator.Instance, page.ViewModel);
+                    page.ViewModel.Search = new DialogSearchViewModel(page.ViewModel.ProtoService, page.ViewModel.CacheService, page.ViewModel.Aggregator, page.ViewModel);
                     page.ViewModel.Search.SearchCommand.Execute((string)data);
                 }
             }
@@ -1119,8 +1118,8 @@ namespace Unigram.Common
                 SettingsHelper.ProxyUsername = user;
                 SettingsHelper.ProxyPassword = pass;
                 SettingsHelper.IsProxyEnabled = true;
-                UnigramContainer.Current.ResolveType<ITransportService>().Close();
-                UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
+
+                UnigramContainer.Current.ResolveType<IMTProtoService>().ToggleProxy();
             }
         }
 
@@ -1161,7 +1160,7 @@ namespace Unigram.Common
             await StickerSetView.Current.ShowAsync(new TLInputStickerSetShortName { ShortName = text });
         }
 
-        public static async void NavigateToUsername(string username, string accessToken, string post, string game)
+        public static void NavigateToUsername(string username, string accessToken, string post, string game)
         {
             NavigateToUsername(MTProtoService.Current, username, accessToken, post, game);
         }
@@ -1346,6 +1345,8 @@ namespace Unigram.Common
         public static async void NavigateToInviteLink(string link)
         {
             var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
+
             var response = await protoService.CheckChatInviteAsync(link);
             if (response.IsSucceeded)
             {
@@ -1373,17 +1374,36 @@ namespace Unigram.Common
                                 if (chatBase != null)
                                 {
                                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                                    if (service != null)
+                                    if (service == null)
+                                    {
+                                        return;
+                                    }
+
+                                    if (chatBase is TLChannel channel)
+                                    {
+                                        protoService.GetHistoryAsync(channel.ToInputPeer(), channel.ToPeer(), false, 0, 0, 0, 1, 0, history =>
+                                        {
+                                            var vector = new TLVector<int>(1);
+                                            if (history is ITLMessages messages)
+                                            {
+                                                vector.AddRange(messages.Messages.Select(x => x.Id));
+                                            }
+
+                                            cacheService.DeleteChannelMessages(channel.Id, vector);
+                                            cacheService.SyncPeerMessages(channel.ToPeer(), history, true, false, sync =>
+                                            {
+                                                service.Dispatcher.Dispatch(() => service.NavigateToDialog(chatBase));
+                                            });
+                                        }, 
+                                        error =>
+                                        {
+                                            Execute.ShowDebugMessage("messages.getHistory error " + error);
+                                        });
+                                    }
+                                    else
                                     {
                                         service.NavigateToDialog(chatBase);
                                     }
-
-                                    //var channel = chatBase as TLChannel;
-                                    //if (channel != null)
-                                    //{
-                                    //    // TODO: sync history
-
-                                    //}
                                 }
                             }
                         }

@@ -329,7 +329,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<T>> SendRequestAsync<T>(string caption, TLObject obj)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<T>>();
-            SendRequestAsync<T>(caption, obj, (callback) =>
+            SendInformativeMessage<T>(caption, obj, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<T>(callback));
             }, (faultCallback) =>
@@ -1054,20 +1054,6 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLCdnConfig>> GetCdnConfigAsync()
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLCdnConfig>>();
-            GetCdnConfigAsync((callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLCdnConfig>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLCdnConfig>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFileBase>>();
@@ -1175,20 +1161,6 @@ namespace Telegram.Api.Services
             }, (faultCallback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLChannelsChannelParticipantsBase>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit)
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            GetChannelHistoryAsync(debugInfo, inputPeer, peer, sync, offset, maxId, limit, (callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(faultCallback));
             });
             return tsc.Task;
         }
@@ -1852,24 +1824,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLPong>> PingAsync(long pingId)
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLPong>>();
-            PingAsync(pingId, (callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLPong>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLPong>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit)
+        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit, int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            GetHistoryAsync(inputPeer, peer, sync, offset, offsetDate, maxId, limit, (callback) =>
+            GetHistoryAsync(inputPeer, peer, sync, offset, offsetDate, maxId, limit, hash, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
             }, (faultCallback) =>
@@ -2449,20 +2407,6 @@ namespace Telegram.Api.Services
             }, (faultCallback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAccountDaysTTL>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLPong>> PingDelayDisconnectAsync(long pingId, int disconnectDelay)
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLPong>>();
-            PingDelayDisconnectAsync(pingId, disconnectDelay, (callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLPong>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLPong>(faultCallback));
             });
             return tsc.Task;
         }

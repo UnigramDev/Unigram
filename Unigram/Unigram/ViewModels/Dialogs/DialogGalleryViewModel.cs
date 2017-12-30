@@ -65,9 +65,9 @@ namespace Unigram.ViewModels.Dialogs
 
                 //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
                 var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                if (response.IsSucceeded)
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
 
                     var current = 1;
                     if (response.Result is TLMessagesMessagesSlice slice)
@@ -80,10 +80,10 @@ namespace Unigram.ViewModels.Dialogs
                     }
                     else
                     {
-                        TotalItems = response.Result.Messages.Count + current;
+                        TotalItems = result.Messages.Count + current;
                     }
 
-                    foreach (var photo in response.Result.Messages.Where(x => x.Id < offset))
+                    foreach (var photo in result.Messages.Where(x => x.Id < offset))
                     {
                         if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
                         {
@@ -95,7 +95,7 @@ namespace Unigram.ViewModels.Dialogs
                         }
                     }
 
-                    foreach (var photo in response.Result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
+                    foreach (var photo in result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
                     {
                         if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
                         {
@@ -136,11 +136,11 @@ namespace Unigram.ViewModels.Dialogs
 
                 //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
                 var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                if (response.IsSucceeded)
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
 
-                    foreach (var photo in response.Result.Messages.Where(x => x.Id < offset))
+                    foreach (var photo in result.Messages.Where(x => x.Id < offset))
                     {
                         if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
                         {
@@ -181,11 +181,11 @@ namespace Unigram.ViewModels.Dialogs
 
                 //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
                 var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                if (response.IsSucceeded)
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
+                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
 
-                    foreach (var photo in response.Result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
+                    foreach (var photo in result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
                     {
                         if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
                         {
@@ -205,8 +205,6 @@ namespace Unigram.ViewModels.Dialogs
         public override int Position => TotalItems - (Items.Count - base.Position);
 
         public override MvxObservableCollection<GalleryItem> Group => _group;
-
-        public override bool CanView => true;
 
         protected override void OnSelectedItemChanged(GalleryItem item)
         {

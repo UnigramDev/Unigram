@@ -1,5 +1,7 @@
 ﻿using System;
 using Telegram.Api.Extensions;
+using Telegram.Api.Native;
+using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
 using Telegram.Api.TL.Messages.Methods;
@@ -13,7 +15,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesGetDHConfig { Version = version, RandomLength = randomLength };
 
             const string caption = "messages.getDhConfig";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         // TODO: Encrypted 

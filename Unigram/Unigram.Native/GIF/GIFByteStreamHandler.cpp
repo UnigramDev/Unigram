@@ -3,6 +3,7 @@
 #include "pch.h"
 #include "GIFMediaSource.h"
 #include "GIFByteStreamHandler.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Unigram::Native;
 
@@ -25,7 +26,9 @@ HRESULT GIFByteStreamHandler::CreateMediaSource(IMFByteStream* byteStream, IProp
 HRESULT GIFByteStreamHandler::ValidateURL(LPCWSTR url)
 {
 	if (CheckExtension(url, L".gif"))
+	{
 		return S_OK;
+	}
 
 	return E_INVALIDARG;
 }
@@ -44,7 +47,9 @@ HRESULT GIFByteStreamHandler::ValidateByteStream(IMFByteStream* byteStream)
 		ReturnIfFailed(result, byteStream->SetCurrentPosition(0));
 
 		if (strncmp(magicNumber, "GIF87a", 6) == 0 || strncmp(magicNumber, "GIF89a", 6) == 0)
+		{
 			return S_OK;
+		}
 	}
 
 	return MF_E_UNSUPPORTED_BYTESTREAM_TYPE;

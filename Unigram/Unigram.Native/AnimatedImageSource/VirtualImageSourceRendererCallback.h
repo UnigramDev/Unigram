@@ -49,9 +49,9 @@ namespace Unigram
 
 			HRESULT StartTimer(LONGLONG duration);
 			HRESULT StopTimer();
-			STDMETHODIMP UpdatesNeeded();
-			STDMETHODIMP Invoke(_In_ IMFAsyncResult* pAsyncResult);
-			STDMETHODIMP GetParameters(_Out_ DWORD* pdwFlags, _Out_ DWORD* pdwQueue);
+			IFACEMETHODIMP UpdatesNeeded();
+			IFACEMETHODIMP Invoke(_In_ IMFAsyncResult* pAsyncResult);
+			IFACEMETHODIMP GetParameters(_Out_ DWORD* pdwFlags, _Out_ DWORD* pdwQueue);
 
 			inline const bool IsTimerRunning() const
 			{

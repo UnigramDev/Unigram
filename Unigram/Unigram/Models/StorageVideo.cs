@@ -239,8 +239,8 @@ namespace Unigram.Models
 
         public async Task<MediaEncodingProfile> GetEncodingAsync()
         {
-            int originalWidth = this.originalWidth;
-            int originalHeight = this.originalHeight;
+            int originalWidth = (int)Properties.Width;
+            int originalHeight = (int)Properties.Height;
 
             if (CropRectangle.HasValue)
             {

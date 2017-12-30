@@ -21,6 +21,7 @@ using Telegram.Api.TL.Auth.Methods;
 using System.Diagnostics;
 using Unigram.Views;
 using Unigram.Views.Settings;
+using System.Linq;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -133,7 +134,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public IList<Country> Countries { get; } = Country.Countries;
+        public IList<Country> Countries { get; } = Country.Countries.OrderBy(x => x.DisplayName).ToList();
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()

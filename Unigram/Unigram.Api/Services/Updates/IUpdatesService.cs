@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Channels;
@@ -49,7 +50,7 @@ namespace Telegram.Api.Services.Updates
         int? ClientSeq { get; }
         void SetState(int? seq, int? pts, int? qts, int? date, int? unreadCount, string caption, bool cleanupMissingCounts = false);
         void SetState(ITLMultiPts multiPts, string caption);
-        void ProcessTransportMessage(TLTransportMessage transportMessage);
+        //void ProcessTransportMessage(TLTransportMessage transportMessage);
         void ProcessUpdates(TLUpdatesBase updates, bool notifyNewMessages = false);
         
         void LoadStateAndUpdate(Action callback);

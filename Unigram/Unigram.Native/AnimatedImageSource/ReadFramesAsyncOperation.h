@@ -30,10 +30,10 @@ namespace Unigram
 			STDMETHODIMP RuntimeClassInitialize(const D2D1_SIZE_U& maximumFrameSize, _In_ Windows::Media::Core::IMediaSource^ mediaSource);
 
 		private:
-			STDMETHODIMP OnReadSample(HRESULT hrStatus, DWORD dwStreamIndex, DWORD dwStreamFlags,
+			IFACEMETHODIMP OnReadSample(HRESULT hrStatus, DWORD dwStreamIndex, DWORD dwStreamFlags,
 				LONGLONG llTimestamp, IMFSample* pSample);
-			STDMETHODIMP OnFlush(DWORD dwStreamIndex);
-			STDMETHODIMP OnEvent(DWORD dwStreamIndex, IMFMediaEvent* pEvent);
+			IFACEMETHODIMP OnFlush(DWORD dwStreamIndex);
+			IFACEMETHODIMP OnEvent(DWORD dwStreamIndex, IMFMediaEvent* pEvent);
 			HRESULT CreateSourceReaderAttributes(_Out_ IMFAttributes** ppAttributes);
 			HRESULT RuntimeClassInitialize(const D2D1_SIZE_U& maximumFrameSize);
 

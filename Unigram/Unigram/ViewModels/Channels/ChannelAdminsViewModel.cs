@@ -17,7 +17,7 @@ namespace Unigram.ViewModels.Channels
     public class ChannelAdminsViewModel : ChannelParticipantsViewModelBase
     {
         public ChannelAdminsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator, new TLChannelParticipantsAdmins())
+            : base(protoService, cacheService, aggregator, new TLChannelParticipantsAdmins(), null)
         {
             ParticipantDismissCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantDismissExecute);
         }

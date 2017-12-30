@@ -1,4 +1,5 @@
 ﻿using System;
+using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods;
 using Telegram.Api.TL.Updates;
@@ -6,8 +7,8 @@ using Telegram.Api.TL.Updates.Methods;
 
 namespace Telegram.Api.Services
 {
-	public partial class MTProtoService
-	{
+    public partial class MTProtoService
+    {
         public void GetStateAsync(Action<TLUpdatesState> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUpdatesGetState();
@@ -37,7 +38,7 @@ namespace Telegram.Api.Services
             var obj = new TLUpdatesGetDifference { Date = date, Pts = pts, Qts = qts };
 
             const string caption = "updates.getDifference";
-            SendInformativeMessage(caption, new TLInvokeWithoutUpdates{Query = obj}, callback, faultCallback);
+            SendInformativeMessage(caption, new TLInvokeWithoutUpdates { Query = obj }, callback, faultCallback);
         }
-	}
+    }
 }

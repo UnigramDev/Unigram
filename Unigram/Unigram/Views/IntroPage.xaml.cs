@@ -174,14 +174,14 @@ namespace Unigram.Views
             {
                 // previous
                 _selectedIndex--;
-                _renderer.SetPage(_selectedIndex);
+                _renderer?.SetPage(_selectedIndex);
                 animation.InsertKeyFrame(1, minimum);
             }
             else if (delta > 0)
             {
                 // next
                 _selectedIndex++;
-                _renderer.SetPage(_selectedIndex);
+                _renderer?.SetPage(_selectedIndex);
                 animation.InsertKeyFrame(1, maximum);
             }
             else
@@ -240,7 +240,7 @@ namespace Unigram.Views
             position += _selectedIndex;
 
             _layoutVisual.Offset = offset;
-            _renderer.SetScroll(-position);
+            _renderer?.SetScroll(-position);
         }
 
         private void LayoutRoot_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
@@ -257,7 +257,7 @@ namespace Unigram.Views
 
             position += _selectedIndex;
 
-            _renderer.SetScroll(0);
+            _renderer?.SetScroll(0);
 
             var batch = _layoutVisual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
@@ -271,7 +271,7 @@ namespace Unigram.Views
                 {
                     // previous
                     _selectedIndex--;
-                    _renderer.SetPage(_selectedIndex);
+                    _renderer?.SetPage(_selectedIndex);
                     animation.InsertKeyFrame(1, minimum);
                 }
                 else
@@ -285,7 +285,7 @@ namespace Unigram.Views
                 {
                     // next
                     _selectedIndex++;
-                    _renderer.SetPage(_selectedIndex);
+                    _renderer?.SetPage(_selectedIndex);
                     animation.InsertKeyFrame(1, maximum);
                 }
                 else

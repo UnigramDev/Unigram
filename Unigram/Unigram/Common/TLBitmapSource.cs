@@ -197,7 +197,7 @@ namespace Unigram.Common
             {
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    var result = await _downloadWebFileManager.DownloadFileAsync(fileName, document.DCId, new TLInputWebFileLocation { Url = document.Url, AccessHash = document.AccessHash }, document.Size).AsTask(document.Download());
+                    var result = await _downloadWebFileManager.DownloadFileAsync(fileName, document.DCId, new TLInputWebFileLocation { Url = document.Url, AccessHash = document.AccessHash }, document.Size, document.Download());
                     if (result != null && Phase <= PHASE_FULL)
                     {
                         _bitmapImage.BeginOnUIThread(() =>
@@ -241,7 +241,7 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(SettingsHelper.SessionGuid + "\\temp\\placeholders\\" + group + "_placeholder.png", CreationCollisionOption.OpenIfExists);
+                    var file = await FileUtils.CreateTempFileAsync($"{group}_placeholder.png", CreationCollisionOption.OpenIfExists);
                     using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
                     {
                         if (stream.Size == 0)
@@ -322,7 +322,7 @@ namespace Unigram.Common
                 {
                     Execute.BeginOnThreadPool(async () =>
                     {
-                        var result = await _downloadManager.DownloadFileAsync(location, fileSize).AsTask(transferable?.Download());
+                        var result = await _downloadManager.DownloadFileAsync(location, fileSize, transferable?.Download());
                         if (result != null && Phase <= phase)
                         {
                             Phase = phase;
@@ -386,7 +386,7 @@ namespace Unigram.Common
                 {
                     Execute.BeginOnThreadPool(async () =>
                     {
-                        var result = await _downloadFileManager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), fileSize).AsTask(transferable?.Download());
+                        var result = await _downloadFileManager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), fileSize, transferable?.Download());
                         if (result != null && Phase <= phase)
                         {
                             Phase = phase;
@@ -451,7 +451,7 @@ namespace Unigram.Common
                 {
                     Execute.BeginOnThreadPool(async () =>
                     {
-                        var result = await _downloadManager.DownloadFileAsync(location, fileSize).AsTask(transferable?.Download());
+                        var result = await _downloadManager.DownloadFileAsync(location, fileSize, transferable?.Download());
                         if (result != null && Phase <= phase)
                         {
                             _bitmapImage.BeginOnUIThread(() =>
@@ -488,7 +488,7 @@ namespace Unigram.Common
                 {
                     Execute.BeginOnThreadPool(async () =>
                     {
-                        var result = await _downloadFileManager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), fileSize).AsTask(transferable?.Download());
+                        var result = await _downloadFileManager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), fileSize, transferable?.Download());
                         if (result != null && Phase <= phase)
                         {
                             //Phase = phase;

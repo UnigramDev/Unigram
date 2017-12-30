@@ -11,10 +11,6 @@
     Loaded="OnLoaded"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <CollectionViewSource x:Name="Countries" Source="{Binding Countries}" IsSourceGrouped="True"/>
-    </Page.Resources>
-
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -48,8 +44,8 @@
                 Grid.Row="1"/>
 
             <ComboBox x:Uid="SignInPage_CountriesList"
-                      ItemsSource="{Binding Countries}"
-                      SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
+                      ItemsSource="{x:Bind ViewModel.Countries}"
+                      SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
                       PlaceholderText="{CustomResource ChooseCountry}"
                       MinWidth="280"
                       HorizontalAlignment="Stretch"
@@ -78,14 +74,14 @@
                                         InputScope="TelephoneNumber"
                                         PlaceholderText="+"
                                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
-                <controls:UpdateTextBox x:Name="PrimaryInput"
-                                        Text="{Binding PhoneNumber, Mode=TwoWay}"
-                                        MinWidth="200"
-                                        InputScope="TelephoneNumber"
-                                        IsTextPredictionEnabled="False"
-                                        KeyDown="PhoneNumber_KeyDown"
-                                        PlaceholderText="Enter your phone number"
-                                        Grid.Column="1"/>
+                <controls:PhoneTextBox x:Name="PrimaryInput"
+                                       Text="{Binding PhoneNumber, Mode=TwoWay}"
+                                       PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
+                                       MinWidth="200"
+                                       InputScope="TelephoneNumber"
+                                       IsTextPredictionEnabled="False"
+                                       KeyDown="PhoneNumber_KeyDown"
+                                       Grid.Column="1"/>
 
             </Grid>
 

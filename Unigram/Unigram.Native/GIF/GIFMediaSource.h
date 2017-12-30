@@ -24,7 +24,7 @@ namespace Unigram
 
 		public:
 			STDMETHODIMP RuntimeClassInitialize(IMFByteStream* byteStream);
-			STDMETHODIMP SetD3DManager(IUnknown* pManager);
+			IFACEMETHODIMP SetD3DManager(IUnknown* pManager);
 
 		protected:
 			virtual DWORD GetCharacteristics() noexcept override;

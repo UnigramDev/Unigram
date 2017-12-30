@@ -19,7 +19,7 @@ namespace Telegram.Api.Services.FileManager
 {
     public interface IDownloadWebManager
     {
-        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string fileName, int dcId, TLInputWebFileLocation file, int fileSize);
+        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string fileName, int dcId, TLInputWebFileLocation file, int fileSize, IProgress<double> test = null);
 
         void DownloadFile(string fileName, int dcId, TLInputWebFileLocation file, TLObject owner, int fileSize);
 
@@ -43,14 +43,14 @@ namespace Telegram.Api.Services.FileManager
         private readonly List<DownloadableItem> _items = new List<DownloadableItem>();
 
         private readonly ITelegramEventAggregator _eventAggregator;
-        private readonly IMTProtoService _mtProtoService;
+        private readonly IMTProtoService _protoService;
         private readonly IStatsService _statsService;
         private readonly DataType _dataType = DataType.Files;
 
         public DownloadWebFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService, IStatsService statsService)
         {
             _eventAggregator = eventAggregator;
-            _mtProtoService = mtProtoService;
+            _protoService = mtProtoService;
             _statsService = statsService;
 
             var timer = Stopwatch.StartNew();
@@ -190,7 +190,7 @@ namespace Telegram.Api.Services.FileManager
                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
                     }
 
-                    _statsService.IncrementReceivedItemsCount(_mtProtoService.NetworkType, _dataType, 1);
+                    _statsService.IncrementReceivedItemsCount(_protoService.NetworkType, _dataType, 1);
                 }
                 else
                 {
@@ -216,13 +216,13 @@ namespace Telegram.Api.Services.FileManager
             var manualResetEvent = new ManualResetEvent(false);
             TLUploadWebFile result = null;
 
-            _mtProtoService.GetWebFileAsync(dcId, location, offset, limit,
+            _protoService.GetWebFileAsync(dcId, location, offset, limit,
                 file =>
                 {
                     result = file;
                     manualResetEvent.Set();
 
-                    _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
+                    _statsService.IncrementReceivedBytesCount(_protoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
                 },
                 error =>
                 {
@@ -239,7 +239,7 @@ namespace Telegram.Api.Services.FileManager
             return result;
         }
 
-        public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string originalFileName, int dcId, TLInputWebFileLocation fileLocation, int fileSize)
+        public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string originalFileName, int dcId, TLInputWebFileLocation fileLocation, int fileSize, IProgress<double> test = null)
         {
             return AsyncInfo.Run<DownloadableItem, double>((token, progress) =>
             {
@@ -247,7 +247,7 @@ namespace Telegram.Api.Services.FileManager
 
                 var downloadableItem = GetDownloadableItem(originalFileName, dcId, fileLocation, null, fileSize);
                 downloadableItem.Callback = tsc;
-                downloadableItem.Progress = progress;
+                downloadableItem.Progress = test ?? progress;
 
                 var downloadedCount = downloadableItem.Parts.Count(x => x.Status == PartStatus.Processed);
                 var count = downloadableItem.Parts.Count;

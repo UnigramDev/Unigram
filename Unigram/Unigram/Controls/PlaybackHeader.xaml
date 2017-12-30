@@ -17,7 +17,7 @@
             <ColumnDefinition Width="48"/>
         </Grid.ColumnDefinitions>
 
-        <Button Click="View_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.Column="1">
+        <Button Click="View_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="3">
             <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
                 <Run x:Name="TitleLabel" FontWeight="SemiBold"/>
                 <Run x:Name="SubtitleLabel"/>

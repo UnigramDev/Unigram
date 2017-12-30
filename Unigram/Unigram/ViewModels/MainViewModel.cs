@@ -372,7 +372,7 @@ namespace Unigram.ViewModels
             //    Debugger.Break();
             //});
 
-            //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.5" }, result =>
+            //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.6" }, result =>
             //{
             //    _updatesService.ProcessUpdates(result, true);
             //},
@@ -602,7 +602,7 @@ namespace Unigram.ViewModels
                     {
                         if (dialog != null)
                         {
-                            suppress = CheckLastNotificationTime(dialog, now);
+                            suppress = CheckLastNotificationTime(dialog, now, commonMessage.IsMentioned);
                         }
 
                         if (!suppress)
@@ -718,7 +718,7 @@ namespace Unigram.ViewModels
             return null;
         }
 
-        private bool CheckLastNotificationTime(TLDialog dialog, int now)
+        private bool CheckLastNotificationTime(TLDialog dialog, int now, bool mention)
         {
             if (dialog == null)
             {
@@ -726,7 +726,7 @@ namespace Unigram.ViewModels
             }
 
             var notifySettings = dialog.NotifySettings as TLPeerNotifySettings;
-            if (notifySettings != null && notifySettings.MuteUntil > now)
+            if (notifySettings != null && notifySettings.MuteUntil > now && !mention)
             {
                 _lastNotificationTimes[dialog.Id] = null;
                 _unmutedCounts[dialog.Id] = 0;

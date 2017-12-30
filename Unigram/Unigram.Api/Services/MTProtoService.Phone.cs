@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Native;
+using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Phone;
 using Telegram.Api.TL.Phone.Methods;
@@ -16,7 +18,7 @@ namespace Telegram.Api.Services
             var obj = new TLPhoneAcceptCall { Peer = peer, GB = gb, Protocol = GetPhoneCallProtocol() };
 
             const string caption = "phone.acceptCall";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void ConfirmCallAsync(TLInputPhoneCall peer, byte[] ga, long fingerprint, Action<TLPhonePhoneCall> callback, Action<TLRPCError> faultCallback = null)
@@ -47,7 +49,7 @@ namespace Telegram.Api.Services
 
                     callback?.Invoke(result);
                 },
-                faultCallback);
+                faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void GetCallConfigAsync(Action<TLDataJSON> callback, Action<TLRPCError> faultCallback = null)
@@ -63,7 +65,7 @@ namespace Telegram.Api.Services
             var obj = new TLPhoneReceivedCall { Peer = peer };
 
             const string caption = "phone.receivedCall";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void RequestCallAsync(TLInputUserBase userId, int randomId, byte[] gaHash, Action<TLPhonePhoneCall> callback, Action<TLRPCError> faultCallback = null)
@@ -71,7 +73,7 @@ namespace Telegram.Api.Services
             var obj = new TLPhoneRequestCall { UserId = userId, RandomId = randomId, GAHash = gaHash, Protocol = GetPhoneCallProtocol() };
 
             const string caption = "phone.requestCall";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void SaveCallDebugAsync(TLInputPhoneCall peer, TLDataJSON debug, Action<bool> callback, Action<TLRPCError> faultCallback = null)

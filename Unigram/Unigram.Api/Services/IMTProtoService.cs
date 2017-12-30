@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Account;
@@ -16,20 +17,13 @@ using Telegram.Api.TL.Phone;
 using Telegram.Api.TL.Photos;
 using Telegram.Api.TL.Updates;
 using Telegram.Api.TL.Upload;
-using Telegram.Api.Transport;
 
 namespace Telegram.Api.Services
 {
     public partial interface IMTProtoService
     {
-        event EventHandler<TransportCheckedEventArgs> TransportChecked;
-
         string Message { get; }
         void SetMessageOnTime(double seconds, string message);
-
-        ITransport GetActiveTransport();
-        Tuple<int, int, int> GetCurrentPacketInfo();
-        string GetTransportInfo();
 
         string Country { get; }
         event EventHandler<CountryEventArgs> GotUserCountry;
@@ -40,10 +34,6 @@ namespace Telegram.Api.Services
         void RaiseSendStatus(bool offline);
 
         int CurrentUserId { get; set; }
-
-        IList<HistoryItem> History { get; }
-
-        void ClearHistory(string caption, bool createNewSession, Exception e = null);
 
         long ClientTicksDelta { get; }
 
@@ -58,6 +48,8 @@ namespace Telegram.Api.Services
         void SaveConfig();
         TLConfig LoadConfig();
 
+        void ToggleProxy();
+
         void GetStateAsync(Action<TLUpdatesState> callback, Action<TLRPCError> faultCallback = null);
         void GetDifferenceAsync(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null);
         void GetDifferenceWithoutUpdatesAsync(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null);
@@ -65,8 +57,6 @@ namespace Telegram.Api.Services
         void RegisterDeviceAsync(int tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void UnregisterDeviceAsync(int tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         
-
-        void MessageAcknowledgments(TLVector<long> ids);
 
         void SendRequestAsync<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null);
         void SendRequestAsync<T>(string caption, TLObject obj, int dcId, bool cdn, Action<T> callback, Action<TLRPCError> faultCallback = null);
@@ -76,16 +66,14 @@ namespace Telegram.Api.Services
         void ResendCodeAsync(string phoneNumber, string phoneCodeHash, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
         void CancelCodeAsync(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SignInAsync(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null);
-        void CancelSignInAsync();
         void LogOutAsync(Action callback);
         void LogOutAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null);
-        void LogOutTransportsAsync(Action callback, Action<List<TLRPCError>> faultCallback = null);
         void SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null);
         // TODO: Deprecated void SendCallAsync(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null);
        
         void SearchAsync(TLInputPeerBase peer, string query, TLInputUserBase from, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void GetDialogsAsync(int offsetDate, int offsetId, TLInputPeerBase offsetPeer, int limit, Action<TLMessagesDialogsBase> callback, Action<TLRPCError> faultCallback = null);
-        void GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit, int hash, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void DeleteMessagesAsync(TLVector<int> id, bool revoke, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null);
         void DeleteHistoryAsync(bool justClear, TLInputPeerBase peer, int maxId, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null);
         void DeleteContactAsync(TLInputUserBase id, Action<TLContactsLink> callback, Action<TLRPCError> faultCallback = null);
@@ -109,12 +97,14 @@ namespace Telegram.Api.Services
         void UpdateProfileAsync(string firstName, string lastName, string about, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null);
         void UpdateStatusAsync(bool offline, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
+        void GetCdnFileAsync(int dcId, byte[] fileToken, int offset, int limit, Action<TLUploadCdnFileBase> callback, Action<TLRPCError> faultCallback = null);
+        void ReuploadCdnFileAsync(int dcId, byte[] fileToken, byte[] requestToken, Action<TLVector<TLCdnFileHash>> callback, Action<TLRPCError> faultCallback = null);
         void GetWebFileAsync(int dcId, TLInputWebFileLocation location, int offset, int limit, Action<TLUploadWebFile> callback, Action<TLRPCError> faultCallback = null);
         void GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFileBase> callback, Action<TLRPCError> faultCallback = null);
         void GetFileAsync(TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFileBase> callback, Action<TLRPCError> faultCallback = null);
         void GetCdnFileAsync(byte[] fileToken, int offset, int limit, Action<TLUploadCdnFileBase> callback, Action<TLRPCError> faultCallback = null);
-        void ReuploadCdnFileAsync(byte[] fileToken, byte[] requestToken, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void GetCdnFileHashesAsync(byte[] fileToken, int offset, Action<TLVector<TLCdnFileHash>> callback, Action<TLRPCError> faultCallback = null);
+        void ReuploadCdnFileAsync(byte[] fileToken, byte[] requestToken, Action<TLVector<TLCdnFileHash>> callback, Action<TLRPCError> faultCallback = null);
         void SaveFilePartAsync(long fileId, int filePart, byte[] bytes, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SaveBigFilePartAsync(long fileId, int filePart, int fileTotalParts, byte[] bytes, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
@@ -138,17 +128,13 @@ namespace Telegram.Api.Services
         // TODO: Encrypted void DiscardEncryptionAsync(int chatId, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         // TODO: Encrypted void SetEncryptedTypingAsync(TLInputEncryptedChat peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
-        void GetConfigInformationAsync(Action<string> callback);
-        void GetTransportInformationAsync(Action<string> callback);
+        //void GetConfigInformationAsync(Action<string> callback);
         void GetUserPhotosAsync(TLInputUserBase userId, int offset, long maxId, int limit, Action<TLPhotosPhotosBase> callback, Action<TLRPCError> faultCallback = null);
         void GetNearestDCAsync(Action<TLNearestDC> callback, Action<TLRPCError> faultCallback = null);
         void GetSupportAsync(Action<TLHelpSupport> callback, Action<TLRPCError> faultCallback = null);
 
         void ResetAuthorizationsAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SetInitState();
-
-        void PingAsync(long pingId, Action<TLPong> callback, Action<TLRPCError> faultCallback = null); 
-        void PingDelayDisconnectAsync(long pingId, int disconnectDelay, Action<TLPong> callback, Action<TLRPCError> faultCallback = null);
 
         void SearchAsync(string q, int limit, Action<TLContactsFound> callback, Action<TLRPCError> faultCallback = null);
         void CheckUsernameAsync(string username, Action<bool> callback, Action<TLRPCError> faultCallback = null);
@@ -159,7 +145,6 @@ namespace Telegram.Api.Services
         void GetPrivacyAsync(TLInputPrivacyKeyBase key, Action<TLAccountPrivacyRules> callback, Action<TLRPCError> faultCallback = null);
         void SetPrivacyAsync(TLInputPrivacyKeyBase key, TLVector<TLInputPrivacyRuleBase> rules, Action<TLAccountPrivacyRules> callback, Action<TLRPCError> faultCallback = null);
         void GetStatusesAsync(Action<TLVector<TLContactStatus>> callback, Action<TLRPCError> faultCallback = null);
-        void UpdateTransportInfoAsync(int dcId, string dcIpAddress, int dcPort, Action<bool> callback);
 
         void ResolveUsernameAsync(string username, Action<TLContactsResolvedPeer> callback, Action<TLRPCError> faultCallback = null);
         void SendChangePhoneCodeAsync(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
@@ -169,8 +154,6 @@ namespace Telegram.Api.Services
 
         void UpdateDeviceLockedAsync(int period, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
-        void GetSendingQueueInfoAsync(Action<string> callback);
-        void GetSyncErrorsAsync(Action<ExceptionInfo, IList<ExceptionInfo>> callback);
         void GetMessagesAsync(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
 
         // messages
@@ -233,7 +216,6 @@ namespace Telegram.Api.Services
         void DeleteHistoryAsync(TLInputChannelBase inputChannel, int maxId, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SetStickersAsync(TLInputChannelBase inputChannel, TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void ReadMessageContentsAsync(TLInputChannelBase inputChannel, TLVector<int> id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
-        void GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void UpdateChannelAsync(int? channelId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null);
         void EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelAdminRights rights, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
@@ -292,13 +274,8 @@ namespace Telegram.Api.Services
         void SendConfirmPhoneCodeAsync(string hash, bool currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
 
         // help
-        void GetCdnConfigAsync(Action<TLCdnConfig> callback, Action<TLRPCError> faultCallback = null);
         void GetAppChangelogAsync(string prevAppVersion, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null); 
         void GetTermsOfServiceAsync(string langCode, Action<TLHelpTermsOfService> callback, Action<TLRPCError> faultCallback = null);
-
-        // background task
-        void SendActionsAsync(List<TLObject> actions, Action<TLObject, object> callback, Action<TLRPCError> faultCallback = null);
-        void ClearQueue();
 
         // payments
         void ClearSavedInfoAsync(bool info, bool credentials, Action<bool> callback, Action<TLRPCError> faultCallback = null);

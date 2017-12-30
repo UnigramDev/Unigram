@@ -2,15 +2,18 @@
 #include <algorithm>
 #include <openssl/rand.h>
 #include "ConnectionSession.h"
+#include "ConnectionManager.h"
+#include "TLTypes.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
+using namespace Telegram::Api::Native::TL;
 
 
 ConnectionSession::ConnectionSession() :
-	m_nextSequenceNumber(0),
+	m_nextMessageSequenceNumber(0),
 	m_minProcessedMessageId(0),
-	m_id(GenereateNewId())
+	m_sessionId(GenereateNewSessionId())
 {
 }
 
@@ -18,22 +21,56 @@ ConnectionSession::~ConnectionSession()
 {
 }
 
-void ConnectionSession::Recreate()
+void ConnectionSession::RecreateSession()
 {
-	m_processedMessageIds.clear();
-	m_messagesIdsForConfirmation.clear();
-	m_processedSessionChanges.clear();
-	m_nextSequenceNumber = 0;
+	auto lock = LockCriticalSection();
 
-	m_id = GenereateNewId();
+	m_processedMessageIds.clear();
+	m_messagesIdsToConfirm.clear();
+	m_processedSessionChanges.clear();
+	m_nextMessageSequenceNumber = 0;
+
+	m_sessionId = GenereateNewSessionId();
 }
 
-UINT32 ConnectionSession::GenerateMessageSequenceNumber(boolean increment)
+HRESULT ConnectionSession::AddConfirmationMessage(ConnectionManager* connectionManager, std::vector<ComPtr<TLMessage>>& messages)
 {
-	UINT32 value = m_nextSequenceNumber;
+	auto lock = LockCriticalSection();
+
+	if (m_messagesIdsToConfirm.empty())
+	{
+		return S_FALSE;
+	}
+
+	HRESULT result;
+	ComPtr<TLMessage> message;
+	ReturnIfFailed(result, CreateConfirmationMessage(connectionManager, &message));
+
+	messages.push_back(message);
+	return S_OK;
+}
+
+HRESULT ConnectionSession::CreateConfirmationMessage(ConnectionManager* connectionManager, TL::TLMessage** messages)
+{
+	auto msgAck = Make<TLMsgsAck>();
+	auto& messagesIds = msgAck->GetMessagesIds();
+	messagesIds.insert(messagesIds.begin(), m_messagesIdsToConfirm.begin(), m_messagesIdsToConfirm.end());
+
+	HRESULT result;
+	ReturnIfFailed(result, MakeAndInitialize<TLMessage>(messages, connectionManager->GenerateMessageId(), GenerateMessageSequenceNumber(false), msgAck.Get()));
+
+	m_messagesIdsToConfirm.clear();
+	return S_OK;
+}
+
+UINT32 ConnectionSession::GenerateMessageSequenceNumber(bool increment)
+{
+	auto lock = LockCriticalSection();
+
+	auto value = m_nextMessageSequenceNumber;
 	if (increment)
 	{
-		m_nextSequenceNumber++;
+		m_nextMessageSequenceNumber++;
 	}
 
 	return value * 2 + (increment ? 1 : 0);
@@ -41,7 +78,7 @@ UINT32 ConnectionSession::GenerateMessageSequenceNumber(boolean increment)
 
 bool ConnectionSession::IsMessageIdProcessed(INT64 messageId)
 {
-	return !(messageId & 1) || m_minProcessedMessageId != 0 && messageId < m_minProcessedMessageId ||
+	return !(messageId & 1) || (m_minProcessedMessageId != 0 && messageId < m_minProcessedMessageId) ||
 		std::find(m_processedMessageIds.begin(), m_processedMessageIds.end(), messageId) != m_processedMessageIds.end();
 }
 
@@ -61,7 +98,7 @@ void ConnectionSession::AddMessageToConfirm(INT64 messageId)
 {
 	if (std::find(m_processedMessageIds.begin(), m_processedMessageIds.end(), messageId) == m_processedMessageIds.end())
 	{
-		m_messagesIdsForConfirmation.push_back(messageId);
+		m_messagesIdsToConfirm.push_back(messageId);
 	}
 }
 
@@ -75,10 +112,10 @@ void ConnectionSession::AddProcessedSession(INT64 sessionId)
 	m_processedSessionChanges.push_back(sessionId);
 }
 
-INT64 ConnectionSession::GenereateNewId()
+INT64 ConnectionSession::GenereateNewSessionId()
 {
 	INT64 newSessionId;
-	RAND_bytes(reinterpret_cast<UINT8*>(&newSessionId), 8);
+	RAND_bytes(reinterpret_cast<BYTE*>(&newSessionId), sizeof(INT64));
 
 #if _DEBUG
 	return 0xabcd000000000000L | (newSessionId & 0x0000ffffffffffffL);

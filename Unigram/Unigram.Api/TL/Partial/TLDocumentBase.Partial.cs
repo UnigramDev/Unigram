@@ -12,6 +12,8 @@ namespace Telegram.Api.TL
 {
     public partial class TLDocumentBase : ITLTransferable, INotifyPropertyChanged
     {
+        public long? UploadId { get; set; }
+
 		public virtual TLInputDocumentBase ToInputDocument()
         {
             throw new NotImplementedException();

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Services.SerializationService;
@@ -35,22 +37,24 @@ namespace Unigram.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var buffer = TLSerializationService.Current.Deserialize((string)e.Parameter) as byte[];
-            if (buffer != null)
+            if (buffer == null)
             {
-                using (var from = new TLBinaryReader(buffer))
-                {
-                    var tuple = new TLTuple<string, string, string, TLMessage>(from);
+                return;
+            }
 
-                    _shareMessage = tuple.Item4;
+            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            {
+                var tuple = new TLTuple<string, string, string, TLMessage>(from);
 
-                    TitleLabel.Text = tuple.Item1;
-                    UsernameLabel.Text = "@" + tuple.Item2;
+                _shareMessage = tuple.Item4;
 
-                    TitleLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item1) ? Visibility.Collapsed : Visibility.Visible;
-                    UsernameLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item2) ? Visibility.Collapsed : Visibility.Visible;
+                TitleLabel.Text = tuple.Item1;
+                UsernameLabel.Text = "@" + tuple.Item2;
 
-                    View.Navigate(new Uri(tuple.Item3));
-                }
+                TitleLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item1) ? Visibility.Collapsed : Visibility.Visible;
+                UsernameLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item2) ? Visibility.Collapsed : Visibility.Visible;
+
+                View.Navigate(new Uri(tuple.Item3));
             }
         }
 

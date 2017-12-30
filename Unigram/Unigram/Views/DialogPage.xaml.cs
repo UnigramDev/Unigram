@@ -58,7 +58,6 @@ using Unigram.Native;
 using LinqToVisualTree;
 using Unigram.Models;
 using System.Windows.Input;
-using Unigram.Strings;
 using Unigram.Views.Dialogs;
 
 namespace Unigram.Views
@@ -90,21 +89,19 @@ namespace Unigram.Views
 
             //NavigationCacheMode = NavigationCacheMode.Required;
 
-            //_typeToItemHashSetMapping.Add("GroupedPhotoTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("GroupedVideoTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
             //_typeToItemHashSetMapping.Add("ServiceMessageLocalTemplate", new HashSet<SelectorItem>());
             //_typeToItemHashSetMapping.Add("ServiceMessageDateTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ServiceUserCallTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ServiceFriendCallTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceUserCallMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceFriendCallMessageTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
 
-            //Messages.ChoosingItemContainer += OnChoosingItemContainer;
-            //Messages.ContainerContentChanging += OnContainerContentChanging;
+            Messages.ChoosingItemContainer += OnChoosingItemContainer;
+            Messages.ContainerContentChanging += OnContainerContentChanging;
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -589,8 +586,6 @@ namespace Unigram.Views
             }
         }
 
-        private void SendShrug() => TextField.InsertText("¯\\_(ツ)_/¯");
-
         private void AttachPickerFlyout_ItemClick(object sender, MediaSelectedEventArgs e)
         {
             var flyout = FlyoutBase.GetAttachedFlyout(ButtonAttach) as MenuFlyout;
@@ -646,6 +641,11 @@ namespace Unigram.Views
                     await FileIO.WriteBytesAsync(cache, buffer);
 
                     media.Add(await StoragePhoto.CreateAsync(cache, true));
+                }
+
+                if (package.Contains(StandardDataFormats.Text))
+                {
+                    media[0].Caption = await package.GetTextAsync();
                 }
 
                 ViewModel.SendMediaExecute(media, media[0]);
@@ -921,13 +921,12 @@ namespace Unigram.Views
             var currentUser = ViewModel.With as TLUser;
             var currentChat = ViewModel.With as TLChat;
             var currentChannel = ViewModel.With as TLChannel;
-            var currentDialog = ViewModel.Dialog as TLDialog;
 
             CreateFlyoutItem(ref flyout, ViewModel.SearchCommand, Strings.Android.Search);
 
             if (currentChannel != null && !currentChannel.IsCreator && (!currentChannel.IsMegaGroup || (currentChannel.Username != null && currentChannel.Username.Length > 0)))
             {
-                CreateFlyoutItem(ref flyout, null, Strings.Android.ReportChat);
+                CreateFlyoutItem(ref flyout, ViewModel.ReportCommand, Strings.Android.ReportChat);
             }
             if (currentUser != null)
             {
@@ -956,9 +955,22 @@ namespace Unigram.Views
             {
                 CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Android.DeleteAndExit);
             }
-            if (currentDialog != null && (currentUser != null || currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup && string.IsNullOrEmpty(currentChannel.Username))))
+            if (currentUser != null || currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup))
             {
-                CreateFlyoutItem(ref flyout, ViewModel.ToggleMuteCommand, currentDialog.IsMuted ? Strings.Android.UnmuteNotifications : Strings.Android.MuteNotifications);
+                TLPeerNotifySettings notifySettings = null;
+                if (ViewModel.Full is TLUserFull userFull)
+                {
+                    notifySettings = userFull.NotifySettings as TLPeerNotifySettings;
+                }
+                else if (ViewModel.Full is TLChatFullBase chatFull)
+                {
+                    notifySettings = chatFull.NotifySettings as TLPeerNotifySettings;
+                }
+
+                if (notifySettings != null)
+                {
+                    CreateFlyoutItem(ref flyout, ViewModel.ToggleMuteCommand, notifySettings.IsMuted ? Strings.Android.UnmuteNotifications : Strings.Android.MuteNotifications);
+                }
             }
 
             //if (currentUser == null || !currentUser.IsSelf)
@@ -969,14 +981,14 @@ namespace Unigram.Views
             //{
             //    CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
             //}
-            if (currentUser != null && currentUser.IsBot && ViewModel.Full is TLUserFull userFull && userFull.HasBotInfo)
+            if (currentUser != null && currentUser.IsBot && ViewModel.Full is TLUserFull botFull && botFull.HasBotInfo)
             {
-                if (userFull.BotInfo.Commands.Any(x => x.Command.Equals("settings")))
+                if (botFull.BotInfo.Commands.Any(x => x.Command.Equals("settings")))
                 {
                     CreateFlyoutItem(ref flyout, null, Strings.Android.BotSettings);
                 }
 
-                if (userFull.BotInfo.Commands.Any(x => x.Command.Equals("help")))
+                if (botFull.BotInfo.Commands.Any(x => x.Command.Equals("help")))
                 {
                     CreateFlyoutItem(ref flyout, null, Strings.Android.BotHelp);
                 }
@@ -996,6 +1008,11 @@ namespace Unigram.Views
             var messageCommon = element.DataContext as TLMessageCommonBase;
             var channel = messageCommon.Parent as TLChannel;
 
+            if (messageCommon is TLMessageService serviceMessage && (serviceMessage.Action is TLMessageActionDate || serviceMessage.Action is TLMessageActionUnreadMessages))
+            {
+                return;
+            }
+
             // Generic
             CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, Strings.Android.Reply);
             CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? Strings.Android.UnpinMessage : Strings.Android.PinMessage);
@@ -1005,7 +1022,7 @@ namespace Unigram.Views
             CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.Select);
             CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, Strings.Android.Copy);
             CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, messageCommon, Strings.Resources.CopyImage);
-            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? Strings.Resources.CopyPostLink : Strings.Resources.CopyMessageLink);
+            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, Strings.Android.CopyLink);
 
             // Stickers
             CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), messageCommon, Strings.Android.AddToStickers);
@@ -1016,7 +1033,7 @@ namespace Unigram.Views
             CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.SaveAs);
 
             CreateFlyoutItem(ref flyout, MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, messageCommon, Strings.Android.AddContactTitle);
-            //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, AppResources.MessageSaveDownload);
+            //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Android.SaveToDownloads);
 
             //sender.ContextFlyout = menu;
 
@@ -1980,6 +1997,19 @@ namespace Unigram.Views
         private void ItemsStackPanel_Loading(FrameworkElement sender, object args)
         {
             Messages.SetScrollMode();
+        }
+
+        private void ServiceMessage_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var message = button.DataContext as TLMessageService;
+
+            if (message == null)
+            {
+                return;
+            }
+
+            ViewModel.MessageServiceCommand.Execute(message);
         }
     }
 

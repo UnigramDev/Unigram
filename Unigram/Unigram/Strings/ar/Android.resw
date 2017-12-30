@@ -48,8 +48,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>خطأ في الوصول</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>تم تسجيل الدخول إلى هذا الحساب من البرنامج هذا.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>إعدادات الحساب</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>تبديل</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>دقيق لدرجة {0}</value>
@@ -201,6 +207,9 @@
   <data name="Add" xml:space="preserve">
     <value>إضافة</value>
   </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>أضف حساب</value>
+  </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>المعذرة، لا يمكنك إضافة هذا المستخدم كمشرف لأنه في قائمة المحظورين ولا يمكنك رفع الحظر عنه.</value>
   </data>
@@ -251,6 +260,9 @@
   </data>
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>لا يوجد ملصقات</value>
+  </data>
+  <data name="AddSubscriber" xml:space="preserve">
+    <value>إضافة مشترك </value>
   </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>أضف لجهات الاتصال</value>
@@ -577,6 +589,9 @@
   <data name="AudioUnknownTitle" xml:space="preserve">
     <value>العنوان غير معروف</value>
   </data>
+  <data name="AutoDownloadMedia" xml:space="preserve">
+    <value>تنزيل الوسائط تلقائياً</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>قفل تلقائي</value>
   </data>
@@ -588,6 +603,24 @@
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
     <value>اطلب رمز المرور إذا غبت فترة محددة من الزمن.</value>
+  </data>
+  <data name="AutodownloadChannels" xml:space="preserve">
+    <value>القنوات</value>
+  </data>
+  <data name="AutodownloadContacts" xml:space="preserve">
+    <value>جهات الاتصال</value>
+  </data>
+  <data name="AutodownloadGroupChats" xml:space="preserve">
+    <value>المحادثات الجماعية</value>
+  </data>
+  <data name="AutodownloadPrivateChats" xml:space="preserve">
+    <value>المحادثات الخاصة</value>
+  </data>
+  <data name="AutodownloadSizeLimit" xml:space="preserve">
+    <value>قيّد بالحجم</value>
+  </data>
+  <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
+    <value>حتى {0}</value>
   </data>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>تنزيل تلقائي للوسائط</value>
@@ -917,6 +950,9 @@
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} قام بنشر صورة متحركة</value>
   </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>%1$@ قام بنشر موقعاً حي</value>
+  </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} قام بإرسال موقع</value>
   </data>
@@ -993,6 +1029,9 @@
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>رسالة جماعية صامتة</value>
+  </data>
+  <data name="ChannelSubscribers" xml:space="preserve">
+    <value>المشتركون </value>
   </data>
   <data name="ChannelType" xml:space="preserve">
     <value>نوع القناة</value>
@@ -3316,6 +3355,9 @@
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} أرسل صورة متحركة للمجموعة {1}</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} أرسل موقعاً حي إلى المجموعة {1}</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} قام بإرسال موقع للمجموعة {1}</value>
   </data>
@@ -3342,6 +3384,9 @@
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} قام بإرسال مقطع مرئي للمجموعة {1}</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} أرسل لك موقعاً حي</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} قام بإرسال موقع لك</value>
@@ -3511,6 +3556,9 @@
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>افتح باستخدام...</value>
   </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>افتح الرسالة</value>
+  </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>هل ترغب في فتح الرابط باستخدام {0} ؟</value>
   </data>
@@ -3676,6 +3724,9 @@
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>تعذر الوصور إلى خادم الدفع. فضلًا تحقق من اتصال الانترنت وحاول مرة أخرى.</value>
   </data>
+  <data name="PaymentEmailToProvider" xml:space="preserve">
+    <value>سيتم إرسال البريد الالكتروني إلى {0} كمعلومات الدفع.</value>
+  </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>المعذرة، تم رفض عملية الدفع.</value>
   </data>
@@ -3708,6 +3759,12 @@
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>كلمة المرور</value>
+  </data>
+  <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
+    <value>سيتم إرسال الرقم والبريد الإلكتروني إلى {0} كمعلومات الدفع.</value>
+  </data>
+  <data name="PaymentPhoneToProvider" xml:space="preserve">
+    <value>سيتم إرسال الرقم إلى {0} كمعلومات الدفع.</value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>المعذرة، تم إلغاء عملية الدفع من البوت.</value>
@@ -4100,6 +4157,12 @@
   <data name="ResetAllNotifications" xml:space="preserve">
     <value>إعادة تعيين كافة الإشعارات</value>
   </data>
+  <data name="ResetAutomaticMediaDownload" xml:space="preserve">
+    <value>إعادة تعيين إعدادات التنزيل التلقائي </value>
+  </data>
+  <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
+    <value>هل أنت متأكد من رغبتك في إعادة تعيين إعدادات التنزيل التلقائي؟ </value>
+  </data>
   <data name="ResetMyAccount" xml:space="preserve">
     <value>إعادة تعيين حسابي</value>
   </data>
@@ -4178,9 +4241,6 @@
   </data>
   <data name="RoamingUsage" xml:space="preserve">
     <value>استخدام تجوال البيانات</value>
-  </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>الإعدادات</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>قمر صناعي</value>
@@ -4413,7 +4473,7 @@
     <value>لقد قمنا بإرسال رمز الدخول إلى تطبيق **تيليجرام** على جهازك الآخر</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
-    <value>تم إرسال مكالمة تفعيل على رقمك **{0}**.
+    <value>جاري الاتصال على رقمك **{0}**.
 
 لا داعي للرد عليها، تيليجرام سيقوم بعملية التفعيل تلقائيًا.</value>
   </data>
@@ -4464,6 +4524,9 @@
   </data>
   <data name="SetTimer" xml:space="preserve">
     <value>عداد التدمير الذاتي</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>الإعدادات</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>الظل</value>
@@ -4696,8 +4759,8 @@
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} جهة اتصال على تيليجرام</value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
-    <value>الأسئلة المتكررة</value>
+  <data name="TelegramFaq" xml:space="preserve">
+    <value>الأسئلة الشائعة عن تيليجرام</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq/ar</value>
@@ -5016,6 +5079,9 @@
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>رد</value>
+  </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>الرد كـ %s</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>بلوتوث</value>

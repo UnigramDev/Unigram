@@ -6,6 +6,7 @@
 #include "OpusMediaSource.h"
 #include "OpusMediaSink.h"
 #include "OpusCodec.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Unigram::Native;
 using Platform::Exception;

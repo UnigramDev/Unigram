@@ -9,7 +9,9 @@ BufferLock::BufferLock(IMFSample* sample) :
 	m_length(0)
 {
 	if (SUCCEEDED(sample->ConvertToContiguousBuffer(&m_mediaBuffer)))
+	{
 		m_mediaBuffer->Lock(&m_buffer, nullptr, &m_length);
+	}
 }
 
 BufferLock::BufferLock(IMFMediaBuffer* buffer) :

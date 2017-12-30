@@ -48,7 +48,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="local:NavigationViewItem">
         <Setter Property="Foreground" Value="{ThemeResource NavigationViewItemForeground}" />
         <Setter Property="Background" Value="{ThemeResource NavigationViewItemBackground}" />
@@ -1447,42 +1447,18 @@
         <Setter Property="Margin" Value="0"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Top"/>
-        <Setter Property="LeftBackground" Value="#007aff"/>
         <Setter Property="RightBackground" Value="#ff3b30"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SwipeListViewItem">
                     <Grid>
-                        <Grid x:Name="DragBackground">
-                            <Grid.Clip>
-                                <RectangleGeometry x:Name="DragClip" Rect="0,0,0,0">
-                                    <RectangleGeometry.Transform>
-                                        <TranslateTransform x:Name="DragClipTransform"/>
-                                    </RectangleGeometry.Transform>
-                                </RectangleGeometry>
-                            </Grid.Clip>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Border x:Name="LeftContainer">
-                                <ContentControl Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding LeftContentTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" RenderTransformOrigin="0.5,0.5">
-                                    <ContentControl.RenderTransform>
-                                        <TranslateTransform x:Name="LeftTransform"/>
-                                    </ContentControl.RenderTransform>
-                                </ContentControl>
-                            </Border>
-
-                            <Border x:Name="RightContainer" Grid.Column="2">
-                                <ContentControl Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding RightContentTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" RenderTransformOrigin="0.5,0.5">
-                                    <ContentControl.RenderTransform>
-                                        <TranslateTransform x:Name="RightTransform"/>
-                                    </ContentControl.RenderTransform>
-                                </ContentControl>
-                            </Border>
-                        </Grid>
+                        <Border x:Name="RightContainer" HorizontalAlignment="Right">
+                            <ContentControl Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding RightContentTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" RenderTransformOrigin="0.5,0.5">
+                                <ContentControl.RenderTransform>
+                                    <TranslateTransform x:Name="RightTransform"/>
+                                </ContentControl.RenderTransform>
+                            </ContentControl>
+                        </Border>
                         <ContentPresenter x:Name="DragContainer" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Background="Transparent" ManipulationMode="System,TranslateX">
                             <ContentPresenter.RenderTransform>
                                 <TranslateTransform x:Name="ContentDragTransform"/>
@@ -1531,7 +1507,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        
+
                         <Grid.Resources>
                             <Style x:Key="CircularThumbStyle" TargetType="local:ImageCropperThumb">
                                 <Setter Property="Background" Value="White" />
@@ -1646,7 +1622,7 @@
                             <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
                         </Grid>
-                        
+
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
                             <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
                                 <TextBlock Text="Return to call" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
@@ -1682,7 +1658,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="local:BadgeButton">
         <Setter Property="Background" Value="{ThemeResource ButtonBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
@@ -1780,7 +1756,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="local:ProfilePicture">
         <Setter Property="Template">
             <Setter.Value>

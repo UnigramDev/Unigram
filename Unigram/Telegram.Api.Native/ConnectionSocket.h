@@ -1,8 +1,14 @@
 #pragma once
+#include <vector>
+#include <memory>
 #include <string>
 #include <Winsock2.h>
-#include <rpc.h>
-#include <rpcndr.h>
+#include <wrl.h>
+#include "ThreadpoolObject.h"
+#include "Wrappers\WSAEvent.h"
+
+using namespace Microsoft::WRL;
+using namespace Microsoft::WRL::Wrappers;
 
 namespace Telegram
 {
@@ -11,32 +17,36 @@ namespace Telegram
 		namespace Native
 		{
 
-			struct EventObjectEventContext;
+			struct ServerEndpoint;
+			class ConnectionManager;
 
-			class ConnectionSocket abstract
+			class ConnectionSocket abstract : protected virtual Details::ThreadpoolObjectT<ThreadpoolTraits::WaitTraits, true>
 			{
 			public:
 				ConnectionSocket();
 				~ConnectionSocket();
 
 			protected:
-				inline SOCKET GetSocket() const
-				{
-					return m_socket;
-				}
+				void SetTimeout(INT32 timeout);
+				HRESULT Close();
+				HRESULT ConnectSocket(_In_ ConnectionManager* connectionManager, _In_ ServerEndpoint const* endpoint, bool ipv6);
+				HRESULT DisconnectSocket(bool immediate);
+				HRESULT SendData(_In_reads_(length) BYTE const* buffer, UINT32 length);
 
-				HRESULT OpenSocket(std::wstring address, UINT16 port, boolean ipv6);
-				HRESULT CloseSocket();
-				HRESULT HandleEvent(_In_ EventObjectEventContext const* context);
-
-				virtual HRESULT OnSocketOpened() = 0;
-				virtual HRESULT OnDataReceived() = 0;
-				virtual HRESULT OnSocketClosed() = 0;
+				virtual HRESULT OnSocketConnected() = 0;
+				virtual HRESULT OnSocketDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length) = 0;
+				virtual HRESULT OnSocketDisconnected(int wsaError) = 0;
 
 			private:
-				HRESULT CloseSocket(boolean error);
+				virtual HRESULT OnCallback(_In_ PTP_CALLBACK_INSTANCE instance, ULONG_PTR waitResult) override;
+				HRESULT CloseSocket(int wsaError, BYTE flags);
+				HRESULT GetLastErrorAndCloseSocket(BYTE flags);
 
 				SOCKET m_socket;
+				WSAEvent m_socketEvent;
+				FILETIME m_timeout;
+				std::vector<BYTE> m_sendBuffer;
+				std::unique_ptr<BYTE[]> m_receiveBuffer;
 			};
 
 		}

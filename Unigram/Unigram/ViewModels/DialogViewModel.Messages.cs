@@ -867,7 +867,7 @@ namespace Unigram.ViewModels
 
             if (message?.Media is TLMessageMediaGroup groupMedia)
             {
-                message = groupMedia.Layout.Messages.LastOrDefault();
+                message = groupMedia.Layout.Messages.FirstOrDefault();
             }
 
             if (message == null)
@@ -1619,45 +1619,75 @@ namespace Unigram.ViewModels
             }
 
             var confirm = await EditUserNameView.Current.ShowAsync(user.FirstName, user.LastName);
-            if (confirm == ContentDialogResult.Primary)
+            if (confirm != ContentDialogResult.Primary)
             {
-                var contact = new TLInputPhoneContact
+                return;
+            }
+
+            var contact = new TLInputPhoneContact
+            {
+                ClientId = user.Id,
+                FirstName = EditUserNameView.Current.FirstName,
+                LastName = EditUserNameView.Current.LastName,
+                Phone = contactMedia.PhoneNumber
+            };
+
+            var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact });
+            if (response.IsSucceeded)
+            {
+                if (response.Result.Users.Count > 0)
                 {
-                    ClientId = user.Id,
-                    FirstName = EditUserNameView.Current.FirstName,
-                    LastName = EditUserNameView.Current.LastName,
-                    Phone = user.Phone
-                };
-
-                var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact });
-                if (response.IsSucceeded)
-                {
-                    if (response.Result.Users.Count > 0)
+                    Aggregator.Publish(new TLUpdateContactLink
                     {
-                        Aggregator.Publish(new TLUpdateContactLink
-                        {
-                            UserId = response.Result.Users[0].Id,
-                            MyLink = new TLContactLinkContact(),
-                            ForeignLink = new TLContactLinkUnknown()
-                        });
-                    }
-
-                    user.RaisePropertyChanged(() => user.HasFirstName);
-                    user.RaisePropertyChanged(() => user.HasLastName);
-                    user.RaisePropertyChanged(() => user.FirstName);
-                    user.RaisePropertyChanged(() => user.LastName);
-                    user.RaisePropertyChanged(() => user.FullName);
-                    user.RaisePropertyChanged(() => user.DisplayName);
-
-                    user.RaisePropertyChanged(() => user.HasPhone);
-                    user.RaisePropertyChanged(() => user.Phone);
-
-                    var dialog = CacheService.GetDialog(user.ToPeer());
-                    if (dialog != null)
-                    {
-                        dialog.RaisePropertyChanged(() => dialog.With);
-                    }
+                        UserId = response.Result.Users[0].Id,
+                        MyLink = new TLContactLinkContact(),
+                        ForeignLink = new TLContactLinkUnknown()
+                    });
                 }
+
+                user.RaisePropertyChanged(() => user.HasFirstName);
+                user.RaisePropertyChanged(() => user.HasLastName);
+                user.RaisePropertyChanged(() => user.FirstName);
+                user.RaisePropertyChanged(() => user.LastName);
+                user.RaisePropertyChanged(() => user.FullName);
+                user.RaisePropertyChanged(() => user.DisplayName);
+
+                user.RaisePropertyChanged(() => user.HasPhone);
+                user.RaisePropertyChanged(() => user.Phone);
+
+                var dialog = CacheService.GetDialog(user.ToPeer());
+                if (dialog != null)
+                {
+                    dialog.RaisePropertyChanged(() => dialog.With);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Service message
+
+        public RelayCommand<TLMessageService> MessageServiceCommand { get; }
+        private async void MessageServiceExecute(TLMessageService message)
+        {
+            if (message.Action is TLMessageActionDate)
+            {
+                var date = BindConvert.Current.DateTime(message.Date);
+
+                var dialog = new Controls.Views.CalendarView();
+                dialog.MaxDate = DateTimeOffset.Now.Date;
+                dialog.SelectedDates.Add(date);
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
+                {
+                    var offset = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, date);
+                    await LoadDateSliceAsync(offset);
+                }
+            }
+            else if (message.Action is TLMessageActionPinMessage && message.ReplyToMsgId is int reply)
+            {
+                await LoadMessageSliceAsync(message.Id, reply);
             }
         }
 

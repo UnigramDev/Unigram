@@ -33,6 +33,8 @@ namespace Unigram.Services
         void Pause();
         void Play();
 
+        void SetPosition(TimeSpan span);
+
         void Clear();
 
         void Enqueue(TLMessage message);
@@ -103,10 +105,10 @@ namespace Unigram.Services
         {
             if (args.NewItem == null)
             {
-                Execute.BeginOnUIThread(() => CurrentItem = null);
-                Dispose();
+                //Execute.BeginOnUIThread(() => CurrentItem = null);
+                //Dispose();
 
-                Debug.WriteLine("PlaybackService: Playback completed");
+                //Debug.WriteLine("PlaybackService: Playback completed");
             }
             else if (_mapping.TryGetValue(args.NewItem, out TLMessage message))
             {
@@ -167,6 +169,21 @@ namespace Unigram.Services
             _mediaPlayer.Play();
         }
 
+        public void SetPosition(TimeSpan span)
+        {
+            var index = _playlist.CurrentItemIndex;
+            var playing = _mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing;
+
+            _mediaPlayer.Pause();
+            _playlist.MoveTo(index);
+            _mediaPlayer.PlaybackSession.Position = span;
+
+            if (playing)
+            {
+                _mediaPlayer.Play();
+            }
+        }
+
         public void Clear()
         {
             Execute.BeginOnUIThread(() => CurrentItem = null);
@@ -175,7 +192,12 @@ namespace Unigram.Services
 
         public void Enqueue(TLMessage message)
         {
-            if (_mediaPlayer.Source == _playlist && _mediaPlayer.Source != null && _inverse.TryGetValue(message, out MediaPlaybackItem item) && _playlist.Items.Contains(item))
+            if (message == null)
+            {
+                return;
+            }
+
+            if (_mediaPlayer.Source == _playlist && _mediaPlayer.Source != null && _playlist != null && _inverse.TryGetValue(message, out MediaPlaybackItem item) && _playlist.Items.Contains(item))
             {
                 var index = _playlist.Items.IndexOf(item);
                 if (index >= 0)
@@ -191,8 +213,8 @@ namespace Unigram.Services
             var voice = message.IsVoice();
 
             _mediaPlayer.CommandManager.IsEnabled = !voice;
-            _mediaPlayer.AudioDeviceType = voice ? MediaPlayerAudioDeviceType.Communications : MediaPlayerAudioDeviceType.Multimedia;
-            _mediaPlayer.AudioCategory = voice ? MediaPlayerAudioCategory.Communications : MediaPlayerAudioCategory.Media;
+            //_mediaPlayer.AudioDeviceType = voice ? MediaPlayerAudioDeviceType.Communications : MediaPlayerAudioDeviceType.Multimedia;
+            //_mediaPlayer.AudioCategory = voice ? MediaPlayerAudioCategory.Communications : MediaPlayerAudioCategory.Media;
 
             if (peer != null)
             {

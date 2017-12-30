@@ -43,7 +43,24 @@ namespace Telegram.Api.Services.Connection
         {
             get
             {
-                return _networkType;
+                if (_profile != null)
+                {
+                    var cost = _profile.GetConnectionCost();
+                    if (cost != null && cost.Roaming)
+                    {
+                        return NetworkType.Roaming;
+                    }
+                    else if (_profile != null && _profile.IsWwanConnectionProfile)
+                    {
+                        return NetworkType.Mobile;
+                    }
+                    else if (_profile != null && _profile.IsWlanConnectionProfile)
+                    {
+                        return NetworkType.WiFi;
+                    }
+                }
+
+                return NetworkType.WiFi;
             }
         }
 
@@ -52,37 +69,9 @@ namespace Telegram.Api.Services.Connection
         private bool _isNetworkAwailable;
 
 #if WP8 || WIN_RT
-        private NetworkType _networkType;
         private ConnectionProfile _profile;
         private NetworkConnectivityLevel? _connectivityLevel;
 #endif
-
-        private void UpdateType()
-        {
-            try
-            {
-                if (_profile != null)
-                {
-                    var cost = _profile.GetConnectionCost();
-                    if (cost != null && cost.Roaming)
-                    {
-                        _networkType = NetworkType.Roaming;
-                    }
-                    else if (_profile != null && _profile.IsWwanConnectionProfile)
-                    {
-                        _networkType = NetworkType.Mobile;
-                    }
-                    else if (_profile != null && _profile.IsWlanConnectionProfile)
-                    {
-                        _networkType = NetworkType.WiFi;
-                    }
-                }
-            }
-            catch
-            {
-                _networkType = NetworkType.WiFi;
-            }
-        }
 
         public ConnectionService(IDeviceInfoService deviceInfoService)
         {
@@ -101,68 +90,64 @@ namespace Telegram.Api.Services.Connection
             _profile = NetworkInformation.GetInternetConnectionProfile();
             _connectivityLevel = _profile != null ? _profile.GetNetworkConnectivityLevel() : (NetworkConnectivityLevel?)null;
 
-            UpdateType();
-
             //var connectivityLevel = _profile.GetNetworkConnectivityLevel();
             //_profile.NetworkAdapter.IanaInterfaceType != 71 // mobile data
             //_profile.GetConnectionCost().Roaming;
 
             //Helpers.Execute.ShowDebugMessage(string.Format("InternetConnectionProfile={0}", _profile != null ? _profile.GetNetworkConnectivityLevel().ToString() : "null"));
-
+            
             // new solution
             NetworkInformation.NetworkStatusChanged += sender =>
             {
-                var previousProfile = _profile;
-                var previousConnectivityLevel = _connectivityLevel;
+                //var previousProfile = _profile;
+                //var previousConnectivityLevel = _connectivityLevel;
 
-                _profile = NetworkInformation.GetInternetConnectionProfile();
-                _connectivityLevel = _profile != null ? _profile.GetNetworkConnectivityLevel() : (NetworkConnectivityLevel?)null;
+                //_profile = NetworkInformation.GetInternetConnectionProfile();
+                //_connectivityLevel = _profile != null ? _profile.GetNetworkConnectivityLevel() : (NetworkConnectivityLevel?)null;
 
-                if (_profile != null)
-                {
-                    UpdateType();
+                //if (_profile != null)
+                //{
+                //    if (_mtProtoService == null) return;
 
-                    if (_mtProtoService == null) return;
+                //    var activeTransport = _mtProtoService.GetActiveTransport();
+                //    if (activeTransport == null) return;
+                //    if (activeTransport.AuthKey == null) return;
 
-                    var activeTransport = _mtProtoService.GetActiveTransport();
-                    if (activeTransport == null) return;
-                    if (activeTransport.AuthKey == null) return;
+                //    var transportId = activeTransport.Id;
 
-                    var transportId = activeTransport.Id;
+                //    var isAuthorized = SettingsHelper.IsAuthorized;
+                //    if (!isAuthorized)
+                //    {
+                //        return;
+                //    }
 
-                    var isAuthorized = SettingsHelper.IsAuthorized;
-                    if (!isAuthorized)
-                    {
-                        return;
-                    }
+                //    var errorDebugString = string.Format("{0} internet connected", DateTime.Now.ToString("HH:mm:ss.fff"));
+                //    TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
 
-                    var errorDebugString = string.Format("{0} internet connected", DateTime.Now.ToString("HH:mm:ss.fff"));
-                    TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
+                //    var reconnect = _connectivityLevel == NetworkConnectivityLevel.InternetAccess && previousConnectivityLevel != NetworkConnectivityLevel.InternetAccess;
+                //    if (reconnect)
+                //    {
+                //        TLUtils.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) + " reconnect t" + transportId, LogSeverity.Error);
 
-                    var reconnect = _connectivityLevel == NetworkConnectivityLevel.InternetAccess && previousConnectivityLevel != NetworkConnectivityLevel.InternetAccess;
-                    if (reconnect)
-                    {
-                        TLUtils.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) + " reconnect t" + transportId, LogSeverity.Error);
+                //        Logs.Log.Write(string.Format("  Reconnect reason=NetworkStatusChanged profile={0} internet_access={1} previous_profile={2} previous_internet_access={3}",
+                //            _profile != null ? _profile.ProfileName : "none",
+                //            _profile != null ? _connectivityLevel.ToString() : "none",
+                //            previousProfile != null ? previousProfile.ProfileName : "none",
+                //            previousProfile != null ? previousConnectivityLevel.ToString() : "none"));
 
-                        Logs.Log.Write(string.Format("  Reconnect reason=NetworkStatusChanged profile={0} internet_access={1} previous_profile={2} previous_internet_access={3}",
-                            _profile != null ? _profile.ProfileName : "none",
-                            _profile != null ? _connectivityLevel.ToString() : "none",
-                            previousProfile != null ? previousProfile.ProfileName : "none",
-                            previousProfile != null ? previousConnectivityLevel.ToString() : "none"));
+                //        RaiseConnectionFailed();
 
-                        RaiseConnectionFailed();
+                //        return;
+                //    }
+                //}
+                //else
+                //{
+                //    var errorDebugString = string.Format("{0} internet disconnected", DateTime.Now.ToString("HH:mm:ss.fff"));
+                //    TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
 
-                        return;
-                    }
-                }
-                else
-                {
-                    var errorDebugString = string.Format("{0} internet disconnected", DateTime.Now.ToString("HH:mm:ss.fff"));
-                    TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
-
-                    _mtProtoService.SetMessageOnTime(60.0 * 60, "Waiting for network...");
-                    //Helpers.Execute.ShowDebugMessage(string.Format("NetworkStatusChanged Internet disconnected Profile={0}", _profile));
-                }
+                //    _mtProtoService.SetMessageOnTime(60.0 * 60, "Waiting for network...");
+                //    //Helpers.Execute.ShowDebugMessage(string.Format("NetworkStatusChanged Internet disconnected Profile={0}", _profile));
+                //}
             };
 #endif
 
@@ -253,149 +238,149 @@ namespace Telegram.Api.Services.Connection
 
         private void CheckConnectionState(object state)
         {
-            //#if !WIN_RT && DEBUG
-            //            Microsoft.Devices.VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
-            //#endif
+//            //#if !WIN_RT && DEBUG
+//            //            Microsoft.Devices.VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
+//            //#endif
 
-            // TODO: Disabled
-            if (Debugger.IsAttached)
-            {
-                return;
-            }
+//            // TODO: Disabled
+//            if (Debugger.IsAttached)
+//            {
+//                return;
+//            }
 
-            if (_mtProtoService == null) return;
+//            if (_mtProtoService == null) return;
             
-            var activeTransport = _mtProtoService.GetActiveTransport();
-            if (activeTransport == null) return;
-            if (activeTransport.AuthKey == null) return;
+//            var activeTransport = _mtProtoService.GetActiveTransport();
+//            if (activeTransport == null) return;
+//            if (activeTransport.AuthKey == null) return;
 
-            var transportId = activeTransport.Id;
+//            var transportId = activeTransport.Id;
 
-            var isAuthorized = SettingsHelper.IsAuthorized;
-            if (!isAuthorized)
-            {
-                return;
-            }
+//            var isAuthorized = SettingsHelper.IsAuthorized;
+//            if (!isAuthorized)
+//            {
+//                return;
+//            }
 
-            var connectionFailed = false;
-            var now = DateTime.Now;
-            if (activeTransport.LastReceiveTime.HasValue)
-            {
-                connectionFailed = Math.Abs((now - activeTransport.LastReceiveTime.Value).TotalSeconds) > Constants.TimeoutInterval;
-                if (connectionFailed)
-                {
-                    Logs.Log.Write(string.Format("  Reconnect reason=ConnectionFailed transport={3} now={0} - last_receive_time={1} > timeout={2}", now.ToString("dd-MM-yyyy HH:mm:ss.fff"), activeTransport.LastReceiveTime.Value.ToString("dd-MM-yyyy HH:mm:ss.fff"), Constants.TimeoutInterval, activeTransport.Id));
-                }
-            }
-            else
-            {
-                if (activeTransport.FirstSendTime.HasValue)
-                {
-                    connectionFailed = Math.Abs((now - activeTransport.FirstSendTime.Value).TotalSeconds) > Constants.TimeoutInterval;
-                    if (connectionFailed)
-                    {
-                        Logs.Log.Write(string.Format("  Reconnect reason=ConnectionFailed transport={3} now={0} - first_send_time={1} > timeout={2}", now.ToString("dd-MM-yyyy HH:mm:ss.fff"), activeTransport.FirstSendTime.Value.ToString("dd-MM-yyyy HH:mm:ss.fff"), Constants.TimeoutInterval, activeTransport.Id));
-                    }
-                }
-            }
+//            var connectionFailed = false;
+//            var now = DateTime.Now;
+//            if (activeTransport.LastReceiveTime.HasValue)
+//            {
+//                connectionFailed = Math.Abs((now - activeTransport.LastReceiveTime.Value).TotalSeconds) > Constants.TimeoutInterval;
+//                if (connectionFailed)
+//                {
+//                    Logs.Log.Write(string.Format("  Reconnect reason=ConnectionFailed transport={3} now={0} - last_receive_time={1} > timeout={2}", now.ToString("dd-MM-yyyy HH:mm:ss.fff"), activeTransport.LastReceiveTime.Value.ToString("dd-MM-yyyy HH:mm:ss.fff"), Constants.TimeoutInterval, activeTransport.Id));
+//                }
+//            }
+//            else
+//            {
+//                if (activeTransport.FirstSendTime.HasValue)
+//                {
+//                    connectionFailed = Math.Abs((now - activeTransport.FirstSendTime.Value).TotalSeconds) > Constants.TimeoutInterval;
+//                    if (connectionFailed)
+//                    {
+//                        Logs.Log.Write(string.Format("  Reconnect reason=ConnectionFailed transport={3} now={0} - first_send_time={1} > timeout={2}", now.ToString("dd-MM-yyyy HH:mm:ss.fff"), activeTransport.FirstSendTime.Value.ToString("dd-MM-yyyy HH:mm:ss.fff"), Constants.TimeoutInterval, activeTransport.Id));
+//                    }
+//                }
+//            }
 
-            if (connectionFailed)
-            {
-                RaiseConnectionFailed();
-                TLUtils.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) + " reconnect t" + transportId, LogSeverity.Error);
-                return;
-            }
+//            if (connectionFailed)
+//            {
+//                RaiseConnectionFailed();
+//                TLUtils.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) + " reconnect t" + transportId, LogSeverity.Error);
+//                return;
+//            }
 
-            var pingRequired = false;
-            var timeFromLastReceive = 0.0;
-            var timeFromFirstSend = 0.0;
-            var pingTimeout = Math.Max(Constants.TimeoutInterval - 10.0, 10.0);
-            if (activeTransport.LastReceiveTime.HasValue)
-            {
-                // что-то уже получали по соединению
-                var lastReceiveTime = activeTransport.LastReceiveTime.Value;
-                timeFromLastReceive = Math.Abs((now - lastReceiveTime).TotalSeconds);
+//            var pingRequired = false;
+//            var timeFromLastReceive = 0.0;
+//            var timeFromFirstSend = 0.0;
+//            var pingTimeout = Math.Max(Constants.TimeoutInterval - 10.0, 10.0);
+//            if (activeTransport.LastReceiveTime.HasValue)
+//            {
+//                // что-то уже получали по соединению
+//                var lastReceiveTime = activeTransport.LastReceiveTime.Value;
+//                timeFromLastReceive = Math.Abs((now - lastReceiveTime).TotalSeconds);
 
-                pingRequired = timeFromLastReceive > pingTimeout;
-                if (pingRequired)
-                {
-                    Logs.Log.Write(string.Format("  CheckReconnect reason=PingRequired transport={3} now={0} - last_receive_time={1} > ping_timeout={2}", now.ToString("HH:mm:ss.fff"), lastReceiveTime.ToString("HH:mm:ss.fff"), pingTimeout, activeTransport.Id));
-                }
-            }
-            else
-            {
-                // ничего не получали, но что-то отправляли
-                if (activeTransport.FirstSendTime.HasValue)
-                {
-                    var firstSendTime = activeTransport.FirstSendTime.Value;
-                    timeFromFirstSend = Math.Abs((now - firstSendTime).TotalSeconds);
+//                pingRequired = timeFromLastReceive > pingTimeout;
+//                if (pingRequired)
+//                {
+//                    Logs.Log.Write(string.Format("  CheckReconnect reason=PingRequired transport={3} now={0} - last_receive_time={1} > ping_timeout={2}", now.ToString("HH:mm:ss.fff"), lastReceiveTime.ToString("HH:mm:ss.fff"), pingTimeout, activeTransport.Id));
+//                }
+//            }
+//            else
+//            {
+//                // ничего не получали, но что-то отправляли
+//                if (activeTransport.FirstSendTime.HasValue)
+//                {
+//                    var firstSendTime = activeTransport.FirstSendTime.Value;
+//                    timeFromFirstSend = Math.Abs((now - firstSendTime).TotalSeconds);
 
-                    pingRequired = timeFromFirstSend > pingTimeout;
-                    if (pingRequired)
-                    {
-                        Logs.Log.Write(string.Format("  CheckReconnect reason=PingRequired transport={3} now={0} - first_send_time={1} > ping_timeout={2}", now.ToString("HH:mm:ss.fff"), firstSendTime.ToString("HH:mm:ss.fff"), pingTimeout, activeTransport.Id));
-                    }
-                }
-                // хотя бы пинганем для начала
-                else
-                {
-                    pingRequired = true;
-                }
-            }
+//                    pingRequired = timeFromFirstSend > pingTimeout;
+//                    if (pingRequired)
+//                    {
+//                        Logs.Log.Write(string.Format("  CheckReconnect reason=PingRequired transport={3} now={0} - first_send_time={1} > ping_timeout={2}", now.ToString("HH:mm:ss.fff"), firstSendTime.ToString("HH:mm:ss.fff"), pingTimeout, activeTransport.Id));
+//                    }
+//                }
+//                // хотя бы пинганем для начала
+//                else
+//                {
+//                    pingRequired = true;
+//                }
+//            }
 
-            if (pingRequired)
-            {
-                var pingId = TLLong.Random();
-                var pingIdHash = pingId % 1000;
+//            if (pingRequired)
+//            {
+//                var pingId = TLLong.Random();
+//                var pingIdHash = pingId % 1000;
 
-                var debugString = string.Format("{0} ping t{1} ({2}, {3}) [{4}]", 
-                    DateTime.Now.ToString("HH:mm:ss.fff"),
-                    transportId, 
-                    timeFromFirstSend.ToString("N"), 
-                    timeFromLastReceive.ToString("N"), 
-                    pingIdHash);
+//                var debugString = string.Format("{0} ping t{1} ({2}, {3}) [{4}]", 
+//                    DateTime.Now.ToString("HH:mm:ss.fff"),
+//                    transportId, 
+//                    timeFromFirstSend.ToString("N"), 
+//                    timeFromLastReceive.ToString("N"), 
+//                    pingIdHash);
 
-                TLUtils.WriteLine(debugString, LogSeverity.Error);
-                _mtProtoService.PingAsync(pingId, //35,
-                    result =>
-                    {
-                        var resultDebugString = string.Format("{0} pong t{1} ({2}, {3}) [{4}]",
-                            DateTime.Now.ToString("HH:mm:ss.fff"),
-                            transportId,
-                            timeFromFirstSend.ToString("N"),
-                            timeFromLastReceive.ToString("N"),
-                            pingIdHash);
+//                TLUtils.WriteLine(debugString, LogSeverity.Error);
+//                _mtProtoService.PingAsync(pingId, //35,
+//                    result =>
+//                    {
+//                        var resultDebugString = string.Format("{0} pong t{1} ({2}, {3}) [{4}]",
+//                            DateTime.Now.ToString("HH:mm:ss.fff"),
+//                            transportId,
+//                            timeFromFirstSend.ToString("N"),
+//                            timeFromLastReceive.ToString("N"),
+//                            pingIdHash);
 
-                        TLUtils.WriteLine(resultDebugString, LogSeverity.Error);
-                    },
-                    error =>
-                    {
-                        var errorDebugString = string.Format("{0} pong error t{1} ({2}, {3}) [{4}] \nSocketError={5}",
-                            DateTime.Now.ToString("HH:mm:ss.fff"),
-                            transportId,
-                            timeFromFirstSend.ToString("N"),
-                            timeFromLastReceive.ToString("N"),
-                            pingIdHash,
-#if WINDOWS_PHONE
-                            error.SocketError
-#else
-                            string.Empty
-#endif
-                            );
+//                        TLUtils.WriteLine(resultDebugString, LogSeverity.Error);
+//                    },
+//                    error =>
+//                    {
+//                        var errorDebugString = string.Format("{0} pong error t{1} ({2}, {3}) [{4}] \nSocketError={5}",
+//                            DateTime.Now.ToString("HH:mm:ss.fff"),
+//                            transportId,
+//                            timeFromFirstSend.ToString("N"),
+//                            timeFromLastReceive.ToString("N"),
+//                            pingIdHash,
+//#if WINDOWS_PHONE
+//                            error.SocketError
+//#else
+//                            string.Empty
+//#endif
+//                            );
 
-                        TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
-                    });
-            }
-            else
-            {
-                var checkDebugString = string.Format("{0} check t{1} ({2}, {3})",
-                    DateTime.Now.ToString("HH:mm:ss.fff"),
-                    transportId,
-                    timeFromFirstSend.ToString("N"),
-                    timeFromLastReceive.ToString("N"));
+//                        TLUtils.WriteLine(errorDebugString, LogSeverity.Error);
+//                    });
+//            }
+//            else
+//            {
+//                var checkDebugString = string.Format("{0} check t{1} ({2}, {3})",
+//                    DateTime.Now.ToString("HH:mm:ss.fff"),
+//                    transportId,
+//                    timeFromFirstSend.ToString("N"),
+//                    timeFromLastReceive.ToString("N"));
 
-                //TLUtils.WriteLine(checkDebugString, LogSeverity.Error);
-            }
+//                //TLUtils.WriteLine(checkDebugString, LogSeverity.Error);
+//            }
         }
     }
 }

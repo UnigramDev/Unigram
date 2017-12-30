@@ -117,7 +117,6 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<bool>> LogOutAsync();
         Task<MTProtoResponse<TLUpdatesBase>> ToggleSignaturesAsync(TLInputChannelBase channel, bool enabled);
         Task<MTProtoResponse<TLChannelsChannelParticipantsBase>> GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit, int hash);
-        Task<MTProtoResponse<TLMessagesMessagesBase>> GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit);
         Task<MTProtoResponse<TLUpdatesBase>> DeleteChatUserAsync(int chatId, TLInputUserBase userId);
         Task<MTProtoResponse<TLUpdatesBase>> ForwardMessageAsync(TLInputPeerBase peer, int fwdMessageId, TLMessage message);
         Task<MTProtoResponse<TLMessagesMessagesBase>> SearchGlobalAsync(string query, int offsetDate, TLInputPeerBase offsetPeer, int offsetId, int limit);
@@ -165,8 +164,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLUpdatesBase>> EditPhotoAsync(TLChannel channel, TLInputChatPhotoBase photo);
         Task<MTProtoResponse<TLUpdatesBase>> EditBannedAsync(TLChannel channel, TLInputUserBase userId, TLChannelBannedRights rights);
         Task<MTProtoResponse<TLMessage>> SendMessageAsync(TLMessage message, Action fastCallback);
-        Task<MTProtoResponse<TLPong>> PingAsync(long pingId);
-        Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit);
+        Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit, int hash);
         Task<MTProtoResponse<bool>> ResetAuthorizationAsync(long hash);
         Task<MTProtoResponse<TLUpdatesBase>> MigrateChatAsync(int chatId);
         Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, TLInputGeoPointBase geoPoint, bool noWebPage, bool stop);
@@ -208,7 +206,6 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLVector<TLWallPaperBase>>> GetWallpapersAsync();
         Task<MTProtoResponse<TLContactsResolvedPeer>> ResolveUsernameAsync(string username);
         Task<MTProtoResponse<TLAccountDaysTTL>> GetAccountTTLAsync();
-        Task<MTProtoResponse<TLPong>> PingDelayDisconnectAsync(long pingId, int disconnectDelay);
         Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit);
         Task<MTProtoResponse<TLMessagesMessagesBase>> SearchAsync(TLInputPeerBase peer, string query, TLInputUserBase from, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit);
         Task<MTProtoResponse<bool>> DeleteAccountAsync(string reason);
@@ -224,7 +221,5 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLAuthSentCode>> ResendCodeAsync(string phoneNumber, string phoneCodeHash);
         Task<MTProtoResponse<bool>> ToggleDialogPinAsync(TLInputPeerBase peer, bool pin);
         Task<MTProtoResponse<bool>> ReorderPinnedDialogsAsync(TLVector<TLInputPeerBase> order, bool force);
-        Task<MTProtoResponse<TLCdnConfig>> GetCdnConfigAsync();
-
     }
 }

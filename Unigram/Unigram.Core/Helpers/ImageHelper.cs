@@ -11,6 +11,7 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Editing;
 using Windows.Media.Effects;
+using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
@@ -405,6 +406,11 @@ namespace Unigram.Core.Helpers
                 transform.ScaledWidth = width;
                 transform.ScaledHeight = height;
                 transform.InterpolationMode = BitmapInterpolationMode.Linear;
+
+                if (effect != null)
+                {
+                    transform.Flip = effect.Mirror == MediaMirroringOptions.Horizontal ? BitmapFlip.Horizontal : BitmapFlip.None;
+                }
 
                 var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 

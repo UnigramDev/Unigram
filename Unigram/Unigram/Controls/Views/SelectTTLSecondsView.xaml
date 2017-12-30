@@ -18,7 +18,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ComboBox x:Name="FieldSeconds" SelectedItem="{x:Bind TTLSeconds, Mode=TwoWay, Converter={StaticResource MessageTTLConverter}}" Header="Timer" HorizontalAlignment="Stretch" Margin="12,16,12,12">
+        <ComboBox x:Name="FieldSeconds" SelectedItem="{x:Bind TTLSeconds, Mode=TwoWay, Converter={StaticResource MessageTTLConverter}}" HorizontalAlignment="Stretch" Margin="12,12,12,8">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Converter={StaticResource MessageTTLConverter}, ConverterParameter=string}"/>

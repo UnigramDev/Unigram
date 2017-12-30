@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Upload;
@@ -20,11 +21,12 @@ namespace Telegram.Api.Services.FileManager
 {
     public interface IDownloadFileManager
     {
-        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLFileLocation file, int fileSize);
+        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLFileLocation file, int fileSize, IProgress<double> test = null);
 
         void DownloadFile(TLFileLocation file, int fileSize, Action<DownloadableItem> callback);
 
         void CancelDownloadFile(TLObject owner);
+        void Cancel(TLFileLocation file);
     }
 
     public class DownloadFileManager : IDownloadFileManager
@@ -40,7 +42,7 @@ namespace Telegram.Api.Services.FileManager
         private readonly List<DownloadableItem> _items = new List<DownloadableItem>();
 
         private readonly ITelegramEventAggregator _eventAggregator;
-        private readonly IMTProtoService _mtProtoService;
+        private readonly IMTProtoService _protoService;
         private readonly IStatsService _statsService;
         private readonly DataType _dataType = DataType.Photos;
 
@@ -48,7 +50,7 @@ namespace Telegram.Api.Services.FileManager
         {
             var stopwatch = Stopwatch.StartNew();
             _eventAggregator = eventAggregator;
-            _mtProtoService = mtProtoService;
+            _protoService = mtProtoService;
             _statsService = statsService;
 
             for (int i = 0; i < Constants.WorkersNumber; i++)
@@ -261,7 +263,7 @@ namespace Telegram.Api.Services.FileManager
                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
                     }
 
-                    _statsService.IncrementReceivedItemsCount(_mtProtoService.NetworkType, _dataType, 1);
+                    _statsService.IncrementReceivedItemsCount(_protoService.NetworkType, _dataType, 1);
                 }
                 else
                 {
@@ -285,7 +287,7 @@ namespace Telegram.Api.Services.FileManager
             TLUploadFileBase result = null;
             TLRPCError outError = null;
             var outIsCanceled = false;
-            _mtProtoService.GetFileAsync(location.DCId, location.ToInputFileLocation(), offset, limit,
+            _protoService.GetFileAsync(location.DCId, location.ToInputFileLocation(), offset, limit,
                 callback =>
                 {
                     result = callback;
@@ -293,7 +295,7 @@ namespace Telegram.Api.Services.FileManager
 
                     if (callback is TLUploadFile file)
                     {
-                        _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
+                        _statsService.IncrementReceivedBytesCount(_protoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
                     }
                 },
                 error =>
@@ -302,7 +304,7 @@ namespace Telegram.Api.Services.FileManager
 
                     if (error.CodeEquals(TLErrorCode.INTERNAL)
                         || (error.CodeEquals(TLErrorCode.BAD_REQUEST) && (error.TypeEquals(TLErrorType.LOCATION_INVALID) || error.TypeEquals(TLErrorType.VOLUME_LOC_NOT_FOUND)))
-                        || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.ToString().StartsWith("Incorrect dhGen")))
+                        || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.StartsWith("Incorrect dhGen")))
                     {
                         outIsCanceled = true;
 
@@ -333,19 +335,14 @@ namespace Telegram.Api.Services.FileManager
             TLRPCError outError = null;
             var outIsCanceled = false;
 
-            var req = new TLUploadGetCdnFile();
-            req.FileToken = redirect.FileToken;
-            req.Limit = limit;
-            req.Offset = offset;
-
-            _mtProtoService.SendRequestAsync<TLUploadCdnFileBase>("upload.getCdnFile", req, redirect.DCId, true, callback =>
+            _protoService.GetCdnFileAsync(redirect.DCId, redirect.FileToken, offset, limit, callback =>
             {
                 if (callback is TLUploadCdnFile file)
                 {
                     result = new TLUploadFile { Bytes = file.Bytes };
                     manualResetEvent.Set();
 
-                    _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, file.Bytes.Length + 4);
+                    _statsService.IncrementReceivedBytesCount(_protoService.NetworkType, _dataType, file.Bytes.Length + 4);
                 }
                 else if (callback is TLUploadCdnFileReuploadNeeded reupload)
                 {
@@ -368,7 +365,7 @@ namespace Telegram.Api.Services.FileManager
 
                 if (error.CodeEquals(TLErrorCode.INTERNAL)
                     || (error.CodeEquals(TLErrorCode.BAD_REQUEST) && (error.TypeEquals(TLErrorType.LOCATION_INVALID) || error.TypeEquals(TLErrorType.VOLUME_LOC_NOT_FOUND)))
-                    || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.ToString().StartsWith("Incorrect dhGen")))
+                    || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.StartsWith("Incorrect dhGen")))
                 {
                     outIsCanceled = true;
 
@@ -399,13 +396,9 @@ namespace Telegram.Api.Services.FileManager
             TLRPCError outError = null;
             var outIsCanceled = false;
 
-            var req = new TLUploadReuploadCdnFile();
-            req.FileToken = redirect.FileToken;
-            req.RequestToken = requestToken;
-
-            _mtProtoService.SendRequestAsync<TLVector<TLCdnFileHash>>("upload.reuploadCdnFile", req, location.DCId, false, callback =>
+            _protoService.ReuploadCdnFileAsync(redirect.DCId, redirect.FileToken, requestToken, callback =>
             {
-                if (callback != null && callback.Count > 0)
+                if (callback != null)
                 {
                     result = GetCdnFile(redirect, location, offset, limit, out outError, out outIsCanceled);
                     while (result == null)
@@ -426,7 +419,7 @@ namespace Telegram.Api.Services.FileManager
 
                 if (error.CodeEquals(TLErrorCode.INTERNAL)
                     || (error.CodeEquals(TLErrorCode.BAD_REQUEST) && (error.TypeEquals(TLErrorType.LOCATION_INVALID) || error.TypeEquals(TLErrorType.VOLUME_LOC_NOT_FOUND)))
-                    || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.ToString().StartsWith("Incorrect dhGen")))
+                    || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.StartsWith("Incorrect dhGen")))
                 {
                     outIsCanceled = true;
 
@@ -461,7 +454,7 @@ namespace Telegram.Api.Services.FileManager
             req.FileToken = redirect.FileToken;
             req.Offset = offset;
 
-            _mtProtoService.SendRequestAsync<TLVector<TLCdnFileHash>>("upload.getCdnFileHashes", req, location.DCId, true, callback =>
+            _protoService.SendRequestAsync<TLVector<TLCdnFileHash>>("upload.getCdnFileHashes", req, location.DCId, true, callback =>
             {
                 result = callback;
                 manualResetEvent.Set();
@@ -496,7 +489,7 @@ namespace Telegram.Api.Services.FileManager
             return result;
         }
 
-        public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLFileLocation file, int fileSize)
+        public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLFileLocation file, int fileSize, IProgress<double> test = null)
         {
             return AsyncInfo.Run<DownloadableItem, double>((token, progress) =>
             {
@@ -516,7 +509,7 @@ namespace Telegram.Api.Services.FileManager
 
                 var downloadableItem = GetDownloadableItem(file, null, fileSize);
                 downloadableItem.Callback = tsc;
-                downloadableItem.Progress = progress;
+                downloadableItem.Progress = test ?? progress;
 
                 lock (_itemsSyncRoot)
                 {
@@ -634,6 +627,22 @@ namespace Telegram.Api.Services.FileManager
                     item.IsCancelled = true;
                 }
             }
+        }
+
+        public void Cancel(TLFileLocation file)
+        {
+            Execute.BeginOnThreadPool(() =>
+            {
+                lock (_itemsSyncRoot)
+                {
+                    var items = _items.Where(x => x.Location.VolumeId == file.VolumeId && x.Location.LocalId == file.LocalId);
+
+                    foreach (var item in items)
+                    {
+                        item.IsCancelled = true;
+                    }
+                }
+            });
         }
     }
 }

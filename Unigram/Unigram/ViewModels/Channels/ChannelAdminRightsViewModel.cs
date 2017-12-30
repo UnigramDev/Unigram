@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -66,89 +68,91 @@ namespace Unigram.ViewModels.Channels
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var buffer = parameter as byte[];
-            if (buffer != null)
+            if (buffer == null)
             {
-                using (var from = new TLBinaryReader(buffer))
+                return;
+            }
+
+            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            {
+                var tuple = new TLTuple<TLPeerChannel, TLChannelParticipantBase>(from);
+                if (tuple.Item2 is TLChannelParticipant participant)
                 {
-                    var tuple = new TLTuple<TLPeerChannel, TLChannelParticipantBase>(from);
-                    if (tuple.Item2 is TLChannelParticipant participant)
-                    {
-                        IsAdminAlready = false;
+                    IsAdminAlready = false;
 
-                        tuple.Item2 = new TLChannelParticipantAdmin
+                    tuple.Item2 = new TLChannelParticipantAdmin
+                    {
+                        UserId = participant.UserId,
+                        Date = participant.Date,
+                        IsCanEdit = true,
+                        AdminRights = new TLChannelAdminRights
                         {
-                            UserId = participant.UserId,
-                            Date = participant.Date,
-                            IsCanEdit = true,
-                            AdminRights = new TLChannelAdminRights
-                            {
-                                IsChangeInfo = true,
-                                IsPinMessages = true,
-                                IsInviteLink = true,
-                                IsInviteUsers = true,
-                                IsBanUsers = true,
-                                IsDeleteMessages = true,
-                                IsEditMessages = true,
-                                IsPostMessages = true,
-                                IsAddAdmins  = false
-                            }
-                        };
-                    }
-                    else if (tuple.Item2 is TLChannelParticipantBanned banned)
-                    {
-                        IsAdminAlready = false;
-
-                        tuple.Item2 = new TLChannelParticipantAdmin
-                        {
-                            UserId = banned.UserId,
-                            Date = banned.Date,
-                            IsCanEdit = true,
-                            AdminRights = new TLChannelAdminRights
-                            {
-                                IsChangeInfo = true,
-                                IsPinMessages = true,
-                                IsInviteLink = true,
-                                IsInviteUsers = true,
-                                IsBanUsers = true,
-                                IsDeleteMessages = true,
-                                IsEditMessages = true,
-                                IsPostMessages = true,
-                                IsAddAdmins = false
-                            }
-                        };
-                    }
-
-                    Channel = CacheService.GetChat(tuple.Item1.ChannelId) as TLChannel;
-                    Item = tuple.Item2 as TLChannelParticipantAdmin;
-
-                    IsAddAdmins = _item.AdminRights.IsAddAdmins;
-                    IsPinMessages = _item.AdminRights.IsPinMessages;
-                    IsInviteLink = _item.AdminRights.IsInviteLink;
-                    IsInviteUsers = _item.AdminRights.IsInviteUsers;
-                    IsBanUsers = _item.AdminRights.IsBanUsers;
-                    IsDeleteMessages = _item.AdminRights.IsDeleteMessages;
-                    IsEditMessages = _item.AdminRights.IsEditMessages;
-                    IsPostMessages = _item.AdminRights.IsPostMessages;
-                    IsChangeInfo = _item.AdminRights.IsChangeInfo;
-
-                    var user = tuple.Item2.User;
-                    if (user == null)
-                    {
-                        return;
-                    }
-
-                    var full = CacheService.GetFullUser(user.Id);
-                    if (full == null)
-                    {
-                        var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
-                        if (response.IsSucceeded)
-                        {
-                            full = response.Result;
+                            IsChangeInfo = true,
+                            IsPinMessages = true,
+                            IsInviteLink = true,
+                            IsInviteUsers = true,
+                            IsBanUsers = true,
+                            IsDeleteMessages = true,
+                            IsEditMessages = true,
+                            IsPostMessages = true,
+                            IsAddAdmins = false
                         }
-                    }
-
-                    Full = full;
+                    };
                 }
+                else if (tuple.Item2 is TLChannelParticipantBanned banned)
+                {
+                    IsAdminAlready = false;
+
+                    tuple.Item2 = new TLChannelParticipantAdmin
+                    {
+                        UserId = banned.UserId,
+                        Date = banned.Date,
+                        IsCanEdit = true,
+                        AdminRights = new TLChannelAdminRights
+                        {
+                            IsChangeInfo = true,
+                            IsPinMessages = true,
+                            IsInviteLink = true,
+                            IsInviteUsers = true,
+                            IsBanUsers = true,
+                            IsDeleteMessages = true,
+                            IsEditMessages = true,
+                            IsPostMessages = true,
+                            IsAddAdmins = false
+                        }
+                    };
+                }
+
+                Channel = CacheService.GetChat(tuple.Item1.ChannelId) as TLChannel;
+                Item = tuple.Item2 as TLChannelParticipantAdmin;
+
+                IsAddAdmins = _item.AdminRights.IsAddAdmins;
+                IsPinMessages = _item.AdminRights.IsPinMessages;
+                IsInviteLink = _item.AdminRights.IsInviteLink;
+                IsInviteUsers = _item.AdminRights.IsInviteUsers;
+                IsBanUsers = _item.AdminRights.IsBanUsers;
+                IsDeleteMessages = _item.AdminRights.IsDeleteMessages;
+                IsEditMessages = _item.AdminRights.IsEditMessages;
+                IsPostMessages = _item.AdminRights.IsPostMessages;
+                IsChangeInfo = _item.AdminRights.IsChangeInfo;
+
+                var user = tuple.Item2.User;
+                if (user == null)
+                {
+                    return;
+                }
+
+                var full = CacheService.GetFullUser(user.Id);
+                if (full == null)
+                {
+                    var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result;
+                    }
+                }
+
+                Full = full;
             }
         }
 

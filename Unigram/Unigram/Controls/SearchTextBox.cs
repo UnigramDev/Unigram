@@ -23,12 +23,15 @@ namespace Unigram.Controls
             TextChanged += OnTextChanged;
         }
 
+        public event RoutedEventHandler Clean;
+
         protected override void OnApplyTemplate()
         {
             var clean = GetTemplateChild("CleanButton") as Button;
             if (clean != null)
             {
                 clean.Click += Clean_Click;
+                clean.Click += Clean;
             }
 
             var search = GetTemplateChild("SearchButton") as Button;

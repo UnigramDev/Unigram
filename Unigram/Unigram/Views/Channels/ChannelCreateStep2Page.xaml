@@ -1,0 +1,136 @@
+﻿<Page
+    x:Class="Unigram.Views.Channels.ChannelCreateStep2Page"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Channels"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:tl="using:Telegram.Api.TL"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:ButtonPageHeader
+            Command="{x:Bind ViewModel.SendCommand}"
+            Text="{CustomResource ChannelSettings}"
+            Glyph="&#xE10B;"/>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Padding="12" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                <RadioButton
+                    IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}"
+                    Content="{CustomResource ChannelPublic}"/>
+                <TextBlock
+                    Text="{CustomResource ChannelPublicInfo}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="28,-6,0,8"/>
+                <RadioButton
+                    IsChecked="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                    Content="{CustomResource ChannelPrivate}"/>
+                <TextBlock
+                    Text="{CustomResource ChannelPrivateInfo}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="28,-6,0,0"/>
+            </StackPanel>
+
+            <Grid Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                    <controls:UpdateTextBox
+                        x:Name="Username"
+                        Text="{Binding Username, Mode=TwoWay}"
+                        Header="{CustomResource ChannelLinkType}"
+                        PlaceholderText="{x:Bind Converter={StaticResource MeUrlPrefixConverter}}"
+                        Style="{StaticResource InlinePlaceholderTextBoxStyle}"
+                        Margin="0,12,12,8"/>
+
+                    <TextBlock
+                        Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.Username, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=LinkAvailable}"
+                        Foreground="Green"
+                        Margin="0,0,0,8"/>
+                    <TextBlock
+                        Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                        Text="{CustomResource LinkChecking}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Margin="0,0,0,8"/>
+                    <TextBlock
+                        Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                        Foreground="Red"
+                        Margin="0,0,0,8"/>
+
+                    <TextBlock
+                        Text="{CustomResource ChannelUsernameHelp}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="0,0,12,12"/>
+                </StackPanel>
+
+                <ListView Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          ItemsSource="{x:Bind ViewModel.AdminedPublicChannels}"
+                          IsItemClickEnabled="True"
+                          ItemClick="ListView_ItemClick"
+                          SelectionMode="None"
+                          Grid.Row="1">
+                    <ListView.Header>
+                        <TextBlock Text="{CustomResource ChangePublicLimitReached}" Foreground="#FF0000" Margin="12,12,12,6" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    </ListView.Header>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="tl:TLChannel">
+                            <Grid Margin="0,6">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <controls:ProfilePicture x:Phase="2" Source="{x:Bind PhotoSelf, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                                <TextBlock Text="{x:Bind DisplayName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                <TextBlock Text="{x:Bind Username, Converter={StaticResource MeUrlPrefixConverter}, ConverterParameter=short}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                           VerticalAlignment="Top"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap"
+                                           Grid.Column="1"
+                                           Grid.Row="1"
+                                           MaxLines="1"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+            <StackPanel Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Grid.Row="2">
+                <TextBox
+                    Text="{x:Bind ViewModel.InviteLink, Mode=OneWay}"
+                    Header="{CustomResource ChannelInviteLinkTitle}"
+                    IsReadOnly="True"
+                    Margin="12,12,12,8"/>
+                <TextBlock
+                    Text="{CustomResource ChannelPrivateLinkHelp}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="12,0"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>

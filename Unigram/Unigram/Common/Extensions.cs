@@ -14,6 +14,7 @@ using Unigram.Controls.Messages;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -37,6 +38,11 @@ namespace Unigram.Common
         public static void BeginOnUIThread(this DependencyObject element, Action action)
         {
             element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+        }
+
+        public static bool IsCompactOverlaySupported(this ApplicationView view)
+        {
+            return ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && view.IsViewModeSupported(ApplicationViewMode.CompactOverlay);
         }
 
         public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
@@ -407,7 +413,7 @@ namespace Unigram.Common
     // Modified from: https://stackoverflow.com/a/32559623/1680863
     public static class ListViewExtensions
     {
-        public async static Task ScrollToItem(this ListViewBase listViewBase, object item, SnapPointsAlignment alignment)
+        public async static Task ScrollToItem(this ListViewBase listViewBase, object item, SnapPointsAlignment alignment, bool highlight, double? pixel = null)
         {
             // get the ScrollViewer withtin the ListView/GridView
             var scrollViewer = listViewBase.GetScrollViewer();
@@ -433,7 +439,13 @@ namespace Unigram.Common
             var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
             var position = transform.TransformPoint(new Point(0, 0));
 
-            if (alignment == SnapPointsAlignment.Near) { }
+            if (alignment == SnapPointsAlignment.Near)
+            {
+                if (pixel is double adjust)
+                {
+                    position.Y -= adjust;
+                }
+            }
             else if (alignment == SnapPointsAlignment.Center)
             {
                 position.Y -= (listViewBase.ActualHeight - selectorItem.ActualHeight) / 2d;
@@ -441,14 +453,24 @@ namespace Unigram.Common
             else if (alignment == SnapPointsAlignment.Far)
             {
                 position.Y -= listViewBase.ActualHeight - selectorItem.ActualHeight;
+
+                if (pixel is double adjust)
+                {
+                    position.Y += adjust;
+                }
             }
 
             // scroll to desired position with animation!
-            scrollViewer.ChangeView(position.X, position.Y, null);
+            scrollViewer.ChangeView(position.X, position.Y, null, alignment != SnapPointsAlignment.Center);
 
-            var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
-            if (bubble != null)
+            if (highlight)
             {
+                var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
+                if (bubble == null)
+                {
+                    return;
+                }
+
                 bubble.Highlight();
             }
         }

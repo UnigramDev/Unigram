@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Contacts;
 using Telegram.Api.TL.Messages;

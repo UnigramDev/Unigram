@@ -26,8 +26,7 @@ namespace Telegram.Api.TL
                     return;
                 }
 
-                var operation = manager.DownloadFileAsync(FileName, DCId, ToInputFileLocation(), Size);
-                var download = await operation.AsTask(Download());
+                var download = await manager.DownloadFileAsync(FileName, DCId, ToInputFileLocation(), Size, Download());
                 if (download != null)
                 {
                     //UploadingProgress = 0;
@@ -41,12 +40,12 @@ namespace Telegram.Api.TL
         {
             if (manager != null)
             {
-                manager.CancelDownloadFile(this);
+                manager.Cancel(this);
             }
 
             if (uploadManager != null)
             {
-                uploadManager.CancelUploadFile(Id);
+                uploadManager.Cancel(UploadId ?? 0);
             }
 
             UploadingProgress = 0;

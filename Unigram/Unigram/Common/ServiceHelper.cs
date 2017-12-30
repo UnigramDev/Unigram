@@ -36,6 +36,10 @@ namespace Unigram.Common
             {
                 return (DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(((TLMessageActionDate)action).Date)), null);
             });
+            _actionsCache.Add(typeof(TLMessageActionContactRegistered), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
+            {
+                return (string.Format(Strings.Android.NotificationContactJoined, fromUser.FullName), null);
+            });
             _actionsCache.Add(typeof(TLMessageActionGameScore), (TLMessageService message, TLMessageActionBase action, TLUser fromUser, bool useActiveLinks) =>
             {
                 var value = ((TLMessageActionGameScore)action).Score;

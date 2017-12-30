@@ -94,9 +94,9 @@ namespace Unigram.Views
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
             }
-            else if (!string.IsNullOrEmpty(SearchDialogs.Text))
+            else if (!string.IsNullOrEmpty(SearchField.Text))
             {
-                SearchDialogs.Text = string.Empty;
+                SearchField.Text = string.Empty;
                 args.Handled = true;
             }
         }
@@ -205,29 +205,45 @@ namespace Unigram.Views
                 return;
             }
 
-            var data = Toast.SplitArguments(parameter);
-            if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
+            if (parameter.StartsWith("tg:toast"))
             {
-                var user = ViewModel.CacheService.GetUser(from_id);
-                if (user != null)
-                {
-                    MasterDetail.NavigationService.NavigateToDialog(user);
-                }
+                parameter = parameter.Substring("tg:toast?".Length);
             }
-            else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
+            else if (parameter.StartsWith("tg://toast"))
             {
-                var chat = ViewModel.CacheService.GetChat(chat_id);
-                if (chat != null)
-                {
-                    MasterDetail.NavigationService.NavigateToDialog(chat);
-                }
+                parameter = parameter.Substring("tg://toast?".Length);
             }
-            else if (data.ContainsKey("channel_id") && int.TryParse(data["channel_id"], out int channel_id))
+
+            if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
             {
-                var channel = ViewModel.CacheService.GetChat(channel_id);
-                if (channel != null)
+                Activate(scheme);
+            }
+            else
+            {
+                var data = Toast.SplitArguments(parameter);
+                if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
                 {
-                    MasterDetail.NavigationService.NavigateToDialog(channel);
+                    var user = ViewModel.CacheService.GetUser(from_id);
+                    if (user != null)
+                    {
+                        MasterDetail.NavigationService.NavigateToDialog(user);
+                    }
+                }
+                else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
+                {
+                    var chat = ViewModel.CacheService.GetChat(chat_id);
+                    if (chat != null)
+                    {
+                        MasterDetail.NavigationService.NavigateToDialog(chat);
+                    }
+                }
+                else if (data.ContainsKey("channel_id") && int.TryParse(data["channel_id"], out int channel_id))
+                {
+                    var channel = ViewModel.CacheService.GetChat(channel_id);
+                    if (channel != null)
+                    {
+                        MasterDetail.NavigationService.NavigateToDialog(channel);
+                    }
                 }
             }
         }
@@ -517,7 +533,7 @@ namespace Unigram.Views
             }
             else
             {
-                SearchDialogs.Text = string.Empty;
+                SearchField.Text = string.Empty;
             }
 
             if (item is TLUser user)
@@ -554,10 +570,10 @@ namespace Unigram.Views
 
         private void searchInit()
         {
-            var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchDialogs, "TextChanged");
+            var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(async x =>
             {
-                if (string.IsNullOrWhiteSpace(SearchDialogs.Text))
+                if (string.IsNullOrWhiteSpace(SearchField.Text))
                 {
                     if (rpMasterTitlebar.SelectedIndex == 0)
                     {
@@ -572,11 +588,11 @@ namespace Unigram.Views
 
                 if (rpMasterTitlebar.SelectedIndex == 0)
                 {
-                    await ViewModel.Dialogs.SearchAsync(SearchDialogs.Text);
+                    await ViewModel.Dialogs.SearchAsync(SearchField.Text);
                 }
                 else
                 {
-                    await ViewModel.Contacts.SearchAsync(SearchDialogs.Text);
+                    await ViewModel.Contacts.SearchAsync(SearchField.Text);
                 }
             });
         }
@@ -609,11 +625,11 @@ namespace Unigram.Views
             }
         }
 
-        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
             var activePanel = rpMasterTitlebar.SelectedIndex == 0 ? DialogsPanel : ContactsPanel;
 
-            if (string.IsNullOrEmpty(SearchDialogs.Text))
+            if (string.IsNullOrEmpty(SearchField.Text))
             {
                 activePanel.Visibility = Visibility.Visible;
             }
@@ -624,15 +640,15 @@ namespace Unigram.Views
 
             if (rpMasterTitlebar.SelectedIndex == 0)
             {
-                ViewModel.Dialogs.SearchQuery = SearchDialogs.Text;
+                ViewModel.Dialogs.SearchQuery = SearchField.Text;
             }
             else
             {
-                ViewModel.Contacts.SearchQuery = SearchDialogs.Text;
+                ViewModel.Contacts.SearchQuery = SearchField.Text;
             }
         }
 
-        private void txtSearch_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void Search_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             var activePanel = rpMasterTitlebar.SelectedIndex == 0 ? DialogsPanel : ContactsPanel;
             var activeList = rpMasterTitlebar.SelectedIndex == 0 ? DialogsSearchListView : ContactsSearchListView;
@@ -704,7 +720,7 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var call = element.DataContext as TLCallGroup;
 
-            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Calls.CallDeleteCommand, call, Strings.Android.Delete);
+            CreateFlyoutItem(ref flyout, _ => Visibility.Visible, ViewModel.Calls.CallDeleteCommand, call, Strings.Android.Delete);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -734,6 +750,14 @@ namespace Unigram.Views
 
         private Visibility DialogPin_Loaded(TLDialog dialog)
         {
+            if (!dialog.IsPinned)
+            {
+                var count = ViewModel.Dialogs.Items.Where(x => x.IsPinned).Count();
+                var max = ViewModel.CacheService.Config.PinnedDialogsCountMax;
+
+                return count < max ? Visibility.Visible : Visibility.Collapsed;
+            }
+
             return Visibility.Visible;
         }
 
@@ -839,12 +863,12 @@ namespace Unigram.Views
 
         private void NewChat_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(CreateChatStep1Page));
+            MasterDetail.NavigationService.Navigate(typeof(ChatCreateStep1Page));
         }
 
         private void NewChannel_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(CreateChannelStep1Page));
+            MasterDetail.NavigationService.Navigate(typeof(ChannelCreateStep1Page));
         }
 
         private void NewContact_Click(object sender, RoutedEventArgs e)
@@ -859,13 +883,13 @@ namespace Unigram.Views
             NavigationCalls.IsChecked = rpMasterTitlebar.SelectedIndex == 2;
             NavigationSettings.IsChecked = rpMasterTitlebar.SelectedIndex == 3;
 
-            SearchDialogs.Visibility = Visibility.Collapsed;
+            SearchField.Visibility = Visibility.Collapsed;
             SettingsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
             ChatsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
             ContactsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
 
-            SearchDialogs.Text = string.Empty;
-            SearchDialogs.Visibility = Visibility.Collapsed;
+            SearchField.Text = string.Empty;
+            SearchField.Visibility = Visibility.Collapsed;
 
             DialogsPanel.Visibility = Visibility.Visible;
             MainHeader.Visibility = Visibility.Visible;
@@ -883,11 +907,11 @@ namespace Unigram.Views
         {
             if (args.ClickedItem == NavigationNewChat)
             {
-                MasterDetail.NavigationService.Navigate(typeof(CreateChatStep1Page));
+                MasterDetail.NavigationService.Navigate(typeof(ChatCreateStep1Page));
             }
             else if (args.ClickedItem == NavigationNewChannel)
             {
-                MasterDetail.NavigationService.Navigate(typeof(CreateChannelStep1Page));
+                MasterDetail.NavigationService.Navigate(typeof(ChannelCreateStep1Page));
             }
             else if (args.ClickedItem == NavigationChats)
             {
@@ -918,19 +942,19 @@ namespace Unigram.Views
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             MainHeader.Visibility = Visibility.Collapsed;
+            SearchField.Visibility = Visibility.Visible;
 
-            SearchDialogs.Visibility = Visibility.Visible;
-            SearchDialogs.Focus(FocusState.Keyboard);
+            SearchField.Focus(FocusState.Keyboard);
         }
 
         private void Search_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(SearchDialogs.Text))
+            if (string.IsNullOrEmpty(SearchField.Text))
             {
                 MainHeader.Visibility = Visibility.Visible;
-                rpMasterTitlebar.Focus(FocusState.Programmatic);
+                SearchField.Visibility = Visibility.Collapsed;
 
-                SearchDialogs.Visibility = Visibility.Collapsed;
+                rpMasterTitlebar.Focus(FocusState.Programmatic);
             }
         }
 

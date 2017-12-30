@@ -75,7 +75,9 @@ HRESULT OpusMediaSource::OnStop()
 HRESULT OpusMediaSource::OnShutdown()
 {
 	if (m_mediaStream != nullptr)
+	{
 		m_mediaStream->Shutdown();
+	}
 
 	m_mediaStream.Reset();
 	return S_OK;
@@ -122,7 +124,9 @@ HRESULT OpusMediaStream::RuntimeClassInitialize(OpusMediaSource* mediaSource, Op
 HRESULT OpusMediaStream::GetParameters(DWORD* pdwFlags, DWORD* pdwQueue)
 {
 	if (pdwFlags == nullptr || pdwQueue == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	*pdwQueue = m_workQueueId;
 	return S_OK;
@@ -134,7 +138,9 @@ HRESULT OpusMediaStream::Invoke(IMFAsyncResult* pAsyncResult)
 
 	auto state = GetState();
 	if (state < MediaStreamState::Paused)
+	{
 		return S_OK;
+	}
 
 	HRESULT result;
 
@@ -174,7 +180,9 @@ HRESULT OpusMediaStream::Invoke(IMFAsyncResult* pAsyncResult)
 
 			ComPtr<IUnknown> token;
 			if (SUCCEEDED(pAsyncResult->GetState(&token)))
+			{
 				BreakIfFailed(result, sample->SetUnknown(MFSampleExtension_Token, token.Get()));
+			}
 
 			BreakIfFailed(result, DeliverSample(sample.Get()));
 			m_currentTime += duration;
@@ -189,7 +197,9 @@ HRESULT OpusMediaStream::Invoke(IMFAsyncResult* pAsyncResult)
 	} while (false);
 
 	if (FAILED(result))
+	{
 		return NotifyError(result);
+	}
 
 	return S_OK;
 }

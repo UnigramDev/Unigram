@@ -19,6 +19,7 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Updates;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services.Cache.EventArgs;
 
 namespace Telegram.Api.Services.Updates
@@ -188,7 +189,7 @@ namespace Telegram.Api.Services.Updates
             }
 #if LOG_CLIENTSEQ
             TLUtils.WriteLine(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} ptsList={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", "null", _pts != null ? _pts.ToString() : "null", ptsList.Count > 0 ? string.Join(", ", ptsList) : "null"), LogSeverity.Error);
-            Logs.Log.Write(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} ptsList={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", "null", _pts != null ? _pts.ToString() : "null", ptsList.Count > 0 ? string.Join(", ", ptsList) : "null"));
+            Logs.Log.Write(string.Format("{0} clientSeq={1} newSeq={2} pts={3} ptsList={4}", caption, ClientSeq != null ? ClientSeq.ToString() : "null", "null", _pts != null ? _pts.ToString() : "null", ptsList.Count > 0 ? string.Join(", ", ptsList) : "null"));
 #endif
             UpdateLostPts(ptsList);
         }
@@ -216,7 +217,7 @@ namespace Telegram.Api.Services.Updates
         {
 #if LOG_CLIENTSEQ
             TLUtils.WriteLine(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} newPts={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", seq, _pts != null ? _pts.ToString() : "null", pts), LogSeverity.Error);
-            Logs.Log.Write(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} newPts={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", seq, _pts != null ? _pts.ToString() : "null", pts));
+            Logs.Log.Write(string.Format("{0} clientSeq={1} newSeq={2} pts={3} newPts={4}", caption, ClientSeq != null ? ClientSeq.ToString() : "null", seq, _pts != null ? _pts.ToString() : "null", pts));
             //TLUtils.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) + " " + caption + " clientSeq=" + ClientSeq + " newSeq=" + seq + " pts=" + pts, LogSeverity.Error);
 #endif
             if (seq != null)
@@ -1421,7 +1422,13 @@ namespace Telegram.Api.Services.Updates
                     {
                         Execute.BeginOnUIThread(() =>
                         {
-                            foreach (var commonMessage in result.Messages.OfType<TLMessageCommonBase>())
+                            var history = result as ITLMessages;
+                            if (history == null)
+                            {
+                                return;
+                            }
+
+                            foreach (var commonMessage in history.Messages.OfType<TLMessageCommonBase>())
                             {
                                 commonMessage.IsMediaUnread = false;
                                 commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
@@ -1511,7 +1518,13 @@ namespace Telegram.Api.Services.Updates
                     {
                         Execute.BeginOnUIThread(() =>
                         {
-                            foreach (var message in result.Messages.OfType<TLMessageCommonBase>())
+                            var history = result as ITLMessages;
+                            if (history == null)
+                            {
+                                return;
+                            }
+
+                            foreach (var message in history.Messages.OfType<TLMessageCommonBase>())
                             {
                                 message.IsMediaUnread = false;
                                 message.RaisePropertyChanged(() => message.IsMediaUnread);
@@ -3051,8 +3064,7 @@ namespace Telegram.Api.Services.Updates
                     IsOut = false,
                     IsUnread = false,
                     Date = updateContactRegistered.Date,
-                    // TODO: local object 
-                    // Action = new TLMessageActionContactRegistered { UserId = user.Id },
+                    Action = new TLMessageActionContactRegistered { UserId = user.Id },
                     RandomId = TLLong.Random()
                 };
 
@@ -3889,36 +3901,36 @@ namespace Telegram.Api.Services.Updates
             ProcessUpdates(updatesList, updatesTooLongList, notifyNewMessages);
         }
 
-        public void ProcessTransportMessage(TLTransportMessage transportMessage)
-        {
-            try
-            {
-                var isUpdating = false;
-                lock (_getDifferenceRequestRoot)
-                {
-                    if (_getDifferenceRequests.Count > 0)
-                    {
-                        isUpdating = true;
-                    }
-                }
+        //public void ProcessTransportMessage(TLTransportMessage transportMessage)
+        //{
+        //    try
+        //    {
+        //        var isUpdating = false;
+        //        lock (_getDifferenceRequestRoot)
+        //        {
+        //            if (_getDifferenceRequests.Count > 0)
+        //            {
+        //                isUpdating = true;
+        //            }
+        //        }
 
-                if (isUpdating)
-                {
-                    //Execute.ShowDebugMessage("UpdatesService.ProcessTransportMessage Skip");
-                    return;
-                }
+        //        if (isUpdating)
+        //        {
+        //            //Execute.ShowDebugMessage("UpdatesService.ProcessTransportMessage Skip");
+        //            return;
+        //        }
 
-                var updatesList = TLUtils.FindInnerObjects<TLUpdatesBase>(transportMessage).ToList();
-                var updatesTooLong = TLUtils.FindInnerObjects<TLUpdatesTooLong>(transportMessage).ToList();
+        //        var updatesList = TLUtils.FindInnerObjects<TLUpdatesBase>(transportMessage).ToList();
+        //        var updatesTooLong = TLUtils.FindInnerObjects<TLUpdatesTooLong>(transportMessage).ToList();
 
-                ProcessUpdates(updatesList, updatesTooLong);
-            }
-            catch (Exception e)
-            {
-                TLUtils.WriteLine("Error during processing update: ", LogSeverity.Error);
-                TLUtils.WriteException(e);
-            }
-        }
+        //        ProcessUpdates(updatesList, updatesTooLong);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        TLUtils.WriteLine("Error during processing update: ", LogSeverity.Error);
+        //        TLUtils.WriteException(e);
+        //    }
+        //}
 
         private readonly object _stateRoot = new object();
 

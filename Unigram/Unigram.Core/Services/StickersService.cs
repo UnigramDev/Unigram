@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.Cache.Context;
@@ -598,7 +600,10 @@ namespace Unigram.Services
                         var data = Sqlite3.sqlite3_column_blob(statement, 0);
                         if (data != null)
                         {
-                            set = TLFactory.From<TLMessagesStickerSet>(data);
+                            using (var from = TLObjectSerializer.CreateReader(data.AsBuffer()))
+                            {
+                                set = TLFactory.Read<TLMessagesStickerSet>(from);
+                            }
                         }
                         else
                         {
@@ -646,18 +651,12 @@ namespace Unigram.Services
 
                     Sqlite3.sqlite3_prepare_v2(database, "REPLACE INTO group_stickers_v2 VALUES(?, ?, ?, ?)", out statement);
 
-                    using (var data = new MemoryStream())
-                    {
-                        using (var to = new TLBinaryWriter(data))
-                        {
-                            result.Write(to);
-                        }
+                    var data = TLObjectSerializer.Serialize(result);
 
-                        Sqlite3.sqlite3_reset(statement);
-                        Sqlite3.sqlite3_bind_int64(statement, 1, result.Set.Id);
-                        Sqlite3.sqlite3_bind_blob(statement, 2, data.ToArray(), -1);
-                        Sqlite3.sqlite3_step(statement);
-                    }
+                    Sqlite3.sqlite3_reset(statement);
+                    Sqlite3.sqlite3_bind_int64(statement, 1, result.Set.Id);
+                    Sqlite3.sqlite3_bind_blob(statement, 2, data.ToArray(), -1);
+                    Sqlite3.sqlite3_step(statement);
 
                     Sqlite3.sqlite3_finalize(statement);
                 }
@@ -1163,13 +1162,19 @@ namespace Unigram.Services
                         var data = Sqlite3.sqlite3_column_blob(statement, 0);
                         if (data != null)
                         {
-                            newStickerArray = TLFactory.From<TLVector<TLMessagesStickerSet>>(data).ToList();
+                            using (var from = TLObjectSerializer.CreateReader(data.AsBuffer()))
+                            {
+                                newStickerArray = TLFactory.Read<TLVector<TLMessagesStickerSet>>(from).ToList();
+                            }
                         }
 
                         var data2 = Sqlite3.sqlite3_column_blob(statement, 1);
                         if (data2 != null)
                         {
-                            unread = TLFactory.From<TLVector<long>>(data2).ToList();
+                            using (var from = TLObjectSerializer.CreateReader(data.AsBuffer()))
+                            {
+                                unread = TLFactory.Read<TLVector<long>>(from).ToList();
+                            }
                         }
 
                         date = Sqlite3.sqlite3_column_int(statement, 2);
@@ -1351,27 +1356,16 @@ namespace Unigram.Services
                 {
                     Sqlite3.sqlite3_prepare_v2(database, "REPLACE INTO stickers_featured VALUES(?, ?, ?, ?, ?)", out statement);
 
-                    using (var data = new MemoryStream())
-                    using (var data2 = new MemoryStream())
-                    {
-                        using (var to = new TLBinaryWriter(data))
-                        {
-                            stickersFinal.Write(to);
-                        }
+                    var data1 = TLObjectSerializer.Serialize(stickersFinal);
+                    var data2 = TLObjectSerializer.Serialize(new TLVector<long>(unreadStickers));
 
-                        using (var to = new TLBinaryWriter(data2))
-                        {
-                            new TLVector<long>(unreadStickers).Write(to);
-                        }
-
-                        Sqlite3.sqlite3_reset(statement);
-                        Sqlite3.sqlite3_bind_int(statement, 1, 1);
-                        Sqlite3.sqlite3_bind_blob(statement, 2, data.ToArray(), -1);
-                        Sqlite3.sqlite3_bind_blob(statement, 3, data2.ToArray(), -1);
-                        Sqlite3.sqlite3_bind_int(statement, 4, date);
-                        Sqlite3.sqlite3_bind_int(statement, 5, hash);
-                        Sqlite3.sqlite3_step(statement);
-                    }
+                    Sqlite3.sqlite3_reset(statement);
+                    Sqlite3.sqlite3_bind_int(statement, 1, 1);
+                    Sqlite3.sqlite3_bind_blob(statement, 2, data1.ToArray(), -1);
+                    Sqlite3.sqlite3_bind_blob(statement, 3, data2.ToArray(), -1);
+                    Sqlite3.sqlite3_bind_int(statement, 4, date);
+                    Sqlite3.sqlite3_bind_int(statement, 5, hash);
+                    Sqlite3.sqlite3_step(statement);
 
                     Sqlite3.sqlite3_finalize(statement);
                 }
@@ -1479,8 +1473,12 @@ namespace Unigram.Services
                         var data = Sqlite3.sqlite3_column_blob(statement, 0);
                         if (data != null)
                         {
-                            newStickerArray = TLFactory.From<TLVector<TLMessagesStickerSet>>(data).ToList();
+                            using (var from = TLObjectSerializer.CreateReader(data.AsBuffer()))
+                            {
+                                newStickerArray = TLFactory.Read<TLVector<TLMessagesStickerSet>>(from).ToList();
+                            }
                         }
+
                         date = Sqlite3.sqlite3_column_int(statement, 1);
                         hash = CalculateStickersHash(newStickerArray);
                     }
@@ -1594,20 +1592,14 @@ namespace Unigram.Services
                 {
                     Sqlite3.sqlite3_prepare_v2(database, "REPLACE INTO stickers_v2 VALUES(?, ?, ?, ?)", out statement);
 
-                    using (var data = new MemoryStream())
-                    {
-                        using (var to = new TLBinaryWriter(data))
-                        {
-                            stickersFinal.Write(to);
-                        }
+                    var data = TLObjectSerializer.Serialize(stickersFinal);
 
-                        Sqlite3.sqlite3_reset(statement);
-                        Sqlite3.sqlite3_bind_int(statement, 1, stickerType == StickerType.Image ? 1 : 2);
-                        Sqlite3.sqlite3_bind_blob(statement, 2, data.ToArray(), -1);
-                        Sqlite3.sqlite3_bind_int(statement, 3, date);
-                        Sqlite3.sqlite3_bind_int(statement, 4, hash);
-                        Sqlite3.sqlite3_step(statement);
-                    }
+                    Sqlite3.sqlite3_reset(statement);
+                    Sqlite3.sqlite3_bind_int(statement, 1, stickerType == StickerType.Image ? 1 : 2);
+                    Sqlite3.sqlite3_bind_blob(statement, 2, data.ToArray(), -1);
+                    Sqlite3.sqlite3_bind_int(statement, 3, date);
+                    Sqlite3.sqlite3_bind_int(statement, 4, hash);
+                    Sqlite3.sqlite3_step(statement);
 
                     Sqlite3.sqlite3_finalize(statement);
                 }
@@ -2027,7 +2019,6 @@ namespace Unigram.Services
         Fave = 2
     }
 
-    public delegate void NeedReloadArchivedStickersEventHandler(object sender, NeedReloadArchivedStickersEventArgs e);
     public class NeedReloadArchivedStickersEventArgs : EventArgs
     {
         public StickerType Type { get; private set; }
@@ -2038,7 +2029,6 @@ namespace Unigram.Services
         }
     }
 
-    public delegate void StickersDidLoadedEventHandler(object sender, StickersDidLoadedEventArgs e);
     public class StickersDidLoadedEventArgs : EventArgs
     {
         public StickerType Type { get; private set; }
@@ -2049,7 +2039,6 @@ namespace Unigram.Services
         }
     }
 
-    public delegate void FeaturedStickersDidLoadedEventHandler(object sender, FeaturedStickersDidLoadedEventArgs e);
     public class FeaturedStickersDidLoadedEventArgs : EventArgs
     {
         public FeaturedStickersDidLoadedEventArgs()
@@ -2057,7 +2046,6 @@ namespace Unigram.Services
         }
     }
 
-    public delegate void RecentsDidLoadedEventHandler(object sender, RecentsDidLoadedEventArgs e);
     public class RecentsDidLoadedEventArgs : EventArgs
     {
         public bool IsGifs { get; private set; }
@@ -2071,7 +2059,6 @@ namespace Unigram.Services
         }
     }
 
-    public delegate void ArchivedStickersCountDidLoadedEventHandler(object sender, ArchivedStickersCountDidLoadedEventArgs e);
     public class ArchivedStickersCountDidLoadedEventArgs : EventArgs
     {
         public StickerType Type { get; private set; }
@@ -2082,7 +2069,6 @@ namespace Unigram.Services
         }
     }
 
-    public delegate void GroupStickersDidLoadedEventHandler(object sender, GroupStickersDidLoadedEventArgs e);
     public class GroupStickersDidLoadedEventArgs : EventArgs
     {
         public long Id { get; private set; }

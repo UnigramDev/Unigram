@@ -233,8 +233,7 @@ namespace Unigram.Controls.Items
                     var from = message.FromId;
                     if (from != null)
                     {
-                        int currentUserId = MTProtoService.Current.CurrentUserId;
-                        if (currentUserId == from)
+                        if (message.IsOut)
                         {
                             if (dialog.Id != from && !message.IsPost)
                             {
@@ -429,46 +428,6 @@ namespace Unigram.Controls.Items
             return false;
         }
 
-        private void UpdateStateIcon()
-        {
-            var draft = ViewModel.Draft as TLDraftMessage;
-            if (draft != null)
-            {
-                StateIcon.Visibility = Visibility.Collapsed;
-                return;
-            }
-
-            var topMessage = ViewModel?.TopMessageItem as TLMessage;
-            if (topMessage != null)
-            {
-                if (topMessage.IsOut && IsOut(ViewModel))
-                {
-                    StateIcon.Visibility = Visibility.Visible;
-
-                    switch (topMessage.State)
-                    {
-                        case TLMessageState.Sending:
-                            StateIcon.Glyph = "\uE600";
-                            break;
-                        case TLMessageState.Confirmed:
-                            StateIcon.Glyph = "\uE602";
-                            break;
-                        case TLMessageState.Read:
-                            StateIcon.Glyph = "\uE601";
-                            break;
-                    }
-                }
-                else
-                {
-                    StateIcon.Visibility = Visibility.Collapsed;
-                }
-            }
-            else
-            {
-                StateIcon.Visibility = Visibility.Collapsed;
-            }
-        }
-
         private string UpdateStateIcon(TLDraftMessageBase draft, TLMessageBase message, TLMessageState state)
         {
             if (draft is TLDraftMessage)
@@ -476,19 +435,21 @@ namespace Unigram.Controls.Items
                 return string.Empty;
             }
 
-            if (message is TLMessage topMessage)
+            if (message is TLMessage topMessage && topMessage.IsOut && IsOut(ViewModel))
             {
-                if (topMessage.IsOut && IsOut(ViewModel))
+                if (topMessage.Parent is TLUser user && user.IsSelf)
                 {
-                    switch (state)
-                    {
-                        case TLMessageState.Sending:
-                            return "\uE600";
-                        case TLMessageState.Confirmed:
-                            return "\uE602";
-                        case TLMessageState.Read:
-                            return "\uE601";
-                    }
+                    return state == TLMessageState.Sending ? "\uE600" : string.Empty;
+                }
+
+                switch (state)
+                {
+                    case TLMessageState.Sending:
+                        return "\uE600";
+                    case TLMessageState.Confirmed:
+                        return "\uE602";
+                    case TLMessageState.Read:
+                        return "\uE601";
                 }
             }
 

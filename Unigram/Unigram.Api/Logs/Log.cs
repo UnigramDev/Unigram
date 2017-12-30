@@ -4,11 +4,12 @@ using System.IO;
 using System.Text;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
-using Execute = Telegram.Api.Helpers.Execute; 
+using Telegram.Api.Native.Diagnostics;
+using Execute = Telegram.Api.Helpers.Execute;
 
 namespace Telegram.Logs
 {
-    public class Log
+    public class Log : ILogger
     {
         public static bool IsPrivateBeta
         {
@@ -111,5 +112,21 @@ namespace Telegram.Logs
 
             return string.Format(format, args);
         }
+
+        #region ILogger
+
+        void ILogger.Log(LogLevel logLevel, string message)
+        {
+//#if DEBUG
+//            System.Diagnostics.Debug.Write(message);
+//#endif 
+
+//            if (logLevel != LogLevel.Information)
+//            {
+//                Write(message);
+//            }
+        }
+
+        #endregion
     }
 }

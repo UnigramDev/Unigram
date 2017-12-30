@@ -321,29 +321,18 @@
                             </StackPanel>
                         </Grid>
 
-                        <controls:SearchTextBox x:Name="SearchDialogs"
+                        <controls:SearchTextBox x:Name="SearchField"
                                                 Padding="60,4,6,4"
                                                 Background="{x:Null}"
                                                 BorderBrush="{x:Null}"
                                                 Style="{StaticResource SearchTextBoxStyle}"
-                                                PreventKeyboardDisplayOnProgrammaticFocus="True"
                                                 PlaceholderText="{CustomResource Search}"
+                                                PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                                Clean="Search_LostFocus"
                                                 LostFocus="Search_LostFocus"
-                                                TextChanged="txtSearch_TextChanged"
-                                                KeyDown="txtSearch_KeyDown"
+                                                TextChanged="Search_TextChanged"
+                                                KeyDown="Search_KeyDown"
                                                 Canvas.ZIndex="1"/>
-                        <!--<controls:SearchTextBox x:Name="SearchContacts"
-                                                    Padding="60,3,6,5"
-                                                    Background="{x:Null}"
-                                                    BorderBrush="{x:Null}"
-                                                    Style="{StaticResource SearchTextBoxStyle}"
-                                                    Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
-                                                    PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                                    PlaceholderText="Search for contacts and usernames"
-                                                    TextChanged="txtSearch_TextChanged"
-                                                    KeyDown="txtSearch_KeyDown"
-                                                    Grid.ColumnSpan="2"
-                                                    Canvas.ZIndex="1"/>-->
                     </Grid>
                 </controls:ContentPageHeader>
 
@@ -353,7 +342,7 @@
                         <ColumnDefinition Width="48"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
+                    <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
                         <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
                             <Run Text="{CustomResource AttachLiveLocation}" FontWeight="SemiBold"/>
                             <Run Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}"/>

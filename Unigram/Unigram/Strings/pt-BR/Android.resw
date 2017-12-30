@@ -48,8 +48,14 @@
   <data name="AccessError" xml:space="preserve">
     <value>Erro de acesso</value>
   </data>
+  <data name="AccountAlreadyLoggedIn" xml:space="preserve">
+    <value>Essa conta já está logada nesse aplicativo.</value>
+  </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>Configurações de Conta</value>
+  </data>
+  <data name="AccountSwitch" xml:space="preserve">
+    <value>Alternar</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>Precisão de {0}</value>
@@ -201,6 +207,9 @@
   <data name="Add" xml:space="preserve">
     <value>Adicionar</value>
   </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Adicionar Conta</value>
+  </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>Você não pode adicionar esse usuário como admin porque ele está na lista negra e você não pode desbaní-lo.</value>
   </data>
@@ -251,6 +260,9 @@
   </data>
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>Stickers não encontrados</value>
+  </data>
+  <data name="AddSubscriber" xml:space="preserve">
+    <value>Adicionar Inscrito</value>
   </data>
   <data name="AddToContacts" xml:space="preserve">
     <value>Adicionar aos contatos</value>
@@ -499,7 +511,7 @@ Lembre-se, sair apaga todos os seus Chats Secretos.</value>
 Por favor verifique a página de <![CDATA[<a href="https://telegram.org/faq#general">Perguntas Frequentes</a>]]>: há dicas e respostas para a maioria dos <![CDATA[<a href="https://telegram.org/faq#troubleshooting">problemas</a>]]>.</value>
   </data>
   <data name="AskButton" xml:space="preserve">
-    <value>Pergunte a um voluntário</value>
+    <value>Perguntar</value>
   </data>
   <data name="AttachAudio" xml:space="preserve">
     <value>Mensagem de voz</value>
@@ -579,6 +591,9 @@ Por favor verifique a página de <![CDATA[<a href="https://telegram.org/faq#gene
   <data name="AudioUnknownTitle" xml:space="preserve">
     <value>Título desconhecido</value>
   </data>
+  <data name="AutoDownloadMedia" xml:space="preserve">
+    <value>Baixar Automaticamente</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Auto-bloquear</value>
   </data>
@@ -590,6 +605,24 @@ Por favor verifique a página de <![CDATA[<a href="https://telegram.org/faq#gene
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
     <value>Requisitar senha se estiver ausente por muito tempo.</value>
+  </data>
+  <data name="AutodownloadChannels" xml:space="preserve">
+    <value>Canais</value>
+  </data>
+  <data name="AutodownloadContacts" xml:space="preserve">
+    <value>Contatos</value>
+  </data>
+  <data name="AutodownloadGroupChats" xml:space="preserve">
+    <value>Conversas em Grupo</value>
+  </data>
+  <data name="AutodownloadPrivateChats" xml:space="preserve">
+    <value>Conversas Privadas</value>
+  </data>
+  <data name="AutodownloadSizeLimit" xml:space="preserve">
+    <value>Limitar por Tamanho</value>
+  </data>
+  <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
+    <value>até {0}</value>
   </data>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Download automático de mídia</value>
@@ -733,7 +766,7 @@ Por favor verifique a página de <![CDATA[<a href="https://telegram.org/faq#gene
     <value>Obrigado por ajudar a tornar as chamadas do Telegram melhores.</value>
   </data>
   <data name="CallText" xml:space="preserve">
-    <value>Vamos te ligar em {0}:%2$02d</value>
+    <value>Telegram irá te ligar em {0}:%2$02d</value>
   </data>
   <data name="CallViaTelegram" xml:space="preserve">
     <value>Chamada do Telegram</value>
@@ -919,6 +952,9 @@ Nota: se você esquecer a sua senha, terá de excluir e reinstalar o app. Todos 
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} postou um GIF</value>
   </data>
+  <data name="ChannelMessageLiveLocation" xml:space="preserve">
+    <value>%1$@ postou uma localização em tempo real</value>
+  </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} postou uma foto</value>
   </data>
@@ -996,6 +1032,9 @@ Se não estiver interessado, sugerimos que crie um canal privado.</value>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Mensagem Silenciosa</value>
   </data>
+  <data name="ChannelSubscribers" xml:space="preserve">
+    <value>Inscritos</value>
+  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Tipo de canal</value>
   </data>
@@ -1048,7 +1087,7 @@ Se não estiver interessado, sugerimos que crie um canal privado.</value>
     <value>Histórico de conversa para novos membros</value>
   </data>
   <data name="ChatHistoryHidden" xml:space="preserve">
-    <value>Esconder</value>
+    <value>Escondido</value>
   </data>
   <data name="ChatHistoryHiddenInfo" xml:space="preserve">
     <value>Novos membros não verão mensagens anteriores.</value>
@@ -1571,7 +1610,7 @@ Para ir além do limite e ter funções adcionais, converta para um supergrupo:
     <value>Banir Usuários</value>
   </data>
   <data name="EditAdminCantEdit" xml:space="preserve">
-    <value>Você não têm permissão para editar esse admin.</value>
+    <value>Você não tem permissão para editar esse admin.</value>
   </data>
   <data name="EditAdminChangeChannelInfo" xml:space="preserve">
     <value>Alterar Info do Canal</value>
@@ -2385,10 +2424,10 @@ sobre o Telegram?</value>
     <value>O histórico foi apagado</value>
   </data>
   <data name="HoldToAudio" xml:space="preserve">
-    <value>Segure para gravar um áudio. Toque para mudar para vídeo.</value>
+    <value>Segure para gravar áudio. Toque para vídeo.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
-    <value>Segure para gravar um vídeo. Toque para mudar para áudio.</value>
+    <value>Segure para gravar vídeo. Toque para áudio.</value>
   </data>
   <data name="HoursZero" xml:space="preserve">
     <value></value>
@@ -3129,7 +3168,7 @@ ou vá para a seção 'Contatos'.</value>
     <value>Nenhum resultado</value>
   </data>
   <data name="NoSharedAudio" xml:space="preserve">
-    <value>Compartilhe músicas nesse chat e os acesse de qualquer um de seus dispositivos.</value>
+    <value>Compartilhe músicas nesse chat e acesse-as de qualquer um de seus dispositivos.</value>
   </data>
   <data name="NoSharedAudioSecret" xml:space="preserve">
     <value>Músicas desse chat serão mostradas aqui.</value>
@@ -3320,6 +3359,9 @@ ou vá para a seção 'Contatos'.</value>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} enviou um GIF para o grupo {1}</value>
   </data>
+  <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
+    <value>{0} enviou uma localização em tempo real para o grupo {1}</value>
+  </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} enviou uma localização para o grupo {1}</value>
   </data>
@@ -3346,6 +3388,9 @@ ou vá para a seção 'Contatos'.</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} enviou um vídeo para o grupo {1}</value>
+  </data>
+  <data name="NotificationMessageLiveLocation" xml:space="preserve">
+    <value>{0} te enviou uma localização em tempo real</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} enviou uma localização</value>
@@ -3509,13 +3554,16 @@ Equipe Telegram</value>
     <value>VER CANAL</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>ABRIR GRUPO</value>
+    <value>VER GRUPO</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>ABRIR EM...</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Abrir em...</value>
+  </data>
+  <data name="OpenMessage" xml:space="preserve">
+    <value>VER MENSAGEM</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Abrir URL em {0}?</value>
@@ -3681,6 +3729,9 @@ de múltiplos dispositivos.</value>
   <data name="PaymentConnectionFailed" xml:space="preserve">
     <value>Não foi possível encontrar o servidor de pagamento. Verifique sua conexão e tente novamente.</value>
   </data>
+  <data name="PaymentEmailToProvider" xml:space="preserve">
+    <value>O email será passado ao {0} como informação de faturamento.</value>
+  </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Desculpe, o pagamento foi recusado.</value>
   </data>
@@ -3713,6 +3764,12 @@ de múltiplos dispositivos.</value>
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>Senha</value>
+  </data>
+  <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
+    <value>Telefone e Email serão passados ao {0} como informação de faturamento.</value>
+  </data>
+  <data name="PaymentPhoneToProvider" xml:space="preserve">
+    <value>O telefone será passado ao {0} como informação de faturamento.</value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>Desculpe, o pagamento foi cancelado pelo bot.</value>
@@ -4091,7 +4148,7 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
     <value>Apagar conta</value>
   </data>
   <data name="ResetAccountButton" xml:space="preserve">
-    <value>APAGAR</value>
+    <value>APAGAR CONTA</value>
   </data>
   <data name="ResetAccountCancelledAlert" xml:space="preserve">
     <value>Suas tentativas recentes de restaurar essa conta foram canceladas pelo usuário ativo. Tente novamente em 7 dias.</value>
@@ -4107,6 +4164,12 @@ Você pode cancelar esse processo a qualquer momento.</value>
   <data name="ResetAllNotifications" xml:space="preserve">
     <value>Restaurar Configurações</value>
   </data>
+  <data name="ResetAutomaticMediaDownload" xml:space="preserve">
+    <value>Apagar Configurações de Download</value>
+  </data>
+  <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
+    <value>Tem certeza que deseja apagar as configurações de download automático?</value>
+  </data>
   <data name="ResetMyAccount" xml:space="preserve">
     <value>APAGAR MINHA CONTA</value>
   </data>
@@ -4117,7 +4180,7 @@ Você pode cancelar esse processo a qualquer momento.</value>
     <value>Aviso</value>
   </data>
   <data name="ResetMyAccountWarningReset" xml:space="preserve">
-    <value>Apagar</value>
+    <value>Apagar conta</value>
   </data>
   <data name="ResetMyAccountWarningText" xml:space="preserve">
     <value>Essa ação não pode ser desfeita.
@@ -4186,9 +4249,6 @@ O canal "**{1}**" se tornará privado.</value>
   </data>
   <data name="RoamingUsage" xml:space="preserve">
     <value>Uso de Dados em Roaming</value>
-  </data>
-  <data name="SETTINGS" xml:space="preserve">
-    <value>Configurações</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>Satélite</value>
@@ -4367,7 +4427,7 @@ Talvez você precise reiniciar o app para que isso tenha efeito.</value>
     <value>por 8 horas</value>
   </data>
   <data name="SendLiveLocationInfo" xml:space="preserve">
-    <value>Atualizado em tempo real enquanto você se move</value>
+    <value>Atualizada em tempo real enquanto você se move</value>
   </data>
   <data name="SendLocation" xml:space="preserve">
     <value>Enviar sua localização atual</value>
@@ -4421,9 +4481,9 @@ Talvez você precise reiniciar o app para que isso tenha efeito.</value>
     <value>Nós enviamos o código para o aplicativo do **Telegram** em seu outro dispositivo.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
-    <value>Enviamos uma ligação de ativação para **{0}**.
+    <value>Estamos ligando para o seu telefone **{0}**.
 
-Não atenda, o Telegram processará automaticamente.</value>
+Não atenda, o Telegram processará tudo automaticamente.</value>
   </data>
   <data name="SentCallOnly" xml:space="preserve">
     <value>Nós te ligaremos em **{0}** para ditar o código.</value>
@@ -4472,6 +4532,9 @@ Não atenda, o Telegram processará automaticamente.</value>
   </data>
   <data name="SetTimer" xml:space="preserve">
     <value>Definir timer de autodestruição</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Configurações</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>Sombras</value>
@@ -4680,6 +4743,24 @@ Não atenda, o Telegram processará automaticamente.</value>
   <data name="Support" xml:space="preserve">
     <value>Suporte</value>
   </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>Sincronizar Contatos</value>
+  </data>
+  <data name="SyncContactsAdded" xml:space="preserve">
+    <value>Contatos deste dispositivo foram adicionados a sua conta.</value>
+  </data>
+  <data name="SyncContactsInfoOff" xml:space="preserve">
+    <value>Ative para importar contatos desse dispositivo para sua conta.</value>
+  </data>
+  <data name="SyncContactsInfoOn" xml:space="preserve">
+    <value>Contatos deste dispositivo serão adicionados a sua conta.</value>
+  </data>
+  <data name="SyncContactsOff" xml:space="preserve">
+    <value>Contatos deste dispositivo não serão adicionados a sua conta.</value>
+  </data>
+  <data name="SyncContactsOn" xml:space="preserve">
+    <value>Contatos deste dispositivo serão adicionados a sua conta.</value>
+  </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>Administrador do Sistema</value>
   </data>
@@ -4704,7 +4785,7 @@ Não atenda, o Telegram processará automaticamente.</value>
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} contatos no Telegram </value>
   </data>
-  <data name="TelegramFAQ" xml:space="preserve">
+  <data name="TelegramFaq" xml:space="preserve">
     <value>Perguntas Frequentes</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
@@ -4962,7 +5043,7 @@ Não atenda, o Telegram processará automaticamente.</value>
 Você pode usar **a–z**, **0–9** e underline. O tamanho mínimo é **5** caracteres.</value>
   </data>
   <data name="UsernameHelpLink" xml:space="preserve">
-    <value>Esse link abre um chat com você mesmo no Telegram:
+    <value>Esse link abre um chat com você no Telegram:
 {0}</value>
   </data>
   <data name="UsernameInUse" xml:space="preserve">
@@ -5024,6 +5105,9 @@ Você pode usar **a–z**, **0–9** e underline. O tamanho mínimo é **5** car
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Atender</value>
+  </data>
+  <data name="VoipAnsweringAsAccount" xml:space="preserve">
+    <value>Respondendo como %s</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
@@ -5191,7 +5275,7 @@ Você pode usar **a–z**, **0–9** e underline. O tamanho mínimo é **5** car
     <value>visto na última semana</value>
   </data>
   <data name="WrongCountry" xml:space="preserve">
-    <value>Código do país incorreto</value>
+    <value>Código do país inválido</value>
   </data>
   <data name="WrongNumber" xml:space="preserve">
     <value>Número incorreto?</value>

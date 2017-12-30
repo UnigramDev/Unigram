@@ -132,8 +132,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 01210600;
-        public const string CurrentChangelog = "- New Appearance settings: theme, chat background and font size in a single place";
+        public const int CurrentVersion = 01311440;
+        public const string CurrentChangelog = "- We're finally leaving alpha stage to enter beta stage!\n- The core of the app has been fully rewritten to be faster and more stable.\n- Downloads and uploads run at full speed now.\n- Added full support for MTProto 2.0.";
 
         private int? _appVersion;
         public int Version

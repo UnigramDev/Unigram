@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -33,46 +35,48 @@ namespace Unigram.ViewModels.Payments
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var buffer = parameter as byte[];
-            if (buffer != null)
+            if (buffer == null)
             {
-                using (var from = new TLBinaryReader(buffer))
+                return Task.CompletedTask;
+            }
+
+            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            {
+                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption, string, string, bool>(from);
+
+                Message = tuple.Item1;
+                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                PaymentForm = tuple.Item2;
+                Info = tuple.Item3;
+                Shipping = tuple.Item5;
+                CredentialsTitle = string.IsNullOrEmpty(tuple.Item6) ? null : tuple.Item6;
+                Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
+                Provider = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.ProviderId) as TLUser;
+
+                if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard && _credentialsTitle == null)
                 {
-                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption, string, string, bool>(from);
+                    CredentialsTitle = savedCard.Title;
+                }
 
-                    Message = tuple.Item1;
-                    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                    PaymentForm = tuple.Item2;
-                    Info = tuple.Item3;
-                    Shipping = tuple.Item5;
-                    CredentialsTitle = string.IsNullOrEmpty(tuple.Item6) ? null : tuple.Item6;
-                    Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
-                    Provider = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.ProviderId) as TLUser;
+                var amount = 0L;
+                foreach (var price in _paymentForm.Invoice.Prices)
+                {
+                    amount += price.Amount;
+                }
 
-                    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard && _credentialsTitle == null)
-                    {
-                        CredentialsTitle = savedCard.Title;
-                    }
-
-                    var amount = 0L;
-                    foreach (var price in _paymentForm.Invoice.Prices)
+                if (_shipping != null)
+                {
+                    foreach (var price in _shipping.Prices)
                     {
                         amount += price.Amount;
                     }
-
-                    if (_shipping != null)
-                    {
-                        foreach (var price in _shipping.Prices)
-                        {
-                            amount += price.Amount;
-                        }
-                    }
-
-                    TotalAmount = amount;
-
-                    _requestedInfo = tuple.Item4;
-                    _credentials = tuple.Item7;
-                    _save = tuple.Item8;
                 }
+
+                TotalAmount = amount;
+
+                _requestedInfo = tuple.Item4;
+                _credentials = tuple.Item7;
+                _save = tuple.Item8;
             }
 
             return Task.CompletedTask;

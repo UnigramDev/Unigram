@@ -15,10 +15,7 @@
     HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
     MaxWidth="{ThemeResource MessageMaxWidth}">
 
-    <!-- TODO: not the right way -->
-    <Border Height="2" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
-
-    <UserControl x:Name="LayoutRoot">
+    <UserControl x:Name="LayoutRoot" Margin="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=0}">
         <Grid x:Name="ContentPanel"
                 Padding="{ThemeResource MessageContentPadding}"
                 CornerRadius="{ThemeResource MessageCornerRadius}"
@@ -92,7 +89,7 @@
                     <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
                 </RichTextBlock.Resources>
                 <Paragraph>
-                    <Span/><InlineUIContainer><TextBlock x:Name="Placeholder" TextLineBounds="TrimToBaseline" FontSize="{ThemeResource MessageFontSize}" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
+                    <Span/><InlineUIContainer><TextBlock x:Name="Placeholder" IsHitTestVisible="False" TextLineBounds="TrimToBaseline" FontSize="{ThemeResource MessageFontSize}" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
                 </Paragraph>
             </RichTextBlock>
 

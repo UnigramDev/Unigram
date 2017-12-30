@@ -14,6 +14,8 @@ using Telegram.Api.TL.Methods;
 using Telegram.Api.TL.Help.Methods;
 using Telegram.Api.TL.Messages.Methods;
 using Telegram.Api.TL.Messages;
+using Telegram.Api.Native.TL;
+using Telegram.Api.Native;
 
 namespace Telegram.Api.Services
 {
@@ -59,7 +61,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void GetFavedStickersAsync( int hash, Action<TLMessagesFavedStickersBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetFavedStickersAsync(int hash, Action<TLMessagesFavedStickersBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetFavedStickers { Hash = hash };
 
@@ -69,11 +71,7 @@ namespace Telegram.Api.Services
 
         public void ClearRecentStickersAsync(bool attached, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesClearRecentStickers();
-            if (attached)
-            {
-                obj.IsAttached = true;
-            }
+            var obj = new TLMessagesClearRecentStickers { IsAttached = attached };
 
             const string caption = "messages.clearRecentStickers";
             SendInformativeMessage(caption, obj, callback, faultCallback);
@@ -84,7 +82,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesReadFeaturedStickers { Id = id };
 
             const string caption = "messages.readFeaturedStickers";
-            SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetAllDraftsAsync(Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
@@ -212,16 +210,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesGetInlineBotResults { Flags = 0, Bot = bot, Peer = peer, GeoPoint = geoPoint, Query = query, Offset = offset };
 
             const string caption = "messages.getInlineBotResults";
-            SendInformativeMessage<TLMessagesBotResults>(caption, obj, 
-                result =>
-                {
-                    _cacheService.SyncUsers(result.Users,
-                        r =>
-                        {
-                            callback?.Invoke(result);
-                        });
-                },
-                faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void SetInlineBotResultsAsync(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM, Action<bool> callback, Action<TLRPCError> faultCallback = null)
@@ -398,7 +387,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesReportSpam { Peer = peer };
 
             const string caption = "messages.reportSpam";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void GetWebPagePreviewAsync(string message, Action<TLMessageMediaBase> callback, Action<TLRPCError> faultCallback = null)
@@ -797,7 +786,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesGetBotCallbackAnswer { Peer = peer, MsgId = messageId, Data = data, HasData = data != null, IsGame = game };
 
             const string caption = "messages.getBotCallbackAnswer";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void StartBotAsync(TLInputUserBase bot, string startParam, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
@@ -1022,7 +1011,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesSetEncryptedTyping { Peer = peer, Typing = typing };
 
             const string caption = "messages.setEncryptedTyping";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void SetTypingAsync(TLInputPeerBase peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null)
@@ -1031,7 +1020,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesSetTyping { Peer = peer, Action = action };
 
             const string caption = "messages.setTyping";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void SetTypingAsync(TLInputPeerBase peer, TLSendMessageActionBase action, Action<bool> callback, Action<TLRPCError> faultCallback = null)
@@ -1123,7 +1112,7 @@ namespace Telegram.Api.Services
                 var r = obj;
                 _cacheService.SyncDialogs(result, callback);
             },
-            faultCallback, 3);
+            faultCallback);
         }
 
         private void GetChannelHistoryAsyncInternal(bool sync, TLPeerBase peer, TLMessagesMessagesBase result, Action<TLMessagesMessagesBase> callback)
@@ -1134,8 +1123,12 @@ namespace Telegram.Api.Services
             }
             else
             {
-                _cacheService.AddChats(result.Chats, results => { });
-                _cacheService.AddUsers(result.Users, results => { });
+                if (result is ITLMessages messages)
+                {
+                    _cacheService.AddChats(messages.Chats, results => { });
+                    _cacheService.AddUsers(messages.Users, results => { });
+                }
+
                 callback(result);
             }
         }
@@ -1148,15 +1141,19 @@ namespace Telegram.Api.Services
             }
             else
             {
-                _cacheService.AddChats(result.Chats, results => { });
-                _cacheService.AddUsers(result.Users, results => { });
+                if (result is ITLMessages messages)
+                {
+                    _cacheService.AddChats(messages.Chats, results => { });
+                    _cacheService.AddUsers(messages.Users, results => { });
+                }
+
                 callback(result);
             }
         }
 
-        public void GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit, int hash, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = offsetDate, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
+            var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = offsetDate, Limit = limit, MaxId = int.MaxValue, MinId = 0, Hash = hash };
 
             //Debug.WriteLine("UpdateItems start request elapsed=" + (timer != null? timer.Elapsed.ToString() : null));
 
@@ -1166,176 +1163,15 @@ namespace Telegram.Api.Services
                 {
                     //Debug.WriteLine("UpdateItems stop request elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
 
-                    foreach (var message in result.Messages)
+                    if (result is ITLMessages messages)
                     {
-                        ProcessSelfMessage(message);
+                        foreach (var message in messages.Messages)
+                        {
+                            ProcessSelfMessage(message);
+                        }
                     }
 
-                    var replyId = new TLVector<int>();
-                    var waitingList = new List<TLMessage>();
-                    //for (var i = 0; i < result.Messages.Count; i++)
-                    //{
-                    //    var message25 = result.Messages[i] as TLMessage;
-                    //    if (message25 != null 
-                    //        && message25.ReplyToMsgId != null 
-                    //        && message25.ReplyToMsgId.Value > 0)
-                    //    {
-                    //        var cachedReply = _cacheService.GetMessage(message25.ReplyToMsgId);
-                    //        if (cachedReply != null)
-                    //        {
-                    //            message25.Reply = cachedReply;
-                    //        }
-                    //        else
-                    //        {
-                    //            replyId.Add(message25.ReplyToMsgId);
-                    //            waitingList.Add(message25);
-                    //        }
-                    //    }
-                    //}
-
-                    if (replyId.Count > 0)
-                    {
-                        //Debug.WriteLine("UpdateItems start GetMessages elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
-
-                        GetMessagesAsync(
-                            replyId,
-                            messagesResult =>
-                            {
-                                //Debug.WriteLine("UpdateItems stop GetMessages elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
-
-                                _cacheService.AddChats(result.Chats, results => { });
-                                _cacheService.AddUsers(result.Users, results => { });
-
-                                for (var i = 0; i < messagesResult.Messages.Count; i++)
-                                {
-                                    for (var j = 0; j < waitingList.Count; j++)
-                                    {
-                                        var messageToReply = messagesResult.Messages[i] as TLMessage;
-                                        if (messageToReply != null
-                                            && messageToReply.Id == waitingList[j].Id)
-                                        {
-                                            waitingList[j].Reply = messageToReply;
-                                        }
-                                    }
-                                }
-
-                                var inputChannelPeer = inputPeer as TLInputPeerChannel;
-                                if (inputChannelPeer != null)
-                                {
-                                    var channel = _cacheService.GetChat(inputChannelPeer.ChannelId) as TLChannel;
-                                    if (channel != null)
-                                    {
-                                        var maxIndex = channel.ReadInboxMaxId != null ? channel.ReadInboxMaxId : 0;
-                                        foreach (var messageBase in messagesResult.Messages)
-                                        {
-                                            var messageCommon = messageBase as TLMessage;
-                                            if (messageCommon != null
-                                                && !messageCommon.IsOut
-                                                && messageCommon.Id > maxIndex)
-                                            {
-                                                messageCommon.SetUnread(true);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                //Debug.WriteLine("UpdateItems stop GetMessages GetHistoryAsyncInternal elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
-
-                                GetHistoryAsyncInternal(sync, peer, result, callback);
-                            },
-                            faultCallback);
-                    }
-                    else
-                    {
-                        //Debug.WriteLine("UpdateItems GetHistoryAsyncInternal elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
-
-                        GetHistoryAsyncInternal(sync, peer, result, callback);
-                    }
-                },
-                faultCallback);
-        }
-
-        public void GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = 0, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
-
-            TLUtils.WriteLine(string.Format("{0} {1} messages.getHistory peer={2} offset={3} max_id={4} limit={5}", string.Empty, debugInfo, inputPeer, offset, maxId, limit), LogSeverity.Error);
-            const string caption = "messages.getHistory";
-            SendInformativeMessage<TLMessagesMessagesBase>(caption, obj,
-                result =>
-                {
-                    var replyId = new TLVector<int>();
-                    var waitingList = new List<TLMessage>();
-                    //for (var i = 0; i < result.Messages.Count; i++)
-                    //{
-                    //    var message25 = result.Messages[i] as TLMessage;
-                    //    if (message25 != null 
-                    //        && message25.ReplyToMsgId != null 
-                    //        && message25.ReplyToMsgId.Value > 0)
-                    //    {
-                    //        var cachedReply = _cacheService.GetMessage(message25.ReplyToMsgId);
-                    //        if (cachedReply != null)
-                    //        {
-                    //            message25.Reply = cachedReply;
-                    //        }
-                    //        else
-                    //        {
-                    //            replyId.Add(message25.ReplyToMsgId);
-                    //            waitingList.Add(message25);
-                    //        }
-                    //    }
-                    //}
-
-                    if (replyId.Count > 0)
-                    {
-                        GetMessagesAsync(
-                            replyId,
-                            messagesResult =>
-                            {
-                                _cacheService.AddChats(result.Chats, results => { });
-                                _cacheService.AddUsers(result.Users, results => { });
-
-                                for (var i = 0; i < messagesResult.Messages.Count; i++)
-                                {
-                                    for (var j = 0; j < waitingList.Count; j++)
-                                    {
-                                        var messageToReply = messagesResult.Messages[i] as TLMessage;
-                                        if (messageToReply != null
-                                            && messageToReply.Id == waitingList[j].Id)
-                                        {
-                                            waitingList[j].Reply = messageToReply;
-                                        }
-                                    }
-                                }
-
-                                var inputChannelPeer = inputPeer as TLInputPeerChannel;
-                                if (inputChannelPeer != null)
-                                {
-                                    var channel = _cacheService.GetChat(inputChannelPeer.ChannelId) as TLChannel;
-                                    if (channel != null)
-                                    {
-                                        var maxIndex = channel.ReadInboxMaxId != null ? channel.ReadInboxMaxId : 0;
-                                        foreach (var messageBase in messagesResult.Messages)
-                                        {
-                                            var messageCommon = messageBase as TLMessage;
-                                            if (messageCommon != null
-                                                && !messageCommon.IsOut
-                                                && messageCommon.Id > maxIndex)
-                                            {
-                                                messageCommon.SetUnread(true);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                GetChannelHistoryAsyncInternal(sync, peer, result, callback);
-                            },
-                            faultCallback);
-                    }
-                    else
-                    {
-                        GetChannelHistoryAsyncInternal(sync, peer, result, callback);
-                    }
+                    GetHistoryAsyncInternal(sync, peer, result, callback);
                 },
                 faultCallback);
         }
@@ -1351,11 +1187,18 @@ namespace Telegram.Api.Services
             const string caption = "messages.search";
             SendInformativeMessage<TLMessagesMessagesBase>(caption, obj, result =>
             {
-                _cacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => callback?.Invoke(result));
+                if (result is ITLMessages messages)
+                {
+                    _cacheService.SyncUsersAndChats(messages.Users, messages.Chats, tuple => callback?.Invoke(result));
+                }
+                else
+                {
+                    callback?.Invoke(result);
+                }
 
                 //Execute.ShowDebugMessage("messages.search result " + result.Messages.Count);
                 //callback?.Invoke(result);
-            }, faultCallback);
+            }, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void SearchGlobalAsync(string query, int offsetDate, TLInputPeerBase offsetPeer, int offsetId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
@@ -1367,9 +1210,13 @@ namespace Telegram.Api.Services
             const string caption = "messages.searchGlobal";
             SendInformativeMessage<TLMessagesMessagesBase>(caption, obj, result =>
             {
-                TLUtils.WriteLine(string.Format("{0} messages.searchGlobal result={1}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), result.Messages.Count), LogSeverity.Error);
+                if (result is ITLMessages messages)
+                {
+                    TLUtils.WriteLine(string.Format("{0} messages.searchGlobal result={1}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), messages.Messages.Count), LogSeverity.Error);
+                }
+
                 callback?.Invoke(result);
-            }, faultCallback);
+            }, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void ReadHistoryAsync(TLInputPeerBase peer, int maxId, int offset, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
@@ -1441,7 +1288,7 @@ namespace Telegram.Api.Services
 
                     callback(result);
                 },
-                faultCallback);
+                faultCallback, flags: RequestFlag.InvokeAfter);
         }
 
         public void DeleteMessagesAsync(TLVector<int> id, bool revoke, Action<TLMessagesAffectedMessages> callback, Action<TLRPCError> faultCallback = null)
@@ -1664,7 +1511,7 @@ namespace Telegram.Api.Services
 
                     callback?.Invoke(result);
                 },
-                faultCallback);
+                faultCallback, flags: RequestFlag.InvokeAfter);
         }
 
         public void EditChatPhotoAsync(int chatId, TLInputChatPhotoBase photo, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
@@ -1688,7 +1535,7 @@ namespace Telegram.Api.Services
 
                     callback?.Invoke(result);
                 },
-                faultCallback);
+                faultCallback, flags: RequestFlag.InvokeAfter);
         }
 
         public void AddChatUserAsync(int chatId, TLInputUserBase userId, int fwdLimit, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
@@ -1736,7 +1583,7 @@ namespace Telegram.Api.Services
 
                     callback?.Invoke(result);
                 },
-                faultCallback);
+                faultCallback, flags: RequestFlag.InvokeAfter);
         }
 
         public void CreateChatAsync(TLVector<TLInputUserBase> users, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
@@ -1760,7 +1607,7 @@ namespace Telegram.Api.Services
 
                     callback?.Invoke(result);
                 },
-                faultCallback);
+                faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void ExportChatInviteAsync(int chatId, Action<TLExportedChatInviteBase> callback, Action<TLRPCError> faultCallback = null)
@@ -1789,7 +1636,7 @@ namespace Telegram.Api.Services
                     }
                     else if (result is TLChatInviteAlready chatInviteAlready)
                     {
-                        _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), new TLVector<TLChatBase> { chatInviteAlready.Chat }, tuple => 
+                        _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), new TLVector<TLChatBase> { chatInviteAlready.Chat }, tuple =>
                         {
                             chatInviteAlready.Chat = tuple.Item2.FirstOrDefault() ?? chatInviteAlready.Chat;
                             callback?.Invoke(result);
@@ -1799,8 +1646,8 @@ namespace Telegram.Api.Services
                     {
                         callback?.Invoke(result);
                     }
-                }
-                , faultCallback);
+                },
+                faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void ImportChatInviteAsync(string hash, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
@@ -1830,65 +1677,7 @@ namespace Telegram.Api.Services
 
                     callback?.Invoke(result);
                 },
-                faultCallback);
-        }
-
-        public void SendActionsAsync(List<TLObject> actions, Action<TLObject, object> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var container = new TLMsgContainer { Messages = new List<TLContainerTransportMessage>() };
-            var historyItems = new List<HistoryItem>();
-            for (var i = 0; i < actions.Count; i++)
-            {
-                var obj = actions[i];
-                int sequenceNumber;
-                long messageId;
-                lock (_activeTransportRoot)
-                {
-                    sequenceNumber = _activeTransport.SequenceNumber * 2 + 1;
-                    _activeTransport.SequenceNumber++;
-                    messageId = _activeTransport.GenerateMessageId(true);
-                }
-
-                var data = i > 0 ? new TLInvokeAfterMsg { MsgId = container.Messages[i - 1].MsgId, Query = obj } : obj;
-                var invokeWithoutUpdates = new TLInvokeWithoutUpdates { Query = data };
-
-                var transportMessage = new TLContainerTransportMessage
-                {
-                    MsgId = messageId,
-                    SeqNo = sequenceNumber,
-                    Query = invokeWithoutUpdates
-                };
-
-                var historyItem = new HistoryItem
-                {
-                    SendTime = DateTime.Now,
-                    Caption = "messages.containerPart" + i,
-                    Object = obj,
-                    Message = transportMessage,
-                    Callback = result => callback?.Invoke(obj, result),
-                    AttemptFailed = null,
-                    FaultCallback = faultCallback,
-                    ClientTicksDelta = ClientTicksDelta,
-                    Status = RequestStatus.Sent,
-                };
-                historyItems.Add(historyItem);
-
-                container.Messages.Add(transportMessage);
-            }
-
-
-            lock (_historyRoot)
-            {
-                foreach (var historyItem in historyItems)
-                {
-                    _history[historyItem.Hash] = historyItem;
-                }
-            }
-#if DEBUG
-            RaisePropertyChanged(() => History);
-#endif
-
-            SendNonInformativeMessage<TLObject>("messages.container", container, result => callback(null, result), faultCallback);
+                faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void ToggleChatAdminsAsync(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
@@ -2006,27 +1795,6 @@ namespace Telegram.Api.Services
                     callback?.Invoke(result);
                 },
                 faultCallback);
-        }
-
-        public int SendingMessages
-        {
-            get
-            {
-                var result = 0;
-                lock (_historyRoot)
-                {
-                    foreach (var historyItem in _history.Values)
-                    {
-                        if (historyItem.Caption.StartsWith("messages.containerPart"))
-                        {
-                            result++;
-                            break;
-                        }
-                    }
-                }
-
-                return result;
-            }
         }
     }
 }

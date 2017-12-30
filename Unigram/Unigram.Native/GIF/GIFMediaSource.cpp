@@ -3,13 +3,16 @@
 #include "pch.h"
 #include "BufferLock.h"
 #include "GIFMediaSource.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Unigram::Native;
 
 HRESULT GIFMediaSource::RuntimeClassInitialize(IMFByteStream* byteStream)
 {
 	if (byteStream == nullptr)
-		return E_POINTER;
+	{
+		return E_INVALIDARG;
+	}
 
 	HRESULT result;
 	ComPtr<IMFPresentationDescriptor> presentationDescriptor;
@@ -31,7 +34,9 @@ DWORD GIFMediaSource::GetMediaStreamCount() noexcept
 MediaStream* GIFMediaSource::GetMediaStreamByIndex(DWORD streamIndex) noexcept
 {
 	if (streamIndex != 0)
+	{
 		return nullptr;
+	}
 
 	return m_mediaStream.Get();
 }
@@ -39,7 +44,9 @@ MediaStream* GIFMediaSource::GetMediaStreamByIndex(DWORD streamIndex) noexcept
 MediaStream* GIFMediaSource::GetMediaStreamById(DWORD streamId) noexcept
 {
 	if (streamId != 0)
+	{
 		return nullptr;
+	}
 
 	return m_mediaStream.Get();
 }
@@ -78,7 +85,9 @@ HRESULT GIFMediaSource::SetD3DManager(IUnknown* pManager)
 	auto lock = GetCriticalSection().Lock();
 
 	if (GetState() == MediaSourceState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	ComPtr<IMFDXGIDeviceManager> deviceManager;
@@ -134,12 +143,16 @@ HRESULT GIFMediaStream::OnSampleRequested(IUnknown* pToken)
 	ReturnIfFailed(result, sample->SetSampleDuration(frameDefinition.Delay));
 
 	if (pToken != nullptr)
+	{
 		ReturnIfFailed(result, sample->SetUnknown(MFSampleExtension_Token, pToken));
+	}
 
 	ReturnIfFailed(result, DeliverSample(sample.Get()));
 
 	if (++m_frameIndex == m_frameDefinitions.size())
+	{
 		ReturnIfFailed(result, NotifyEndOfStream());
+	}
 
 	m_frameTime += frameDefinition.Delay;
 	return S_OK;
@@ -155,7 +168,9 @@ HRESULT GIFMediaStream::OnStart(MFTIME position)
 		for (DWORD i = 0; i < m_frameDefinitions.size(); i++)
 		{
 			if (m_frameTime + m_frameDefinitions[i].Delay > position)
+			{
 				break;
+			}
 
 			m_frameIndex = i;
 			m_frameTime += m_frameDefinitions[i].Delay;
@@ -199,7 +214,9 @@ HRESULT GIFMediaStream::SetD3DManager(IMFDXGIDeviceManager* deviceManager)
 	auto lock = GetCriticalSection().Lock();
 
 	if (GetState() != MediaStreamState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	m_dxgiDeviceManager = deviceManager;
 	return CreateDeviceResources();
@@ -379,27 +396,39 @@ HRESULT GIFMediaStream::GetFrameDefinition(IWICBitmapFrameDecode* frame, GIFFram
 	PROPVARIANT variant;
 	PropVariantInit(&variant);
 	if (SUCCEEDED(metadataReader->GetMetadataByName(L"/imgdesc/Left", &variant)))
+	{
 		frameDefinition->Bounds.left = variant.uiVal;
+	}
 
 	PropVariantInit(&variant);
 	if (SUCCEEDED(metadataReader->GetMetadataByName(L"/imgdesc/Top", &variant)))
+	{
 		frameDefinition->Bounds.top = variant.uiVal;
+	}
 
 	PropVariantInit(&variant);
 	if (SUCCEEDED(metadataReader->GetMetadataByName(L"/imgdesc/Width", &variant)))
+	{
 		frameDefinition->Bounds.right = frameDefinition->Bounds.left + variant.uiVal;
+	}
 
 	PropVariantInit(&variant);
 	if (SUCCEEDED(metadataReader->GetMetadataByName(L"/imgdesc/Height", &variant)))
+	{
 		frameDefinition->Bounds.bottom = frameDefinition->Bounds.top + variant.uiVal;
+	}
 
 	PropVariantInit(&variant);
 	if (SUCCEEDED(metadataReader->GetMetadataByName(L"/grctlext/Delay", &variant)) && variant.uiVal > 0)
+	{
 		frameDefinition->Delay = std::max(90000, variant.uiVal * 100000);
+	}
 
 	PropVariantInit(&variant);
 	if (SUCCEEDED(metadataReader->GetMetadataByName(L"/grctlext/Disposal", &variant)))
+	{
 		frameDefinition->DisposalMethod = static_cast<GIFFrameDisposalMethod>(variant.bVal);
+	}
 
 	return S_OK;
 }
@@ -467,11 +496,15 @@ HRESULT GIFMediaStream::CreateFrameSample(ID2D1Bitmap1* frameBufferBitmap, D2D_S
 
 	BufferLock2D bufferLock(mediaBuffer2D.Get());
 	if (!bufferLock.IsValid())
+	{
 		return MF_E_NO_VIDEO_SAMPLE_AVAILABLE;
+	}
 
 	BitmapLock bitmapLock(D2D1_MAP_OPTIONS_READ, frameBufferBitmap);
 	if (!bitmapLock.IsValid())
+	{
 		return MF_E_NO_VIDEO_SAMPLE_AVAILABLE;
+	}
 
 	for (DWORD i = 0; i < frameSize.height; i++)
 	{

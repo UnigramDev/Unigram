@@ -23,8 +23,6 @@ namespace Unigram.Selectors
 
         public DataTemplate ServiceMessageTemplate { get; set; }
         public DataTemplate ServiceMessagePhotoTemplate { get; set; }
-        public DataTemplate ServiceMessageLocalTemplate { get; set; }
-        public DataTemplate ServiceMessageDateTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -70,15 +68,15 @@ namespace Unigram.Selectors
                 {
                     return EmptyMessageTemplate;
                 }
-                else if (serviceMessage.Action is TLMessageActionDate)
-                {
-                    return ServiceMessageDateTemplate;
-                }
-                else if (serviceMessage.Action is TLMessageActionUnreadMessages)
-                {
-                    //return ServiceMessageUnreadTemplate;
-                    return ServiceMessageLocalTemplate;
-                }
+                //else if (serviceMessage.Action is TLMessageActionDate)
+                //{
+                //    return ServiceMessageDateTemplate;
+                //}
+                //else if (serviceMessage.Action is TLMessageActionUnreadMessages)
+                //{
+                //    //return ServiceMessageUnreadTemplate;
+                //    return ServiceMessageLocalTemplate;
+                //}
                 else if (serviceMessage.Action is TLMessageActionPhoneCall)
                 {
                     return serviceMessage.IsOut ? ServiceUserCallTemplate : ServiceFriendCallTemplate;

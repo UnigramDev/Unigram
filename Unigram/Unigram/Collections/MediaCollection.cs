@@ -53,20 +53,20 @@ namespace Unigram.Collections
             try
             {
                 var response = await _protoService.SearchAsync(_peer, _query, null, _filter, 0, 0, _lastMaxId, 0, 50);
-                if (response.IsSucceeded)
+                if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
-                    if (response.Result.Messages.Count > 0)
+                    if (result.Messages.Count > 0)
                     {
                         //_lastMaxId = response.Result.Messages.Min(x => x.Id);
-                        _lastMaxId += response.Result.Messages.Count;
-                        _hasMore = response.Result.Messages.Count == 50;
+                        _lastMaxId += result.Messages.Count;
+                        _hasMore = result.Messages.Count == 50;
                     }
                     else
                     {
                         _hasMore = false;
                     }
 
-                    return response.Result.Messages.OfType<TLMessage>().GroupBy(x =>
+                    return result.Messages.OfType<TLMessage>().GroupBy(x =>
                     {
                         var clientDelta = MTProtoService.Current.ClientTicksDelta;
                         var utc0SecsInt = x.Date - clientDelta / 4294967296.0;

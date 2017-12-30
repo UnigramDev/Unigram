@@ -59,8 +59,8 @@ namespace Unigram
 			virtual HRESULT OnShutdown() override;
 
 		private:
-			STDMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
-			STDMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
+			IFACEMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
+			IFACEMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
 			HRESULT SetStreamPosition(LONGLONG time);
 
 			UINT32 m_channelCount;

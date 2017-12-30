@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -27,25 +29,27 @@ namespace Unigram.ViewModels.Payments
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var buffer = parameter as byte[];
-            if (buffer != null)
+            if (buffer == null)
             {
-                using (var from = new TLBinaryReader(buffer))
+                return Task.CompletedTask;
+            }
+
+            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            {
+                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm>(from);
+
+                Message = tuple.Item1;
+                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                PaymentForm = tuple.Item2;
+
+                var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
+                if (info.ShippingAddress == null)
                 {
-                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm>(from);
-
-                    Message = tuple.Item1;
-                    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                    PaymentForm = tuple.Item2;
-
-                    var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
-                    if (info.ShippingAddress == null)
-                    {
-                        info.ShippingAddress = new TLPostAddress();
-                    }
-
-                    Info = info;
-                    SelectedCountry = Country.Countries.FirstOrDefault(x => x.Code.Equals(info.ShippingAddress.CountryIso2, StringComparison.OrdinalIgnoreCase));
+                    info.ShippingAddress = new TLPostAddress();
                 }
+
+                Info = info;
+                SelectedCountry = Country.Countries.FirstOrDefault(x => x.Code.Equals(info.ShippingAddress.CountryIso2, StringComparison.OrdinalIgnoreCase));
             }
 
             return Task.CompletedTask;
@@ -64,7 +68,7 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        public IList<Country> Countries { get; } = Country.Countries;
+        public IList<Country> Countries { get; } = Country.Countries.OrderBy(x => x.DisplayName).ToList();
 
         private Country _selectedCountry = Country.Countries[0];
         public Country SelectedCountry

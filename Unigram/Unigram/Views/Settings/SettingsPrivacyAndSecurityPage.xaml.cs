@@ -79,5 +79,15 @@ namespace Unigram.Views.Settings
                 Frame.Navigate(typeof(SettingsSecurityPasscodePage));
             }
         }
+
+        #region Binding
+
+        private string ConvertSync(bool sync)
+        {
+            return sync ? Strings.Android.SyncContactsInfoOn : Strings.Android.SyncContactsInfoOff;
+        }
+
+        #endregion
+
     }
 }

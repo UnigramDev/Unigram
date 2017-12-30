@@ -7,7 +7,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
-using Telegram.Api.Transport;
 using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Settings;
@@ -67,8 +66,7 @@ namespace Unigram.Views.Settings
 
                 if (SettingsHelper.IsProxyEnabled || SettingsHelper.IsProxyEnabled != enabled)
                 {
-                    UnigramContainer.Current.ResolveType<ITransportService>().Close();
-                    UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
+                    UnigramContainer.Current.ResolveType<IMTProtoService>().ToggleProxy();
                 }
             }
         }
