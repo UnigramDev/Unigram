@@ -224,7 +224,7 @@ namespace Unigram.Controls
                     _recorder.settings.VideoDeviceId = cameraDevice.Id;
                     await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
 
-                    this.BeginOnUIThread(async () =>
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                     {
                         if (_video)
                         {
@@ -235,9 +235,9 @@ namespace Unigram.Controls
                             await _roundView.SetAsync(_recorder.m_mediaCapture, _recorder._mirroringPreview);
                             await _recorder.SetPreviewRotationAsync();
                         }
-
-                        await _recorder.StartAsync();
                     });
+
+                    await _recorder.StartAsync();
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -463,6 +463,7 @@ namespace Unigram.Controls
                 if (m_lowLag != null)
                 {
                     await m_lowLag.StopAsync();
+                    await m_lowLag.FinishAsync();
                 }
                 else
                 {
