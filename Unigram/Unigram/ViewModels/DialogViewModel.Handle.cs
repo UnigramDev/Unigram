@@ -200,7 +200,6 @@ namespace Unigram.ViewModels
         {
             BeginOnUIThread(async () =>
             {
-                Items.Clear();
                 IsFirstSliceLoaded = false;
                 IsLastSliceLoaded = false;
 

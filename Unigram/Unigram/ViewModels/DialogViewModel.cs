@@ -922,8 +922,6 @@ namespace Unigram.ViewModels
                     _goBackStack.Push(previousId.Value);
                 }
 
-                Items.Clear();
-
                 var offset = -25;
                 var limit = 50;
 
@@ -934,6 +932,8 @@ namespace Unigram.ViewModels
                     {
                         ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                     }
+
+                    Items.Clear();
 
                     ProcessReplies(result.Messages);
                     MessageCollection.ProcessReplies(result.Messages);
@@ -1049,6 +1049,8 @@ namespace Unigram.ViewModels
                     {
                         ListField.SetScrollMode(maxId == int.MaxValue ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
                     }
+
+                    Items.Clear();
 
                     ProcessReplies(result.Messages);
                     MessageCollection.ProcessReplies(result.Messages);
