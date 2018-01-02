@@ -31,12 +31,24 @@ using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
     public partial class DialogViewModel
     {
         #region Reply
+
+        public RelayCommand MessageReplyLastCommand { get; }
+        private async void MessageReplyLastExecute()
+        {
+            var last = Items.LastOrDefault(x => x is TLMessageCommonBase message && message.RandomId == null);
+            if (last != null)
+            {
+                MessageReplyCommand.Execute(last);
+                await ListField.ScrollToItem(last, SnapPointsAlignment.Far, true, 4);
+            }
+        }
 
         public RelayCommand<TLMessageBase> MessageReplyCommand { get; }
         private void MessageReplyExecute(TLMessageBase message)
@@ -851,12 +863,13 @@ namespace Unigram.ViewModels
         #region Edit
 
         public RelayCommand MessageEditLastCommand { get; }
-        private void MessageEditLastExecute()
+        private async void MessageEditLastExecute()
         {
             var last = Items.LastOrDefault(x => x is TLMessage message && message.IsOut);
             if (last != null)
             {
                 MessageEditCommand.Execute(last);
+                await ListField.ScrollToItem(last, SnapPointsAlignment.Far, true, 4);
             }
         }
 

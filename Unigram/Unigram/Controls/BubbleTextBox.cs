@@ -459,6 +459,11 @@ namespace Unigram.Controls
                     ViewModel.MessageEditLastCommand.Execute();
                     e.Handled = true;
                 }
+                else if (e.Key == VirtualKey.Up && ctrl)
+                {
+                    ViewModel.MessageReplyLastCommand.Execute();
+                    e.Handled = true;
+                }
                 else if ((e.Key == VirtualKey.Up && alt) || (e.Key == VirtualKey.PageUp && ctrl) || (e.Key == VirtualKey.Tab && ctrl && shift))
                 {
                     ViewModel.Aggregator.Publish("move_up");

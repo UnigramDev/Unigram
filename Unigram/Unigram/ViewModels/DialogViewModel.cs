@@ -200,6 +200,7 @@ namespace Unigram.ViewModels
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
             MessagesCopyCommand = new RelayCommand(MessagesCopyExecute, MessagesCopyCanExecute);
 
+            MessageReplyLastCommand = new RelayCommand(MessageReplyLastExecute);
             MessageReplyCommand = new RelayCommand<TLMessageBase>(MessageReplyExecute);
             MessageDeleteCommand = new RelayCommand<TLMessageBase>(MessageDeleteExecute);
             MessageForwardCommand = new RelayCommand<TLMessageBase>(MessageForwardExecute);
