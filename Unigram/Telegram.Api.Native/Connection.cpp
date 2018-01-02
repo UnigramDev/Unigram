@@ -844,8 +844,7 @@ HRESULT Connection::OnProxyGreetingResponse(BYTE* buffer, UINT32 length)
 	switch (buffer[1])
 	{
 	case 0x00:
-		m_flags = FLAGS_SET_PROXYHANDSHAKESTATE(m_flags, ProxyHandshakeState::None);
-		break;
+		return OnProxyAuthenticationResponse(buffer, length);
 	case 0x02:
 	{
 		auto& connectionManager = m_datacenter->GetConnectionManager();
