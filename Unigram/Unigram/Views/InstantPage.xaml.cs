@@ -785,12 +785,17 @@ namespace Unigram.Views
             header.Margin = new Thickness(_padding, 0, 0, 0);
 
             var photo = photos.FirstOrDefault(x => x.Id == block.AuthorPhotoId);
-            var ellipse = new Ellipse();
-            ellipse.Width = 36;
-            ellipse.Height = 36;
-            ellipse.Margin = new Thickness(0, 0, _padding, 0);
-            ellipse.Fill = new ImageBrush { ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photo, true), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-            Grid.SetRowSpan(ellipse, 2);
+            if (photo is TLPhoto)
+            {
+                var ellipse = new Ellipse();
+                ellipse.Width = 36;
+                ellipse.Height = 36;
+                ellipse.Margin = new Thickness(0, 0, _padding, 0);
+                ellipse.Fill = new ImageBrush { ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photo, true), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                Grid.SetRowSpan(ellipse, 2);
+
+                header.Children.Add(ellipse);
+            }
 
             var textAuthor = new TextBlock();
             textAuthor.Text = block.Author;
@@ -806,7 +811,6 @@ namespace Unigram.Views
             Grid.SetColumn(textDate, 1);
             Grid.SetRow(textDate, 1);
 
-            header.Children.Add(ellipse);
             header.Children.Add(textAuthor);
             header.Children.Add(textDate);
 
