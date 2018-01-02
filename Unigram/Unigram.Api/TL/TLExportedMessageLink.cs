@@ -7,6 +7,7 @@ namespace Telegram.Api.TL
 	public partial class TLExportedMessageLink : TLObject 
 	{
 		public String Link { get; set; }
+		public String Html { get; set; }
 
 		public TLExportedMessageLink() { }
 		public TLExportedMessageLink(TLBinaryReader from)
@@ -19,11 +20,13 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from)
 		{
 			Link = from.ReadString();
+			Html = from.ReadString();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			to.WriteString(Link ?? string.Empty);
+			to.WriteString(Html ?? string.Empty);
 		}
 	}
 }

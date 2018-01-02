@@ -6,6 +6,7 @@ namespace Telegram.Api.TL.Contacts
 {
 	public partial class TLContactsFound : TLObject 
 	{
+		public TLVector<TLPeerBase> MyResults { get; set; }
 		public TLVector<TLPeerBase> Results { get; set; }
 		public TLVector<TLChatBase> Chats { get; set; }
 		public TLVector<TLUserBase> Users { get; set; }
@@ -20,6 +21,7 @@ namespace Telegram.Api.TL.Contacts
 
 		public override void Read(TLBinaryReader from)
 		{
+			MyResults = TLFactory.Read<TLVector<TLPeerBase>>(from);
 			Results = TLFactory.Read<TLVector<TLPeerBase>>(from);
 			Chats = TLFactory.Read<TLVector<TLChatBase>>(from);
 			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
@@ -27,6 +29,7 @@ namespace Telegram.Api.TL.Contacts
 
 		public override void Write(TLBinaryWriter to)
 		{
+			to.WriteObject(MyResults);
 			to.WriteObject(Results);
 			to.WriteObject(Chats);
 			to.WriteObject(Users);
