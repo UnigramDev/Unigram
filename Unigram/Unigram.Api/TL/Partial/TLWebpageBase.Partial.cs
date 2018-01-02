@@ -38,7 +38,7 @@ namespace Telegram.Api.TL
             }
         }
 
-        public override bool IsInstantGallery() => HasCachedPage && (string.Equals(SiteName, "twitter", StringComparison.OrdinalIgnoreCase) || string.Equals(SiteName, "instagram", StringComparison.OrdinalIgnoreCase));
+        public override bool IsInstantGallery() => HasCachedPage && (string.Equals(SiteName, "twitter", StringComparison.OrdinalIgnoreCase) || string.Equals(SiteName, "instagram", StringComparison.OrdinalIgnoreCase) || string.Equals(Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
 
         #region Instant Gallery
 

@@ -208,7 +208,8 @@ namespace Unigram.Selectors
             if (webPage.Photo != null && webPage.Type != null)
             {
                 if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase))
+                    string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
