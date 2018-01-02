@@ -15,7 +15,7 @@ namespace Telegram.Api.TL
 {
     public partial class TLDialog : INotifyPropertyChanged
     {
-        public ObservableCollection<TLMessageBase> Messages { get; set; } = new ObservableCollection<TLMessageBase>();
+        public List<TLMessageBase> Messages { get; set; } = new List<TLMessageBase>();
 
         public List<TLMessageBase> CommitMessages { get; set; } = new List<TLMessageBase>();
 

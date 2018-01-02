@@ -596,7 +596,7 @@ namespace Telegram.Api.Services.Cache
                                 Flags = 0,
                                 Peer = peer,
                                 With = with,
-                                Messages = new ObservableCollection<TLMessageBase> { commonMessage },
+                                Messages = new List<TLMessageBase> { commonMessage },
                                 TopMessage = commonMessage.Id,
                                 TopMessageRandomId = commonMessage.RandomId,
                                 TopMessageItem = commonMessage,
@@ -615,7 +615,7 @@ namespace Telegram.Api.Services.Cache
                                 Flags = 0,
                                 Peer = peer,
                                 With = with,
-                                Messages = new ObservableCollection<TLMessageBase> { commonMessage },
+                                Messages = new List<TLMessageBase> { commonMessage },
                                 TopMessage = commonMessage.Id,
                                 TopMessageRandomId = commonMessage.RandomId,
                                 TopMessageItem = commonMessage,
@@ -2175,7 +2175,7 @@ namespace Telegram.Api.Services.Cache
                     var dialog = Dialogs[i] as TLDialog;
                     if (dialog != null)
                     {
-                        dialog.Messages = new ObservableCollection<TLMessageBase>(dialog.Messages.Take(1));
+                        dialog.Messages = new List<TLMessageBase>(dialog.Messages.Take(1));
 
                         var message = dialog.Messages.FirstOrDefault();
                         if (message != null)

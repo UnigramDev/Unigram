@@ -2130,7 +2130,7 @@ namespace Telegram.Api.Services.Cache
                     if (dialog != null)
                     {
                         dialog._topMessageItem = messagesCache[peer.Id][dialogBase.TopMessage];
-                        dialog.Messages = new ObservableCollection<TLMessageBase> { dialog.TopMessageItem };
+                        dialog.Messages = new List<TLMessageBase> { dialog.TopMessageItem };
                     }
 
                     //var dialogChannel = dialogBase as TLDialogChannel;
