@@ -523,6 +523,11 @@ namespace Unigram.Controls
                 ViewModel.ClearReplyCommand.Execute();
                 e.Handled = true;
             }
+            else if (e.Key == VirtualKey.Search || (e.Key == VirtualKey.F && Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down)))
+            {
+                ViewModel.SearchCommand.Execute();
+                e.Handled = true;
+            }
 
             if (!e.Handled)
             {
