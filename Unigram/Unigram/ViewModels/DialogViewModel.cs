@@ -1359,15 +1359,18 @@ namespace Unigram.ViewModels
             var highlight = true;
             var pixel = new double?();
 
-            if (_scrollingIndex.TryGetValue(participant.ToPeer(), out int visible))
+            if (messageId == null)
             {
-                messageId = visible;
-                highlight = false;
-            }
+                if (_scrollingIndex.TryGetValue(participant.ToPeer(), out int visible))
+                {
+                    messageId = visible;
+                    highlight = false;
+                }
 
-            if (_scrollingPixel.TryGetValue(participant.ToPeer(), out double kpixel))
-            {
-                pixel = kpixel;
+                if (_scrollingPixel.TryGetValue(participant.ToPeer(), out double kpixel))
+                {
+                    pixel = kpixel;
+                }
             }
 
             //Aggregator.Subscribe(this);
