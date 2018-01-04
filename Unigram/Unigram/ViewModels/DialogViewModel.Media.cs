@@ -164,8 +164,9 @@ namespace Unigram.ViewModels
                     }
                 };
 
+                var videoProps = await file.Properties.GetVideoPropertiesAsync();
                 var musicProps = await file.Properties.GetMusicPropertiesAsync();
-                if (musicProps.Duration > TimeSpan.Zero && !file.Name.EndsWith(".mp4"))
+                if (musicProps.Duration > TimeSpan.Zero && videoProps.Width == 0 && videoProps.Height == 0)
                 {
                     document.Attributes.Add(new TLDocumentAttributeAudio
                     {
@@ -209,6 +210,9 @@ namespace Unigram.ViewModels
                             Caption = media.Caption,
                             Attributes = document.Attributes
                         };
+
+                        // If user sends a video as a file he wants it to be preserved, so let's force to not send it as a GIF
+                        inputMedia.IsNoSoundVideo = true;
 
                         var result = await ProtoService.SendMediaAsync(_peer, inputMedia, message);
                         //if (result.IsSucceeded)
@@ -278,8 +282,9 @@ namespace Unigram.ViewModels
                 }
             };
 
+            var videoProps = await file.Properties.GetVideoPropertiesAsync();
             var musicProps = await file.Properties.GetMusicPropertiesAsync();
-            if (musicProps.Duration > TimeSpan.Zero)
+            if (musicProps.Duration > TimeSpan.Zero && videoProps.Width == 0 && videoProps.Height == 0)
             {
                 document.Attributes.Add(new TLDocumentAttributeAudio
                 {
@@ -328,6 +333,9 @@ namespace Unigram.ViewModels
                             Caption = media.Caption,
                             Attributes = document.Attributes
                         };
+
+                        // If user sends a video as a file he wants it to be preserved, so let's force to not send it as a GIF
+                        inputMedia.IsNoSoundVideo = true;
 
                         var result = await ProtoService.SendMediaAsync(_peer, inputMedia, message);
                     }

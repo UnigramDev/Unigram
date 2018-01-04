@@ -440,7 +440,11 @@ namespace Unigram.Core.Helpers
             //file = await Package.Current.InstalledLocation.GetFileAsync("Assets\\Thumb.jpg");
 
             //var imageProps = await file.Properties.GetImagePropertiesAsync();
-            //var videoProps = await file.Properties.GetVideoPropertiesAsync();
+            var videoProps = await file.Properties.GetVideoPropertiesAsync();
+            if (videoProps.Duration > TimeSpan.Zero && videoProps.Width > 0 && videoProps.Height > 0)
+            {
+                return await GetVideoThumbnailAsync(file, videoProps, null);
+            }
 
             //if (imageProps.Width > 0 || videoProps.Width > 0)
             //{
