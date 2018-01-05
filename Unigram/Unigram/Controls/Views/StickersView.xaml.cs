@@ -37,6 +37,12 @@ namespace Unigram.Controls.Views
             InitializeComponent();
         }
 
+        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            if (ViewModel != null) Bindings.Update();
+            if (ViewModel == null) Bindings.StopTracking();
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Bindings.StopTracking();

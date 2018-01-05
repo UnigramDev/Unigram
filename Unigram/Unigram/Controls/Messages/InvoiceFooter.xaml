@@ -8,7 +8,8 @@
     mc:Ignorable="d"
     CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    DataContextChanged="OnDataContextChanged">
 
     <TextBlock Style="{StaticResource CaptionTextBlockStyle}">
         <Run Text="{x:Bind Convert.FormatAmount(ViewModel.TotalAmount, ViewModel.Currency)}" FontWeight="SemiBold"/><Run Text="{x:Bind ConvertLabel(ViewModel.HasReceiptMsgId, ViewModel.IsTest), Mode=OneWay}"/>

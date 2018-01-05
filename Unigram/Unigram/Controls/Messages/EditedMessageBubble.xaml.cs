@@ -31,14 +31,14 @@ namespace Unigram.Controls.Messages
         public EditedMessageBubble()
         {
             InitializeComponent();
+        }
 
-            DataContextChanged += (s, args) =>
-            {
-                if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
-                if (ViewModel == null) Bindings.StopTracking();
+        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
+            if (ViewModel == null) Bindings.StopTracking();
 
-                _oldValue = ViewModel;
-            };
+            _oldValue = ViewModel;
         }
 
         #region Adaptive part

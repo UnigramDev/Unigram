@@ -40,20 +40,15 @@ namespace Unigram.Controls.Items
         public DialogListViewItem()
         {
             InitializeComponent();
-
-            DataContextChanged += (s, args) =>
-            {
-                if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
-                if (ViewModel == null) Bindings.StopTracking();
-
-                _oldValue = ViewModel;
-            };
-
-            DataContextChanged += OnDataContextChanged;
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
+            if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
+            if (ViewModel == null) Bindings.StopTracking();
+
+            _oldValue = ViewModel;
+
             if (_oldViewModel != null)
             {
                 _oldViewModel.PropertyChanged -= OnPropertyChanged;

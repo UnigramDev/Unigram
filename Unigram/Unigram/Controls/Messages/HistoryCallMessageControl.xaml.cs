@@ -27,14 +27,14 @@ namespace Unigram.Controls.Messages
         public HistoryCallMessageControl()
         {
             InitializeComponent();
+        }
 
-            DataContextChanged += (s, args) =>
-            {
-                if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
-                if (ViewModel == null) Bindings.StopTracking();
+        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
+            if (ViewModel == null) Bindings.StopTracking();
 
-                _oldValue = ViewModel;
-            };
+            _oldValue = ViewModel;
         }
 
         private string ConvertCount(TLCallGroup call, int count)

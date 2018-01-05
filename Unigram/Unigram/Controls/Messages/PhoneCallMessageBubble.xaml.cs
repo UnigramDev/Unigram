@@ -27,14 +27,14 @@ namespace Unigram.Controls.Messages
         {
             InitializeComponent();
             _layoutRoot = LayoutRoot;
+        }
 
-            DataContextChanged += (s, args) =>
-            {
-                if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
-                if (ViewModel == null) Bindings.StopTracking();
+        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
+            if (ViewModel == null) Bindings.StopTracking();
 
-                _oldValue = ViewModel;
-            };
+            _oldValue = ViewModel;
         }
 
         private string ConvertTitle(TLMessageService message)

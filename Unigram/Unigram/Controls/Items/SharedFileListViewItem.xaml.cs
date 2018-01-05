@@ -51,8 +51,6 @@ namespace Unigram.Controls.Items
 
             //    _oldValue = ViewModel;
             //};
-
-            DataContextChanged += OnDataContextChanged;
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)

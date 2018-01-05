@@ -13,7 +13,8 @@
     d:DesignWidth="400"
     Margin="{ThemeResource MessageContentMargin}"
     HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
-    MaxWidth="{ThemeResource MessageMaxWidth}">
+    MaxWidth="{ThemeResource MessageMaxWidth}"
+    DataContextChanged="OnDataContextChanged">
 
     <UserControl x:Name="LayoutRoot" Margin="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=0}">
         <Grid x:Name="ContentPanel"

@@ -13,7 +13,8 @@
     d:DesignWidth="400"
     HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
     MaxWidth="430"
-    MinWidth="260">
+    MinWidth="260"
+    DataContextChanged="OnDataContextChanged">
 
     <!-- TODO: not the right way -->
     <Border Height="2" Visibility="{x:Bind (Visibility)ViewModel.IsFirst, Mode=OneWay, FallbackValue=Collapsed}"/>
