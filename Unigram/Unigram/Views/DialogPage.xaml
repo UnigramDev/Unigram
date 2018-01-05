@@ -211,7 +211,7 @@
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested">
+            <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" DoubleTapped="Message_DoubleTapped">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -228,7 +228,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested"/>
+                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" DoubleTapped="Message_DoubleTapped"/>
 
                 <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -254,7 +254,7 @@
                                          Source="{x:Bind Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                          Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
                                          Click="Photo_Click"/>
-                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" Grid.Column="1"/>
+                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" DoubleTapped="Message_DoubleTapped" Grid.Column="1"/>
 
                 <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
