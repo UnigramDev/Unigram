@@ -155,3 +155,42 @@ int32 NativeUtils::GetLastInputTime()
 
 	return 0;
 }
+
+int32 NativeUtils::GetDirectionality(String^ value)
+{
+	unsigned int length = value->Length();
+	WORD* type;
+	type = new WORD[length];
+	GetStringTypeEx(LOCALE_USER_DEFAULT, CT_CTYPE2, value->Data(), length, type);
+
+	for (int i = 0; i < length; i++)
+	{
+		if (type[i] & C2_LEFTTORIGHT)
+		{
+			return C2_LEFTTORIGHT;
+		}
+		else if (type[i] & C2_RIGHTTOLEFT)
+		{
+			return C2_RIGHTTOLEFT;
+		}
+	}
+
+	return C2_OTHERNEUTRAL;
+}
+
+int32 NativeUtils::GetDirectionality(char16 value)
+{
+	WORD type = 0;
+	GetStringTypeEx(LOCALE_USER_DEFAULT, CT_CTYPE2, &value, 1, &type);
+
+	if (type & C2_LEFTTORIGHT)
+	{
+		return C2_LEFTTORIGHT;
+	}
+	else if (type & C2_RIGHTTOLEFT)
+	{
+		return C2_RIGHTTOLEFT;
+	}
+
+	return C2_OTHERNEUTRAL;
+}
