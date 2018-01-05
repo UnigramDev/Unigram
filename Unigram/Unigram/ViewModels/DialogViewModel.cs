@@ -541,18 +541,20 @@ namespace Unigram.ViewModels
 
         public void SetSelection(int start)
         {
-            if (TextField == null)
+            var field = TextField;
+            if (field == null)
             {
                 return;
             }
 
-            TextField.Document.GetText(TextGetOptions.None, out string text);
-            TextField.Document.Selection.SetRange(start, text.Length);
+            field.Document.GetText(TextGetOptions.None, out string text);
+            field.Document.Selection.SetRange(start, text.Length);
         }
 
         public void SetText(string text, TLVector<TLMessageEntityBase> entities = null, bool focus = false)
         {
-            if (TextField == null)
+            var field = TextField;
+            if (field == null)
             {
                 return;
             }
@@ -567,27 +569,39 @@ namespace Unigram.ViewModels
 
             if (string.IsNullOrEmpty(text))
             {
-                TextField.Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
+                field.Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
             }
             else
             {
-                TextField.SetText(text, entities);
+                field.SetText(text, entities);
             }
 
             if (focus)
             {
-                TextField.Focus(FocusState.Keyboard);
+                field.Focus(FocusState.Keyboard);
             }
+        }
+
+        public void SetScrollMode(ItemsUpdatingScrollMode mode, bool force)
+        {
+            var field = ListField;
+            if (field == null)
+            {
+                return;
+            }
+
+            field.SetScrollMode(mode, force);
         }
 
         public string GetText()
         {
-            if (TextField == null)
+            var field = TextField;
+            if (field == null)
             {
                 return null;
             }
 
-            TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
+            field.Document.GetText(TextGetOptions.NoHidden, out string text);
             return text;
         }
 
@@ -679,7 +693,7 @@ namespace Unigram.ViewModels
                 {
                     if (result.Messages.Count > 0)
                     {
-                        ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
                     }
 
                     ProcessReplies(result.Messages);
@@ -772,7 +786,7 @@ namespace Unigram.ViewModels
                     if (result.Messages.Count > 0)
                     {
                         //ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
-                        ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                     }
 
                     ProcessReplies(result.Messages);
@@ -892,7 +906,7 @@ namespace Unigram.ViewModels
             if (already != null)
             {
                 //ListField.ScrollIntoView(already);
-                await ListField.ScrollToItem(already, highlight ? SnapPointsAlignment.Center : SnapPointsAlignment.Far, highlight, pixel);
+                await ListField?.ScrollToItem(already, highlight ? SnapPointsAlignment.Center : SnapPointsAlignment.Far, highlight, pixel);
                 return;
             }
             else if (second)
@@ -931,7 +945,7 @@ namespace Unigram.ViewModels
                 {
                     if (result.Messages.Count > 0)
                     {
-                        ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                     }
 
                     Items.Clear();
@@ -1048,7 +1062,7 @@ namespace Unigram.ViewModels
 
                     if (result.Messages.Count > 0)
                     {
-                        ListField.SetScrollMode(maxId == int.MaxValue ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
+                        SetScrollMode(maxId == int.MaxValue ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
                     }
 
                     Items.Clear();
@@ -1128,16 +1142,22 @@ namespace Unigram.ViewModels
         {
             //if (IsFirstSliceLoaded)
             {
+                var field = ListField;
+                if (field == null)
+                {
+                    return;
+                }
+
                 if (item == null)
                 {
-                    ListField.ScrollToBottom();
+                    field.ScrollToBottom();
                 }
                 else
                 {
-                    ListField.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+                    field.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
                 }
 
-                ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                field.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
             }
         }
 
@@ -1469,7 +1489,7 @@ namespace Unigram.ViewModels
                             IsLastSliceLoaded = false;
                             IsFirstSliceLoaded = false;
 
-                            ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                            SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                             Items.AddRange(history.Reverse());
 
                             foreach (var item in history.OrderByDescending(x => x.Date))
@@ -1509,7 +1529,7 @@ namespace Unigram.ViewModels
 
                                 if (result.Messages.Count > 0)
                                 {
-                                    ListField.SetScrollMode(maxId == int.MaxValue ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
+                                    SetScrollMode(maxId == int.MaxValue ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
                                 }
 
                                 ProcessReplies(result.Messages);
@@ -1903,18 +1923,24 @@ namespace Unigram.ViewModels
 
             try
             {
-                var panel = ListField.ItemsPanelRoot as ItemsStackPanel;
-                if (panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
+                var field = ListField;
+                if (field == null)
+                {
+                    return Task.CompletedTask;
+                }
+
+                var panel = field.ItemsPanelRoot as ItemsStackPanel;
+                if (panel != null && panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
                 {
                     _scrollingIndex[peer] = Items[panel.LastVisibleIndex].Id;
 
-                    var container = ListField.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
+                    var container = field.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
                     if (container != null)
                     {
-                        var transform = container.TransformToVisual(ListField);
+                        var transform = container.TransformToVisual(field);
                         var position = transform.TransformPoint(new Point());
 
-                        _scrollingPixel[peer] = ListField.ActualHeight - (position.Y + container.ActualHeight);
+                        _scrollingPixel[peer] = field.ActualHeight - (position.Y + container.ActualHeight);
                     }
                 }
                 else

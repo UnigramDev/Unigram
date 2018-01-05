@@ -608,7 +608,7 @@ namespace Unigram.ViewModels
 
             var dialogResult = await dialog.ShowAsync();
 
-            TextField.FocusMaybe(FocusState.Keyboard);
+            TextField?.FocusMaybe(FocusState.Keyboard);
 
             if (dialogResult == ContentDialogBaseResult.OK)
             {

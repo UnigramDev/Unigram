@@ -74,7 +74,7 @@ namespace Unigram.ViewModels
                     RemoveNotifications();
                 }
 
-                TextField.FocusMaybe(FocusState.Keyboard);
+                TextField?.FocusMaybe(FocusState.Keyboard);
             }
             else if (message.Equals("Window_Deactivated"))
             {

@@ -46,7 +46,7 @@ namespace Unigram.ViewModels
             if (last != null)
             {
                 MessageReplyCommand.Execute(last);
-                await ListField.ScrollToItem(last, SnapPointsAlignment.Far, true, 4);
+                await ListField?.ScrollToItem(last, SnapPointsAlignment.Far, true, 4);
             }
         }
 
@@ -91,7 +91,7 @@ namespace Unigram.ViewModels
             }
 
             Reply = message;
-            TextField.Focus(Windows.UI.Xaml.FocusState.Keyboard);
+            TextField?.Focus(Windows.UI.Xaml.FocusState.Keyboard);
         }
 
         #endregion
@@ -757,7 +757,7 @@ namespace Unigram.ViewModels
             }
 
             SelectionMode = ListViewSelectionMode.Multiple;
-            ListField.SelectedItems.Add(message);
+            ListField?.SelectedItems.Add(message);
 
             ExpandSelection(new[] { messageCommon });
         }
@@ -869,7 +869,7 @@ namespace Unigram.ViewModels
             if (last != null)
             {
                 MessageEditCommand.Execute(last);
-                await ListField.ScrollToItem(last, SnapPointsAlignment.Far, true, 4);
+                await ListField?.ScrollToItem(last, SnapPointsAlignment.Far, true, 4);
             }
         }
 
