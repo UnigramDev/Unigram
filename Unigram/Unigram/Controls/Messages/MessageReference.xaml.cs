@@ -47,19 +47,34 @@ namespace Unigram.Controls.Messages
 
         public string Title { get; set; }
 
-        private object _message;
+        #region Message
+
         public object Message
         {
-            get
-            {
-                return _message;
-            }
+            get { return (object)GetValue(MessageProperty); }
+            //set { SetValue(MessageProperty, value); }
             set
             {
-                _message = value;
-                SetTemplateCore(value);
+                // TODO: shitty hack!!!
+                var oldValue = (object)GetValue(MessageProperty);
+                SetValue(MessageProperty, value);
+
+                if (oldValue == value)
+                {
+                    SetTemplateCore(value);
+                }
             }
         }
+
+        public static readonly DependencyProperty MessageProperty =
+            DependencyProperty.Register("Message", typeof(object), typeof(MessageReference), new PropertyMetadata(null, OnMessageChanged));
+
+        private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((MessageReference)d).SetTemplateCore((object)e.NewValue);
+        }
+
+        #endregion
 
         private bool SetTemplateCore(object item)
         {

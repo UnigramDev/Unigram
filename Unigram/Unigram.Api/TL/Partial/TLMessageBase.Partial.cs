@@ -225,25 +225,6 @@ namespace Telegram.Api.TL
             }
         }
 
-        //public TLMessageBase Reply { get; set; }
-
-        public ReplyInfo ReplyInfo
-        {
-            get
-            {
-                if (ReplyToMsgId == null)
-                {
-                    return null;
-                }
-
-                return new ReplyInfo
-                {
-                    ReplyToMsgId = ReplyToMsgId,
-                    Reply = Reply
-                };
-            }
-        }
-
         public Visibility ReplyVisibility
         {
             get
