@@ -36,8 +36,7 @@ namespace Unigram.ViewModels
         IHandle<DialogRemovedEventArgs>,
         IHandle<UpdateCompletedEventArgs>,
         IHandle<ChannelUpdateCompletedEventArgs>,
-        IHandle<ChannelAvailableMessagesEventArgs>,
-        IHandle<string>
+        IHandle<ChannelAvailableMessagesEventArgs>
     {
         public async void Handle(string message)
         {
@@ -347,7 +346,6 @@ namespace Unigram.ViewModels
                     message.RaisePropertyChanged(() => message.Media);
                     message.RaisePropertyChanged(() => message.ReplyMarkup);
                     message.RaisePropertyChanged(() => message.Self);
-                    message.RaisePropertyChanged(() => message.SelfBase);
                 });
             }
         }
@@ -399,7 +397,6 @@ namespace Unigram.ViewModels
                     message.RaisePropertyChanged(() => message.Media);
                     message.RaisePropertyChanged(() => message.ReplyMarkup);
                     message.RaisePropertyChanged(() => message.Self);
-                    message.RaisePropertyChanged(() => message.SelfBase);
                 });
             }
         }
@@ -434,6 +431,11 @@ namespace Unigram.ViewModels
                 BeginOnUIThread(() =>
                 {
                     var index = Items.IndexOf(message);
+                    if (index < 0)
+                    {
+                        return;
+                    }
+
                     Items.RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, message, index, index));
                 });
             }

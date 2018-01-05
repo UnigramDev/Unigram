@@ -47,34 +47,19 @@ namespace Unigram.Controls.Messages
 
         public string Title { get; set; }
 
-        #region Message
-
+        private object _message;
         public object Message
         {
-            get { return (object)GetValue(MessageProperty); }
-            //set { SetValue(MessageProperty, value); }
+            get
+            {
+                return _message;
+            }
             set
             {
-                // TODO: shitty hack!!!
-                var oldValue = (object)GetValue(MessageProperty);
-                SetValue(MessageProperty, value);
-
-                if (oldValue == value)
-                {
-                    SetTemplateCore(value);
-                }
+                _message = value;
+                SetTemplateCore(value);
             }
         }
-
-        public static readonly DependencyProperty MessageProperty =
-            DependencyProperty.Register("Message", typeof(object), typeof(MessageReference), new PropertyMetadata(null, OnMessageChanged));
-
-        private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((MessageReference)d).SetTemplateCore((object)e.NewValue);
-        }
-
-        #endregion
 
         private bool SetTemplateCore(object item)
         {
@@ -91,6 +76,8 @@ namespace Unigram.Controls.Messages
                     return GetMessageTemplate(item as TLObject);
                 }
 
+                return SetLoadingTemplate(null, null);
+
                 return SetUnsupportedTemplate(null, null);
             }
             else
@@ -98,6 +85,7 @@ namespace Unigram.Controls.Messages
                 if (replyInfo.Reply == null)
                 {
                     //return ReplyLoadingTemplate;
+                    return SetLoadingTemplate(null, null);
                 }
 
                 var contain = replyInfo.Reply as TLMessagesContainter;
@@ -821,6 +809,19 @@ namespace Unigram.Controls.Messages
                 ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(action.Photo, true);
             }
 
+            return true;
+        }
+
+        private bool SetLoadingTemplate(TLMessageBase message, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = string.Empty;
+            ServiceLabel.Text = Strings.Android.Loading;
+            MessageLabel.Text = string.Empty;
             return true;
         }
 

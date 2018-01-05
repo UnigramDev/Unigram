@@ -31,8 +31,9 @@ namespace Unigram.Controls.Media
             InitializeComponent();
         }
 
-        private object UpdateSelf(TLMessage message)
+        private object UpdateSelf(TLMessageBase messageBase)
         {
+            var message = messageBase as TLMessage;
             if (message == null)
             {
                 return null;

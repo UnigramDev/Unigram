@@ -1243,11 +1243,10 @@ namespace Unigram.ViewModels
                         {
                             messages[i].Reply = reply;
                             messages[i].RaisePropertyChanged(() => messages[i].Reply);
-                            messages[i].RaisePropertyChanged(() => messages[i].ReplyInfo);
 
                             if (messages[i] is TLMessageService)
                             {
-                                messages[i].RaisePropertyChanged(() => ((TLMessageService)messages[i]).Self);
+                                messages[i].RaisePropertyChanged(() => messages[i].Self);
                             }
                         }
                         else
@@ -1299,27 +1298,37 @@ namespace Unigram.ViewModels
                     //CacheService.AddUsers(result.Result.Users, (results) => { });
                     CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
 
-                    for (int j = 0; j < result.Messages.Count; j++)
+                    for (int k = 0; k < replyToMsgs.Count; k++)
                     {
-                        for (int k = 0; k < replyToMsgs.Count; k++)
+                        for (int j = 0; j < result.Messages.Count; j++)
                         {
-                            var message = replyToMsgs[k];
-                            if (message != null && message.ReplyToMsgId.Value == result.Messages[j].Id)
+                            if (replyToMsgs[k].ReplyToMsgId == result.Messages[j].Id)
                             {
                                 replyToMsgs[k].Reply = result.Messages[j];
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].Reply);
-                                replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].ReplyInfo);
 
                                 if (replyToMsgs[k] is TLMessageService)
                                 {
-                                    replyToMsgs[k].RaisePropertyChanged(() => ((TLMessageService)replyToMsgs[k]).Self);
+                                    replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].Self);
                                 }
                             }
+                        }
+
+                        if (replyToMsgs[k].Reply == null)
+                        {
+                            replyToMsgs[k].Reply = new TLMessageEmpty { Id = replyToMsgs[k].ReplyToMsgId ?? 0 };
+                            replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].Reply);
                         }
                     }
                 }
                 else
                 {
+                    for (int k = 0; k < replyToMsgs.Count; k++)
+                    {
+                        replyToMsgs[k].Reply = new TLMessageEmpty { Id = replyToMsgs[k].ReplyToMsgId ?? 0 };
+                        replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].Reply);
+                    }
+
                     Execute.ShowDebugMessage("messages.getMessages error " + response.Error);
                 }
             }
@@ -1332,9 +1341,9 @@ namespace Unigram.ViewModels
             //    return;
             //}
 
-            //Messages.Clear();
-            //With = null;
-            //Full = null;
+            Items.Clear();
+            With = null;
+            Full = null;
 
             var messageId = new int?();
             if (App.InMemoryState.NavigateToMessage.HasValue)

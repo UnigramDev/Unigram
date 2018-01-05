@@ -23,7 +23,7 @@ namespace Telegram.Api.TL
 
         public TLMessageBase Reply { get; set; }
 
-        public TLMessageBase SelfBase
+        public TLMessageBase Self
         {
             get
             {
@@ -271,17 +271,6 @@ namespace Telegram.Api.TL
         {
             get;
             set;
-        }
-    }
-
-    public partial class TLMessageService
-    {
-        public TLMessageService Self
-        {
-            get
-            {
-                return this;
-            }
         }
     }
 
@@ -623,14 +612,6 @@ namespace Telegram.Api.TL
             return false;
         }
         #endregion
-
-        public TLMessage Self
-        {
-            get
-            {
-                return this;
-            }
-        }
 
         public Visibility StickerReplyVisibility
         {
