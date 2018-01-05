@@ -41,12 +41,12 @@ namespace Unigram.Common
     {
         #region Message
 
-        public static TLMessage GetMessage(DependencyObject obj)
+        public static TLMessageBase GetMessage(DependencyObject obj)
         {
-            return (TLMessage)obj.GetValue(MessageProperty);
+            return (TLMessageBase)obj.GetValue(MessageProperty);
         }
 
-        public static void SetMessage(DependencyObject obj, TLMessage value)
+        public static void SetMessage(DependencyObject obj, TLMessageBase value)
         {
             // TODO: shitty hack!!!
             var oldValue = obj.GetValue(MessageProperty);
@@ -59,17 +59,17 @@ namespace Unigram.Common
         }
 
         public static readonly DependencyProperty MessageProperty =
-            DependencyProperty.RegisterAttached("Message", typeof(TLMessage), typeof(MessageHelper), new PropertyMetadata(null, OnMessageChanged));
+            DependencyProperty.RegisterAttached("Message", typeof(TLMessageBase), typeof(MessageHelper), new PropertyMetadata(null, OnMessageChanged));
 
         private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as RichTextBlock;
-            var newValue = e.NewValue as TLMessage;
+            var newValue = e.NewValue as TLMessageBase;
 
             OnMessageChanged(sender, newValue);
         }
 
-        private static void OnMessageChanged(RichTextBlock sender, TLMessage newValue)
+        private static void OnMessageChanged(RichTextBlock sender, TLMessageBase newValue)
         {
             //sender.IsTextSelectionEnabled = false;
             var block = sender.Blocks[0] as Paragraph;
