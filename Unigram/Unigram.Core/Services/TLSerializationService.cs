@@ -78,7 +78,7 @@ namespace Unigram.Core.Services
                 return null;
             }
 
-            if (parameter is TLObject obj)
+            if (parameter is ITLObject obj)
             {
                 var buffer = TLObjectSerializer.Serialize(obj);
                 var array = buffer.ToArray();

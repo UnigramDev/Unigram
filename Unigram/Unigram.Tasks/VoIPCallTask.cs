@@ -32,6 +32,7 @@ using Telegram.Api.TL.Messages;
 using Telegram.Api.TL.Phone;
 using Unigram.Common;
 using Telegram.Api.Native.TL;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Unigram.Tasks
 {
@@ -147,6 +148,7 @@ namespace Unigram.Tasks
 
         public VoIPCallMediator()
         {
+            var user = new TLUser();
             VoIPCallTask.Log("Mediator constructed", "Mediator constructed");
         }
 
@@ -657,157 +659,158 @@ namespace Unigram.Tasks
 
         private async Task<MTProtoResponse<T>> SendRequestAsync<T>(string caption, TLObject request)
         {
-            //if (_protoService != null)
-            //{
-            //    VoIPCallTask.Log("Sending request", "Via MTProtoService");
+            if (_protoService != null)
+            {
+                VoIPCallTask.Log("Sending request", "Via MTProtoService");
 
-            //    if (caption.Equals("voip.getUser"))
-            //    {
-            //        return new MTProtoResponse<T>(InMemoryCacheService.Current.GetUser(((TLPeerUser)request).UserId));
-            //    }
+                if (caption.Equals("voip.getUser"))
+                {
+                    return new MTProtoResponse<T>(InMemoryCacheService.Current.GetUser(((TLPeerUser)request).UserId));
+                }
 
-            //    return await _protoService.SendRequestAsync<T>(caption, request);
-            //}
-            //else
-            //{
-            //    VoIPCallTask.Log("Sending request", "Via AppServiceConnection");
+                return await _protoService.SendRequestAsync<T>(caption, request);
+            }
+            else
+            {
+                VoIPCallTask.Log("Sending request", "Via AppServiceConnection");
 
-            //    if (_connection == null)
-            //    {
-            //        _connection = VoIPServiceTask.Connection;
-            //        _connection.RequestReceived += OnRequestReceived;
-            //    }
+                if (_connection == null)
+                {
+                    _connection = VoIPServiceTask.Connection;
+                    _connection.RequestReceived += OnRequestReceived;
+                }
 
-            //    var response = await _connection.SendMessageAsync(new ValueSet { { nameof(caption), caption }, { nameof(request), TLSerializationService.Current.Serialize(request) } });
-            //    if (response.Status == AppServiceResponseStatus.Success)
-            //    {
-            //        if (response.Message.ContainsKey("result"))
-            //        {
-            //            return new MTProtoResponse<T>(TLSerializationService.Current.Deserialize(response.Message["result"] as string));
-            //        }
-            //        else if (response.Message.ContainsKey("error"))
-            //        {
-            //            return new MTProtoResponse<T>(TLSerializationService.Current.Deserialize<TLRPCError>(response.Message["error"] as string));
-            //        }
-            //    }
+                var response = await _connection.SendMessageAsync(new ValueSet { { nameof(caption), caption }, { nameof(request), TLSerializationService.Current.Serialize(request) } });
+                if (response.Status == AppServiceResponseStatus.Success)
+                {
+                    if (response.Message.ContainsKey("result"))
+                    {
+                        return new MTProtoResponse<T>(TLSerializationService.Current.Deserialize(response.Message["result"] as string));
+                    }
+                    else if (response.Message.ContainsKey("error"))
+                    {
+                        return new MTProtoResponse<T>(TLSerializationService.Current.Deserialize<TLRPCError>(response.Message["error"] as string));
+                    }
+                }
 
-            //    VoIPCallTask.Log("Request failed", "Via AppServiceConnection");
+                VoIPCallTask.Log("Request failed", "Via AppServiceConnection");
 
-            //    return new MTProtoResponse<T>(new TLRPCError { ErrorMessage = "UNKNOWN", ErrorCode = (int)response.Status });
-            //}
-
-            return null;
+                return new MTProtoResponse<T>(new TLRPCError((int)response.Status, "UNKNOWN"));
+            }
         }
 
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            //var deferral = args.GetDeferral();
-            //var message = args.Request.Message;
+            var deferral = args.GetDeferral();
+            var message = args.Request.Message;
 
-            //if (message.ContainsKey("update"))
-            //{
-            //    var buffer = message["update"] as string;
-            //    var update = TLSerializationService.Current.Deserialize(buffer) as TLUpdatePhoneCall;
-            //    if (update != null)
-            //    {
-            //        Handle(update);
-            //    }
-            //}
-            //else if (message.ContainsKey("caption"))
-            //{
-            //    var caption = message["caption"] as string;
-            //    if (caption.Equals("phone.discardCall"))
-            //    {
-            //        if (_phoneCall != null)
-            //        {
-            //            var buffer = message["request"] as string;
-            //            var payload = TLSerializationService.Current.Deserialize<byte[]>(buffer);
-            //            var reader = new TLBinaryReader(payload);
-            //            var req = new TLTuple<double>(reader);
-            //            reader.Dispose();
+            if (message.ContainsKey("update"))
+            {
+                var buffer = message["update"] as string;
+                var update = TLSerializationService.Current.Deserialize(buffer) as TLUpdatePhoneCall;
+                if (update != null)
+                {
+                    Handle(update);
+                }
+            }
+            else if (message.ContainsKey("caption"))
+            {
+                var caption = message["caption"] as string;
+                if (caption.Equals("phone.discardCall"))
+                {
+                    if (_phoneCall != null)
+                    {
+                        var buffer = message["request"] as string;
+                        var payload = TLSerializationService.Current.Deserialize<byte[]>(buffer);
+                        var reader = TLObjectSerializer.CreateReader(payload.AsBuffer());
+                        var req = new TLTuple<double>(reader);
+                        reader.Dispose();
 
-            //            var missed = _state == TLPhoneCallState.Ringing || (_state == TLPhoneCallState.Waiting && _outgoing);
-            //            var declined = _state == TLPhoneCallState.WaitingIncoming;
-            //            TLPhoneCallDiscardReasonBase reason = missed 
-            //                ? new TLPhoneCallDiscardReasonMissed() 
-            //                : declined 
-            //                ? (TLPhoneCallDiscardReasonBase)new TLPhoneCallDiscardReasonBusy() 
-            //                : new TLPhoneCallDiscardReasonHangup();
+                        var missed = _state == TLPhoneCallState.Ringing || (_state == TLPhoneCallState.Waiting && _outgoing);
+                        var declined = _state == TLPhoneCallState.WaitingIncoming;
+                        TLPhoneCallDiscardReasonBase reason = missed
+                            ? new TLPhoneCallDiscardReasonMissed()
+                            : declined
+                            ? (TLPhoneCallDiscardReasonBase)new TLPhoneCallDiscardReasonBusy()
+                            : new TLPhoneCallDiscardReasonHangup();
 
-            //            var req2 = new TLPhoneDiscardCall { Peer = _phoneCall.ToInputPhoneCall(), Reason = reason, Duration = (int)req.Item1 };
+                        var req2 = new TLPhoneDiscardCall { Peer = _phoneCall.ToInputPhoneCall(), Reason = reason, Duration = (int)req.Item1 };
 
-            //            const string caption2 = "phone.discardCall";
-            //            var response = await SendRequestAsync<TLUpdatesBase>(caption2, req2);
-            //            if (response.IsSucceeded)
-            //            {
-            //                if (response.Result is TLUpdates updates)
-            //                {
-            //                    var update = updates.Updates.FirstOrDefault(x => x is TLUpdatePhoneCall) as TLUpdatePhoneCall;
-            //                    if (update != null)
-            //                    {
-            //                        Handle(update);
-            //                    }
-            //                }
-            //            }
-            //        }
-            //        else if (_systemCall != null)
-            //        {
-            //            _systemCall.AnswerRequested -= OnAnswerRequested;
-            //            _systemCall.RejectRequested -= OnRejectRequested;
-            //            _systemCall.NotifyCallEnded();
-            //            _systemCall = null;
-            //        }
-            //        else if (_deferral != null)
-            //        {
-            //            _deferral.Complete();
-            //        }
-            //    }
-            //    else if (caption.Equals("phone.mute") || caption.Equals("phone.unmute"))
-            //    {
-            //        if (_controller != null)
-            //        {
-            //            _controller.SetMicMute(caption.Equals("phone.mute"));
+                        const string caption2 = "phone.discardCall";
+                        var response = await SendRequestAsync<TLUpdatesBase>(caption2, req2);
+                        if (response.IsSucceeded)
+                        {
+                            if (response.Result is TLUpdates updates)
+                            {
+                                var update = updates.Updates.FirstOrDefault(x => x is TLUpdatePhoneCall) as TLUpdatePhoneCall;
+                                if (update != null)
+                                {
+                                    Handle(update);
+                                }
+                            }
+                        }
+                    }
+                    else if (_systemCall != null)
+                    {
+                        _systemCall.AnswerRequested -= OnAnswerRequested;
+                        _systemCall.RejectRequested -= OnRejectRequested;
+                        _systemCall.NotifyCallEnded();
+                        _systemCall = null;
 
-            //            var coordinator = VoipCallCoordinator.GetDefault();
-            //            if (caption.Equals("phone.mute"))
-            //            {
-            //                coordinator.NotifyMuted();
-            //            }
-            //            else
-            //            {
-            //                coordinator.NotifyUnmuted();
-            //            }
-            //        }
-            //    }
-            //    else if (caption.Equals("voip.startCall"))
-            //    {
-            //        var buffer = message["request"] as string;
-            //        var req = TLSerializationService.Current.Deserialize<TLUser>(buffer);
+                        _phoneCall = new TLPhoneCallDiscarded();
+                        await UpdateStateAsync(TLPhoneCallState.Ended);
+                    }
+                    else if (_deferral != null)
+                    {
+                        _deferral.Complete();
+                    }
+                }
+                else if (caption.Equals("phone.mute") || caption.Equals("phone.unmute"))
+                {
+                    if (_controller != null)
+                    {
+                        _controller.SetMicMute(caption.Equals("phone.mute"));
 
-            //        _user = req;
-            //        OutgoingCall(req.Id, req.AccessHash.Value);
-            //    }
-            //    else if (caption.Equals("voip.debugString"))
-            //    {
-            //        if (_controller != null)
-            //        {
-            //            await args.Request.SendResponseAsync(new ValueSet { { "result", _controller.GetDebugString() }, { "version", VoIPControllerWrapper.GetVersion() } });
-            //        }
-            //    }
-            //}
-            //else if (message.ContainsKey("voip.callInfo"))
-            //{
-            //    if (_phoneCall != null)
-            //    {
-            //        await args.Request.SendResponseAsync(new ValueSet { { "result", TLSerializationService.Current.Serialize(_phoneCall) } });
-            //    }
-            //    else
-            //    {
-            //        await args.Request.SendResponseAsync(new ValueSet { { "error", false } });
-            //    }
-            //}
+                        var coordinator = VoipCallCoordinator.GetDefault();
+                        if (caption.Equals("phone.mute"))
+                        {
+                            coordinator.NotifyMuted();
+                        }
+                        else
+                        {
+                            coordinator.NotifyUnmuted();
+                        }
+                    }
+                }
+                else if (caption.Equals("voip.startCall"))
+                {
+                    var buffer = message["request"] as string;
+                    var req = TLSerializationService.Current.Deserialize<TLUser>(buffer);
 
-            //deferral.Complete();
+                    _user = req;
+                    OutgoingCall(req.Id, req.AccessHash.Value);
+                }
+                else if (caption.Equals("voip.debugString"))
+                {
+                    if (_controller != null)
+                    {
+                        await args.Request.SendResponseAsync(new ValueSet { { "result", _controller.GetDebugString() }, { "version", VoIPControllerWrapper.GetVersion() } });
+                    }
+                }
+            }
+            else if (message.ContainsKey("voip.callInfo"))
+            {
+                if (_phoneCall != null)
+                {
+                    await args.Request.SendResponseAsync(new ValueSet { { "result", TLSerializationService.Current.Serialize(_phoneCall) } });
+                }
+                else
+                {
+                    await args.Request.SendResponseAsync(new ValueSet { { "error", false } });
+                }
+            }
+
+            deferral.Complete();
         }
 
         public void Handle(TLUpdatePhoneCall update)

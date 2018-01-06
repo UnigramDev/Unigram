@@ -227,7 +227,7 @@ namespace Unigram.Views
             {
                 if (user.HasPhoto && user.Photo is TLUserProfilePhoto)
                 {
-                    Image.Source = DefaultPhotoConverter.Convert(user.Photo, true) as ImageSource;
+                    Image.Source = DefaultPhotoConverter.Convert(user, true) as ImageSource;
                     GrabPanel.Background = new SolidColorBrush(Colors.Transparent);
                 }
                 else

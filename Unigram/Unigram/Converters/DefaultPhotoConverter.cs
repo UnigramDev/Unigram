@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml;
+using Windows.UI.ViewManagement;
 
 namespace Unigram.Converters
 {
@@ -29,19 +30,20 @@ namespace Unigram.Converters
         private static readonly Dictionary<string, WeakReference> _cachedSources = new Dictionary<string, WeakReference>();
         private static readonly Dictionary<string, WeakReference<WriteableBitmap>> _cachedWebPImages = new Dictionary<string, WeakReference<WriteableBitmap>>();
 
-        private static readonly Dictionary<Window, TLBitmapContext> _threadContext = new Dictionary<Window, TLBitmapContext>();
+        private static readonly Dictionary<int, TLBitmapContext> _threadContext = new Dictionary<int, TLBitmapContext>();
 
         public static TLBitmapContext BitmapContext
         {
             get
             {
-                if (_threadContext.TryGetValue(Window.Current, out TLBitmapContext value))
+                var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+                if (_threadContext.TryGetValue(id, out TLBitmapContext value))
                 {
                     return value;
                 }
 
                 var context = new TLBitmapContext();
-                _threadContext[Window.Current] = context;
+                _threadContext[id] = context;
 
                 return context;
             }

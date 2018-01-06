@@ -11,6 +11,8 @@ using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.TL.Phone.Methods;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Core.Services;
@@ -31,6 +33,16 @@ namespace Unigram.Common
 {
     public class VoIPConnection
     {
+        private VoIPConnection()
+        {
+            TLObjectSerializer.RegisterObjectConstructor(0x26CF8950, () => new TLMessagesGetDHConfig());
+            TLObjectSerializer.RegisterObjectConstructor(0x5B95B3D4, () => new TLPhoneRequestCall());
+            TLObjectSerializer.RegisterObjectConstructor(0x78D413A6, () => new TLPhoneDiscardCall());
+            TLObjectSerializer.RegisterObjectConstructor(0x3BD2B4A0, () => new TLPhoneAcceptCall());
+            TLObjectSerializer.RegisterObjectConstructor(0x55451FA9, () => new TLPhoneGetCallConfig());
+            TLObjectSerializer.RegisterObjectConstructor(0x2EFE1722, () => new TLPhoneConfirmCall());
+        }
+
         private static VoIPConnection _current;
         public static VoIPConnection Current
         {
@@ -256,13 +268,10 @@ namespace Unigram.Common
                         {
                             var tuple = new TLTuple<int>(from);
 
-                            if (_phoneView != null)
+                            await _phoneView?.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                             {
-                                await _phoneView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                                {
-                                    _phoneView.SetSignalBars(tuple.Item1);
-                                });
-                            }
+                                _phoneView.SetSignalBars(tuple.Item1);
+                            });
                         }
                     }
                     else if (caption.Equals("voip.setCallRating") && req is TLInputPhoneCall peer)
