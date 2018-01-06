@@ -129,7 +129,7 @@
 
                 <local:MessageReference
                     x:Name="Reply"
-                    Message="{x:Bind ViewModel.Reply.SelfBase, Mode=OneWay}"
+                    Message="{x:Bind ViewModel.Reply.Self, Mode=OneWay, FallbackValue=''}"
                     Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
                     Click="Reply_Click"
                     Grid.Row="1"/>
