@@ -1101,8 +1101,8 @@ HRESULT Connection::GetProxyEndpoint(IProxySettings* proxySettings, ServerEndpoi
 			return HRESULT_FROM_WIN32(wsaError);
 		}
 
-		WCHAR ipBuffer[15];
-		DWORD ipBufferLength = 15;
+		WCHAR ipBuffer[16];
+		DWORD ipBufferLength = 16;
 		if (WSAAddressToString(addressInfo->ai_addr, static_cast<DWORD>(addressInfo->ai_addrlen), nullptr, ipBuffer, &ipBufferLength) == SOCKET_ERROR)
 		{
 			FreeAddrInfo(addressInfo);
