@@ -903,6 +903,15 @@ HRESULT TLCDNConfig::ReadBody(ITLBinaryReaderEx* reader)
 
 
 template<typename TLObjectTraits>
+HRESULT TLRPCErrorT<TLObjectTraits>::RuntimeClassInitialize(INT32 errorCode, HSTRING errorMessage)
+{
+	m_errorCode = errorCode;
+	m_errorMessage.Attach(errorMessage);
+
+	return S_OK;
+}
+
+template<typename TLObjectTraits>
 HRESULT TLRPCErrorT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
@@ -1589,4 +1598,10 @@ HRESULT TLFutureSalt::ReadBody(ITLBinaryReaderEx* reader)
 HRESULT TLConfigStatics::get_Default(ITLConfig** value)
 {
 	return MakeAndInitialize<TLConfig>(value, false);
+}
+
+
+HRESULT TLRPCErrorFactory::CreateInstance(INT32 errorCode, HSTRING errorMessage, TLRPCError** value)
+{
+	return MakeAndInitialize<TLRPCError>(value, errorCode, errorMessage);
 }

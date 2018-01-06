@@ -271,6 +271,14 @@ namespace Telegram
 
 
 				[exclusiveto(TLRPCError)]
+				[uuid(7F082942-3017-44C9-9E5D-87EDCFB7E209)]
+				[version(API_VERSION)]
+				interface ITLRPCErrorFactory : IInspectable
+				{
+					HRESULT CreateInstance([in] INT32 errorCode, [in] HSTRING errorMessage, [out][retval] TLRPCError** value);
+				}
+
+				[exclusiveto(TLRPCError)]
 				[uuid(7E992965-E9B1-4804-9C1C-E578B5C397AF)]
 				[version(API_VERSION)]
 				interface ITLRPCError : IInspectable
@@ -279,6 +287,7 @@ namespace Telegram
 					[propget] HRESULT ErrorMessage([out][retval] HSTRING* value);
 				}
 
+				[activatable(ITLRPCErrorFactory, API_VERSION)]
 				[marshaling_behavior(agile)]
 				[threading(both)]
 				[version(API_VERSION)]

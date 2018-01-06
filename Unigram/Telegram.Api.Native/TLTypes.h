@@ -19,6 +19,7 @@ using ABI::Telegram::Api::Native::TL::ITLConfig;
 using ABI::Telegram::Api::Native::TL::ITLConfigSimple;
 using ABI::Telegram::Api::Native::TL::ITLIpPort;
 using ABI::Telegram::Api::Native::TL::ITLConfigStatics;
+using ABI::Telegram::Api::Native::TL::ITLRPCErrorFactory;
 
 
 namespace Telegram
@@ -598,6 +599,8 @@ namespace Telegram
 					IFACEMETHODIMP get_ErrorMessage(_Out_ HSTRING* value);
 
 					//Internal methods
+					STDMETHODIMP RuntimeClassInitialize(_In_ INT32 errorCode, _In_ HSTRING errorMessage);
+
 					inline INT32 GetErrorCode() const
 					{
 						return m_errorCode;
@@ -1433,6 +1436,16 @@ namespace Telegram
 					//COM exported methods
 					IFACEMETHODIMP get_Default(_Out_ ITLConfig** value);
 				};
+
+				class TLRPCErrorFactory WrlSealed : public AgileActivationFactory<ITLRPCErrorFactory>
+				{
+					InspectableClassStatic(RuntimeClass_Telegram_Api_Native_TL_TLRPCError, BaseTrust);
+
+				public:
+					//COM exported methods
+					IFACEMETHODIMP CreateInstance(_In_ INT32 errorCode, _In_ HSTRING errorMessage, _Out_ TLRPCError** value);
+				};
+
 
 			}
 		}
