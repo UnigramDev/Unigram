@@ -43,15 +43,15 @@ namespace Unigram.Views
 
         private void SwapChain_Loaded(object sender, RoutedEventArgs e)
         {
-            if (_renderer == null)
-            {
-                try
-                {
-                    _renderer = new TLIntroRenderer(SwapChain, ApplicationSettings.Current.CurrentTheme);
-                    _renderer.Loaded();
-                }
-                catch { }
-            }
+            //if (_renderer == null)
+            //{
+            //    try
+            //    {
+            //        _renderer = new TLIntroRenderer(SwapChain, ApplicationSettings.Current.CurrentTheme);
+            //        _renderer.Loaded();
+            //    }
+            //    catch { }
+            //}
         }
 
         private void SwapChain_Unloaded(object sender, RoutedEventArgs e)
