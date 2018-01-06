@@ -87,7 +87,7 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
 
-            //NavigationCacheMode = NavigationCacheMode.Required;
+            NavigationCacheMode = NavigationCacheMode.Required;
 
             _typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
@@ -99,9 +99,6 @@ namespace Unigram.Views
             _typeToItemHashSetMapping.Add("ServiceUserCallMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceFriendCallMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
-
-            Messages.ChoosingItemContainer += OnChoosingItemContainer;
-            Messages.ContainerContentChanging += OnContainerContentChanging;
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -204,9 +201,28 @@ namespace Unigram.Views
         //    base.OnNavigatedTo(e);
         //}
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
+
+            ViewModel.TextField = TextField;
+            ViewModel.ListField = Messages;
+
+            ViewModel.SetText(null);
+
+            CheckMessageBoxEmpty();
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+            Bindings.Update();
+
             TextField.FocusMaybe(FocusState.Keyboard);
+
+            if (App.DataPackage != null)
+            {
+                var package = App.DataPackage;
+                App.DataPackage = null;
+                await HandlePackageAsync(package);
+            }
 
             base.OnNavigatedTo(e);
         }
@@ -226,6 +242,19 @@ namespace Unigram.Views
             //}
 
             base.OnNavigatingFrom(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            if (ViewModel != null)
+            {
+                ViewModel.PropertyChanged -= OnPropertyChanged;
+
+                ViewModel.TextField = null;
+                ViewModel.ListField = null;
+            }
+
+            base.OnNavigatedFrom(e);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -264,10 +293,13 @@ namespace Unigram.Views
             }
         }
 
-        private async void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
+
+            Window.Current.Activated += Window_Activated;
+            Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
             App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
@@ -275,13 +307,6 @@ namespace Unigram.Views
             Messages.ScrollingHost.ViewChanged += OnViewChanged;
 
             TextField.FocusMaybe(FocusState.Keyboard);
-
-            if (App.DataPackage != null)
-            {
-                var package = App.DataPackage;
-                App.DataPackage = null;
-                await HandlePackageAsync(package);
-            }
         }
 
         private void Headers_ViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
@@ -342,6 +367,9 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
 
+            Window.Current.Activated -= Window_Activated;
+            Window.Current.VisibilityChanged -= Window_VisibilityChanged;
+
             App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
@@ -363,6 +391,32 @@ namespace Unigram.Views
         {
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(1, GridUnitType.Auto);
+        }
+
+        private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+            {
+                ViewModel.Handle("Window_Activated");
+                TextField.FocusMaybe(FocusState.Keyboard);
+            }
+            else
+            {
+                ViewModel.Handle("Window_Deactivated");
+            }
+        }
+
+        private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
+        {
+            if (e.Visible)
+            {
+                ViewModel.Handle("Window_Activated");
+                TextField.FocusMaybe(FocusState.Keyboard);
+            }
+            else
+            {
+                ViewModel.Handle("Window_Deactivated");
+            }
         }
 
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
