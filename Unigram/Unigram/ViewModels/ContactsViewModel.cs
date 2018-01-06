@@ -44,7 +44,7 @@ namespace Unigram.ViewModels
             foreach (var item in contacts.OfType<TLUser>())
             {
                 var user = item as TLUser;
-                if (user.IsSelf)
+                if (user == null || user.IsSelf)
                 {
                     continue;
                 }
@@ -204,7 +204,7 @@ namespace Unigram.ViewModels
         {
             BeginOnUIThread(() =>
             {
-                var first = Items.FirstOrDefault(x => x.Id == message.UserId);
+                var first = Items.FirstOrDefault(x => x != null && x.Id == message.UserId);
                 if (first != null)
                 {
                     Items.Remove(first);
@@ -231,7 +231,7 @@ namespace Unigram.ViewModels
             BeginOnUIThread(() =>
             {
                 var contact = update.MyLink is TLContactLinkContact;
-                var already = Items.FirstOrDefault(x => x.Id == update.UserId);
+                var already = Items.FirstOrDefault(x => x != null && x.Id == update.UserId);
                 if (already == null)
                 {
                     if (contact)

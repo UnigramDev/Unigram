@@ -48,6 +48,8 @@ namespace Unigram.Models
         public override uint Width => Properties.GetWidth();
         public override uint Height => Properties.GetHeight();
 
+        public override bool IsAnimatable => true;
+
         public new static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
         {
             try

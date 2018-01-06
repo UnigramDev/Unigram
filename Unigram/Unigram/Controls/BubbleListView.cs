@@ -55,7 +55,7 @@ namespace Unigram.Controls
                 SetScrollMode();
             }
 
-            if (ScrollingHost.ScrollableHeight < 120 && Items.Count > 0)
+            if (ScrollingHost.ScrollableHeight < 200 && Items.Count > 0)
             {
                 if (!ViewModel.IsFirstSliceLoaded)
                 {
@@ -76,7 +76,7 @@ namespace Unigram.Controls
 
         private async void Panel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (ScrollingHost.ScrollableHeight < 120)
+            if (ScrollingHost.ScrollableHeight < 200)
             {
                 if (!ViewModel.IsFirstSliceLoaded)
                 {
@@ -97,11 +97,11 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
+            if (ScrollingHost.VerticalOffset < 200 && !e.IsIntermediate)
             {
                 await ViewModel.LoadNextSliceAsync(true);
             }
-            else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
+            else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && !e.IsIntermediate)
             {
                 if (ViewModel.IsFirstSliceLoaded == false)
                 {
@@ -144,13 +144,13 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (mode == ItemsUpdatingScrollMode.KeepItemsInView && (force || scroll.VerticalOffset < 120))
+            if (mode == ItemsUpdatingScrollMode.KeepItemsInView && (force || scroll.VerticalOffset < 200))
             {
                 Debug.WriteLine("Changed scrolling mode to KeepItemsInView");
 
                 panel.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
             }
-            else if (mode == ItemsUpdatingScrollMode.KeepLastItemInView && (force || scroll.ScrollableHeight - scroll.VerticalOffset < 120))
+            else if (mode == ItemsUpdatingScrollMode.KeepLastItemInView && (force || scroll.ScrollableHeight - scroll.VerticalOffset < 200))
             {
                 Debug.WriteLine("Changed scrolling mode to KeepLastItemInView");
 

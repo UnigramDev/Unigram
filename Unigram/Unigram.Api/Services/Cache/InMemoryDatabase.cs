@@ -1752,7 +1752,7 @@ namespace Telegram.Api.Services.Cache
                             var clearHistoryMessage = new TLMessageService();
                             clearHistoryMessage.Flags = 0;
                             clearHistoryMessage.Id = messageCommon.Id;
-                            clearHistoryMessage.FromId = messageCommon.FromId ?? new int?(-1);
+                            clearHistoryMessage.FromId = messageCommon.FromId;
                             clearHistoryMessage.ToId = messageCommon.ToId;
                             clearHistoryMessage.Date = messageCommon.Date;
                             clearHistoryMessage.IsOut = messageCommon.IsOut;

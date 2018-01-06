@@ -55,7 +55,7 @@ namespace Unigram.Views
 
         private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 120)
+            if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 120 && ViewModel.IsFirstSliceLoaded)
             {
                 //if (ViewModel.IsFirstSliceLoaded)
                 //{

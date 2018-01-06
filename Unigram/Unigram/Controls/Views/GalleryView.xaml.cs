@@ -208,7 +208,7 @@ namespace Unigram.Controls.Views
             handler = new RoutedEventHandler(async (s, args) =>
             {
                 Loaded -= handler;
-                await ViewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+                await ViewModel?.OnNavigatedToAsync(parameter, NavigationMode.New, null);
             });
 
             Loaded += handler;

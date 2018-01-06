@@ -11,6 +11,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
+using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -43,6 +44,46 @@ namespace Unigram.Common
         public static bool IsCompactOverlaySupported(this ApplicationView view)
         {
             return ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && view.IsViewModeSupported(ApplicationViewMode.CompactOverlay);
+        }
+
+        public static string NormalizeTextDirection(this string data)
+        {
+            if (data.Length > 0)
+            {
+                var lastCharacterDirection = NativeUtils.GetDirectionality(data[data.Length - 1]);
+
+                // 1 = LTR
+                // 2 = RTL
+                // 8 = NEUTRAL
+
+                // If the last character has strong directionality (direction is not null), then the text direction for the string is already consistent.
+                if (lastCharacterDirection == 8)
+                {
+                    // If the last character has no directionality (neutral character, direction is null), then we may need to add a direction marker to
+                    // ensure that the last character doesn't inherit directionality from the outside context.
+                    var appTextDirection = 1; // checks the <html> element's "dir" attribute.
+                    var dataTextDirection = NativeUtils.GetDirectionality(data); // Run through the string until a non-neutral character is encountered,
+                                                                         // which determines the text direction.
+
+                    if (appTextDirection != dataTextDirection)
+                    {
+                        // Add a direction marker only if the data text runs opposite to the directionality of the app as a whole,
+                        // which would cause the neutral characters at the ends to flip.
+                        var directionMarkerCharacter = dataTextDirection == 2 ? "\u200F" : "\u200E";
+
+                        data += directionMarkerCharacter;
+
+                        // Prepend the direction marker if the data text begins with a neutral character.
+                        var firstCharacterDirection = NativeUtils.GetDirectionality(data[0]);
+                        if (firstCharacterDirection == 8)
+                        {
+                            data = directionMarkerCharacter + data;
+                        }
+                    }
+                }
+            }
+
+            return data;
         }
 
         public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);

@@ -120,6 +120,7 @@ namespace Unigram.Common
                 var foreground = sender.Resources["MessageHyperlinkForegroundBrush"] as SolidColorBrush;
 
                 var paragraph = new Span();
+                var display = string.Empty;
 
                 if (message.HasEntities && message.Entities != null)
                 {
@@ -134,6 +135,7 @@ namespace Unigram.Common
 
                     if (!string.IsNullOrWhiteSpace(message.Message))
                     {
+                        display = message.Message;
                         paragraph.Inlines.Add(new Run { Text = message.Message });
                     }
                     else if (message.Media is TLMessageMediaVenue venueMedia)
@@ -156,6 +158,7 @@ namespace Unigram.Common
                         var captionMedia2 = message.Media as ITLMessageMediaCaption;
                         if (captionMedia2 != null)
                         {
+                            display = captionMedia2.Caption;
                             Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a ITLMediaCaption");
                             ReplaceAll(message, captionMedia2.Caption, paragraph, sender.Foreground, true);
                         }
@@ -171,48 +174,63 @@ namespace Unigram.Common
                     //ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
+                var direction = Native.NativeUtils.GetDirectionality(display);
+                if (direction == 2)
+                {
+                    sender.FlowDirection = FlowDirection.RightToLeft;
+                    paragraph.Inlines.Add(new LineBreak());
+                }
+                else
+                {
+                    sender.FlowDirection = FlowDirection.LeftToRight;
+                }
+
                 if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || empty || message?.Media == null)
                 {
-                    if (IsAnyCharacterRightToLeft(message.Message ?? string.Empty))
-                    {
-                        paragraph.Inlines.Add(new LineBreak());
-                    }
+                    //var direction = Native.NativeUtils.GetDirectionality(display);
+                    //if (direction == 2)
+                    //{
+                    //    sender.FlowDirection = FlowDirection.RightToLeft;
+                    //    paragraph.Inlines.Add(new LineBreak());
+                    //}
                     //else
-                    {
-                        //var date = BindConvert.Current.Date(message.Date);
-                        //var placeholder = message.IsOut ? $"  {date}  " : $"  {date}";
+                    //{
+                    //    sender.FlowDirection = FlowDirection.LeftToRight;
 
-                        //var bot = false;
-                        //if (message.From != null)
-                        //{
-                        //    bot = message.From.IsBot;
-                        //}
+                    //var date = BindConvert.Current.Date(message.Date);
+                    //var placeholder = message.IsOut ? $"  {date}  " : $"  {date}";
 
-                        //if (message.HasEditDate && !message.HasViaBotId && !bot && !(message.ReplyMarkup is TLReplyInlineMarkup))
-                        //{
-                        //    placeholder = "edited" + placeholder;
-                        //}
+                    //var bot = false;
+                    //if (message.From != null)
+                    //{
+                    //    bot = message.From.IsBot;
+                    //}
 
-                        //if (message.HasViews)
-                        //{
-                        //    placeholder = "WS  " + (message.Views ?? 0) + placeholder;
+                    //if (message.HasEditDate && !message.HasViaBotId && !bot && !(message.ReplyMarkup is TLReplyInlineMarkup))
+                    //{
+                    //    placeholder = "edited" + placeholder;
+                    //}
 
-                        //    if (message.HasFromId && message.From != null)
-                        //    {
-                        //        placeholder = (message.From.FullName + "  " ?? string.Empty) + placeholder;
-                        //    }
-                        //    else if (message.IsPost && message.HasPostAuthor && message.PostAuthor != null)
-                        //    {
-                        //        placeholder = (message.PostAuthor + "  " ?? string.Empty) + placeholder;
-                        //    }
-                        //    else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
-                        //    {
-                        //        placeholder = (message.FwdFrom.PostAuthor + "  " ?? string.Empty) + placeholder;
-                        //    }
-                        //}
+                    //if (message.HasViews)
+                    //{
+                    //    placeholder = "WS  " + (message.Views ?? 0) + placeholder;
 
-                        //paragraph.Inlines.Add(new Run { Text = "\u200E" + placeholder, Foreground = null, FontSize = 12 });
-                    }
+                    //    if (message.HasFromId && message.From != null)
+                    //    {
+                    //        placeholder = (message.From.FullName + "  " ?? string.Empty) + placeholder;
+                    //    }
+                    //    else if (message.IsPost && message.HasPostAuthor && message.PostAuthor != null)
+                    //    {
+                    //        placeholder = (message.PostAuthor + "  " ?? string.Empty) + placeholder;
+                    //    }
+                    //    else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                    //    {
+                    //        placeholder = (message.FwdFrom.PostAuthor + "  " ?? string.Empty) + placeholder;
+                    //    }
+                    //}
+
+                    //paragraph.Inlines.Add(new Run { Text = "\u200E" + placeholder, Foreground = null, FontSize = 12 });
+                    //}
                 }
                 else
                 {
@@ -1394,7 +1412,7 @@ namespace Unigram.Common
                                             {
                                                 service.Dispatcher.Dispatch(() => service.NavigateToDialog(chatBase));
                                             });
-                                        }, 
+                                        },
                                         error =>
                                         {
                                             Execute.ShowDebugMessage("messages.getHistory error " + error);

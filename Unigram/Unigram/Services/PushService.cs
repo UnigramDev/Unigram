@@ -69,6 +69,10 @@ namespace Unigram.Core.Services
                         {
                             SettingsHelper.ChannelUri = channel.Uri;
                         }
+                        else
+                        {
+                            SettingsHelper.ChannelUri = null;
+                        }
 
                         if (Uri.TryCreate(oldUri, UriKind.Absolute, out Uri unregister))
                         {
@@ -81,6 +85,8 @@ namespace Unigram.Core.Services
                 catch (Exception ex)
                 {
                     _alreadyRegistered = false;
+                    SettingsHelper.ChannelUri = null;
+
                     Debugger.Break();
                 }
             }

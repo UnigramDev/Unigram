@@ -66,6 +66,7 @@ namespace Unigram.Controls.Messages
 
         private void OnMediaChanged()
         {
+            string display = null;
             var message = DataContext as TLMessage;
 
             var empty = false;
@@ -76,6 +77,8 @@ namespace Unigram.Controls.Messages
 
             if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty || empty)
             {
+                display = message.Message;
+
                 Media.Margin = new Thickness(0);
                 Placeholder.Visibility = Visibility.Visible;
                 FooterToNormal();
@@ -110,6 +113,7 @@ namespace Unigram.Controls.Messages
                     var caption = false;
                     if (message.Media is ITLMessageMediaCaption captionMedia)
                     {
+                        display = captionMedia.Caption;
                         caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                     }
                     else if (message.Media is TLMessageMediaVenue)
@@ -167,6 +171,7 @@ namespace Unigram.Controls.Messages
                     var caption = false;
                     if (message.Media is ITLMessageMediaCaption captionMedia)
                     {
+                        display = captionMedia.Caption;
                         caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                     }
 
@@ -177,6 +182,21 @@ namespace Unigram.Controls.Messages
                     Grid.SetRow(Message, caption ? 4 : 2);
                 }
             }
+
+            //if (display != null)
+            //{
+            //    var direction = NativeUtils.GetDirectionality(display);
+            //    if (direction == 2)
+            //    {
+            //        Message.FlowDirection = FlowDirection.RightToLeft;
+            //        Footer.HorizontalAlignment = HorizontalAlignment.Left;
+            //    }
+            //    else
+            //    {
+            //        Message.FlowDirection = FlowDirection.LeftToRight;
+            //        Footer.HorizontalAlignment = HorizontalAlignment.Right;
+            //    }
+            //}
         }
 
         private void FooterToLightMedia(bool isOut)
