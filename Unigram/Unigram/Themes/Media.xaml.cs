@@ -56,11 +56,11 @@ namespace Unigram.Themes
 
         private void InstantView_Click(object sender, RoutedEventArgs e)
         {
-            var image = sender as FrameworkElement;
-            var message = image.DataContext as TLMessage;
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
 
-            var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
-            if (bubble == null)
+            var context = TryGetContext(element);
+            if (context == null)
             {
                 return;
             }
@@ -69,7 +69,7 @@ namespace Unigram.Themes
             {
                 if (webPage.HasCachedPage)
                 {
-                    bubble.Context.NavigationService.Navigate(typeof(InstantPage), message.Media);
+                    context.NavigationService.Navigate(typeof(InstantPage), message.Media);
                 }
                 else if (webPage.HasType && (webPage.Type.Equals("telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
                                              webPage.Type.Equals("telegram_channel", StringComparison.OrdinalIgnoreCase) ||
@@ -128,6 +128,23 @@ namespace Unigram.Themes
             }
         }
 
+        private static UnigramViewModelBase TryGetContext(FrameworkElement element)
+        {
+            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
+            if (bubble != null && bubble.ContextBase != null)
+            {
+                return bubble.ContextBase;
+            }
+
+            var page = element.Ancestors<Page>().FirstOrDefault() as Page;
+            if (page != null && page.DataContext is UnigramViewModelBase viewModel)
+            {
+                return viewModel;
+            }
+
+            return null;
+        }
+
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
             Download_Click(sender as FrameworkElement, e);
@@ -137,8 +154,8 @@ namespace Unigram.Themes
         {
             var element = sender as FrameworkElement;
 
-            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
-            if (bubble == null)
+            var context = TryGetContext(element);
+            if (context == null)
             {
                 return;
             }
@@ -160,7 +177,7 @@ namespace Unigram.Themes
                 var chatFull = InMemoryCacheService.Current.GetFullChat(chat.Id);
                 if (chatFull != null && chatFull.ChatPhoto is TLPhoto && chat != null)
                 {
-                    var viewModel = new ChatPhotosViewModel(bubble.ContextBase.ProtoService, bubble.ContextBase.CacheService, chatFull, chat, serviceMessage);
+                    var viewModel = new ChatPhotosViewModel(context.ProtoService, context.CacheService, chatFull, chat, serviceMessage);
                     await GalleryView.Current.ShowAsync(viewModel, () => media);
                 }
 
@@ -176,6 +193,12 @@ namespace Unigram.Themes
             var document = message.GetDocument();
             if (TLMessage.IsGif(document) && !ApplicationSettings.Current.IsAutoPlayEnabled)
             {
+                var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
+                if (bubble == null)
+                {
+                    return;
+                }
+
                 var page = bubble.Ancestors<IGifPlayback>().FirstOrDefault() as IGifPlayback;
                 if (page == null)
                 {
@@ -204,7 +227,7 @@ namespace Unigram.Themes
                 }
                 else
                 {
-                    viewModel = new DialogGalleryViewModel(bubble.ContextBase.ProtoService, bubble.ContextBase.CacheService, message.Parent.ToInputPeer(), message);
+                    viewModel = new DialogGalleryViewModel(context.ProtoService, context.CacheService, message.Parent.ToInputPeer(), message);
                 }
 
                 await GalleryView.Current.ShowAsync(viewModel, () => media);
@@ -231,8 +254,8 @@ namespace Unigram.Themes
                 return;
             }
 
-            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
-            if (bubble == null)
+            var context = TryGetContext(element);
+            if (context == null)
             {
                 return;
             }
@@ -242,8 +265,8 @@ namespace Unigram.Themes
                 var vector = new TLVector<int> { message.Id };
                 if (message.Parent is TLChannel channel)
                 {
-                    bubble.ContextBase.Aggregator.Publish(new TLUpdateChannelReadMessagesContents { ChannelId = channel.Id, Messages = vector });
-                    bubble.ContextBase.ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), vector, result =>
+                    context.Aggregator.Publish(new TLUpdateChannelReadMessagesContents { ChannelId = channel.Id, Messages = vector });
+                    context.ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), vector, result =>
                     {
                         message.IsMediaUnread = false;
                         message.RaisePropertyChanged(() => message.IsMediaUnread);
@@ -251,8 +274,8 @@ namespace Unigram.Themes
                 }
                 else
                 {
-                    bubble.ContextBase.Aggregator.Publish(new TLUpdateReadMessagesContents { Messages = vector });
-                    bubble.ContextBase.ProtoService.ReadMessageContentsAsync(vector, result =>
+                    context.Aggregator.Publish(new TLUpdateReadMessagesContents { Messages = vector });
+                    context.ProtoService.ReadMessageContentsAsync(vector, result =>
                     {
                         message.IsMediaUnread = false;
                         message.RaisePropertyChanged(() => message.IsMediaUnread);
@@ -274,7 +297,7 @@ namespace Unigram.Themes
 
             if (message.Parent != null)
             {
-                var viewModel = new GallerySecretViewModel(message.Parent.ToInputPeer(), message, bubble.ContextBase.ProtoService, bubble.ContextBase.CacheService, bubble.ContextBase.Aggregator);
+                var viewModel = new GallerySecretViewModel(message.Parent.ToInputPeer(), message, context.ProtoService, context.CacheService, context.Aggregator);
                 await GallerySecretView.Current.ShowAsync(viewModel, () => media);
             }
         }
@@ -321,15 +344,15 @@ namespace Unigram.Themes
             var element = sender as FrameworkElement;
             var message = element.DataContext as TLMessage;
 
-            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
-            if (bubble == null)
+            var context = TryGetContext(element);
+            if (context == null)
             {
                 return;
             }
 
             if (message.Media is TLMessageMediaContact contactMedia && contactMedia.User.HasAccessHash)
             {
-                bubble.Context.NavigationService.Navigate(typeof(UserDetailsPage), contactMedia.User.ToPeer());
+                context.NavigationService.Navigate(typeof(UserDetailsPage), contactMedia.User.ToPeer());
             }
         }
     }
