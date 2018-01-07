@@ -1436,6 +1436,7 @@ namespace Telegram
 					//COM exported methods
 					IFACEMETHODIMP get_Default(_Out_ ITLConfig** value);
 				};
+				
 
 				class TLRPCErrorFactory WrlSealed : public AgileActivationFactory<ITLRPCErrorFactory>
 				{

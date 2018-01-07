@@ -209,7 +209,7 @@ HRESULT ConnectionSocket::SendData(BYTE const* buffer, UINT32 length)
 			auto availableBytes = length - sentBytes;
 			m_sendBuffer.resize(remainingBytes + availableBytes);
 
-			CopyMemory(m_sendBuffer.data() + remainingBytes, buffer, availableBytes);
+			CopyMemory(m_sendBuffer.data() + remainingBytes, buffer + sentBytes, availableBytes);
 
 			return S_FALSE;
 		}
