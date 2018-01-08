@@ -109,8 +109,7 @@ namespace Telegram.Api.Services
                 //TokenType = 3,   // MPNS
                 //TokenType = 8,   // WNS
                 TokenType = tokenType,
-                Token = token,
-                OtherUids = new TLVector<int>()
+                Token = token
             };
 
             const string methodName = "account.registerDevice";
