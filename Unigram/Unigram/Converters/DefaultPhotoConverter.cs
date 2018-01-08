@@ -49,8 +49,6 @@ namespace Unigram.Converters
             }
         }
 
-        private static readonly AnimatedImageSourceRendererFactory _videoFactory = new AnimatedImageSourceRendererFactory();
-
         public bool CheckChatSettings
         {
             get;

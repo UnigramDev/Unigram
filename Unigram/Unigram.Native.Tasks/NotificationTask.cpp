@@ -368,7 +368,7 @@ String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
 	}
 
 	std::wstringstream almost;
-	almost << L"ms-appdata:///local/temp/placeholders/"
+	almost << L"ms-appdata:///local/temp/"
 		<< group->Data()
 		<< L"_placeholder.png";
 
