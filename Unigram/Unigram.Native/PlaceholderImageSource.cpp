@@ -1,22 +1,24 @@
 #include "pch.h"
+#include <ShCore.h>
 #include "PlaceholderImageSource.h"
 
-using namespace concurrency;
 using namespace D2D1;
 using namespace Windows::Storage;
 using namespace Unigram::Native;
 
-PlaceholderImageSource^ PlaceholderImageSource::m_instance;
-critical_section PlaceholderImageSource::m_criticalSection;
-
 void PlaceholderImageSource::Draw(Color clear, Platform::String^ text, IRandomAccessStream^ randomAccessStream)
 {
-	critical_section::scoped_lock scopedLock(m_criticalSection);
+	static const auto instance = ref new PlaceholderImageSource(192, 192);
+	ThrowIfFailed(instance->InternalDraw(clear, text, randomAccessStream));
+}
 
-	if (m_instance == nullptr)
-		m_instance = ref new PlaceholderImageSource(192, 192);
+HRESULT PlaceholderImageSource::InternalDraw(Color clear, Platform::String^ text, IRandomAccessStream^ randomAccessStream)
+{
+	auto lock = m_criticalSection.Lock();
 
-	m_instance->BeginDraw(clear);
+	HRESULT result;
+	DWRITE_TEXT_METRICS textMetrics;
+	ReturnIfFailed(result, MeasureText(text, &textMetrics));
 
 	//ID2D1LinearGradientBrush *m_pLinearGradientBrush;
 	//ID2D1GradientStopCollection *pGradientStops = NULL;
@@ -26,7 +28,7 @@ void PlaceholderImageSource::Draw(Color clear, Platform::String^ text, IRandomAc
 	//gradientStops[0].position = 0.0f;
 	//gradientStops[1].color = D2D1::ColorF(end.R / 255.0f, end.G / 255.0f, end.B / 255.0f, end.A / 255.0f);
 	//gradientStops[1].position = 1.0f;
-	//ThrowIfFailed(m_instance->m_d2dContext->CreateGradientStopCollection(
+	//ThrowIfFailed(m_d2dContext->CreateGradientStopCollection(
 	//	gradientStops,
 	//	2,
 	//	D2D1_GAMMA_2_2,
@@ -34,7 +36,7 @@ void PlaceholderImageSource::Draw(Color clear, Platform::String^ text, IRandomAc
 	//	&pGradientStops)
 	//);
 
-	//ThrowIfFailed(m_instance->m_d2dContext->CreateLinearGradientBrush(
+	//ThrowIfFailed(m_d2dContext->CreateLinearGradientBrush(
 	//	D2D1::LinearGradientBrushProperties(
 	//		D2D1::Point2F(0, 0),
 	//		D2D1::Point2F(0, 192)),
@@ -42,77 +44,60 @@ void PlaceholderImageSource::Draw(Color clear, Platform::String^ text, IRandomAc
 	//	&m_pLinearGradientBrush)
 	//);
 
-	//m_instance->m_d2dContext->FillRectangle(D2D1::RectF(0, 0, 192, 192), m_pLinearGradientBrush);
+	//m_d2dContext->FillRectangle(D2D1::RectF(0, 0, 192, 192), m_pLinearGradientBrush);
 
-	DWRITE_TEXT_METRICS textMetrics = { 0 };
-	m_instance->MeasureText(text, L"Segoe UI", 82, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_WEIGHT_NORMAL, &textMetrics);
-	m_instance->DrawText(text, (192 - textMetrics.width) / 2, (180 - textMetrics.height) / 2, L"Segoe UI", D2D1::ColorF(D2D1::ColorF::White), 82, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_WEIGHT_NORMAL);
-	m_instance->EndDraw();
-	m_instance->SaveBitmapToFile(randomAccessStream);
+	m_d2dContext->BeginDraw();
+	m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+	m_d2dContext->Clear(D2D1::ColorF(clear.R / 255.0f, clear.G / 255.0f, clear.B / 255.0f, clear.A / 255.0f));
+
+	D2D1_RECT_F layoutRect = { (192.0f - textMetrics.width) / 2.0f, (180.0f - textMetrics.height) / 2.0f, m_renderTargetSize.width, m_renderTargetSize.height };
+	m_d2dContext->DrawText(text->Data(), text->Length(), m_textFormat.Get(), &layoutRect, m_textBrush.Get());
+
+	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
+	{
+		ReturnIfFailed(result, CreateDeviceResources());
+		return InternalDraw(clear, text, randomAccessStream);
+	}
+
+	ComPtr<IStream> stream;
+	ReturnIfFailed(result, CreateStreamOverRandomAccessStream(randomAccessStream, IID_PPV_ARGS(&stream)));
+
+	return SaveBitmapToStream(GUID_ContainerFormatPng, stream.Get());
 }
 
-PlaceholderImageSource::PlaceholderImageSource(int width, int height)
+PlaceholderImageSource::PlaceholderImageSource(int width, int height) :
+	m_renderTargetSize({ static_cast<FLOAT>(width), static_cast<FLOAT>(height) })
 {
-	CreateDeviceIndependentResources();
-	CreateDeviceResources();
-
-	D2D1_SIZE_U size = { width, height };
-	D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
-
-	ThrowIfFailed(
-		m_d2dContext->CreateBitmap(
-			size, (const void *)0, 0,
-			&properties,
-			&m_targetBitmap
-		)
-	);
-
-	m_d2dContext->SetTarget(m_targetBitmap.Get());
-
-	m_renderTargetSize = m_d2dContext->GetSize();
-
-	//BeginDraw();
+	ThrowIfFailed(CreateDeviceIndependentResources());
+	ThrowIfFailed(CreateDeviceResources());
 }
 
-void PlaceholderImageSource::Initialize()
+HRESULT PlaceholderImageSource::CreateDeviceIndependentResources()
 {
-	CreateDeviceIndependentResources();
-	CreateDeviceResources();
+	HRESULT result;
+	D2D1_FACTORY_OPTIONS options = {};
+	ReturnIfFailed(result, D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), &options, &m_d2dFactory));
+	ReturnIfFailed(result, CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_wicFactory)));
+	ReturnIfFailed(result, DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &m_dwriteFactory));
+
+	ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
+		L"Segoe UI",							// font family name
+		nullptr,								// system font collection
+		DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+		DWRITE_FONT_STYLE_NORMAL,				// font style
+		DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+		82.0f,									// font size
+		L"",									// locale name
+		&m_textFormat
+	));
+	ReturnIfFailed(result, m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+
+	return m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 }
 
-
-void PlaceholderImageSource::CreateDeviceIndependentResources()
+HRESULT PlaceholderImageSource::CreateDeviceResources()
 {
-	D2D1_FACTORY_OPTIONS options;
-	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
-
-
-	ThrowIfFailed(
-		D2D1CreateFactory(
-			D2D1_FACTORY_TYPE_SINGLE_THREADED,
-			__uuidof(ID2D1Factory1),
-			&options,
-			&m_d2dFactory)
-	);
-
-	ThrowIfFailed(
-		CoCreateInstance(
-			CLSID_WICImagingFactory,
-			nullptr,
-			CLSCTX_INPROC_SERVER,
-			IID_PPV_ARGS(&m_wicFactory))
-	);
-
-	ThrowIfFailed(
-		DWriteCreateFactory(
-			DWRITE_FACTORY_TYPE_SHARED,
-			__uuidof(IDWriteFactory),
-			&m_dwriteFactory)
-	);
-}
-
-void PlaceholderImageSource::CreateDeviceResources()
-{
+	HRESULT result;
 	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
 	D3D_FEATURE_LEVEL featureLevels[] =
@@ -128,271 +113,64 @@ void PlaceholderImageSource::CreateDeviceResources()
 
 	ComPtr<ID3D11Device> device;
 	ComPtr<ID3D11DeviceContext> context;
-
-	ThrowIfFailed(
-		D3D11CreateDevice(
-			nullptr,                    // specify null to use the default adapter
-			D3D_DRIVER_TYPE_HARDWARE,
-			0,
-			creationFlags,              // optionally set debug and Direct2D compatibility flags
-			featureLevels,              // list of feature levels this app can support
-			ARRAYSIZE(featureLevels),   // number of possible feature levels
-			D3D11_SDK_VERSION,
-			&device,                    // returns the Direct3D device created
-			&m_featureLevel,            // returns feature level of device created
-			&context                    // returns the device immediate context
-		)
-	);
+	ReturnIfFailed(result, D3D11CreateDevice(nullptr,	// specify null to use the default adapter
+		D3D_DRIVER_TYPE_HARDWARE, 0,
+		creationFlags,							// optionally set debug and Direct2D compatibility flags
+		featureLevels,							// list of feature levels this app can support
+		ARRAYSIZE(featureLevels),				// number of possible feature levels
+		D3D11_SDK_VERSION,
+		&device,								// returns the Direct3D device created
+		&m_featureLevel,						// returns feature level of device created
+		&context								// returns the device immediate context
+	));
 
 	ComPtr<IDXGIDevice> dxgiDevice;
+	ReturnIfFailed(result, device.As(&dxgiDevice));
+	ReturnIfFailed(result, m_d2dFactory->CreateDevice(dxgiDevice.Get(), &m_d2dDevice));
+	ReturnIfFailed(result, m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &m_d2dContext));
+	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &m_textBrush));
 
-	ThrowIfFailed(
-		device.As(&dxgiDevice)
-	);
+	D2D1_SIZE_U size = { static_cast<UINT32>(m_renderTargetSize.width), static_cast<UINT32>(m_renderTargetSize.height) };
+	D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+	ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties, &m_targetBitmap));
 
-	ThrowIfFailed(
-		m_d2dFactory->CreateDevice(dxgiDevice.Get(), &m_d2dDevice)
-	);
+	m_d2dContext->SetTarget(m_targetBitmap.Get());
 
-	ThrowIfFailed(
-		m_d2dDevice->CreateDeviceContext(
-			D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-			&m_d2dContext)
-	);
+	return m_wicFactory->CreateImageEncoder(m_d2dDevice.Get(), &m_imageEncoder);
 }
 
-void PlaceholderImageSource::BeginDraw(Color clear)
+HRESULT PlaceholderImageSource::MeasureText(Platform::String^ text, DWRITE_TEXT_METRICS* textMetrics)
 {
-	m_d2dContext->BeginDraw();
-	m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
-	m_d2dContext->Clear(D2D1::ColorF(clear.R / 255.0f, clear.G / 255.0f, clear.B / 255.0f, clear.A / 255.0f));
+	HRESULT result;
+	ComPtr<IDWriteTextLayout> textLayout;
+	ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
+		text->Data(),							// The string to be laid out and formatted.
+		text->Length(),							// The length of the string.
+		m_textFormat.Get(),						// The text format to apply to the string (contains font information, etc).
+		m_renderTargetSize.width,				// The width of the layout box.
+		m_renderTargetSize.height,				// The height of the layout box.
+		&textLayout								// The IDWriteTextLayout interface pointer.
+	));
+
+	return textLayout->GetMetrics(textMetrics);
 }
 
-void PlaceholderImageSource::EndDraw()
+
+HRESULT PlaceholderImageSource::SaveBitmapToStream(REFGUID wicFormat, IStream* stream)
 {
-	ThrowIfFailed(
-		m_d2dContext->EndDraw()
-	);
-
-	//if (needPreview)
-	//{
-	//	GUID wicFormat = GUID_ContainerFormatBmp;
-	//	ComPtr<IStream> stream;
-	//	ComPtr<ISequentialStream> ss;
-	//	auto inMemStream = ref new InMemoryRandomAccessStream();
-	//	ThrowIfFailed(
-	//		CreateStreamOverRandomAccessStream(inMemStream, IID_PPV_ARGS(&stream))
-	//		);
-
-	//	SaveBitmapToStream(m_targetBitmap, m_wicFactory, m_d2dContext, wicFormat, stream.Get());
-
-	//	return inMemStream;
-	//}
-
-	//return nullptr;
-}
-
-void PlaceholderImageSource::DrawText(Platform::String^ text, int x, int y, Platform::String^ fontFamilyName,
-	D2D1_COLOR_F textColor, float fontSize, DWRITE_FONT_STYLE fontStyle,
-	DWRITE_FONT_WEIGHT fontWeight)
-{
-	ThrowIfFailed(
-		m_dwriteFactory->CreateTextFormat(
-			fontFamilyName->Data(),				 // font family name
-			nullptr,							 // system font collection
-			fontWeight,							 // font weight 
-			fontStyle,							 // font style
-			DWRITE_FONT_STRETCH_NORMAL,			 // default font stretch
-			fontSize,						     // font size
-			L"",								 // locale name
-			&m_textFormat
-		)
-	);
-
-	// Set text alignment.
-	ThrowIfFailed(
-		m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING)
-	);
-
-	// Set paragraph alignment.
-	ThrowIfFailed(
-		m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
-	);
-
-	D2D1_RECT_F layoutRect = { x, y, m_renderTargetSize.width, m_renderTargetSize.height };
-
-	ThrowIfFailed(
-		m_d2dContext->CreateSolidColorBrush(
-			textColor,
-			&m_textBrush
-		)
-	);
-
-	m_d2dContext->DrawText(text->Data(), text->Length(), m_textFormat.Get(), &layoutRect, m_textBrush.Get());
-}
-
-void PlaceholderImageSource::MeasureText(Platform::String^ text, Platform::String^ fontFamilyName, float fontSize, DWRITE_FONT_STYLE fontStyle, DWRITE_FONT_WEIGHT fontWeight, DWRITE_TEXT_METRICS* textMetrics)
-{
-	ThrowIfFailed(
-		m_dwriteFactory->CreateTextFormat(
-			fontFamilyName->Data(),				 // font family name
-			nullptr,							 // system font collection
-			fontWeight,							 // font weight 
-			fontStyle,							 // font style
-			DWRITE_FONT_STRETCH_NORMAL,			 // default font stretch
-			fontSize,						     // font size
-			L"",								 // locale name
-			&m_textFormat
-		)
-	);
-
-	ThrowIfFailed(
-		m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING)
-	);
-
-	ThrowIfFailed(
-		m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
-	);
-
-	ComPtr<IDWriteTextLayout> pTextLayout_;
-	m_dwriteFactory->CreateTextLayout(
-		text->Data(),      // The string to be laid out and formatted.
-		text->Length(),  // The length of the string.
-		m_textFormat.Get(),  // The text format to apply to the string (contains font information, etc).
-		m_renderTargetSize.width,         // The width of the layout box.
-		m_renderTargetSize.height,        // The height of the layout box.
-		&pTextLayout_  // The IDWriteTextLayout interface pointer.
-	);
-
-	ThrowIfFailed(
-		pTextLayout_->GetMetrics(textMetrics)
-	);
-}
-
-void PlaceholderImageSource::SaveBitmapToFile(Streams::IRandomAccessStream^ randomAccessStream)
-{
-	//Pickers::FileSavePicker^ savePicker = ref new Pickers::FileSavePicker();
-	//auto pngExtensions = ref new Platform::Collections::Vector<Platform::String^>();
-	//pngExtensions->Append(".png");
-	//savePicker->FileTypeChoices->Insert("PNG file", pngExtensions);
-	//auto jpgExtensions = ref new Platform::Collections::Vector<Platform::String^>();
-	//jpgExtensions->Append(".jpg");
-	//savePicker->FileTypeChoices->Insert("JPEG file", jpgExtensions);
-	//auto bmpExtensions = ref new Platform::Collections::Vector<Platform::String^>();
-	//bmpExtensions->Append(".bmp");
-	//savePicker->FileTypeChoices->Insert("BMP file", bmpExtensions);
-	//savePicker->DefaultFileExtension = ".png";
-	//savePicker->SuggestedFileName = "watermark";
-	//savePicker->SuggestedStartLocation = Pickers::PickerLocationId::PicturesLibrary;
-
-	std::shared_ptr<GUID> wicFormat = std::make_shared<GUID>(GUID_ContainerFormatPng);
-
-	//create_task(savePicker->PickSaveFileAsync()).then([=](StorageFile^ file)
-	//{
-	//	if (file == nullptr)
-	//	{
-	//		// If user clicks "Cancel", reset the saving state, then cancel the current task.
-	//		//m_screenSavingState = ScreenSavingState::NotSaved;
-	//		cancel_current_task();
-	//	}
-
-	//	if (file->FileType == ".bmp")
-	//	{
-	//		*wicFormat = GUID_ContainerFormatBmp;
-	//	}
-	//	else if (file->FileType == ".jpg")
-	//	{
-	//		*wicFormat = GUID_ContainerFormatJpeg;
-	//	}
-	//	return file->OpenAsync(FileAccessMode::ReadWrite);
-
-	//}).then([=](Streams::IRandomAccessStream^ randomAccessStream)
-	//{
-		// Convert the RandomAccessStream to an IStream.
-	ComPtr<IStream> stream;
-	ThrowIfFailed(
-		CreateStreamOverRandomAccessStream(randomAccessStream, IID_PPV_ARGS(&stream))
-	);
-
-	SaveBitmapToStream(m_targetBitmap, m_wicFactory, m_d2dContext, GUID_ContainerFormatPng, stream.Get());
-	//});
-}
-
-void PlaceholderImageSource::SaveBitmapToStream(
-	_In_ ComPtr<ID2D1Bitmap1> d2dBitmap,
-	_In_ ComPtr<IWICImagingFactory2> wicFactory2,
-	_In_ ComPtr<ID2D1DeviceContext> d2dContext,
-	_In_ REFGUID wicFormat,
-	_In_ IStream* stream
-)
-{
+	HRESULT result;
 	ComPtr<IWICBitmapEncoder> wicBitmapEncoder;
-	ThrowIfFailed(
-		wicFactory2->CreateEncoder(
-			wicFormat,
-			nullptr,    // No preferred codec vendor.
-			&wicBitmapEncoder
-		)
-	);
-
-	ThrowIfFailed(
-		wicBitmapEncoder->Initialize(
-			stream,
-			WICBitmapEncoderNoCache
-		)
-	);
+	ReturnIfFailed(result, m_wicFactory->CreateEncoder(wicFormat, nullptr, &wicBitmapEncoder));
+	ReturnIfFailed(result, wicBitmapEncoder->Initialize(stream, WICBitmapEncoderNoCache));
 
 	ComPtr<IWICBitmapFrameEncode> wicFrameEncode;
-	ThrowIfFailed(
-		wicBitmapEncoder->CreateNewFrame(
-			&wicFrameEncode,
-			nullptr     // No encoder options.
-		)
-	);
+	ReturnIfFailed(result, wicBitmapEncoder->CreateNewFrame(&wicFrameEncode, nullptr));
+	ReturnIfFailed(result, wicFrameEncode->Initialize(nullptr));
 
-	ThrowIfFailed(
-		wicFrameEncode->Initialize(nullptr)
-	);
+	WICImageParameters params = { m_targetBitmap->GetPixelFormat(), 96.0f, 96.0f, 0.0f, 0.0f, static_cast<UINT32>(m_renderTargetSize.width), static_cast<UINT32>(m_renderTargetSize.height) };
+	ReturnIfFailed(result, m_imageEncoder->WriteFrame(m_targetBitmap.Get(), wicFrameEncode.Get(), &params));
+	ReturnIfFailed(result, wicFrameEncode->Commit());
+	ReturnIfFailed(result, wicBitmapEncoder->Commit());
 
-	ComPtr<ID2D1Device> d2dDevice;
-	d2dContext->GetDevice(&d2dDevice);
-
-	ComPtr<IWICImageEncoder> imageEncoder;
-	ThrowIfFailed(
-		wicFactory2->CreateImageEncoder(
-			d2dDevice.Get(),
-			&imageEncoder
-		)
-	);
-
-	D2D1_SIZE_F imageSize = d2dBitmap->GetSize();
-	WICImageParameters *parames = new WICImageParameters();
-	parames->DpiX = 96.0;
-	parames->DpiY = 96.0;
-	parames->Left = 0;
-	parames->PixelFormat = d2dBitmap->GetPixelFormat();
-	parames->PixelHeight = imageSize.height;
-	parames->PixelWidth = imageSize.width;
-	parames->Top = 0;
-
-	ThrowIfFailed(
-		imageEncoder->WriteFrame(
-			d2dBitmap.Get(),
-			wicFrameEncode.Get(),
-			parames
-			//nullptr     // Use default WICImageParameter options.
-		)
-	);
-
-	ThrowIfFailed(
-		wicFrameEncode->Commit()
-	);
-
-	ThrowIfFailed(
-		wicBitmapEncoder->Commit()
-	);
-
-	ThrowIfFailed(
-		stream->Commit(STGC_DEFAULT)
-	);
+	return stream->Commit(STGC_DEFAULT);
 }

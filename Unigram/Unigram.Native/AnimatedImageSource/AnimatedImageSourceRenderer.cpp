@@ -45,8 +45,7 @@ HRESULT AnimatedImageSourceRenderer::Draw(RECT const& drawingBounds)
 	auto lock = m_criticalSection.Lock();
 
 	HRESULT result;
-	result = m_owner->DrawFrame(m_imageSourceNative.Get(), drawingBounds, m_frameBitmap.Get());
-	if (result == E_SURFACE_CONTENTS_LOST)
+	if ((result = m_owner->DrawFrame(m_imageSourceNative.Get(), drawingBounds, m_frameBitmap.Get())) == E_SURFACE_CONTENTS_LOST)
 	{
 		ReturnIfFailed(result, InitializeImageSource());
 		return OnTimerTick();
