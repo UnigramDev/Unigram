@@ -963,8 +963,8 @@ auth.resendCode#3ef1a9bf phone_number:string phone_code_hash:string = auth.SentC
 auth.cancelCode#1f040578 phone_number:string phone_code_hash:string = Bool;
 auth.dropTempAuthKeys#8e48a188 except_auth_keys:Vector<long> = Bool;
 
-account.registerDevice#f75874d1 token_type:int token:string other_uids:Vector<int> = Bool;
-account.unregisterDevice#3076c4bf token_type:int token:string other_uids:Vector<int> = Bool;
+account.registerDevice#001389cc token_type:int token:string app_sandbox:Bool = Bool;
+account.unregisterDevice#3076c4bf token_type:int token:string = Bool;
 account.updateNotifySettings#84be5b93 peer:InputNotifyPeer settings:InputPeerNotifySettings = Bool;
 account.getNotifySettings#12b3ad31 peer:InputNotifyPeer = PeerNotifySettings;
 account.resetNotifySettings#db7e1747 = Bool;
@@ -1196,4 +1196,4 @@ langpack.getStrings#2e1ee318 lang_code:string keys:Vector<string> = Vector<LangP
 langpack.getDifference#b2e4d7d from_version:int = LangPackDifference;
 langpack.getLanguages#800fd57d = Vector<LangPackLanguage>;
 
-// LAYER 73
+// LAYER 74
