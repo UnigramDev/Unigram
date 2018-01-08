@@ -39,7 +39,10 @@ namespace Telegram.Api.TL
 		InvokeWithLayer18 = 0x1C900537,
 
 		// Manually parsed
+		RPCResult = 0xF35C6D01,
 		RPCReqError = 0x7AE432F5,
+		MsgContainer = 0x73F1F8DC,
+		GzipPacked = 0x3072CFA1,
 		Null = 0x56730BCC,
 
 		ContestSaveDeveloperInfo = 0x9A5F6E95,
@@ -300,6 +303,7 @@ namespace Telegram.Api.TL
 		PhotosPhoto = 0x20212CA8,
 		UploadFile = 0x96A18D5,
 		UploadFileCdnRedirect = 0xEA52FE5A,
+		Config = 0x9C840964,
 		NearestDC = 0x8E1A1775,
 		HelpAppUpdate = 0x8987F311,
 		HelpNoAppUpdate = 0xC45A6536,
@@ -655,7 +659,7 @@ namespace Telegram.Api.TL
 		AuthResendCode = 0x3EF1A9BF,
 		AuthCancelCode = 0x1F040578,
 		AuthDropTempAuthKeys = 0x8E48A188,
-		AccountRegisterDevice = 0xF75874D1,
+		AccountRegisterDevice = 0x001389CC,
 		AccountUnregisterDevice = 0x3076C4BF,
 		AccountUpdateNotifySettings = 0x84BE5B93,
 		AccountGetNotifySettings = 0x12B3AD31,
