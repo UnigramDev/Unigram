@@ -131,7 +131,7 @@ int32 NativeUtils::GetLastInputTime()
 {
 	typedef BOOL(WINAPI *pGetLastInputInfo)(_Out_ PLASTINPUTINFO);
 
-	static const LibraryInstance user32(L"User32.dll");
+	static const LibraryInstance user32(L"User32.dll", 0x00000001);
 	static const auto getLastInputInfo = user32.GetMethod<pGetLastInputInfo>("GetLastInputInfo");
 
 	if (getLastInputInfo == nullptr)
