@@ -2,7 +2,7 @@
 #include "Helpers\LibraryHelper.h"
 #include "NetworkExtensions.h"
 
-static LibraryInstance s_iphlpapi(L"Iphlpapi.dll");
+static const LibraryInstance s_iphlpapi(L"Iphlpapi.dll");
 
 NTSTATUS WINAPI NotifyIpInterfaceChange(ADDRESS_FAMILY Family, PIPINTERFACE_CHANGE_CALLBACK Callback, PVOID CallerContext, BOOLEAN InitialNotification, HANDLE* NotificationHandle)
 {

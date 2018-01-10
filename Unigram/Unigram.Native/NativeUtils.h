@@ -7,17 +7,14 @@
 #include <windows.h>
 #include "Shlwapi.h"
 
-typedef HMODULE(WINAPI *pLoadLibraryEx)(_In_ LPCTSTR, _Reserved_ HANDLE, _In_ DWORD);
-typedef HMODULE(WINAPI *pGetModuleHandle)(__in_opt LPCTSTR lpModuleName);
-
-typedef BOOL(WINAPI *pGetLastInputInfo)(_Out_ PLASTINPUTINFO plii);
-
 using namespace Platform;
+using namespace Windows::Foundation::Metadata;
 
 namespace Unigram
 {
 	namespace Native
 	{
+
 		public ref class NativeUtils sealed
 		{
 		public:
@@ -28,6 +25,7 @@ namespace Unigram
 
 			static int32 GetLastInputTime();
 
+			[DefaultOverload]
 			static int32 GetDirectionality(String^ value);
 			static int32 GetDirectionality(char16 value);
 
@@ -36,16 +34,6 @@ namespace Unigram
 			static void CleanDirectoryInternal(const std::wstring &path, int days);
 			static bool IsBrowsePath(const std::wstring& path);
 			static ULONGLONG FileTimeToSeconds(FILETIME& ft);
-
-			static HMODULE s_user32;
-			static pGetLastInputInfo s_getLastInputInfo;
 		};
-
-		HMODULE GetKernelModule()
-		{
-			MEMORY_BASIC_INFORMATION mbi = { 0 };
-			VirtualQuery(VirtualQuery, &mbi, sizeof(mbi));
-			return reinterpret_cast<HMODULE>(mbi.AllocationBase);
-		}
 	}
 }
