@@ -25,10 +25,18 @@ HMODULE GetModuleHandle(LPCTSTR libFileName)
 	return procGetModuleHandle(libFileName);
 }
 
-HMODULE LoadLibrary(_In_ LPCTSTR lpFileName)
+HMODULE LoadLibrary(LPCTSTR lpFileName)
 {
 	typedef HMODULE(WINAPI *pLoadLibrary)(_In_ LPCTSTR);
 	static const auto procLoadLibrary = reinterpret_cast<pLoadLibrary>(GetProcAddress(GetKernelModule(), "LoadLibraryW"));
 
 	return procLoadLibrary(lpFileName);
+}
+
+HMODULE LoadLibraryEx(_In_ LPCTSTR lpFileName, _Reserved_ HANDLE hFile, _In_ DWORD flags)
+{
+	typedef HMODULE(WINAPI *pLoadLibraryEx)(_In_ LPCTSTR, _Reserved_ HANDLE, _In_ DWORD);
+	static const auto procLoadLibraryEx = reinterpret_cast<pLoadLibraryEx>(GetProcAddress(GetKernelModule(), "LoadLibraryExW"));
+
+	return procLoadLibraryEx(lpFileName, hFile, flags);
 }
