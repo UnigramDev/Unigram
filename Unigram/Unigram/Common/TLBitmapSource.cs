@@ -246,8 +246,7 @@ namespace Unigram.Common
                     {
                         if (stream.Size == 0)
                         {
-                            PlaceholderImageSource.Draw(BindConvert.Current.Bubble(id).Color, InitialNameStringConverter.Convert(value), stream);
-                            stream.Seek(0);
+                            PlaceholderImageHelper.DrawProfilePlaceholder(BindConvert.Current.Bubble(id).Color, InitialNameStringConverter.Convert(value), stream);
                         }
 
                         _bitmapImage.SetSource(stream);
@@ -302,6 +301,7 @@ namespace Unigram.Common
                     Phase = phase;
 
                     _bitmapImage.UriSource = FileUtils.GetTempFileUri(fileName);
+
                     return true;
                 }
             }
