@@ -259,7 +259,7 @@
     <ClInclude Include="Opus\OpusMediaSource.h" />
     <ClInclude Include="Opus\OpusMediaType.h" />
     <ClInclude Include="Opus\OpusOutputByteStream.h" />
-    <ClInclude Include="PlaceholderImageSource.h" />
+    <ClInclude Include="PlaceholderImageHelper.h" />
     <ClInclude Include="MediaCapturePreview.h" />
     <ClInclude Include="WebP\DemuxerWrapper.h" />
     <ClInclude Include="GIF\GIFByteStreamHandler.h" />
@@ -306,7 +306,7 @@
     <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRenderer.cpp" />
     <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.cpp" />
     <ClCompile Include="AnimatedImageSource\FramesCacheStore.cpp" />
-    <ClCompile Include="PlaceholderImageSource.cpp" />
+    <ClCompile Include="PlaceholderImageHelper.cpp" />
     <ClCompile Include="MediaCapturePreview.cpp" />
     <ClCompile Include="WebP\WebPFrame.cpp" />
     <ClCompile Include="WebP\WebPImage.cpp" />
