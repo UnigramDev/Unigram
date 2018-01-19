@@ -1215,7 +1215,8 @@ namespace Unigram.ViewModels
                             {
                                 group.Id = first.Id;
                                 group.Flags = first.Flags;
-                                group.HasEditDate = false;
+                                group.HasEditDate = first.HasEditDate;
+                                group.EditDate = first.EditDate;
                                 group.FromId = first.FromId;
                                 group.ToId = first.ToId;
                                 group.FwdFrom = first.FwdFrom;
@@ -1230,16 +1231,8 @@ namespace Unigram.ViewModels
                                 group.GroupedId = first.GroupedId;
                             }
 
-                            if (first.Media is ITLMessageMediaCaption caption)
-                            {
-                                group.HasEditDate = first.HasEditDate;
-                                group.EditDate = first.EditDate;
-
-                                groupMedia.Caption = caption.Caption;
-
-                                group.RaisePropertyChanged(() => group.EditDate);
-                                group.RaisePropertyChanged(() => group.Self);
-                            }
+                            group.RaisePropertyChanged(() => group.EditDate);
+                            group.RaisePropertyChanged(() => group.Self);
                         }
 
                         if (next)
@@ -2332,8 +2325,8 @@ namespace Unigram.ViewModels
                             {
                                 if (container.EditMessage.HasGroupedId && container.EditMessage.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out TLMessage group) && group.Media is TLMessageMediaGroup groupMedia)
                                 {
-                                    groupMedia.Caption = message.Message;
-                                    groupMedia.RaisePropertyChanged(() => groupMedia.Caption);
+                                    group.Message = message.Message;
+                                    //groupMedia.RaisePropertyChanged(() => groupMedia.Caption);
                                     group.RaisePropertyChanged(() => group.Self);
                                 }
                             });
@@ -3935,14 +3928,13 @@ namespace Unigram.ViewModels
         }
     }
 
-    public class TLMessageMediaGroup : TLMessageMediaBase, ITLMessageMediaCaption
+    public class TLMessageMediaGroup : TLMessageMediaBase
     {
         public TLMessageMediaGroup()
         {
             Layout = new GroupedMessages();
         }
 
-        public String Caption { get; set; }
         public GroupedMessages Layout { get; private set; }
     }
 

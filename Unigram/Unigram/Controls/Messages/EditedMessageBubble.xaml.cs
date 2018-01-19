@@ -98,9 +98,9 @@ namespace Unigram.Controls.Messages
                     }
 
                     var caption = false;
-                    if (message.Media is ITLMessageMediaCaption captionMedia)
+                    if (message.Media is TLMessageMediaPhoto || message.Media is TLMessageMediaDocument)
                     {
-                        caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
+                        caption = !string.IsNullOrWhiteSpace(message.Message);
                     }
                     else if (message.Media is TLMessageMediaVenue)
                     {
@@ -147,9 +147,9 @@ namespace Unigram.Controls.Messages
                 else /*if (IsInlineMedia(message.Media))*/
                 {
                     var caption = false;
-                    if (message.Media is ITLMessageMediaCaption captionMedia)
+                    if (message.Media is TLMessageMediaPhoto || message.Media is TLMessageMediaDocument)
                     {
-                        caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
+                        caption = !string.IsNullOrWhiteSpace(message.Message);
                     }
 
                     Media.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);

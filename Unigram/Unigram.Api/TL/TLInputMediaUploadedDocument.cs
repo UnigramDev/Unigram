@@ -4,7 +4,7 @@ using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLInputMediaUploadedDocument : TLInputMediaBase, ITLMessageMediaCaption 
+	public partial class TLInputMediaUploadedDocument : TLInputMediaBase 
 	{
 		[Flags]
 		public enum Flag : Int32
@@ -25,7 +25,6 @@ namespace Telegram.Api.TL
 		public TLInputFileBase Thumb { get; set; }
 		public String MimeType { get; set; }
 		public TLVector<TLDocumentAttributeBase> Attributes { get; set; }
-		public String Caption { get; set; }
 		public TLVector<TLInputDocumentBase> Stickers { get; set; }
 		public Int32? TTLSeconds { get; set; }
 
@@ -44,7 +43,6 @@ namespace Telegram.Api.TL
 			if (HasThumb) Thumb = TLFactory.Read<TLInputFileBase>(from);
 			MimeType = from.ReadString();
 			Attributes = TLFactory.Read<TLVector<TLDocumentAttributeBase>>(from);
-			Caption = from.ReadString();
 			if (HasStickers) Stickers = TLFactory.Read<TLVector<TLInputDocumentBase>>(from);
 			if (HasTTLSeconds) TTLSeconds = from.ReadInt32();
 		}
@@ -58,7 +56,6 @@ namespace Telegram.Api.TL
 			if (HasThumb) to.WriteObject(Thumb);
 			to.WriteString(MimeType ?? string.Empty);
 			to.WriteObject(Attributes);
-			to.WriteString(Caption ?? string.Empty);
 			if (HasStickers) to.WriteObject(Stickers);
 			if (HasTTLSeconds) to.WriteInt32(TTLSeconds.Value);
 		}

@@ -4,7 +4,7 @@ using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLInputMediaDocument : TLInputMediaBase, ITLMessageMediaCaption 
+	public partial class TLInputMediaDocument : TLInputMediaBase 
 	{
 		[Flags]
 		public enum Flag : Int32
@@ -16,7 +16,6 @@ namespace Telegram.Api.TL
 
 		public Flag Flags { get; set; }
 		public TLInputDocumentBase Id { get; set; }
-		public String Caption { get; set; }
 		public Int32? TTLSeconds { get; set; }
 
 		public TLInputMediaDocument() { }
@@ -31,7 +30,6 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			Id = TLFactory.Read<TLInputDocumentBase>(from);
-			Caption = from.ReadString();
 			if (HasTTLSeconds) TTLSeconds = from.ReadInt32();
 		}
 
@@ -41,7 +39,6 @@ namespace Telegram.Api.TL
 
 			to.WriteInt32((Int32)Flags);
 			to.WriteObject(Id);
-			to.WriteString(Caption ?? string.Empty);
 			if (HasTTLSeconds) to.WriteInt32(TTLSeconds.Value);
 		}
 

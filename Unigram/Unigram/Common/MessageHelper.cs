@@ -81,9 +81,9 @@ namespace Unigram.Common
                 var text = !string.IsNullOrWhiteSpace(message.Message);
 
                 var caption = false;
-                if (message.Media is ITLMessageMediaCaption captionMedia)
+                if (message.Media is TLMessageMediaPhoto || message.Media is TLMessageMediaDocument || message.Media is TLMessageMediaGroup)
                 {
-                    caption = !string.IsNullOrWhiteSpace(captionMedia.Caption) && !message.IsRoundVideo();
+                    caption = !string.IsNullOrWhiteSpace(message.Message) && !message.IsRoundVideo();
                 }
                 else if (message.Media is TLMessageMediaVenue)
                 {
@@ -122,7 +122,7 @@ namespace Unigram.Common
                 var paragraph = new Span();
                 var display = string.Empty;
 
-                if (message.HasEntities && message.Entities != null)
+                if (message.HasEntities && message.Entities != null && !string.IsNullOrEmpty(message.Message))
                 {
                     ReplaceEntities(message, paragraph, foreground);
                 }
@@ -153,16 +153,6 @@ namespace Unigram.Common
                             ReplaceAll(message, gameMedia.Game.Description, paragraph, sender.Foreground, true);
                         }
                     }
-                    else if (caption)
-                    {
-                        var captionMedia2 = message.Media as ITLMessageMediaCaption;
-                        if (captionMedia2 != null)
-                        {
-                            display = captionMedia2.Caption;
-                            Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a ITLMediaCaption");
-                            ReplaceAll(message, captionMedia2.Caption, paragraph, sender.Foreground, true);
-                        }
-                    }
 
                     //var text = message.Message;
                     //var captionMedia = message.Media as ITLMediaCaption;
@@ -185,7 +175,7 @@ namespace Unigram.Common
                     sender.FlowDirection = FlowDirection.LeftToRight;
                 }
 
-                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || empty || message?.Media == null)
+                if (message?.Media is TLMessageMediaEmpty || message?.Media is TLMessageMediaPhoto || message?.Media is TLMessageMediaDocument || message?.Media is TLMessageMediaGroup || empty || message?.Media == null)
                 {
                     //var direction = Native.NativeUtils.GetDirectionality(display);
                     //if (direction == 2)

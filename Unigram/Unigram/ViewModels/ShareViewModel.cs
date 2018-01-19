@@ -389,15 +389,6 @@ namespace Unigram.ViewModels
             }
             else if (_inputMedia != null)
             {
-                if (_inputMedia is TLInputMediaDocument document)
-                {
-                    document.Caption = null;
-                }
-                else if (_inputMedia is TLInputMediaPhoto photo)
-                {
-                    photo.Caption = null;
-                }
-
                 foreach (var dialog in dialogs)
                 {
                     TLMessage comment = null;

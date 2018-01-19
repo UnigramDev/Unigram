@@ -227,9 +227,7 @@ namespace Unigram.ViewModels
             if (message.Media is TLMessageMediaPhoto photoMedia)
             {
                 photoMedia.Photo = null;
-                photoMedia.Caption = null;
                 photoMedia.HasPhoto = false;
-                photoMedia.HasCaption = false;
 
                 photoMedia.DestructDate = null;
                 photoMedia.DestructIn = null;
@@ -237,9 +235,7 @@ namespace Unigram.ViewModels
             else if (message.Media is TLMessageMediaDocument documentMedia)
             {
                 documentMedia.Document = null;
-                documentMedia.Caption = null;
                 documentMedia.HasDocument = false;
-                documentMedia.HasCaption = false;
 
                 documentMedia.DestructDate = null;
                 documentMedia.DestructIn = null;

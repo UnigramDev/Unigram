@@ -329,21 +329,21 @@ namespace Unigram.Core.Services
                 {
                     if (message.Media is TLMessageMediaDocument documentMedia)
                     {
-                        if (string.IsNullOrEmpty(documentMedia.Caption) || message.IsRoundVideo())
+                        if (string.IsNullOrEmpty(message.Message) || message.IsRoundVideo())
                         {
                             return result;
                         }
 
-                        return result + documentMedia.Caption.Replace("\r\n", "\n").Replace("\n", " ");
+                        return result + message.Message.Replace("\r\n", "\n").Replace("\n", " ");
                     }
                     else if (message.Media is TLMessageMediaPhoto photoMedia)
                     {
-                        if (string.IsNullOrEmpty(photoMedia.Caption))
+                        if (string.IsNullOrEmpty(message.Message))
                         {
                             return result;
                         }
 
-                        return result + photoMedia.Caption.Replace("\r\n", "\n").Replace("\n", " ");
+                        return result + message.Message.Replace("\r\n", "\n").Replace("\n", " ");
                     }
                     else if (message.Media is TLMessageMediaVenue venueMedia)
                     {
@@ -449,7 +449,7 @@ namespace Unigram.Core.Services
                         }
 
                         var caption = string.Empty;
-                        if (!string.IsNullOrEmpty(documentMedia.Caption))
+                        if (!string.IsNullOrEmpty(message.Message))
                         {
                             caption = ", ";
                         }
@@ -528,7 +528,7 @@ namespace Unigram.Core.Services
                             return result + Strings.Android.AttachPhotoExpired;
                         }
 
-                        if (string.IsNullOrEmpty(photoMedia.Caption))
+                        if (string.IsNullOrEmpty(message.Message))
                         {
                             return result + Strings.Android.AttachPhoto;
                         }

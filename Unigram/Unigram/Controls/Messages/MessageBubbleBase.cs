@@ -615,7 +615,7 @@ namespace Unigram.Controls.Messages
             return false;
         }
 
-        protected static bool IsInlineMedia(TLMessageMediaBase media)
+        protected static bool IsInlineMedia(TLMessage message, TLMessageMediaBase media)
         {
             if (media == null) return false;
 
@@ -625,7 +625,7 @@ namespace Unigram.Controls.Messages
             else if (media is TLMessageMediaPhoto)
             {
                 var photoMedia = media as TLMessageMediaPhoto;
-                if (string.IsNullOrWhiteSpace(photoMedia.Caption))
+                if (string.IsNullOrWhiteSpace(message.Message))
                 {
                     return false;
                 }
@@ -638,14 +638,14 @@ namespace Unigram.Controls.Messages
                 else if (TLMessage.IsVoice(documentMedia.Document)) return true;
                 else if (TLMessage.IsVideo(documentMedia.Document))
                 {
-                    if (string.IsNullOrWhiteSpace(documentMedia.Caption))
+                    if (string.IsNullOrWhiteSpace(message.Message))
                     {
                         return false;
                     }
                 }
                 else if (TLMessage.IsGif(documentMedia.Document))
                 {
-                    if (string.IsNullOrWhiteSpace(documentMedia.Caption))
+                    if (string.IsNullOrWhiteSpace(message.Message))
                     {
                         return false;
                     }

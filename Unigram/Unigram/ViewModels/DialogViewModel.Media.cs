@@ -47,13 +47,16 @@ namespace Unigram.ViewModels
             Stickers.StickersService.AddRecentGif(document, (int)(Utils.CurrentTimestamp / 1000));
         }
 
-        private void SendDocument(TLDocument document, string caption)
+        private void SendDocument(TLDocument document, string caption = null)
         {
             caption = caption.Format();
 
-            var media = new TLMessageMediaDocument { Document = document, Caption = caption };
+            var media = new TLMessageMediaDocument { Document = document };
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+            message.Entities = Markdown.Parse(ref caption);
+            message.HasEntities = message.Entities != null;
+            message.Message = caption.Format();
 
             if (Reply != null)
             {
@@ -68,7 +71,6 @@ namespace Unigram.ViewModels
             {
                 var input = new TLInputMediaDocument
                 {
-                    Caption = caption,
                     Id = new TLInputDocument
                     {
                         Id = document.Id,
@@ -183,10 +185,12 @@ namespace Unigram.ViewModels
                 var media = new TLMessageMediaDocument
                 {
                     Document = document,
-                    Caption = caption
                 };
 
                 var message = TLUtils.GetMessage(SettingsHelper.UserId, _peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+                message.Entities = Markdown.Parse(ref caption);
+                message.HasEntities = message.Entities != null;
+                message.Message = caption.Format();
 
                 if (Reply != null)
                 {
@@ -207,7 +211,6 @@ namespace Unigram.ViewModels
                         {
                             File = upload.ToInputFile(),
                             MimeType = document.MimeType,
-                            Caption = media.Caption,
                             Attributes = document.Attributes
                         };
 
@@ -301,10 +304,12 @@ namespace Unigram.ViewModels
             var media = new TLMessageMediaDocument
             {
                 Document = document,
-                Caption = caption
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, _peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+            message.Entities = Markdown.Parse(ref caption);
+            message.HasEntities = message.Entities != null;
+            message.Message = caption.Format();
 
             if (Reply != null)
             {
@@ -330,7 +335,6 @@ namespace Unigram.ViewModels
                             File = upload.ToInputFile(),
                             Thumb = thumbUpload.ToInputFile(),
                             MimeType = document.MimeType,
-                            Caption = media.Caption,
                             Attributes = document.Attributes
                         };
 
@@ -437,14 +441,15 @@ namespace Unigram.ViewModels
             {
                 Document = document,
                 HasDocument = document != null,
-                Caption = caption,
-                HasCaption = caption != null,
                 TTLSeconds = ttlSeconds,
                 HasTTLSeconds = ttlSeconds != null
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, _peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
             message.IsMediaUnread = round;
+            message.Entities = Markdown.Parse(ref caption);
+            message.HasEntities = message.Entities != null;
+            message.Message = caption.Format();
 
             if (Reply != null)
             {
@@ -494,7 +499,6 @@ namespace Unigram.ViewModels
                             File = upload.ToInputFile(),
                             Thumb = thumbUpload.ToInputFile(),
                             MimeType = document.MimeType,
-                            Caption = media.Caption,
                             Attributes = document.Attributes,
                             TTLSeconds = ttlSeconds
                         };
@@ -653,8 +657,6 @@ namespace Unigram.ViewModels
 
         private async Task SendPhotoAsync(StorageFile file, string caption, int? ttlSeconds = null)
         {
-            caption = caption.Format();
-
             var originalProps = await file.Properties.GetImagePropertiesAsync();
 
             var imageWidth = originalProps.GetWidth();
@@ -713,14 +715,15 @@ namespace Unigram.ViewModels
             var media = new TLMessageMediaPhoto
             {
                 Photo = photo,
-                Caption = caption,
                 TTLSeconds = ttlSeconds,
                 HasPhoto = true,
-                HasCaption = caption != null,
                 HasTTLSeconds = ttlSeconds.HasValue
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+            message.Entities = Markdown.Parse(ref caption);
+            message.HasEntities = message.Entities != null;
+            message.Message = caption.Format();
 
             if (Reply != null)
             {
@@ -740,7 +743,6 @@ namespace Unigram.ViewModels
                     var inputMedia = new TLInputMediaUploadedPhoto
                     {
                         File = upload.ToInputFile(),
-                        Caption = media.Caption,
                         TTLSeconds = ttlSeconds
                     };
 
@@ -828,11 +830,13 @@ namespace Unigram.ViewModels
 
             var media = new TLMessageMediaDocument
             {
-                Caption = caption,
                 Document = document
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+            message.Entities = Markdown.Parse(ref caption);
+            message.HasEntities = message.Entities != null;
+            message.Message = caption.Format();
 
             if (Reply != null)
             {
@@ -858,7 +862,6 @@ namespace Unigram.ViewModels
                             File = upload.ToInputFile(),
                             Thumb = thumbUpload.ToInputFile(),
                             MimeType = document.MimeType,
-                            Caption = media.Caption,
                             Attributes = document.Attributes
                         };
 
@@ -892,7 +895,6 @@ namespace Unigram.ViewModels
 
             var media = new TLMessageMediaDocument
             {
-                Caption = caption,
                 Document = new TLDocument
                 {
                     Id = TLLong.Random(),
@@ -921,6 +923,9 @@ namespace Unigram.ViewModels
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
             message.IsMediaUnread = true;
+            message.Entities = Markdown.Parse(ref caption);
+            message.HasEntities = message.Entities != null;
+            message.Message = caption.Format();
 
             if (Reply != null)
             {
@@ -941,7 +946,6 @@ namespace Unigram.ViewModels
                     {
                         File = upload.ToInputFile(),
                         MimeType = "audio/ogg",
-                        Caption = media.Caption,
                         Attributes = new TLVector<TLDocumentAttributeBase>
                         {
                             new TLDocumentAttributeAudio
@@ -1253,7 +1257,7 @@ namespace Unigram.ViewModels
                 messages[i].RandomId = randomId[i];
             }
 
-            var inputMedia = messages.Select(x => new TLInputSingleMedia { Media = x.Media.ToInputMedia(), RandomId = x.RandomId ?? 0 });
+            var inputMedia = messages.Select(x => new TLInputSingleMedia { Message = x.Message, Entities = x.Entities, HasEntities = x.HasEntities, Media = x.Media.ToInputMedia(), RandomId = x.RandomId ?? 0 });
 
             //var group = new GroupedMessages { GroupedId = groupedId };
             //group.Messages.AddRange(messages);
@@ -1367,14 +1371,15 @@ namespace Unigram.ViewModels
             var media = new TLMessageMediaPhoto
             {
                 Photo = photo,
-                Caption = caption,
                 HasPhoto = true,
-                HasCaption = caption != null,
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
             message.GroupedId = groupedId;
             message.HasGroupedId = groupedId.HasValue;
+            message.Entities = Markdown.Parse(ref caption);
+            message.HasEntities = message.Entities != null;
+            message.Message = caption.Format();
 
             if (Reply != null)
             {
@@ -1399,7 +1404,6 @@ namespace Unigram.ViewModels
                 var inputMedia = new TLInputMediaUploadedPhoto
                 {
                     File = upload.ToInputFile(),
-                    Caption = media.Caption,
                 };
 
                 return await ProtoService.UploadMediaAsync(Peer, inputMedia, message);
@@ -1480,12 +1484,14 @@ namespace Unigram.ViewModels
             var media = new TLMessageMediaDocument
             {
                 Document = document,
-                Caption = caption
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, _peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
             message.GroupedId = groupedId;
             message.HasGroupedId = groupedId.HasValue;
+            message.Entities = Markdown.Parse(ref caption);
+            message.HasEntities = message.Entities != null;
+            message.Message = caption.Format();
 
             if (Reply != null)
             {
@@ -1540,7 +1546,6 @@ namespace Unigram.ViewModels
                         File = upload.ToInputFile(),
                         Thumb = thumbUpload.ToInputFile(),
                         MimeType = document.MimeType,
-                        Caption = media.Caption,
                         Attributes = document.Attributes
                     };
 

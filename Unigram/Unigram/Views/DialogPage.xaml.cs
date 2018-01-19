@@ -203,7 +203,18 @@ namespace Unigram.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (ViewModel != null)
+            {
+                ViewModel.PropertyChanged -= OnPropertyChanged;
+
+                ViewModel.TextField = null;
+                ViewModel.ListField = null;
+
+                Bindings.StopTracking();
+            }
+
             DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
+            Bindings.Update();
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -225,36 +236,6 @@ namespace Unigram.Views
             }
 
             base.OnNavigatedTo(e);
-        }
-
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            //if (_panel != null && ViewModel.With != null)
-            //{
-            //    var container = Messages.ContainerFromIndex(_panel.FirstVisibleIndex);
-            //    if (container != null)
-            //    {
-            //        var peer = ViewModel.With.ToPeer();
-            //        var item = Messages.ItemFromContainer(container) as TLMessageBase;
-
-            //        ApplicationSettings.Current.AddOrUpdateValue(TLSerializationService.Current.Serialize(peer), item?.Id ?? -1);
-            //    }
-            //}
-
-            base.OnNavigatingFrom(e);
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            if (ViewModel != null)
-            {
-                ViewModel.PropertyChanged -= OnPropertyChanged;
-
-                ViewModel.TextField = null;
-                ViewModel.ListField = null;
-            }
-
-            base.OnNavigatedFrom(e);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -1177,7 +1158,7 @@ namespace Unigram.Views
                 {
                     return Visibility.Visible;
                 }
-                else if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsEditMessages)))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                else if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsEditMessages)))) && (message.Media is TLMessageMediaPhoto || message.Media is TLMessageMediaDocument || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
                 {
                     var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
                     var config = ViewModel.CacheService.GetConfig();
@@ -1235,11 +1216,6 @@ namespace Unigram.Views
             if (messageCommon is TLMessage message)
             {
                 if (!string.IsNullOrEmpty(message.Message))
-                {
-                    return Visibility.Visible;
-                }
-
-                if (message.Media is ITLMessageMediaCaption mediaCaption && !string.IsNullOrEmpty(mediaCaption.Caption))
                 {
                     return Visibility.Visible;
                 }

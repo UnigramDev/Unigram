@@ -145,20 +145,8 @@ namespace Unigram.Controls.Views
                     link = MeUrlPrefixConverter.Convert(link);
                 }
 
-                string title = null;
-
-                var media = message.Media as ITLMessageMediaCaption;
-                if (media != null && !string.IsNullOrWhiteSpace(media.Caption))
-                {
-                    title = media.Caption;
-                }
-                else if (!string.IsNullOrWhiteSpace(message.Message))
-                {
-                    title = message.Message;
-                }
-
                 ViewModel.ShareLink = new Uri(link);
-                ViewModel.ShareTitle = title ?? channel.DisplayName;
+                ViewModel.ShareTitle = message.Message ?? channel.DisplayName;
             }
             else if (message.Media is TLMessageMediaGame gameMedia)
             {

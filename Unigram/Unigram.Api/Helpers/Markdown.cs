@@ -30,8 +30,13 @@ namespace Telegram.Api.Helpers
 
         private static readonly Regex _defaultUrl = new Regex("\\G\\[(.+?)\\]\\((.+?)\\)", RegexOptions.Compiled);
 
-        public static IList<TLMessageEntityBase> Parse(ref string message)
+        public static TLVector<TLMessageEntityBase> Parse(ref string message)
         {
+            if (message == null)
+            {
+                return null;
+            }
+
             // Cannot use a for loop because we need to skip some indices
             var i = 0;
             var result = new List<TLMessageEntityBase>();
@@ -147,7 +152,12 @@ namespace Telegram.Api.Helpers
                 message = message.Insert(offset, _delimiters[current]);
             }
 
-            return result;
+            if (result.Count > 0)
+            {
+                return new TLVector<TLMessageEntityBase>(result);
+            }
+
+            return null;
         }
     }
 }

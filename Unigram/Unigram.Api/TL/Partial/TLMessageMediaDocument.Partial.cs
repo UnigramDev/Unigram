@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLMessageMediaDocument : ITLMessageMediaCaption, ITLMessageMediaDestruct
+    public partial class TLMessageMediaDocument : ITLMessageMediaDestruct
     {
         private DateTime? _destructDate;
         public DateTime? DestructDate

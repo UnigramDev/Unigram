@@ -10,17 +10,14 @@ namespace Telegram.Api.TL
 		public enum Flag : Int32
 		{
 			Photo = (1 << 0),
-			Caption = (1 << 1),
 			TTLSeconds = (1 << 2),
 		}
 
 		public bool HasPhoto { get { return Flags.HasFlag(Flag.Photo); } set { Flags = value ? (Flags | Flag.Photo) : (Flags & ~Flag.Photo); } }
-		public bool HasCaption { get { return Flags.HasFlag(Flag.Caption); } set { Flags = value ? (Flags | Flag.Caption) : (Flags & ~Flag.Caption); } }
 		public bool HasTTLSeconds { get { return Flags.HasFlag(Flag.TTLSeconds); } set { Flags = value ? (Flags | Flag.TTLSeconds) : (Flags & ~Flag.TTLSeconds); } }
 
 		public Flag Flags { get; set; }
 		public TLPhotoBase Photo { get; set; }
-		public String Caption { get; set; }
 		public Int32? TTLSeconds { get; set; }
 
 		public TLMessageMediaPhoto() { }
@@ -35,7 +32,6 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			if (HasPhoto) Photo = TLFactory.Read<TLPhotoBase>(from);
-			if (HasCaption) Caption = from.ReadString();
 			if (HasTTLSeconds) TTLSeconds = from.ReadInt32();
 		}
 
@@ -45,14 +41,12 @@ namespace Telegram.Api.TL
 
 			to.WriteInt32((Int32)Flags);
 			if (HasPhoto) to.WriteObject(Photo);
-			if (HasCaption) to.WriteString(Caption ?? string.Empty);
 			if (HasTTLSeconds) to.WriteInt32(TTLSeconds.Value);
 		}
 
 		private void UpdateFlags()
 		{
 			HasPhoto = Photo != null;
-			HasCaption = Caption != null;
 			HasTTLSeconds = TTLSeconds != null;
 		}
 	}

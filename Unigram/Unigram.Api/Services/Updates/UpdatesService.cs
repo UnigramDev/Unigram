@@ -1397,18 +1397,14 @@ namespace Telegram.Api.Services.Updates
                             if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
                             {
                                 photoMedia.Photo = null;
-                                photoMedia.Caption = null;
                                 photoMedia.HasPhoto = false;
-                                photoMedia.HasCaption = false;
 
                                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
                             }
                             else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
                             {
                                 documentMedia.Document = null;
-                                documentMedia.Caption = null;
                                 documentMedia.HasDocument = false;
-                                documentMedia.HasCaption = false;
 
                                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
                             }
@@ -1447,18 +1443,14 @@ namespace Telegram.Api.Services.Updates
                                     if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
                                     {
                                         photoMedia.Photo = null;
-                                        photoMedia.Caption = null;
                                         photoMedia.HasPhoto = false;
-                                        photoMedia.HasCaption = false;
 
                                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
                                     }
                                     else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
                                     {
                                         documentMedia.Document = null;
-                                        documentMedia.Caption = null;
                                         documentMedia.HasDocument = false;
-                                        documentMedia.HasCaption = false;
 
                                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
                                     }

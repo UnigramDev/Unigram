@@ -12,6 +12,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Native;
+using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -111,10 +112,10 @@ namespace Unigram.Controls.Messages
                     }
 
                     var caption = false;
-                    if (message.Media is ITLMessageMediaCaption captionMedia)
+                    if (message.Media is TLMessageMediaPhoto || message.Media is TLMessageMediaDocument || message.Media is TLMessageMediaGroup)
                     {
-                        display = captionMedia.Caption;
-                        caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
+                        display = message.Message;
+                        caption = !string.IsNullOrWhiteSpace(message.Message);
                     }
                     else if (message.Media is TLMessageMediaVenue)
                     {
@@ -169,10 +170,10 @@ namespace Unigram.Controls.Messages
                 else /*if (IsInlineMedia(message.Media))*/
                 {
                     var caption = false;
-                    if (message.Media is ITLMessageMediaCaption captionMedia)
+                    if (message.Media is TLMessageMediaPhoto || message.Media is TLMessageMediaDocument || message.Media is TLMessageMediaGroup)
                     {
-                        display = captionMedia.Caption;
-                        caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
+                        display = message.Message;
+                        caption = !string.IsNullOrWhiteSpace(message.Message);
                     }
 
                     Media.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);

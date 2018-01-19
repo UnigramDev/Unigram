@@ -387,12 +387,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                if (_message.Media is ITLMessageMediaCaption captionMedia)
-                {
-                    return captionMedia.Caption;
-                }
-
-                return null;
+                return _message.Message;
             }
         }
 

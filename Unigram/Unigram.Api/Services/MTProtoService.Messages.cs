@@ -909,7 +909,7 @@ namespace Telegram.Api.Services
 
         public void SendMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesSendMedia { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Media = inputMedia, RandomId = message.RandomId.Value };
+            var obj = new TLMessagesSendMedia { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Media = inputMedia, RandomId = message.RandomId.Value, Message = message.Message, Entities = message.Entities };
 
             obj.IsSilent = message.IsSilent;
 

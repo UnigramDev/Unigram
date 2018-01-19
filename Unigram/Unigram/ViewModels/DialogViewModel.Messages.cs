@@ -650,11 +650,11 @@ namespace Unigram.ViewModels
                         {
                             builder.Append($"[{Strings.Android.AttachPhoto}]");
 
-                            if (string.IsNullOrEmpty(photoMedia.Caption)) { }
+                            if (string.IsNullOrEmpty(message.Message)) { }
                             else
                             {
                                 builder.AppendLine();
-                                builder.Append(photoMedia.Caption);
+                                builder.Append(message.Message);
                             }
                         }
                         else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -692,11 +692,11 @@ namespace Unigram.ViewModels
                                 builder.Append($"[{Strings.Android.AttachMusic}]");
                             }
 
-                            if (string.IsNullOrEmpty(documentMedia.Caption)) { }
+                            if (string.IsNullOrEmpty(message.Message)) { }
                             else
                             {
                                 builder.AppendLine();
-                                builder.Append(documentMedia.Caption);
+                                builder.Append(message.Message);
                             }
                         }
                         else if (message.Media is TLMessageMediaGeo geoMedia)
@@ -774,24 +774,9 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            string text = null;
-
-            var media = message.Media as ITLMessageMediaCaption;
-            if (media != null && !string.IsNullOrWhiteSpace(media.Caption))
-            {
-                text = media.Caption;
-            }
-            else if (!string.IsNullOrWhiteSpace(message.Message))
-            {
-                text = message.Message;
-            }
-
-            if (text != null)
-            {
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(text);
-                ClipboardEx.TrySetContent(dataPackage);
-            }
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(message.Message ?? string.Empty);
+            ClipboardEx.TrySetContent(dataPackage);
         }
 
         #endregion
@@ -968,11 +953,13 @@ namespace Unigram.ViewModels
         {
             if (editData.IsCaption)
             {
-                var mediaCaption = message.Media as ITLMessageMediaCaption;
-                if (mediaCaption != null)
-                {
-                    return mediaCaption.Caption ?? string.Empty;
-                }
+                //var mediaCaption = message.Media as ITLMessageMediaCaption;
+                //if (mediaCaption != null)
+                //{
+                //    return mediaCaption.Caption ?? string.Empty;
+                //}
+
+                return message.Message;
             }
             else
             {

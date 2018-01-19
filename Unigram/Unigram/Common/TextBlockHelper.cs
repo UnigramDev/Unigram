@@ -263,17 +263,17 @@ namespace Unigram.Common
                 siteName.Text = Strings.Android.EventLogOriginalMessages;
                 description.Text = oldMessage.Message;
             }
-            else if (oldMessage.Media is ITLMessageMediaCaption captionMedia)
+            else
             {
                 siteName.Text = Strings.Android.EventLogOriginalCaption;
 
-                if (string.IsNullOrEmpty(captionMedia.Caption))
+                if (string.IsNullOrEmpty(oldMessage.Message))
                 {
                     description.Text = Strings.Android.EventLogOriginalCaptionEmpty;
                 }
                 else
                 {
-                    description.Text = captionMedia.Caption;
+                    description.Text = oldMessage.Message;
                 }
             }
         }

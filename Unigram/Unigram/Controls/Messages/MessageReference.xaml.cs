@@ -445,10 +445,10 @@ namespace Unigram.Controls.Messages
                     ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photoMedia, true);
                 }
 
-                if (!string.IsNullOrWhiteSpace(photoMedia.Caption))
+                if (!string.IsNullOrWhiteSpace(message.Message))
                 {
                     ServiceLabel.Text += ", ";
-                    MessageLabel.Text += photoMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
+                    MessageLabel.Text += message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
             }
 
@@ -562,10 +562,10 @@ namespace Unigram.Controls.Messages
                     ServiceLabel.Text = document.Title;
                 }
 
-                if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
+                if (!string.IsNullOrWhiteSpace(message.Message))
                 {
                     ServiceLabel.Text += ", ";
-                    MessageLabel.Text += documentMedia.Caption.Replace('\n', ' ');
+                    MessageLabel.Text += message.Message.Replace('\n', ' ');
                 }
             }
 
@@ -586,10 +586,10 @@ namespace Unigram.Controls.Messages
             var documentMedia = message.Media as TLMessageMediaDocument;
             if (documentMedia != null)
             {
-                if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
+                if (!string.IsNullOrWhiteSpace(message.Message))
                 {
                     ServiceLabel.Text += ", ";
-                    MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
+                    MessageLabel.Text += message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
             }
 
@@ -651,10 +651,10 @@ namespace Unigram.Controls.Messages
                     ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
                 }
 
-                if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
+                if (!string.IsNullOrWhiteSpace(message.Message))
                 {
                     ServiceLabel.Text += ", ";
-                    MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
+                    MessageLabel.Text += message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
             }
 
@@ -676,10 +676,10 @@ namespace Unigram.Controls.Messages
             var documentMedia = message.Media as TLMessageMediaDocument;
             if (documentMedia != null)
             {
-                if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
+                if (!string.IsNullOrWhiteSpace(message.Message))
                 {
                     ServiceLabel.Text += ", ";
-                    MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
+                    MessageLabel.Text += message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
                 ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = new CornerRadius(18);
@@ -704,10 +704,10 @@ namespace Unigram.Controls.Messages
             var documentMedia = message.Media as TLMessageMediaDocument;
             if (documentMedia != null)
             {
-                if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
+                if (!string.IsNullOrWhiteSpace(message.Message))
                 {
                     ServiceLabel.Text += ", ";
-                    MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
+                    MessageLabel.Text += message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
                 }
 
                 ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
@@ -781,10 +781,10 @@ namespace Unigram.Controls.Messages
                     ServiceLabel.Text = document.FileName;
                     MessageLabel.Text = string.Empty;
 
-                    if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
+                    if (!string.IsNullOrWhiteSpace(message.Message))
                     {
                         ServiceLabel.Text += ", ";
-                        MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
+                        MessageLabel.Text += message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
                     }
                 }
             }

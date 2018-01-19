@@ -84,7 +84,7 @@ namespace Telegram.Api.TL
     {
         public override TLInputMediaBase ToInputMedia()
         {
-            return new TLInputMediaDocument { Id = Document.ToInputDocument(), Caption = Caption };
+            return new TLInputMediaDocument { Id = Document.ToInputDocument() };
         }
     }
 
@@ -92,7 +92,7 @@ namespace Telegram.Api.TL
     {
         public override TLInputMediaBase ToInputMedia()
         {
-            return new TLInputMediaPhoto { Id = Photo.ToInputPhoto(), Caption = Caption };
+            return new TLInputMediaPhoto { Id = Photo.ToInputPhoto() };
         }
     }
 }

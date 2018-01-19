@@ -6,8 +6,19 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputSingleMedia : TLObject 
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			Entities = (1 << 0),
+		}
+
+		public bool HasEntities { get { return Flags.HasFlag(Flag.Entities); } set { Flags = value ? (Flags | Flag.Entities) : (Flags & ~Flag.Entities); } }
+
 		public TLInputMediaBase Media { get; set; }
+		public Flag Flags { get; set; }
 		public Int64 RandomId { get; set; }
+		public String Message { get; set; }
+		public TLVector<TLMessageEntityBase> Entities { get; set; }
 
 		public TLInputSingleMedia() { }
 		public TLInputSingleMedia(TLBinaryReader from)
@@ -20,13 +31,26 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from)
 		{
 			Media = TLFactory.Read<TLInputMediaBase>(from);
+			Flags = (Flag)from.ReadInt32();
 			RandomId = from.ReadInt64();
+			Message = from.ReadString();
+			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
+			UpdateFlags();
+
 			to.WriteObject(Media);
+			to.WriteInt32((Int32)Flags);
 			to.WriteInt64(RandomId);
+			to.WriteString(Message ?? string.Empty);
+			if (HasEntities) to.WriteObject(Entities);
+		}
+
+		private void UpdateFlags()
+		{
+			HasEntities = Entities != null;
 		}
 	}
 }

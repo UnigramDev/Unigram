@@ -10,7 +10,17 @@ namespace Telegram.Api.TL.Messages.Methods
 	/// </summary>
 	public partial class TLMessagesGetWebPagePreview : TLObject
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			Entities = (1 << 3),
+		}
+
+		public bool HasEntities { get { return Flags.HasFlag(Flag.Entities); } set { Flags = value ? (Flags | Flag.Entities) : (Flags & ~Flag.Entities); } }
+
+		public Flag Flags { get; set; }
 		public String Message { get; set; }
+		public TLVector<TLMessageEntityBase> Entities { get; set; }
 
 		public TLMessagesGetWebPagePreview() { }
 		public TLMessagesGetWebPagePreview(TLBinaryReader from)
@@ -22,12 +32,23 @@ namespace Telegram.Api.TL.Messages.Methods
 
 		public override void Read(TLBinaryReader from)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Message = from.ReadString();
+			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
+			UpdateFlags();
+
+			to.WriteInt32((Int32)Flags);
 			to.WriteString(Message ?? string.Empty);
+			if (HasEntities) to.WriteObject(Entities);
+		}
+
+		private void UpdateFlags()
+		{
+			HasEntities = Entities != null;
 		}
 	}
 }

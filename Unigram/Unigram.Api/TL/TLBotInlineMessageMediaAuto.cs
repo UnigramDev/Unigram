@@ -4,18 +4,21 @@ using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLBotInlineMessageMediaAuto : TLBotInlineMessageBase, ITLMessageMediaCaption 
+	public partial class TLBotInlineMessageMediaAuto : TLBotInlineMessageBase 
 	{
 		[Flags]
 		public enum Flag : Int32
 		{
+			Entities = (1 << 1),
 			ReplyMarkup = (1 << 2),
 		}
 
+		public bool HasEntities { get { return Flags.HasFlag(Flag.Entities); } set { Flags = value ? (Flags | Flag.Entities) : (Flags & ~Flag.Entities); } }
 		public bool HasReplyMarkup { get { return Flags.HasFlag(Flag.ReplyMarkup); } set { Flags = value ? (Flags | Flag.ReplyMarkup) : (Flags & ~Flag.ReplyMarkup); } }
 
 		public Flag Flags { get; set; }
-		public String Caption { get; set; }
+		public String Message { get; set; }
+		public TLVector<TLMessageEntityBase> Entities { get; set; }
 
 		public TLBotInlineMessageMediaAuto() { }
 		public TLBotInlineMessageMediaAuto(TLBinaryReader from)
@@ -28,7 +31,8 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from)
 		{
 			Flags = (Flag)from.ReadInt32();
-			Caption = from.ReadString();
+			Message = from.ReadString();
+			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from);
 			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from);
 		}
 
@@ -37,12 +41,14 @@ namespace Telegram.Api.TL
 			UpdateFlags();
 
 			to.WriteInt32((Int32)Flags);
-			to.WriteString(Caption ?? string.Empty);
+			to.WriteString(Message ?? string.Empty);
+			if (HasEntities) to.WriteObject(Entities);
 			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
 		}
 
 		private void UpdateFlags()
 		{
+			HasEntities = Entities != null;
 			HasReplyMarkup = ReplyMarkup != null;
 		}
 	}

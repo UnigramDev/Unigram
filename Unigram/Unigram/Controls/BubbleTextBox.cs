@@ -867,7 +867,7 @@ namespace Unigram.Controls
                 var entities = Markdown.Parse(ref message);
                 if (entities == null)
                 {
-                    entities = new List<TLMessageEntityBase>();
+                    entities = new TLVector<TLMessageEntityBase>();
                 }
 
                 foreach (var entity in parser.Entities)

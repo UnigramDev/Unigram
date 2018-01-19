@@ -304,7 +304,6 @@ namespace Unigram.ViewModels
                     message.Media = new TLMessageMediaDocument
                     {
                         Document = mediaResult.Document,
-                        Caption = string.Empty,
                         //NotListened = !(this.With is TLChannel)
                     };
                     //message.NotListened = !(this.With is TLChannel);
@@ -314,7 +313,6 @@ namespace Unigram.ViewModels
                     message.Media = new TLMessageMediaDocument
                     {
                         Document = mediaResult.Document,
-                        Caption = string.Empty
                     };
                 }
                 else if (mediaResult.Type.Equals("sticker", StringComparison.OrdinalIgnoreCase))
@@ -322,7 +320,6 @@ namespace Unigram.ViewModels
                     message.Media = new TLMessageMediaDocument
                     {
                         Document = mediaResult.Document,
-                        Caption = string.Empty
                     };
                 }
                 else if (mediaResult.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
@@ -330,7 +327,6 @@ namespace Unigram.ViewModels
                     message.Media = new TLMessageMediaDocument
                     {
                         Document = mediaResult.Document,
-                        Caption = string.Empty
                     };
                 }
                 else if (mediaResult.Type.Equals("gif", StringComparison.OrdinalIgnoreCase))
@@ -338,7 +334,6 @@ namespace Unigram.ViewModels
                     message.Media = new TLMessageMediaDocument
                     {
                         Document = mediaResult.Document,
-                        Caption = string.Empty
                     };
                 }
                 else if (mediaResult.Type.Equals("photo", StringComparison.OrdinalIgnoreCase))
@@ -346,7 +341,6 @@ namespace Unigram.ViewModels
                     message.Media = new TLMessageMediaPhoto
                     {
                         Photo = mediaResult.Photo,
-                        Caption = string.Empty
                     };
                 }
             }
@@ -413,11 +407,9 @@ namespace Unigram.ViewModels
             }
             else if (resultBase.SendMessage is TLBotInlineMessageMediaAuto sendMedia)
             {
-                var mediaCaption = message.Media as ITLMessageMediaCaption;
-                if (mediaCaption != null)
-                {
-                    mediaCaption.Caption = sendMedia.Caption;
-                }
+                message.Message = sendMedia.Message;
+                message.Entities = sendMedia.Entities;
+                message.HasEntities = sendMedia.HasEntities;
             }
 
             if (resultBase.SendMessage != null && resultBase.SendMessage.ReplyMarkup != null)

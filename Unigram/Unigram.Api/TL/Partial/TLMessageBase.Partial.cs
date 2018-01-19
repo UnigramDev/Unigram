@@ -641,12 +641,12 @@ namespace Telegram.Api.TL
                     Media = (TLMessageMediaBase)webpageNew ?? new TLMessageMediaEmpty();
                 }
 
-                var captionNew = message.Media as ITLMessageMediaCaption;
-                var captionOld = Media as ITLMessageMediaCaption;
-                if (captionOld != null && captionNew != null)
-                {
-                    captionOld.Caption = captionNew.Caption;
-                }
+                //var captionNew = message.Media as ITLMessageMediaCaption;
+                //var captionOld = Media as ITLMessageMediaCaption;
+                //if (captionOld != null && captionNew != null)
+                //{
+                //    captionOld.Caption = captionNew.Caption;
+                //}
 
                 var invoiceNew = message.Media as TLMessageMediaInvoice;
                 var invoiceOld = Media as TLMessageMediaInvoice;
