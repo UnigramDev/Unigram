@@ -171,6 +171,11 @@ namespace Unigram.Common
             var text = markdown;
             var previous = 0;
 
+            if (entities == null)
+            {
+                entities = new TLVector<TLMessageEntityBase>();
+            }
+
             foreach (var entity in entities.OrderBy(x => x.Offset))
             {
                 if (entity.Offset > previous)

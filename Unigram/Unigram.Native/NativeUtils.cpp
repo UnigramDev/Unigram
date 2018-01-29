@@ -159,11 +159,11 @@ int32 NativeUtils::GetDirectionality(String^ value)
 
 	for (int i = 0; i < length; i++)
 	{
-		if (type[i] & C2_LEFTTORIGHT)
+		/*if (type[i] & C2_LEFTTORIGHT)
 		{
 			return C2_LEFTTORIGHT;
 		}
-		else if (type[i] & C2_RIGHTTOLEFT)
+		else*/ if (type[i] & C2_RIGHTTOLEFT)
 		{
 			return C2_RIGHTTOLEFT;
 		}

@@ -63,8 +63,8 @@ namespace Unigram.Controls
                 if (audio.IsVoice)
                 {
                     var date = BindConvert.Current.DateTime(message.Date);
-                    TitleLabel.Text = message.Participant is TLUser user && user.IsSelf ? "You" : message.Participant?.DisplayName;
-                    SubtitleLabel.Text = string.Format("{0} at {1}", date.Date == DateTime.Now.Date ? "Today" : BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
+                    TitleLabel.Text = message.Participant is TLUser user && user.IsSelf ? user.FullName : message.Participant?.DisplayName;
+                    SubtitleLabel.Text = string.Format(Strings.Android.FormatDateAtTime, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date)); //string.Format("{0} at {1}", date.Date == DateTime.Now.Date ? "Today" : BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
                 }
                 else
                 {

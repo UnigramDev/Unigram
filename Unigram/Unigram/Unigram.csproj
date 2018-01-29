@@ -1227,6 +1227,9 @@
     <PRIResource Include="Strings\ru\Resources.resw" />
     <PRIResource Include="Strings\uk\Resources.resw" />
     <PRIResource Include="Strings\nl\Resources.resw" />
+    <PRIResource Include="Strings\fa\Android.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>

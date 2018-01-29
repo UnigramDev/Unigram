@@ -235,16 +235,16 @@ namespace Unigram.Controls
                             await _roundView.SetAsync(_recorder.m_mediaCapture, _recorder._mirroringPreview);
                             await _recorder.SetPreviewRotationAsync();
                         }
-                    });
 
-                    await _recorder.StartAsync();
+                        await _recorder.StartAsync();
+                    });
                 }
                 catch (UnauthorizedAccessException)
                 {
                     Debug.WriteLine("The access to microphone was denied!");
                     return;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     Debug.WriteLine("The app couldn't initialize microphone!");
                     return;
