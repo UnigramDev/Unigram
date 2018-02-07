@@ -108,15 +108,64 @@ namespace Telegram.Api.Services.Locale
                 var writer = new StreamWriter(new FileStream(fileName, FileMode.OpenOrCreate));
                 //writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
                 //writer.Write("<resources>\n");
+                writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+                writer.Write("<root>\n");
+                writer.Write("  <xsd:schema id=\"root\" xmlns=\"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">\n");
+                writer.Write("    <xsd:element name=\"root\" msdata:IsDataSet=\"true\">\n");
+                writer.Write("      <xsd:complexType>\n");
+                writer.Write("        <xsd:choice maxOccurs=\"unbounded\">\n");
+                writer.Write("          <xsd:element name=\"data\">\n");
+                writer.Write("            <xsd:complexType>\n");
+                writer.Write("              <xsd:sequence>\n");
+                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\n");
+                writer.Write("                <xsd:element name=\"comment\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"2\" />\n");
+                writer.Write("              </xsd:sequence>\n");
+                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" msdata:Ordinal=\"1\" />\n");
+                writer.Write("              <xsd:attribute name=\"type\" type=\"xsd:string\" msdata:Ordinal=\"3\" />\n");
+                writer.Write("              <xsd:attribute name=\"mimetype\" type=\"xsd:string\" msdata:Ordinal=\"4\" />\n");
+                writer.Write("            </xsd:complexType>\n");
+                writer.Write("          </xsd:element>\n");
+                writer.Write("          <xsd:element name=\"resheader\">\n");
+                writer.Write("            <xsd:complexType>\n");
+                writer.Write("              <xsd:sequence>\n");
+                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\n");
+                writer.Write("              </xsd:sequence>\n");
+                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" use=\"required\" />\n");
+                writer.Write("            </xsd:complexType>\n");
+                writer.Write("          </xsd:element>\n");
+                writer.Write("        </xsd:choice>\n");
+                writer.Write("      </xsd:complexType>\n");
+                writer.Write("    </xsd:element>\n");
+                writer.Write("  </xsd:schema>\n");
+                writer.Write("  <resheader name=\"resmimetype\">\n");
+                writer.Write("    <value>text/microsoft-resx</value>\n");
+                writer.Write("  </resheader>\n");
+                writer.Write("  <resheader name=\"version\">\n");
+                writer.Write("    <value>1.3</value>\n");
+                writer.Write("  </resheader>\n");
+                writer.Write("  <resheader name=\"reader\">\n");
+                writer.Write("    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\n");
+                writer.Write("  </resheader>\n");
+                writer.Write("  <resheader name=\"writer\">\n");
+                writer.Write("    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\n");
+                writer.Write("  </resheader>\n");
 
                 foreach (var entry in values)
                 {
                     //writer.Write($"<string name=\"{entry.Key}\">{entry.Value}</string>\n");
                     writer.Write($"  <data name=\"{entry.Key}\" xml:space=\"preserve\">\n");
-                    writer.Write($"    <value>{entry.Value.Replace("&", "&amp;")}</value>\n");
+                    if (string.IsNullOrEmpty(entry.Value))
+                    {
+                        writer.Write($"    <value/>\n");
+                    }
+                    else
+                    {
+                        writer.Write($"    <value>{entry.Value.Replace("&", "&amp;")}</value>\n");
+                    }
                     writer.Write($"  </data>\n");
                 }
 
+                writer.Write("</root>");
                 //writer.Write("</resources>");
                 writer.Dispose();
 

@@ -1163,7 +1163,7 @@ namespace Unigram.ViewModels
 
         public async void ProcessReplies(IList<TLMessageBase> messages)
         {
-            var replyIds = new TLVector<int>();
+            var replyIds = new TLVector<TLInputMessageBase>();
             var replyToMsgs = new List<TLMessageCommonBase>();
 
             var groups = new Dictionary<long, Tuple<TLMessage, GroupedMessages>>();
@@ -1264,7 +1264,7 @@ namespace Unigram.ViewModels
                         }
                         else
                         {
-                            replyIds.Add(replyId.Value);
+                            replyIds.Add(new TLInputMessageID { Id = replyId.Value });
                             replyToMsgs.Add(commonMessage);
                         }
                     }
@@ -1709,7 +1709,7 @@ namespace Unigram.ViewModels
                         var pinned = CacheService.GetMessage(full.PinnedMsgId, channel.Id);
                         if (pinned == null && update)
                         {
-                            var y = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int>() { full.PinnedMsgId ?? 0 });
+                            var y = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<TLInputMessageBase>() { new TLInputMessageID { Id = full.PinnedMsgId ?? 0 } });
                             if (y.IsSucceeded && y.Result is ITLMessages result)
                             {
                                 CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
@@ -1840,7 +1840,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var response = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int> { channel.PinnedMsgId.Value });
+                var response = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<TLInputMessageBase> { new TLInputMessageID { Id = channel.PinnedMsgId.Value } });
                 if (response.IsSucceeded && response.Result is ITLMessages result)
                 {
                     CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
@@ -2116,12 +2116,12 @@ namespace Unigram.ViewModels
                     //else
                     {
                         var peer = Peer as TLInputPeerChannel;
-                        task = ProtoService.GetMessagesAsync(new TLInputChannel { ChannelId = peer.ChannelId, AccessHash = peer.AccessHash }, new TLVector<int> { draft.ReplyToMsgId.Value });
+                        task = ProtoService.GetMessagesAsync(new TLInputChannel { ChannelId = peer.ChannelId, AccessHash = peer.AccessHash }, new TLVector<TLInputMessageBase> { new TLInputMessageID { Id = draft.ReplyToMsgId.Value } });
                     }
                 }
                 else
                 {
-                    task = ProtoService.GetMessagesAsync(new TLVector<int> { draft.ReplyToMsgId.Value });
+                    task = ProtoService.GetMessagesAsync(new TLVector<TLInputMessageBase> { new TLInputMessageID { Id = draft.ReplyToMsgId.Value } });
                 }
 
                 var response = await task;

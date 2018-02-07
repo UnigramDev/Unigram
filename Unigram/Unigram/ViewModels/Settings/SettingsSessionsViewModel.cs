@@ -147,25 +147,25 @@ namespace Unigram.ViewModels.Settings
                 }
             }
         }
-    }
 
-    public class TLAuthorizationComparer : IComparer<TLAuthorization>
-    {
-        public int Compare(TLAuthorization x, TLAuthorization y)
+        public class TLAuthorizationComparer : IComparer<TLAuthorization>
         {
-            var epoch = y.DateActive.CompareTo(x.DateActive);
-            if (epoch == 0)
+            public int Compare(TLAuthorization x, TLAuthorization y)
             {
-                var appName = x.AppName.CompareTo(y.AppName);
-                if (appName == 0)
+                var epoch = y.DateActive.CompareTo(x.DateActive);
+                if (epoch == 0)
                 {
-                    return x.Hash.CompareTo(y.Hash);
+                    var appName = x.AppName.CompareTo(y.AppName);
+                    if (appName == 0)
+                    {
+                        return x.Hash.CompareTo(y.Hash);
+                    }
+
+                    return appName;
                 }
 
-                return appName;
+                return epoch;
             }
-
-            return epoch;
         }
     }
 }

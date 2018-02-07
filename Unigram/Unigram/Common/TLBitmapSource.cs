@@ -234,10 +234,10 @@ namespace Unigram.Common
             {
                 Phase = PHASE_PLACEHOLDER;
 
-                var fileName = FileUtils.GetTempFileName("placeholders\\" + group + "_placeholder.png");
+                var fileName = FileUtils.GetTempFileName(group + "_placeholder.png");
                 if (File.Exists(fileName))
                 {
-                    _bitmapImage.UriSource = FileUtils.GetTempFileUri("placeholders//" + group + "_placeholder.png");
+                    _bitmapImage.UriSource = FileUtils.GetTempFileUri(group + "_placeholder.png");
                 }
                 else
                 {
@@ -247,6 +247,7 @@ namespace Unigram.Common
                         if (stream.Size == 0)
                         {
                             PlaceholderImageHelper.DrawProfilePlaceholder(BindConvert.Current.Bubble(id).Color, InitialNameStringConverter.Convert(value), stream);
+                            stream.Seek(0);
                         }
 
                         _bitmapImage.SetSource(stream);

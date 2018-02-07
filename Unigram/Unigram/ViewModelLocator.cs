@@ -147,6 +147,7 @@ namespace Unigram
                 builder.RegisterType<SettingsUsernameViewModel>().SingleInstance();
                 builder.RegisterType<SettingsEditNameViewModel>().SingleInstance();
                 builder.RegisterType<SettingsSessionsViewModel>().SingleInstance();
+                builder.RegisterType<SettingsWebSessionsViewModel>().SingleInstance();
                 builder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
                 builder.RegisterType<SettingsBlockUserViewModel>();
                 builder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();

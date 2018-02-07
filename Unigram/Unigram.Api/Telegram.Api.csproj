@@ -141,10 +141,13 @@
     <Compile Include="TL\Account\Methods\TLAccountGetPrivacy.cs" />
     <Compile Include="TL\Account\Methods\TLAccountGetTmpPassword.cs" />
     <Compile Include="TL\Account\Methods\TLAccountGetWallPapers.cs" />
+    <Compile Include="TL\Account\Methods\TLAccountGetWebAuthorizations.cs" />
     <Compile Include="TL\Account\Methods\TLAccountRegisterDevice.cs" />
     <Compile Include="TL\Account\Methods\TLAccountReportPeer.cs" />
     <Compile Include="TL\Account\Methods\TLAccountResetAuthorization.cs" />
     <Compile Include="TL\Account\Methods\TLAccountResetNotifySettings.cs" />
+    <Compile Include="TL\Account\Methods\TLAccountResetWebAuthorization.cs" />
+    <Compile Include="TL\Account\Methods\TLAccountResetWebAuthorizations.cs" />
     <Compile Include="TL\Account\Methods\TLAccountSendChangePhoneCode.cs" />
     <Compile Include="TL\Account\Methods\TLAccountSendConfirmPhoneCode.cs" />
     <Compile Include="TL\Account\Methods\TLAccountSetAccountTTL.cs" />
@@ -164,6 +167,7 @@
     <Compile Include="TL\Account\TLAccountPasswordSettings.cs" />
     <Compile Include="TL\Account\TLAccountPrivacyRules.cs" />
     <Compile Include="TL\Account\TLAccountTmpPassword.cs" />
+    <Compile Include="TL\Account\TLAccountWebAuthorizations.cs" />
     <Compile Include="TL\Auth\Methods\TLAuthBindTempAuthKey.cs" />
     <Compile Include="TL\Auth\Methods\TLAuthCancelCode.cs" />
     <Compile Include="TL\Auth\Methods\TLAuthCheckPassword.cs" />
@@ -320,7 +324,6 @@
     <Compile Include="TL\Messages\Methods\TLMessagesEditMessage.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesExportChatInvite.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesFaveSticker.cs" />
-    <Compile Include="TL\Messages\Methods\TLMessagesForwardMessage.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesForwardMessages.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetAllChats.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetAllDrafts.cs" />
@@ -350,6 +353,7 @@
     <Compile Include="TL\Messages\Methods\TLMessagesGetRecentLocations.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetRecentStickers.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetSavedGifs.cs" />
+    <Compile Include="TL\Messages\Methods\TLMessagesGetStickers.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetStickerSet.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetUnreadMentions.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetWebPage.cs" />
@@ -495,6 +499,7 @@
     <Compile Include="TL\Partial\TLUserBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUserFull.Partial.cs" />
     <Compile Include="TL\Partial\TLChatBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLWebAuthorization.Partial.cs" />
     <Compile Include="TL\Payments\Methods\TLPaymentsClearSavedInfo.cs" />
     <Compile Include="TL\Payments\Methods\TLPaymentsGetPaymentForm.cs" />
     <Compile Include="TL\Payments\Methods\TLPaymentsGetPaymentReceipt.cs" />
@@ -726,7 +731,11 @@
     <Compile Include="TL\TLInputMediaUploadedDocument.cs" />
     <Compile Include="TL\TLInputMediaUploadedPhoto.cs" />
     <Compile Include="TL\TLInputMediaVenue.cs" />
+    <Compile Include="TL\TLInputMessageBase.cs" />
     <Compile Include="TL\TLInputMessageEntityMentionName.cs" />
+    <Compile Include="TL\TLInputMessageID.cs" />
+    <Compile Include="TL\TLInputMessagePinned.cs" />
+    <Compile Include="TL\TLInputMessageReplyTo.cs" />
     <Compile Include="TL\TLInputMessagesFilterChatPhotos.cs" />
     <Compile Include="TL\TLInputMessagesFilterContacts.cs" />
     <Compile Include="TL\TLInputMessagesFilterDocument.cs" />
@@ -1098,6 +1107,7 @@
     <Compile Include="TL\TLWallPaper.cs" />
     <Compile Include="TL\TLWallPaperBase.cs" />
     <Compile Include="TL\TLWallPaperSolid.cs" />
+    <Compile Include="TL\TLWebAuthorization.cs" />
     <Compile Include="TL\TLWebDocument.cs" />
     <Compile Include="TL\TLWebPage.cs" />
     <Compile Include="TL\TLWebPageBase.cs" />

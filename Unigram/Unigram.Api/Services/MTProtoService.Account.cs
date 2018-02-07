@@ -16,16 +16,16 @@ using Telegram.Api.Native;
 
 namespace Telegram.Api.Services
 {
-	public partial class MTProtoService
-	{
-	    public event EventHandler CheckDeviceLocked;
+    public partial class MTProtoService
+    {
+        public event EventHandler CheckDeviceLocked;
 
-	    protected virtual void RaiseCheckDeviceLocked()
-	    {
+        protected virtual void RaiseCheckDeviceLocked()
+        {
             CheckDeviceLocked?.Invoke(this, EventArgs.Empty);
         }
 
-	    private void CheckDeviceLockedInternal(object state)
+        private void CheckDeviceLockedInternal(object state)
         {
             RaiseCheckDeviceLocked();
         }
@@ -46,13 +46,13 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-	    public void DeleteAccountAsync(string reason, Action<bool> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void DeleteAccountAsync(string reason, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAccountDeleteAccount { Reason = reason };
 
             const string caption = "account.deleteAccount";
             SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
-	    }
+        }
 
         public void UpdateDeviceLockedAsync(int period, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
@@ -62,13 +62,13 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-	    public void GetWallpapersAsync(Action<TLVector<TLWallPaperBase>> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void GetWallpapersAsync(Action<TLVector<TLWallPaperBase>> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAccountGetWallPapers();
 
             const string caption = "account.getWallpapers";
             SendInformativeMessage(caption, obj, callback, faultCallback);
-	    }
+        }
 
         public void SendChangePhoneCodeAsync(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
         {
@@ -109,7 +109,9 @@ namespace Telegram.Api.Services
                 //TokenType = 3,   // MPNS
                 //TokenType = 8,   // WNS
                 TokenType = tokenType,
-                Token = token
+                Token = token,
+                AppSandbox = false,
+                OtherUids = new TLVector<int>()
             };
 
             const string methodName = "account.registerDevice";
@@ -136,7 +138,8 @@ namespace Telegram.Api.Services
                 //TokenType = 3,   // MPNS
                 //TokenType = 8,   // WNS
                 TokenType = tokenType,
-                Token = token
+                Token = token,
+                OtherUids = new TLVector<int>()
             };
 
             const string methodName = "account.unregisterDevice";
@@ -175,7 +178,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-	    public void UpdateNotifySettingsAsync(TLInputNotifyPeerBase peer, TLInputPeerNotifySettings settings, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void UpdateNotifySettingsAsync(TLInputNotifyPeerBase peer, TLInputPeerNotifySettings settings, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             //Execute.ShowDebugMessage(string.Format("account.updateNotifySettings peer=[{0}] settings=[{1}]", peer, settings));
 
@@ -241,33 +244,33 @@ namespace Telegram.Api.Services
         }
 #endif
 
-	    public void CheckUsernameAsync(string username, Action<bool> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void CheckUsernameAsync(string username, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAccountCheckUsername { Username = username };
 
             const string caption = "account.checkUsername";
             SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
-	    }
+        }
 
-	    public void UpdateUsernameAsync(string username, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void UpdateUsernameAsync(string username, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAccountUpdateUsername { Username = username };
 
             const string caption = "account.updateUsername";
             SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
-	    }
+        }
 
-	    public void GetAccountTTLAsync(Action<TLAccountDaysTTL> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void GetAccountTTLAsync(Action<TLAccountDaysTTL> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAccountGetAccountTTL();
 
             const string caption = "account.getAccountTTL";
             SendInformativeMessage(caption, obj, callback, faultCallback);
-	    }
+        }
 
         public void SetAccountTTLAsync(TLAccountDaysTTL ttl, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAccountSetAccountTTL { TTL = ttl};
+            var obj = new TLAccountSetAccountTTL { TTL = ttl };
 
             const string caption = "account.setAccountTTL";
             SendInformativeMessage(caption, obj, callback, faultCallback);
@@ -313,69 +316,101 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-	    public void GetPasswordAsync(Action<TLAccountPasswordBase> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void GetPasswordAsync(Action<TLAccountPasswordBase> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAccountGetPassword();
 
             const string caption = "account.getPassword";
             SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
-	    }
+        }
 
-	    public void GetPasswordSettingsAsync(byte[] currentPasswordHash, Action<TLAccountPasswordSettings> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void GetPasswordSettingsAsync(byte[] currentPasswordHash, Action<TLAccountPasswordSettings> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAccountGetPasswordSettings { CurrentPasswordHash = currentPasswordHash };
 
             const string caption = "account.getPasswordSettings";
             SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
-	    }
+        }
 
-	    public void UpdatePasswordSettingsAsync(byte[] currentPasswordHash, TLAccountPasswordInputSettings newSettings, Action<bool> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void UpdatePasswordSettingsAsync(byte[] currentPasswordHash, TLAccountPasswordInputSettings newSettings, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAccountUpdatePasswordSettings { CurrentPasswordHash = currentPasswordHash, NewSettings = newSettings };
 
             const string caption = "account.updatePasswordSettings";
             SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
-	    }
+        }
 
-	    public void CheckPasswordAsync(byte[] passwordHash, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void CheckPasswordAsync(byte[] passwordHash, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAuthCheckPassword { PasswordHash = passwordHash };
 
             const string caption = "auth.checkPassword";
             SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
-	    }
+        }
 
-	    public void RequestPasswordRecoveryAsync(Action<TLAuthPasswordRecovery> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void RequestPasswordRecoveryAsync(Action<TLAuthPasswordRecovery> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAuthRequestPasswordRecovery();
 
             const string caption = "auth.requestPasswordRecovery";
             SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
-	    }
+        }
 
-	    public void RecoverPasswordAsync(string code, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
-	    {
-	        var obj = new TLAuthRecoverPassword {Code = code};
+        public void RecoverPasswordAsync(string code, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLAuthRecoverPassword { Code = code };
 
             const string caption = "auth.recoverPassword";
             SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
-	    }
+        }
 
 
-	    public void ConfirmPhoneAsync(string phoneCodeHash, string phoneCode, Action<bool> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void ConfirmPhoneAsync(string phoneCodeHash, string phoneCode, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAccountConfirmPhone { PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode };
 
             const string caption = "account.confirmPhone";
             SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
-	    }
+        }
 
-	    public void SendConfirmPhoneCodeAsync(string hash, bool currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        public void SendConfirmPhoneCodeAsync(string hash, bool currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
+        {
             var obj = new TLAccountSendConfirmPhoneCode { Flags = 0, Hash = hash, CurrentNumber = currentNumber };
 
             const string caption = "account.sendConfirmPhoneCode";
             SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
-	    }
-	}
+        }
+
+        public void GetWebAuthorizationsAsync(Action<TLAccountWebAuthorizations> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLAccountGetWebAuthorizations();
+
+            const string caption = "account.getWebAuthorizations";
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
+
+            SendInformativeMessage<TLAccountWebAuthorizations>(caption, obj, result =>
+            {
+                _cacheService.SyncUsers(result.Users, r => { });
+
+                callback?.Invoke(result);
+            },
+            faultCallback, flags: RequestFlag.FailOnServerError);
+        }
+
+        public void ResetWebAuthorizationAsync(long hash, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLAccountResetWebAuthorization { Hash = hash };
+
+            const string caption = "account.resetWebAuthorization";
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
+        }
+
+        public void ResetWebAuthorizationsAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLAccountResetWebAuthorizations();
+
+            const string caption = "account.resetWebAuthorizations";
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
+        }
+    }
 }

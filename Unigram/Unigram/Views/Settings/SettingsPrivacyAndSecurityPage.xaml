@@ -101,14 +101,18 @@
                 </StackPanel>
                 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource PrivacyPayments}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PrivacyBots}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:HyperButton
                         Command="{x:Bind ViewModel.ClearPaymentsCommand}"
                         Tag="{CustomResource PrivacyPaymentsClear}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton
+                        Click="WebSessions_Click"
+                        Tag="{CustomResource WebSessionsTitle}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
 
                     <TextBlock
-                        Text="{CustomResource PrivacyPaymentsClearInfo}"
+                        Text="{CustomResource PrivacyBotsInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,0"/>

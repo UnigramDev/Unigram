@@ -11,7 +11,7 @@ namespace Telegram.Api.TL.Channels.Methods
 	public partial class TLChannelsGetMessages : TLObject
 	{
 		public TLInputChannelBase Channel { get; set; }
-		public TLVector<Int32> Id { get; set; }
+		public TLVector<TLInputMessageBase> Id { get; set; }
 
 		public TLChannelsGetMessages() { }
 		public TLChannelsGetMessages(TLBinaryReader from)
@@ -24,7 +24,7 @@ namespace Telegram.Api.TL.Channels.Methods
 		public override void Read(TLBinaryReader from)
 		{
 			Channel = TLFactory.Read<TLInputChannelBase>(from);
-			Id = TLFactory.Read<TLVector<Int32>>(from);
+			Id = TLFactory.Read<TLVector<TLInputMessageBase>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)

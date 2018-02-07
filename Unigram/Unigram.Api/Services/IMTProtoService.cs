@@ -154,7 +154,7 @@ namespace Telegram.Api.Services
 
         void UpdateDeviceLockedAsync(int period, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
-        void GetMessagesAsync(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetMessagesAsync(TLVector<TLInputMessageBase> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
 
         // messages
         void SendMultiMediaAsync(TLInputPeerBase inputPeer, TLVector<TLInputSingleMedia> multiMedia, IList<TLMessage> messages, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
@@ -181,7 +181,6 @@ namespace Telegram.Api.Services
         void SendMessageAsync(TLMessage message, Action<TLMessageCommonBase> callback, Action fastCallback, Action<TLRPCError> faultCallback = null);
         void SendMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void StartBotAsync(TLInputUserBase bot, string startParam, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
-        void ForwardMessageAsync(TLInputPeerBase peer, int fwdMessageId, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void ForwardMessagesAsync(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, bool grouped, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void CreateChatAsync(TLVector<TLInputUserBase> users, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void EditChatTitleAsync(int chatId, string title, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
@@ -216,7 +215,7 @@ namespace Telegram.Api.Services
         void DeleteHistoryAsync(TLInputChannelBase inputChannel, int maxId, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SetStickersAsync(TLInputChannelBase inputChannel, TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void ReadMessageContentsAsync(TLInputChannelBase inputChannel, TLVector<int> id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
-        void GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<TLInputMessageBase> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void UpdateChannelAsync(int? channelId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null);
         void EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelAdminRights rights, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
         void EditBannedAsync(TLChannel channel, TLInputUserBase userId, TLChannelBannedRights rights, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
@@ -272,6 +271,10 @@ namespace Telegram.Api.Services
         void RecoverPasswordAsync(string code, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null);
         void ConfirmPhoneAsync(string phoneCodeHash, string phoneCode, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SendConfirmPhoneCodeAsync(string hash, bool currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
+        void GetWebAuthorizationsAsync(Action<TLAccountWebAuthorizations> callback, Action<TLRPCError> faultCallback = null);
+        void ResetWebAuthorizationAsync(long hash, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void ResetWebAuthorizationsAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null);
+
 
         // help
         void GetAppChangelogAsync(string prevAppVersion, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null); 

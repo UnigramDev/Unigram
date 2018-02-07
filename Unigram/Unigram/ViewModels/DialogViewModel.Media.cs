@@ -720,7 +720,7 @@ namespace Unigram.ViewModels
                 HasTTLSeconds = ttlSeconds.HasValue
             };
 
-            caption.Format();
+            caption = caption.Format();
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
             message.Entities = Markdown.Parse(ref caption);

@@ -7,6 +7,7 @@ namespace Telegram.Api.TL
 	public partial class TLInputPaymentCredentialsAndroidPay : TLInputPaymentCredentialsBase 
 	{
 		public TLDataJSON PaymentToken { get; set; }
+		public String GoogleTransactionId { get; set; }
 
 		public TLInputPaymentCredentialsAndroidPay() { }
 		public TLInputPaymentCredentialsAndroidPay(TLBinaryReader from)
@@ -19,11 +20,13 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from)
 		{
 			PaymentToken = TLFactory.Read<TLDataJSON>(from);
+			GoogleTransactionId = from.ReadString();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			to.WriteObject(PaymentToken);
+			to.WriteString(GoogleTransactionId ?? string.Empty);
 		}
 	}
 }

@@ -12,6 +12,8 @@ namespace Telegram.Api.TL.Account.Methods
 	{
 		public Int32 TokenType { get; set; }
 		public String Token { get; set; }
+		public Boolean AppSandbox { get; set; }
+		public TLVector<Int32> OtherUids { get; set; }
 
 		public TLAccountRegisterDevice() { }
 		public TLAccountRegisterDevice(TLBinaryReader from)
@@ -25,12 +27,16 @@ namespace Telegram.Api.TL.Account.Methods
 		{
 			TokenType = from.ReadInt32();
 			Token = from.ReadString();
+			AppSandbox = from.ReadBoolean();
+			OtherUids = TLFactory.Read<TLVector<Int32>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			to.WriteInt32(TokenType);
 			to.WriteString(Token ?? string.Empty);
+			to.WriteBoolean(AppSandbox);
+			to.WriteObject(OtherUids);
 		}
 	}
 }

@@ -62,7 +62,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<TLInputMessageBase> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsGetMessages { Channel = inputChannel, Id = id };
 

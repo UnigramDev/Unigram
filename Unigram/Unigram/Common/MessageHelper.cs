@@ -164,14 +164,16 @@ namespace Unigram.Common
                     //ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
-                var direction = Native.NativeUtils.GetDirectionality(display);
-                if (direction == 2)
+                //var direction = Native.NativeUtils.GetDirectionality(display);
+                if (IsAnyCharacterRightToLeft(display))
                 {
+                    sender.TextReadingOrder = TextReadingOrder.UseFlowDirection;
                     sender.FlowDirection = FlowDirection.RightToLeft;
                     paragraph.Inlines.Add(new LineBreak());
                 }
                 else
                 {
+                    sender.TextReadingOrder = TextReadingOrder.UseFlowDirection;
                     sender.FlowDirection = FlowDirection.LeftToRight;
                 }
 

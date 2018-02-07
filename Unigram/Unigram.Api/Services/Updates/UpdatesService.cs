@@ -1086,7 +1086,7 @@ namespace Telegram.Api.Services.Updates
                     if (message == null)
                     {
                         GetChannelMessagesAsync(channel.ToInputChannel(),
-                            new TLVector<int> { updateChannelPinnedMessage.Id },
+                            new TLVector<TLInputMessageBase> { new TLInputMessageID { Id = updateChannelPinnedMessage.Id } },
                             messagesBase =>
                             {
                                 _cacheService.AddMessagesToContext(messagesBase, result =>
@@ -1361,7 +1361,7 @@ namespace Telegram.Api.Services.Updates
             if (updatedReadMessagesContents != null)
             {
                 var messages = new List<TLMessageCommonBase>(updatedReadMessagesContents.Messages.Count);
-                var messagesId = new TLVector<int>(updatedReadMessagesContents.Messages.Count);
+                var messagesId = new TLVector<TLInputMessageBase>(updatedReadMessagesContents.Messages.Count);
 
                 foreach (var readMessageId in updatedReadMessagesContents.Messages)
                 {
@@ -1372,7 +1372,7 @@ namespace Telegram.Api.Services.Updates
                     }
                     else
                     {
-                        messagesId.Add(readMessageId);
+                        messagesId.Add(new TLInputMessageID { Id = readMessageId });
                     }
                 }
 
@@ -1474,7 +1474,7 @@ namespace Telegram.Api.Services.Updates
                 var dialog = _cacheService.GetDialog(new TLPeerChannel { ChannelId = updateChannelReadMessagesContents.ChannelId });
 
                 var messages = new List<TLMessageCommonBase>(updateChannelReadMessagesContents.Messages.Count);
-                var messagesId = new TLVector<int>(updateChannelReadMessagesContents.Messages.Count);
+                var messagesId = new TLVector<TLInputMessageBase>(updateChannelReadMessagesContents.Messages.Count);
 
                 foreach (var readMessageId in updateChannelReadMessagesContents.Messages)
                 {
@@ -1485,7 +1485,7 @@ namespace Telegram.Api.Services.Updates
                     }
                     else
                     {
-                        messagesId.Add(readMessageId);
+                        messagesId.Add(new TLInputMessageID { Id = readMessageId });
                     }
                 }
 

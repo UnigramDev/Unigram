@@ -1031,7 +1031,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void GetMessagesAsync(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetMessagesAsync(TLVector<TLInputMessageBase> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetMessages { Id = id };
 
@@ -1320,50 +1320,6 @@ namespace Telegram.Api.Services
 
             const string caption = "messages.receivedMessages";
             SendInformativeMessage(caption, obj, callback, faultCallback);
-        }
-
-        public void ForwardMessageAsync(TLInputPeerBase peer, int fwdMessageId, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLMessagesForwardMessage { Peer = peer, Id = fwdMessageId, RandomId = message.RandomId ?? 0 };
-
-            const string caption = "messages.forwardMessage";
-            ForwardMessageAsyncInternal(obj,
-                result =>
-                {
-                    Execute.BeginOnUIThread(() =>
-                    {
-                        message.State = TLMessageState.Confirmed;
-
-                        // TODO: 24/04/2017 verify if this is really needed
-                        if (message.Media is TLMessageMediaPhoto photoMedia)
-                        {
-                            photoMedia.Photo.LastProgress = 0.0;
-                            photoMedia.Photo.DownloadingProgress = 0.0;
-                        }
-                        else if (message.Media is TLMessageMediaDocument documentMedia)
-                        {
-                            documentMedia.Document.LastProgress = 0.0;
-                            documentMedia.Document.DownloadingProgress = 0.0;
-                        }
-                    });
-
-                    var multiPts = result as ITLMultiPts;
-                    if (multiPts != null)
-                    {
-                        _updatesService.SetState(multiPts, caption);
-                    }
-                    else
-                    {
-                        ProcessUpdates(result, new List<TLMessage> { message });
-                    }
-
-                    callback?.Invoke(result);
-                },
-                () =>
-                {
-
-                },
-                faultCallback);
         }
 
         public void ForwardMessagesAsync(TLInputPeerBase toPeer, TLInputPeerBase fromPeer, TLVector<int> id, IList<TLMessage> messages, bool withMyScore, bool grouped, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)

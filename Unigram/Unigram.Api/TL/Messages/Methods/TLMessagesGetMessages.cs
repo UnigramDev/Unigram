@@ -10,7 +10,7 @@ namespace Telegram.Api.TL.Messages.Methods
 	/// </summary>
 	public partial class TLMessagesGetMessages : TLObject
 	{
-		public TLVector<Int32> Id { get; set; }
+		public TLVector<TLInputMessageBase> Id { get; set; }
 
 		public TLMessagesGetMessages() { }
 		public TLMessagesGetMessages(TLBinaryReader from)
@@ -22,7 +22,7 @@ namespace Telegram.Api.TL.Messages.Methods
 
 		public override void Read(TLBinaryReader from)
 		{
-			Id = TLFactory.Read<TLVector<Int32>>(from);
+			Id = TLFactory.Read<TLVector<TLInputMessageBase>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)

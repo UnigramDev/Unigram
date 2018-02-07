@@ -17,8 +17,8 @@ namespace Telegram.Api.Services.Updates
     public delegate void GetParticipantAction(TLInputChannelBase channelId, TLInputUserBase userId, Action<TLChannelsChannelParticipant> callback, Action<TLRPCError> faultCallback = null);
     public delegate void GetFullChatAction(int chatId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null);
     public delegate void GetFullUserAction(TLInputUserBase userId, Action<TLUserFull> callback, Action<TLRPCError> faultCallback = null);
-    public delegate void GetChannelMessagesAction(TLInputChannelBase channelId, TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
-    public delegate void GetMessagesAction(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+    public delegate void GetChannelMessagesAction(TLInputChannelBase channelId, TLVector<TLInputMessageBase> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
+    public delegate void GetMessagesAction(TLVector<TLInputMessageBase> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
 
     public delegate void SetMessageOnTimeAtion(double seconds, string message);
 

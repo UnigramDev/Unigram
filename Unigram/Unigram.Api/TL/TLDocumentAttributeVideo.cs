@@ -10,9 +10,11 @@ namespace Telegram.Api.TL
 		public enum Flag : Int32
 		{
 			RoundMessage = (1 << 0),
+			SupportsStreaming = (1 << 1),
 		}
 
 		public bool IsRoundMessage { get { return Flags.HasFlag(Flag.RoundMessage); } set { Flags = value ? (Flags | Flag.RoundMessage) : (Flags & ~Flag.RoundMessage); } }
+		public bool IsSupportsStreaming { get { return Flags.HasFlag(Flag.SupportsStreaming); } set { Flags = value ? (Flags | Flag.SupportsStreaming) : (Flags & ~Flag.SupportsStreaming); } }
 
 		public Flag Flags { get; set; }
 		public Int32 Duration { get; set; }

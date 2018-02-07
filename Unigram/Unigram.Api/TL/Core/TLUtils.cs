@@ -58,12 +58,6 @@ namespace Telegram.Api.TL
                 return true;
             }
 
-            var forwardMessageAction = obj as TLMessagesForwardMessage;
-            if (forwardMessageAction != null)
-            {
-                return true;
-            }
-
             var startBotAction = obj as TLMessagesStartBot;
             if (startBotAction != null)
             {

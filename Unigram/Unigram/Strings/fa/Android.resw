@@ -1,44 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<root>	
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>1.3</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>آخرین بازدید خیلی وقت پیش</value>
   </data>
@@ -328,55 +328,55 @@
     <value>پاپ‌آپ همیشه نمایش داده شود</value>
   </data>
   <data name="AndMoreTypingZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndMoreTypingOne" xml:space="preserve">
     <value>و {0} نفر دیگر در حال نوشتن هستند</value>
   </data>
   <data name="AndMoreTypingTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndMoreTypingFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndMoreTypingMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndMoreTypingOther" xml:space="preserve">
     <value>و {0} نفر دیگر در حال نوشتن هستند</value>
   </data>
   <data name="AndMoreTypingGroupZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndMoreTypingGroupOne" xml:space="preserve">
     <value>{0} و {1} نفر دیگر در حال نوشتن هستند</value>
   </data>
   <data name="AndMoreTypingGroupTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndMoreTypingGroupFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndMoreTypingGroupMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndMoreTypingGroupOther" xml:space="preserve">
     <value>{0} و {1} نفر دیگر در حال نوشتن هستند</value>
   </data>
   <data name="AndOtherZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndOtherOne" xml:space="preserve">
     <value>و {0} نفر دیگر</value>
   </data>
   <data name="AndOtherTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndOtherFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndOtherMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndOtherOther" xml:space="preserve">
     <value>و {0} نفر دیگر</value>
@@ -498,6 +498,9 @@
   <data name="AreYouSureUnblockContact" xml:space="preserve">
     <value>آیا از رفع مسدودیت این مخاطب اطمینان دارید؟</value>
   </data>
+  <data name="AreYouSureWebSessions" xml:space="preserve">
+    <value>آیا از قطع اتصال تمامی وبسایت‌هایی که از تلگرام برای ورود به آن‌ها استفاده کرده‌اید اطمینان دارید؟</value>
+  </data>
   <data name="ArticleByAuthor" xml:space="preserve">
     <value>توسط {0}</value>
   </data>
@@ -607,6 +610,45 @@
   </data>
   <data name="AutoLockInfo" xml:space="preserve">
     <value>در صورت عدم حضور در مدت زمان تعیین شده، از شما گذرواژه خواسته می‌شود.</value>
+  </data>
+  <data name="AutoNightAutomatic" xml:space="preserve">
+    <value>خودکار</value>
+  </data>
+  <data name="AutoNightBrightness" xml:space="preserve">
+    <value>آستانه روشنایی</value>
+  </data>
+  <data name="AutoNightBrightnessInfo" xml:space="preserve">
+    <value>هنگامی که روشنایی محیط از {0}٪ کمتر شد، قالب را به قالب شب ترجیحی خود تغییر دهید.</value>
+  </data>
+  <data name="AutoNightDisabled" xml:space="preserve">
+    <value>غیرفعال</value>
+  </data>
+  <data name="AutoNightFrom" xml:space="preserve">
+    <value>از</value>
+  </data>
+  <data name="AutoNightLocation" xml:space="preserve">
+    <value>استفاده از زمان غروب و طلوع محلی</value>
+  </data>
+  <data name="AutoNightPreferred" xml:space="preserve">
+    <value>قالب شب ترجیحی</value>
+  </data>
+  <data name="AutoNightSchedule" xml:space="preserve">
+    <value>برنامه</value>
+  </data>
+  <data name="AutoNightScheduled" xml:space="preserve">
+    <value>برنامه‌ریزی شده</value>
+  </data>
+  <data name="AutoNightTheme" xml:space="preserve">
+    <value>حالت خودکار شب</value>
+  </data>
+  <data name="AutoNightTo" xml:space="preserve">
+    <value>تا</value>
+  </data>
+  <data name="AutoNightUpdateLocation" xml:space="preserve">
+    <value>به‌روزرسانی موقعیت</value>
+  </data>
+  <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
+    <value>محاسبه زمان‌های غروب و طلوع نیازمند به یک بار چک کردن موقعیت تقریبی شما است. توجه داشته باشد که این موقعیت تنها در دستگاه شما به صورت محلی ذخیره می‌شود.\n\nغروب: {0}\nطلوع: {1}</value>
   </data>
   <data name="AutodownloadChannels" xml:space="preserve">
     <value>کانال‌ها</value>
@@ -807,6 +849,9 @@
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>لغو ثبت نام</value>
+  </data>
+  <data name="CantPlayVideo" xml:space="preserve">
+    <value>برنامه قادر به پخش این ویدئو نبود. با پخش کننده خارجی امتحان می‌کنید؟</value>
   </data>
   <data name="Caption" xml:space="preserve">
     <value>عنوان</value>
@@ -1023,7 +1068,7 @@
     <value>برکناری مدیر</value>
   </data>
   <data name="ChannelRestrictedUsers" xml:space="preserve">
-    <value>کاربران محدود شده</value>
+    <value>کاربران محدود</value>
   </data>
   <data name="ChannelSettings" xml:space="preserve">
     <value>تنظیمات</value>
@@ -1128,19 +1173,19 @@
     <value>فضای ذخیره‌سازی اَبری شما</value>
   </data>
   <data name="ChatsZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ChatsOne" xml:space="preserve">
     <value>{0} گفتگو</value>
   </data>
   <data name="ChatsTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ChatsFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ChatsMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} گفتگو</value>
@@ -1192,6 +1237,9 @@
   </data>
   <data name="ClearOtherSessionsHelp" xml:space="preserve">
     <value>از همه دستگاه‌ها بجز این دستگاه خارج می‌شود.</value>
+  </data>
+  <data name="ClearOtherWebSessionsHelp" xml:space="preserve">
+    <value>شما می‌توانید به وبسایت‌هایی که از ورود با حساب کاربری تلگرام پشتیبانی می‌کنند وارد شوید.</value>
   </data>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>شکلک‌های اخیر پاک شوند؟</value>
@@ -1392,7 +1440,7 @@
     <value>علی‌رغم تنظیمات بالا، این کاربران خواهند یا نخواهند توانست با شما تماس بگیرند.</value>
   </data>
   <data name="CustomHelp" xml:space="preserve">
-    <value>مهم: شما نمی‌توانید زمان آخرین بازدید افرادی را ببینید که با آن‌ها زمان آخرین بازدید خود را به اشتراک نمی‌گذارید. در عوض، زمان آخرین بازدید تقریبی نمایش داده خواهد شد (به تازگی، در طول یک هفته، در طول یک ماه).</value>
+    <value>توجه: شما قادر به دیدن زمان آخرین بازدید افرادی که زمان آخرین بازدید خود را با آن‌ها به اشتراک نمی‌گذارید، نیستید. در عوض، زمان آخرین بازدید تقریبی نمایش داده خواهد شد (به تازگی، ظرف یک هفته پیش، ظرف یک ماه پیش).</value>
   </data>
   <data name="CustomNotifications" xml:space="preserve">
     <value>اعلان‌های سفارشی</value>
@@ -1410,37 +1458,37 @@
     <value>میزان استفاده از حافظه و شبکه</value>
   </data>
   <data name="DaysZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="DaysOne" xml:space="preserve">
     <value>{0} روز</value>
   </data>
   <data name="DaysTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="DaysFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="DaysMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="DaysOther" xml:space="preserve">
     <value>{0} روز</value>
   </data>
   <data name="DaysBoldZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="DaysBoldOne" xml:space="preserve">
     <value>**{0}** روز</value>
   </data>
   <data name="DaysBoldTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="DaysBoldFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="DaysBoldMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="DaysBoldOther" xml:space="preserve">
     <value>**{0}** روز</value>
@@ -1450,6 +1498,9 @@
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>فهرست رفع اشکال</value>
+  </data>
+  <data name="DebugMenuClearMediaCache" xml:space="preserve">
+    <value>پاک کردن حافظه موقت رسانه ارسالی</value>
   </data>
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>غیرفعال کردن دوربین درون‌برنامه</value>
@@ -1687,6 +1738,9 @@
   <data name="EmpryUsersPlaceholder" xml:space="preserve">
     <value>افزودن کاربران</value>
   </data>
+  <data name="EnableAllStreamingInfo" xml:space="preserve">
+    <value>برخی از ویدئوها نمی‌توانند به صورت پیوسته پخش شوند - مانند تمامی ویدئوهایی که از دستگاه اندروید توسط تلگرام نسخه 4.7 یا قدیمی‌تر ارسال شده‌اند.</value>
+  </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>فعال‌سازی انیمیشن</value>
   </data>
@@ -1695,6 +1749,9 @@
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
     <value>شما می‌توانید سرور پروکسی خود را در قسمت تنظیمات (داده‌ها و ذخیره‌سازی) تغییر دهید.</value>
+  </data>
+  <data name="EnableStreaming" xml:space="preserve">
+    <value>پخش پیوسته ویدئوها و فایل‌های صوتی</value>
   </data>
   <data name="EnabledPasswordText" xml:space="preserve">
     <value>شما تأیید دو مرحله‌ای را فعال کرده‌اید.
@@ -1747,7 +1804,7 @@
     <value>گفتگوی محرمانه لغو شد</value>
   </data>
   <data name="English" xml:space="preserve">
-    <value>انگلیسی</value>
+    <value>فارسی</value>
   </data>
   <data name="Enhance" xml:space="preserve">
     <value>بهبود</value>
@@ -2080,73 +2137,73 @@
     <value>هدایت به...</value>
   </data>
   <data name="ForwardedAudioZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedAudioOne" xml:space="preserve">
     <value>پیام‌ صوتی هدایت شده</value>
   </data>
   <data name="ForwardedAudioTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedAudioFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedAudioMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedAudioOther" xml:space="preserve">
     <value>{0} پیام صوتی هدایت شده</value>
   </data>
   <data name="ForwardedContactZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedContactOne" xml:space="preserve">
     <value>مخاطب هدایت شده</value>
   </data>
   <data name="ForwardedContactTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedContactFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedContactMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedContactOther" xml:space="preserve">
     <value>{0} مخاطب هدایت شده</value>
   </data>
   <data name="ForwardedFileZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedFileOne" xml:space="preserve">
     <value>فایل هدایت شده</value>
   </data>
   <data name="ForwardedFileTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedFileFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedFileMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedFileOther" xml:space="preserve">
     <value>{0} فایل هدایت شده</value>
   </data>
   <data name="ForwardedLocationZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedLocationOne" xml:space="preserve">
     <value>موقعیت هدایت شده</value>
   </data>
   <data name="ForwardedLocationTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedLocationFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedLocationMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedLocationOther" xml:space="preserve">
     <value>{0} موقعیت هدایت شده</value>
@@ -2155,109 +2212,109 @@
     <value>پیام هدایت شده</value>
   </data>
   <data name="ForwardedMessageCountZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedMessageCountOne" xml:space="preserve">
     <value>پیام هدایت شده</value>
   </data>
   <data name="ForwardedMessageCountTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedMessageCountFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedMessageCountMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedMessageCountOther" xml:space="preserve">
     <value>{0} پیام هدایت شده</value>
   </data>
   <data name="ForwardedMusicZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedMusicOne" xml:space="preserve">
     <value>آهنگ هدایت شده</value>
   </data>
   <data name="ForwardedMusicTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedMusicFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedMusicMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedMusicOther" xml:space="preserve">
     <value>{0} آهنگ هدایت شده</value>
   </data>
   <data name="ForwardedPhotoZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedPhotoOne" xml:space="preserve">
     <value>عکس هدایت شده</value>
   </data>
   <data name="ForwardedPhotoTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedPhotoFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedPhotoMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedPhotoOther" xml:space="preserve">
     <value>{0} عکس هدایت شده</value>
   </data>
   <data name="ForwardedRoundZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedRoundOne" xml:space="preserve">
     <value>پیام ویدئویی هدایت شده</value>
   </data>
   <data name="ForwardedRoundTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedRoundFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedRoundMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedRoundOther" xml:space="preserve">
     <value>{0} پیام ویدئویی هدایت شده</value>
   </data>
   <data name="ForwardedStickerZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedStickerOne" xml:space="preserve">
     <value>استیکر هدایت شده</value>
   </data>
   <data name="ForwardedStickerTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedStickerFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedStickerMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedStickerOther" xml:space="preserve">
     <value>{0} استیکر هدایت شده</value>
   </data>
   <data name="ForwardedVideoZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedVideoOne" xml:space="preserve">
     <value>ویدئوی هدایت شده</value>
   </data>
   <data name="ForwardedVideoTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedVideoFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedVideoMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ForwardedVideoOther" xml:space="preserve">
     <value>{0} ویدئوی هدایت شده</value>
@@ -2272,19 +2329,19 @@
     <value>از دوربین</value>
   </data>
   <data name="FromChatsZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="FromChatsOne" xml:space="preserve">
     <value>از {0} گفتگو</value>
   </data>
   <data name="FromChatsTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="FromChatsFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="FromChatsMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="FromChatsOther" xml:space="preserve">
     <value>از {0} گفتگو</value>
@@ -2390,37 +2447,37 @@
     <value>برای ضبط ویدئو نگه دارید. برای تغییر به ضبط صدا لمس کنید.</value>
   </data>
   <data name="HoursZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="HoursOne" xml:space="preserve">
     <value>{0} ساعت</value>
   </data>
   <data name="HoursTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="HoursFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="HoursMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="HoursOther" xml:space="preserve">
     <value>{0} ساعت</value>
   </data>
   <data name="HoursBoldZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="HoursBoldOne" xml:space="preserve">
     <value>**{0}** ساعت</value>
   </data>
   <data name="HoursBoldTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="HoursBoldFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="HoursBoldMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="HoursBoldOther" xml:space="preserve">
     <value>**{0}** ساعت</value>
@@ -2498,19 +2555,19 @@
     <value>سلام، من از تلگرام برای گفتگو استفاده می‌کنم. به من بپیوند! تلگرام را از اینجا دانلود کن: {0}</value>
   </data>
   <data name="InviteTextNumZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="InviteTextNumOne" xml:space="preserve">
     <value>سلام، من و همچنین {0} نفر دیگر از مخاطبین ما از تلگرام برای گفتگو استفاده می‌کنیم. به ما بپیوند! آن را از اینجا دانلود کن: {1}</value>
   </data>
   <data name="InviteTextNumTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="InviteTextNumFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="InviteTextNumMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="InviteTextNumOther" xml:space="preserve">
     <value>سلام، من و همچنین {0} نفر دیگر از مخاطبین ما از تلگرام برای گفتگو استفاده می‌کنیم. به ما بپیوند! آن را از اینجا دانلود کن: {1}</value>
@@ -2608,7 +2665,7 @@
     <value>فارسی</value>
   </data>
   <data name="LanguageNameInEnglish" xml:space="preserve">
-    <value>Persian</value>
+    <value>فارسی</value>
   </data>
   <data name="LastName" xml:space="preserve">
     <value>نام خانوادگی (اختیاری)</value>
@@ -2844,19 +2901,19 @@
     <value>دیگران می‌توانند این لینک را با بقیه به اشتراک بگذارند و با جستجوی تلگرام گروه شما را پیدا کنند.</value>
   </data>
   <data name="MembersZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MembersOne" xml:space="preserve">
     <value>{0} عضو</value>
   </data>
   <data name="MembersTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MembersFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MembersMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MembersOther" xml:space="preserve">
     <value>{0} عضو</value>
@@ -2904,19 +2961,19 @@
     <value>پیام‌ها</value>
   </data>
   <data name="MetersZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MetersOne" xml:space="preserve">
     <value>{0} متر</value>
   </data>
   <data name="MetersTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MetersFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MetersMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MetersOther" xml:space="preserve">
     <value>{0} متر</value>
@@ -2925,37 +2982,37 @@
     <value>متر فاصله</value>
   </data>
   <data name="MinutesZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MinutesOne" xml:space="preserve">
     <value>{0} دقیقه</value>
   </data>
   <data name="MinutesTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MinutesFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MinutesMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MinutesOther" xml:space="preserve">
     <value>{0} دقیقه</value>
   </data>
   <data name="MinutesBoldZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MinutesBoldOne" xml:space="preserve">
     <value>**{0}** دقیقه</value>
   </data>
   <data name="MinutesBoldTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MinutesBoldFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MinutesBoldMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MinutesBoldOther" xml:space="preserve">
     <value>**{0}** دقیقه</value>
@@ -2964,19 +3021,19 @@
     <value>میزان استفاده از داده تلفن همراه</value>
   </data>
   <data name="MonthsZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MonthsOne" xml:space="preserve">
     <value>{0} ماه</value>
   </data>
   <data name="MonthsTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MonthsFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MonthsMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MonthsOther" xml:space="preserve">
     <value>{0} ماه</value>
@@ -3030,19 +3087,19 @@
     <value>پیام جدید</value>
   </data>
   <data name="NewMessagesZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="NewMessagesOne" xml:space="preserve">
     <value>{0} پیام جدید</value>
   </data>
   <data name="NewMessagesTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="NewMessagesFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="NewMessagesMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="NewMessagesOther" xml:space="preserve">
     <value>{0} پیام جدید</value>
@@ -3111,6 +3168,12 @@
   </data>
   <data name="NoOtherSessionsInfo" xml:space="preserve">
     <value>شما می‌توانید در تلفن همراه، تبلت یا رایانه‌های دیگر با استفاده از یک شماره تلفن یکسان وارد حساب کاربری تلگرام شوید. تمامی داده‌های شما بلافاصله همگام‌سازی خواهند شد.</value>
+  </data>
+  <data name="NoOtherWebSessions" xml:space="preserve">
+    <value>ورود فعالی وجود ندارد.</value>
+  </data>
+  <data name="NoOtherWebSessionsInfo" xml:space="preserve">
+    <value>شما می‌توانید به وبسایت‌هایی که از ورود با حساب کاربری تلگرام پشتیبانی می‌کنند وارد شوید.</value>
   </data>
   <data name="NoPhotos" xml:space="preserve">
     <value>هنوز عکسی موجود نیست</value>
@@ -3423,6 +3486,9 @@
   <data name="NotificationsEnableCustom" xml:space="preserve">
     <value>فعال کردن اعلان‌های سفارشی</value>
   </data>
+  <data name="NotificationsImportance" xml:space="preserve">
+    <value>اهمیت</value>
+  </data>
   <data name="NotificationsLed" xml:space="preserve">
     <value>LED</value>
   </data>
@@ -3450,11 +3516,20 @@
   <data name="NotificationsPriorityHigh" xml:space="preserve">
     <value>زیاد</value>
   </data>
+  <data name="NotificationsPriorityLow" xml:space="preserve">
+    <value>کم</value>
+  </data>
   <data name="NotificationsPriorityMax" xml:space="preserve">
     <value>حداکثر</value>
   </data>
+  <data name="NotificationsPriorityMedium" xml:space="preserve">
+    <value>متوسط</value>
+  </data>
   <data name="NotificationsPrioritySettings" xml:space="preserve">
     <value>همانند تنظیمات</value>
+  </data>
+  <data name="NotificationsPriorityUrgent" xml:space="preserve">
+    <value>ضروری</value>
   </data>
   <data name="NotificationsService" xml:space="preserve">
     <value>سرویس اتصال دائم</value>
@@ -3487,19 +3562,19 @@
     <value>آنلاین</value>
   </data>
   <data name="OnlineCountZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="OnlineCountOne" xml:space="preserve">
     <value>{0} آنلاین</value>
   </data>
   <data name="OnlineCountTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="OnlineCountFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="OnlineCountMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="OnlineCountOther" xml:space="preserve">
     <value>{0} آنلاین</value>
@@ -3536,6 +3611,9 @@
   </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>نشست‌های فعال</value>
+  </data>
+  <data name="OtherWebSessions" xml:space="preserve">
+    <value>وبسایت‌های متصل</value>
   </data>
   <data name="OutgoingCalls" xml:space="preserve">
     <value>تماس‌های خروجی</value>
@@ -3918,20 +3996,23 @@
   <data name="PleaseReEnterPassword" xml:space="preserve">
     <value>لطفاً گذرواژه‌ خود را دوباره وارد کنید</value>
   </data>
+  <data name="PleaseStreamDownload" xml:space="preserve">
+    <value>لطفاً تا دانلود کامل ویدئو صبر کنید.</value>
+  </data>
   <data name="PointsZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="PointsOne" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="PointsTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="PointsFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="PointsMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="PointsOther" xml:space="preserve">
     <value>{0}</value>
@@ -3950,6 +4031,12 @@
   </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>حتی اگر دستگاه شما روی حالت مزاحم نشوید باشد اعلان‌های با اولویت بالا کار خواهند کرد.</value>
+  </data>
+  <data name="PrivacyBots" xml:space="preserve">
+    <value>ربات‌ها و وبسایت‌ها</value>
+  </data>
+  <data name="PrivacyBotsInfo" xml:space="preserve">
+    <value>وبسایت‌هایی که از تلگرام برای ورود به آن‌ها استفاده کرده‌اید.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
     <value>با غیرفعال کردن نظیر به نظیر، تمامی تماس‌ها از طریق سرورهای تلگرام منتقل می‌شوند تا از فاش شدن آدرس IP شما جلوگیری شود، اما ممکن است کیفیت صدا کمی پایین بیاید.</value>
@@ -3974,6 +4061,9 @@
   </data>
   <data name="PrivacyPaymentsClear" xml:space="preserve">
     <value>پاک کردن اطلاعات پرداخت و ارسال</value>
+  </data>
+  <data name="PrivacyPaymentsClearAlert" xml:space="preserve">
+    <value>آیا می‌خواهید تمامی اطلاعات ارسال خود را حذف کرده و از ارائه‌دهندگان خدمات پرداختی بخواهید کارت‌های بانکی ذخیره شده شما را حذف کنند؟ توجه داشته باشید که تلگرام به هیچ وجه اطلاعات کارت‌های بانکی شما را ذخیره نمی کند.</value>
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>شما می‌توانید تمامی اطلاعات ارسال خود را حذف کرده و از ارائه‌دهندگان خدمات پرداختی بخواهید کارت‌های بانکی ذخیره شده شما را حذف کنند. توجه داشته باشید که تلگرام به هیچ وجه اطلاعات کارت‌های بانکی شما را ذخیره نمی کند.</value>
@@ -4021,19 +4111,19 @@
     <value>پنهان کردن</value>
   </data>
   <data name="RecipientZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="RecipientOne" xml:space="preserve">
     <value>{0} دریافت کننده</value>
   </data>
   <data name="RecipientTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="RecipientFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="RecipientMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="RecipientOther" xml:space="preserve">
     <value>{0} دریافت کننده</value>
@@ -4293,37 +4383,37 @@
     <value>پیام‌ها</value>
   </data>
   <data name="SecondsZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SecondsOne" xml:space="preserve">
     <value>{0} ثانیه</value>
   </data>
   <data name="SecondsTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SecondsFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SecondsMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SecondsOther" xml:space="preserve">
     <value>{0} ثانیه</value>
   </data>
   <data name="SecondsBoldZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SecondsBoldOne" xml:space="preserve">
     <value>**{0}** ثانیه‌‌</value>
   </data>
   <data name="SecondsBoldTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SecondsBoldFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SecondsBoldMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SecondsBoldOther" xml:space="preserve">
     <value>**{0}** ثانیه‌‌</value>
@@ -4333,6 +4423,9 @@
   </data>
   <data name="SecretChatContextBotAlert" xml:space="preserve">
     <value>لطفاً توجه داشته باشید که ربات‌های درون خطی توسط توسعه‌دهندگان شخص ثالث ارائه شده‌اند. برای این که رباتی کار کند، نمادهایی که شما بعد از نام کاربری ربات می‌نویسید به توسعه‌دهنده مربوطه ارسال می‌شوند.</value>
+  </data>
+  <data name="SecretChatName" xml:space="preserve">
+    <value>گفتگوی محرمانه</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
     <value>آیا تمایل دارید پیش‌نمایش‌های لینک را در گفتگوی محرمانه فعال کنید؟ توجه داشته باشید که پیش‌نمایش‌های لینک در سرورهای تلگرام ایجاد می‌شوند.</value>
@@ -4637,19 +4730,19 @@
     <value>لطفاً کد کشور خود را تأیید کرده و شماره تلفن خود را وارد نمایید.</value>
   </data>
   <data name="StickersZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="StickersOne" xml:space="preserve">
     <value>{0} استیکر</value>
   </data>
   <data name="StickersTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="StickersFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="StickersMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="StickersOther" xml:space="preserve">
     <value>{0} استیکر</value>
@@ -4675,6 +4768,9 @@
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>متوقف کردن همه</value>
   </data>
+  <data name="StopDownload" xml:space="preserve">
+    <value>متوقف کردن دانلود</value>
+  </data>
   <data name="StopLiveLocation" xml:space="preserve">
     <value>متوقف کردن به اشتراک گذاری موقعیت</value>
   </data>
@@ -4690,20 +4786,23 @@
   <data name="StorageUsage" xml:space="preserve">
     <value>میزان استفاده از فضای ذخیره‌سازی</value>
   </data>
+  <data name="Streaming" xml:space="preserve">
+    <value>پخش پیوسته</value>
+  </data>
   <data name="SubscribersZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SubscribersOne" xml:space="preserve">
     <value>{0} دنبال کننده</value>
   </data>
   <data name="SubscribersTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SubscribersFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SubscribersMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="SubscribersOther" xml:space="preserve">
     <value>{0} دنبال کننده</value>
@@ -4736,19 +4835,19 @@
     <value>برای دسترسی به گیف‌های ذخیره شده اینجا را لمس کنید</value>
   </data>
   <data name="TelegramContactsZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="TelegramContactsOne" xml:space="preserve">
     <value>{0} مخاطب در تلگرام</value>
   </data>
   <data name="TelegramContactsTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="TelegramContactsFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="TelegramContactsMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="TelegramContactsOther" xml:space="preserve">
     <value>{0} مخاطب در تلگرام</value>
@@ -4765,11 +4864,23 @@
   <data name="TerminateAllSessions" xml:space="preserve">
     <value>پایان دادن به تمامی نشست‌های دیگر</value>
   </data>
+  <data name="TerminateAllWebSessions" xml:space="preserve">
+    <value>قطع اتصال تمامی وبسایت‌ها</value>
+  </data>
   <data name="TerminateSessionInfo" xml:space="preserve">
     <value>برای پایان دادن بر روی نشست لمس کنید.</value>
   </data>
   <data name="TerminateSessionQuestion" xml:space="preserve">
     <value>آیا به این نشست پایان می‌دهید؟</value>
+  </data>
+  <data name="TerminateWebSessionInfo" xml:space="preserve">
+    <value>برای قطع اتصال حساب کاربری تلگرام خود لمس کنید.</value>
+  </data>
+  <data name="TerminateWebSessionQuestion" xml:space="preserve">
+    <value>قطع اتصال {0}؟</value>
+  </data>
+  <data name="TerminateWebSessionStop" xml:space="preserve">
+    <value>مسدود کردن {0}</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>متن در حافظه کپی شد</value>
@@ -4796,19 +4907,19 @@
     <value>متأسفانه مهلت ویرایش به اتمام رسیده است.</value>
   </data>
   <data name="TimesZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="TimesOne" xml:space="preserve">
     <value>{0} بار</value>
   </data>
   <data name="TimesTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="TimesFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="TimesMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="TimesOther" xml:space="preserve">
     <value>{0} بار</value>
@@ -4892,19 +5003,19 @@
     <value>مخاطبین به‌روزرسانی شوند؟</value>
   </data>
   <data name="UpdatedMinutesZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="UpdatedMinutesOne" xml:space="preserve">
     <value>آخرین به‌روزرسانی {0} دقیقه پیش</value>
   </data>
   <data name="UpdatedMinutesTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="UpdatedMinutesFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="UpdatedMinutesMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="UpdatedMinutesOther" xml:space="preserve">
     <value>آخرین به‌روزرسانی {0} دقیقه پیش</value>
@@ -4952,7 +5063,7 @@
     <value>نام کاربری</value>
   </data>
   <data name="UserBio" xml:space="preserve">
-    <value>زندگی‌نامه</value>
+    <value>بیوگرافی</value>
   </data>
   <data name="UserBioEmpty" xml:space="preserve">
     <value>خالی</value>
@@ -5036,19 +5147,19 @@
     <value>نام کاربری شما </value>
   </data>
   <data name="UsersZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="UsersOne" xml:space="preserve">
     <value>{0} کاربر</value>
   </data>
   <data name="UsersTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="UsersFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="UsersMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="UsersOther" xml:space="preserve">
     <value>{0} کاربر</value>
@@ -5064,6 +5175,9 @@
   </data>
   <data name="VideoCaption" xml:space="preserve">
     <value>عنوان ویدئو</value>
+  </data>
+  <data name="VideoDoesNotSupportStreaming" xml:space="preserve">
+    <value>این ویدئو برای پخش پیوسته بهینه نشده است. شما باید جهت پخش این ویدئو آن را به طور کامل دانلود کنید.</value>
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>پیام‌های ویدئویی</value>
@@ -5185,20 +5299,23 @@
   <data name="Warmth" xml:space="preserve">
     <value>گرما</value>
   </data>
+  <data name="WebSessionsTitle" xml:space="preserve">
+    <value>وارد شده با تلگرام</value>
+  </data>
   <data name="WeeksZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="WeeksOne" xml:space="preserve">
     <value>{0} هفته</value>
   </data>
   <data name="WeeksTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="WeeksFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="WeeksMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="WeeksOther" xml:space="preserve">
     <value>{0} هفته</value>
@@ -5252,19 +5369,19 @@
     <value>شماره اشتباه است؟</value>
   </data>
   <data name="YearsZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="YearsOne" xml:space="preserve">
     <value>{0} سال</value>
   </data>
   <data name="YearsTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="YearsFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="YearsMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="YearsOther" xml:space="preserve">
     <value>{0} سال</value>
@@ -5383,37 +5500,37 @@
     <value>dd.MM.yyyy</value>
   </data>
   <data name="ItemsZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ItemsOne" xml:space="preserve">
     <value>{0} مورد</value>
   </data>
   <data name="ItemsTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ItemsFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ItemsMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="ItemsOther" xml:space="preserve">
     <value>{0} مورد</value>
   </data>
   <data name="MessagesZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MessagesOne" xml:space="preserve">
     <value>{0} پیام</value>
   </data>
   <data name="MessagesTwo" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MessagesFew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MessagesMany" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="MessagesOther" xml:space="preserve">
     <value>{0} پیام</value>

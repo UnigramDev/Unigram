@@ -89,6 +89,9 @@ namespace Telegram.Api.TL
 				case TLType.AccountSendConfirmPhoneCode: return (T)(Object)new TLAccountSendConfirmPhoneCode(from);
 				case TLType.AccountConfirmPhone: return (T)(Object)new TLAccountConfirmPhone(from);
 				case TLType.AccountGetTmpPassword: return (T)(Object)new TLAccountGetTmpPassword(from);
+				case TLType.AccountGetWebAuthorizations: return (T)(Object)new TLAccountGetWebAuthorizations(from);
+				case TLType.AccountResetWebAuthorization: return (T)(Object)new TLAccountResetWebAuthorization(from);
+				case TLType.AccountResetWebAuthorizations: return (T)(Object)new TLAccountResetWebAuthorizations(from);
 				case TLType.UsersGetUsers: return (T)(Object)new TLUsersGetUsers(from);
 				case TLType.UsersGetFullUser: return (T)(Object)new TLUsersGetFullUser(from);
 				case TLType.ContactsGetStatuses: return (T)(Object)new TLContactsGetStatuses(from);
@@ -128,7 +131,6 @@ namespace Telegram.Api.TL
 				case TLType.MessagesAddChatUser: return (T)(Object)new TLMessagesAddChatUser(from);
 				case TLType.MessagesDeleteChatUser: return (T)(Object)new TLMessagesDeleteChatUser(from);
 				case TLType.MessagesCreateChat: return (T)(Object)new TLMessagesCreateChat(from);
-				case TLType.MessagesForwardMessage: return (T)(Object)new TLMessagesForwardMessage(from);
 				case TLType.MessagesGetDHConfig: return (T)(Object)new TLMessagesGetDHConfig(from);
 				case TLType.MessagesRequestEncryption: return (T)(Object)new TLMessagesRequestEncryption(from);
 				case TLType.MessagesAcceptEncryption: return (T)(Object)new TLMessagesAcceptEncryption(from);
@@ -141,6 +143,7 @@ namespace Telegram.Api.TL
 				case TLType.MessagesReceivedQueue: return (T)(Object)new TLMessagesReceivedQueue(from);
 				case TLType.MessagesReportEncryptedSpam: return (T)(Object)new TLMessagesReportEncryptedSpam(from);
 				case TLType.MessagesReadMessageContents: return (T)(Object)new TLMessagesReadMessageContents(from);
+				case TLType.MessagesGetStickers: return (T)(Object)new TLMessagesGetStickers(from);
 				case TLType.MessagesGetAllStickers: return (T)(Object)new TLMessagesGetAllStickers(from);
 				case TLType.MessagesGetWebPagePreview: return (T)(Object)new TLMessagesGetWebPagePreview(from);
 				case TLType.MessagesExportChatInvite: return (T)(Object)new TLMessagesExportChatInvite(from);
@@ -869,6 +872,11 @@ namespace Telegram.Api.TL
 				case TLType.RecentMeUrlStickerSet: return (T)(Object)new TLRecentMeUrlStickerSet(from);
 				case TLType.HelpRecentMeUrls: return (T)(Object)new TLHelpRecentMeUrls(from);
 				case TLType.InputSingleMedia: return (T)(Object)new TLInputSingleMedia(from);
+				case TLType.WebAuthorization: return (T)(Object)new TLWebAuthorization(from);
+				case TLType.AccountWebAuthorizations: return (T)(Object)new TLAccountWebAuthorizations(from);
+				case TLType.InputMessageID: return (T)(Object)new TLInputMessageID(from);
+				case TLType.InputMessageReplyTo: return (T)(Object)new TLInputMessageReplyTo(from);
+				case TLType.InputMessagePinned: return (T)(Object)new TLInputMessagePinned(from);
 				case TLType.Message: return (T)(Object)new TLMessage(from);
 				case TLType.MessageService: return (T)(Object)new TLMessageService(from);
 				case TLType.Null: return (T)(Object)null;

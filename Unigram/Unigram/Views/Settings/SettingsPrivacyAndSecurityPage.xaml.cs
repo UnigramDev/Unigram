@@ -41,6 +41,11 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsSessionsPage));
         }
 
+        private void WebSessions_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsWebSessionsPage));
+        }
+
         private void BlockedUsers_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsBlockedUsersPage));
@@ -88,6 +93,5 @@ namespace Unigram.Views.Settings
         }
 
         #endregion
-
     }
 }

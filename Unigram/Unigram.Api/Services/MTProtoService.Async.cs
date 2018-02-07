@@ -24,6 +24,48 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLAccountWebAuthorizations>> GetWebAuthorizationsAsync()
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLAccountWebAuthorizations>>();
+            GetWebAuthorizationsAsync((callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLAccountWebAuthorizations>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLAccountWebAuthorizations>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<bool>> ResetWebAuthorizationAsync(long hash)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
+            ResetWebAuthorizationAsync(hash, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<bool>> ResetWebAuthorizationsAsync()
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
+            ResetWebAuthorizationsAsync((callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLLangPackDifference>> GetDifferenceAsync(int fromVersion)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLLangPackDifference>>();
@@ -620,7 +662,7 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id)
+        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<TLInputMessageBase> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
             GetMessagesAsync(inputChannel, id, (callback) =>
@@ -1170,20 +1212,6 @@ namespace Telegram.Api.Services
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
             DeleteChatUserAsync(chatId, userId, (callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUpdatesBase>> ForwardMessageAsync(TLInputPeerBase peer, int fwdMessageId, TLMessage message)
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            ForwardMessageAsync(peer, fwdMessageId, message, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1908,7 +1936,7 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLVector<int> id)
+        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLVector<TLInputMessageBase> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
             GetMessagesAsync(id, (callback) =>
