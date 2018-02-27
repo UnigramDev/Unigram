@@ -5,13 +5,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
+using TdWindows;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Common;
+using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -20,84 +18,41 @@ namespace Unigram.ViewModels
 {
     public class ShareViewModel : UnigramViewModelBase
     {
-        public ShareViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, DialogsViewModel dialogs)
+        public ShareViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, ChatsViewModel dialogs)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new MvxObservableCollection<ITLDialogWith>();
-            SelectedItems = new MvxObservableCollection<ITLDialogWith>();
+            Items = new MvxObservableCollection<Chat>();
+            SelectedItems = new MvxObservableCollection<Chat>();
 
             SendCommand = new RelayCommand(SendExecute, () => SelectedItems?.Count > 0);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (mode == NavigationMode.New)
+            //if (mode == NavigationMode.New)
+            //{
+            //    _dialogs = null;
+            //}
+
+            var response = await ProtoService.SendAsync(new GetChats(long.MaxValue, 0, 200));
+            if (response is TdWindows.Chats chats)
             {
-                _dialogs = null;
+                var list = ProtoService.GetChats(chats.ChatIds);
+
+                Items.ReplaceWith(list);
             }
 
-            var dialogs = GetDialogs();
-            if (dialogs != null)
-            {
-                Items.ReplaceWith(dialogs);
-            }
+            //var dialogs = GetDialogs();
+            //if (dialogs != null)
+            //{
+            //    Items.ReplaceWith(dialogs);
+            //}
 
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
         }
 
-        private List<ITLDialogWith> _dialogs;
-        private List<ITLDialogWith> GetDialogs()
-        {
-            if (_dialogs == null)
-            {
-                var dialogs = CacheService.GetDialogs().Select(x => x.With).ToList();
-                if (dialogs.IsEmpty())
-                {
-                    // TODO: request
-                }
-
-                for (int i = 0; i < dialogs.Count; i++)
-                {
-                    if (dialogs[i] is TLChannel channel && (channel.IsBroadcast && !(channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null && channel.AdminRights.IsPostMessages))))
-                    {
-                        dialogs.RemoveAt(i);
-                        i--;
-                    }
-                }
-
-                var self = dialogs.FirstOrDefault(x => x is TLUser user && user.IsSelf);
-                if (self == null)
-                {
-                    var user = CacheService.GetUser(SettingsHelper.UserId);
-                    if (user == null)
-                    {
-                        //var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
-                        //if (response.IsSucceeded)
-                        //{
-                        //    user = response.Result.FirstOrDefault() as TLUser;
-                        //}
-                    }
-
-                    if (user != null)
-                    {
-                        self = user;
-                    }
-                }
-
-                if (self != null)
-                {
-                    dialogs.Remove(self);
-                    dialogs.Insert(0, self);
-                }
-
-                _dialogs = dialogs;
-            }
-
-            return _dialogs;
-        }
-
-        private MvxObservableCollection<ITLDialogWith> _selectedItems = new MvxObservableCollection<ITLDialogWith>();
-        public MvxObservableCollection<ITLDialogWith> SelectedItems
+        private MvxObservableCollection<Chat> _selectedItems = new MvxObservableCollection<Chat>();
+        public MvxObservableCollection<Chat> SelectedItems
         {
             get
             {
@@ -123,8 +78,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private IEnumerable<TLMessage> _messages;
-        public IEnumerable<TLMessage> Messages
+        private IList<Message> _messages;
+        public IList<Message> Messages
         {
             get
             {
@@ -136,8 +91,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private TLInputMediaBase _inputMedia;
-        public TLInputMediaBase InputMedia
+        private InputMessageContent _inputMedia;
+        public InputMessageContent InputMedia
         {
             get
             {
@@ -186,310 +141,82 @@ namespace Unigram.ViewModels
             }
         }
 
-        public MvxObservableCollection<ITLDialogWith> Items { get; private set; }
+        public MvxObservableCollection<Chat> Items { get; private set; }
 
 
 
         public RelayCommand SendCommand { get; }
-        private void SendExecute()
+        private async void SendExecute()
         {
-            var dialogs = SelectedItems.ToList();
-            if (dialogs.Count == 0)
+            var chats = SelectedItems.ToList();
+            if (chats.Count == 0)
             {
                 return;
             }
 
-            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+            if (!string.IsNullOrEmpty(_comment))
+            {
+                var formatted = GetFormattedText(_comment);
+
+                foreach (var chat in chats)
+                {
+                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, false, false, null, new InputMessageText(formatted, false, false)));
+                }
+            }
 
             if (_messages != null)
             {
-                foreach (var dialog in dialogs)
+                foreach (var chat in chats)
                 {
-                    TLInputPeerBase toPeer = dialog.ToInputPeer();
-                    TLInputPeerBase fromPeer = null;
-                    TLMessage comment = null;
-
-                    var msgs = new TLVector<TLMessage>();
-                    var msgIds = new TLVector<int>();
-
-                    var grouped = false;
-
-                    foreach (var fwdMessage in _messages)
-                    {
-                        var clone = fwdMessage.Clone();
-                        clone.Id = 0;
-                        clone.HasEditDate = false;
-                        clone.EditDate = null;
-                        clone.HasReplyToMsgId = false;
-                        clone.ReplyToMsgId = null;
-                        clone.HasReplyMarkup = false;
-                        clone.ReplyMarkup = null;
-                        clone.Date = date;
-                        clone.ToId = dialog.ToPeer();
-                        clone.RandomId = TLLong.Random();
-                        clone.IsOut = true;
-                        clone.IsPost = false;
-                        clone.FromId = SettingsHelper.UserId;
-                        clone.IsMediaUnread = dialog.ToPeer() is TLPeerChannel ? true : false;
-                        clone.IsUnread = true;
-                        clone.State = TLMessageState.Sending;
-                        clone.HasGroupedId = false;
-                        clone.GroupedId = null;
-
-                        if (clone.Media == null)
-                        {
-                            clone.HasMedia = true;
-                            clone.Media = new TLMessageMediaEmpty();
-                        }
-
-                        if (fwdMessage.HasGroupedId)
-                        {
-                            grouped = true;
-                        }
-
-                        if (fwdMessage.Parent is TLChannel channel)
-                        {
-                            if (channel.IsBroadcast)
-                            {
-                                if (!channel.IsSignatures)
-                                {
-                                    clone.HasFromId = false;
-                                    clone.FromId = null;
-                                }
-
-                                // TODO
-                                //if (IsSilent)
-                                //{
-                                //    clone.IsSilent = true;
-                                //}
-
-                                clone.HasViews = true;
-                                clone.Views = 1;
-                            }
-                        }
-
-                        if (clone.Media is TLMessageMediaGame gameMedia)
-                        {
-                            clone.HasEntities = false;
-                            clone.Entities = null;
-                            clone.Message = null;
-                        }
-                        else if (clone.Media is TLMessageMediaGeoLive geoLiveMedia)
-                        {
-                            clone.Media = new TLMessageMediaGeo { Geo = geoLiveMedia.Geo };
-                        }
-
-                        if (fromPeer == null)
-                        {
-                            fromPeer = fwdMessage.Parent.ToInputPeer();
-                        }
-
-                        if (clone.FwdFrom == null && !clone.IsGame())
-                        {
-                            if (fwdMessage.ToId is TLPeerChannel)
-                            {
-                                var fwdChannel = CacheService.GetChat(fwdMessage.ToId.Id) as TLChannel;
-                                if (fwdChannel != null && fwdChannel.IsMegaGroup)
-                                {
-                                    clone.HasFwdFrom = true;
-                                    clone.FwdFrom = new TLMessageFwdHeader
-                                    {
-                                        HasFromId = true,
-                                        FromId = fwdMessage.FromId,
-                                        Date = fwdMessage.Date
-                                    };
-                                }
-                                else
-                                {
-                                    clone.HasFwdFrom = true;
-                                    clone.FwdFrom = new TLMessageFwdHeader
-                                    {
-                                        HasFromId = fwdMessage.HasFromId,
-                                        FromId = fwdMessage.FromId,
-                                        Date = fwdMessage.Date
-                                    };
-
-                                    if (fwdChannel.IsBroadcast)
-                                    {
-                                        clone.FwdFrom.HasChannelId = clone.FwdFrom.HasChannelPost = true;
-                                        clone.FwdFrom.ChannelId = fwdChannel.Id;
-                                        clone.FwdFrom.ChannelPost = fwdMessage.Id;
-                                        clone.FwdFrom.HasPostAuthor = fwdMessage.HasPostAuthor;
-                                        clone.FwdFrom.PostAuthor = fwdMessage.PostAuthor;
-                                    }
-                                }
-                            }
-                            else if (fwdMessage.FromId == SettingsHelper.UserId && fwdMessage.ToId is TLPeerUser peerUser && peerUser.UserId == SettingsHelper.UserId)
-                            {
-
-                            }
-                            else
-                            {
-                                clone.HasFwdFrom = true;
-                                clone.FwdFrom = new TLMessageFwdHeader
-                                {
-                                    HasFromId = true,
-                                    FromId = fwdMessage.FromId,
-                                    Date = fwdMessage.Date
-                                };
-                            }
-
-                            if (clone.FwdFrom != null && ((toPeer is TLInputPeerUser user && user.UserId == SettingsHelper.UserId) || toPeer is TLInputPeerSelf))
-                            {
-                                clone.FwdFrom.SavedFromMsgId = fwdMessage.Id;
-                                clone.FwdFrom.SavedFromPeer = fwdMessage.Parent?.ToPeer();
-                                clone.FwdFrom.HasSavedFromMsgId = true;
-                                clone.FwdFrom.HasSavedFromPeer = clone.FwdFrom.SavedFromPeer != null;
-                            }
-                        }
-
-                        msgs.Add(clone);
-                        msgIds.Add(fwdMessage.Id);
-                    }
-
-                    if (!string.IsNullOrEmpty(_comment))
-                    {
-                        comment = TLUtils.GetMessage(SettingsHelper.UserId, toPeer.ToPeer(), TLMessageState.Sending, true, true, date, _comment, new TLMessageMediaEmpty(), TLLong.Random(), null);
-                        msgs.Insert(0, comment);
-                    }
-
-                    CacheService.SyncSendingMessages(msgs, null, async (m) =>
-                    {
-                        if (comment != null)
-                        {
-                            msgs.Remove(comment);
-
-                            var result = await ProtoService.SendMessageAsync(comment, null);
-                            if (result.IsSucceeded)
-                            {
-
-                            }
-                            else
-                            {
-
-                            }
-                        }
-
-                        var response = await ProtoService.ForwardMessagesAsync(toPeer, fromPeer, msgIds, msgs, IsWithMyScore, grouped);
-                        if (response.IsSucceeded)
-                        {
-                            foreach (var i in m)
-                            {
-                                Aggregator.Publish(i);
-                            }
-                        }
-                        else
-                        {
-
-                        }
-                    });
+                    var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, false));
+                    //if (response is TdWindows.Messages messages)
+                    //{
+                    //    foreach (var message in messages.MessagesData)
+                    //    {
+                    //        Aggregator.Publish(new UpdateNewMessage(message, true, false));
+                    //    }
+                    //}
                 }
 
                 NavigationService.GoBack();
             }
             else if (_inputMedia != null)
             {
-                if (_inputMedia is TLInputMediaDocument document)
+                foreach (var chat in chats)
                 {
-                    document.Caption = null;
-                }
-                else if (_inputMedia is TLInputMediaPhoto photo)
-                {
-                    photo.Caption = null;
-                }
-
-                foreach (var dialog in dialogs)
-                {
-                    TLMessage comment = null;
-                    var msgs = new TLVector<TLMessage>();
-
-                    if (!string.IsNullOrEmpty(_comment))
-                    {
-                        comment = TLUtils.GetMessage(SettingsHelper.UserId, dialog.ToPeer(), TLMessageState.Sending, true, true, date, _comment, new TLMessageMediaEmpty(), TLLong.Random(), null);
-                        msgs.Insert(0, comment);
-                    }
-
-                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.ToPeer(), TLMessageState.Sending, true, true, date, null, new TLMessageMediaEmpty(), TLLong.Random(), null);
-                    msgs.Add(message);
-
-                    CacheService.SyncSendingMessages(msgs, null, async (m) =>
-                    {
-                        if (comment != null)
-                        {
-                            msgs.Remove(comment);
-
-                            var result = await ProtoService.SendMessageAsync(comment, null);
-                            if (result.IsSucceeded)
-                            {
-                            }
-                            else
-                            {
-
-                            }
-                        }
-
-                        var response = await ProtoService.SendMediaAsync(dialog.ToInputPeer(), _inputMedia, message);
-                        if (response.IsSucceeded)
-                        {
-                            foreach (var i in m)
-                            {
-                                Aggregator.Publish(i);
-                            }
-                        }
-                    });
+                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, false, false, null, _inputMedia));
                 }
 
                 NavigationService.GoBack();
             }
             else if (ShareLink != null)
             {
-                foreach (var dialog in dialogs)
-                {
-                    TLMessage comment = null;
-                    var msgs = new TLVector<TLMessage>();
-
-                    if (!string.IsNullOrEmpty(_comment))
-                    {
-                        comment = TLUtils.GetMessage(SettingsHelper.UserId, dialog.ToPeer(), TLMessageState.Sending, true, true, date, _comment, new TLMessageMediaEmpty(), TLLong.Random(), null);
-                        msgs.Insert(0, comment);
-                    }
-
-                    var messageText = ShareLink.ToString();
-                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.ToPeer(), TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
-                    msgs.Add(message);
-
-                    CacheService.SyncSendingMessages(msgs, null, async (m) =>
-                    {
-                        if (comment != null)
-                        {
-                            msgs.Remove(comment);
-
-                            var result = await ProtoService.SendMessageAsync(comment, null);
-                            if (result.IsSucceeded)
-                            {
-                            }
-                            else
-                            {
-
-                            }
-                        }
-
-                        var response = await ProtoService.SendMessageAsync(message, () => { message.State = TLMessageState.Confirmed; });
-                        if (response.IsSucceeded)
-                        {
-                            foreach (var i in m)
-                            {
-                                Aggregator.Publish(i);
-                            }
-                        }
-                    });
-                }
 
                 NavigationService.GoBack();
             }
 
             //App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
             //NavigationService.GoBackAt(0);
+        }
+
+        private FormattedText GetFormattedText(string text)
+        {
+            if (text == null)
+            {
+                return new FormattedText();
+            }
+
+            text = text.Format();
+
+            var entities = Markdown.Parse(ProtoService, ref text);
+            if (entities == null)
+            {
+                entities = new List<TextEntity>();
+            }
+
+            return new FormattedText(text, entities);
+
+            //return ProtoService.Execute(new ParseTextEntities(text.Format(), new TextParseModeMarkdown())) as FormattedText;
         }
 
         #region Search
@@ -513,86 +240,86 @@ namespace Unigram.ViewModels
             if (results != null)
             {
                 SelectionMode = ListViewSelectionMode.None;
-                Items.ReplaceWith(results.Cast<TLDialog>().Select(x => x.With));
+                //Items.ReplaceWith(results.Cast<TLDialog>().Select(x => x.With));
             }
             else
             {
-                var dialogs = GetDialogs();
-                if (dialogs != null)
-                {
-                    foreach (var item in _selectedItems)
-                    {
-                        //dialogs.Remove(item);
-                        //dialogs.Insert(0, item);
+                //var dialogs = GetDialogs();
+                //if (dialogs != null)
+                //{
+                //    foreach (var item in _selectedItems)
+                //    {
+                //        //dialogs.Remove(item);
+                //        //dialogs.Insert(0, item);
 
-                        if (dialogs.Contains(item)) { }
-                        else
-                        {
-                            dialogs.Insert(0, item);
-                        }
-                    }
+                //        //if (dialogs.Contains(item)) { }
+                //        //else
+                //        //{
+                //        //    dialogs.Insert(0, item);
+                //        //}
+                //    }
 
-                    SelectionMode = ListViewSelectionMode.None;
-                    Items.ReplaceWith(dialogs);
-                }
+                //    SelectionMode = ListViewSelectionMode.None;
+                //    //Items.ReplaceWith(dialogs);
+                //}
             }
         }
 
         private async Task<KeyedList<string, TLObject>> SearchLocalAsync(string query1)
         {
-            if (string.IsNullOrWhiteSpace(query1))
-            {
-                return null;
-            }
+            //if (string.IsNullOrWhiteSpace(query1))
+            //{
+            //    return null;
+            //}
 
-            var dialogs = await Task.Run(() => CacheService.GetDialogs());
-            var contacts = await Task.Run(() => CacheService.GetContacts());
+            //var dialogs = await Task.Run(() => CacheService.GetDialogs());
+            //var contacts = await Task.Run(() => CacheService.GetContacts());
 
-            if (dialogs != null && contacts != null)
-            {
-                var query = LocaleHelper.GetQuery(query1);
+            //if (dialogs != null && contacts != null)
+            //{
+            //    var query = LocaleHelper.GetQuery(query1);
 
-                var simple = new List<TLDialog>();
-                var parent = dialogs.Where(dialog =>
-                {
-                    if (dialog.With is TLUser user)
-                    {
-                        return user.IsLike(query, StringComparison.OrdinalIgnoreCase);
-                    }
-                    else if (dialog.With is TLChannel channel)
-                    {
-                        return channel.IsLike(query, StringComparison.OrdinalIgnoreCase);
-                    }
-                    else if (dialog.With is TLChat chat)
-                    {
-                        return !chat.HasMigratedTo && chat.IsLike(query, StringComparison.OrdinalIgnoreCase);
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }).ToList();
+            //    var simple = new List<TLDialog>();
+            //    var parent = dialogs.Where(dialog =>
+            //    {
+            //        if (dialog.With is TLUser user)
+            //        {
+            //            return user.IsLike(query, StringComparison.OrdinalIgnoreCase);
+            //        }
+            //        else if (dialog.With is TLChannel channel)
+            //        {
+            //            return channel.IsLike(query, StringComparison.OrdinalIgnoreCase);
+            //        }
+            //        else if (dialog.With is TLChat chat)
+            //        {
+            //            return !chat.HasMigratedTo && chat.IsLike(query, StringComparison.OrdinalIgnoreCase);
+            //        }
+            //        else
+            //        {
+            //            return false;
+            //        }
+            //    }).ToList();
 
-                var contactsResults = contacts.OfType<TLUser>().Where(x => x.IsLike(query, StringComparison.OrdinalIgnoreCase));
+            //    var contactsResults = contacts.OfType<TLUser>().Where(x => x.IsLike(query, StringComparison.OrdinalIgnoreCase));
 
-                foreach (var result in contactsResults)
-                {
-                    var dialog = parent.FirstOrDefault(x => x.Peer.TypeId == TLType.PeerUser && x.Id == result.Id);
-                    if (dialog == null)
-                    {
-                        simple.Add(new TLDialog
-                        {
-                            With = result,
-                            Peer = new TLPeerUser { UserId = result.Id }
-                        });
-                    }
-                }
+            //    foreach (var result in contactsResults)
+            //    {
+            //        var dialog = parent.FirstOrDefault(x => x.Peer.TypeId == TLType.PeerUser && x.Id == result.Id);
+            //        if (dialog == null)
+            //        {
+            //            simple.Add(new TLDialog
+            //            {
+            //                With = result,
+            //                Peer = new TLPeerUser { UserId = result.Id }
+            //            });
+            //        }
+            //    }
 
-                if (parent.Count > 0 || simple.Count > 0)
-                {
-                    return new KeyedList<string, TLObject>(null, parent.OrderByDescending(x => x.GetDateIndexWithDraft()).Union(simple.OrderBy(x => x.With.DisplayName)));
-                }
-            }
+            //    if (parent.Count > 0 || simple.Count > 0)
+            //    {
+            //        return new KeyedList<string, TLObject>(null, parent.Union(simple.OrderBy(x => x.With.DisplayName)));
+            //    }
+            //}
 
             return null;
         }

@@ -4,15 +4,13 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Payments;
 using Unigram.Common;
 using Unigram.Views.Payments;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Payments
 {
@@ -20,7 +18,7 @@ namespace Unigram.ViewModels.Payments
     {
         private TLPaymentRequestedInfo _info;
 
-        public PaymentFormStep2ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public PaymentFormStep2ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -34,17 +32,17 @@ namespace Unigram.ViewModels.Payments
                 return Task.CompletedTask;
             }
 
-            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
-            {
-                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo>(from);
+            //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            //{
+            //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo>(from);
 
-                Message = tuple.Item1;
-                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                PaymentForm = tuple.Item2;
-                RequestedInfo = tuple.Item4;
+            //    Message = tuple.Item1;
+            //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+            //    PaymentForm = tuple.Item2;
+            //    RequestedInfo = tuple.Item4;
 
-                _info = tuple.Item3;
-            }
+            //    _info = tuple.Item3;
+            //}
 
             return Task.CompletedTask;
         }
@@ -92,16 +90,16 @@ namespace Unigram.ViewModels.Payments
 
                     if (ApplicationSettings.Current.TmpPassword != null)
                     {
-                        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
+                        //NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
                     }
                     else
                     {
-                        NavigationService.NavigateToPaymentFormStep4(_message, _paymentForm, _info, _requestedInfo, _shipping);
+                        //NavigationService.NavigateToPaymentFormStep4(_message, _paymentForm, _info, _requestedInfo, _shipping);
                     }
                 }
                 else
                 {
-                    NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, _info, _requestedInfo, _shipping);
+                    //NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, _info, _requestedInfo, _shipping);
                 }
             }
         }

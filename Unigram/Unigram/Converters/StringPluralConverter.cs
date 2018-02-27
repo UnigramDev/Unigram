@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
 using Unigram.Common;
 using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml.Data;
@@ -18,7 +17,7 @@ namespace Unigram.Converters
             {
                 // TODO: declesion
 
-                return LocaleHelper.Declension(format, System.Convert.ToInt32(value));
+                return Locale.Declension(format, System.Convert.ToInt32(value));
             }
 
             return value;

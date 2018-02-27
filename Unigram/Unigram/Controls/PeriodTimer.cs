@@ -107,27 +107,47 @@ namespace Unigram.Controls
                 Visibility = Visibility.Visible;
             }
 
-            var geoLiveMedia = newValue.Media as TLMessageMediaGeoLive;
-            if (geoLiveMedia == null)
-            {
-                return;
-            }
+            //var geoLiveMedia = newValue.Media as TLMessageMediaGeoLive;
+            //if (geoLiveMedia == null)
+            //{
+            //    return;
+            //}
 
-            var value = BindConvert.Current.DateTime(newValue.Date + geoLiveMedia.Period);
-            var difference = value - DateTime.Now;
+            //var value = BindConvert.Current.DateTime(newValue.Date + geoLiveMedia.Period);
+            //var difference = value - DateTime.Now;
 
-            _angleStoryboard.SkipToFill();
+            //_angleStoryboard.SkipToFill();
 
-            if (difference > TimeSpan.Zero)
-            {
-                var angleAnimation = (DoubleAnimation)_angleStoryboard.Children[0];
-                angleAnimation.From = 359 - (difference.TotalSeconds / geoLiveMedia.Period * 359);
-                angleAnimation.To = 359;
-                angleAnimation.Duration = difference;
-                _angleStoryboard.Begin();
-            }
+            //if (difference > TimeSpan.Zero)
+            //{
+            //    var angleAnimation = (DoubleAnimation)_angleStoryboard.Children[0];
+            //    angleAnimation.From = 359 - (difference.TotalSeconds / geoLiveMedia.Period * 359);
+            //    angleAnimation.To = 359;
+            //    angleAnimation.Duration = difference;
+            //    _angleStoryboard.Begin();
+            //}
 
-            TimeoutLabel.Text = GetTimeout(difference);
+            //TimeoutLabel.Text = GetTimeout(difference);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             //double value;
             ////if (oldValue > 0.0 && oldValue < 1.0 && newValue == 0.0)

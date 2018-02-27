@@ -31,21 +31,17 @@ namespace Unigram.Controls
         {
             if (Messages.SelectionMode == ListViewSelectionMode.Multiple)
             {
-                if (Content is TLMessageService serviceMessage && !(serviceMessage.Action is TLMessageActionPhoneCall))
-                {
-                    e.Handled = true;
-                }
-                else if (Content is TLMessage message)
-                {
-                    if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
-                    {
-                        e.Handled = true;
-                    }
-                    else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
-                    {
-                        e.Handled = true;
-                    }
-                }
+                //if (Content is TLMessageService serviceMessage)
+                //{
+                //    e.Handled = true;
+                //}
+                //else if (Content is TLMessage message)
+                //{
+                //    if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
+                //    {
+                //        e.Handled = true;
+                //    }
+                //}
             }
 
             base.OnPointerPressed(e);

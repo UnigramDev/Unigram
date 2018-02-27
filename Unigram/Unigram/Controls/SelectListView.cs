@@ -18,15 +18,10 @@ namespace Unigram.Controls
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            args.RegisterUpdateCallback(OnUpdateCallback);
-        }
-
-        private void OnUpdateCallback(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
             var content = args.ItemContainer.ContentTemplateRoot;
             if (content != null)
             {
-                content.IsHitTestVisible = SelectionMode == ListViewSelectionMode.None;
+                content.IsHitTestVisible = SelectionMode != ListViewSelectionMode.Multiple;
             }
         }
 
@@ -49,7 +44,7 @@ namespace Unigram.Controls
                 var content = container.ContentTemplateRoot;
                 if (content != null)
                 {
-                    content.IsHitTestVisible = SelectionMode == ListViewSelectionMode.None;
+                    content.IsHitTestVisible = SelectionMode != ListViewSelectionMode.Multiple;
                 }
             }
         }
@@ -67,7 +62,7 @@ namespace Unigram.Controls
             var content = container.ContentTemplateRoot;
             if (content != null)
             {
-                content.IsHitTestVisible = SelectionMode == ListViewSelectionMode.None;
+                content.IsHitTestVisible = SelectionMode != ListViewSelectionMode.Multiple;
             }
         }
     }

@@ -23,6 +23,23 @@ namespace Unigram.Core.Helpers
 {
     public static class ImageHelper
     {
+        public static async Task<(int Width, int Height)> GetScaleAsync(StorageFile file, int requestedMinSide = 1280, double quality = 0.77)
+        {
+            var props = await file.Properties.GetImagePropertiesAsync();
+            if (props.Width > requestedMinSide || props.Height > requestedMinSide)
+            {
+                double ratioX = (double)requestedMinSide / props.Width;
+                double ratioY = (double)requestedMinSide / props.Height;
+                double ratio = Math.Min(ratioX, ratioY);
+
+                return ((int)(props.Width * ratio), (int)(props.Height * ratio));
+            }
+
+            return ((int)props.Width, (int)props.Height);
+        }
+
+
+
         /// <summary>
         /// Resizes and crops source file image so that resized image width/height are not larger than <param name="requestedMinSide"></param>
         /// </summary>
@@ -36,10 +53,10 @@ namespace Unigram.Core.Helpers
             using (var imageStream = await sourceFile.OpenReadAsync())
             {
                 var decoder = await BitmapDecoder.CreateAsync(imageStream);
-                if (decoder.FrameCount > 1)
-                {
-                    throw new InvalidCastException();
-                }
+                //if (decoder.FrameCount > 1)
+                //{
+                //    throw new InvalidCastException();
+                //}
 
                 var originalPixelWidth = decoder.PixelWidth;
                 var originalPixelHeight = decoder.PixelHeight;
@@ -366,150 +383,132 @@ namespace Unigram.Core.Helpers
             return transform;
         }
 
-        public static async Task<TLPhotoSizeBase> GetVideoThumbnailAsync(StorageFile file, VideoProperties props, VideoTransformEffectDefinition effect)
-        {
-            double originalWidth = props.GetWidth();
-            double originalHeight = props.GetHeight();
+        //public static async Task<TLPhotoSizeBase> GetVideoThumbnailAsync(StorageFile file, VideoProperties props, VideoTransformEffectDefinition effect)
+        //{
+        //    double originalWidth = props.GetWidth();
+        //    double originalHeight = props.GetHeight();
 
-            if (effect != null && !effect.CropRectangle.IsEmpty)
-            {
-                file = await CropAsync(file, effect.CropRectangle);
-                originalWidth = effect.CropRectangle.Width;
-                originalHeight = effect.CropRectangle.Height;
-            }
+        //    if (effect != null && !effect.CropRectangle.IsEmpty)
+        //    {
+        //        file = await CropAsync(file, effect.CropRectangle);
+        //        originalWidth = effect.CropRectangle.Width;
+        //        originalHeight = effect.CropRectangle.Height;
+        //    }
 
-            TLPhotoSizeBase result;
-            var fileLocation = new TLFileLocation
-            {
-                VolumeId = TLLong.Random(),
-                LocalId = TLInt.Random(),
-                Secret = TLLong.Random(),
-                DCId = 0
-            };
+        //    TLPhotoSizeBase result;
+        //    var desiredName = string.Format("{0}_{1}_{2}.jpg", "fileLocation.VolumeId", "fileLocation.LocalId", "fileLocation.Secret");
+        //    var desiredFile = await FileUtils.CreateTempFileAsync(desiredName);
 
-            var desiredName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-            var desiredFile = await FileUtils.CreateTempFileAsync(desiredName);
+        //    using (var fileStream = await OpenReadAsync(file))
+        //    using (var outputStream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
+        //    {
+        //        var decoder = await BitmapDecoder.CreateAsync(fileStream);
 
-            using (var fileStream = await OpenReadAsync(file))
-            using (var outputStream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
-            {
-                var decoder = await BitmapDecoder.CreateAsync(fileStream);
+        //        double ratioX = (double)90 / originalWidth;
+        //        double ratioY = (double)90 / originalHeight;
+        //        double ratio = Math.Min(ratioX, ratioY);
 
-                double ratioX = (double)90 / originalWidth;
-                double ratioY = (double)90 / originalHeight;
-                double ratio = Math.Min(ratioX, ratioY);
+        //        uint width = (uint)(originalWidth * ratio);
+        //        uint height = (uint)(originalHeight * ratio);
 
-                uint width = (uint)(originalWidth * ratio);
-                uint height = (uint)(originalHeight * ratio);
+        //        var transform = new BitmapTransform();
+        //        transform.ScaledWidth = width;
+        //        transform.ScaledHeight = height;
+        //        transform.InterpolationMode = BitmapInterpolationMode.Linear;
 
-                var transform = new BitmapTransform();
-                transform.ScaledWidth = width;
-                transform.ScaledHeight = height;
-                transform.InterpolationMode = BitmapInterpolationMode.Linear;
+        //        if (effect != null)
+        //        {
+        //            transform.Flip = effect.Mirror == MediaMirroringOptions.Horizontal ? BitmapFlip.Horizontal : BitmapFlip.None;
+        //        }
 
-                if (effect != null)
-                {
-                    transform.Flip = effect.Mirror == MediaMirroringOptions.Horizontal ? BitmapFlip.Horizontal : BitmapFlip.None;
-                }
+        //        var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
-                var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+        //        var propertySet = new BitmapPropertySet();
+        //        var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
+        //        propertySet.Add("ImageQuality", qualityValue);
 
-                var propertySet = new BitmapPropertySet();
-                var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
-                propertySet.Add("ImageQuality", qualityValue);
+        //        var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
+        //        encoder.SetSoftwareBitmap(pixelData);
+        //        await encoder.FlushAsync();
 
-                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
-                encoder.SetSoftwareBitmap(pixelData);
-                await encoder.FlushAsync();
+        //        result = new TLPhotoSize
+        //        {
+        //            W = (int)width,
+        //            H = (int)height,
+        //            Size = (int)outputStream.Size,
+        //            Type = string.Empty
+        //        };
+        //    }
 
-                result = new TLPhotoSize
-                {
-                    W = (int)width,
-                    H = (int)height,
-                    Size = (int)outputStream.Size,
-                    Type = string.Empty,
-                    Location = fileLocation
-                };
-            }
+        //    return result;
+        //}
 
-            return result;
-        }
+        //public static async Task<TLPhotoSizeBase> GetFileThumbnailAsync(StorageFile file)
+        //{
+        //    //file = await Package.Current.InstalledLocation.GetFileAsync("Assets\\Thumb.jpg");
 
-        public static async Task<TLPhotoSizeBase> GetFileThumbnailAsync(StorageFile file)
-        {
-            //file = await Package.Current.InstalledLocation.GetFileAsync("Assets\\Thumb.jpg");
+        //    //var imageProps = await file.Properties.GetImagePropertiesAsync();
+        //    var videoProps = await file.Properties.GetVideoPropertiesAsync();
+        //    if (videoProps.Duration > TimeSpan.Zero && videoProps.Width > 0 && videoProps.Height > 0)
+        //    {
+        //        return await GetVideoThumbnailAsync(file, videoProps, null);
+        //    }
 
-            //var imageProps = await file.Properties.GetImagePropertiesAsync();
-            var videoProps = await file.Properties.GetVideoPropertiesAsync();
-            if (videoProps.Duration > TimeSpan.Zero && videoProps.Width > 0 && videoProps.Height > 0)
-            {
-                return await GetVideoThumbnailAsync(file, videoProps, null);
-            }
+        //    //if (imageProps.Width > 0 || videoProps.Width > 0)
+        //    //{
+        //    try
+        //    {
+        //        using (var thumb = await file.GetThumbnailAsync(ThumbnailMode.ListView, 96, ThumbnailOptions.ResizeThumbnail))
+        //        {
+        //            if (thumb != null && thumb.Type == ThumbnailType.Image)
+        //            {
+        //                var randomStream = thumb as IRandomAccessStream;
 
-            //if (imageProps.Width > 0 || videoProps.Width > 0)
-            //{
-            try
-            {
-                using (var thumb = await file.GetThumbnailAsync(ThumbnailMode.ListView, 96, ThumbnailOptions.ResizeThumbnail))
-                {
-                    if (thumb != null && thumb.Type == ThumbnailType.Image)
-                    {
-                        var randomStream = thumb as IRandomAccessStream;
+        //                var originalWidth = (int)thumb.OriginalWidth;
+        //                var originalHeight = (int)thumb.OriginalHeight;
 
-                        var originalWidth = (int)thumb.OriginalWidth;
-                        var originalHeight = (int)thumb.OriginalHeight;
+        //                if (thumb.ContentType != "image/jpeg")
+        //                {
+        //                    var memoryStream = new InMemoryRandomAccessStream();
+        //                    var bitmapDecoder = await BitmapDecoder.CreateAsync(thumb);
+        //                    var pixelDataProvider = await bitmapDecoder.GetPixelDataAsync();
+        //                    var bitmapEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, memoryStream);
+        //                    bitmapEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, bitmapDecoder.PixelWidth, bitmapDecoder.PixelHeight, bitmapDecoder.DpiX, bitmapDecoder.DpiY, pixelDataProvider.DetachPixelData());
+        //                    await bitmapEncoder.FlushAsync();
+        //                    randomStream = memoryStream;
+        //                }
 
-                        if (thumb.ContentType != "image/jpeg")
-                        {
-                            var memoryStream = new InMemoryRandomAccessStream();
-                            var bitmapDecoder = await BitmapDecoder.CreateAsync(thumb);
-                            var pixelDataProvider = await bitmapDecoder.GetPixelDataAsync();
-                            var bitmapEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, memoryStream);
-                            bitmapEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, bitmapDecoder.PixelWidth, bitmapDecoder.PixelHeight, bitmapDecoder.DpiX, bitmapDecoder.DpiY, pixelDataProvider.DetachPixelData());
-                            await bitmapEncoder.FlushAsync();
-                            randomStream = memoryStream;
-                        }
+        //                var desiredName = string.Format("{0}_{1}_{2}.jpg", "fileLocation.VolumeId", "fileLocation.LocalId", "fileLocation.Secret");
+        //                var desiredFile = await FileUtils.CreateTempFileAsync(desiredName);
 
-                        var fileLocation = new TLFileLocation
-                        {
-                            VolumeId = TLLong.Random(),
-                            LocalId = TLInt.Random(),
-                            Secret = TLLong.Random(),
-                            DCId = 0
-                        };
+        //                var buffer = new Windows.Storage.Streams.Buffer(Convert.ToUInt32(randomStream.Size));
+        //                var buffer2 = await randomStream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None);
+        //                using (var stream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
+        //                {
+        //                    await stream.WriteAsync(buffer2);
+        //                    stream.Dispose();
+        //                }
 
-                        var desiredName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-                        var desiredFile = await FileUtils.CreateTempFileAsync(desiredName);
+        //                var result = new TLPhotoSize
+        //                {
+        //                    W = originalWidth,
+        //                    H = originalHeight,
+        //                    Size = (int)randomStream.Size,
+        //                    Type = string.Empty
+        //                };
 
-                        var buffer = new Windows.Storage.Streams.Buffer(Convert.ToUInt32(randomStream.Size));
-                        var buffer2 = await randomStream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None);
-                        using (var stream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
-                        {
-                            await stream.WriteAsync(buffer2);
-                            stream.Dispose();
-                        }
+        //                randomStream.Dispose();
+        //                return result;
+        //            }
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        return new TLPhotoSizeEmpty();
+        //    }
+        //    //}
 
-                        var result = new TLPhotoSize
-                        {
-                            W = originalWidth,
-                            H = originalHeight,
-                            Size = (int)randomStream.Size,
-                            Type = string.Empty,
-                            Location = fileLocation
-                        };
-
-                        randomStream.Dispose();
-                        return result;
-                    }
-                }
-            }
-            catch
-            {
-                return new TLPhotoSizeEmpty();
-            }
-            //}
-
-            return null;
-        }
+        //    return null;
+        //}
     }
 }

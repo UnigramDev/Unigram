@@ -3,23 +3,107 @@
 #include "PlaceholderImageHelper.h"
 
 using namespace D2D1;
+using namespace Platform;
+using namespace Windows::Foundation::Collections;
+using namespace Windows::UI::ViewManagement;
+using namespace Windows::UI::Xaml;
 using namespace Windows::Storage;
 using namespace Unigram::Native;
 
-PlaceholderImageHelper^ PlaceholderImageHelper::Instance::get()
+std::map<int, WeakReference> PlaceholderImageHelper::s_windowContext;
+
+PlaceholderImageHelper^ PlaceholderImageHelper::GetForCurrentView()
 {
-	static const auto instance = ref new PlaceholderImageHelper();
+	auto id = ApplicationView::GetApplicationViewIdForWindow(Window::Current->CoreWindow);
+	auto reference = s_windowContext.find(id);
+
+	if (reference != s_windowContext.end())
+	{
+		auto instance = reference->second.Resolve<PlaceholderImageHelper>();
+		if (instance != nullptr)
+		{
+			return instance;
+		}
+	}
+
+	auto instance = ref new PlaceholderImageHelper();
+	WeakReference result(instance);
+	s_windowContext[id] = result;
+
 	return instance;
+}
+
+void PlaceholderImageHelper::DrawIdenticon(IVector<uint8>^ hash, IRandomAccessStream^ randomAccessStream)
+{
+	ThrowIfFailed(InternalDrawIdenticon(hash, randomAccessStream));
 }
 
 void PlaceholderImageHelper::DrawProfilePlaceholder(Color clear, Platform::String^ text, IRandomAccessStream^ randomAccessStream)
 {
-	ThrowIfFailed(Instance->InternalDrawProfilePlaceholder(clear, text, randomAccessStream));
+	ThrowIfFailed(InternalDrawProfilePlaceholder(clear, text, randomAccessStream));
 }
 
 void PlaceholderImageHelper::DrawThumbnailPlaceholder(Platform::String^ fileName, float blurAmount, IRandomAccessStream^ randomAccessStream)
 {
-	ThrowIfFailed(Instance->InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
+	ThrowIfFailed(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
+}
+
+HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, IRandomAccessStream^ randomAccessStream)
+{
+	auto lock = m_criticalSection.Lock();
+
+	HRESULT result;
+
+	m_d2dContext->SetTarget(m_targetBitmap.Get());
+	m_d2dContext->BeginDraw();
+
+	auto width = 192;
+	auto height = 192;
+
+	if (hash->Size == 16)
+	{
+		int bitPointer = 0;
+		float rectSize = (float)std::floor(std::min(width, height) / 8.0f);
+		float xOffset = std::max(0.0f, (width - rectSize * 8) / 2);
+		float yOffset = std::max(0.0f, (height - rectSize * 8) / 2);
+		for (int iy = 0; iy < 8; iy++)
+		{
+			for (int ix = 0; ix < 8; ix++)
+			{
+				int byteValue = (hash->GetAt(bitPointer / 8) >> (bitPointer % 8)) & 0x3;
+				bitPointer += 2;
+				int colorIndex = std::abs(byteValue) % 4;
+				D2D1_RECT_F layoutRect = { (int)(xOffset + ix * rectSize), (int)(iy * rectSize + yOffset), (int)(xOffset + ix * rectSize + rectSize), (int)(iy * rectSize + rectSize + yOffset) };
+				m_d2dContext->FillRectangle(layoutRect, m_identiconBrushes[colorIndex].Get());
+			}
+		}
+	}
+	else
+	{
+		int bitPointer = 0;
+		float rectSize = (float)std::floor(std::min(192, 192) / 12.0f);
+		float xOffset = std::max(0.0f, (width - rectSize * 12) / 2);
+		float yOffset = std::max(0.0f, (height - rectSize * 12) / 2);
+		for (int iy = 0; iy < 12; iy++)
+		{
+			for (int ix = 0; ix < 12; ix++)
+			{
+				int byteValue = (hash->GetAt(bitPointer / 8) >> (bitPointer % 8)) & 0x3;
+				int colorIndex = std::abs(byteValue) % 4;
+				D2D1_RECT_F layoutRect = { (int)(xOffset + ix * rectSize), (int)(iy * rectSize + yOffset), (int)(xOffset + ix * rectSize + rectSize), (int)(iy * rectSize + rectSize + yOffset) };
+				m_d2dContext->FillRectangle(layoutRect, m_identiconBrushes[colorIndex].Get());
+				bitPointer += 2;
+			}
+		}
+	}
+
+	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
+	{
+		ReturnIfFailed(result, CreateDeviceResources());
+		return InternalDrawIdenticon(hash, randomAccessStream);
+	}
+
+	return SaveImageToStream(m_targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
 }
 
 HRESULT PlaceholderImageHelper::InternalDrawProfilePlaceholder(Color clear, Platform::String^ text, IRandomAccessStream^ randomAccessStream)
@@ -166,6 +250,26 @@ HRESULT PlaceholderImageHelper::CreateDeviceResources()
 	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &m_textBrush));
 	ReturnIfFailed(result, m_d2dContext->CreateEffect(CLSID_D2D1GaussianBlur, &m_gaussianBlurEffect));
 	ReturnIfFailed(result, m_gaussianBlurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE, D2D1_BORDER_MODE_HARD));
+
+	/*            Color.FromArgb(0xff, 0xff, 0xff, 0xff),
+            Color.FromArgb(0xff, 0xd5, 0xe6, 0xf3),
+            Color.FromArgb(0xff, 0x2d, 0x57, 0x75),
+            Color.FromArgb(0xff, 0x2f, 0x99, 0xc9)
+*/
+
+	ComPtr<ID2D1SolidColorBrush> color1;
+	ComPtr<ID2D1SolidColorBrush> color2;
+	ComPtr<ID2D1SolidColorBrush> color3;
+	ComPtr<ID2D1SolidColorBrush> color4;
+	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &color1));
+	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(0xd5 / 255.0f, 0xe6 / 255.0f, 0xf3 / 255.0f, 1.0f), &color2));
+	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(0x2d / 255.0f, 0x57 / 255.0f, 0x75 / 255.0f, 1.0f), &color3));
+	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(0x2f / 255.0f, 0x99 / 255.0f, 0xc9 / 255.0f, 1.0f), &color4));
+
+	m_identiconBrushes.push_back(color1);
+	m_identiconBrushes.push_back(color2);
+	m_identiconBrushes.push_back(color3);
+	m_identiconBrushes.push_back(color4);
 
 	D2D1_SIZE_U size = { 192, 192 };
 	D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };

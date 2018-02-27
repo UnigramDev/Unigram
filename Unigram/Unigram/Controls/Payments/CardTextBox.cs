@@ -199,12 +199,12 @@ namespace Unigram.Controls.Payments
             }
             else
             {
-                //phoneField.setTextColor(builder.length() > 0 ? Theme.getColor(Theme.key_windowBackgroundWhiteRedText4) : Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+                //phoneField.setTextColor(builder.Length() > 0 ? Theme.getColor(Theme.key_windowBackgroundWhiteRedText4) : Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             }
             Text = builder.ToString();
             if (start >= 0)
             {
-                //phoneField.setSelection(start <= phoneField.length() ? start : phoneField.length());
+                //phoneField.setSelection(start <= phoneField.Length() ? start : phoneField.Length());
                 selectionStart = start <= Text.Length ? start : Text.Length;
                 SelectionStart = selectionStart;
             }

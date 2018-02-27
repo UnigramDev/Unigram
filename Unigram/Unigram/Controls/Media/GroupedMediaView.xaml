@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="Unigram.Controls.Media.GroupedMediaView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,7 +9,8 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid x:Name="LayoutRoot" Tag="{x:Bind UpdateSelf(ViewModel.Self), Mode=OneWay}">
+    <!-- Tag="{x:Bind UpdateSelf(ViewModel.Self), Mode=OneWay}" -->
+    <Grid x:Name="LayoutRoot" >
 
     </Grid>
 </UserControl>

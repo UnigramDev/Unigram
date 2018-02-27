@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
+using TdWindows;
 using Unigram.Converters;
+using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -15,30 +16,25 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class InvoiceFooter : HackedContentPresenter
+    public sealed partial class InvoiceFooter : ContentPresenter
     {
-        public TLMessage Message => DataContext as TLMessage;
-        public TLMessageMediaInvoice ViewModel => Message?.Media as TLMessageMediaInvoice;
-
-        public BindConvert Convert => BindConvert.Current;
-
-        private TLMessageMediaInvoice _oldValue;
-
         public InvoiceFooter()
         {
             InitializeComponent();
         }
 
-        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        public void UpdateMessage(MessageViewModel message)
         {
-            if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
-            if (ViewModel == null) Bindings.StopTracking();
+            var invoice = message.Content as MessageInvoice;
+            if (invoice == null)
+            {
+                return;
+            }
 
-            _oldValue = ViewModel;
+            Amount.Text = BindConvert.Current.FormatAmount(invoice.TotalAmount, invoice.Currency);
+            Label.Text = ConvertLabel(invoice.ReceiptMessageId != 0, invoice.IsTest);
         }
 
         private string ConvertLabel(bool receipt, bool test)

@@ -1,4 +1,4 @@
-﻿<ResourceDictionary
+<ResourceDictionary
     x:Class="Unigram.Themes.Messages"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,11 +10,30 @@
     xmlns:native="using:Unigram.Native"
     xmlns:messages="using:Telegram.Api.TL.Messages"
     xmlns:tl="using:Telegram.Api.TL"
+    xmlns:td="using:TdWindows"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <DataTemplate x:Key="StickerSetItemTemplate" x:DataType="messages:TLMessagesStickerSet">
+    <!--<DataTemplate x:Key="StickerSetItemTemplate" x:DataType="messages:TLMessagesStickerSet">
+         <Grid Margin="0,6" Background="Transparent">
+         <Grid.ColumnDefinitions>
+         <ColumnDefinition Width="Auto"/>
+         <ColumnDefinition />
+         </Grid.ColumnDefinitions>
+         <Grid.RowDefinitions>
+         <RowDefinition Height="Auto"/>
+         <RowDefinition Height="Auto"/>
+         </Grid.RowDefinitions>
+         
+         <Image x:Phase="3" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+         
+         <TextBlock Text="{x:Bind Set.Title}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+         <TextBlock Text="{x:Bind Set.Count, Converter={StaticResource StringPluralConverter}, ConverterParameter=Stickers}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
+         </Grid>
+         </DataTemplate>-->
+
+    <DataTemplate x:Key="StickerSetItemTemplate" x:DataType="td:StickerSetInfo">
         <Grid Margin="0,6" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -25,40 +44,38 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Image x:Phase="3" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+            <Image Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
 
-            <TextBlock Text="{x:Bind Set.Title}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
-            <TextBlock Text="{x:Bind Set.Count, Converter={StaticResource StringPluralConverter}, ConverterParameter=Stickers}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
+            <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+            <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
         </Grid>
     </DataTemplate>
 
     <selectors:AutocompleteTemplateSelector x:Name="AutocompleteTemplate">
         <selectors:AutocompleteTemplateSelector.MentionTemplate>
-            <DataTemplate x:DataType="tl:TLUser">
+            <DataTemplate>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                    <controls:ProfilePicture IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
                     <TextBlock VerticalAlignment="Center" Grid.Column="1">
-                        <Run Text="{x:Bind FullName}" FontWeight="SemiBold" />
-                        <Run Text="{x:Bind Username, Converter={StaticResource UsernameConverter}, ConverterParameter=none}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                        <Run /><Run Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                     </TextBlock>
                 </Grid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.MentionTemplate>
         <selectors:AutocompleteTemplateSelector.CommandTemplate>
-            <DataTemplate x:DataType="viewmodels:TLUserCommand">
+            <DataTemplate>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                    <controls:ProfilePicture IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
                     <TextBlock VerticalAlignment="Center" Grid.Column="1">
-                        <Run Text="/" FontWeight="SemiBold" /><Run Text="{x:Bind Item.Command}" FontWeight="SemiBold" />
-                        <Run Text="{x:Bind Item.Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                        <Run /><Run Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                     </TextBlock>
                 </Grid>
             </DataTemplate>

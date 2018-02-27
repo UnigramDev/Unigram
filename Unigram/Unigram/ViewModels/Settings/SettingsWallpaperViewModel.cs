@@ -4,14 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
+using TdWindows;
 using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Core.Helpers;
+using Unigram.Services;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -24,24 +22,30 @@ namespace Unigram.ViewModels.Settings
     {
         private const string TempWallpaperFileName = "temp_wallpaper.jpg";
 
-        public SettingsWallPaperViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public SettingsWallPaperViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new MvxObservableCollection<TLWallPaperBase>();
-            ProtoService.GetWallpapersAsync(result =>
-            {
-                var defa = result.FirstOrDefault(x => x.Id == 1000001);
-                if (defa != null)
-                {
-                    result.Remove(defa);
-                    result.Insert(0, defa);
-                }
+            Items = new MvxObservableCollection<Wallpaper>();
 
-                BeginOnUIThread(() =>
+            ProtoService.Send(new GetWallpapers(), result =>
+            {
+                if (result is Wallpapers wallpapers)
                 {
-                    Items.ReplaceWith(result);
-                    UpdateView();
-                });
+                    var items = wallpapers.WallpapersData.ToList();
+
+                    var predefined = items.FirstOrDefault(x => x.Id == 1000001);
+                    if (predefined != null)
+                    {
+                        items.Remove(predefined);
+                        items.Insert(0, predefined);
+                    }
+
+                    BeginOnUIThread(() =>
+                    {
+                        Items.ReplaceWith(items);
+                        UpdateView();
+                    });
+                }
             });
 
             LocalCommand = new RelayCommand(LocalExecute);
@@ -73,14 +77,18 @@ namespace Unigram.ViewModels.Settings
                     using (var stream = await file.OpenReadAsync())
                     {
                         var bitmap = new BitmapImage();
-                        await bitmap.SetSourceAsync(stream);
+                        try
+                        {
+                            await bitmap.SetSourceAsync(stream);
+                        }
+                        catch { }
                         Local = bitmap;
                     }
                 }
             }
             else
             {
-                SelectedItem = Items.FirstOrDefault(x => x.Id == selected) ?? Items.FirstOrDefault(x => x.Id == 1000001) ?? new TLWallPaper { Id = 1000001 };
+                SelectedItem = Items.FirstOrDefault(x => x.Id == selected) ?? Items.FirstOrDefault(x => x.Id == 1000001);
             }
         }
 
@@ -110,8 +118,8 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private TLWallPaperBase _selectedItem;
-        public TLWallPaperBase SelectedItem
+        private Wallpaper _selectedItem;
+        public Wallpaper SelectedItem
         {
             get
             {
@@ -129,7 +137,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public MvxObservableCollection<TLWallPaperBase> Items { get; private set; }
+        public MvxObservableCollection<Wallpaper> Items { get; private set; }
 
         public RelayCommand LocalCommand { get; }
         private async void LocalExecute()
@@ -151,7 +159,11 @@ namespace Unigram.ViewModels.Settings
                 using (var stream = await result.OpenReadAsync())
                 {
                     var bitmap = new BitmapImage();
-                    await bitmap.SetSourceAsync(stream);
+                    try
+                    {
+                        await bitmap.SetSourceAsync(stream);
+                    }
+                    catch { }
                     Local = bitmap;
                 }
             }
@@ -160,28 +172,29 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand DoneCommand { get; }
         private async void DoneExecute()
         {
-            if (_selectedItem is TLWallPaper wallpaper)
+            var wallpaper = _selectedItem;
+            if (wallpaper != null && wallpaper.Sizes != null && wallpaper.Sizes.Count > 0)
             {
                 if (wallpaper.Id != 1000001)
                 {
-                    var photoSize = wallpaper.Full as TLPhotoSize;
-                    var location = photoSize.Location as TLFileLocation;
-                    var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+                    //var photoSize = wallpaper.Full as TLPhotoSize;
+                    //var location = photoSize.Location as TLFileLocation;
+                    //var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
 
-                    var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath(fileName));
-                    if (item is StorageFile file)
-                    {
-                        var result = await FileUtils.CreateFileAsync(Constants.WallpaperFileName);
-                        await file.CopyAndReplaceAsync(result);
+                    //var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath(fileName));
+                    //if (item is StorageFile file)
+                    //{
+                    //    var result = await FileUtils.CreateFileAsync(Constants.WallpaperFileName);
+                    //    await file.CopyAndReplaceAsync(result);
 
-                        var accent = await ImageHelper.GetAccentAsync(result);
-                        Theme.Current.AddOrUpdateColor("MessageServiceBackgroundBrush", accent[0]);
-                        Theme.Current.AddOrUpdateColor("MessageServiceBackgroundPressedBrush", accent[1]);
-                    }
-                    else
-                    {
-                        return;
-                    }
+                    //    var accent = await ImageHelper.GetAccentAsync(result);
+                    //    Theme.Current.AddOrUpdateColor("MessageServiceBackgroundBrush", accent[0]);
+                    //    Theme.Current.AddOrUpdateColor("MessageServiceBackgroundPressedBrush", accent[1]);
+                    //}
+                    //else
+                    //{
+                    //    return;
+                    //}
                 }
                 else
                 {
@@ -192,10 +205,10 @@ namespace Unigram.ViewModels.Settings
                 ApplicationSettings.Current.SelectedBackground = wallpaper.Id;
                 ApplicationSettings.Current.SelectedColor = 0;
             }
-            else if (_selectedItem is TLWallPaperSolid solid)
+            else if (wallpaper != null)
             {
-                ApplicationSettings.Current.SelectedBackground = solid.Id;
-                ApplicationSettings.Current.SelectedColor = solid.BgColor;
+                ApplicationSettings.Current.SelectedBackground = wallpaper.Id;
+                ApplicationSettings.Current.SelectedColor = wallpaper.Color;
             }
             else if (_selectedItem == null && _isLocal)
             {

@@ -3,33 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
+using TdWindows;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Core.Models;
+using Unigram.Models;
+using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Users
 {
     public class UserCreateViewModel : UnigramViewModelBase
     {
-        public UserCreateViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public UserCreateViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            ProtoService.GotUserCountry += GotUserCountry;
-
             SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrEmpty(_firstName) && !string.IsNullOrEmpty(_phoneCode) && !string.IsNullOrEmpty(_phoneNumber));
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (!string.IsNullOrEmpty(ProtoService.Country))
-            {
-                GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
-            }
+            //if (!string.IsNullOrEmpty(LegacyService.Country))
+            //{
+            //    GotUserCountry(this, new CountryEventArgs { Country = LegacyService.Country });
+            //}
 
             IsLoading = false;
             return Task.CompletedTask;
@@ -157,25 +154,16 @@ namespace Unigram.ViewModels.Users
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var contact = new TLInputPhoneContact
+            var response = await ProtoService.SendAsync(new ImportContacts(new[] { new Contact() }));
+            if (response is ImportedContacts imported)
             {
-                ClientId = GetHashCode(),
-                FirstName = FirstName,
-                LastName = LastName,
-                Phone = "+" + PhoneCode + PhoneNumber
-            };
-
-            var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact });
-            if (response.IsSucceeded)
-            {
-                if (response.Result.Users.Count > 0)
+                if (imported.UserIds.Count > 0)
                 {
-                    Aggregator.Publish(new TLUpdateContactLink
+                    var create = await ProtoService.SendAsync(new CreatePrivateChat(imported.UserIds[0], false));
+                    if (create is Chat chat)
                     {
-                        UserId = response.Result.Users[0].Id,
-                        MyLink = new TLContactLinkContact(),
-                        ForeignLink = new TLContactLinkUnknown()
-                    });
+                        NavigationService.NavigateToChat(chat);
+                    }
                 }
                 else
                 {

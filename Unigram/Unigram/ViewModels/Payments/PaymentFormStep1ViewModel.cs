@@ -5,22 +5,20 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Payments;
 using Unigram.Common;
-using Unigram.Core.Models;
+using Unigram.Models;
 using Unigram.Views.Payments;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Payments
 {
     public class PaymentFormStep1ViewModel : PaymentFormViewModelBase
     {
-        public PaymentFormStep1ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public PaymentFormStep1ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -34,23 +32,23 @@ namespace Unigram.ViewModels.Payments
                 return Task.CompletedTask;
             }
 
-            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
-            {
-                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm>(from);
+            //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            //{
+            //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm>(from);
 
-                Message = tuple.Item1;
-                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                PaymentForm = tuple.Item2;
+            //    Message = tuple.Item1;
+            //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+            //    PaymentForm = tuple.Item2;
 
-                var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
-                if (info.ShippingAddress == null)
-                {
-                    info.ShippingAddress = new TLPostAddress();
-                }
+            //    var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
+            //    if (info.ShippingAddress == null)
+            //    {
+            //        info.ShippingAddress = new TLPostAddress();
+            //    }
 
-                Info = info;
-                SelectedCountry = Country.Countries.FirstOrDefault(x => x.Code.Equals(info.ShippingAddress.CountryIso2, StringComparison.OrdinalIgnoreCase));
-            }
+            //    Info = info;
+            //    SelectedCountry = Country.Countries.FirstOrDefault(x => x.Code.Equals(info.ShippingAddress.CountryIso2, StringComparison.OrdinalIgnoreCase));
+            //}
 
             return Task.CompletedTask;
         }
@@ -129,19 +127,19 @@ namespace Unigram.ViewModels.Payments
                 info.ShippingAddress.CountryIso2 = _selectedCountry?.Code?.ToUpper();
             }
 
-            var response = await ProtoService.ValidateRequestedInfoAsync(_message.Id, info, save);
+            var response = await LegacyService.ValidateRequestedInfoAsync(_message.Id, info, save);
             if (response.IsSucceeded)
             {
                 IsLoading = false;
 
                 if (_paymentForm.HasSavedInfo && !save)
                 {
-                    ProtoService.ClearSavedInfoAsync(true, false, null, null);
+                    LegacyService.ClearSavedInfoAsync(true, false, null, null);
                 }
 
                 if (_paymentForm.Invoice.IsFlexible)
                 {
-                    NavigationService.NavigateToPaymentFormStep2(_message, _paymentForm, info, response.Result);
+                    //NavigationService.NavigateToPaymentFormStep2(_message, _paymentForm, info, response.Result);
                 }
                 else if (_paymentForm.HasSavedCredentials)
                 {
@@ -155,16 +153,16 @@ namespace Unigram.ViewModels.Payments
 
                     if (ApplicationSettings.Current.TmpPassword != null)
                     {
-                        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, info, response.Result, null, null, null, true);
+                        //NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, info, response.Result, null, null, null, true);
                     }
                     else
                     {
-                        NavigationService.NavigateToPaymentFormStep4(_message, _paymentForm, info, response.Result, null);
+                        //NavigationService.NavigateToPaymentFormStep4(_message, _paymentForm, info, response.Result, null);
                     }
                 }
                 else
                 {
-                    NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, info, response.Result, null);
+                    //NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, info, response.Result, null);
                 }
             }
             else if (response.Error != null)

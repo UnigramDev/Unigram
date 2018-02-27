@@ -2,8 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Strings;
 using Unigram.ViewModels;
@@ -17,8 +16,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Controls.Messages
 {
@@ -41,12 +38,13 @@ namespace Unigram.Controls.Messages
         {
             VisualStateManager.GoToState(LayoutRoot, call.IsFailed ? "Missed" : "Default", false);
 
+            var title = call.Peer.GetFullName();
             if (count > 1)
             {
-                return $"({count})";
+                return $"{title} ({count})";
             }
 
-            return string.Empty;
+            return title;
         }
     }
 }

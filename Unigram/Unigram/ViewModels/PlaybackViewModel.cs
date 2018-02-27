@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
+using TdWindows;
 using Unigram.Core.Common;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
@@ -17,12 +14,12 @@ namespace Unigram.ViewModels
     {
         private readonly IPlaybackService _playbackService;
 
-        public PlaybackViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPlaybackService playbackService)
+        public PlaybackViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IPlaybackService playbackService)
             : base(protoService, cacheService, aggregator)
         {
             _playbackService = playbackService;
 
-            Items = new MvxObservableCollection<TLMessage>();
+            Items = new MvxObservableCollection<Message>();
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -33,6 +30,6 @@ namespace Unigram.ViewModels
 
         public IPlaybackService Playback => _playbackService;
 
-        public MvxObservableCollection<TLMessage> Items { get; private set; }
+        public MvxObservableCollection<Message> Items { get; private set; }
     }
 }

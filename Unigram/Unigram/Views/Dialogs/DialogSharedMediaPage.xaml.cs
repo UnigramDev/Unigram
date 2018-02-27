@@ -26,10 +26,13 @@ using Windows.System;
 using System.Windows.Input;
 using Unigram.Strings;
 using Unigram.ViewModels.Dialogs;
+using TdWindows;
+using Unigram.Controls.Items;
+using Unigram.Controls.Views;
 
 namespace Unigram.Views.Dialogs
 {
-    public sealed partial class DialogSharedMediaPage : Page, IMasterDetailPage
+    public sealed partial class DialogSharedMediaPage : Page, IMasterDetailPage, IFileDelegate
     {
         public DialogSharedMediaViewModel ViewModel => DataContext as DialogSharedMediaViewModel;
 
@@ -37,6 +40,7 @@ namespace Unigram.Views.Dialogs
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<DialogSharedMediaViewModel>();
+            ViewModel.Delegate = this;
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
@@ -48,12 +52,12 @@ namespace Unigram.Views.Dialogs
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
@@ -96,9 +100,13 @@ namespace Unigram.Views.Dialogs
             }
         }
 
-        private void Photo_Click(object sender, RoutedEventArgs e)
+        private async void Photo_Click(object sender, RoutedEventArgs e)
         {
-            Themes.Media.Download_Click(sender as FrameworkElement, null);
+            var element = sender as FrameworkElement;
+            var message = element.Tag as Message;
+
+            var viewModel = new DialogGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, message.ChatId, message);
+            await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => element);
         }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
@@ -139,7 +147,7 @@ namespace Unigram.Views.Dialogs
         {
             if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
             {
-                ViewModel.SelectedItems = new List<TLMessageCommonBase>(((ListViewBase)sender).SelectedItems.Cast<TLMessageCommonBase>());
+                ViewModel.SelectedItems = new List<Message>(((ListViewBase)sender).SelectedItems.Cast<Message>());
             }
         }
 
@@ -156,14 +164,13 @@ namespace Unigram.Views.Dialogs
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var messageCommon = element.DataContext as TLMessageCommonBase;
-            var channel = messageCommon.Parent as TLChannel;
+            var message = element.Tag as Message;
 
-            CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, messageCommon, Strings.Android.ShowInChat);
-            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Android.Delete);
-            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Android.Forward);
-            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.Select);
-            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, messageCommon, Strings.Resources.SaveAs);
+            CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, message, Strings.Android.ShowInChat);
+            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Android.Delete);
+            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Android.Forward);
+            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Resources.Select);
+            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, message, Strings.Resources.SaveAs);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -176,9 +183,9 @@ namespace Unigram.Views.Dialogs
             }
         }
 
-        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<TLMessageCommonBase, Visibility> visibility, ICommand command, object parameter, string text)
+        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<Message, Visibility> visibility, ICommand command, object parameter, string text)
         {
-            var value = visibility(parameter as TLMessageCommonBase);
+            var value = visibility(parameter as Message);
             if (value == Visibility.Visible)
             {
                 var flyoutItem = new MenuFlyoutItem();
@@ -191,44 +198,135 @@ namespace Unigram.Views.Dialogs
             }
         }
 
-        private Visibility MessageView_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessageView_Loaded(Message message)
         {
             return Visibility.Visible;
         }
 
-        private Visibility MessageSave_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessageSave_Loaded(Message message)
         {
             return Visibility.Visible;
         }
 
-        private Visibility MessageDelete_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessageDelete_Loaded(Message message)
         {
-            if (messageCommon.Parent is TLChannel channel)
-            {
-                if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
-                {
-                    return Visibility.Collapsed;
-                }
-
-                if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
-                {
-                    return Visibility.Collapsed;
-                }
-            }
-
-            return Visibility.Visible;
+            return message.CanBeDeletedOnlyForSelf || message.CanBeDeletedForAllUsers ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private Visibility MessageForward_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessageForward_Loaded(Message message)
         {
             return Visibility.Visible;
         }
 
-        private Visibility MessageSelect_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessageSelect_Loaded(Message message)
         {
             return ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var message = args.Item as Message;
+            if (message.Content is MessagePhoto photoMessage)
+            {
+                if (args.ItemContainer.ContentTemplateRoot is SimpleHyperlinkButton content)
+                {
+                    var small = photoMessage.Photo.GetSmall();
+                    var photo = content.Content as Image;
+                    photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 0, 0);
+                }
+            }
+            else if (message.Content is MessageVideo videoMessage && videoMessage.Video.Thumbnail != null)
+            {
+                if (args.ItemContainer.ContentTemplateRoot is SimpleHyperlinkButton content)
+                {
+                    var photo = content.Content as Image;
+                    photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, videoMessage.Video.Thumbnail.Photo, 0, 0);
+                }
+            }
+            else if (message.Content is MessageDocument)
+            {
+                if (args.ItemContainer.ContentTemplateRoot is SharedFileListViewItem content)
+                {
+                    content.UpdateMessage(ViewModel.ProtoService, message);
+                }
+            }
+            else if (message.Content is MessageText)
+            {
+                if (args.ItemContainer.ContentTemplateRoot is SharedLinkListViewItem content)
+                {
+                    content.UpdateMessage(message);
+                }
+            }
+
+            var element = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
+            element.Tag = message;
+        }
+
+        public void UpdateFile(TdWindows.File file)
+        {
+            foreach (Message message in ScrollingMedia.Items)
+            {
+                if (message.UpdateFile(file))
+                {
+                    var container = ScrollingMedia.ContainerFromItem(message) as GridViewItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var content = container.ContentTemplateRoot as SimpleHyperlinkButton;
+                    if (content == null)
+                    {
+                        continue;
+                    }
+
+                    if (message.Content is MessagePhoto photo)
+                    {
+                        var small = photo.Photo.GetSmall();
+                        if (small != null && small.Photo.Id == file.Id && file.Local.IsDownloadingCompleted)
+                        {
+                            var thumbnail = content.Content as Image;
+                            thumbnail.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 0, 0);
+                        }
+                    }
+                    else if (message.Content is MessageVideo video)
+                    {
+                        var thumb = video.Video.Thumbnail;
+                        if (thumb != null && thumb.Photo.Id == file.Id && file.Local.IsDownloadingCompleted)
+                        {
+                            var thumbnail = content.Content as Image;
+                            thumbnail.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, thumb.Photo, 0, 0);
+                        }
+                    }
+                }
+            }
+
+            foreach (Message message in ScrollingFiles.Items)
+            {
+                if (message.UpdateFile(file))
+                {
+                    var container = ScrollingFiles.ContainerFromItem(message) as ListViewItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var document = message.Content as MessageDocument;
+                    var content = container.ContentTemplateRoot as SharedFileListViewItem;
+
+                    if (file.Id == document.Document.DocumentData.Id)
+                    {
+                        content.UpdateFile(message, file);
+                    }
+                }
+            }
+        }
     }
 }

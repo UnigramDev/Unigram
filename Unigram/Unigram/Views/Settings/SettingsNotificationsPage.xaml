@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Settings.SettingsNotificationsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -90,7 +90,7 @@
                         Content="{CustomResource InAppPreview}"
                         Margin="12,0"/>
 
-                    <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" Height="1" Margin="12,6,0,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
                 </StackPanel>
 
                 <StackPanel Margin="0,24,0,0">

@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="Unigram.Controls.DialogSearchToolBar"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -209,7 +209,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
+        <Grid Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
@@ -229,7 +229,7 @@
 
             <controls:GlyphButton Click="Cancel_Click" Glyph="&#xE10A;" Grid.Column="1"/>
 
-            <Border BorderThickness="0,0,0,1" VerticalAlignment="Bottom" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="5"/>
+            <Border BorderThickness="0,0,0,1" VerticalAlignment="Bottom" IsHitTestVisible="False" BorderBrush="{ThemeResource TelegramSeparatorBrush}" Grid.ColumnSpan="5"/>
         </Grid>
 
         <ListView x:Name="ListAutocomplete"
@@ -243,7 +243,7 @@
             <ListView.Footer>
                 <Border x:Name="AutocompleteHeader"
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                    <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" Height="1"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Bottom" Height="1"/>
                 </Border>
             </ListView.Footer>
             <ListView.ItemsPanel>

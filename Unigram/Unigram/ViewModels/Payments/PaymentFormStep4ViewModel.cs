@@ -6,10 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Account;
 using Telegram.Api.TL.Payments;
@@ -17,6 +14,7 @@ using Unigram.Common;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Payments
 {
@@ -26,7 +24,7 @@ namespace Unigram.ViewModels.Payments
         private TLPaymentsValidatedRequestedInfo _requestedInfo;
         private TLShippingOption _shipping;
 
-        public PaymentFormStep4ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public PaymentFormStep4ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -40,26 +38,26 @@ namespace Unigram.ViewModels.Payments
                 return Task.CompletedTask;
             }
 
-            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
-            {
-                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
+            //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            //{
+            //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
 
-                Message = tuple.Item1;
-                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                PaymentForm = tuple.Item2;
+            //    Message = tuple.Item1;
+            //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+            //    PaymentForm = tuple.Item2;
 
-                    // TODO: real hint
-                    PasswordHint = Strings.Android.LoginPassword;
+            //        // TODO: real hint
+            //        PasswordHint = Strings.Android.LoginPassword;
 
-                if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
-                {
-                    CredentialsTitle = savedCard.Title;
-                }
+            //    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
+            //    {
+            //        CredentialsTitle = savedCard.Title;
+            //    }
 
-                _info = tuple.Item3;
-                _requestedInfo = tuple.Item4;
-                _shipping = tuple.Item5;
-            }
+            //    _info = tuple.Item3;
+            //    _requestedInfo = tuple.Item4;
+            //    _shipping = tuple.Item5;
+            //}
 
             return Task.CompletedTask;
         }
@@ -108,7 +106,7 @@ namespace Unigram.ViewModels.Payments
         {
             IsLoading = true;
 
-            var passwordResponse = await ProtoService.GetPasswordAsync();
+            var passwordResponse = await LegacyService.GetPasswordAsync();
             if (passwordResponse.IsSucceeded)
             {
                 if (passwordResponse.Result is TLAccountPassword password)
@@ -121,11 +119,11 @@ namespace Unigram.ViewModels.Payments
                     var hashed = hasher.HashData(input);
                     CryptographicBuffer.CopyToByteArray(hashed, out byte[] data);
 
-                    var response = await ProtoService.GetTmpPasswordAsync(data, 60 * 30);
+                    var response = await LegacyService.GetTmpPasswordAsync(data, 60 * 30);
                     if (response.IsSucceeded)
                     {
                         ApplicationSettings.Current.TmpPassword = response.Result;
-                        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
+                        //NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
                     }
                     else if (response.Error != null)
                     {
@@ -156,7 +154,7 @@ namespace Unigram.ViewModels.Payments
         public RelayCommand ChooseCommand => new RelayCommand(ChooseExecute);
         private void ChooseExecute()
         {
-            NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, _info, _requestedInfo, _shipping);
+            //NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, _info, _requestedInfo, _shipping);
         }
 
         public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)

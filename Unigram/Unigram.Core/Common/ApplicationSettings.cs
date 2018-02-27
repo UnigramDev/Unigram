@@ -132,8 +132,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 01411600;
-        public const string CurrentChangelog = "- Double click on a message to reply.\n- Scrolling position is restored when returning to a chat.\n- Improved general app performances.\n- Resolved various problems related to proxies.";
+        public const int CurrentVersion = 1014530;
+        public const string CurrentChangelog = "Ladies and gentlemen, please welcome Unigram X.\r\nSince the beginning of the year we're working closely with TDLib creators to deliver you the best Telegram experience on Windows 10.\r\nWe're proud to announce that the wait is over, and the app has been rewritten from scratch to guarantee you performance, stability and security.\r\n\r\nHere's what we've done so far:\r\n- Every chat you open is now securely cached on your device, so you can browse them even when internet connection isn't available.\r\n- Secret chats are now fully supported: this allows you to communicate with your friends using end-to-end encryption, even on desktop.\r\n- My People integration: you can now pin your contacts to the Windows taskbar and use Unigram to chat with them without opening the full app.\r\n- The app is now faster, stronger, better.\r\n\r\nSome of the features available in the old app might be unavailable at the moment, but they're going to come soon.\r\nIf something important for you is missing in the app don't esitate to contact us and we'll work to bring it to you as soon as possible!";
 
         private int? _appVersion;
         public int Version
@@ -200,6 +200,46 @@ namespace Unigram.Common
             {
                 _contactsSavedCount = value;
                 AddOrUpdateValue("ContactsSavedCount", value);
+            }
+        }
+
+        private int? _filesTtl;
+        public int FilesTtl
+        {
+            get
+            {
+                if (_filesTtl == null)
+                    _filesTtl = GetValueOrDefault("FilesTtl", 0);
+
+                return _filesTtl ?? 0;
+            }
+            set
+            {
+                _filesTtl = value;
+                AddOrUpdateValue("FilesTtl", value);
+            }
+        }
+
+        private int? _verbosityLevel;
+        public int VerbosityLevel
+        {
+            get
+            {
+                if (_verbosityLevel == null)
+#if DEBUG
+                    _verbosityLevel = GetValueOrDefault("VerbosityLevel", 5);
+
+                return _verbosityLevel ?? 5;
+#else
+                    _verbosityLevel = GetValueOrDefault("VerbosityLevel", 0);
+
+                return _verbosityLevel ?? 0;
+#endif
+            }
+            set
+            {
+                _verbosityLevel = value;
+                AddOrUpdateValue("VerbosityLevel", value);
             }
         }
 
@@ -380,56 +420,11 @@ namespace Unigram.Common
             }
         }
 
-        public ApplicationSettingsDownload AutoDownload => new ApplicationSettingsDownload();
-
         public void CleanUp()
         {
             // Here should be cleaned up all the settings that are shared with background tasks.
             _peerToPeerMode = null;
             _useLessData = null;
         }
-    }
-
-    public class ApplicationSettingsDownload
-    {
-        private int[] _defaults = new int[3];
-
-        public ApplicationSettingsDownload()
-        {
-            _defaults[(int)NetworkType.Mobile] = (int)(AutoDownloadType.Photo | AutoDownloadType.Audio | AutoDownloadType.Music | AutoDownloadType.GIF | AutoDownloadType.Round);
-            _defaults[(int)NetworkType.WiFi] = (int)(AutoDownloadType.Photo | AutoDownloadType.Audio | AutoDownloadType.Music | AutoDownloadType.GIF | AutoDownloadType.Round);
-            _defaults[(int)NetworkType.Roaming] = 0;
-        }
-
-        private AutoDownloadType?[] _autoDownload = new AutoDownloadType?[3];
-        public AutoDownloadType this[NetworkType index]
-        {
-            get
-            {
-                var i = (int)index;
-                if (_autoDownload[i] == null)
-                    _autoDownload[i] = (AutoDownloadType)ApplicationSettings.Current.GetValueOrDefault("auto_download_" + i, _defaults[(int)index]);
-
-                return _autoDownload[i].Value;
-            }
-            set
-            {
-                var i = (int)index;
-                _autoDownload[i] = value;
-                ApplicationSettings.Current.AddOrUpdateValue("auto_download_" + i, (int)value);
-            }
-        }
-    }
-
-    [Flags]
-    public enum AutoDownloadType
-    {
-        Photo = 1,
-        Audio = 2,
-        Video = 4,
-        Document = 8,
-        Music = 16,
-        GIF = 32,
-        Round = 64,
     }
 }

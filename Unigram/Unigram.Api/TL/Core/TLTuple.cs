@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Native.TL;
+
 
 namespace Telegram.Api.TL
 {
     public class TLTuple : TLObject
     {
-        public override TLType TypeId => (TLType)0xFFFFFF0E;
-
         public static TLTuple<T1> Create<T1>(T1 item1)
         {
             return new TLTuple<T1>(item1);
@@ -62,20 +60,6 @@ namespace Telegram.Api.TL
         }
 
         public TLTuple() { }
-        public TLTuple(TLBinaryReader from)
-        {
-            Read(from);
-        }
-
-        public override void Read(TLBinaryReader from)
-        {
-            Item1 = TLFactory.Read<T1>(from);
-        }
-
-        public override void Write(TLBinaryWriter to)
-        {
-            TLFactory.Write<T1>(to, Item1);
-        }
     }
 
     public class TLTuple<T1, T2> : TLTuple<T1>
@@ -89,22 +73,6 @@ namespace Telegram.Api.TL
         }
 
         public TLTuple() { }
-        public TLTuple(TLBinaryReader from)
-        {
-            Read(from);
-        }
-
-        public override void Read(TLBinaryReader from)
-        {
-            base.Read(from);
-            Item2 = TLFactory.Read<T2>(from);
-        }
-
-        public override void Write(TLBinaryWriter to)
-        {
-            base.Write(to);
-            TLFactory.Write<T2>(to, Item2);
-        }
     }
 
     public class TLTuple<T1, T2, T3> : TLTuple<T1, T2>
@@ -118,22 +86,6 @@ namespace Telegram.Api.TL
         }
 
         public TLTuple() { }
-        public TLTuple(TLBinaryReader from)
-        {
-            Read(from);
-        }
-
-        public override void Read(TLBinaryReader from)
-        {
-            base.Read(from);
-            Item3 = TLFactory.Read<T3>(from);
-        }
-
-        public override void Write(TLBinaryWriter to)
-        {
-            base.Write(to);
-            TLFactory.Write<T3>(to, Item3);
-        }
     }
 
     public class TLTuple<T1, T2, T3, T4> : TLTuple<T1, T2, T3>
@@ -147,22 +99,6 @@ namespace Telegram.Api.TL
         }
 
         public TLTuple() { }
-        public TLTuple(TLBinaryReader from)
-        {
-            Read(from);
-        }
-
-        public override void Read(TLBinaryReader from)
-        {
-            base.Read(from);
-            Item4 = TLFactory.Read<T4>(from);
-        }
-
-        public override void Write(TLBinaryWriter to)
-        {
-            base.Write(to);
-            TLFactory.Write<T4>(to, Item4);
-        }
     }
 
     public class TLTuple<T1, T2, T3, T4, T5> : TLTuple<T1, T2, T3, T4>
@@ -176,22 +112,6 @@ namespace Telegram.Api.TL
         }
 
         public TLTuple() { }
-        public TLTuple(TLBinaryReader from)
-        {
-            Read(from);
-        }
-
-        public override void Read(TLBinaryReader from)
-        {
-            base.Read(from);
-            Item5 = TLFactory.Read<T5>(from);
-        }
-
-        public override void Write(TLBinaryWriter to)
-        {
-            base.Write(to);
-            TLFactory.Write<T5>(to, Item5);
-        }
     }
 
     public class TLTuple<T1, T2, T3, T4, T5, T6> : TLTuple<T1, T2, T3, T4, T5>
@@ -205,22 +125,6 @@ namespace Telegram.Api.TL
         }
 
         public TLTuple() { }
-        public TLTuple(TLBinaryReader from)
-        {
-            Read(from);
-        }
-
-        public override void Read(TLBinaryReader from)
-        {
-            base.Read(from);
-            Item6 = TLFactory.Read<T6>(from);
-        }
-
-        public override void Write(TLBinaryWriter to)
-        {
-            base.Write(to);
-            TLFactory.Write<T6>(to, Item6);
-        }
     }
 
     public class TLTuple<T1, T2, T3, T4, T5, T6, T7> : TLTuple<T1, T2, T3, T4, T5, T6>
@@ -234,22 +138,6 @@ namespace Telegram.Api.TL
         }
 
         public TLTuple() { }
-        public TLTuple(TLBinaryReader from)
-        {
-            Read(from);
-        }
-
-        public override void Read(TLBinaryReader from)
-        {
-            base.Read(from);
-            Item7 = TLFactory.Read<T7>(from);
-        }
-
-        public override void Write(TLBinaryWriter to)
-        {
-            base.Write(to);
-            TLFactory.Write<T7>(to, Item7);
-        }
     }
 
     public class TLTuple<T1, T2, T3, T4, T5, T6, T7, T8> : TLTuple<T1, T2, T3, T4, T5, T6, T7>
@@ -263,21 +151,5 @@ namespace Telegram.Api.TL
         }
 
         public TLTuple() { }
-        public TLTuple(TLBinaryReader from)
-        {
-            Read(from);
-        }
-
-        public override void Read(TLBinaryReader from)
-        {
-            base.Read(from);
-            Item8 = TLFactory.Read<T8>(from);
-        }
-
-        public override void Write(TLBinaryWriter to)
-        {
-            base.Write(to);
-            TLFactory.Write<T8>(to, Item8);
-        }
     }
 }

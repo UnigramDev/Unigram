@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Settings.SettingsGeneralPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -19,10 +19,10 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <local:TableStackPanel x:Name="SwitchGroup1"
-                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                       Margin="0,0,0,0">
+                <StackPanel x:Name="SwitchGroup1"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            BorderBrush="{ThemeResource TelegramSeparatorBrush}"
+                            Margin="0,0,0,0">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
                         Header="{CustomResource SendByEnter}"
@@ -39,7 +39,7 @@
                         Style="{ThemeResource CheckButtonStyle}"/>
 
                     <controls:StartupSwitch Margin="0,24"/>
-                </local:TableStackPanel>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

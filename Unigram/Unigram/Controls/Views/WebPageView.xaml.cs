@@ -44,95 +44,95 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLWebPage webPage)
-        {
-            if (ApplicationView.GetForCurrentView().IsCompactOverlaySupported())
-            {
-                return AsyncInfo.Run(async token =>
-                {
-                    var w = webPage.EmbedWidth ?? 340;
-                    var h = webPage.EmbedHeight ?? 200;
+        //public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLWebPage webPage)
+        //{
+        //    if (ApplicationView.GetForCurrentView().IsCompactOverlaySupported())
+        //    {
+        //        return AsyncInfo.Run(async token =>
+        //        {
+        //            var w = webPage.EmbedWidth ?? 340;
+        //            var h = webPage.EmbedHeight ?? 200;
 
-                    double ratioX = (double)340 / w;
-                    double ratioY = (double)340 / h;
-                    double ratio = Math.Min(ratioX, ratioY);
+        //            double ratioX = (double)340 / w;
+        //            double ratioY = (double)340 / h;
+        //            double ratio = Math.Min(ratioX, ratioY);
 
-                    var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
-                    preferences.CustomSize = new Size(w * ratio, h * ratio);
+        //            var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+        //            preferences.CustomSize = new Size(w * ratio, h * ratio);
 
-                    var newView = CoreApplication.CreateNewView();
-                    var newViewId = 0;
-                    await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        var request = new HttpRequestMessage(HttpMethod.Get, new Uri(webPage.EmbedUrl));
-                        request.Headers.Referer = new Uri("https://youtube.com");
+        //            var newView = CoreApplication.CreateNewView();
+        //            var newViewId = 0;
+        //            await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+        //            {
+        //                var request = new HttpRequestMessage(HttpMethod.Get, new Uri(webPage.EmbedUrl));
+        //                request.Headers.Referer = new Uri("https://youtube.com");
 
-                        var view = new WebView();
-                        view.NavigateWithHttpRequestMessage(request);
-                        //view.Navigate(new Uri(webPage.EmbedUrl));
+        //                var view = new WebView();
+        //                view.NavigateWithHttpRequestMessage(request);
+        //                //view.Navigate(new Uri(webPage.EmbedUrl));
 
-                        var yolo = new GlyphButton();
-                        yolo.HorizontalAlignment = HorizontalAlignment.Right;
-                        yolo.VerticalAlignment = VerticalAlignment.Bottom;
-                        yolo.Glyph = "\uE740";
-                        yolo.Click += async (s, args) =>
-                        {
-                            var current = ApplicationView.GetForCurrentView();
-                            if (current.ViewMode == ApplicationViewMode.CompactOverlay)
-                            {
-                                current.TryEnterFullScreenMode();
-                            }
-                            else
-                            {
-                                await current.TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, preferences);
-                            }
-                        };
+        //                var yolo = new GlyphButton();
+        //                yolo.HorizontalAlignment = HorizontalAlignment.Right;
+        //                yolo.VerticalAlignment = VerticalAlignment.Bottom;
+        //                yolo.Glyph = "\uE740";
+        //                yolo.Click += async (s, args) =>
+        //                {
+        //                    var current = ApplicationView.GetForCurrentView();
+        //                    if (current.ViewMode == ApplicationViewMode.CompactOverlay)
+        //                    {
+        //                        current.TryEnterFullScreenMode();
+        //                    }
+        //                    else
+        //                    {
+        //                        await current.TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, preferences);
+        //                    }
+        //                };
 
-                        var ciccio = new Grid();
-                        ciccio.RequestedTheme = ElementTheme.Dark;
-                        ciccio.Children.Add(view);
-                        ciccio.Children.Add(yolo);
+        //                var ciccio = new Grid();
+        //                ciccio.RequestedTheme = ElementTheme.Dark;
+        //                ciccio.Children.Add(view);
+        //                ciccio.Children.Add(yolo);
 
-                        Window.Current.Content = ciccio;
-                        Window.Current.Activate();
-                        Window.Current.VisibilityChanged += (s, args) =>
-                        {
-                            if (args.Visible)
-                            {
-                                return;
-                            }
+        //                Window.Current.Content = ciccio;
+        //                Window.Current.Activate();
+        //                Window.Current.VisibilityChanged += (s, args) =>
+        //                {
+        //                    if (args.Visible)
+        //                    {
+        //                        return;
+        //                    }
 
-                            view.NavigateToString(string.Empty);
-                        };
+        //                    view.NavigateToString(string.Empty);
+        //                };
 
-                        newViewId = ApplicationView.GetForCurrentView().Id;
+        //                newViewId = ApplicationView.GetForCurrentView().Id;
 
-                        var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-                        coreTitleBar.ExtendViewIntoTitleBar = true;
+        //                var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+        //                coreTitleBar.ExtendViewIntoTitleBar = true;
 
-                        var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-                        titleBar.ButtonBackgroundColor = Colors.Transparent;
-                        titleBar.ButtonForegroundColor = Colors.White;
-                        titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-                        titleBar.ButtonInactiveForegroundColor = Colors.White;
-                    });
+        //                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+        //                titleBar.ButtonBackgroundColor = Colors.Transparent;
+        //                titleBar.ButtonForegroundColor = Colors.White;
+        //                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+        //                titleBar.ButtonInactiveForegroundColor = Colors.White;
+        //            });
 
-                    var viewShown = await ApplicationViewSwitcher.TryShowAsViewModeAsync(newViewId, ApplicationViewMode.CompactOverlay, preferences);
+        //            var viewShown = await ApplicationViewSwitcher.TryShowAsViewModeAsync(newViewId, ApplicationViewMode.CompactOverlay, preferences);
 
-                    return ContentDialogBaseResult.OK;
-                });
-            }
-            else
-            {
-                if (webPage.HasEmbedUrl)
-                {
-                    Image.Constraint = webPage;
-                    View.Navigate(new Uri(webPage.EmbedUrl));
-                }
+        //            return ContentDialogBaseResult.OK;
+        //        });
+        //    }
+        //    else
+        //    {
+        //        if (webPage.HasEmbedUrl)
+        //        {
+        //            Image.Constraint = webPage;
+        //            View.Navigate(new Uri(webPage.EmbedUrl));
+        //        }
 
-                return base.ShowAsync();
-            }
-        }
+        //        return base.ShowAsync();
+        //    }
+        //}
 
         private void Join_Click(object sender, RoutedEventArgs e)
         {

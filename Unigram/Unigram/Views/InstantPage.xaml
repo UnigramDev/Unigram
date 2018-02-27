@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.InstantPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,7 +7,9 @@
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
 
     <Page.Resources>
         <Style x:Key="EmptyButtonStyle" TargetType="Button">
@@ -102,28 +104,28 @@
             <Setter Property="BorderThickness" Value="2,0,0,0"/>
         </Style>
         
-        <DataTemplate x:Key="ChannelItemTemplate" x:DataType="tl:TLChannel">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{x:Bind DisplayName}" VerticalAlignment="Center" Padding="12,10"/>
-
-                <Button Content="JOIN"
-                        Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}, ConverterParameter=invert}"
-                        Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-                        Background="Transparent"
-                        Padding="12,8"
-                        Grid.Column="1"/>
-                <FontIcon Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}}"
-                          Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                          HorizontalAlignment="Right"
-                          Margin="12,0"
-                          Glyph="&#xE10B;"
-                          Grid.Column="1"/>
-            </Grid>
-        </DataTemplate>
+        <!--<DataTemplate x:Key="ChannelItemTemplate" x:DataType="tl:TLChannel">
+             <Grid>
+             <Grid.ColumnDefinitions>
+             <ColumnDefinition/>
+             <ColumnDefinition Width="Auto"/>
+             </Grid.ColumnDefinitions>
+             <TextBlock Text="{x:Bind DisplayName}" VerticalAlignment="Center" Padding="12,10"/>
+             
+             <Button Content="JOIN"
+             Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}, ConverterParameter=invert}"
+             Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+             Background="Transparent"
+             Padding="12,8"
+             Grid.Column="1"/>
+             <FontIcon Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}}"
+             Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+             HorizontalAlignment="Right"
+             Margin="12,0"
+             Glyph="&#xE10B;"
+             Grid.Column="1"/>
+             </Grid>
+             </DataTemplate>-->
 
         <Style x:Key="ChannelBlockStyle" BasedOn="{StaticResource EmptyButtonStyle}" TargetType="Button">
             <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}"/>
@@ -145,7 +147,7 @@
         <controls:ButtonPageHeader Command="{x:Bind ViewModel.ShareCommand}" Glyph="&#xE72D;"/>
 
         <ListView x:Name="ScrollingHost"
-                  Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+                  Background="{ThemeResource TelegramTitleBarBackgroundBrush}"
                   SelectionMode="None"
                   Grid.Row="1">
             <ListView.ItemContainerStyle>
@@ -168,7 +170,7 @@
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.Footer>
-                <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
+                <Border Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
                     <Button
                         Command="{x:Bind ViewModel.FeedbackCommand}"
                         Content="{CustomResource PreviewFeedback}"
@@ -184,7 +186,7 @@
         </ListView>
 
         <!--<ScrollViewer x:Name="ScrollingHost"
-             Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+             Background="{ThemeResource TelegramTitleBarBackgroundBrush}"
              VerticalScrollBarVisibility="Auto"
              VerticalScrollMode="Auto"
              Grid.Row="1">
@@ -195,7 +197,7 @@
              </Grid.RowDefinitions>
              <StackPanel x:Name="LayoutRoot" Margin="0,0,0,20"/>
              
-             <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Grid.Row="1">
+             <Border Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Grid.Row="1">
              <Button Command="{x:Bind ViewModel.FeedbackCommand}" Content="Leave feedback about this preview" HorizontalContentAlignment="Center" VerticalAlignment="Center" Padding="8,6" Style="{StaticResource EmptyButtonStyle}"/>
              </Border>
              </Grid>

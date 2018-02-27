@@ -4,7 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Telegram.Api.Aggregator {
+namespace Telegram.Api
+{
     /// <summary>
     /// Generic extension methods used by the framework.
     /// </summary>
@@ -112,16 +113,6 @@ namespace Telegram.Api.Aggregator {
                 throw new ArgumentNullException("assembly");
 
             return assembly.ExportedTypes;
-        }
-
-        /// <summary>
-        /// Returns a value that indicates whether the specified type can be assigned to the current type.
-        /// </summary>
-        /// <param name="target">The target type</param>
-        /// <param name="type">The type to check.</param>
-        /// <returns>true if the specified type can be assigned to this type; otherwise, false.</returns>
-        public static bool IsAssignableFrom(this Type target, Type type) {
-            return target.GetTypeInfo().IsAssignableFrom(type.GetTypeInfo());
         }
 #endif
     }

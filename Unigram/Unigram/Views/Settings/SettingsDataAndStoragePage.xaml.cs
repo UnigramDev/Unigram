@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using TdWindows;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
@@ -40,35 +41,6 @@ namespace Unigram.Views.Settings
         private void Stats_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsStatsPage));
-        }
-
-        private async void Proxy_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new ProxyView();
-            dialog.Server = SettingsHelper.ProxyServer;
-            dialog.Port = SettingsHelper.ProxyPort.ToString();
-            dialog.Username = SettingsHelper.ProxyUsername;
-            dialog.Password = SettingsHelper.ProxyPassword;
-            dialog.IsProxyEnabled = SettingsHelper.IsProxyEnabled;
-            dialog.IsCallsProxyEnabled = SettingsHelper.IsCallsProxyEnabled;
-
-            var enabled = SettingsHelper.IsProxyEnabled == true;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
-            {
-                SettingsHelper.ProxyServer = dialog.Server;
-                SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
-                SettingsHelper.ProxyUsername = dialog.Username;
-                SettingsHelper.ProxyPassword = dialog.Password;
-                SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
-                SettingsHelper.IsCallsProxyEnabled = dialog.IsCallsProxyEnabled;
-
-                if (SettingsHelper.IsProxyEnabled || SettingsHelper.IsProxyEnabled != enabled)
-                {
-                    UnigramContainer.Current.ResolveType<IMTProtoService>().ToggleProxy();
-                }
-            }
         }
 
         #region Binding

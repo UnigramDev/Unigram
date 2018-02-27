@@ -21,24 +21,5 @@ namespace Unigram.Views
         {
             this.InitializeComponent();
         }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            if (App.InMemoryState.ForwardMessages != null)
-            {
-                Overlay.Visibility = Visibility.Visible;
-                EmptyLabel.Text = "Choose a recipient...";
-            }
-            else if (App.DataPackage != null)
-            {
-                Overlay.Visibility = Visibility.Visible;
-                EmptyLabel.Text = "Choose a recipient...";
-            }
-            else
-            {
-                Overlay.Visibility = Visibility.Collapsed;
-                EmptyLabel.Text = "Please select a chat to start messaging";
-            }
-        }
     }
 }

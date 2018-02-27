@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Account;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.SignIn;
 using Windows.Security.Cryptography;
@@ -26,7 +24,7 @@ namespace Unigram.ViewModels.SignIn
     {
         private SignInPasswordPage.NavigationParameters _parameters;
 
-        public SignInPasswordViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public SignInPasswordViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -36,15 +34,10 @@ namespace Unigram.ViewModels.SignIn
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var parameters = parameter as SignInPasswordPage.NavigationParameters;
-            if (parameters != null)
+            var authState = ProtoService.GetAuthorizationState();
+            if (authState is AuthorizationStateWaitPassword waitPassword)
             {
-                _parameters = parameters;
-
-                if (parameters.Password is TLAccountPassword password)
-                {
-                    PasswordHint = password.Hint;
-                }
+                PasswordHint = waitPassword.PasswordHint;
             }
 
             return Task.CompletedTask;
@@ -92,52 +85,25 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (_parameters == null)
-            {
-                // TODO: ...
-                return;
-            }
-
             if (string.IsNullOrEmpty(_password))
             {
                 RaisePropertyChanged("PASSWORD_INVALID");
                 return;
             }
 
-            var currentSalt = _parameters.Password.CurrentSalt;
-            var hash = TLUtils.Combine(currentSalt, Encoding.UTF8.GetBytes(_password), currentSalt);
-
-            var input = CryptographicBuffer.CreateFromByteArray(hash);
-            var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-            var hashed = hasher.HashData(input);
-            CryptographicBuffer.CopyToByteArray(hashed, out byte[] data);
-
-            var response = await ProtoService.CheckPasswordAsync(data);
-            if (response.IsSucceeded)
+            var response = await ProtoService.SendAsync(new CheckAuthenticationPassword(_password));
+            if (response is Error error)
             {
-                SettingsHelper.IsAuthorized = true;
-                SettingsHelper.UserId = response.Result.User.Id;
-                ProtoService.CurrentUserId = response.Result.User.Id;
-                ProtoService.SetInitState();
-
-                // TODO: maybe ask about notifications?
-
-                NavigationService.Navigate(typeof(MainPage));
-            }
-            else
-            {
-                TLUtils.WriteLog("auth.checkPassword error " + response.Error);
-
-                if (response.Error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
+                if (error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
                 {
                     //await new MessageDialog(Resources.PasswordInvalidString, Resources.Error).ShowAsync();
                 }
-                else if (response.Error.CodeEquals(TLErrorCode.FLOOD))
+                else if (error.CodeEquals(TLErrorCode.FLOOD))
                 {
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
                 }
 
-                Execute.ShowDebugMessage("account.checkPassword error " + response.Error);
+                Execute.ShowDebugMessage("account.checkPassword error " + error);
             }
         }
 
@@ -150,11 +116,11 @@ namespace Unigram.ViewModels.SignIn
                 return;
             }
 
-            if (_parameters.Password.HasRecovery)
+            if (_parameters.Result.HasRecoveryEmailAddress)
             {
                 IsLoading = true;
 
-                var response = await ProtoService.RequestPasswordRecoveryAsync();
+                var response = await LegacyService.RequestPasswordRecoveryAsync();
                 if (response.IsSucceeded)
                 {
                     await TLMessageDialog.ShowAsync(string.Format(Strings.Android.RestoreEmailSent, response.Result.EmailPattern), Strings.Android.AppName, Strings.Android.OK);
@@ -182,10 +148,10 @@ namespace Unigram.ViewModels.SignIn
             {
                 IsLoading = true;
 
-                var response = await ProtoService.DeleteAccountAsync("Forgot password");
+                var response = await LegacyService.DeleteAccountAsync("Forgot password");
                 if (response.IsSucceeded)
                 {
-                    var logout = await ProtoService.LogOutAsync();
+                    //var logout = await LegacyService.LogOutAsync();
 
                     var state = new SignUpPage.NavigationParameters
                     {

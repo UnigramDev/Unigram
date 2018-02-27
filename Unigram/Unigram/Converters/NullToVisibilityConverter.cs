@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
@@ -26,11 +25,6 @@ namespace Unigram.Converters
             if (value is string)
             {
                 return string.IsNullOrWhiteSpace((string)value) ? Visibility.Collapsed : Visibility.Visible;
-            }
-
-            if (value is TLReplyMarkupBase)
-            {
-                return value is TLReplyKeyboardMarkup ? Visibility.Visible : Visibility.Collapsed;
             }
 
             return value == null ? Visibility.Collapsed : Visibility.Visible;

@@ -3,32 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
+using TdWindows;
+using Unigram.Common;
+using Unigram.Services;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
 {
-    public class ChannelParticipantToTypeConverter : IValueConverter
+    public class ChannelParticipantToTypeConverter
     {
-        public object Convert(object value, Type targetType, object parameter, string language)
+        public static string Convert(IProtoService protoService, ChatMember member)
         {
-            var participant = value as TLChannelParticipantBase;
-            switch (value)
+            switch (member.Status)
             {
-                case TLChannelParticipantCreator creator:
-                    return Strings.Android.ChannelCreator;
-                case TLChannelParticipantAdmin admin:
-                    return string.Format(Strings.Android.EditAdminPromotedBy, admin.PromotedByUser.FullName);
-                case TLChannelParticipantBanned banned:
-                    return string.Format(Strings.Android.UserRestrictionsBy, banned.KickedByUser.FullName);
+                case ChatMemberStatusAdministrator administrator:
+                    return string.Format(Strings.Android.EditAdminPromotedBy, protoService.GetUser(member.InviterUserId).GetFullName());
+                case ChatMemberStatusRestricted restricted:
+                    return string.Format(Strings.Android.UserRestrictionsBy, protoService.GetUser(member.InviterUserId).GetFullName());
+                case ChatMemberStatusBanned banned:
+                    return string.Format(Strings.Android.UserRestrictionsBy, protoService.GetUser(member.InviterUserId).GetFullName());
                 default:
-                    return LastSeenConverter.GetLabel(participant.User, false);
+                    return LastSeenConverter.GetLabel(protoService.GetUser(member.UserId), false);
             }
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
         }
     }
 }

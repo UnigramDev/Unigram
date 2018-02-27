@@ -39,8 +39,6 @@ namespace Unigram.Converters
         public DateTimeFormatter LongDate { get; private set; }
         public DateTimeFormatter LongTime { get; private set; }
 
-        public List<SolidColorBrush> PlaceholderColors { get; private set; }
-
         private BindConvert()
         {
             //var region = new GeographicRegion();
@@ -50,18 +48,6 @@ namespace Unigram.Converters
             ShortTime = new DateTimeFormatter("shorttime", GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
             LongDate = new DateTimeFormatter("longdate", GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
             LongTime = new DateTimeFormatter("longtime", GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-
-            PlaceholderColors = new List<SolidColorBrush>();
-
-            for (int i = 0; i < 6; i++)
-            {
-                PlaceholderColors.Add((SolidColorBrush)Application.Current.Resources[$"Placeholder{i}Brush"]);
-            }
-        }
-
-        public SolidColorBrush Bubble(int uid)
-        {
-            return PlaceholderColors[(uid + SettingsHelper.UserId) % PlaceholderColors.Count];
         }
 
         public string PhoneNumber(string number)
@@ -139,7 +125,7 @@ namespace Unigram.Converters
 
         public string FormatAmount(long amount, string currency)
         {
-            return LocaleHelper.FormatCurrency(amount, currency);
+            return Locale.FormatCurrency(amount, currency);
         }
 
         public string ShippingOption(TLShippingOption option, string currency)
@@ -155,9 +141,7 @@ namespace Unigram.Converters
 
         public string DateExtended(int value)
         {
-            var clientDelta = MTProtoService.Current.ClientTicksDelta;
-            var utc0SecsInt = value - clientDelta / 4294967296.0;
-            var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
+            var dateTime = Utils.UnixTimestampToDateTime(value);
 
             //Today
             if (dateTime.Date == System.DateTime.Now.Date)
@@ -193,43 +177,7 @@ namespace Unigram.Converters
 
         public DateTime DateTime(int value)
         {
-            var clientDelta = MTProtoService.Current.ClientTicksDelta;
-            var utc0SecsInt = value - clientDelta / 4294967296.0;
-            var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
-
-            return dateTime;
-        }
-
-        public string State(TLMessageState value)
-        {
-            switch (value)
-            {
-                case TLMessageState.Sending:
-                    return "\uE600";
-                case TLMessageState.Confirmed:
-                    return "\uE602";
-                case TLMessageState.Read:
-                    return "\uE601";
-                default:
-                    return "\uFFFD";
-            }
-        }
-
-        public string Views(TLMessage message, int? views)
-        {
-            var number = string.Empty;
-
-            if (message.HasViews)
-            {
-                number = ShortNumber(views ?? 0);
-
-                if (message.IsPost && message.HasFromId && message.From != null)
-                {
-                    number += $"   {message.From.FullName},";
-                }
-            }
-
-            return number;
+            return Utils.UnixTimestampToDateTime(value);
         }
 
         public string ShortNumber(int number)

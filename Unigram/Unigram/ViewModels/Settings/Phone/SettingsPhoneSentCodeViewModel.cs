@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Account;
 using Telegram.Api.TL.Auth;
@@ -18,6 +16,7 @@ using Unigram.Views.Settings;
 using Unigram.Views.SignIn;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -25,7 +24,7 @@ namespace Unigram.ViewModels.Settings
     {
         private string _phoneNumber;
 
-        public SettingsPhoneSentCodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public SettingsPhoneSentCodeViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -116,7 +115,7 @@ namespace Unigram.ViewModels.Settings
 
             IsLoading = true;
 
-            var response = await ProtoService.ChangePhoneAsync(phoneNumber, phoneCodeHash, _phoneCode);
+            var response = await LegacyService.ChangePhoneAsync(phoneNumber, phoneCodeHash, _phoneCode);
             if (response.IsSucceeded)
             {
                 while (NavigationService.Frame.BackStackDepth > 1)
@@ -148,7 +147,7 @@ namespace Unigram.ViewModels.Settings
                     {
                         PhoneNumber = _phoneNumber,
                         PhoneCode = _phoneCode,
-                        Result = _sentCode,
+                        //Result = _sentCode,
                     };
 
                     NavigationService.Navigate(typeof(SignUpPage), state);
@@ -168,15 +167,15 @@ namespace Unigram.ViewModels.Settings
                 else if (response.Error.TypeEquals(TLErrorType.SESSION_PASSWORD_NEEDED))
                 {
                     //this.IsWorking = true;
-                    var password = await ProtoService.GetPasswordAsync();
+                    var password = await LegacyService.GetPasswordAsync();
                     if (password.IsSucceeded && password.Result is TLAccountPassword)
                     {
                         var state = new SignInPasswordPage.NavigationParameters
                         {
                             PhoneNumber = _phoneNumber,
                             PhoneCode = _phoneCode,
-                            Result = _sentCode,
-                            Password = password.Result as TLAccountPassword
+                            //Result = _sentCode,
+                            //Password = password.Result as TLAccountPassword
                         };
 
                         NavigationService.Navigate(typeof(SignInPasswordPage), state);
@@ -208,7 +207,7 @@ namespace Unigram.ViewModels.Settings
             {
                 IsLoading = true;
 
-                var response = await ProtoService.ResendCodeAsync(_phoneNumber, _sentCode.PhoneCodeHash);
+                var response = await LegacyService.ResendCodeAsync(_phoneNumber, _sentCode.PhoneCodeHash);
                 if (response.IsSucceeded)
                 {
                     if (response.Result.Type is TLAuthSentCodeTypeSms || response.Result.Type is TLAuthSentCodeTypeApp)
@@ -216,7 +215,7 @@ namespace Unigram.ViewModels.Settings
                         NavigationService.Navigate(typeof(SignInSentCodePage), new SignInSentCodePage.NavigationParameters
                         {
                             PhoneNumber = _phoneNumber,
-                            Result = response.Result
+                            //Result = response.Result
                         });
                     }
                 }

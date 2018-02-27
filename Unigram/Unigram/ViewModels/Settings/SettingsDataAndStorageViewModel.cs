@@ -4,42 +4,46 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Template10.Common;
 using Template10.Mvvm;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
-using Unigram.Strings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
+using Unigram.Views.Settings;
+using Telegram.Api.Helpers;
+using TdWindows;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsDataAndStorageViewModel : UnigramViewModelBase
     {
-        public SettingsDataAndStorageViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) : base(protoService, cacheService, aggregator)
+        public SettingsDataAndStorageViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
+            : base(protoService, cacheService, aggregator)
         {
-            AutoDownloads = new ObservableCollection<SettingsDataAutoDownload>
-            {
-                new SettingsDataAutoDownload(Strings.Android.WhenUsingMobileData, NetworkType.Mobile),
-                new SettingsDataAutoDownload(Strings.Android.WhenConnectedOnWiFi, NetworkType.WiFi),
-                new SettingsDataAutoDownload(Strings.Android.WhenRoaming, NetworkType.Roaming),
-            };
+            //AutoDownloads = new ObservableCollection<SettingsDataAutoDownload>
+            //{
+            //    new SettingsDataAutoDownload(Strings.Android.WhenUsingMobileData, NetworkType.Mobile),
+            //    new SettingsDataAutoDownload(Strings.Android.WhenConnectedOnWiFi, NetworkType.WiFi),
+            //    new SettingsDataAutoDownload(Strings.Android.WhenRoaming, NetworkType.Roaming),
+            //};
 
-            AutoDownloadCommand = new RelayCommand<NetworkType>(AutoDownloadExecute);
+            //AutoDownloadCommand = new RelayCommand<NetworkType>(AutoDownloadExecute);
+            AutoDownloadCommand = new RelayCommand<AutoDownloadType>(AutoDownloadExecute);
+            ResetAutoDownloadCommand = new RelayCommand(ResetAutoDownloadExecute);
             UseLessDataCommand = new RelayCommand(UseLessDataExecute);
+            ProxyCommand = new RelayCommand(ProxyExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            foreach (var item in AutoDownloads)
-            {
-                item.Refresh();
-            }
+            //foreach (var item in AutoDownloads)
+            //{
+            //    item.Refresh();
+            //}
 
             return Task.CompletedTask;
         }
@@ -57,22 +61,35 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public ObservableCollection<SettingsDataAutoDownload> AutoDownloads { get; private set; }
-
-        public RelayCommand<NetworkType> AutoDownloadCommand { get; }
-        private async void AutoDownloadExecute(NetworkType network)
+        public bool AutoDownloadEnabled
         {
-            var confirm = await SettingsDownloadView.Current.ShowAsync(ApplicationSettings.Current.AutoDownload[network]);
-            if (confirm == ContentDialogBaseResult.OK)
+            get
             {
-                ApplicationSettings.Current.AutoDownload[network] = SettingsDownloadView.Current.SelectedItems;
-
-                foreach (var item in AutoDownloads)
-                {
-                    item.Refresh();
-                }
+                return !ProtoService.Preferences.Disabled;
+            }
+            set
+            {
+                ProtoService.SetPreferences(ProtoService.Preferences.UpdateDisabled(!value));
+                RaisePropertyChanged();
             }
         }
+
+        //public ObservableCollection<SettingsDataAutoDownload> AutoDownloads { get; private set; }
+
+        //public RelayCommand<NetworkType> AutoDownloadCommand { get; }
+        //private async void AutoDownloadExecute(NetworkType network)
+        //{
+        //    var confirm = await SettingsDownloadView.Current.ShowAsync(ApplicationSettings.Current.AutoDownload[network]);
+        //    if (confirm == ContentDialogBaseResult.OK)
+        //    {
+        //        ApplicationSettings.Current.AutoDownload[network] = SettingsDownloadView.Current.SelectedItems;
+
+        //        foreach (var item in AutoDownloads)
+        //        {
+        //            item.Refresh();
+        //        }
+        //    }
+        //}
 
         public RelayCommand UseLessDataCommand { get; }
         private async void UseLessDataExecute()
@@ -105,36 +122,90 @@ namespace Unigram.ViewModels.Settings
                 UseLessData = (libtgvoip.DataSavingMode)mode;
             }
         }
-    }
 
-    public class SettingsDataAutoDownload : BindableBase
-    {
-        public SettingsDataAutoDownload(string title, NetworkType network)
+        public RelayCommand<AutoDownloadType> AutoDownloadCommand { get; }
+        public void AutoDownloadExecute(AutoDownloadType type)
         {
-            Title = title;
-            Type = network;
+            NavigationService.Navigate(typeof(SettingsDataAutoPage), type);
         }
 
-        public string Title { get; private set; }
-
-        public NetworkType Type { get; private set; }
-
-        private AutoDownloadType _flags;
-        public AutoDownloadType Flags
+        public RelayCommand ResetAutoDownloadCommand { get; }
+        private async void ResetAutoDownloadExecute()
         {
-            get
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ResetAutomaticMediaDownloadAlert, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            if (confirm == ContentDialogResult.Primary)
             {
-                return _flags;
-            }
-            set
-            {
-                Set(ref _flags, value);
+                ProtoService.SetPreferences(AutoDownloadPreferences.Default);
+                RaisePropertyChanged(() => AutoDownloadEnabled);
             }
         }
 
-        public void Refresh()
+        public RelayCommand ProxyCommand { get; }
+        private async void ProxyExecute()
         {
-            Flags = ApplicationSettings.Current.AutoDownload[Type];
+            var dialog = new ProxyView(true);
+            dialog.Server = SettingsHelper.ProxyServer;
+            dialog.Port = SettingsHelper.ProxyPort.ToString();
+            dialog.Username = SettingsHelper.ProxyUsername;
+            dialog.Password = SettingsHelper.ProxyPassword;
+            dialog.IsProxyEnabled = SettingsHelper.IsProxyEnabled;
+            dialog.IsCallsProxyEnabled = SettingsHelper.IsCallsProxyEnabled;
+
+            var enabled = SettingsHelper.IsProxyEnabled == true;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var server = SettingsHelper.ProxyServer = dialog.Server;
+                var port = SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
+                var username = SettingsHelper.ProxyUsername = dialog.Username;
+                var password = SettingsHelper.ProxyPassword = dialog.Password;
+                var newValue = SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
+                SettingsHelper.IsCallsProxyEnabled = dialog.IsCallsProxyEnabled;
+
+                if (newValue || newValue != enabled)
+                {
+                    if (newValue)
+                    {
+                        ProtoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
+                    }
+                    else
+                    {
+                        ProtoService.Send(new SetProxy(new ProxyEmpty()));
+                    }
+                }
+            }
         }
     }
+
+    //public class SettingsDataAutoDownload : BindableBase
+    //{
+    //    public SettingsDataAutoDownload(string title, NetworkType network)
+    //    {
+    //        Title = title;
+    //        Type = network;
+    //    }
+
+    //    public string Title { get; private set; }
+
+    //    public NetworkType Type { get; private set; }
+
+    //    private AutoDownloadType _flags;
+    //    public AutoDownloadType Flags
+    //    {
+    //        get
+    //        {
+    //            return _flags;
+    //        }
+    //        set
+    //        {
+    //            Set(ref _flags, value);
+    //        }
+    //    }
+
+    //    public void Refresh()
+    //    {
+    //        Flags = ApplicationSettings.Current.AutoDownload[Type];
+    //    }
+    //}
 }

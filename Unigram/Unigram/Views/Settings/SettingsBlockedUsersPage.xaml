@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Settings.SettingsBlockedUsersPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -15,18 +15,20 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
+            Command="{x:Bind ViewModel.BlockCommand}"
             Text="{CustomResource BlockedUsers}"
-            Glyph="&#xE109;"
-            Command="{x:Bind ViewModel.BlockCommand}"/>
+            Glyph="&#xE109;"/>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Items}"
+        <ListView x:Name="ScrollingHost"
+                  ItemsSource="{x:Bind ViewModel.Items}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
+                  ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
                   Grid.Row="1">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="tl:TLUser">
-                    <Grid Margin="0,6">
+                <DataTemplate>
+                    <Grid Margin="0,6" Background="Transparent" ContextRequested="User_ContextRequested">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -35,12 +37,10 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <controls:ProfilePicture x:Phase="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" IsEnabled="False" Grid.RowSpan="2"/>
+                        <controls:ProfilePicture Width="36" Height="36" Margin="0,0,12,0" IsEnabled="False" Grid.RowSpan="2"/>
 
-                        <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                        <TextBlock Text="{x:Bind Phone, Converter={StaticResource PhoneNumberFormatConverter}, ConverterParameter=blocked}"
-                                   x:Phase="1"
-                                   VerticalAlignment="Top"
+                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                        <TextBlock VerticalAlignment="Top"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                    TextTrimming="CharacterEllipsis"
@@ -50,8 +50,12 @@
                                    MaxLines="1"/>
                     </Grid>
                 </DataTemplate>
-
             </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.Footer>
                 <TextBlock
                     Text="{CustomResource UnblockText}"

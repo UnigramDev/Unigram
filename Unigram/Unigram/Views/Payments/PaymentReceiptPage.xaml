@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Payments.PaymentReceiptPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -40,21 +40,21 @@
                     <StackPanel Grid.Column="1">
                         <TextBlock Text="{x:Bind ViewModel.Invoice.Title, FallbackValue=Empty}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
                         <TextBlock Text="{x:Bind ViewModel.Invoice.Description, FallbackValue=Empty}" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind ViewModel.Bot.FullName, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Bot.FirstName, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                     </StackPanel>
                 </Grid>
 
                 <local:LabeledPricesPanel Currency="{x:Bind ViewModel.Receipt.Invoice.Currency}"
-                                          Prices="{x:Bind ViewModel.Receipt.Invoice.Prices}"/>
-                <local:LabeledPricesPanel Currency="{x:Bind ViewModel.Receipt.Currency}"
-                                          Prices="{x:Bind ViewModel.Receipt.Shipping.Prices}"/>
+                                          Prices="{x:Bind ViewModel.Receipt.Invoice.PriceParts}"/>
+                <local:LabeledPricesPanel Currency="{x:Bind ViewModel.Receipt.Invoice.Currency}"
+                                          Prices="{x:Bind ViewModel.Receipt.ShippingOption.PriceParts}"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="{CustomResource PaymentTransactionTotal}" Margin="12,4,0,8" Style="{StaticResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind Convert.FormatAmount(ViewModel.Receipt.TotalAmount, ViewModel.Receipt.Currency), FallbackValue=Empty}" Margin="8,4,12,8" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+                    <!--<TextBlock Text="{x:Bind Convert.FormatAmount(ViewModel.Receipt.TotalAmount, ViewModel.Receipt.Currency), FallbackValue=Empty}" Margin="8,4,12,8" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>-->
                 </Grid>
 
                 <StackPanel Padding="12,8">
@@ -63,32 +63,32 @@
                 </StackPanel>
 
                 <StackPanel Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.Bot.FullName, FallbackValue=Empty}"/>
+                    <TextBlock Text="{x:Bind ViewModel.Bot.FirstName, FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentCheckoutProvider}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasShippingAddress, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind ConvertAddress(ViewModel.Receipt.Info.ShippingAddress), FallbackValue=Empty}"/>
+                <StackPanel Visibility="{x:Bind ViewModel.Receipt.OrderInfo.ShippingAddress, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ConvertAddress(ViewModel.Receipt.OrderInfo.ShippingAddress), FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentShippingAddress}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasName, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.Receipt.Info.Name, FallbackValue=Empty}"/>
+                <StackPanel Visibility="{x:Bind ViewModel.Receipt.OrderInfo.Name, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Receipt.OrderInfo.Name, FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentCheckoutName}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasPhone, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind Convert.PhoneNumber(ViewModel.Receipt.Info.Phone), FallbackValue=Empty}"/>
+                <StackPanel Visibility="{x:Bind ViewModel.Receipt.OrderInfo.PhoneNumber, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind Convert.PhoneNumber(ViewModel.Receipt.OrderInfo.PhoneNumber), FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentCheckoutPhoneNumber}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.Info.HasEmail, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.Receipt.Info.Email, FallbackValue=Empty}"/>
+                <StackPanel Visibility="{x:Bind ViewModel.Receipt.OrderInfo.EmailAddress, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Receipt.OrderInfo.EmailAddress, FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentCheckoutEmail}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Receipt.HasShipping, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.Receipt.Shipping.Title, FallbackValue=Empty}"/>
+                <StackPanel Visibility="{x:Bind ViewModel.Receipt.ShippingOption, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Receipt.ShippingOption.Title, FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentCheckoutShippingMethod}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>

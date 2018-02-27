@@ -1,28 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
-using Telegram.Api.Native;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.Services.Connection;
 using Telegram.Api.Services.DeviceInfo;
-using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Messages.Methods;
-using Telegram.Api.TL.Methods;
 using Unigram.Core.Notifications;
-using Unigram.Core.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Background;
 using Windows.Security.ExchangeActiveSyncProvisioning;
-using Windows.System;
 using Windows.System.Profile;
-using Windows.UI.Notifications;
 
 namespace Unigram.Tasks
 {
@@ -41,43 +26,43 @@ namespace Unigram.Tasks
 
                     var text = data["QuickMessage"];
                     var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
-                    var entitiesBase = Utils.GetEntities(ref messageText);
+                    //var entitiesBase = Markdown.Parse(ref messageText);
 
                     var replyToMsgId = new int?();
-                    var inputPeer = default(TLInputPeerBase);
+                    //var inputPeer = default(TLInputPeerBase);
                     if (data.ContainsKey("from_id"))
                     {
-                        inputPeer = new TLInputPeerUser { UserId = int.Parse(data["from_id"]), AccessHash = long.Parse(data["access_hash"]) };
+                        //inputPeer = new TLInputPeerUser { UserId = int.Parse(data["from_id"]), AccessHash = long.Parse(data["access_hash"]) };
                     }
                     else if (data.ContainsKey("channel_id"))
                     {
-                        inputPeer = new TLInputPeerChannel { ChannelId = int.Parse(data["channel_id"]), AccessHash = long.Parse(data["access_hash"]) };
+                        //inputPeer = new TLInputPeerChannel { ChannelId = int.Parse(data["channel_id"]), AccessHash = long.Parse(data["access_hash"]) };
                         replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) : new int?();
                     }
                     else if (data.ContainsKey("chat_id"))
                     {
-                        inputPeer = new TLInputPeerChat { ChatId = int.Parse(data["chat_id"]) };
+                        //inputPeer = new TLInputPeerChat { ChatId = int.Parse(data["chat_id"]) };
                         replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) : new int?();
                     }
 
-                    TLVector<TLMessageEntityBase> entities = null;
-                    if (entitiesBase != null)
-                    {
-                        entities = new TLVector<TLMessageEntityBase>(entitiesBase);
-                    }
+                    //TLVector<TLMessageEntityBase> entities = null;
+                    //if (entitiesBase != null)
+                    //{
+                    //    entities = new TLVector<TLMessageEntityBase>(entitiesBase);
+                    //}
 
-                    var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = replyToMsgId, Message = messageText, Entities = entities, IsBackground = true, RandomId = TLLong.Random() };
+                    //var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = replyToMsgId, Message = messageText, Entities = entities, IsBackground = true, RandomId = TLLong.Random() };
 
-                    ConnectionManager.Instance.UserId = SettingsHelper.UserId;
-                    ConnectionManager.Instance.SendRequest(new TLInvokeWithoutUpdates { Query = obj }, (message, ex) =>
-                    {
-                        manualResetEvent.Set();
-                    },
-                    () =>
-                    {
-                        manualResetEvent.Set();
-                    },
-                    ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.CanCompress | RequestFlag.FailOnServerError | RequestFlag.RequiresQuickAck | RequestFlag.Immediate);
+                    //ConnectionManager.Instance.UserId = SettingsHelper.UserId;
+                    //ConnectionManager.Instance.SendRequest(new TLInvokeWithoutUpdates { Query = obj }, (message, ex) =>
+                    //{
+                    //    manualResetEvent.Set();
+                    //},
+                    //() =>
+                    //{
+                    //    manualResetEvent.Set();
+                    //},
+                    //ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.CanCompress | RequestFlag.FailOnServerError | RequestFlag.RequiresQuickAck | RequestFlag.Immediate);
 
                     manualResetEvent.WaitOne(15000);
                 }

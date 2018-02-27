@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Settings.SettingsPrivacyAndSecurityPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -39,21 +39,19 @@
                     <TextBlock Text="{CustomResource PrivacyTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource BlockedUsers}"
+                        Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"
                         Click="BlockedUsers_Click"/>
                     <controls:BadgeButton
-                        IsEnabled="False"
                         Content="{CustomResource PrivacyLastSeen}"
-                        Badge="{x:Bind ViewModel.StatusTimestampRules.Badge, Mode=OneWay}"
+                        Badge="{x:Bind ViewModel.ShowStatusRules.Badge, Mode=OneWay}"
                         Click="StatusTimestamp_Click"/>
                     <controls:BadgeButton
-                        IsEnabled="False"
                         Content="{CustomResource Calls}"
-                        Badge="{x:Bind ViewModel.PhoneCallRules.Badge, Mode=OneWay}"
+                        Badge="{x:Bind ViewModel.AllowCallsRules.Badge, Mode=OneWay}"
                         Click="PhoneCall_Click"/>
                     <controls:BadgeButton
-                        IsEnabled="False"
                         Content="{CustomResource GroupsAndChannels}"
-                        Badge="{x:Bind ViewModel.ChatInviteRules.Badge, Mode=OneWay}"
+                        Badge="{x:Bind ViewModel.AllowChatInvitesRules.Badge, Mode=OneWay}"
                         Click="ChatInvite_Click"/>
 
                     <TextBlock
@@ -90,7 +88,7 @@
                     <TextBlock Text="{CustomResource DeleteAccountTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource DeleteAccountIfAwayFor}"
-                        Badge="{x:Bind ViewModel.AccountTTL, Mode=OneWay, Converter={StaticResource AccountTTLConverter}}"
+                        Badge="{x:Bind ConvertTtl(ViewModel.AccountTTL), Mode=OneWay}"
                         Command="{x:Bind ViewModel.AccountTTLCommand}"/>
 
                     <TextBlock
@@ -99,16 +97,20 @@
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,0"/>
                 </StackPanel>
-                
+
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource PrivacyPayments}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PrivacyBots}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:HyperButton
                         Command="{x:Bind ViewModel.ClearPaymentsCommand}"
                         Tag="{CustomResource PrivacyPaymentsClear}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton
+                        Click="WebSessions_Click"
+                        Tag="{CustomResource WebSessionsTitle}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
 
                     <TextBlock
-                        Text="{CustomResource PrivacyPaymentsClearInfo}"
+                        Text="{CustomResource PrivacyBotsInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,0"/>
@@ -116,10 +118,6 @@
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource Contacts}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <!--<controls:BadgeButton
-                        Content="{CustomResource PrivacyCallsP2PTitle}"
-                        Badge="{x:Bind ViewModel.PeerToPeerMode, Mode=OneWay, Converter={StaticResource PeerToPeerModeConverter}}"
-                        Command="{x:Bind ViewModel.PeerToPeerCommand}"/>-->
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                         Header="{CustomResource SyncContacts}"
@@ -136,7 +134,7 @@
                     <TextBlock Text="{CustomResource Calls}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource PrivacyCallsP2PTitle}"
-                        Badge="{x:Bind ViewModel.PeerToPeerMode, Mode=OneWay, Converter={StaticResource PeerToPeerModeConverter}}"
+                        Badge="{x:Bind ConvertP2P(ViewModel.PeerToPeerMode), Mode=OneWay}"
                         Command="{x:Bind ViewModel.PeerToPeerCommand}"/>
 
                     <TextBlock

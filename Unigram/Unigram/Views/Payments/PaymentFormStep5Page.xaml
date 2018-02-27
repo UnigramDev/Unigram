@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Payments.PaymentFormStep5Page"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -101,10 +101,10 @@
                     </StackPanel>
                 </Grid>
 
-                <local:LabeledPricesPanel Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
-                                          Prices="{x:Bind ViewModel.PaymentForm.Invoice.Prices}"/>
-                <local:LabeledPricesPanel Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
-                                          Prices="{x:Bind ViewModel.Shipping.Prices}"/>
+                <!--<local:LabeledPricesPanel Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
+                     Prices="{x:Bind ViewModel.PaymentForm.Invoice.Prices}"/>
+                     <local:LabeledPricesPanel Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
+                     Prices="{x:Bind ViewModel.Shipping.Prices}"/>-->
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -152,11 +152,11 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+        <Grid Background="{ThemeResource TelegramTitleBarBackgroundBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}"
               Grid.Row="3">
             <Button Content="{x:Bind ConvertPay(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), FallbackValue=Empty}" Command="{x:Bind ViewModel.SendCommand}" Style="{StaticResource SendButtonStyle}"/>
-            <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+            <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
     </Grid>
 </Page>

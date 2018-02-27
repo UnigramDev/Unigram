@@ -1,93 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.Services.FileManager;
-using Telegram.Api.Services.FileManager.EventArgs;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Messages;
-using Telegram.Api.TL.Messages.Methods;
-using Template10.Common;
+﻿using System.Linq;
+using TdWindows;
 using Unigram.Common;
-using Unigram.Controls.Views;
 using Unigram.Core.Common;
-using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Dialogs
 {
     public class DialogGalleryViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
-        private readonly TLInputPeerBase _peer;
+        private readonly long _chatId;
 
         private readonly MvxObservableCollection<GalleryItem> _group;
         private long _current;
 
-        public DialogGalleryViewModel(IMTProtoService protoService, ICacheService cacheService, TLInputPeerBase peer, TLMessage selected)
-            : base(protoService, cacheService, null)
+        public DialogGalleryViewModel(IProtoService protoService, IEventAggregator aggregator, long chatId, Message selected)
+            : base(protoService, aggregator)
         {
             _group = new MvxObservableCollection<GalleryItem>();
-            _peer = peer;
+            _chatId = chatId;
 
-            if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo())
-            {
-                Items = new MvxObservableCollection<GalleryItem> { new GalleryMessageItem(selected) };
-                SelectedItem = Items[0];
-                FirstItem = Items[0];
-            }
-            else
-            {
-                Items = new MvxObservableCollection<GalleryItem>();
-            }
+            //if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo())
+            //{
+            //    Items = new MvxObservableCollection<GalleryItem> { new GalleryLegacyMessageItem(selected) };
+            //    SelectedItem = Items[0];
+            //    FirstItem = Items[0];
+            //}
+            //else
+            //{
+            //    Items = new MvxObservableCollection<GalleryItem>();
+            //}
+
+            //Initialize(selected.Id);
+
+            Items = new MvxObservableCollection<GalleryItem> { new GalleryMessageItem(protoService, selected) };
+            SelectedItem = Items[0];
+            FirstItem = Items[0];
 
             Initialize(selected.Id);
         }
 
-        private async void Initialize(int offset)
+        private async void Initialize(long fromMessageId)
         {
             using (await _loadMoreLock.WaitAsync())
             {
                 var limit = 20;
-                var req = new TLMessagesSearch
+                var offset = -limit / 2;
+
+                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterPhotoAndVideo()));
+                if (response is TdWindows.Messages messages)
                 {
-                    Peer = _peer,
-                    Filter = new TLInputMessagesFilterPhotoVideo(),
-                    OffsetId = offset,
-                    AddOffset = -limit / 2,
-                    Limit = limit,
-                };
+                    TotalItems = messages.TotalCount;
 
-                //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
-                var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                if (response.IsSucceeded && response.Result is ITLMessages result)
-                {
-                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
-
-                    var current = 1;
-                    if (response.Result is TLMessagesMessagesSlice slice)
+                    foreach (var message in messages.MessagesData.Where(x => x.Id < fromMessageId))
                     {
-                        TotalItems = slice.Count + current;
-                    }
-                    else if (response.Result is TLMessagesChannelMessages channelMessages)
-                    {
-                        TotalItems = channelMessages.Count + current;
-                    }
-                    else
-                    {
-                        TotalItems = result.Messages.Count + current;
-                    }
-
-                    foreach (var photo in result.Messages.Where(x => x.Id < offset))
-                    {
-                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
+                        if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
-                            Items.Insert(0, new GalleryMessageItem(message));
+                            Items.Insert(0, new GalleryMessageItem(ProtoService, message));
                         }
                         else
                         {
@@ -95,11 +64,11 @@ namespace Unigram.ViewModels.Dialogs
                         }
                     }
 
-                    foreach (var photo in result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
+                    foreach (var message in messages.MessagesData.Where(x => x.Id > fromMessageId).OrderBy(x => x.Id))
                     {
-                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
+                        if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
-                            Items.Add(new GalleryMessageItem(message));
+                            Items.Add(new GalleryMessageItem(ProtoService, message));
                         }
                         else
                         {
@@ -122,29 +91,21 @@ namespace Unigram.ViewModels.Dialogs
                     return;
                 }
 
-                var offset = item.Message.Id;
+                var fromMessageId = item.Id;
 
                 var limit = 20;
-                var req = new TLMessagesSearch
-                {
-                    Peer = _peer,
-                    Filter = new TLInputMessagesFilterPhotoVideo(),
-                    OffsetId = offset,
-                    AddOffset = 0,
-                    Limit = limit,
-                };
+                var offset = -limit / 2;
 
-                //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
-                var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                if (response.IsSucceeded && response.Result is ITLMessages result)
+                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterPhotoAndVideo()));
+                if (response is TdWindows.Messages messages)
                 {
-                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
+                    TotalItems = messages.TotalCount;
 
-                    foreach (var photo in result.Messages.Where(x => x.Id < offset))
+                    foreach (var message in messages.MessagesData.Where(x => x.Id < fromMessageId))
                     {
-                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
+                        if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
-                            Items.Insert(0, new GalleryMessageItem(message));
+                            Items.Insert(0, new GalleryMessageItem(ProtoService, message));
                         }
                         else
                         {
@@ -155,6 +116,39 @@ namespace Unigram.ViewModels.Dialogs
                     OnSelectedItemChanged(_selectedItem);
                 }
             }
+
+            //var offset = item.Message.Id;
+
+            //var limit = 20;
+            //var req = new TLMessagesSearch
+            //{
+            //    Peer = _peer,
+            //    Filter = new TLInputMessagesFilterPhotoVideo(),
+            //    OffsetId = offset,
+            //    AddOffset = 0,
+            //    Limit = limit,
+            //};
+
+            ////var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
+            //var response = await LegacyService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
+            //if (response.IsSucceeded && response.Result is ITLMessages result)
+            //{
+            //    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
+
+            //    foreach (var photo in result.Messages.Where(x => x.Id < offset))
+            //    {
+            //        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
+            //        {
+            //            Items.Insert(0, new GalleryMessageItem(message));
+            //        }
+            //        else
+            //        {
+            //            TotalItems--;
+            //        }
+            //    }
+
+            //    OnSelectedItemChanged(_selectedItem);
+            //}
         }
 
         protected override async void LoadNext()
@@ -167,29 +161,21 @@ namespace Unigram.ViewModels.Dialogs
                     return;
                 }
 
-                var offset = item.Message.Id;
+                var fromMessageId = item.Id;
 
                 var limit = 20;
-                var req = new TLMessagesSearch
-                {
-                    Peer = _peer,
-                    Filter = new TLInputMessagesFilterPhotoVideo(),
-                    OffsetId = offset + 1,
-                    AddOffset = -limit,
-                    Limit = limit,
-                };
+                var offset = -limit / 2;
 
-                //var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
-                var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                if (response.IsSucceeded && response.Result is ITLMessages result)
+                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterPhotoAndVideo()));
+                if (response is TdWindows.Messages messages)
                 {
-                    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
+                    TotalItems = messages.TotalCount;
 
-                    foreach (var photo in result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
+                    foreach (var message in messages.MessagesData.Where(x => x.Id > fromMessageId).OrderBy(x => x.Id))
                     {
-                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
+                        if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
-                            Items.Add(new GalleryMessageItem(message));
+                            Items.Add(new GalleryMessageItem(ProtoService, message));
                         }
                         else
                         {
@@ -208,35 +194,35 @@ namespace Unigram.ViewModels.Dialogs
 
         protected override void OnSelectedItemChanged(GalleryItem item)
         {
-            var messageItem = item as GalleryMessageItem;
-            if (messageItem == null)
-            {
-                return;
-            }
+            //var messageItem = item as GalleryLegacyMessageItem;
+            //if (messageItem == null)
+            //{
+            //    return;
+            //}
 
-            var message = messageItem.Message as TLMessage;
-            if (message == null)
-            {
-                return;
-            }
+            //var message = messageItem.Message as TLMessage;
+            //if (message == null)
+            //{
+            //    return;
+            //}
 
-            if (message.GroupedId is long group)
-            {
-                var all = Items.Where(x => x is GalleryMessageItem msg && msg.Message.GroupedId == group).ToList();
-                if (all.Count == _group.Count && group == _current)
-                {
-                    return;
-                }
+            //if (message.GroupedId is long group)
+            //{
+            //    var all = Items.Where(x => x is GalleryLegacyMessageItem msg && msg.Message.GroupedId == group).ToList();
+            //    if (all.Count == _group.Count && group == _current)
+            //    {
+            //        return;
+            //    }
 
-                _current = group;
-                _group.ReplaceWith(all);
+            //    _current = group;
+            //    _group.ReplaceWith(all);
 
-                RaisePropertyChanged(() => SelectedItem);
-            }
-            else
-            {
-                _group.Clear();
-            }
+            //    RaisePropertyChanged(() => SelectedItem);
+            //}
+            //else
+            //{
+            //    _group.Clear();
+            //}
         }
     }
 }

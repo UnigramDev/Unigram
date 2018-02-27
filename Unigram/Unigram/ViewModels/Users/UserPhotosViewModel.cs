@@ -4,63 +4,49 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.Services.FileManager;
-using Telegram.Api.Services.FileManager.EventArgs;
+using TdWindows;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Photos;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Common;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Users
 {
     public class UserPhotosViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
-        private readonly TLInputUserBase _peer;
+        private readonly int _userId;
 
-        public UserPhotosViewModel(IMTProtoService protoService, TLUserFull userFull, TLUser user)
-            : base(protoService, null, null)
+        public UserPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, User user)
+            : base(protoService, aggregator)
         {
             //Items = new MvxObservableCollection<GalleryItem>();
             //Initialize(user);
 
-            _peer = user.ToInputUser();
-            _user = user;
+            _userId = user.Id;
+            //_user = user;
 
-            Items = new MvxObservableCollection<GalleryItem> { new GalleryPhotoItem(userFull.ProfilePhoto as TLPhoto, user) };
+            Items = new MvxObservableCollection<GalleryItem> { new GalleryProfilePhotoItem(protoService, user.ProfilePhoto) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
-            Initialize(user, userFull.ProfilePhoto.Id);
+            Initialize(user);
         }
 
-        private async void Initialize(TLUser user, long maxId)
+        private async void Initialize(User user)
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var response = await ProtoService.GetUserPhotosAsync(user.ToInputUser(), 0, maxId, 0);
-                if (response.IsSucceeded)
+                var response = await ProtoService.SendAsync(new GetUserProfilePhotos(_userId, 1, 20));
+                if (response is UserProfilePhotos photos)
                 {
-                    if (response.Result is TLPhotosPhotosSlice slice)
-                    {
-                        TotalItems = slice.Count;
-                    }
-                    else
-                    {
-                        TotalItems = response.Result.Photos.Count;
-                    }
+                    TotalItems = photos.TotalCount;
 
-                    foreach (var item in response.Result.Photos.Where(x => x.Id < maxId))
+                    foreach (var item in photos.Photos)
                     {
-                        Items.Add(new GalleryPhotoItem(item as TLPhoto, user));
+                        Items.Add(new GalleryPhotoItem(ProtoService, item));
                     }
                 }
             }
@@ -70,26 +56,14 @@ namespace Unigram.ViewModels.Users
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var last = Items.LastOrDefault() as GalleryPhotoItem;
-                if (last == null)
+                var response = await ProtoService.SendAsync(new GetUserProfilePhotos(_userId, Items.Count, 20));
+                if (response is UserProfilePhotos photos)
                 {
-                    return;
-                }
+                    TotalItems = photos.TotalCount;
 
-                var photo = last.Source as TLPhoto;
-                if (photo == null)
-                {
-                    return;
-                }
-
-                var response = await ProtoService.GetUserPhotosAsync(_peer, 0, photo.Id, 0);
-                if (response.IsSucceeded)
-                {
-                    //Items.AddRange(response.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, _user)));
-
-                    foreach (var item in response.Result.Photos)
+                    foreach (var item in photos.Photos)
                     {
-                        Items.Add(new GalleryPhotoItem(item as TLPhoto, _user));
+                        Items.Add(new GalleryPhotoItem(ProtoService, item));
                     }
                 }
             }
@@ -101,26 +75,26 @@ namespace Unigram.ViewModels.Users
 
         protected override async void DeleteExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureDeletePhoto, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
-            if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryPhotoItem item)
-            {
-                //var response = await ProtoService.UpdateProfilePhotoAsync(new TLInputPhotoEmpty());
-                var response = await ProtoService.DeletePhotosAsync(new TLVector<TLInputPhotoBase> { new TLInputPhoto { Id = item.Photo.Id, AccessHash = item.Photo.AccessHash } });
-                if (response.IsSucceeded)
-                {
-                    var index = Items.IndexOf(item);
-                    if (index < Items.Count - 1)
-                    {
-                        Items.Remove(item);
-                        SelectedItem = Items[index > 0 ? index - 1 : index];
-                        TotalItems--;
-                    }
-                    else
-                    {
-                        NavigationService.GoBack();
-                    }
-                }
-            }
+            //var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureDeletePhoto, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            //if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryPhotoItem item)
+            //{
+            //    //var response = await ProtoService.UpdateProfilePhotoAsync(new TLInputPhotoEmpty());
+            //    var response = await LegacyService.DeletePhotosAsync(new TLVector<TLInputPhotoBase> { new TLInputPhoto { Id = item.Photo.Id, AccessHash = item.Photo.AccessHash } });
+            //    if (response.IsSucceeded)
+            //    {
+            //        var index = Items.IndexOf(item);
+            //        if (index < Items.Count - 1)
+            //        {
+            //            Items.Remove(item);
+            //            SelectedItem = Items[index > 0 ? index - 1 : index];
+            //            TotalItems--;
+            //        }
+            //        else
+            //        {
+            //            NavigationService.GoBack();
+            //        }
+            //    }
+            //}
         }
 
         private TLUser _user;

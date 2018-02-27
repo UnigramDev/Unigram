@@ -5,12 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Messages;
-using Template10.Utils;
+using TdWindows;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Services;
@@ -20,63 +15,56 @@ namespace Unigram.ViewModels
 {
     public class StickerSetViewModel : UnigramViewModelBase
     {
-        private readonly IStickersService _stickersService;
-
-        public StickerSetViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService)
+        public StickerSetViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            _stickersService = stickersService;
-
-            Items = new MvxObservableCollection<TLDocumentBase>();
+            Items = new MvxObservableCollection<Sticker>();
 
             SendCommand = new RelayCommand(SendExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (parameter is TLInputStickerSetBase set)
-            {
-                IsLoading = true;
+            IsLoading = true;
 
-                var response = await ProtoService.GetStickerSetAsync(set);
-                if (response.IsSucceeded)
+            if (parameter is long setId)
+            {
+                var response = await ProtoService.SendAsync(new GetStickerSet(setId));
+                if (response is StickerSet stickerSet)
                 {
                     IsLoading = false;
 
-                    if (_stickersService.IsStickerPackInstalled(response.Result.Set.Id))
-                    {
-                        var existing = _stickersService.GetStickerSetById(response.Result.Set.Id);
-                        if (existing.Set.Hash != response.Result.Set.Hash)
-                        {
-                            StickerSet = response.Result.Set;
-                            Items.ReplaceWith(response.Result.Documents);
+                    StickerSet = stickerSet;
+                    Items.ReplaceWith(stickerSet.Stickers);
 
-                            _stickersService.LoadStickers(response.Result.Set.IsMasks ? StickerType.Mask : StickerType.Image, false, true);
-                        }
-                        else
-                        {
-                            StickerSet = existing.Set;
-                            Items.ReplaceWith(existing.Documents);
-                        }
-                    }
-                    else
-                    {
-                        StickerSet = response.Result.Set;
-                        Items.ReplaceWith(response.Result.Documents);
-                    }
                 }
                 else
                 {
-                    StickerSet = new TLStickerSet { Title = "Sticker pack not found." };
+                    StickerSet = new StickerSet { Title = "Sticker pack not found." };
                     Items.Clear();
+                }
+            }
+            else if (parameter is string name)
+            {
+                var response = await ProtoService.SendAsync(new SearchStickerSet(name));
+                if (response is StickerSet stickerSet)
+                {
+                    IsLoading = false;
 
-                    //IsLoading = false;
+                    StickerSet = stickerSet;
+                    Items.ReplaceWith(stickerSet.Stickers);
+
+                }
+                else
+                {
+                    StickerSet = new StickerSet { Title = "Sticker pack not found." };
+                    Items.Clear();
                 }
             }
         }
 
-        private TLStickerSet _stickerSet = new TLStickerSet();
-        public TLStickerSet StickerSet
+        private StickerSet _stickerSet = new StickerSet();
+        public StickerSet StickerSet
         {
             get
             {
@@ -88,37 +76,29 @@ namespace Unigram.ViewModels
             }
         }
 
-        public MvxObservableCollection<TLDocumentBase> Items { get; private set; }
+        public MvxObservableCollection<Sticker> Items { get; private set; }
 
         public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        private void SendExecute()
         {
             IsLoading = true;
 
-            if (_stickersService.IsStickerPackInstalled(_stickerSet.Id) == false)
+            var set = _stickerSet;
+            if (set == null)
             {
-                var response = await ProtoService.InstallStickerSetAsync(new TLInputStickerSetID { Id = _stickerSet.Id, AccessHash = _stickerSet.AccessHash }, false);
-                if (response.IsSucceeded)
-                {
-                    _stickersService.LoadStickers(_stickerSet.IsMasks ? StickerType.Mask : StickerType.Image, false, true);
+                return;
+            }
 
-                    _stickerSet.IsInstalled = true;
-                    _stickerSet.IsArchived = false;
-                    _stickerSet.RaisePropertyChanged(() => _stickerSet.IsInstalled);
-
-                    NavigationService.GoBack();
-                }
+            if (set.IsInstalled)
+            {
+                ProtoService.Send(new ChangeStickerSet(set.Id, set.IsOfficial, set.IsOfficial));
             }
             else
             {
-                _stickersService.RemoveStickersSet(_stickerSet, _stickerSet.IsOfficial ? 1 : 0, true);
-
-                _stickerSet.IsInstalled = _stickerSet.IsOfficial;
-                _stickerSet.IsArchived = _stickerSet.IsOfficial;
-                _stickerSet.RaisePropertyChanged(() => _stickerSet.IsInstalled);
-
-                NavigationService.GoBack();
+                ProtoService.Send(new ChangeStickerSet(set.Id, true, false));
             }
+
+            NavigationService.GoBack();
         }
     }
 }

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Auth;
 using Unigram.Common;
@@ -16,6 +15,7 @@ using Unigram.Views;
 using Unigram.Views.SignIn;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.SignIn
 {
@@ -25,7 +25,7 @@ namespace Unigram.ViewModels.SignIn
         private string _phoneCode;
         private TLAuthSentCode _sentCode;
 
-        public SignUpViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public SignUpViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -38,7 +38,7 @@ namespace Unigram.ViewModels.SignIn
             {
                 _phoneNumber = param.PhoneNumber;
                 _phoneCode = param.PhoneCode;
-                _sentCode = param.Result;
+                //_sentCode = param.Result;
             }
 
             return Task.CompletedTask;
@@ -90,14 +90,9 @@ namespace Unigram.ViewModels.SignIn
 
             IsLoading = true;
 
-            var response = await ProtoService.SignUpAsync(phoneNumber, phoneCodeHash, _phoneCode, _firstName, _lastName);
+            var response = await LegacyService.SignUpAsync(phoneNumber, phoneCodeHash, _phoneCode, _firstName, _lastName);
             if (response.IsSucceeded)
             {
-                SettingsHelper.IsAuthorized = true;
-                SettingsHelper.UserId = response.Result.User.Id;
-                ProtoService.CurrentUserId = response.Result.User.Id;
-                ProtoService.SetInitState();
-
                 // TODO: maybe ask about notifications?
 
                 NavigationService.Navigate(typeof(MainPage));

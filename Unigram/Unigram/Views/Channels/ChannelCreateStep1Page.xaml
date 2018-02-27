@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Channels.ChannelCreateStep1Page"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -55,7 +55,7 @@
                 TextWrapping="Wrap"
                 Margin="12,8,12,8"
                 Grid.Row="1"/>
-            <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" Height="1" Margin="12,0,0,0" Grid.Row="2"/>
+            <Rectangle Fill="{ThemeResource TelegramSeparatorBrush}" Height="1" Margin="12,0,0,0" Grid.Row="2"/>
 
             <TextBlock
                 Text="{CustomResource DescriptionInfo}"

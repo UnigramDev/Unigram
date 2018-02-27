@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Services.Cache;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
@@ -22,18 +21,18 @@ namespace Unigram.Converters
                 value = string.Empty;
             }
 
-            var config = InMemoryCacheService.Current.GetConfig();
-            if (config == null)
-            {
-                if (shorty)
-                {
-                    return "t.me/" + value;
-                }
+            //var config = InMemoryCacheService.Current.GetConfig();
+            //if (config == null)
+            //{
+            //    if (shorty)
+            //    {
+            //        return "t.me/" + value;
+            //    }
 
-                return "https://t.me/" + value;
-            }
+            //    return "https://t.me/" + value;
+            //}
 
-            var linkPrefix = config.MeUrlPrefix;
+            var linkPrefix = "https://t.me/"; // config.MeUrlPrefix;
             if (linkPrefix.EndsWith("/"))
             {
                 linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);

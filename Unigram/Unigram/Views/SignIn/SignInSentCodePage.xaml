@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.SignIn.SignInSentCodePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -37,7 +37,7 @@
                 Text="{CustomResource YourCode}"
                 Style="{ThemeResource TitleTextBlockStyle}"/>
             <TextBlock
-                common:TextBlockHelper.Markdown="{x:Bind ConvertType(ViewModel.SentCode.Type, ViewModel.PhoneNumber), FallbackValue=''}"
+                common:TextBlockHelper.Markdown="{x:Bind ConvertType(ViewModel.SentCode, ViewModel.PhoneNumber), FallbackValue=''}"
                 Style="{StaticResource BodyTextBlockStyle}"
                 Padding="0,8,0,16"
                 Grid.Row="1"/>
@@ -64,7 +64,7 @@
                     Visibility="Collapsed"/>
 
             <HyperlinkButton Command="{x:Bind ViewModel.ResendCommand}"
-                             Visibility="{x:Bind (Visibility)ViewModel.SentCode.HasNextType}"
+                             Visibility="{x:Bind ViewModel.SentCode.CodeInfo.NextType, Converter={StaticResource NullToVisibilityConverter}}"
                              Content="{CustomResource DidNotGetTheCode}"
                              Grid.Row="6"/>
         </Grid>

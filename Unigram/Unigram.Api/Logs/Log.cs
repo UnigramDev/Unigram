@@ -2,14 +2,12 @@
 using System.Globalization;
 using System.IO;
 using System.Text;
-using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
-using Telegram.Api.Native.Diagnostics;
 using Execute = Telegram.Api.Helpers.Execute;
 
 namespace Telegram.Logs
 {
-    public class Log : ILogger
+    public class Log
     {
         public static bool IsPrivateBeta
         {
@@ -83,26 +81,6 @@ namespace Telegram.Logs
             get { return DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + ".txt"; }
         }
 
-        public static void CopyTo(string fileName, Action<string> callback)
-        {
-            Execute.BeginOnThreadPool(() =>
-            {
-                FileUtils.CopyLog(_fileSyncRoot, DirectoryName, FileName, fileName, IsEnabled);
-
-                callback?.Invoke(fileName);
-            });
-        }
-
-        public static void Clear(Action callback)
-        {
-            Execute.BeginOnThreadPool(() =>
-            {
-                FileUtils.Clear(_fileSyncRoot, DirectoryName);
-
-                callback?.Invoke();
-            });
-        }
-
         public static string Format(string format, params object[] args)
         {
             for (int i = 0; i < args.Length; i++)
@@ -112,21 +90,5 @@ namespace Telegram.Logs
 
             return string.Format(format, args);
         }
-
-        #region ILogger
-
-        void ILogger.Log(LogLevel logLevel, string message)
-        {
-//#if DEBUG
-//            System.Diagnostics.Debug.Write(message);
-//#endif 
-
-//            if (logLevel != LogLevel.Information)
-//            {
-//                Write(message);
-//            }
-        }
-
-        #endregion
     }
 }

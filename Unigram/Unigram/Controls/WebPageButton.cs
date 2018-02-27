@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using TdWindows;
 
 namespace Unigram.Controls
 {
@@ -17,97 +17,94 @@ namespace Unigram.Controls
         protected override void OnApplyTemplate()
         {
             ContentPresenter = (TextBlock)GetTemplateChild("ContentPresenter");
-            OnWebPageChanged(WebPage, null);
 
             base.OnApplyTemplate();
         }
 
         #region WebPage
 
-        public TLWebPageBase WebPage
+        public WebPage WebPage
         {
-            get { return (TLWebPageBase)GetValue(WebPageProperty); }
+            get { return (WebPage)GetValue(WebPageProperty); }
             set { SetValue(WebPageProperty, value); }
         }
 
         public static readonly DependencyProperty WebPageProperty =
-            DependencyProperty.Register("WebPage", typeof(TLWebPageBase), typeof(WebPageButton), new PropertyMetadata(null, OnWebPageChanged));
+            DependencyProperty.Register("WebPage", typeof(WebPage), typeof(WebPageButton), new PropertyMetadata(null, OnWebPageChanged));
 
         private static void OnWebPageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((WebPageButton)d).OnWebPageChanged((TLWebPageBase)e.NewValue, (TLWebPageBase)e.OldValue);
+
         }
 
-        private void OnWebPageChanged(TLWebPageBase newValue, TLWebPageBase oldValue)
+        public void UpdateWebPage(WebPage webPage)
         {
-            if (newValue is TLWebPage webPage)
+            if (webPage == null)
             {
-                var run1 = ContentPresenter?.Inlines[0] as Run;
-                var run2 = ContentPresenter?.Inlines[1] as Run;
-                var run3 = ContentPresenter?.Inlines[2] as Run;
+                Visibility = Visibility.Collapsed;
+                return;
+            }
 
-                if (webPage.HasCachedPage)
-                {
-                    if (webPage.IsInstantGallery())
-                    {
-                        Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        if (run1 != null)
-                        {
-                            run1.Text = run3.Text = "\uE611";
-                            run2.Text = $"  {Strings.Android.InstantView}  ";
-                            run3.Foreground = null;
-                        }
+            var run1 = ContentPresenter?.Inlines[0] as Run;
+            var run2 = ContentPresenter?.Inlines[1] as Run;
+            var run3 = ContentPresenter?.Inlines[2] as Run;
 
-                        Visibility = Visibility.Visible;
-                    }
-                }
-                else if (webPage.HasType && webPage.Type.Equals("telegram_megagroup", StringComparison.OrdinalIgnoreCase))
+            if (webPage.HasInstantView)
+            {
+                //if (webPage.IsInstantGallery())
+                //{
+                //    Visibility = Visibility.Collapsed;
+                //}
+                //else
                 {
                     if (run1 != null)
                     {
-                        run1.Text = run3.Text = string.Empty;
-                        run2.Text = Strings.Android.OpenGroup;
+                        run1.Text = run3.Text = "\uE611";
+                        run2.Text = $"  {Strings.Android.InstantView}  ";
                         run3.Foreground = null;
                     }
 
                     Visibility = Visibility.Visible;
                 }
-                else if (webPage.HasType && webPage.Type.Equals("telegram_channel", StringComparison.OrdinalIgnoreCase))
+            }
+            else if (string.Equals(webPage.Type, "telegram_megagroup", StringComparison.OrdinalIgnoreCase))
+            {
+                if (run1 != null)
                 {
-                    if (run1 != null)
-                    {
-                        run1.Text = run3.Text = string.Empty;
-                        run2.Text = Strings.Android.OpenChannel;
-                        run3.Foreground = null;
-                    }
+                    run1.Text = run3.Text = string.Empty;
+                    run2.Text = Strings.Android.OpenGroup;
+                    run3.Foreground = null;
+                }
 
-                    Visibility = Visibility.Visible;
-                }
-                else if (webPage.HasType && webPage.Type.Equals("telegram_message", StringComparison.OrdinalIgnoreCase))
+                Visibility = Visibility.Visible;
+            }
+            else if (string.Equals(webPage.Type, "telegram_channel", StringComparison.OrdinalIgnoreCase))
+            {
+                if (run1 != null)
                 {
-                    if (run1 != null)
-                    {
-                        run1.Text = run3.Text = string.Empty;
-                        run2.Text = Strings.Android.OpenMessage;
-                        run3.Foreground = null;
-                    }
+                    run1.Text = run3.Text = string.Empty;
+                    run2.Text = Strings.Android.OpenChannel;
+                    run3.Foreground = null;
+                }
 
-                    Visibility = Visibility.Visible;
-                }
-                else
+                Visibility = Visibility.Visible;
+            }
+            else if (string.Equals(webPage.Type, "telegram_message", StringComparison.OrdinalIgnoreCase))
+            {
+                if (run1 != null)
                 {
-                    Visibility = Visibility.Collapsed;
+                    run1.Text = run3.Text = string.Empty;
+                    run2.Text = Strings.Android.OpenMessage;
+                    run3.Foreground = null;
                 }
+
+                Visibility = Visibility.Visible;
             }
             else
             {
                 Visibility = Visibility.Collapsed;
             }
         }
-
         #endregion
     }
 }

@@ -1,58 +1,45 @@
-﻿using System;
-using System.Diagnostics;
+﻿using Microsoft.HockeyApp;
+using Mono.Options;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.HockeyApp;
+using TdWindows;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.Services.Updates;
+using Telegram.Api.TL;
 using Template10.Common;
+using Template10.Services.NavigationService;
+using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Core.Notifications;
+using Unigram.Core.Services;
+using Unigram.Services;
+using Unigram.ViewModels;
+using Unigram.Views;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.UI;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-using Unigram.Views;
-using Unigram.Core.Notifications;
-using Windows.UI.Xaml.Controls;
-using Windows.ApplicationModel.DataTransfer.ShareTarget;
-using Windows.Media.SpeechRecognition;
-using Windows.ApplicationModel.VoiceCommands;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
-using Windows.Networking.PushNotifications;
-using Unigram.Tasks;
-using Windows.UI.Notifications;
-using Windows.Storage;
-using Windows.UI.Popups;
-using Unigram.Common;
-using Windows.Media;
-using System.IO;
-using Template10.Services.NavigationService;
-using Unigram.Views.SignIn;
-using Windows.UI.Core;
-using Unigram.Converters;
-using Windows.Foundation.Metadata;
-using Windows.ApplicationModel.Core;
-using System.Collections;
-using Telegram.Api.TL;
-using System.Collections.Generic;
-using Unigram.Core.Services;
-using Template10.Controls;
-using Windows.Foundation;
 using Windows.ApplicationModel.Contacts;
-using Telegram.Api.Aggregator;
-using Unigram.Controls;
-using Unigram.Views.Users;
-using System.Linq;
-using Telegram.Logs;
-using Windows.Media.Playback;
-using Windows.UI.StartScreen;
-using Windows.System;
+using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.DataTransfer.ShareTarget;
+using Windows.ApplicationModel.VoiceCommands;
+using Windows.Foundation;
+using Windows.Foundation.Metadata;
+using Windows.Media;
+using Windows.Media.Playback;
+using Windows.Media.SpeechRecognition;
+using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.Notifications;
+using Windows.UI.StartScreen;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Resources;
-using Unigram.Services;
 
 namespace Unigram
 {
@@ -72,15 +59,15 @@ namespace Unigram
 
         public UISettings UISettings => _uiSettings;
 
-        public static event TypedEventHandler<CoreDispatcher, AcceleratorKeyEventArgs> AcceleratorKeyActivated;
+        //public ViewModelLocator Locator
+        //{
+        //    get
+        //    {
+        //        return Resources["Locator"] as ViewModelLocator;
+        //    }
+        //}
 
-        public ViewModelLocator Locator
-        {
-            get
-            {
-                return Resources["Locator"] as ViewModelLocator;
-            }
-        }
+        public ViewModelLocator Locator { get; } = new ViewModelLocator();
 
         public static MediaPlayer Playback { get; } = new MediaPlayer();
 
@@ -100,6 +87,12 @@ namespace Unigram
                 RequestedTheme = ApplicationSettings.Current.RequestedTheme == ElementTheme.Dark ? ApplicationTheme.Dark : ApplicationTheme.Light;
             }
 
+#if DEBUG
+            Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en";
+#endif
+
+            Locator.Configure();
+            UnigramContainer.Current.ResolveType<IGenerationService>();
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
 
             InitializeComponent();
@@ -109,14 +102,6 @@ namespace Unigram
 
             m_mediaExtensionManager = new MediaExtensionManager();
             m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
-
-            if (SettingsHelper.SwitchAccount >= 0)
-            {
-                SettingsHelper.SelectedAccount = SettingsHelper.SwitchAccount;
-                SettingsHelper.SwitchAccount = -1;
-            }
-
-            FileUtils.CreateTemporaryFolder();
 
             InactivityHelper.Detected += Inactivity_Detected;
 
@@ -133,7 +118,7 @@ namespace Unigram
 
 #if !DEBUG
 
-            HockeyClient.Current.Configure("7d36a4260af54125bbf6db407911ed3b",
+            HockeyClient.Current.Configure(Constants.HockeyAppId,
                 new TelemetryConfiguration()
                 {
                     EnableDiagnostics = true,
@@ -188,28 +173,6 @@ namespace Unigram
             IsVisible = e.Visible;
             HandleActivated(e.Visible);
 
-            //if (e.Visible)
-            //{
-            //    Log.Write("Window_VisibilityChanged");
-
-            //    Task.Run(() => Locator.LoadStateAndUpdate());
-            //}
-            //else
-            //{
-            //    var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-            //    if (cacheService != null)
-            //    {
-            //        cacheService.TryCommit();
-            //    }
-
-            //    var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-            //    if (updatesService != null)
-            //    {
-            //        updatesService.SaveState();
-            //        updatesService.CancelUpdating();
-            //    }
-            //}
-
             var passcode = UnigramContainer.Current.ResolveType<IPasscodeService>();
             if (passcode != null)
             {
@@ -229,23 +192,26 @@ namespace Unigram
                     }
                 }
             }
+
+#if !DEBUG && !PREVIEW
+            if (e.Visible)
+            {
+                var dispatcher = Window.Current.Dispatcher;
+                Execute.BeginOnThreadPool(async () =>
+                {
+                    await new HockeyAppUpdateService().CheckForUpdatesAsync(Constants.HockeyAppId, dispatcher);
+                });
+            }
+#endif
         }
 
         private void HandleActivated(bool active)
         {
-            var aggregator = UnigramContainer.Current.ResolveType<ITelegramEventAggregator>();
+            var aggregator = UnigramContainer.Current.ResolveType<IEventAggregator>();
             aggregator.Publish(active ? "Window_Activated" : "Window_Deactivated");
 
-            if (active)
-            {
-                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-                protoService.RaiseSendStatus(false);
-            }
-            else
-            {
-                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-                protoService.RaiseSendStatus(true);
-            }
+            var protoService = UnigramContainer.Current.ResolveType<IProtoService>();
+            protoService.Send(new SetOption("online", new OptionValueBoolean(active)));
         }
 
         /////// <summary>
@@ -283,9 +249,15 @@ namespace Unigram
             return navigationFrame;
         }
 
+        protected override INavigationService CreateNavigationService(Frame frame)
+        {
+            return new UnigramNavigationService(UnigramContainer.Current.ResolveType<IProtoService>(), frame);
+        }
+
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
-            Locator.Configure();
+            //Locator.Configure();
+            //UnigramContainer.Current.ResolveType<IGenerationService>();
 
             var passcode = UnigramContainer.Current.ResolveType<IPasscodeService>();
             if (passcode != null && passcode.IsEnabled)
@@ -302,8 +274,6 @@ namespace Unigram
                 Window.Current.Activated += Window_Activated;
                 Window.Current.VisibilityChanged -= Window_VisibilityChanged;
                 Window.Current.VisibilityChanged += Window_VisibilityChanged;
-                Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
-                Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
                 UpdateBars();
                 ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
@@ -318,7 +288,20 @@ namespace Unigram
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            if (SettingsHelper.IsAuthorized)
+            var service = UnigramContainer.Current.ResolveType<IProtoService>();
+
+            var state = service.GetAuthorizationState();
+            if (state == null)
+            {
+                return;
+            }
+
+            CustomXamlResourceLoader.Current = new XamlResourceLoader();
+
+            //var service = UnigramContainer.Current.ResolveType<IProtoService>();
+            //var response = await service.SendAsync(new GetAuthorizationState());
+            //if (response is AuthorizationStateReady)
+            if (state is AuthorizationStateReady)
             {
                 if (args is ShareTargetActivatedEventArgs share)
                 {
@@ -360,10 +343,10 @@ namespace Unigram
                     ShareOperation = share.ShareOperation;
                     DataPackage = package.GetView();
 
-                    var options = new LauncherOptions();
+                    var options = new Windows.System.LauncherOptions();
                     options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
 
-                    await Launcher.LaunchUriAsync(new Uri("tg://"), options);
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri("tg://"), options);
                 }
                 else if (args is VoiceCommandActivatedEventArgs voice)
                 {
@@ -388,7 +371,9 @@ namespace Unigram
                 }
                 else if (args is ContactPanelActivatedEventArgs contact)
                 {
-                    var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+                    WindowContext.GetForCurrentView().SetContactPanel(contact.ContactPanel);
+
+                    var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
                     contact.ContactPanel.HeaderColor = backgroundBrush.Color;
 
                     var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
@@ -412,9 +397,9 @@ namespace Unigram
                             else
                             {
                                 var remote = first.RemoteId;
-                                if (int.TryParse(remote.Substring(1), out int userId))
+                                if (long.TryParse(remote.Substring(1), out long chatId))
                                 {
-                                    NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = userId });
+                                    NavigationService.NavigateToChat(chatId);
                                 }
                                 else
                                 {
@@ -447,6 +432,10 @@ namespace Unigram
                         NavigationService.NavigateToMain(protocol.Uri.ToString());
                     }
                 }
+                //else if (args is CommandLineActivatedEventArgs commandLine && TryParseCommandLine(commandLine, out int id, out bool test))
+                //{
+
+                //}
                 else
                 {
                     Execute.Initialize();
@@ -465,7 +454,7 @@ namespace Unigram
                     }
                 }
             }
-            else
+            else if (state is AuthorizationStateWaitPhoneNumber)
             {
                 Execute.Initialize();
 
@@ -476,8 +465,6 @@ namespace Unigram
             Window.Current.Activated += Window_Activated;
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
-            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
-            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
             UpdateBars();
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
@@ -486,27 +473,48 @@ namespace Unigram
             Theme.Current.Update();
             NotifyThemeChanged();
 
-            Task.Run(() => OnStartSync());
+            var dispatcher = Window.Current.Dispatcher;
+            Task.Run(() => OnStartSync(dispatcher));
             //return Task.CompletedTask;
         }
 
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        private bool TryParseCommandLine(CommandLineActivatedEventArgs args, out int id, out bool test)
         {
-            if (AcceleratorKeyActivated is MulticastDelegate multicast)
+#if !DEBUG
+            if (args.PreviousExecutionState != ApplicationExecutionState.Terminated)
             {
-                var list = multicast.GetInvocationList();
-                for (int i = list.Length - 1; i >= 0; i--)
+                id = 0;
+                test = false;
+                return false;
+            }
+#endif
+
+            try
+            {
+                var v_id = 0;
+                var v_test = false;
+
+                var p = new OptionSet()
                 {
-                    var result = list[i].DynamicInvoke(sender, args);
-                    if (args.Handled)
-                    {
-                        return;
-                    }
-                }
+                    { "i|id=", (int v) => v_id = v },
+                    { "t|test", v => v_test = v != null },
+                };
+
+                var extra = p.Parse(args.Operation.Arguments.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+
+                id = v_id;
+                test = v_test;
+                return true;
+            }
+            catch
+            {
+                id = 0;
+                test = false;
+                return false;
             }
         }
 
-        private async void OnStartSync()
+        private async void OnStartSync(CoreDispatcher dispatcher)
         {
             //#if DEBUG
             await VoIPConnection.Current.ConnectAsync();
@@ -518,24 +526,24 @@ namespace Unigram
             TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
             ToastNotificationManager.History.Clear("App");
 
-            if (SettingsHelper.UserId > 0 && ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2) && JumpList.IsSupported())
-            {
-                var current = await JumpList.LoadCurrentAsync();
-                current.SystemGroupKind = JumpListSystemGroupKind.None;
-                current.Items.Clear();
+            //if (SettingsHelper.UserId > 0 && ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2) && JumpList.IsSupported())
+            //{
+            //    var current = await JumpList.LoadCurrentAsync();
+            //    current.SystemGroupKind = JumpListSystemGroupKind.None;
+            //    current.Items.Clear();
 
-                var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", SettingsHelper.UserId), Strings.Android.SavedMessages);
-                cloud.Logo = new Uri("ms-appx:///Assets/JumpList/SavedMessages/SavedMessages.png");
+            //    var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", SettingsHelper.UserId), Strings.Android.SavedMessages);
+            //    cloud.Logo = new Uri("ms-appx:///Assets/JumpList/SavedMessages/SavedMessages.png");
 
-                current.Items.Add(cloud);
+            //    current.Items.Add(cloud);
 
-                await current.SaveAsync();
-            }
+            //    await current.SaveAsync();
+            //}
 
 #if !DEBUG && !PREVIEW
             Execute.BeginOnThreadPool(async () =>
             {
-                await new AppUpdateService().CheckForUpdatesAsync();
+                await new HockeyAppUpdateService().CheckForUpdatesAsync(Constants.HockeyAppId, dispatcher);
             });
 #endif
 
@@ -555,13 +563,7 @@ namespace Unigram
 
         public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
-            Log.Write("OnResuming");
-
-            if (SettingsHelper.IsAuthorized)
-            {
-                var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-                updatesService.LoadStateAndUpdate(() => { });
-            }
+            Telegram.Logs.Log.Write("OnResuming");
 
             //#if DEBUG
             await VoIPConnection.Current.ConnectAsync();
@@ -572,20 +574,7 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-            if (cacheService != null)
-            {
-                cacheService.TryCommit();
-            }
-
-            var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-            if (updatesService != null)
-            {
-                updatesService.SaveState();
-                updatesService.CancelUpdating();
-            }
-
-            Log.Write("OnSuspendingAsync");
+            Telegram.Logs.Log.Write("OnSuspendingAsync");
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }
@@ -608,14 +597,14 @@ namespace Unigram
             var current = _uiSettings.GetColorValue(UIColorType.Background);
 
             // Apply buttons feedback based on Light or Dark theme
-            if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark || current == Colors.Black)
+            if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark || (ApplicationSettings.Current.CurrentTheme == ElementTheme.Default && current == Colors.Black))
             {
                 background = Color.FromArgb(255, 31, 31, 31);
                 foreground = Colors.White;
                 buttonHover = Color.FromArgb(255, 53, 53, 53);
                 buttonPressed = Color.FromArgb(255, 76, 76, 76);
             }
-            else if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Light || current == Colors.White)
+            else if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Light || (ApplicationSettings.Current.CurrentTheme == ElementTheme.Default && current == Colors.White))
             {
                 background = Color.FromArgb(255, 230, 230, 230);
                 foreground = Colors.Black;
@@ -634,6 +623,7 @@ namespace Unigram
             // Foreground
             titleBar.ForegroundColor = foreground;
             titleBar.ButtonForegroundColor = foreground;
+            titleBar.ButtonHoverForegroundColor = foreground;
 
             // Buttons
             titleBar.ButtonBackgroundColor = background;
@@ -655,7 +645,7 @@ namespace Unigram
 
         //private void Window_Activated(object sender, WindowActivatedEventArgs e)
         //{
-        //    ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrush"]).Color = e.WindowActivationState != CoreWindowActivationState.Deactivated ? ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushBase"]).Color : ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushDeactivated"]).Color;
+        //    ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrush"]).Color = e.WindowActivationState != CoreWindowActivationState.Deactivated ? ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrushBase"]).Color : ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrushDeactivated"]).Color;
         //}
 
         public static void NotifyThemeChanged()
@@ -681,15 +671,78 @@ namespace Unigram
 
     public class AppInMemoryState
     {
-        public IEnumerable<TLMessage> ForwardMessages { get; set; }
-
-        public TLKeyboardButtonSwitchInline SwitchInline { get; set; }
-        public TLUser SwitchInlineBot { get; set; }
+        public InlineKeyboardButtonTypeSwitchInline SwitchInline { get; set; }
+        public User SwitchInlineBot { get; set; }
 
         public string SendMessage { get; set; }
         public bool SendMessageUrl { get; set; }
 
         public int? NavigateToMessage { get; set; }
         public string NavigateToAccessToken { get; set; }
+    }
+
+    public class WindowContext
+    {
+        public WindowContext()
+        {
+            Window.Current.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+            Window.Current.Activated += OnActivated;
+        }
+
+        public CoreWindowActivationState ActivationState { get; private set; }
+
+        public ContactPanel ContactPanel { get; private set; }
+
+        public void SetContactPanel(ContactPanel panel)
+        {
+            ContactPanel = panel;
+        }
+
+        public bool IsContactPanel()
+        {
+            return ContactPanel != null;
+        }
+
+        public event TypedEventHandler<CoreDispatcher, AcceleratorKeyEventArgs> AcceleratorKeyActivated;
+
+        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+            if (AcceleratorKeyActivated is MulticastDelegate multicast)
+            {
+                var list = multicast.GetInvocationList();
+                for (int i = list.Length - 1; i >= 0; i--)
+                {
+                    var result = list[i].DynamicInvoke(sender, args);
+                    if (args.Handled)
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void OnActivated(object sender, WindowActivatedEventArgs e)
+        {
+            ActivationState = e.WindowActivationState;
+        }
+
+
+
+
+
+        private static Dictionary<int, WindowContext> _windowContext = new Dictionary<int, WindowContext>();
+        public static WindowContext GetForCurrentView()
+        {
+            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+            if (_windowContext.TryGetValue(id, out WindowContext value))
+            {
+                return value;
+            }
+
+            var context = new WindowContext();
+            _windowContext[id] = context;
+
+            return context;
+        }
     }
 }

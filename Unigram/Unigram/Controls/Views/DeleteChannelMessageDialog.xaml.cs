@@ -15,8 +15,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Content Dialog item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Controls.Views
 {
     public sealed partial class DeleteChannelMessageDialog : ContentDialog
@@ -29,7 +27,7 @@ namespace Unigram.Controls.Views
             PrimaryButtonText = Strings.Android.OK;
             SecondaryButtonText = Strings.Android.Cancel;
 
-            Message.Text = string.Format(Strings.Android.AreYouSureDeleteMessages, LocaleHelper.Declension("Messages", count));
+            Message.Text = string.Format(Strings.Android.AreYouSureDeleteMessages, Locale.Declension("Messages", count));
             DeleteAllCheck.Content = string.Format(Strings.Android.DeleteAllFrom, fullName ?? string.Empty);
         }
 

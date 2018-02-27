@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 
-namespace Unigram.Core.Models
+namespace Unigram.Models
 {
     public class Country
     {

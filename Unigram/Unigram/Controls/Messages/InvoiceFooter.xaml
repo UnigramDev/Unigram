@@ -1,4 +1,4 @@
-﻿<local:HackedContentPresenter
+<ContentPresenter
     x:Class="Unigram.Controls.Messages.InvoiceFooter"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,10 +8,9 @@
     mc:Ignorable="d"
     CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
     d:DesignHeight="300"
-    d:DesignWidth="400"
-    DataContextChanged="OnDataContextChanged">
+    d:DesignWidth="400">
 
     <TextBlock Style="{StaticResource CaptionTextBlockStyle}">
-        <Run Text="{x:Bind Convert.FormatAmount(ViewModel.TotalAmount, ViewModel.Currency)}" FontWeight="SemiBold"/><Run Text="{x:Bind ConvertLabel(ViewModel.HasReceiptMsgId, ViewModel.IsTest), Mode=OneWay}"/>
+        <Run x:Name="Amount" FontWeight="SemiBold"/><Run x:Name="Label"/>
     </TextBlock>
-</local:HackedContentPresenter>
+</ContentPresenter>

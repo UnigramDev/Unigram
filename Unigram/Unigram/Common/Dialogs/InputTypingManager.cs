@@ -1,41 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Telegram.Api.Extensions;
-using Telegram.Api.TL;
+using TdWindows;
 
 namespace Unigram.Common.Dialogs
 {
     public class InputTypingManager
     {
         private readonly Action _callback;
-        private readonly Action<IList<Tuple<int, TLSendMessageActionBase>>> _typingCallback;
+        private readonly Action<IList<Tuple<int, ChatAction>>> _typingCallback;
 
-        private readonly Dictionary<int, Tuple<DateTime, TLSendMessageActionBase>> _typingUsersCache = new Dictionary<int, Tuple<DateTime, TLSendMessageActionBase>>();
+        private readonly Dictionary<int, Tuple<DateTime, ChatAction>> _typingUsersCache = new Dictionary<int, Tuple<DateTime, ChatAction>>();
 
         private readonly object _typingUsersSyncRoot = new object();
 
         private readonly Timer _typingUsersTimer;
 
-        public InputTypingManager(Action<IList<Tuple<int, TLSendMessageActionBase>>> typingCallback, Action callback)
+        public InputTypingManager(Action<IList<Tuple<int, ChatAction>>> typingCallback, Action callback)
         {
-            _typingUsersTimer = new Timer(new TimerCallback(UpdateTypingUsersCache), null, -1, -1);
+            _typingUsersTimer = new Timer(UpdateTypingUsersCache, null, -1, -1);
             _typingCallback = typingCallback;
             _callback = callback;
         }
 
-        public void AddTypingUser(int userId, TLSendMessageActionBase action)
+        public void AddTypingUser(int userId, ChatAction action)
         {
             var now = DateTime.Now;
             var max = DateTime.MaxValue;
-            var typing = new List<Tuple<int, TLSendMessageActionBase>>();
+            var typing = new List<Tuple<int, ChatAction>>();
 
             lock (_typingUsersSyncRoot)
             {
-                _typingUsersCache[userId] = new Tuple<DateTime, TLSendMessageActionBase>(TillDate(now, action), action);
+                _typingUsersCache[userId] = new Tuple<DateTime, ChatAction>(TillDate(now, action), action);
 
                 foreach (var current in _typingUsersCache)
                 {
@@ -46,7 +43,7 @@ namespace Unigram.Common.Dialogs
                             max = current.Value.Item1;
                         }
 
-                        typing.Add(new Tuple<int, TLSendMessageActionBase>(current.Key, current.Value.Item2));
+                        typing.Add(new Tuple<int, ChatAction>(current.Key, current.Value.Item2));
                     }
                 }
             }
@@ -63,7 +60,7 @@ namespace Unigram.Common.Dialogs
 
         public void RemoveTypingUser(int userId)
         {
-            var typing = new List<Tuple<int, TLSendMessageActionBase>>();
+            var typing = new List<Tuple<int, ChatAction>>();
 
             lock (_typingUsersSyncRoot)
             {
@@ -73,7 +70,7 @@ namespace Unigram.Common.Dialogs
                 {
                     if (current.Value.Item1 > DateTime.Now)
                     {
-                        typing.Add(new Tuple<int, TLSendMessageActionBase>(current.Key, current.Value.Item2));
+                        typing.Add(new Tuple<int, ChatAction>(current.Key, current.Value.Item2));
                     }
                 }
             }
@@ -113,9 +110,9 @@ namespace Unigram.Common.Dialogs
             }
         }
 
-        private static DateTime TillDate(DateTime now, TLSendMessageActionBase action)
+        private static DateTime TillDate(DateTime now, ChatAction action)
         {
-            var playGameAction = action as TLSendMessageGamePlayAction;
+            var playGameAction = action as ChatActionStartPlayingGame;
             if (playGameAction != null)
             {
                 return now.AddSeconds(10.0);
@@ -128,7 +125,7 @@ namespace Unigram.Common.Dialogs
         {
             var now = DateTime.Now;
             var max = DateTime.MaxValue;
-            var typing = new List<Tuple<int, TLSendMessageActionBase>>();
+            var typing = new List<Tuple<int, ChatAction>>();
 
             lock (_typingUsersSyncRoot)
             {
@@ -152,7 +149,7 @@ namespace Unigram.Common.Dialogs
                             max = _typingUsersCache[current].Item1;
                         }
 
-                        typing.Add(new Tuple<int, TLSendMessageActionBase>(current, _typingUsersCache[current].Item2));
+                        typing.Add(new Tuple<int, ChatAction>(current, _typingUsersCache[current].Item2));
                     }
                 }
             }

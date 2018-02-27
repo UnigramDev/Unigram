@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api.TL;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -74,12 +75,12 @@ namespace Unigram.Controls
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new DialogListViewItem(this);
+            return new ChatListViewItem(null);
         }
 
         #region Drag & Drop
 
-        private ObservableCollection<TLDialog> _rows;
+        private ObservableCollection<Chat> _rows;
         private ListViewItem _currentContainer;
         private object _currentItem;
         private int _currentIndex;
@@ -121,7 +122,7 @@ namespace Unigram.Controls
                     source.RemoveAt(_originalIndex);
                     source.Insert(_currentIndex, item);
 
-                    await ViewModel.Dialogs.UpdatePinnedItemsAsync();
+                    //await ViewModel.Dialogs.UpdatePinnedItemsAsync();
                 }
             }
         }
@@ -171,7 +172,7 @@ namespace Unigram.Controls
                     else if (delta > 0 && indexDelta > 0.5) drag = _currentIndex < original ? -1 : 0;
 
                     _rows.Move(index, original + drag);
-                    _currentIndex = _rows.IndexOf(_currentItem as TLDialog);
+                    _currentIndex = _rows.IndexOf(_currentItem as Chat);
 
                     var anim = drag == 1 ? container.ActualHeight : drag == -1 ? -container.ActualHeight : 0;
                     var visual = ElementCompositionPreview.GetElementVisual((ListViewItemPresenter)VisualTreeHelper.GetChild(container, 0));
@@ -201,7 +202,7 @@ namespace Unigram.Controls
 
         private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            var item = e.Items.FirstOrDefault() as TLDialog;
+            var item = e.Items.FirstOrDefault() as Chat;
             if (item != null)
             {
                 if (item.IsPinned == false)
@@ -232,7 +233,7 @@ namespace Unigram.Controls
                     //var translate = _currentContainer.RenderTransform as TranslateTransform;
                     //translate.Y += difference;
 
-                    _rows = new ObservableCollection<TLDialog>(ViewModel.Dialogs.Items.Where(x => x.IsPinned));
+                    _rows = new ObservableCollection<Chat>(ViewModel.Chats.Items.Where(x => x.IsPinned));
                 }
             }
         }

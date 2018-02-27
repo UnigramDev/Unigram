@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Supergroups;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -20,7 +21,7 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class ChannelAdminLogFilterContentView : UserControl
     {
-        public ChannelAdminLogFilterViewModel ViewModel => DataContext as ChannelAdminLogFilterViewModel;
+        public SupergroupEventLogFilterViewModel ViewModel => DataContext as SupergroupEventLogFilterViewModel;
 
         public ChannelAdminLogFilterContentView()
         {

@@ -54,9 +54,13 @@ namespace Unigram.Converters
 
         public static string ConvertDayGrouping(DateTime date)
         {
-            var formatted = new DateTimeFormatter("day month.full", GlobalizationPreferences.Languages).Format(date);
+            var now = DateTime.Now;
 
-            if (date.Year != DateTime.Now.Year)
+            var formatted = new DateTimeFormatter("day month.full", GlobalizationPreferences.Languages).Format(date);
+            var difference = Math.Abs((date.Month - now.Month) + 12 * (date.Year - now.Year));
+
+            //if (date.Year != DateTime.Now.Year)
+            if (difference >= 12)
             {
                 formatted += $" {date.Year}";
             }

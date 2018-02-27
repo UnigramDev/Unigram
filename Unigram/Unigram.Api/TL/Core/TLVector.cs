@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Native.TL;
+
 
 namespace Telegram.Api.TL
 {
@@ -25,11 +25,6 @@ namespace Telegram.Api.TL
         {
             _items = new List<T>();
         }
-        public TLVector(TLBinaryReader from)
-        {
-            _items = new List<T>();
-            Read(from);
-        }
         public TLVector(IEnumerable<T> source)
         {
             _items = new List<T>(source);
@@ -42,30 +37,7 @@ namespace Telegram.Api.TL
 
         public int Capacity { get; private set; }
 
-        public override TLType TypeId { get { return TLType.Vector; } }
-
-        public override void Read(TLBinaryReader from)
-        {
-            //var type2 = (TLType)from.ReadUInt32();
-            var count = from.ReadInt32();
-            for (int i = 0; i < count; i++)
-            {
-                _items.Add(TLFactory.Read<T>(from));
-            }
-        }
-
-        public override void Write(TLBinaryWriter to)
-        {
-            var notNull = _items.Where(x => x != null).ToList();
-
-            //to.WriteUInt32(0x1CB5C415);
-            to.WriteInt32(notNull.Count());
-
-            foreach (var item in notNull)
-            {
-                TLFactory.Write<T>(to, item);
-            }
-        }
+        
 
         #region Enumeration
         public T this[int index]

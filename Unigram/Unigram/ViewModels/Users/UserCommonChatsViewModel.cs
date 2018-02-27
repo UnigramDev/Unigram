@@ -2,33 +2,34 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
-using Unigram.Common;
+using TdWindows;
+using Unigram.Core.Common;
+using Unigram.Services;
+using Windows.Foundation;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Users
 {
     public class UserCommonChatsViewModel : UnigramViewModelBase
     {
-        public UserCommonChatsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public UserCommonChatsViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (parameter is TLInputUserBase userId)
+            if (parameter is int userId)
             {
-                if (Items != null)
-                {
-                    Items.HasMoreItems = false;
-                    Items.Clear();
-                }
+                //if (Items != null)
+                //{
+                //    Items.HasMoreItems = false;
+                //    Items.Clear();
+                //}
 
                 Items = new ItemsCollection(ProtoService, userId);
                 RaisePropertyChanged(() => Items);
@@ -39,30 +40,49 @@ namespace Unigram.ViewModels.Users
 
         public ItemsCollection Items { get; private set; }
 
-        public class ItemsCollection : IncrementalCollection<TLChatBase>
+        public class ItemsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
         {
-            private readonly IMTProtoService _protoService;
-            private readonly TLInputUserBase _userId;
+            private readonly IProtoService _protoService;
+            private readonly int _userId;
 
-            public ItemsCollection(IMTProtoService protoService, TLInputUserBase userId)
+            public ItemsCollection(IProtoService protoService, int userId)
             {
                 _protoService = protoService;
                 _userId = userId;
             }
 
-            public override async Task<IList<TLChatBase>> LoadDataAsync()
+            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                var offset = Count == 0 ? 0 : this[Count - 1].Id;
-                var limit = Count == 0 ? 50 : 100;
-
-                var response = await _protoService.GetCommonChatsAsync(_userId, offset, limit);
-                if (response.IsSucceeded)
+                return AsyncInfo.Run(async token =>
                 {
-                    return response.Result.Chats;
-                }
+                    var offset = 0L;
 
-                return new TLChatBase[0];
+                    var last = this.LastOrDefault();
+                    if (last != null)
+                    {
+                        offset = last.Id;
+                    }
+
+                    var response = await _protoService.SendAsync(new GetGroupsInCommon(_userId, offset, 20));
+                    if (response is TdWindows.Chats chats)
+                    {
+                        foreach (var id in chats.ChatIds)
+                        {
+                            var chat = _protoService.GetChat(id);
+                            if (chat != null)
+                            {
+                                Add(chat);
+                            }
+                        }
+
+                        return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
+                    }
+
+                    return new LoadMoreItemsResult();
+                });
             }
+
+            public bool HasMoreItems => true;
         }
     }
 }
