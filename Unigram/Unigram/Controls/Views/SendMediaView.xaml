@@ -676,16 +676,27 @@
                 </FlipView.ItemTemplate>
             </local:HeaderFlipView>
 
-            <Border Visibility="{x:Bind SelectedItem.IsAnimatable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#99000000" CornerRadius="18" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12" Grid.Row="1">
-                <controls:GlyphToggleButton UncheckedGlyph="&#xE15D;"
-                                            CheckedGlyph="&#xE198;"
-                                            IsChecked="{Binding SelectedItem.IsMuted, Mode=TwoWay}"
-                                            Style="{StaticResource MuteToggleButtonStyle}"/>
-            </Border>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12" Grid.Row="1">
+                <Border Visibility="{x:Bind SelectedItem.IsAnimatable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#99000000" CornerRadius="18" Margin="0,0,8,0">
+                    <controls:GlyphToggleButton UncheckedGlyph="&#xE906;"
+                                                CheckedGlyph="&#xE906;"
+                                                IsChecked="{Binding SelectedItem.IsMuted, Mode=TwoWay}"
+                                                Style="{StaticResource MuteToggleButtonStyle}"
+                                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                FontSize="18"/>
+                </Border>
+                <Border Background="#99000000" CornerRadius="18">
+                    <controls:GlyphToggleButton UncheckedGlyph="&#xE160;"
+                                                CheckedGlyph="&#xE160;"
+                                                IsChecked="{Binding SelectedItem.IsForceFile, Mode=TwoWay}"
+                                                Style="{StaticResource MuteToggleButtonStyle}"/>
+                </Border>
+            </StackPanel>
 
             <Grid Background="#AA000000" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
@@ -839,7 +850,7 @@
                 <controls:GlyphButton
                     x:Name="TTLSeconds"
                     Click="TTLSeconds_Click"
-                    Glyph="{x:Bind SelectedItem.TTLSeconds, Mode=OneWay}"
+                    Glyph="{x:Bind SelectedItem.Ttl, Mode=OneWay}"
                     Visibility="{x:Bind IsTTLEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
                     Style="{StaticResource SelfDestructButtonStyle}"
