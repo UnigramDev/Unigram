@@ -210,7 +210,7 @@ namespace Unigram.ViewModels.Supergroups
                 if (item.Action is ChatEventDescriptionChanged descriptionChanged)
                 {
                     var text = new FormattedText(descriptionChanged.NewDescription, new TextEntity[0]);
-                    var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.Android.EventLogPreviousGroupDescription, Description = descriptionChanged.OldDescription };
+                    var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousGroupDescription, Description = descriptionChanged.OldDescription };
 
                     return new MessageText(text, webPage);
                 }
@@ -219,7 +219,7 @@ namespace Unigram.ViewModels.Supergroups
                     var link = string.IsNullOrEmpty(usernameChanged.NewUsername) ? string.Empty : MeUrlPrefixConverter.Convert(usernameChanged.NewUsername);
 
                     var text = new FormattedText(link, new[] { new TextEntity(0, link.Length, new TextEntityTypeUrl()) });
-                    var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.Android.EventLogPreviousLink, Description = MeUrlPrefixConverter.Convert(usernameChanged.OldUsername) };
+                    var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousLink, Description = MeUrlPrefixConverter.Convert(usernameChanged.OldUsername) };
 
                     return new MessageText(text, webPage);
                 }
@@ -315,10 +315,10 @@ namespace Unigram.ViewModels.Supergroups
                         }
                         else
                         {
-                            bannedDuration = Strings.Android.UserRestrictionsUntilForever;
+                            bannedDuration = Strings.Resources.UserRestrictionsUntilForever;
                         }
 
-                        var str = Strings.Android.EventLogRestrictedUntil;
+                        var str = Strings.Resources.EventLogRestrictedUntil;
                         rights = new StringBuilder(String.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")), bannedDuration));
                         var added = false;
                         if (o == null)
@@ -344,23 +344,23 @@ namespace Unigram.ViewModels.Supergroups
 
                         //if (o.IsViewMessages != n.IsViewMessages)
                         //{
-                        //    AppendChange(n.IsViewMessages, Strings.Android.EventLogRestrictedReadMessages);
+                        //    AppendChange(n.IsViewMessages, Strings.Resources.EventLogRestrictedReadMessages);
                         //}
                         if (o.CanSendMessages != n.CanSendMessages)
                         {
-                            AppendChange(n.CanSendMessages, Strings.Android.EventLogRestrictedSendMessages);
+                            AppendChange(n.CanSendMessages, Strings.Resources.EventLogRestrictedSendMessages);
                         }
                         if (o.CanSendOtherMessages != n.CanSendOtherMessages)
                         {
-                            AppendChange(n.CanSendOtherMessages, Strings.Android.EventLogRestrictedSendStickers);
+                            AppendChange(n.CanSendOtherMessages, Strings.Resources.EventLogRestrictedSendStickers);
                         }
                         if (o.CanSendMediaMessages != n.CanSendMediaMessages)
                         {
-                            AppendChange(n.CanSendMediaMessages, Strings.Android.EventLogRestrictedSendMedia);
+                            AppendChange(n.CanSendMediaMessages, Strings.Resources.EventLogRestrictedSendMedia);
                         }
                         if (o.CanAddWebPagePreviews != n.CanAddWebPagePreviews)
                         {
-                            AppendChange(n.CanAddWebPagePreviews, Strings.Android.EventLogRestrictedSendEmbed);
+                            AppendChange(n.CanAddWebPagePreviews, Strings.Resources.EventLogRestrictedSendEmbed);
                         }
 
                         text = rights.ToString();
@@ -370,11 +370,11 @@ namespace Unigram.ViewModels.Supergroups
                         String str;
                         if (o == null || memberRestricted.NewStatus is ChatMemberStatusBanned)
                         {
-                            str = Strings.Android.EventLogChannelRestricted;
+                            str = Strings.Resources.EventLogChannelRestricted;
                         }
                         else
                         {
-                            str = Strings.Android.EventLogChannelUnrestricted;
+                            str = Strings.Resources.EventLogChannelUnrestricted;
                         }
 
                         text = String.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")));
@@ -387,7 +387,7 @@ namespace Unigram.ViewModels.Supergroups
                     var entities = new List<TextEntity>();
 
                     var whoUser = _protoService.GetUser(memberPromoted.UserId);
-                    var str = Strings.Android.EventLogPromoted;
+                    var str = Strings.Resources.EventLogPromoted;
                     var userName = GetUserName(whoUser, entities, str.IndexOf("{0}"));
                     var builder = new StringBuilder(string.Format(str, userName));
                     var added = false;
@@ -427,44 +427,44 @@ namespace Unigram.ViewModels.Supergroups
 
                     if (o.CanChangeInfo != n.CanChangeInfo)
                     {
-                        AppendChange(n.CanChangeInfo, _channel ? Strings.Android.EventLogPromotedChangeChannelInfo : Strings.Android.EventLogPromotedChangeGroupInfo);
+                        AppendChange(n.CanChangeInfo, _channel ? Strings.Resources.EventLogPromotedChangeChannelInfo : Strings.Resources.EventLogPromotedChangeGroupInfo);
                     }
 
                     if (_channel)
                     {
                         if (o.CanPostMessages != n.CanPostMessages)
                         {
-                            AppendChange(n.CanPostMessages, Strings.Android.EventLogPromotedPostMessages);
+                            AppendChange(n.CanPostMessages, Strings.Resources.EventLogPromotedPostMessages);
                         }
                         if (o.CanEditMessages != n.CanEditMessages)
                         {
-                            AppendChange(n.CanEditMessages, Strings.Android.EventLogPromotedEditMessages);
+                            AppendChange(n.CanEditMessages, Strings.Resources.EventLogPromotedEditMessages);
                         }
                     }
                     if (o.CanDeleteMessages != n.CanDeleteMessages)
                     {
-                        AppendChange(n.CanDeleteMessages, Strings.Android.EventLogPromotedDeleteMessages);
+                        AppendChange(n.CanDeleteMessages, Strings.Resources.EventLogPromotedDeleteMessages);
                     }
                     if (o.CanPromoteMembers != n.CanPromoteMembers)
                     {
-                        AppendChange(n.CanPromoteMembers, Strings.Android.EventLogPromotedAddAdmins);
+                        AppendChange(n.CanPromoteMembers, Strings.Resources.EventLogPromotedAddAdmins);
                     }
                     if (!_channel)
                     {
                         if (o.CanRestrictMembers != n.CanRestrictMembers)
                         {
-                            AppendChange(n.CanRestrictMembers, Strings.Android.EventLogPromotedBanUsers);
+                            AppendChange(n.CanRestrictMembers, Strings.Resources.EventLogPromotedBanUsers);
                         }
                     }
                     if (o.CanInviteUsers != n.CanInviteUsers)
                     {
-                        AppendChange(n.CanInviteUsers, Strings.Android.EventLogPromotedAddUsers);
+                        AppendChange(n.CanInviteUsers, Strings.Resources.EventLogPromotedAddUsers);
                     }
                     if (!_channel)
                     {
                         if (o.CanPinMessages != n.CanPinMessages)
                         {
-                            AppendChange(n.CanPinMessages, Strings.Android.EventLogPromotedPinMessages);
+                            AppendChange(n.CanPinMessages, Strings.Resources.EventLogPromotedPinMessages);
                         }
                     }
 

@@ -88,17 +88,17 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> DialogDeleteCommand { get; }
         private async void DialogDeleteExecute(Chat chat)
         {
-            var message = Strings.Android.AreYouSureDeleteAndExit;
+            var message = Strings.Resources.AreYouSureDeleteAndExit;
             if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
-                message = Strings.Android.AreYouSureDeleteThisChat;
+                message = Strings.Resources.AreYouSureDeleteThisChat;
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
-                message = super.IsChannel ? Strings.Android.ChannelLeaveAlert : Strings.Android.MegaLeaveAlert;
+                message = super.IsChannel ? Strings.Resources.ChannelLeaveAlert : Strings.Resources.MegaLeaveAlert;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 if (chat.Type is ChatTypeSecret secret)
@@ -117,7 +117,7 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> DialogClearCommand { get; }
         private async void DialogClearExecute(Chat chat)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureClearHistory, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistory, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 ProtoService.Send(new DeleteChatHistory(chat.Id, false));
@@ -127,7 +127,7 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> DialogDeleteAndStopCommand { get; }
         private async void DialogDeleteAndStopExecute(Chat chat)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureDeleteThisChat, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureDeleteThisChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary && chat.Type is ChatTypePrivate privata)
             {
                 ProtoService.Send(new BlockUser(privata.UserId));
@@ -335,8 +335,8 @@ namespace Unigram.ViewModels
                 _query = query;
 
                 _local = new KeyedList<string, object>(null as string);
-                _remote = new KeyedList<string, object>(Strings.Android.GlobalSearch);
-                _messages = new KeyedList<string, object>(Strings.Android.SearchMessages);
+                _remote = new KeyedList<string, object>(Strings.Resources.GlobalSearch);
+                _messages = new KeyedList<string, object>(Strings.Resources.SearchMessages);
 
                 Add(_local);
                 Add(_remote);

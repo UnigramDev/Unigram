@@ -38,7 +38,7 @@ namespace Unigram.Controls
 
         private string ConvertOf(int index, int count)
         {
-            return string.Format(Strings.Android.Of, index + 1, count);
+            return string.Format(Strings.Resources.Of, index + 1, count);
         }
 
         #endregion

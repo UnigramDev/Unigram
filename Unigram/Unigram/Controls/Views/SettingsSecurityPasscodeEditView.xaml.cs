@@ -27,9 +27,9 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
 
-            Title = Strings.Android.PasscodePIN;
-            PrimaryButtonText = Strings.Android.OK;
-            SecondaryButtonText = Strings.Android.Cancel;
+            Title = Strings.Resources.PasscodePIN;
+            PrimaryButtonText = Strings.Resources.OK;
+            SecondaryButtonText = Strings.Resources.Cancel;
         }
 
         public string Passcode { get; private set; }

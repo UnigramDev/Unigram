@@ -17,11 +17,11 @@ namespace Unigram.Converters
             switch (member.Status)
             {
                 case ChatMemberStatusAdministrator administrator:
-                    return string.Format(Strings.Android.EditAdminPromotedBy, protoService.GetUser(member.InviterUserId).GetFullName());
+                    return string.Format(Strings.Resources.EditAdminPromotedBy, protoService.GetUser(member.InviterUserId).GetFullName());
                 case ChatMemberStatusRestricted restricted:
-                    return string.Format(Strings.Android.UserRestrictionsBy, protoService.GetUser(member.InviterUserId).GetFullName());
+                    return string.Format(Strings.Resources.UserRestrictionsBy, protoService.GetUser(member.InviterUserId).GetFullName());
                 case ChatMemberStatusBanned banned:
-                    return string.Format(Strings.Android.UserRestrictionsBy, protoService.GetUser(member.InviterUserId).GetFullName());
+                    return string.Format(Strings.Resources.UserRestrictionsBy, protoService.GetUser(member.InviterUserId).GetFullName());
                 default:
                     return LastSeenConverter.GetLabel(protoService.GetUser(member.UserId), false);
             }

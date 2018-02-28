@@ -67,10 +67,10 @@ namespace Unigram.ViewModels.Settings
             stack.Children.Add(new RadioButton { Tag = 1 * 60 * 60, Content = Locale.FormatAutoLock(1 * 60 * 60), IsChecked = timeout == 1 * 60 * 60 });
             stack.Children.Add(new RadioButton { Tag = 5 * 60 * 60, Content = Locale.FormatAutoLock(5 * 60 * 60), IsChecked = timeout == 5 * 60 * 60 });
 
-            dialog.Title = Strings.Android.AutoLock;
+            dialog.Title = Strings.Resources.AutoLock;
             dialog.Content = stack;
-            dialog.PrimaryButtonText = Strings.Android.OK;
-            dialog.SecondaryButtonText = Strings.Android.Cancel;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)

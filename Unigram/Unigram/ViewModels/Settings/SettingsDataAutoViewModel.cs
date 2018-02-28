@@ -26,16 +26,16 @@ namespace Unigram.ViewModels.Settings
                 _type = type;
 
                 Title = type == AutoDownloadType.Photos
-                    ? Strings.Android.LocalPhotoCache
+                    ? Strings.Resources.LocalPhotoCache
                     : type == AutoDownloadType.Videos
-                    ? Strings.Android.LocalVideoCache
+                    ? Strings.Resources.LocalVideoCache
                     : type == AutoDownloadType.Documents
-                    ? Strings.Android.FilesDataUsage
+                    ? Strings.Resources.FilesDataUsage
                     : type == AutoDownloadType.VideoNotes
-                    ? Strings.Android.VideoMessagesAutodownload
+                    ? Strings.Resources.VideoMessagesAutodownload
                     : type == AutoDownloadType.VoiceNotes
-                    ? Strings.Android.AudioAutodownload
-                    : Strings.Android.LocalGifCache;
+                    ? Strings.Resources.AudioAutodownload
+                    : Strings.Resources.LocalGifCache;
 
                 var preferences = ProtoService.Preferences;
                 var mode = type == AutoDownloadType.Photos

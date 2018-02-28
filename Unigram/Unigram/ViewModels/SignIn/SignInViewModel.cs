@@ -162,7 +162,7 @@ namespace Unigram.ViewModels.SignIn
                 }
                 else if (error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Android.PhoneNumberFlood, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.PhoneNumberFlood, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 //else if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_BANNED))
                 //{
@@ -170,19 +170,19 @@ namespace Unigram.ViewModels.SignIn
                 //}
                 else if (error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Android.InvalidCode, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Android.CodeExpired, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.Message.StartsWith("FLOOD_WAIT"))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Android.FloodWait, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.Code != -1000)
                 {
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
         }
@@ -203,10 +203,10 @@ namespace Unigram.ViewModels.SignIn
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                var server = SettingsHelper.ProxyServer = dialog.Server;
+                var server = SettingsHelper.ProxyServer = dialog.Server ?? string.Empty;
                 var port = SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
-                var username = SettingsHelper.ProxyUsername = dialog.Username;
-                var password = SettingsHelper.ProxyPassword = dialog.Password;
+                var username = SettingsHelper.ProxyUsername = dialog.Username ?? string.Empty;
+                var password = SettingsHelper.ProxyPassword = dialog.Password ?? string.Empty;
                 var newValue = SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
                 SettingsHelper.IsCallsProxyEnabled = dialog.IsCallsProxyEnabled;
 

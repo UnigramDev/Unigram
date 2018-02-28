@@ -95,11 +95,11 @@ namespace Unigram.ViewModels.Settings
             }
 
             var dialog = new TLMessageDialog();
-            dialog.Title = Strings.Android.AppName;
-            dialog.Message = string.Format(Strings.Android.TerminateWebSessionQuestion, session.DomainName);
-            dialog.PrimaryButtonText = Strings.Android.OK;
-            dialog.SecondaryButtonText = Strings.Android.Cancel;
-            dialog.CheckBoxLabel = string.Format(Strings.Android.TerminateWebSessionStop, bot.FirstName);
+            dialog.Title = Strings.Resources.AppName;
+            dialog.Message = string.Format(Strings.Resources.TerminateWebSessionQuestion, session.DomainName);
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+            dialog.CheckBoxLabel = string.Format(Strings.Resources.TerminateWebSessionStop, bot.FirstName);
 
             var terminate = await dialog.ShowQueuedAsync();
             if (terminate == ContentDialogResult.Primary)
@@ -121,7 +121,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand TerminateOthersCommand { get; }
         private async void TerminateOtherExecute()
         {
-            var terminate = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureWebSessions, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var terminate = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureWebSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.SendAsync(new DisconnectAllWebsites());

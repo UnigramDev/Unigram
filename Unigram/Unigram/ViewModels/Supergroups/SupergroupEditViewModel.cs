@@ -437,10 +437,10 @@ namespace Unigram.ViewModels.Supergroups
                 }
 
                 var dialog = new TLMessageDialog();
-                dialog.Title = Strings.Android.AppName;
-                dialog.Message = string.Format(Strings.Android.RevokeLinkAlert, supergroup.Username, chat.Title);
-                dialog.PrimaryButtonText = Strings.Android.RevokeButton;
-                dialog.SecondaryButtonText = Strings.Android.Cancel;
+                dialog.Title = Strings.Resources.AppName;
+                dialog.Message = string.Format(Strings.Resources.RevokeLinkAlert, supergroup.Username, chat.Title);
+                dialog.PrimaryButtonText = Strings.Resources.RevokeButton;
+                dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
@@ -466,8 +466,8 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup super)
             {
-                var message = super.IsChannel ? Strings.Android.ChannelDeleteAlert : Strings.Android.MegaDeleteAlert;
-                var confirm = await TLMessageDialog.ShowAsync(message, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                var message = super.IsChannel ? Strings.Resources.ChannelDeleteAlert : Strings.Resources.MegaDeleteAlert;
+                var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var response = await ProtoService.SendAsync(new DeleteSupergroup(super.SupergroupId));
@@ -562,7 +562,7 @@ namespace Unigram.ViewModels.Supergroups
                     {
                         IsLoading = false;
                         IsAvailable = false;
-                        ErrorMessage = Strings.Android.UsernameInUse;
+                        ErrorMessage = Strings.Resources.UsernameInUse;
                     }
                 }
                 else if (response is Error error)
@@ -571,13 +571,13 @@ namespace Unigram.ViewModels.Supergroups
                     {
                         IsLoading = false;
                         IsAvailable = false;
-                        ErrorMessage = Strings.Android.UsernameInvalid;
+                        ErrorMessage = Strings.Resources.UsernameInvalid;
                     }
                     else if (error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
                     {
                         IsLoading = false;
                         IsAvailable = false;
-                        ErrorMessage = Strings.Android.UsernameInUse;
+                        ErrorMessage = Strings.Resources.UsernameInUse;
                     }
                     else if (error.TypeEquals(TLErrorType.USERNAME_NOT_OCCUPIED))
                     {
@@ -608,15 +608,15 @@ namespace Unigram.ViewModels.Supergroups
                 }
                 else if (_username.Length < 5)
                 {
-                    ErrorMessage = Strings.Android.UsernameInvalidShort;
+                    ErrorMessage = Strings.Resources.UsernameInvalidShort;
                 }
                 else if (_username.Length > 32)
                 {
-                    ErrorMessage = Strings.Android.UsernameInvalidLong;
+                    ErrorMessage = Strings.Resources.UsernameInvalidLong;
                 }
                 else
                 {
-                    ErrorMessage = Strings.Android.UsernameInvalid;
+                    ErrorMessage = Strings.Resources.UsernameInvalid;
                 }
             }
             else

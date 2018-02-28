@@ -38,13 +38,13 @@ namespace Unigram.ViewModels.Dialogs
         {
             _favoriteSet = new StickerSetViewModel(new StickerSetInfo
             {
-                Title = Strings.Android.FavoriteStickers,
+                Title = Strings.Resources.FavoriteStickers,
                 Name = "tg/favedStickers"
             });
 
             _recentSet = new StickerSetViewModel(new StickerSetInfo
             {
-                Title = Strings.Android.RecentStickers,
+                Title = Strings.Resources.RecentStickers,
                 Name = "tg/recentlyUsed"
             });
 
@@ -52,7 +52,7 @@ namespace Unigram.ViewModels.Dialogs
             //{
             //    Set = new TLStickerSet
             //    {
-            //        Title = Strings.Android.GroupStickers,
+            //        Title = Strings.Resources.GroupStickers,
             //        ShortName = "tg/groupStickers",
             //    },
             //};

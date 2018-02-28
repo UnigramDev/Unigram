@@ -168,7 +168,7 @@ namespace Unigram.Controls.Messages
             {
                 if (admin != null && !message.IsOutgoing && message.Delegate != null && message.Delegate.IsAdmin(message.SenderUserId))
                 {
-                    paragraph.Inlines.Add(new Run { Text = " " + Strings.Android.ChatAdmin, Foreground = null });
+                    paragraph.Inlines.Add(new Run { Text = " " + Strings.Resources.ChatAdmin, Foreground = null });
                 }
             }
 
@@ -179,9 +179,9 @@ namespace Unigram.Controls.Messages
                 if (paragraph.Inlines.Count > 0)
                     paragraph.Inlines.Add(new LineBreak());
 
-                paragraph.Inlines.Add(new Run { Text = Strings.Android.ForwardedMessage, FontWeight = FontWeights.Normal });
+                paragraph.Inlines.Add(new Run { Text = Strings.Resources.ForwardedMessage, FontWeight = FontWeights.Normal });
                 paragraph.Inlines.Add(new LineBreak());
-                paragraph.Inlines.Add(new Run { Text = Strings.Android.From + " ", FontWeight = FontWeights.Normal });
+                paragraph.Inlines.Add(new Run { Text = Strings.Resources.From + " ", FontWeight = FontWeights.Normal });
 
                 var title = string.Empty;
                 if (message.ForwardInfo is MessageForwardedFromUser fromUser)
@@ -580,7 +580,7 @@ namespace Unigram.Controls.Messages
             }
             else if (message.Content is MessageUnsupported unsupported)
             {
-                GetEntities(message, Strings.Android.UnsupportedMedia);
+                GetEntities(message, Strings.Resources.UnsupportedMedia);
                 result = true;
             }
             else if (message.Content is MessageVenue venue)
@@ -706,6 +706,11 @@ namespace Unigram.Controls.Messages
             if (text.Length > previous)
             {
                 span.Inlines.Add(new Run { Text = text.Substring(previous) });
+            }
+
+            if (MessageHelper.IsAnyCharacterRightToLeft(text))
+            {
+                span.Inlines.Add(new LineBreak());
             }
 
             return true;

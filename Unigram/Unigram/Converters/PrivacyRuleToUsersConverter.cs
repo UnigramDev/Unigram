@@ -18,7 +18,7 @@ namespace Unigram.Converters
                 return Locale.Declension("Users", count);
             }
 
-            return Strings.Android.EmpryUsersPlaceholder;
+            return Strings.Resources.EmpryUsersPlaceholder;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

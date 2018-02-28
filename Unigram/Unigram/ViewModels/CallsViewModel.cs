@@ -116,7 +116,7 @@ namespace Unigram.ViewModels
         public RelayCommand<TLCallGroup> CallDeleteCommand { get; }
         private async void CallDeleteExecute(TLCallGroup group)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ConfirmDeleteCallLog, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ConfirmDeleteCallLog, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -220,7 +220,7 @@ namespace Unigram.ViewModels
         {
             if (IsFailed)
             {
-                return Strings.Android.CallMessageIncomingMissed;
+                return Strings.Resources.CallMessageIncomingMissed;
             }
 
             var finalType = string.Empty;
@@ -291,13 +291,13 @@ namespace Unigram.ViewModels
             switch (type)
             {
                 case TLCallDisplayType.Outgoing:
-                    return Strings.Android.CallMessageOutgoing;
+                    return Strings.Resources.CallMessageOutgoing;
                 case TLCallDisplayType.Incoming:
-                    return Strings.Android.CallMessageIncoming;
+                    return Strings.Resources.CallMessageIncoming;
                 case TLCallDisplayType.Cancelled:
-                    return Strings.Android.CallMessageOutgoingMissed;
+                    return Strings.Resources.CallMessageOutgoingMissed;
                 case TLCallDisplayType.Missed:
-                    return Strings.Android.CallMessageIncomingMissed;
+                    return Strings.Resources.CallMessageIncomingMissed;
                 default:
                     return null;
             }

@@ -15,21 +15,21 @@ namespace Unigram.Converters
             switch (value)
             {
                 case FileTypeAnimation animation:
-                    return Strings.Android.LocalGifCache;
+                    return Strings.Resources.LocalGifCache;
                 case FileTypeAudio audio:
-                    return Strings.Android.LocalMusicCache;
+                    return Strings.Resources.LocalMusicCache;
                 case FileTypeDocument document:
-                    return Strings.Android.FilesDataUsage;
+                    return Strings.Resources.FilesDataUsage;
                 case FileTypeNone none:
-                    return Strings.Android.TotalDataUsage;
+                    return Strings.Resources.TotalDataUsage;
                 case FileTypePhoto photo:
-                    return Strings.Android.LocalPhotoCache;
+                    return Strings.Resources.LocalPhotoCache;
                 case FileTypeVideo video:
-                    return Strings.Android.LocalVideoCache;
+                    return Strings.Resources.LocalVideoCache;
                 case FileTypeVideoNote videoNote:
-                    return Strings.Android.VideoMessagesAutodownload;
+                    return Strings.Resources.VideoMessagesAutodownload;
                 case FileTypeVoiceNote voiceNote:
-                    return Strings.Android.AudioAutodownload;
+                    return Strings.Resources.AudioAutodownload;
                 case FileTypeProfilePhoto profilePhoto:
                     return "Profile photos";
                 case FileTypeSticker sticker:

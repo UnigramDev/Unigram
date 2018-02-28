@@ -30,6 +30,7 @@ using Windows.Foundation;
 using Windows.UI.Notifications;
 using Windows.UI.StartScreen;
 using Windows.UI.Text;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -1265,6 +1266,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
+#if !DEBUG
+            if (chat.Type is ChatTypeSecret)
+            {
+                ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = false;
+            }
+#endif
+
             Chat = chat;
             SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
 
@@ -1424,6 +1432,13 @@ namespace Unigram.ViewModels
             {
                 return Task.CompletedTask;
             }
+
+#if !DEBUG
+            if (chat.Type is ChatTypeSecret)
+            {
+                ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = true;
+            }
+#endif
 
             ProtoService.Send(new CloseChat(chat.Id));
 
@@ -2026,17 +2041,17 @@ namespace Unigram.ViewModels
 
             if (IsReportSpam)
             {
-                var message = Strings.Android.ReportSpamAlert;
+                var message = Strings.Resources.ReportSpamAlert;
                 if (chat.Type is ChatTypeSupergroup supergroup)
                 {
-                    message = supergroup.IsChannel ? Strings.Android.ReportSpamAlertChannel : Strings.Android.ReportSpamAlertGroup;
+                    message = supergroup.IsChannel ? Strings.Resources.ReportSpamAlertChannel : Strings.Resources.ReportSpamAlertGroup;
                 }
                 else if (chat.Type is ChatTypeBasicGroup)
                 {
-                    message = Strings.Android.ReportSpamAlertGroup;
+                    message = Strings.Resources.ReportSpamAlertGroup;
                 }
 
-                var confirm = await TLMessageDialog.ShowAsync(message, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -2086,17 +2101,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var message = Strings.Android.AreYouSureDeleteAndExit;
+            var message = Strings.Resources.AreYouSureDeleteAndExit;
             if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
-                message = Strings.Android.AreYouSureDeleteThisChat;
+                message = Strings.Resources.AreYouSureDeleteThisChat;
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
-                message = super.IsChannel ? Strings.Android.ChannelLeaveAlert : Strings.Android.MegaLeaveAlert;
+                message = super.IsChannel ? Strings.Resources.ChannelLeaveAlert : Strings.Resources.MegaLeaveAlert;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 if (chat.Type is ChatTypeSecret secret)
@@ -2125,7 +2140,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureClearHistory, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistory, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 ProtoService.Send(new DeleteChatHistory(chat.Id, false));
@@ -2187,7 +2202,7 @@ namespace Unigram.ViewModels
 
             if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPinMessages))
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Android.UnpinMessageAlert, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     PinnedMessage = null;
@@ -2222,7 +2237,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureUnblockContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -2533,10 +2548,10 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var opt1 = new RadioButton { Content = Strings.Android.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt2 = new RadioButton { Content = Strings.Android.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt3 = new RadioButton { Content = Strings.Android.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt4 = new RadioButton { Content = Strings.Android.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
+            var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
             var stack = new StackPanel();
             stack.Children.Add(opt1);
             stack.Children.Add(opt2);
@@ -2546,11 +2561,11 @@ namespace Unigram.ViewModels
 
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             dialog.Content = stack;
-            dialog.Title = Strings.Android.ReportChat;
+            dialog.Title = Strings.Resources.ReportChat;
             dialog.IsPrimaryButtonEnabled = true;
             dialog.IsSecondaryButtonEnabled = true;
-            dialog.PrimaryButtonText = Strings.Android.OK;
-            dialog.SecondaryButtonText = Strings.Android.Cancel;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -2569,12 +2584,12 @@ namespace Unigram.ViewModels
             if (reason is ChatReportReasonCustom other)
             {
                 var input = new InputDialog();
-                input.Title = Strings.Android.ReportChat;
-                input.PlaceholderText = Strings.Android.ReportChatDescription;
+                input.Title = Strings.Resources.ReportChat;
+                input.PlaceholderText = Strings.Resources.ReportChatDescription;
                 input.IsPrimaryButtonEnabled = true;
                 input.IsSecondaryButtonEnabled = true;
-                input.PrimaryButtonText = Strings.Android.OK;
-                input.SecondaryButtonText = Strings.Android.Cancel;
+                input.PrimaryButtonText = Strings.Resources.OK;
+                input.SecondaryButtonText = Strings.Resources.Cancel;
 
                 var inputResult = await input.ShowQueuedAsync();
                 if (inputResult == ContentDialogResult.Primary)

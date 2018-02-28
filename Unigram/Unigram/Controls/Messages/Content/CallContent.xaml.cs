@@ -41,7 +41,7 @@ namespace Unigram.Controls.Messages.Content
             var outgoing = message.IsOutgoing;
             var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
 
-            TitleLabel.Text = missed ? (outgoing ? Strings.Android.CallMessageOutgoingMissed : Strings.Android.CallMessageIncomingMissed) : (outgoing ? Strings.Android.CallMessageOutgoing : Strings.Android.CallMessageIncoming);
+            TitleLabel.Text = missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming);
             ReasonGlyph.Text = outgoing ? "\uE60B\u00A0" : "\uE60C\u00A0";
             DateLabel.Text = BindConvert.Current.Date(message.Date);
 

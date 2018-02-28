@@ -23,9 +23,9 @@ namespace Unigram.Controls.Views
         {
             this.InitializeComponent();
 
-            Title = Strings.Android.AppName;
-            PrimaryButtonText = Strings.Android.OK;
-            SecondaryButtonText = Strings.Android.Cancel;
+            Title = Strings.Resources.AppName;
+            PrimaryButtonText = Strings.Resources.OK;
+            SecondaryButtonText = Strings.Resources.Cancel;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

@@ -198,8 +198,8 @@ namespace Unigram.ViewModels.BasicGroups
 
             if (chat.Type is ChatTypeBasicGroup basic)
             {
-                var message = Strings.Android.MegaDeleteAlert;
-                var confirm = await TLMessageDialog.ShowAsync(message, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                var message = Strings.Resources.MegaDeleteAlert;
+                var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, ProtoService.GetMyId(), new ChatMemberStatusLeft()));

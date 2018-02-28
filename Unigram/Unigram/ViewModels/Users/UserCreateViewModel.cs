@@ -167,12 +167,12 @@ namespace Unigram.ViewModels.Users
                 }
                 else
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Android.ContactNotRegistered, Strings.Android.AppName, Strings.Android.Invite, Strings.Android.Cancel);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.ContactNotRegistered, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
                 }
             }
             else
             {
-                await TLMessageDialog.ShowAsync(Strings.Android.ContactNotRegistered, Strings.Android.AppName, Strings.Android.Invite, Strings.Android.Cancel);
+                await TLMessageDialog.ShowAsync(Strings.Resources.ContactNotRegistered, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
             }
         }
     }

@@ -245,18 +245,18 @@ namespace Unigram.Controls.Views
             //    }
             //    else if (audio.HasPerformer && !audio.HasTitle)
             //    {
-            //        TitleLabel.Text = Strings.Android.AudioUnknownTitle;
+            //        TitleLabel.Text = Strings.Resources.AudioUnknownTitle;
             //        SubtitleLabel.Text = audio.Performer;
             //    }
             //    else if (audio.HasTitle && !audio.HasPerformer)
             //    {
             //        TitleLabel.Text = audio.Title;
-            //        SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
+            //        SubtitleLabel.Text = Strings.Resources.AudioUnknownArtist;
             //    }
             //    else
             //    {
-            //        TitleLabel.Text = Strings.Android.AudioUnknownTitle;
-            //        SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
+            //        TitleLabel.Text = Strings.Resources.AudioUnknownTitle;
+            //        SubtitleLabel.Text = Strings.Resources.AudioUnknownArtist;
             //    }
 
             //    //DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");

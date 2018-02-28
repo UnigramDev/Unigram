@@ -382,7 +382,7 @@ namespace Unigram.ViewModels
 
                     if (untrust)
                     {
-                        var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.OpenUrlAlert, url), Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                        var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;

@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/12/2017 11:19:05
+// 	Generated: 02/28/2018 14:57:04
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -25,12 +25,12 @@ namespace Unigram.Strings
     using Windows.ApplicationModel.Resources;
     
     
-    public sealed partial class Branding
+    public sealed partial class Additional
     {
         
         private static ResourceLoader resourceLoader;
         
-        static Branding()
+        static Additional()
         {
             string executingAssemblyName;
             executingAssemblyName = Windows.UI.Xaml.Application.Current.GetType().AssemblyQualifiedName;
@@ -38,83 +38,116 @@ namespace Unigram.Strings
             executingAssemblySplit = executingAssemblyName.Split(',');
             executingAssemblyName = executingAssemblySplit[1];
             string currentAssemblyName;
-            currentAssemblyName = typeof(Branding).AssemblyQualifiedName;
+            currentAssemblyName = typeof(Additional).AssemblyQualifiedName;
             string[] currentAssemblySplit;
             currentAssemblySplit = currentAssemblyName.Split(',');
             currentAssemblyName = currentAssemblySplit[1];
             if (executingAssemblyName.Equals(currentAssemblyName))
             {
-                resourceLoader = ResourceLoader.GetForViewIndependentUse("Branding");
+                resourceLoader = ResourceLoader.GetForViewIndependentUse("Additional");
             }
             else
             {
-                resourceLoader = ResourceLoader.GetForViewIndependentUse(currentAssemblyName + "/Branding");
+                resourceLoader = ResourceLoader.GetForViewIndependentUse(currentAssemblyName + "/Additional");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "Unigram"
+        /// Localized resource similar to "About"
         /// </summary>
-        public static string ApplicationDescription
+        public static string About
         {
             get
             {
-                return resourceLoader.GetString("ApplicationDescription");
+                return resourceLoader.GetString("About");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "Unigram (Alpha)"
+        /// Localized resource similar to "Chats"
         /// </summary>
-        public static string ApplicationDisplayName
+        public static string Chats
         {
             get
             {
-                return resourceLoader.GetString("ApplicationDisplayName");
+                return resourceLoader.GetString("Chats");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "Unigram"
+        /// Localized resource similar to "Copy image"
         /// </summary>
-        public static string ApplicationName
+        public static string CopyImage
         {
             get
             {
-                return resourceLoader.GetString("ApplicationName");
+                return resourceLoader.GetString("CopyImage");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "Unigram"
+        /// Localized resource similar to "Deleted message"
         /// </summary>
-        public static string PackageDisplayName
+        public static string DeletedMessage
         {
             get
             {
-                return resourceLoader.GetString("PackageDisplayName");
+                return resourceLoader.GetString("DeletedMessage");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "Unigram, Inc."
+        /// Localized resource similar to "News"
         /// </summary>
-        public static string PublisherDisplayName
+        public static string News
         {
             get
             {
-                return resourceLoader.GetString("PublisherDisplayName");
+                return resourceLoader.GetString("News");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "Telegram"
+        /// Localized resource similar to "original"
         /// </summary>
-        public static string ServiceName
+        public static string OriginalMessage
         {
             get
             {
-                return resourceLoader.GetString("ServiceName");
+                return resourceLoader.GetString("OriginalMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save as..."
+        /// </summary>
+        public static string SaveAs
+        {
+            get
+            {
+                return resourceLoader.GetString("SaveAs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select"
+        /// </summary>
+        public static string Select
+        {
+            get
+            {
+                return resourceLoader.GetString("Select");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unread Messages"
+        /// </summary>
+        public static string UnreadMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("UnreadMessages");
             }
         }
     }

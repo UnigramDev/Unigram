@@ -23,9 +23,9 @@ namespace Unigram.Controls.Views
 
             FieldAbout.Text = bio;
 
-            Title = Strings.Android.UserBio;
-            PrimaryButtonText = Strings.Android.OK;
-            SecondaryButtonText = Strings.Android.Cancel;
+            Title = Strings.Resources.UserBio;
+            PrimaryButtonText = Strings.Resources.OK;
+            SecondaryButtonText = Strings.Resources.Cancel;
         }
 
         public string About

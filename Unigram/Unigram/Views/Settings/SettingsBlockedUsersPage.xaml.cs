@@ -61,7 +61,7 @@ namespace Unigram.Views.Settings
             else if (args.Phase == 1)
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = string.IsNullOrEmpty(user.PhoneNumber) ? Strings.Android.NumberUnknown : PhoneNumber.Format(user.PhoneNumber);
+                subtitle.Text = string.IsNullOrEmpty(user.PhoneNumber) ? Strings.Resources.NumberUnknown : PhoneNumber.Format(user.PhoneNumber);
             }
             else if (args.Phase == 2)
             {
@@ -84,7 +84,7 @@ namespace Unigram.Views.Settings
             var element = sender as FrameworkElement;
             var user = element.Tag as User;
 
-            flyout.Items.Add(new MenuFlyoutItem { Text = Strings.Android.Unblock, Command = ViewModel.UnblockCommand, CommandParameter = user });
+            flyout.Items.Add(new MenuFlyoutItem { Text = Strings.Resources.Unblock, Command = ViewModel.UnblockCommand, CommandParameter = user });
 
             if (args.TryGetPosition(sender, out Point point))
             {

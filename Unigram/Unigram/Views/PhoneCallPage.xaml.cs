@@ -236,7 +236,7 @@ namespace Unigram.Views
                 }
 
                 FromLabel.Text = user.FullName;
-                DescriptionLabel.Text = string.Format(Strings.Android.CallEmojiKeyTooltip, user.FirstName);
+                DescriptionLabel.Text = string.Format(Strings.Resources.CallEmojiKeyTooltip, user.FirstName);
             }
 
             if (tuple.Item4.Length > 0)
@@ -258,26 +258,26 @@ namespace Unigram.Views
             switch (state)
             {
                 case TLPhoneCallState.WaitingIncoming:
-                    return Strings.Android.VoipIncoming;
+                    return Strings.Resources.VoipIncoming;
                 case TLPhoneCallState.WaitInit:
                 case TLPhoneCallState.WaitInitAck:
-                    return Strings.Android.VoipConnecting;
+                    return Strings.Resources.VoipConnecting;
                 case TLPhoneCallState.ExchangingKeys:
-                    return Strings.Android.VoipExchangingKeys;
+                    return Strings.Resources.VoipExchangingKeys;
                 case TLPhoneCallState.Waiting:
-                    return Strings.Android.VoipWaiting;
+                    return Strings.Resources.VoipWaiting;
                 case TLPhoneCallState.Ringing:
-                    return Strings.Android.VoipRinging;
+                    return Strings.Resources.VoipRinging;
                 case TLPhoneCallState.Requesting:
-                    return Strings.Android.VoipRequesting;
+                    return Strings.Resources.VoipRequesting;
                 case TLPhoneCallState.HangingUp:
-                    return Strings.Android.VoipHangingUp;
+                    return Strings.Resources.VoipHangingUp;
                 case TLPhoneCallState.Ended:
-                    return Strings.Android.VoipCallEnded;
+                    return Strings.Resources.VoipCallEnded;
                 case TLPhoneCallState.Busy:
-                    return Strings.Android.VoipBusy;
+                    return Strings.Resources.VoipBusy;
                 case TLPhoneCallState.Failed:
-                    return Strings.Android.VoipFailed;
+                    return Strings.Resources.VoipFailed;
                 case TLPhoneCallState.Established:
                     return "00:00";
             }

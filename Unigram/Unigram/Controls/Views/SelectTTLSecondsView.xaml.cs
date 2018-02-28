@@ -23,12 +23,12 @@ namespace Unigram.Controls.Views
         {
             this.InitializeComponent();
 
-            Title = Strings.Android.MessageLifetime;
-            PrimaryButtonText = Strings.Android.OK;
-            SecondaryButtonText = Strings.Android.Cancel;
+            Title = Strings.Resources.MessageLifetime;
+            PrimaryButtonText = Strings.Resources.OK;
+            SecondaryButtonText = Strings.Resources.Cancel;
             Footer.Text = photo 
-                ? Strings.Android.MessageLifetimePhoto
-                : Strings.Android.MessageLifetimeVideo;
+                ? Strings.Resources.MessageLifetimePhoto
+                : Strings.Resources.MessageLifetimeVideo;
 
             var seconds = new int[29];
             for (int i = 0; i < seconds.Length; i++)

@@ -27,7 +27,7 @@ namespace Unigram.Common
 
         static Locale()
         {
-            _loader = ResourceLoader.GetForViewIndependentUse("Android");
+            _loader = ResourceLoader.GetForViewIndependentUse("Resources");
 
             AddRules(new String[]{"bem", "brx", "da", "de", "el", "en", "eo", "es", "et", "fi", "fo", "gl", "he", "iw", "it", "nb",
                 "nl", "nn", "no", "sv", "af", "bg", "bn", "ca", "eu", "fur", "fy", "gu", "ha", "is", "ku",

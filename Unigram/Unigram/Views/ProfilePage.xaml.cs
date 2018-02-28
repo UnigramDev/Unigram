@@ -118,7 +118,7 @@ namespace Unigram.Views
             Username.Content = $"@{user.Username}";
             Username.Visibility = string.IsNullOrEmpty(user.Username) ? Visibility.Collapsed : Visibility.Visible;
 
-            DescriptionTitle.Text = user.Type is UserTypeBot ? "About" : Strings.Android.UserBio;
+            DescriptionTitle.Text = user.Type is UserTypeBot ? "About" : Strings.Resources.UserBio;
             DescriptionTitle.Visibility = Visibility.Visible;
             DescriptionLabel.Padding = new Thickness(12, 0, 12, 12);
 
@@ -357,10 +357,10 @@ namespace Unigram.Views
                     //}
                     if (user.OutgoingLink is LinkStateIsContact)
                     {
-                        CreateFlyoutItem(ref flyout, ViewModel.ShareCommand, Strings.Android.ShareContact);
-                        CreateFlyoutItem(ref flyout, fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Android.Unblock : Strings.Android.BlockContact);
-                        CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.EditContact);
-                        CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Android.DeleteContact);
+                        CreateFlyoutItem(ref flyout, ViewModel.ShareCommand, Strings.Resources.ShareContact);
+                        CreateFlyoutItem(ref flyout, fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact);
+                        CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Resources.EditContact);
+                        CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Resources.DeleteContact);
                     }
                     else
                     {
@@ -368,34 +368,34 @@ namespace Unigram.Views
                         {
                             if (bot.CanJoinGroups)
                             {
-                                CreateFlyoutItem(ref flyout, null, Strings.Android.BotInvite);
+                                CreateFlyoutItem(ref flyout, null, Strings.Resources.BotInvite);
                             }
 
-                            CreateFlyoutItem(ref flyout, null, Strings.Android.BotShare);
+                            CreateFlyoutItem(ref flyout, null, Strings.Resources.BotShare);
                         }
 
                         if (user.PhoneNumber != null && user.PhoneNumber.Length > 0)
                         {
-                            CreateFlyoutItem(ref flyout, ViewModel.AddCommand, Strings.Android.AddContact);
-                            CreateFlyoutItem(ref flyout, ViewModel.ShareCommand, Strings.Android.ShareContact);
-                            CreateFlyoutItem(ref flyout, fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Android.Unblock : Strings.Android.BlockContact);
+                            CreateFlyoutItem(ref flyout, ViewModel.AddCommand, Strings.Resources.AddContact);
+                            CreateFlyoutItem(ref flyout, ViewModel.ShareCommand, Strings.Resources.ShareContact);
+                            CreateFlyoutItem(ref flyout, fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact);
                         }
                         else
                         {
                             if (user.Type is UserTypeBot)
                             {
-                                CreateFlyoutItem(ref flyout, fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Android.BotRestart : Strings.Android.BotStop);
+                                CreateFlyoutItem(ref flyout, fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.BotRestart : Strings.Resources.BotStop);
                             }
                             else
                             {
-                                CreateFlyoutItem(ref flyout, fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Android.Unblock : Strings.Android.BlockContact);
+                                CreateFlyoutItem(ref flyout, fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact);
                             }
                         }
                     }
                 }
                 else
                 {
-                    CreateFlyoutItem(ref flyout, ViewModel.ShareCommand, Strings.Android.ShareContact);
+                    CreateFlyoutItem(ref flyout, ViewModel.ShareCommand, Strings.Resources.ShareContact);
                 }
             }
             //if (writeButton != null)
@@ -424,11 +424,11 @@ namespace Unigram.Views
                 {
                     if (supergroup.IsChannel)
                     {
-                        CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.ManageChannelMenu);
+                        CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Resources.ManageChannelMenu);
                     }
                     else
                     {
-                        CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.ManageGroupMenu);
+                        CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Resources.ManageGroupMenu);
                     }
                 }
 
@@ -438,13 +438,13 @@ namespace Unigram.Views
                     //{
                     //    await Task.Delay(100);
                     //    Search_Click(null, null);
-                    //}), Strings.Android.SearchMembers);
+                    //}), Strings.Resources.SearchMembers);
 
-                    CreateFlyoutItem(ref flyout, null, Strings.Android.SearchMembers);
+                    CreateFlyoutItem(ref flyout, null, Strings.Resources.SearchMembers);
 
                     if (!(supergroup.Status is ChatMemberStatusCreator) && !(supergroup.Status is ChatMemberStatusLeft) && !(supergroup.Status is ChatMemberStatusBanned))
                     {
-                        CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Android.LeaveMegaMenu);
+                        CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Resources.LeaveMegaMenu);
                     }
                 }
             }
@@ -463,21 +463,21 @@ namespace Unigram.Views
                 //item = menu.addItem(10, R.drawable.ic_ab_other);
                 if (basicGroup.Status is ChatMemberStatusCreator)
                 {
-                    CreateFlyoutItem(ref flyout, null, Strings.Android.SetAdmins);
+                    CreateFlyoutItem(ref flyout, null, Strings.Resources.SetAdmins);
                 }
                 if (!basicGroup.EveryoneIsAdministrator || basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator)
                 {
-                    CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.ChannelEdit);
+                    CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Resources.ChannelEdit);
                 }
 
-                CreateFlyoutItem(ref flyout, null, Strings.Android.SearchMembers);
+                CreateFlyoutItem(ref flyout, null, Strings.Resources.SearchMembers);
 
                 if (basicGroup.Status is ChatMemberStatusCreator && basicGroup.MemberCount > 0)
                 {
-                    CreateFlyoutItem(ref flyout, ViewModel.MigrateCommand, Strings.Android.ConvertGroupMenu);
+                    CreateFlyoutItem(ref flyout, ViewModel.MigrateCommand, Strings.Resources.ConvertGroupMenu);
                 }
 
-                CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Android.DeleteAndExit);
+                CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Resources.DeleteAndExit);
             }
             //else if (chat.Type is ChatTypeBasicGroup basic)
             //{
@@ -494,16 +494,16 @@ namespace Unigram.Views
 
             //if (user.IsSelf)
             //{
-            //    CreateFlyoutItem(ref flyout, null, Strings.Android.ShareContact);
+            //    CreateFlyoutItem(ref flyout, null, Strings.Resources.ShareContact);
             //}
             //else
             //{
             //    if (user.IsContact)
             //    {
-            //        CreateFlyoutItem(ref flyout, null, Strings.Android.ShareContact);
-            //        CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Android.BlockContact : Strings.Android.Unblock);
-            //        CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Android.EditContact);
-            //        CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Android.DeleteContact);
+            //        CreateFlyoutItem(ref flyout, null, Strings.Resources.ShareContact);
+            //        CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Resources.BlockContact : Strings.Resources.Unblock);
+            //        CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Resources.EditContact);
+            //        CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Resources.DeleteContact);
             //    }
             //    else
             //    {
@@ -511,33 +511,33 @@ namespace Unigram.Views
             //        {
             //            if (!user.IsBotNochats)
             //            {
-            //                CreateFlyoutItem(ref flyout, null, Strings.Android.BotInvite);
+            //                CreateFlyoutItem(ref flyout, null, Strings.Resources.BotInvite);
             //            }
 
-            //            CreateFlyoutItem(ref flyout, null, Strings.Android.BotShare);
+            //            CreateFlyoutItem(ref flyout, null, Strings.Resources.BotShare);
             //        }
 
             //        if (user.Phone != null && user.Phone.Length > 0)
             //        {
-            //            CreateFlyoutItem(ref flyout, ViewModel.AddCommand, Strings.Android.AddContact);
-            //            CreateFlyoutItem(ref flyout, null, Strings.Android.ShareContact);
-            //            CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Android.BlockContact : Strings.Android.Unblock);
+            //            CreateFlyoutItem(ref flyout, ViewModel.AddCommand, Strings.Resources.AddContact);
+            //            CreateFlyoutItem(ref flyout, null, Strings.Resources.ShareContact);
+            //            CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Resources.BlockContact : Strings.Resources.Unblock);
             //        }
             //        else
             //        {
             //            if (user.IsBot)
             //            {
-            //                CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Android.BotStop : Strings.Android.BotRestart);
+            //                CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Resources.BotStop : Strings.Resources.BotRestart);
             //            }
             //            else
             //            {
-            //                CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Android.BlockContact : Strings.Android.Unblock);
+            //                CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Resources.BlockContact : Strings.Resources.Unblock);
             //            }
             //        }
             //    }
             //}
 
-            CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
+            CreateFlyoutItem(ref flyout, null, Strings.Resources.AddShortcut);
 
             if (flyout.Items.Count > 0)
             {
@@ -584,14 +584,14 @@ namespace Unigram.Views
                 return;
             }
 
-            CreateFlyoutItem(ref flyout, MemberPromote_Loaded, ViewModel.MemberPromoteCommand, status, member, Strings.Android.SetAsAdmin);
+            CreateFlyoutItem(ref flyout, MemberPromote_Loaded, ViewModel.MemberPromoteCommand, status, member, Strings.Resources.SetAsAdmin);
 
             if (chat.Type is ChatTypeSupergroup)
             {
-                CreateFlyoutItem(ref flyout, MemberRestrict_Loaded, ViewModel.MemberRestrictCommand, status, member, Strings.Android.KickFromSupergroup);
+                CreateFlyoutItem(ref flyout, MemberRestrict_Loaded, ViewModel.MemberRestrictCommand, status, member, Strings.Resources.KickFromSupergroup);
             }
 
-            CreateFlyoutItem(ref flyout, MemberRemove_Loaded, ViewModel.MemberRemoveCommand, status, member, Strings.Android.KickFromGroup);
+            CreateFlyoutItem(ref flyout, MemberRemove_Loaded, ViewModel.MemberRemoveCommand, status, member, Strings.Resources.KickFromGroup);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {

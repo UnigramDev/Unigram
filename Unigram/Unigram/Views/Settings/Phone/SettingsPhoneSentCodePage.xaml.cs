@@ -54,9 +54,9 @@ namespace Unigram.Views.Settings
             switch (type)
             {
                 case TLAuthSentCodeTypeApp appType:
-                    return Strings.Android.SentAppCode;
+                    return Strings.Resources.SentAppCode;
                 case TLAuthSentCodeTypeSms smsType:
-                    return string.Format(Strings.Android.SentSmsCode, number);
+                    return string.Format(Strings.Resources.SentSmsCode, number);
             }
 
             return null;

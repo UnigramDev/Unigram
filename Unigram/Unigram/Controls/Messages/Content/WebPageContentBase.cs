@@ -97,7 +97,7 @@ namespace Unigram.Controls.Messages.Content
                     if (run1 != null)
                     {
                         run1.Text = run3.Text = "\uE611";
-                        run2.Text = $"  {Strings.Android.InstantView}  ";
+                        run2.Text = $"  {Strings.Resources.InstantView}  ";
                         run3.Foreground = null;
                     }
 
@@ -109,7 +109,7 @@ namespace Unigram.Controls.Messages.Content
                 if (run1 != null)
                 {
                     run1.Text = run3.Text = string.Empty;
-                    run2.Text = Strings.Android.OpenGroup;
+                    run2.Text = Strings.Resources.OpenGroup;
                     run3.Foreground = null;
                 }
 
@@ -120,7 +120,7 @@ namespace Unigram.Controls.Messages.Content
                 if (run1 != null)
                 {
                     run1.Text = run3.Text = string.Empty;
-                    run2.Text = Strings.Android.OpenChannel;
+                    run2.Text = Strings.Resources.OpenChannel;
                     run3.Foreground = null;
                 }
 
@@ -131,7 +131,7 @@ namespace Unigram.Controls.Messages.Content
                 if (run1 != null)
                 {
                     run1.Text = run3.Text = string.Empty;
-                    run2.Text = Strings.Android.OpenMessage;
+                    run2.Text = Strings.Resources.OpenMessage;
                     run3.Foreground = null;
                 }
 

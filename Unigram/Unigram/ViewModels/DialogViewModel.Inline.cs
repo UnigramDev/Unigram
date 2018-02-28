@@ -158,11 +158,11 @@ namespace Unigram.ViewModels
             //{
             //    if (channel.BannedRights.IsForever())
             //    {
-            //        await TLMessageDialog.ShowAsync(Strings.Android.AttachMediaRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
+            //        await TLMessageDialog.ShowAsync(Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AppName, Strings.Resources.OK);
             //    }
             //    else
             //    {
-            //        await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
+            //        await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
             //    }
 
             //    return;

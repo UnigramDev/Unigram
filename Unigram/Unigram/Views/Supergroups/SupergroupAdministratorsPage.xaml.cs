@@ -114,7 +114,7 @@ namespace Unigram.Views.Supergroups
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
             AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Text = group.IsChannel ? Strings.Android.ChannelAdminsInfo : Strings.Android.MegaAdminsInfo;
+            Footer.Text = group.IsChannel ? Strings.Resources.ChannelAdminsInfo : Strings.Resources.MegaAdminsInfo;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo) { }

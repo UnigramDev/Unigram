@@ -224,10 +224,10 @@ namespace Unigram.ViewModels.Dialogs
             else
             {
                 var dialog = new TLMessageDialog();
-                dialog.Title = Strings.Android.Message;
-                dialog.Message = string.Format(Strings.Android.AreYouSureDeleteMessages, Locale.Declension("Messages", 1));
-                dialog.PrimaryButtonText = Strings.Android.OK;
-                dialog.SecondaryButtonText = Strings.Android.Cancel;
+                dialog.Title = Strings.Resources.Message;
+                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", 1));
+                dialog.PrimaryButtonText = Strings.Resources.OK;
+                dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
                 if (message.CanBeDeletedForAllUsers && message.CanBeDeletedOnlyForSelf)
                 {
@@ -236,12 +236,12 @@ namespace Unigram.ViewModels.Dialogs
                         var user = ProtoService.GetUser(privata.UserId);
                         if (user != null && !(user.Type is UserTypeBot))
                         {
-                            dialog.CheckBoxLabel = string.Format(Strings.Android.DeleteForUser, ProtoService.GetTitle(chat));
+                            dialog.CheckBoxLabel = string.Format(Strings.Resources.DeleteForUser, ProtoService.GetTitle(chat));
                         }
                     }
                     else if (chat.Type is ChatTypeBasicGroup)
                     {
-                        dialog.CheckBoxLabel = Strings.Android.DeleteForAll;
+                        dialog.CheckBoxLabel = Strings.Resources.DeleteForAll;
                     }
                 }
 
@@ -354,10 +354,10 @@ namespace Unigram.ViewModels.Dialogs
             //else
             {
                 var dialog = new TLMessageDialog();
-                dialog.Title = Strings.Android.Message;
-                dialog.Message = string.Format(Strings.Android.AreYouSureDeleteMessages, Locale.Declension("Messages", messages.Count));
-                dialog.PrimaryButtonText = Strings.Android.OK;
-                dialog.SecondaryButtonText = Strings.Android.Cancel;
+                dialog.Title = Strings.Resources.Message;
+                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", messages.Count));
+                dialog.PrimaryButtonText = Strings.Resources.OK;
+                dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
                 var canBeDeletedForAllUsers = messages.All(x => x.CanBeDeletedForAllUsers);
                 var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
@@ -369,12 +369,12 @@ namespace Unigram.ViewModels.Dialogs
                         var user = ProtoService.GetUser(privata.UserId);
                         if (user != null && !(user.Type is UserTypeBot))
                         {
-                            dialog.CheckBoxLabel = string.Format(Strings.Android.DeleteForUser, ProtoService.GetTitle(chat));
+                            dialog.CheckBoxLabel = string.Format(Strings.Resources.DeleteForUser, ProtoService.GetTitle(chat));
                         }
                     }
                     else if (chat.Type is ChatTypeBasicGroup)
                     {
-                        dialog.CheckBoxLabel = Strings.Android.DeleteForAll;
+                        dialog.CheckBoxLabel = Strings.Resources.DeleteForAll;
                     }
                 }
 

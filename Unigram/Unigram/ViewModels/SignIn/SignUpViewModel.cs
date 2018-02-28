@@ -103,27 +103,27 @@ namespace Unigram.ViewModels.SignIn
 
                 if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Android.InvalidPhoneNumber, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || response.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Android.InvalidCode, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Android.CodeExpired, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (response.Error.TypeEquals(TLErrorType.FIRSTNAME_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Android.InvalidFirstName, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidFirstName, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (response.Error.TypeEquals(TLErrorType.LASTNAME_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Android.InvalidLastName, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidLastName, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else
                 {
-                    await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
         }

@@ -86,17 +86,17 @@ namespace Unigram.ViewModels.Settings
                 if (current is UserPrivacySettingRuleAllowAll)
                 {
                     primary = PrivacyValue.AllowAll;
-                    badge = Strings.Android.LastSeenEverybody;
+                    badge = Strings.Resources.LastSeenEverybody;
                 }
                 else if (current is UserPrivacySettingRuleAllowContacts)
                 {
                     primary = PrivacyValue.AllowContacts;
-                    badge = Strings.Android.LastSeenContacts;
+                    badge = Strings.Resources.LastSeenContacts;
                 }
                 else if (current is UserPrivacySettingRuleRestrictAll)
                 {
                     primary = PrivacyValue.DisallowAll;
-                    badge = Strings.Android.LastSeenNobody;
+                    badge = Strings.Resources.LastSeenNobody;
                 }
                 else if (current is UserPrivacySettingRuleRestrictUsers disallowUsers)
                 {
@@ -111,7 +111,7 @@ namespace Unigram.ViewModels.Settings
             if (primary == null)
             {
                 primary = PrivacyValue.DisallowAll;
-                badge = Strings.Android.LastSeenNobody;
+                badge = Strings.Resources.LastSeenNobody;
             }
 
             var list = new List<string>();

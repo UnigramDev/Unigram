@@ -22,51 +22,59 @@ namespace Unigram.Common
 
         public Theme()
         {
-            isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
-            Current = this;
-            Update();
+            try
+            {
+                isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
+                Current = this;
+                Update();
 
-            this.Add("MessageServiceForegroundBrush", GetBrushOrDefault("MessageServiceForegroundBrush", Colors.White));
-            this.Add("MessageServiceBackgroundBrush", GetBrushOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
-            this.Add("MessageServiceBackgroundPressedBrush", GetBrushOrDefault("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96)));
+                this.Add("MessageServiceForegroundBrush", GetBrushOrDefault("MessageServiceForegroundBrush", Colors.White));
+                this.Add("MessageServiceBackgroundBrush", GetBrushOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
+                this.Add("MessageServiceBackgroundPressedBrush", GetBrushOrDefault("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96)));
 
-            this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 15d));
+                this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 15d));
+            }
+            catch { }
         }
 
         public void Update()
         {
-            var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
-            if (accent == null)
+            try
             {
-                return;
-            }
-
-            var fileName = FileUtils.GetFileName("colors.palette");
-            if (File.Exists(fileName))
-            {
-                var text = File.ReadAllText(fileName);
-
-                try
+                var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
+                if (accent == null)
                 {
-                    var dictionary = XamlReader.Load(text) as ResourceDictionary;
-                    if (dictionary == null)
+                    return;
+                }
+
+                var fileName = FileUtils.GetFileName("colors.palette");
+                if (File.Exists(fileName))
+                {
+                    var text = File.ReadAllText(fileName);
+
+                    try
                     {
-                        return;
-                    }
+                        var dictionary = XamlReader.Load(text) as ResourceDictionary;
+                        if (dictionary == null)
+                        {
+                            return;
+                        }
 
-                    accent.MergedDictionaries.Clear();
-                    accent.MergedDictionaries.Add(dictionary);
+                        accent.MergedDictionaries.Clear();
+                        accent.MergedDictionaries.Add(dictionary);
+                    }
+                    catch
+                    {
+                        File.Delete(fileName);
+                        Update();
+                    }
                 }
-                catch
+                else
                 {
-                    File.Delete(fileName);
-                    Update();
+                    accent.MergedDictionaries.Clear();
                 }
             }
-            else
-            {
-                accent.MergedDictionaries.Clear();
-            }
+            catch { }
         }
 
         #region Settings

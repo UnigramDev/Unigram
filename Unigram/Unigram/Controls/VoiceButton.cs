@@ -103,7 +103,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Android.AttachMediaRestrictedForever, Strings.Android.AttachMediaRestricted);
+            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
             if (restricted)
             {
                 return;
@@ -492,7 +492,7 @@ namespace Unigram.Controls
             public async Task SetPreviewRotationAsync()
             {
                 // Only need to update the orientation if the camera is mounted on the device
-                if (_externalCamera) return;
+                if (_externalCamera || _rotationHelper == null || m_mediaCapture == null) return;
 
                 // Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
                 var rotation = _rotationHelper.GetCameraPreviewOrientation();

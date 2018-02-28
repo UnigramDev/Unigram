@@ -123,29 +123,29 @@ namespace Unigram.ViewModels
                         //case TLSendMessageChooseContactAction chooseContact:
                         //    return "";
                         case ChatActionStartPlayingGame gamePlay:
-                            return Strings.Android.SendingGame;
+                            return Strings.Resources.SendingGame;
                         //case TLSendMessageGeoLocationAction geoLocation:
                         //    return "";
                         case ChatActionRecordingVoiceNote recordAudio:
-                            return Strings.Android.RecordingAudio;
+                            return Strings.Resources.RecordingAudio;
                         case ChatActionRecordingVideoNote recordRound:
                         case ChatActionUploadingVideoNote uploadRound:
-                            return Strings.Android.RecordingRound;
+                            return Strings.Resources.RecordingRound;
                         //case TLSendMessageTypingAction typing:
-                        //    return Strings.Android.Typing;
+                        //    return Strings.Resources.Typing;
                         case ChatActionUploadingVoiceNote uploadAudio:
-                            return Strings.Android.SendingAudio;
+                            return Strings.Resources.SendingAudio;
                         case ChatActionUploadingDocument uploadDocument:
-                            return Strings.Android.SendingFile;
+                            return Strings.Resources.SendingFile;
                         case ChatActionUploadingPhoto uploadPhoto:
-                            return Strings.Android.SendingPhoto;
+                            return Strings.Resources.SendingPhoto;
                         case ChatActionRecordingVideo recordVideo:
                         case ChatActionUploadingVideo uploadVideo:
-                            return Strings.Android.SendingVideoStatus;
+                            return Strings.Resources.SendingVideoStatus;
                     }
                 }
 
-                return Strings.Android.Typing;
+                return Strings.Resources.Typing;
             }
 
             if (typingUsers.Count == 1)
@@ -167,29 +167,29 @@ namespace Unigram.ViewModels
                         //case TLSendMessageChooseContactAction chooseContact:
                         //    return "";
                         case ChatActionStartPlayingGame gamePlay:
-                            return string.Format(Strings.Android.IsSendingGame, userName);
+                            return string.Format(Strings.Resources.IsSendingGame, userName);
                         //case TLSendMessageGeoLocationAction geoLocation:
                         //    return "";
                         case ChatActionRecordingVoiceNote recordAudio:
-                            return string.Format(Strings.Android.IsRecordingAudio, userName);
+                            return string.Format(Strings.Resources.IsRecordingAudio, userName);
                         case ChatActionRecordingVideoNote recordRound:
                         case ChatActionUploadingVideoNote uploadRound:
-                            return string.Format(Strings.Android.IsSendingVideo, userName);
+                            return string.Format(Strings.Resources.IsSendingVideo, userName);
                         //case TLSendMessageTypingAction typing:
-                        //    return string.Format(Strings.Android.IsTyping, userName);
+                        //    return string.Format(Strings.Resources.IsTyping, userName);
                         case ChatActionUploadingVoiceNote uploadAudio:
-                            return string.Format(Strings.Android.IsSendingAudio, userName);
+                            return string.Format(Strings.Resources.IsSendingAudio, userName);
                         case ChatActionUploadingDocument uploadDocument:
-                            return string.Format(Strings.Android.IsSendingFile, userName);
+                            return string.Format(Strings.Resources.IsSendingFile, userName);
                         case ChatActionUploadingPhoto uploadPhoto:
-                            return string.Format(Strings.Android.IsSendingPhoto, userName);
+                            return string.Format(Strings.Resources.IsSendingPhoto, userName);
                         case ChatActionRecordingVideo recordVideo:
                         case ChatActionUploadingVideo uploadVideo:
-                            return string.Format(Strings.Android.IsSendingVideo, userName);
+                            return string.Format(Strings.Resources.IsSendingVideo, userName);
                     }
                 }
 
-                return string.Format("{0} {1}", userName, Strings.Android.IsTyping);
+                return string.Format("{0} {1}", userName, Strings.Resources.IsTyping);
             }
             else
             {
@@ -223,7 +223,7 @@ namespace Unigram.ViewModels
                 {
                     if (count == 1)
                     {
-                        return string.Format("{0} {1}", label, Strings.Android.IsTyping);
+                        return string.Format("{0} {1}", label, Strings.Resources.IsTyping);
                     }
                     else
                     {
@@ -233,7 +233,7 @@ namespace Unigram.ViewModels
                         }
                         else
                         {
-                            return string.Format("{0} {1}", label, Strings.Android.AreTyping);
+                            return string.Format("{0} {1}", label, Strings.Resources.AreTyping);
                         }
                     }
                 }

@@ -127,13 +127,17 @@ namespace Unigram.ViewModels
         public RelayCommand AskCommand { get; }
         private async void AskExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AskAQuestionInfo, Strings.Android.AskAQuestion, Strings.Android.AskButton, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AskAQuestionInfo, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.SendAsync(new GetSupportUser());
-                if (response is User)
+                if (response is User user)
                 {
-                    NavigationService.NavigateToChat(null);
+                    response = await ProtoService.SendAsync(new CreatePrivateChat(user.Id, false));
+                    if (response is Chat chat)
+                    {
+                        NavigationService.NavigateToChat(chat);
+                    }
                 }
             }
         }
@@ -141,7 +145,7 @@ namespace Unigram.ViewModels
         public RelayCommand LogoutCommand { get; }
         private async void LogoutExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureLogout, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureLogout, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

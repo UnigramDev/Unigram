@@ -41,10 +41,10 @@ namespace Unigram.Controls.Messages
         {
             if (receipt)
             {
-                return "  " + Strings.Android.PaymentReceipt.ToUpper();
+                return "  " + Strings.Resources.PaymentReceipt.ToUpper();
             }
 
-            return "  " + (test ? Strings.Android.PaymentTestInvoice : Strings.Android.PaymentInvoice).ToUpper();
+            return "  " + (test ? Strings.Resources.PaymentTestInvoice : Strings.Resources.PaymentInvoice).ToUpper();
         }
     }
 }

@@ -60,7 +60,7 @@ namespace Unigram.Views.Dialogs
                 _liveLocation = value;
 
                 LiveLocationButton.Visibility = value.HasValue ? Visibility.Visible : Visibility.Collapsed;
-                LiveLocationLabel.Text = value == true ? Strings.Android.SendLiveLocation : Strings.Android.StopLiveLocation;
+                LiveLocationLabel.Text = value == true ? Strings.Resources.SendLiveLocation : Strings.Resources.StopLiveLocation;
 
                 LiveLocationButton.Visibility = Visibility.Collapsed;
             }

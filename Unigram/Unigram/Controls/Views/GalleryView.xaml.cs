@@ -63,7 +63,7 @@ namespace Unigram.Controls.Views
 
             #region Localizations
 
-            FlyoutSaveAs.Text = Strings.Resources.SaveAs;
+            FlyoutSaveAs.Text = Strings.Additional.SaveAs;
 
             #endregion
 
@@ -386,12 +386,12 @@ namespace Unigram.Controls.Views
         private string ConvertDate(int value)
         {
             var date = Convert.DateTime(value);
-            return string.Format(Strings.Android.FormatDateAtTime, Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
+            return string.Format(Strings.Resources.FormatDateAtTime, Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
         }
 
         private string ConvertOf(int index, int count)
         {
-            return string.Format(Strings.Android.Of, index, count);
+            return string.Format(Strings.Resources.Of, index, count);
         }
 
         #endregion
@@ -904,10 +904,10 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            CreateFlyoutItem(ref flyout, item.CanView, ViewModel.ViewCommand, item, Strings.Android.ShowInChat);
-            CreateFlyoutItem(ref flyout, ViewModel.CanSave, ViewModel.SaveCommand, item, Strings.Resources.SaveAs);
-            CreateFlyoutItem(ref flyout, ViewModel.CanOpenWith, ViewModel.OpenWithCommand, item, Strings.Android.OpenInExternalApp);
-            CreateFlyoutItem(ref flyout, ViewModel.CanDelete, ViewModel.DeleteCommand, item, Strings.Android.Delete);
+            CreateFlyoutItem(ref flyout, item.CanView, ViewModel.ViewCommand, item, Strings.Resources.ShowInChat);
+            CreateFlyoutItem(ref flyout, ViewModel.CanSave, ViewModel.SaveCommand, item, Strings.Additional.SaveAs);
+            CreateFlyoutItem(ref flyout, ViewModel.CanOpenWith, ViewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp);
+            CreateFlyoutItem(ref flyout, ViewModel.CanDelete, ViewModel.DeleteCommand, item, Strings.Resources.Delete);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {

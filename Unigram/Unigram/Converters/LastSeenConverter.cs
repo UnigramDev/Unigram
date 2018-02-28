@@ -70,20 +70,20 @@ namespace Unigram.Converters
 
             if (user.Id == 777000)
             {
-                return Strings.Android.ServiceNotifications;
+                return Strings.Resources.ServiceNotifications;
             }
             else if (user.Type is UserTypeBot bot)
             {
                 if (details)
                 {
-                    return Strings.Android.Bot;
+                    return Strings.Resources.Bot;
                 }
 
-                return bot.CanReadAllGroupMessages ? Strings.Android.BotStatusRead : Strings.Android.BotStatusCantRead;
+                return bot.CanReadAllGroupMessages ? Strings.Resources.BotStatusRead : Strings.Resources.BotStatusCantRead;
             }
             //else if (user.IsSelf && details)
             //{
-            //    return Strings.Android.ChatYourSelf;
+            //    return Strings.Resources.ChatYourSelf;
             //}
 
             if (user.Status is UserStatusOffline offline)
@@ -94,7 +94,7 @@ namespace Unigram.Converters
             {
                 if (online.Expires > Utils.CurrentTimestamp / 1000)
                 {
-                    return Strings.Android.Online;
+                    return Strings.Resources.Online;
                 }
                 else
                 {
@@ -103,19 +103,19 @@ namespace Unigram.Converters
             }
             else if (user.Status is UserStatusRecently recently)
             {
-                return Strings.Android.Lately;
+                return Strings.Resources.Lately;
             }
             else if (user.Status is UserStatusLastWeek lastWeek)
             {
-                return Strings.Android.WithinAWeek;
+                return Strings.Resources.WithinAWeek;
             }
             else if (user.Status is UserStatusLastMonth lastMonth)
             {
-                return Strings.Android.WithinAMonth;
+                return Strings.Resources.WithinAMonth;
             }
             else
             {
-                return Strings.Android.ALongTimeAgo;
+                return Strings.Resources.ALongTimeAgo;
             }
         }
 
@@ -133,21 +133,21 @@ namespace Unigram.Converters
 
                 if (dateDay == day && year == dateYear)
                 {
-                    return string.Format("{0} {1} {2}", Strings.Android.LastSeen, Strings.Android.TodayAt, BindConvert.Current.ShortTime.Format(online));
+                    return string.Format("{0} {1} {2}", Strings.Resources.LastSeen, Strings.Resources.TodayAt, BindConvert.Current.ShortTime.Format(online));
                 }
                 else if (dateDay + 1 == day && year == dateYear)
                 {
-                    return string.Format("{0} {1} {2}", Strings.Android.LastSeen, Strings.Android.YesterdayAt, BindConvert.Current.ShortTime.Format(online));
+                    return string.Format("{0} {1} {2}", Strings.Resources.LastSeen, Strings.Resources.YesterdayAt, BindConvert.Current.ShortTime.Format(online));
                 }
                 else if (Math.Abs(Utils.CurrentTimestamp / 1000 - date) < 31536000000L)
                 {
-                    string format = string.Format(Strings.Android.FormatDateAtTime, online.ToString(Strings.Android.FormatterMonth), BindConvert.Current.ShortTime.Format(online));
-                    return string.Format("{0} {1}", Strings.Android.LastSeenDate, format);
+                    string format = string.Format(Strings.Resources.FormatDateAtTime, online.ToString(Strings.Resources.FormatterMonth), BindConvert.Current.ShortTime.Format(online));
+                    return string.Format("{0} {1}", Strings.Resources.LastSeenDate, format);
                 }
                 else
                 {
-                    string format = string.Format(Strings.Android.FormatDateAtTime, online.ToString(Strings.Android.FormatterYear), BindConvert.Current.ShortTime.Format(online));
-                    return string.Format("{0} {1}", Strings.Android.LastSeenDate, format);
+                    string format = string.Format(Strings.Resources.FormatDateAtTime, online.ToString(Strings.Resources.FormatterYear), BindConvert.Current.ShortTime.Format(online));
+                    return string.Format("{0} {1}", Strings.Resources.LastSeenDate, format);
                 }
             }
             catch (Exception e)

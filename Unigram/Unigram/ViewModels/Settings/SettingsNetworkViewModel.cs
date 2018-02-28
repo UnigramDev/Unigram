@@ -89,7 +89,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ResetStatisticsAlert, Strings.Android.AppName, Strings.Android.Reset, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 //_statsService.ResetStats(Type);
@@ -139,13 +139,13 @@ namespace Unigram.ViewModels.Settings
 
     //        Items = new MvxObservableCollection<SettingsStatsDataBase>
     //        {
-    //            new SettingsStatsData(statsService, Strings.Android.LocalPhotoCache, type, DataType.Photos),
-    //            new SettingsStatsData(statsService, Strings.Android.LocalVideoCache, type, DataType.Videos),
-    //            new SettingsStatsData(statsService, Strings.Android.LocalAudioCache, type, DataType.Audios),
-    //            new SettingsStatsData(statsService, Strings.Android.FilesDataUsage, type, DataType.Files),
-    //            new SettingsStatsCallData(statsService, Strings.Android.CallsDataUsage, type, DataType.Calls),
-    //            new SettingsStatsDataBase(statsService, Strings.Android.MessagesDataUsage, type, DataType.Messages),
-    //            new SettingsStatsDataBase(statsService, Strings.Android.TotalDataUsage, type, DataType.Total)
+    //            new SettingsStatsData(statsService, Strings.Resources.LocalPhotoCache, type, DataType.Photos),
+    //            new SettingsStatsData(statsService, Strings.Resources.LocalVideoCache, type, DataType.Videos),
+    //            new SettingsStatsData(statsService, Strings.Resources.LocalAudioCache, type, DataType.Audios),
+    //            new SettingsStatsData(statsService, Strings.Resources.FilesDataUsage, type, DataType.Files),
+    //            new SettingsStatsCallData(statsService, Strings.Resources.CallsDataUsage, type, DataType.Calls),
+    //            new SettingsStatsDataBase(statsService, Strings.Resources.MessagesDataUsage, type, DataType.Messages),
+    //            new SettingsStatsDataBase(statsService, Strings.Resources.TotalDataUsage, type, DataType.Total)
     //        };
 
     //        ResetCommand = new RelayCommand(ResetExecute);
@@ -185,7 +185,7 @@ namespace Unigram.ViewModels.Settings
     //    public RelayCommand ResetCommand { get; }
     //    private async void ResetExecute()
     //    {
-    //        var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ResetStatisticsAlert, Strings.Android.AppName, Strings.Android.Reset, Strings.Android.Cancel);
+    //        var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
     //        if (confirm == ContentDialogResult.Primary)
     //        {
     //            _statsService.ResetStats(Type);

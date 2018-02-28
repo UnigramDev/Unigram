@@ -84,7 +84,7 @@ namespace Unigram.Views.Settings
         {
             if (days < 1)
             {
-                return Strings.Android.KeepMediaForever;
+                return Strings.Resources.KeepMediaForever;
             }
             else if (days < 7)
             {

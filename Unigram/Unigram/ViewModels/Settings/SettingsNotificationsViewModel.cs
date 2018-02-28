@@ -249,7 +249,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand { get; }
         private void ResetExecute()
         {
-            //var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetNotificationsDialogBody, Strings.Resources.ResetNotificationsDialogTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+            //var confirm = await TLMessageDialog.ShowAsync(Strings.Additional.ResetNotificationsDialogBody, Strings.Additional.ResetNotificationsDialogTitle, Strings.Additional.OK, Strings.Additional.Cancel);
             //if (confirm == ContentDialogResult.Primary)
             //{
                 _suppressUpdating = true;

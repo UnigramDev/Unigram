@@ -36,7 +36,7 @@ namespace Unigram.Views.Settings
                 return null;
             }
 
-            return string.Format(Strings.Android.NetworkUsageSince, BindConvert.Current.ShortDate.Format(sinceDate) + " " + BindConvert.Current.ShortTime.Format(sinceDate));
+            return string.Format(Strings.Resources.NetworkUsageSince, BindConvert.Current.ShortDate.Format(sinceDate) + " " + BindConvert.Current.ShortTime.Format(sinceDate));
         }
 
         #endregion

@@ -81,7 +81,7 @@ namespace Unigram.Views.Supergroups
             //    return;
             //}
 
-            //await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? Strings.Android.EventLogInfoDetail : Strings.Android.EventLogInfoDetailChannel, Strings.Android.EventLogInfoTitle, Strings.Android.OK);
+            //await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? Strings.Resources.EventLogInfoDetail : Strings.Resources.EventLogInfoDetailChannel, Strings.Resources.EventLogInfoTitle, Strings.Resources.OK);
         }
 
         private async void Settings_Click(object sender, RoutedEventArgs e)

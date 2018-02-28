@@ -204,7 +204,7 @@ namespace Unigram.Controls.Views
 
         private string ConvertGrouped(bool grouped)
         {
-            return grouped ? Strings.Android.GroupPhotosHelp : Strings.Android.SinglePhotosHelp;
+            return grouped ? Strings.Resources.GroupPhotosHelp : Strings.Resources.SinglePhotosHelp;
         }
 
         private bool ConvertSelected(StorageMedia media)

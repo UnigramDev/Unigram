@@ -61,9 +61,9 @@ namespace Unigram.Views.SignIn
             switch (waitCode.CodeInfo.Type)
             {
                 case AuthenticationCodeTypeTelegramMessage appType:
-                    return Strings.Android.SentAppCode;
+                    return Strings.Resources.SentAppCode;
                 case AuthenticationCodeTypeSms smsType:
-                    return string.Format(Strings.Android.SentSmsCode, PhoneNumber.Format(number));
+                    return string.Format(Strings.Resources.SentSmsCode, PhoneNumber.Format(number));
             }
 
             return null;

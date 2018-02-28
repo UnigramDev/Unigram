@@ -89,11 +89,11 @@ namespace Unigram.Views
 
             #region Localizations
 
-            TabChats.Header = Strings.Resources.Chats;
+            TabChats.Header = Strings.Additional.Chats;
 
-            NavigationChats.Content = Strings.Resources.Chats;
-            //NavigationAbout.Content = Strings.Resources.About;
-            NavigationNews.Content = Strings.Resources.News;
+            NavigationChats.Content = Strings.Additional.Chats;
+            //NavigationAbout.Content = Strings.Additional.About;
+            NavigationNews.Content = Strings.Additional.News;
 
             #endregion
 
@@ -865,12 +865,12 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var chat = element.Tag as Chat;
 
-            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Chats.DialogPinCommand, chat, chat.IsPinned ? Strings.Android.UnpinFromTop : Strings.Android.PinToTop);
-            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Chats.DialogNotifyCommand, chat, chat.NotificationSettings.MuteFor > 0 ? Strings.Android.UnmuteNotifications : Strings.Android.MuteNotifications);
-            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Chats.DialogClearCommand, chat, Strings.Android.ClearHistory);
+            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Chats.DialogPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop);
+            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Chats.DialogNotifyCommand, chat, chat.NotificationSettings.MuteFor > 0 ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications);
+            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Chats.DialogClearCommand, chat, Strings.Resources.ClearHistory);
             CreateFlyoutItem(ref flyout, DialogDelete_Loaded, ViewModel.Chats.DialogDeleteCommand, chat, DialogDelete_Text(chat));
-            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Chats.DialogDeleteAndStopCommand, chat, Strings.Android.DeleteAndStop);
-            CreateFlyoutItem(ref flyout, DialogDeleteAndExit_Loaded, ViewModel.Chats.DialogDeleteCommand, chat, Strings.Android.DeleteAndExit);
+            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Chats.DialogDeleteAndStopCommand, chat, Strings.Resources.DeleteAndStop);
+            CreateFlyoutItem(ref flyout, DialogDeleteAndExit_Loaded, ViewModel.Chats.DialogDeleteCommand, chat, Strings.Resources.DeleteAndExit);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -890,7 +890,7 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var call = element.DataContext as TLCallGroup;
 
-            CreateFlyoutItem(ref flyout, _ => Visibility.Visible, ViewModel.Calls.CallDeleteCommand, call, Strings.Android.Delete);
+            CreateFlyoutItem(ref flyout, _ => Visibility.Visible, ViewModel.Calls.CallDeleteCommand, call, Strings.Resources.Delete);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -974,10 +974,10 @@ namespace Unigram.Views
         {
             if (chat.Type is ChatTypeSupergroup super)
             {
-                return super.IsChannel ? Strings.Android.LeaveChannelMenu : Strings.Android.LeaveMegaMenu;
+                return super.IsChannel ? Strings.Resources.LeaveChannelMenu : Strings.Resources.LeaveMegaMenu;
             }
 
-            return Strings.Android.Delete;
+            return Strings.Resources.Delete;
         }
 
         private Visibility DialogDeleteAndStop_Loaded(Chat chat)

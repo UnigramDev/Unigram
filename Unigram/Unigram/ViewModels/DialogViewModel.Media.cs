@@ -44,7 +44,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Android.AttachStickersRestrictedForever, Strings.Android.AttachStickersRestricted);
+            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted);
             if (restricted)
             {
                 return;
@@ -65,7 +65,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Android.AttachStickersRestrictedForever, Strings.Android.AttachStickersRestricted);
+            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted);
             if (restricted)
             {
                 return;
@@ -91,11 +91,11 @@ namespace Unigram.ViewModels
                 {
                     if (restricted.IsForever())
                     {
-                        await TLMessageDialog.ShowAsync(forever, Strings.Android.AppName, Strings.Android.OK);
+                        await TLMessageDialog.ShowAsync(forever, Strings.Resources.AppName, Strings.Resources.OK);
                     }
                     else
                     {
-                        await TLMessageDialog.ShowAsync(string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate)), Strings.Android.AppName, Strings.Android.OK);
+                        await TLMessageDialog.ShowAsync(string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
                     return true;

@@ -166,11 +166,11 @@ namespace Unigram.Views.Dialogs
             var element = sender as FrameworkElement;
             var message = element.Tag as Message;
 
-            CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, message, Strings.Android.ShowInChat);
-            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Android.Delete);
-            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Android.Forward);
-            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Resources.Select);
-            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, message, Strings.Resources.SaveAs);
+            CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, message, Strings.Resources.ShowInChat);
+            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete);
+            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward);
+            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select);
+            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, message, Strings.Additional.SaveAs);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {

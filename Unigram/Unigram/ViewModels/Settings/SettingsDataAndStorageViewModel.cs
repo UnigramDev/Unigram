@@ -26,9 +26,9 @@ namespace Unigram.ViewModels.Settings
         {
             //AutoDownloads = new ObservableCollection<SettingsDataAutoDownload>
             //{
-            //    new SettingsDataAutoDownload(Strings.Android.WhenUsingMobileData, NetworkType.Mobile),
-            //    new SettingsDataAutoDownload(Strings.Android.WhenConnectedOnWiFi, NetworkType.WiFi),
-            //    new SettingsDataAutoDownload(Strings.Android.WhenRoaming, NetworkType.Roaming),
+            //    new SettingsDataAutoDownload(Strings.Resources.WhenUsingMobileData, NetworkType.Mobile),
+            //    new SettingsDataAutoDownload(Strings.Resources.WhenConnectedOnWiFi, NetworkType.WiFi),
+            //    new SettingsDataAutoDownload(Strings.Resources.WhenRoaming, NetworkType.Roaming),
             //};
 
             //AutoDownloadCommand = new RelayCommand<NetworkType>(AutoDownloadExecute);
@@ -97,14 +97,14 @@ namespace Unigram.ViewModels.Settings
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Android.UseLessDataNever, IsChecked = UseLessData == libtgvoip.DataSavingMode.Never });
-            stack.Children.Add(new RadioButton { Tag = 1, Content = Strings.Android.UseLessDataOnMobile, IsChecked = UseLessData == libtgvoip.DataSavingMode.MobileOnly });
-            stack.Children.Add(new RadioButton { Tag = 2, Content = Strings.Android.UseLessDataAlways, IsChecked = UseLessData == libtgvoip.DataSavingMode.Always });
+            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Resources.UseLessDataNever, IsChecked = UseLessData == libtgvoip.DataSavingMode.Never });
+            stack.Children.Add(new RadioButton { Tag = 1, Content = Strings.Resources.UseLessDataOnMobile, IsChecked = UseLessData == libtgvoip.DataSavingMode.MobileOnly });
+            stack.Children.Add(new RadioButton { Tag = 2, Content = Strings.Resources.UseLessDataAlways, IsChecked = UseLessData == libtgvoip.DataSavingMode.Always });
 
-            dialog.Title = Strings.Android.VoipUseLessData;
+            dialog.Title = Strings.Resources.VoipUseLessData;
             dialog.Content = stack;
-            dialog.PrimaryButtonText = Strings.Android.OK;
-            dialog.SecondaryButtonText = Strings.Android.Cancel;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -132,7 +132,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetAutoDownloadCommand { get; }
         private async void ResetAutoDownloadExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ResetAutomaticMediaDownloadAlert, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 ProtoService.SetPreferences(AutoDownloadPreferences.Default);
@@ -156,10 +156,10 @@ namespace Unigram.ViewModels.Settings
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                var server = SettingsHelper.ProxyServer = dialog.Server;
+                var server = SettingsHelper.ProxyServer = dialog.Server ?? string.Empty;
                 var port = SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
-                var username = SettingsHelper.ProxyUsername = dialog.Username;
-                var password = SettingsHelper.ProxyPassword = dialog.Password;
+                var username = SettingsHelper.ProxyUsername = dialog.Username ?? string.Empty;
+                var password = SettingsHelper.ProxyPassword = dialog.Password ?? string.Empty;
                 var newValue = SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
                 SettingsHelper.IsCallsProxyEnabled = dialog.IsCallsProxyEnabled;
 

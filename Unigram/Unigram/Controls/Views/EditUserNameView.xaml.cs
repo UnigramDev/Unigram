@@ -23,9 +23,9 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
 
-            Title = Strings.Android.EditName;
-            PrimaryButtonText = Strings.Android.OK;
-            SecondaryButtonText = Strings.Android.Cancel;
+            Title = Strings.Resources.EditName;
+            PrimaryButtonText = Strings.Resources.OK;
+            SecondaryButtonText = Strings.Resources.Cancel;
         }
 
         public EditUserNameView(string firstName, string lastName)
@@ -35,9 +35,9 @@ namespace Unigram.Controls.Views
             FirstName = firstName;
             LastName = lastName;
 
-            Title = Strings.Android.EditName;
-            PrimaryButtonText = Strings.Android.OK;
-            SecondaryButtonText = Strings.Android.Cancel;
+            Title = Strings.Resources.EditName;
+            PrimaryButtonText = Strings.Resources.OK;
+            SecondaryButtonText = Strings.Resources.Cancel;
         }
 
         public string FirstName

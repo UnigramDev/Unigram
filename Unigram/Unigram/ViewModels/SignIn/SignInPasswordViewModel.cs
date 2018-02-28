@@ -123,19 +123,19 @@ namespace Unigram.ViewModels.SignIn
                 var response = await LegacyService.RequestPasswordRecoveryAsync();
                 if (response.IsSucceeded)
                 {
-                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.RestoreEmailSent, response.Result.EmailPattern), Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, response.Result.EmailPattern), Strings.Resources.AppName, Strings.Resources.OK);
 
                     // TODO: show recovery page
                 }
                 else if (response.Error != null)
                 {
                     IsLoading = false;
-                    await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
             else
             {
-                await TLMessageDialog.ShowAsync(Strings.Android.RestorePasswordNoEmailText, Strings.Android.RestorePasswordNoEmailTitle, Strings.Android.OK);
+                await TLMessageDialog.ShowAsync(Strings.Resources.RestorePasswordNoEmailText, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
                 IsResettable = true;
             }
         }
@@ -143,7 +143,7 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ResetMyAccountWarningText, Strings.Android.ResetMyAccountWarning, Strings.Android.ResetMyAccountWarningReset, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetMyAccountWarningText, Strings.Resources.ResetMyAccountWarning, Strings.Resources.ResetMyAccountWarningReset, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 IsLoading = true;
@@ -168,7 +168,7 @@ namespace Unigram.ViewModels.SignIn
 
                     if (response.Error.ErrorMessage.Contains("2FA_RECENT_CONFIRM"))
                     {
-                        await TLMessageDialog.ShowAsync(Strings.Android.ResetAccountCancelledAlert, Strings.Android.AppName, Strings.Android.OK);
+                        await TLMessageDialog.ShowAsync(Strings.Resources.ResetAccountCancelledAlert, Strings.Resources.AppName, Strings.Resources.OK);
                     }
                     else if (response.Error.ErrorMessage.StartsWith("2FA_CONFIRM_WAIT_"))
                     {
@@ -176,7 +176,7 @@ namespace Unigram.ViewModels.SignIn
                     }
                     else
                     {
-                        await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Android.AppName, Strings.Android.OK);
+                        await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Resources.AppName, Strings.Resources.OK);
                     }
                 }
             }

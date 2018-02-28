@@ -164,7 +164,7 @@ namespace Unigram.Controls
                             //}
                             else if (inlineButton.Type is InlineKeyboardButtonTypeBuy && receipt)
                             {
-                                button.Content = Strings.Android.PaymentReceipt;
+                                button.Content = Strings.Resources.PaymentReceipt;
                             }
                         }
                         else if (row[i] is KeyboardButton keyboardButton)

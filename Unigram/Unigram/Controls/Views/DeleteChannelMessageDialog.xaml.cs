@@ -23,12 +23,12 @@ namespace Unigram.Controls.Views
         {
             this.InitializeComponent();
 
-            Title = Strings.Android.Message;
-            PrimaryButtonText = Strings.Android.OK;
-            SecondaryButtonText = Strings.Android.Cancel;
+            Title = Strings.Resources.Message;
+            PrimaryButtonText = Strings.Resources.OK;
+            SecondaryButtonText = Strings.Resources.Cancel;
 
-            Message.Text = string.Format(Strings.Android.AreYouSureDeleteMessages, Locale.Declension("Messages", count));
-            DeleteAllCheck.Content = string.Format(Strings.Android.DeleteAllFrom, fullName ?? string.Empty);
+            Message.Text = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", count));
+            DeleteAllCheck.Content = string.Format(Strings.Resources.DeleteAllFrom, fullName ?? string.Empty);
         }
 
         public bool BanUser
