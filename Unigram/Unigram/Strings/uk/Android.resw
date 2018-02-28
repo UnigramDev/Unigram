@@ -1,18 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -31,13 +50,13 @@
     <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
-    <value>1.3</value>
+    <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>відвідини — дуже давно</value>
@@ -388,7 +407,7 @@
     <value>Telegram</value>
   </data>
   <data name="AppNameBeta" xml:space="preserve">
-    <value>Telegram Beta</value>
+    <value>Telegram</value>
   </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>Застосувати файл перекладу</value>
@@ -511,7 +530,7 @@
     <value>Поставити запитання</value>
   </data>
   <data name="AskAQuestionInfo" xml:space="preserve">
-    <value>Підтримка Telegram здійснюється добровольцями. Ми намагаємося відповідати якомога швидше, але, іноді, доведеться трохи зачекати.
+    <value>Підтримка Telegram здійснюється добровольцями. Ми намагаємося відповідати якомога швидше, але іноді доведеться трохи зачекати.
 
 Ознайомтеся з <![CDATA[<a href="https://telegram.org/faq#general-questions">ЧаПи Telegram</a>]]>: там є важливі поради щодо усунення <![CDATA[<a href="https://telegram.org/faq#troubleshooting">несправностей</a>]]> та відповіді на поширені запитання.</value>
   </data>
@@ -676,9 +695,6 @@
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Чекаємо, коли {0} з’явиться в мережі...</value>
-  </data>
-  <data name="BackgroundRestricted" xml:space="preserve">
-    <value>Фонові дані обмежені.</value>
   </data>
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Фонові дані обмежені.</value>
@@ -1242,7 +1258,7 @@
     <value>Завершує сеанси на всіх пристроях, крім поточного.</value>
   </data>
   <data name="ClearOtherWebSessionsHelp" xml:space="preserve">
-    <value>Ви можете увійти на сайти, які підтримують вхід через Telegram.</value>
+    <value>Ви можете входити на сайти, які підтримують вхід через Telegram.</value>
   </data>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Очистити недавні емодзі?</value>
@@ -2701,7 +2717,7 @@
     <value>Усі (-{0})</value>
   </data>
   <data name="LastSeenFormatted" xml:space="preserve">
-    <value>відвідини — {0}</value>
+    <value>відвідини {0}</value>
   </data>
   <data name="LastSeenNobody" xml:space="preserve">
     <value>Ніхто</value>
@@ -3518,6 +3534,9 @@
   </data>
   <data name="NotificationsPriorityHigh" xml:space="preserve">
     <value>Високий</value>
+  </data>
+  <data name="NotificationsPriorityLow" xml:space="preserve">
+    <value>Низький</value>
   </data>
   <data name="NotificationsPriorityMax" xml:space="preserve">
     <value>Максимальний</value>
@@ -4424,7 +4443,7 @@
     <value>Зауважте, що inline-боти надаються сторонніми розробниками. Для роботи бота введені вами символи після псевдоніму бота надсилаються відповідному розробнику.</value>
   </data>
   <data name="SecretChatName" xml:space="preserve">
-    <value>Секретний чат</value>
+    <value>Telegram</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
     <value>Увімкнути передогляд посилань у секретних чатах? Зауважте, що передогляд формується на серверах Telegram.</value>
@@ -5070,7 +5089,7 @@ http://telegram.org/update</value>
     <value>Немає</value>
   </data>
   <data name="UserBioInfo" xml:space="preserve">
-    <value>Додайте кілька рядків про себе. Цей текст побачить кожен, хто відкриє ваш профіль.</value>
+    <value>Додайте кілька рядків про себе. Цей текст побачать усі, хто відкриє ваш профіль.</value>
   </data>
   <data name="UserRestricted" xml:space="preserve">
     <value>Вам не дозволено цього робити.</value>
@@ -5391,10 +5410,10 @@ http://telegram.org/update</value>
     <value>учора</value>
   </data>
   <data name="YesterdayAt" xml:space="preserve">
-    <value>учора —</value>
+    <value>— учора —</value>
   </data>
   <data name="YesterdayAtFormatted" xml:space="preserve">
-    <value>учора — {0}</value>
+    <value>— учора — {0}</value>
   </data>
   <data name="YouBlockedUser" xml:space="preserve">
     <value>Ви не можете додавати цього користувача чи бота, тому що ви його заблокували. Розблокуйте, щоб продовжити.</value>

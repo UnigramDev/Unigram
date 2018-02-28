@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 02/22/2018 11:52:23
+// 	Generated: 02/28/2018 13:49:56
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2370,7 +2370,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Waiting for %s to get online..."
+        /// Localized resource similar to "Waiting for {0} to get online..."
         /// </summary>
         public static string AwaitingEncryption
         {
@@ -6303,7 +6303,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "%s joined your secret chat."
+        /// Localized resource similar to "{0} joined your secret chat."
         /// </summary>
         public static string EncryptedChatStartedOutgoing
         {
@@ -6369,7 +6369,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "%s invited you to join a secret chat."
+        /// Localized resource similar to "{0} invited you to join a secret chat."
         /// </summary>
         public static string EncryptedPlaceholderTitleIncoming
         {
@@ -6380,7 +6380,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You have invited %s to join a secret chat."
+        /// Localized resource similar to "You have invited {0} to join a secret chat."
         /// </summary>
         public static string EncryptedPlaceholderTitleOutgoing
         {
@@ -19004,7 +19004,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Answering as %s"
+        /// Localized resource similar to "Answering as {0}"
         /// </summary>
         public static string VoipAnsweringAsAccount
         {

@@ -695,7 +695,7 @@ Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemein
     <value>GIFs autom. Abspielen</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>Warte, bis %s online geht...</value>
+    <value>Warte, bis {0} online geht...</value>
   </data>
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Hintergrunddaten eingeschränkt.</value>
@@ -1782,7 +1782,7 @@ Wenn du dich bei Telegram anmeldest, brauchst du dein Kennwort.</value>
     <value>Du bist dem geheimen Chat beigetreten.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>%s ist deinem geheimen Chat beigetreten.</value>
+    <value>{0} ist deinem geheimen Chat beigetreten.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>Keine Serverspeicherung</value>
@@ -1800,12 +1800,12 @@ Wenn du dich bei Telegram anmeldest, brauchst du dein Kennwort.</value>
     <value>Geheime Chats in Kürze:</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>%s hat dich zu einem
+    <value>{0} hat dich zu einem
 Ende-zu-Ende verschlüsselten
 Geheimen Chat eingeladen.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>Du hast %s zu einem
+    <value>Du hast {0} zu einem
 Ende-zu-Ende verschlüsselten
 Geheimen Chat eingeladen.</value>
   </data>
@@ -5277,7 +5277,7 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
     <value>Annehmen</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>Mit %s beantworten</value>
+    <value>Mit {0} beantworten</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>

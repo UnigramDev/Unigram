@@ -696,7 +696,7 @@ Please take a look at the <![CDATA[<a href="https://telegram.org/faq#general-que
     <value>Autoplay GIFs</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>Waiting for %s to get online...</value>
+    <value>Waiting for {0} to get online...</value>
   </data>
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Background data restricted.</value>
@@ -1789,7 +1789,7 @@ You'll need the password you set up here to log in to your Telegram account.</va
     <value>You joined the secret chat.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>%s joined your secret chat.</value>
+    <value>{0} joined your secret chat.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>Use end-to-end encryption</value>
@@ -1807,10 +1807,10 @@ You'll need the password you set up here to log in to your Telegram account.</va
     <value>Secret chats:</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>%s invited you to join a secret chat.</value>
+    <value>{0} invited you to join a secret chat.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>You have invited %s to join a secret chat.</value>
+    <value>You have invited {0} to join a secret chat.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>Encryption Key</value>
@@ -5298,7 +5298,7 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
     <value>Answer</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>Answering as %s</value>
+    <value>Answering as {0}</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>

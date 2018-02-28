@@ -1,18 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -31,13 +50,13 @@
     <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
-    <value>1.3</value>
+    <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>en ligne il y a longtemps</value>
@@ -388,7 +407,7 @@
     <value>Telegram</value>
   </data>
   <data name="AppNameBeta" xml:space="preserve">
-    <value>Telegram Beta</value>
+    <value>Telegram</value>
   </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>Installer le pack linguistique</value>
@@ -616,7 +635,7 @@ La <![CDATA[<a href="https://telegram.org/faq#general">FAQ Telegram</a>]]> répo
     <value>Seuil de luminosité</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Passer au thème nuit préféré lorsque la luminosité passe en dessous de  {0}%%.</value>
+    <value>Activer le mode nuit lorsque la luminosité passe en dessous de {0}%%.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Désactivé</value>
@@ -625,13 +644,13 @@ La <![CDATA[<a href="https://telegram.org/faq#general">FAQ Telegram</a>]]> répo
     <value>De</value>
   </data>
   <data name="AutoNightLocation" xml:space="preserve">
-    <value>Lever et coucher de soleil locaux</value>
+    <value>Levers et couchers de soleil locaux</value>
   </data>
   <data name="AutoNightPreferred" xml:space="preserve">
-    <value>Thème nuit préféré</value>
+    <value>Thème à utiliser</value>
   </data>
   <data name="AutoNightSchedule" xml:space="preserve">
-    <value>Programmer</value>
+    <value>Horaires</value>
   </data>
   <data name="AutoNightScheduled" xml:space="preserve">
     <value>Programmé</value>
@@ -674,9 +693,6 @@ La <![CDATA[<a href="https://telegram.org/faq#general">FAQ Telegram</a>]]> répo
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>En attente de la connexion de {0}…</value>
-  </data>
-  <data name="BackgroundRestricted" xml:space="preserve">
-    <value>Données en arrière-plan restreintes</value>
   </data>
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Données en arrière-plan restreintes</value>
@@ -1402,7 +1418,7 @@ Pour aller au delà et accéder à plus, passez à un supergroupe :
     <value>Sélectionnez l'icône de palette pour voir les éléments sur chaque écran et les éditer.</value>
   </data>
   <data name="CreateNewThemeInfo" xml:space="preserve">
-    <value>Vous pouvez créer votre propre thème en changeant les couleurs dans l'application. Vous pouvez toujours revenir au thème par défaut de Telegram ici.</value>
+    <value>Vous pouvez créer votre propre thème en changeant les couleurs depuis l'application. Vous pouvez toujours revenir au thème par défaut ici.</value>
   </data>
   <data name="Crop" xml:space="preserve">
     <value>RECADRER</value>
@@ -4093,7 +4109,7 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
     <value>Paramètres</value>
   </data>
   <data name="RaiseToSpeak" xml:space="preserve">
-    <value>Détection vocale</value>
+    <value>Mettre à l'oreille pour parler</value>
   </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
     <value>Confirmez votre nouveau code d'accès</value>
@@ -4325,7 +4341,7 @@ Le canal "**{1}**" deviendra privé.</value>
     <value>Télécharger</value>
   </data>
   <data name="SaveToGIFs" xml:space="preserve">
-    <value>Ajouter à vos GIF</value>
+    <value>Ajouter aux GIF</value>
   </data>
   <data name="SaveToGallery" xml:space="preserve">
     <value>Ajouter à la galerie</value>
@@ -4426,7 +4442,7 @@ Il est possible que vous deviez redémarrer l'application pour que cela prenne e
     <value>Les bots insérés sont fournis par des développeurs indépendants. Pour qu'ils fonctionnent, ce que vous entrez après leur nom est envoyé à leur développeur respectif.</value>
   </data>
   <data name="SecretChatName" xml:space="preserve">
-    <value>Échange Secret</value>
+    <value>Telegram</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
     <value>Voulez-vous activer les aperçus de liens étendus dans les échanges secrets ? Notez que les aperçus sont générés sur les serveurs de Telegram.</value>

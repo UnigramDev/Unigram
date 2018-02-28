@@ -693,7 +693,7 @@
     <value>تشغيل تلقائي للصور المتحركة</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>في إنتظار اتصال %s … </value>
+    <value>في إنتظار اتصال {0} … </value>
   </data>
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>تم تقييد البيانات الخلفية</value>
@@ -1782,7 +1782,7 @@
     <value>لقد قمت بالدخول للمحادثة السرية.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>%s قام بالدخول للمحادثة السرية.</value>
+    <value>{0} قام بالدخول للمحادثة السرية.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>استخدم التشفير من البداية للنهاية</value>
@@ -1800,10 +1800,10 @@
     <value>المحادثات السرية:</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>%s قام بدعوتك لمحادثة سرية</value>
+    <value>{0} قام بدعوتك لمحادثة سرية</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>لقد قمت بدعوة %s لمحادثة سرية.</value>
+    <value>لقد قمت بدعوة {0} لمحادثة سرية.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>مفتاح التشفير</value>
@@ -5265,7 +5265,7 @@
     <value>رد</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>الرد كـ %s</value>
+    <value>الرد كـ {0}</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>بلوتوث</value>

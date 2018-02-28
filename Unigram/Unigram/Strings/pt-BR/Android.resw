@@ -1,18 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -31,13 +50,13 @@
     <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
-    <value>1.3</value>
+    <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>visto há muito tempo</value>
@@ -391,7 +410,7 @@
     <value>Telegram</value>
   </data>
   <data name="AppNameBeta" xml:space="preserve">
-    <value>Telegram Beta</value>
+    <value>Telegram</value>
   </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>Aplicar arquivo de localização</value>
@@ -649,7 +668,7 @@ Por favor verifique a página de <![CDATA[<a href="https://telegram.org/faq/br#q
     <value>Atualizar Localização</value>
   </data>
   <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
-    <value>O cálculo do nascer e pôr do Sol necessita de uma checagem única de sua localização aproximada. Note que essa localização é armazenada apenas em seu dispositivo.\n\nNascer do Sol: {0}\nPôr do Sol: {1}</value>
+    <value>O cálculo do nascer e pôr do Sol necessita de uma checagem única de sua localização aproximada. Note que essa localização é armazenada apenas em seu dispositivo.\n\nPôr do Sol: {0}\nNascer do Sol: {1}</value>
   </data>
   <data name="AutodownloadChannels" xml:space="preserve">
     <value>Canais</value>
@@ -677,9 +696,6 @@ Por favor verifique a página de <![CDATA[<a href="https://telegram.org/faq/br#q
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Esperando {0} se conectar...</value>
-  </data>
-  <data name="BackgroundRestricted" xml:space="preserve">
-    <value>Dados em segundo plano restringidos.</value>
   </data>
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Dados em segundo plano restringidos.</value>
@@ -4490,7 +4506,7 @@ Talvez você precise reiniciar o app para que isso tenha efeito.</value>
     <value>Os bots integrados são fornecidos por desenvolvedores terceiros. Para o bot funcionar, os símbolos que você digita depois do nome de usuário do bot são enviados para o respectivo desenvolvedor.</value>
   </data>
   <data name="SecretChatName" xml:space="preserve">
-    <value>Chat Secreto</value>
+    <value>Telegram</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
     <value>Você gostaria de ativar a pré-visualização estendida de links em Chats Secretos? Note que a pré-visualização é gerada nos servidores do Telegram.</value>
