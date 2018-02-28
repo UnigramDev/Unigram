@@ -1,11 +1,8 @@
 using System;
-using System.Windows.Input;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Unigram.Common;
 using Windows.ApplicationModel;
 using Windows.System;
+using Unigram.Services;
 
 namespace Unigram.ViewModels
 {
@@ -14,7 +11,7 @@ namespace Unigram.ViewModels
     /// </summary>
     public class AboutViewModel : UnigramViewModelBase
     {
-        public AboutViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public AboutViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             UsefulPrivacyCommand = new RelayCommand(UsefulPrivacyExecute);
@@ -33,7 +30,7 @@ namespace Unigram.ViewModels
         /// Returns the app version as a formated string. 
         /// </summary>
         /// <returns>App version as a string.</returns>
-        private static string GetVersion()
+        public static string GetVersion()
         {
             Package package = Package.Current;
             PackageId packageId = package.Id;
@@ -50,13 +47,13 @@ namespace Unigram.ViewModels
         public RelayCommand UsefulPrivacyCommand { get; }
         private async void UsefulPrivacyExecute()
         {
-            await Launcher.LaunchUriAsync(new Uri("http://unigram.me/privacy.html"));
+            await Launcher.LaunchUriAsync(new Uri("http://unigram.me/privacy.Html"));
         }
 
         public RelayCommand UsefulFaqCommand { get; }
         private async void UsefulFaqExecute()
         {
-            await Launcher.LaunchUriAsync(new Uri("http://unigram.me/faq.html"));
+            await Launcher.LaunchUriAsync(new Uri("http://unigram.me/faq.Html"));
         }
 
         public RelayCommand UsefulWebsiteCommand { get; }

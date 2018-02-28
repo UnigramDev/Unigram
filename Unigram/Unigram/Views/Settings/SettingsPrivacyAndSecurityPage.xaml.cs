@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.ViewModels.Settings;
+using Unigram.Views.Settings.Privacy;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -28,17 +30,14 @@ namespace Unigram.Views.Settings
             DataContext = UnigramContainer.Current.ResolveType<SettingsPrivacyAndSecurityViewModel>();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            while (Frame.BackStackDepth > 1)
-            {
-                Frame.BackStack.RemoveAt(1);
-            }
-        }
-
         private void Sessions_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsSessionsPage));
+        }
+
+        private void WebSessions_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsWebSessionsPage));
         }
 
         private void BlockedUsers_Click(object sender, RoutedEventArgs e)
@@ -48,17 +47,17 @@ namespace Unigram.Views.Settings
 
         private void StatusTimestamp_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsPrivacyStatusTimestampPage));
+            Frame.Navigate(typeof(SettingsPrivacyShowStatusPage));
         }
 
         private void PhoneCall_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsPrivacyPhoneCallPage));
+            Frame.Navigate(typeof(SettingsPrivacyAllowCallsPage));
         }
 
         private void ChatInvite_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsPrivacyChatInvitePage));
+            Frame.Navigate(typeof(SettingsPrivacyAllowChatInvitesPage));
         }
 
         private async void Passcode_Click(object sender, RoutedEventArgs e)
@@ -87,7 +86,30 @@ namespace Unigram.Views.Settings
             return sync ? Strings.Android.SyncContactsInfoOn : Strings.Android.SyncContactsInfoOff;
         }
 
-        #endregion
+        private string ConvertP2P(int mode)
+        {
+            switch (mode)
+            {
+                case 0:
+                default:
+                    return Strings.Android.LastSeenEverybody;
+                case 1:
+                    return Strings.Android.LastSeenContacts;
+                case 2:
+                    return Strings.Android.LastSeenNobody;
+            }
+        }
 
+        private string ConvertTtl(int days)
+        {
+            if (days >= 365)
+            {
+                return Locale.Declension("Years", days / 365);
+            }
+
+            return Locale.Declension("Months", days / 30);
+        }
+
+        #endregion
     }
 }

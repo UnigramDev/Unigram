@@ -36,6 +36,7 @@ namespace Unigram.Controls
         private OpusRecorder _recorder;
         private StorageFile _file;
         private bool _cancelOnRelease;
+        private bool _cancelPointer;
         private bool _pressed;
         private bool _recording;
         private DateTime _start;
@@ -96,21 +97,18 @@ namespace Unigram.Controls
 
         protected override async void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendMedia)
+            var chat = ViewModel.Chat;
+            if (chat == null)
             {
-                if (channel.BannedRights.IsForever())
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Android.AttachMediaRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
-                }
-                else
-                {
-                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
-                }
-
                 return;
             }
 
-            //Start();
+            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Android.AttachMediaRestrictedForever, Strings.Android.AttachMediaRestricted);
+            if (restricted)
+            {
+                return;
+            }
+
             _timer.Stop();
             _timer.Start();
 
@@ -123,13 +121,18 @@ namespace Unigram.Controls
         protected override void OnPointerReleased(PointerRoutedEventArgs e)
         {
             base.OnPointerReleased(e);
+            ReleasePointerCapture(e.Pointer);
+
+            if (_cancelPointer)
+            {
+                _cancelPointer = false;
+                return;
+            }
 
             _timer.Stop();
             _pressed = false;
 
             //Stop();
-            ReleasePointerCapture(e.Pointer);
-
             if (_recording)
             {
                 Stop();
@@ -137,26 +140,6 @@ namespace Unigram.Controls
             else
             {
                 IsVideo = !IsVideo;
-            }
-        }
-
-        protected override void OnPointerEntered(PointerRoutedEventArgs e)
-        {
-            base.OnPointerEntered(e);
-
-            if (_pressed)
-            {
-                _cancelOnRelease = false;
-            }
-        }
-
-        protected override void OnPointerExited(PointerRoutedEventArgs e)
-        {
-            base.OnPointerExited(e);
-
-            if (_pressed)
-            {
-                _cancelOnRelease = true;
             }
         }
 
@@ -235,16 +218,23 @@ namespace Unigram.Controls
                             await _roundView.SetAsync(_recorder.m_mediaCapture, _recorder._mirroringPreview);
                             await _recorder.SetPreviewRotationAsync();
                         }
-                    });
 
-                    await _recorder.StartAsync();
+                        await _recorder.StartAsync();
+
+                        if (_video)
+                        {
+                            _roundView.IsOpen = true;
+                        }
+
+                        RecordingStarted?.Invoke(this, EventArgs.Empty);
+                    });
                 }
                 catch (UnauthorizedAccessException)
                 {
                     Debug.WriteLine("The access to microphone was denied!");
                     return;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     Debug.WriteLine("The app couldn't initialize microphone!");
                     return;
@@ -265,6 +255,19 @@ namespace Unigram.Controls
             if (updatePreview)
             {
                 await _recorder.SetPreviewRotationAsync();
+            }
+        }
+
+        public void CancelRecording()
+        {
+            _timer.Stop();
+            _pressed = false;
+
+            if (_recording)
+            {
+                _cancelPointer = true;
+                _cancelOnRelease = true;
+                Stop();
             }
         }
 
@@ -347,11 +350,11 @@ namespace Unigram.Controls
                             profile.Video.Height = 240;
                             profile.Video.Bitrate = 300000;
 
-                            await ViewModel.SendVideoAsync(_file, null, true, false, null, profile, transform);
+                            await ViewModel.SendVideoNoteAsync(_file, profile, transform);
                         }
                         else
                         {
-                            await ViewModel.SendAudioAsync(_file, (int)elapsed.TotalSeconds, true, null, null, null);
+                            await ViewModel.SendVoiceNoteAsync(_file, (int)elapsed.TotalSeconds, null);
                         }
                     });
                 }
@@ -460,24 +463,28 @@ namespace Unigram.Controls
 
             public async Task StopAsync()
             {
-                if (m_lowLag != null)
+                try
                 {
-                    await m_lowLag.StopAsync();
-                    await m_lowLag.FinishAsync();
-                }
-                else
-                {
-                    await m_mediaCapture.StopRecordAsync();
-                }
+                    if (m_lowLag != null)
+                    {
+                        await m_lowLag.StopAsync();
+                        await m_lowLag.FinishAsync();
+                    }
+                    else
+                    {
+                        await m_mediaCapture.StopRecordAsync();
+                    }
 
-                m_mediaCapture.Dispose();
-                m_mediaCapture = null;
+                    m_mediaCapture.Dispose();
+                    m_mediaCapture = null;
 
-                if (m_opusSink is IDisposable disposable)
-                {
-                    disposable.Dispose();
-                    m_opusSink = null;
+                    if (m_opusSink is IDisposable disposable)
+                    {
+                        disposable.Dispose();
+                        m_opusSink = null;
+                    }
                 }
+                catch { }
             }
 
             #endregion

@@ -4,61 +4,89 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Payments;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
+using Unigram.Views.Payments;
+using TdWindows;
 
 namespace Unigram.ViewModels.Payments
 {
     public class PaymentReceiptViewModel : UnigramViewModelBase
     {
-        private TLMessage _message;
-
-        public PaymentReceiptViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public PaymentReceiptViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var buffer = parameter as byte[];
-            if (buffer == null)
+            var navigation = parameter as ReceiptNavigation;
+            if (navigation == null)
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            var response = await ProtoService.SendAsync(new GetPaymentReceipt(navigation.ChatId, navigation.ReceiptMessageId));
+            if (response is PaymentReceipt receipt)
             {
-                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentReceipt>(from);
+                Receipt = receipt;
+                Bot = ProtoService.GetUser(receipt.PaymentsProviderUserId);
 
-                _message = tuple.Item1;
-                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                Receipt = tuple.Item2;
-                Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
+                var second = await ProtoService.SendAsync(new GetMessage(navigation.ChatId, navigation.ReceiptMessageId));
+                if (second is Message message1 && message1.Content is MessagePaymentSuccessful payment)
+                {
+                    Payment = payment;
+
+                    var third = await ProtoService.SendAsync(new GetMessage(navigation.ChatId, payment.InvoiceMessageId));
+                    if (third is Message message2 && message2.Content is MessageInvoice invoice)
+                    {
+                        Invoice = invoice;
+                    }
+                }
             }
 
-            return Task.CompletedTask;
+            //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            //{
+            //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentReceipt>(from);
+
+            //    _message = tuple.Item1;
+            //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+            //    Receipt = tuple.Item2;
+            //    Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
+            //}
         }
 
-        private TLMessageMediaInvoice _invoice = new TLMessageMediaInvoice();
-        public TLMessageMediaInvoice Invoice
+        private MessageInvoice _invoce;
+        public MessageInvoice Invoice
         {
             get
             {
-                return _invoice;
+                return _invoce;
             }
             set
             {
-                Set(ref _invoice, value);
+                Set(ref _invoce, value);
             }
         }
 
-        private TLPaymentsPaymentReceipt _receipt = new TLPaymentsPaymentReceipt { Info = new TLPaymentRequestedInfo() };
-        public TLPaymentsPaymentReceipt Receipt
+        private MessagePaymentSuccessful _payment;
+        public MessagePaymentSuccessful Payment
+        {
+            get
+            {
+                return _payment;
+            }
+            set
+            {
+                Set(ref _payment, value);
+            }
+        }
+
+        private PaymentReceipt _receipt;
+        public PaymentReceipt Receipt
         {
             get
             {
@@ -70,8 +98,8 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        private TLUser _bot;
-        public TLUser Bot
+        private User _bot;
+        public User Bot
         {
             get
             {

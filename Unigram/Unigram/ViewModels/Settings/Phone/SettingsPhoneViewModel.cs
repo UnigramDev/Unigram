@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Unigram.Views.SignIn;
-using Telegram.Api.Aggregator;
 using Unigram.Common;
-using Unigram.Core.Models;
+using Unigram.Models;
 using System;
 using Telegram.Api.Helpers;
 using Windows.UI.Popups;
@@ -17,29 +15,29 @@ using Windows.UI.Xaml.Navigation;
 using Unigram.Controls;
 using Windows.System;
 using Windows.UI.Core;
-using Telegram.Api.TL.Auth.Methods;
 using System.Diagnostics;
 using Unigram.Views;
 using Unigram.Views.Settings;
 using System.Linq;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsPhoneViewModel : UnigramViewModelBase
     {
-        public SettingsPhoneViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public SettingsPhoneViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            ProtoService.GotUserCountry += GotUserCountry;
+            LegacyService.GotUserCountry += GotUserCountry;
 
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (!string.IsNullOrEmpty(ProtoService.Country))
+            if (!string.IsNullOrEmpty(LegacyService.Country))
             {
-                GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
+                GotUserCountry(this, new CountryEventArgs { Country = LegacyService.Country });
             }
 
             IsLoading = false;
@@ -153,7 +151,7 @@ namespace Unigram.ViewModels.Settings
 
             IsLoading = true;
 
-            var response = await ProtoService.SendChangePhoneCodeAsync(_phoneCode + _phoneNumber, /* TODO: Verify */ null);
+            var response = await LegacyService.SendChangePhoneCodeAsync(_phoneCode + _phoneNumber, /* TODO: Verify */ null);
             if (response.IsSucceeded)
             {
                 var state = new SettingsPhoneSentCodePage.NavigationParameters

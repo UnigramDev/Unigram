@@ -47,8 +47,7 @@ The following tools and SDKs are mandatory for the project development:
     * NuGet package manager
     * Universal Windows Platform tools
     * Windows 10 SDK 16299
-
-[Can I use Visual Studio 2015?](https://github.com/UnigramDev/Unigram/wiki/FAQ:-Development#why-do-i-have-to-use-visual-studio-2017-cant-i-use-vs2015)
+	* TDLib for Universal Windows Platform
 
 ## Dependencies
 The app uses the following NuGet packages to work:
@@ -57,13 +56,11 @@ The app uses the following NuGet packages to work:
 * [Microsoft.NETCore.UniversalWindowsPlatform](https://www.nuget.org/packages/Microsoft.NETCore.UniversalWindowsPlatform/)
 * [Microsoft.Xaml.Behaviors.Uwp.Managed](https://www.nuget.org/packages/Microsoft.Xaml.Behaviors.Uwp.Managed/)
 * [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/)
-* [Portable.BouncyCastle](https://www.nuget.org/packages/Portable.BouncyCastle/)
 * [System.Reactive](https://www.nuget.org/packages/System.Reactive/)
 * [Template10](https://www.nuget.org/packages/Template10/)
-* [Universal.WinSQLite](https://www.nuget.org/packages/Universal.WinSQLite/)
 * [Win2D.uwp](https://www.nuget.org/packages/Win2D.uwp/)
 
-The project also relies on `libogg`, `libopus`, `libopusfile` and `libwebp` that are included in the repository.
+The project also relies on `libogg`, `libopus`, `libopusfile`, `libwebp` and `libtgvoip` that are included in the repository.
 
 ## Current and planned features
 Check out the [Features list](https://github.com/UnigramDev/Unigram/wiki/Features) and see what Unigram has to offer and what is yet to come.

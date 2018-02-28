@@ -12,6 +12,7 @@
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
     xmlns:behaviors="using:Unigram.Behaviors"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:td="using:TdWindows"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -22,7 +23,94 @@
 
     <UserControl.Resources>
         <CollectionViewSource x:Name="FeaturedSource" Source="{x:Bind ViewModel.Stickers.FeaturedStickers}" ItemsPath="Covers" IsSourceGrouped="True"/>
-        <CollectionViewSource x:Name="StickersSource" Source="{x:Bind ViewModel.Stickers.SavedStickers}" ItemsPath="Documents" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="StickersSource" Source="{x:Bind ViewModel.Stickers.SavedStickers}" ItemsPath="Stickers" IsSourceGrouped="True"/>
+
+        <Style x:Name="ModernPivotRadioButtonStyle" TargetType="controls:PivotRadioButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+            <Setter Property="Glyph" Value="&#xE700;" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Width" Value="48" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:PivotRadioButton">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Checked">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.Visibility" Value="Collapsed"/>
+                                            <Setter Target="CheckedContentPresenter.Visibility" Value="Visible"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked" />
+                                    <VisualState x:Name="Indeterminate" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="BackgroundElement"/>
+                            <TextBlock
+                                x:Name="ContentPresenter"
+                                TextAlignment="Center"
+                                VerticalAlignment="Center"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="{TemplateBinding Glyph}"/>
+                            <TextBlock
+                                x:Name="CheckedContentPresenter"
+                                TextAlignment="Center"
+                                VerticalAlignment="Center"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="{TemplateBinding CheckedGlyph}"
+                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                Visibility="Collapsed"/>
+
+                            <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Padding="{TemplateBinding Padding}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Grid>
@@ -47,6 +135,8 @@
                         <Setter Target="ShowRow.Height" Value="736*"/>
                         <Setter Target="ShowRow.MaxHeight" Value="736"/>
                         <Setter Target="HideRow.Height" Value="*"/>
+
+                        <Setter Target="ToolbarContainer.(Grid.Row)" Value="2"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -64,7 +154,7 @@
               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
-              BorderThickness="0,1,0,0"
+              BorderThickness="0,0,0,0"
               Grid.Column="1"
               Grid.Row="1">
             <Grid.RowDefinitions>
@@ -112,25 +202,27 @@
                     <ListView x:Name="GifsView"
                               ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
                               SelectionMode="None"
-                              Padding="10,10,10,10">
+                              ContainerContentChanging="Animations_ContainerContentChanging"
+                              Padding="2">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <GridView ItemsSource="{Binding}"
+                                <controls:MosaicRow HorizontalAlignment="Stretch"/>
+                                <!--<GridView ItemsSource="{Binding}"
                                           IsItemClickEnabled="True"
                                           SelectionMode="None"
-                                          ItemClick="Gifs_ItemClick">
+                                          ItemClick="Gifs_ItemClick"
+                                          ContainerContentChanging="Animations_ContainerContentChanging">
                                     <GridView.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <controls:MosaicRow HorizontalAlignment="Stretch"/>
                                         </ItemsPanelTemplate>
                                     </GridView.ItemsPanel>
                                     <GridView.ItemTemplate>
                                         <DataTemplate x:DataType="common:MosaicMediaPosition">
                                             <Border Margin="2">
                                                 <Border.Background>
-                                                    <ImageBrush ImageSource="{x:Bind Item, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                                                    <ImageBrush Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
                                                 </Border.Background>
-                                                <!--<Image x:Phase="3" Source="{x:Bind Item, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill"/>-->
+                                                --><!--<Image x:Phase="3" Source="{x:Bind Item, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill"/>--><!--
                                             </Border>
                                         </DataTemplate>
                                     </GridView.ItemTemplate>
@@ -150,7 +242,7 @@
                                             <ItemsPresenter />
                                         </ControlTemplate>
                                     </GridView.Template>
-                                </GridView>
+                                </GridView>-->
                             </DataTemplate>
                         </ListView.ItemTemplate>
                         <ListView.ItemContainerStyle>
@@ -179,7 +271,7 @@
                         </common:FluidGridView.Triggers>
                         <GridView.GroupStyle>
                             <GroupStyle>
-                                <GroupStyle.HeaderTemplate>
+                                <!--<GroupStyle.HeaderTemplate>
                                     <DataTemplate x:DataType="viewModels:TLFeaturedStickerSet">
                                         <Grid Padding="0,0,0,8">
                                             <Grid.ColumnDefinitions>
@@ -201,10 +293,10 @@
                                             </TextBlock>
 
                                             <Border Height="48" Grid.Column="1" Grid.RowSpan="2"/>
-                                            <!--<controls:GlyphButton Click="Install_Click" Visibility="{x:Bind Set.IsInstalled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Glyph="&#xE109;" Width="40" Height="40" CornerRadius="20" Margin="0,4,-8,4" Grid.Column="1" Grid.RowSpan="2"/>-->
+                                            --><!--<controls:GlyphButton Click="Install_Click" Visibility="{x:Bind Set.IsInstalled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Glyph="&#xE109;" Width="40" Height="40" CornerRadius="20" Margin="0,4,-8,4" Grid.Column="1" Grid.RowSpan="2"/>--><!--
                                         </Grid>
                                     </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
+                                </GroupStyle.HeaderTemplate>-->
                                 <GroupStyle.HeaderContainerStyle>
                                     <Style TargetType="GridViewHeaderItem">
                                         <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
@@ -237,11 +329,11 @@
                                 </GroupStyle.HeaderContainerStyle>
                             </GroupStyle>
                         </GridView.GroupStyle>
-                        <GridView.ItemTemplate>
+                        <!--<GridView.ItemTemplate>
                             <DataTemplate x:DataType="tl:TLDocument">
                                 <Image x:Phase="3" Margin="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
                             </DataTemplate>
-                        </GridView.ItemTemplate>
+                        </GridView.ItemTemplate>-->
                         <GridView.Footer>
                             <Border Height="12"/>
                         </GridView.Footer>
@@ -266,21 +358,22 @@
                 <PivotItem>
                     <!--<SemanticZoom x:Name="SemanticStickers">
                         <SemanticZoom.ZoomedInView>-->
-                            <controls:ZoomableGridView
+                    <controls:ZoomableGridView
                                 x:Name="Stickers"
                                 ItemsSource="{x:Bind StickersSource.View}"
                                 common:FluidGridView.OrientationOnly="False"
+                        ContainerContentChanging="Stickers_ContainerContentChanging"
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"
                                 ItemClick="Stickers_ItemClick"
                                 Loaded="Stickers_Loaded"
-                                Padding="12,0">
-                                <common:FluidGridView.Triggers>
-                                    <common:FluidGridViewTrigger RowsOrColumns="5"/>
-                                </common:FluidGridView.Triggers>
-                                <GridView.GroupStyle>
-                                    <GroupStyle>
-                                        <GroupStyle.HeaderTemplateSelector>
+                                Padding="2,0">
+                        <common:FluidGridView.Triggers>
+                            <common:FluidGridViewTrigger RowsOrColumns="5"/>
+                        </common:FluidGridView.Triggers>
+                        <GridView.GroupStyle>
+                            <GroupStyle>
+                                <!--<GroupStyle.HeaderTemplateSelector>
                                             <selectors:StickerSetTemplateSelector>
                                                 <selectors:StickerSetTemplateSelector.ItemTemplate>
                                                     <DataTemplate x:DataType="messages:TLMessagesStickerSet">
@@ -301,66 +394,76 @@
                                                     </DataTemplate>
                                                 </selectors:StickerSetTemplateSelector.GroupTemplate>
                                             </selectors:StickerSetTemplateSelector>
-                                        </GroupStyle.HeaderTemplateSelector>
-                                        <GroupStyle.HeaderContainerStyle>
-                                            <Style TargetType="GridViewHeaderItem">
-                                                <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
-                                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                                <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                                <Setter Property="Margin" Value="0,0,0,0"/>
-                                                <Setter Property="Padding" Value="0,8,0,8"/>
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                <Setter Property="VerticalContentAlignment" Value="Top" />
-                                                <Setter Property="MinHeight" Value="32"/>
-                                                <Setter Property="Height" Value="32"/>
-                                                <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="GridViewHeaderItem">
-                                                            <Border Background="{TemplateBinding Background}"
+                                        </GroupStyle.HeaderTemplateSelector>-->
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Title}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                                <GroupStyle.HeaderContainerStyle>
+                                    <Style TargetType="GridViewHeaderItem">
+                                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
+                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                        <Setter Property="Margin" Value="0,0,0,0"/>
+                                        <Setter Property="Padding" Value="10,8,10,8"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="VerticalContentAlignment" Value="Top" />
+                                        <Setter Property="MinHeight" Value="32"/>
+                                        <Setter Property="Height" Value="32"/>
+                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="GridViewHeaderItem">
+                                                    <Border Background="{TemplateBinding Background}"
                                                                     BorderBrush="{TemplateBinding BorderBrush}"
                                                                     BorderThickness="{TemplateBinding BorderThickness}">
-                                                                <ContentPresenter x:Name="ContentPresenter"
+                                                        <ContentPresenter x:Name="ContentPresenter"
                                                                                   Margin="{TemplateBinding Padding}"
                                                                                   Content="{TemplateBinding Content}"
                                                                                   ContentTemplate="{TemplateBinding ContentTemplate}"
                                                                                   ContentTransitions="{TemplateBinding ContentTransitions}"
                                                                                   HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                                                   VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </GroupStyle.HeaderContainerStyle>
-                                    </GroupStyle>
-                                </GridView.GroupStyle>
-                                <GridView.ItemTemplate>
-                                    <DataTemplate x:DataType="tl:TLDocument">
-                                        <Image x:Phase="3" Margin="2" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
-                                    </DataTemplate>
-                                </GridView.ItemTemplate>
-                                <GridView.Footer>
-                                    <Border Height="12"/>
-                                </GridView.Footer>
-                                <GridView.ItemContainerStyle>
-                                    <Style TargetType="GridViewItem">
-                                        <Setter Property="Margin" Value="0"/>
-                                        <Setter Property="Padding" Value="0"/>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
                                     </Style>
-                                </GridView.ItemContainerStyle>
-                                <GridView.ItemContainerTransitions>
-                                    <TransitionCollection/>
-                                </GridView.ItemContainerTransitions>
-                                <GridView.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <ItemsWrapGrid Orientation="Horizontal" AreStickyGroupHeadersEnabled="False"/>
-                                    </ItemsPanelTemplate>
-                                </GridView.ItemsPanel>
-                            </controls:ZoomableGridView>
-                        <!--</SemanticZoom.ZoomedInView>
+                                </GroupStyle.HeaderContainerStyle>
+                            </GroupStyle>
+                        </GridView.GroupStyle>
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <Image Margin="2"/>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                        <!--<GridView.Header>
+                            <Border>
+                                <TextBox PlaceholderText="Search Stickers" Margin="10,8,10,0"/>
+                            </Border>
+                        </GridView.Header>-->
+                        <GridView.Footer>
+                            <Border Height="12"/>
+                        </GridView.Footer>
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="Margin" Value="0"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </GridView.ItemContainerStyle>
+                        <GridView.ItemContainerTransitions>
+                            <TransitionCollection/>
+                        </GridView.ItemContainerTransitions>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" AreStickyGroupHeadersEnabled="False" Loaded="OnLoaded"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                    </controls:ZoomableGridView>
+                    <!--</SemanticZoom.ZoomedInView>
                         <SemanticZoom.ZoomedOutView>
                             <ListView ItemsSource="{x:Bind StickersSource.View.CollectionGroups}">
                                 <ListView.ItemTemplate>
@@ -373,95 +476,244 @@
                     </SemanticZoom>-->
                 </PivotItem>
             </Pivot>
-            <ListView x:Name="Toolbar"
-                      ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
-                      Height="{ThemeResource AppBarThemeCompactHeight}"
-                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                      IsItemClickEnabled="True"
-                      ItemClick="Toolbar_ItemClick"
-                      SelectionChanged="Toolbar_SelectionChanged"
-                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                      ScrollViewer.HorizontalScrollMode="Auto"
-                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                      ScrollViewer.VerticalScrollMode="Disabled"
-                      Grid.Row="2">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="Margin" Value="0"/>
-                        <Setter Property="Padding" Value="0"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Width" Value="{ThemeResource AppBarThemeCompactHeight}"/>
-                        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
-                        <Setter Property="MinWidth" Value="0"/>
-                        <Setter Property="MinHeight" Value="0"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplateSelector>
-                    <selectors:StickerSetTemplateSelector>
-                        <selectors:StickerSetTemplateSelector.ItemTemplate>
-                            <DataTemplate x:DataType="messages:TLMessagesStickerSet">
-                                <Image Margin="6" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}"/>
-                            </DataTemplate>
-                        </selectors:StickerSetTemplateSelector.ItemTemplate>
-                        <selectors:StickerSetTemplateSelector.GroupTemplate>
-                            <DataTemplate x:DataType="viewModels:TLChannelStickerSet">
-                                <controls:ProfilePicture Margin="6" Source="{x:Bind With, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}" IsHitTestVisible="False"/>
-                            </DataTemplate>
-                        </selectors:StickerSetTemplateSelector.GroupTemplate>
-                        <selectors:StickerSetTemplateSelector.RecentsTemplate>
-                            <DataTemplate x:DataType="messages:TLMessagesStickerSet">
-                                <Border ToolTipService.ToolTip="{x:Bind Set.Title}" Background="Transparent">
-                                    <FontIcon Glyph="&#xE121;" Margin="0,0,0,2"/>
-                                </Border>
-                            </DataTemplate>
-                        </selectors:StickerSetTemplateSelector.RecentsTemplate>
-                        <selectors:StickerSetTemplateSelector.FavedTemplate>
-                            <DataTemplate x:DataType="messages:TLMessagesStickerSet">
-                                <Border ToolTipService.ToolTip="{x:Bind Set.Title}" Background="Transparent">
-                                    <FontIcon Glyph="&#xE208;" Margin="0,0,0,2"/>
-                                </Border>
-                            </DataTemplate>
-                        </selectors:StickerSetTemplateSelector.FavedTemplate>
-                    </selectors:StickerSetTemplateSelector>
-                </ListView.ItemTemplateSelector>
-                <ListView.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.SavedGifs.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="0" Glyph="&#xE608;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-                        <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Padding="4">
-                            <Grid Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
-                                  CornerRadius="10"
-                                  MinWidth="20"
-                                  Height="20">
-                                <TextBlock Text="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay}"
-                                           Style="{ThemeResource CaptionTextBlockStyle}"
-                                           Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
-                                           TextAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           TextLineBounds="TrimToBaseline,TrimToCapHeight"
-                                           Margin="5,0,5,0"/>
-                            </Grid>
-                        </controls:PivotRadioButton>
-                        <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="2" Glyph="&#xE121;" Visibility="Collapsed"/>
-                    </StackPanel>
-                </ListView.Header>
-                <ListView.Footer>
-                    <StackPanel Orientation="Horizontal">
-                        <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-                        <controls:GlyphButton Click="Settings_Click" Glyph="&#xE115;"/>
-                    </StackPanel>
-                </ListView.Footer>
-                <ListView.ItemContainerTransitions>
-                    <TransitionCollection/>
-                </ListView.ItemContainerTransitions>
-            </ListView>
+            <Grid x:Name="ToolbarContainer">
+                <Border x:Name="Separator"/>
+                <!--
+                          Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"-->
+                <ListView x:Name="Toolbar"
+                          ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
+                          Height="{ThemeResource TelegramToolBarSmallHeight}"
+                          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                          IsItemClickEnabled="True"
+                          ItemClick="Toolbar_ItemClick"
+                          SelectionChanged="Toolbar_SelectionChanged"
+                          ContainerContentChanging="Toolbar_ContainerContentChanging"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          ScrollViewer.HorizontalScrollMode="Auto"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          ScrollViewer.VerticalScrollMode="Disabled"
+                          Grid.Row="0">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemContainerStyleSelector>
+                        <selectors:StickerSetStyleSelector>
+                            <selectors:StickerSetStyleSelector.RecentStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Margin" Value="0"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Width" Value="{ThemeResource TelegramToolBarSmallHeight}"/>
+                                    <Setter Property="Height" Value="{ThemeResource TelegramToolBarSmallHeight}"/>
+                                    <Setter Property="MinWidth" Value="0"/>
+                                    <Setter Property="MinHeight" Value="0"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListViewItem">
+                                                <Grid x:Name="RootGrid" ToolTipService.ToolTip="{CustomResource RecentStickers}">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup>
+                                                            <VisualState x:Name="Normal"/>
+                                                            <VisualState x:Name="PointerOver">
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Pressed">
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Selected">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
+                                                                    <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                            <VisualState x:Name="PointerOverSelected">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
+                                                                    <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
+                                                                </VisualState.Setters>
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="PressedSelected">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
+                                                                    <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
+                                                                </VisualState.Setters>
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                    <FontIcon x:Name="UncheckedGlyph" Glyph="&#xE911;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                                                    <FontIcon x:Name="CheckedGlyph" Visibility="Collapsed" Glyph="&#xE912;" FontFamily="{StaticResource TelegramThemeFontFamily}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </selectors:StickerSetStyleSelector.RecentStyle>
+                            <selectors:StickerSetStyleSelector.FavoriteStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Margin" Value="0"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Width" Value="{ThemeResource TelegramToolBarSmallHeight}"/>
+                                    <Setter Property="Height" Value="{ThemeResource TelegramToolBarSmallHeight}"/>
+                                    <Setter Property="MinWidth" Value="0"/>
+                                    <Setter Property="MinHeight" Value="0"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListViewItem">
+                                                <Grid x:Name="RootGrid" ToolTipService.ToolTip="{CustomResource FavoriteStickers}">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup>
+                                                            <VisualState x:Name="Normal"/>
+                                                            <VisualState x:Name="PointerOver">
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Pressed">
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Selected">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
+                                                                    <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                            <VisualState x:Name="PointerOverSelected">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
+                                                                    <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
+                                                                </VisualState.Setters>
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="PressedSelected">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
+                                                                    <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
+                                                                </VisualState.Setters>
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                    <FontIcon x:Name="UncheckedGlyph" Glyph="&#xE208;" Margin="0,0,0,2"/>
+                                                    <FontIcon x:Name="CheckedGlyph" Visibility="Collapsed" Glyph="&#xE0B4;" Margin="0,0,0,2" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </selectors:StickerSetStyleSelector.FavoriteStyle>
+                            <selectors:StickerSetStyleSelector.ItemStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Margin" Value="0"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Width" Value="{ThemeResource TelegramToolBarSmallHeight}"/>
+                                    <Setter Property="Height" Value="{ThemeResource TelegramToolBarSmallHeight}"/>
+                                    <Setter Property="MinWidth" Value="0"/>
+                                    <Setter Property="MinHeight" Value="0"/>
+                                </Style>
+                            </selectors:StickerSetStyleSelector.ItemStyle>
+                        </selectors:StickerSetStyleSelector>
+                    </ListView.ItemContainerStyleSelector>
+                    <ListView.ItemTemplateSelector>
+                        <selectors:StickerSetTemplateSelector>
+                            <selectors:StickerSetTemplateSelector.ItemTemplate>
+                                <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                                    <!--<Image Margin="6" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Title}"/>-->
+                                    <Image Margin="6" ToolTipService.ToolTip="{x:Bind Title}"/>
+                                </DataTemplate>
+                            </selectors:StickerSetTemplateSelector.ItemTemplate>
+                            <!--<selectors:StickerSetTemplateSelector.GroupTemplate>
+                                <DataTemplate x:DataType="viewModels:TLChannelStickerSet">
+                                    <controls:ProfilePicture Margin="6" Source="{x:Bind With, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}" IsHitTestVisible="False"/>
+                                </DataTemplate>
+                            </selectors:StickerSetTemplateSelector.GroupTemplate>-->
+                            <selectors:StickerSetTemplateSelector.RecentsTemplate>
+                                <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                                    <Border ToolTipService.ToolTip="{x:Bind Title}" Background="Transparent">
+                                        <FontIcon Glyph="&#xE121;" Margin="0,0,0,2"/>
+                                    </Border>
+                                </DataTemplate>
+                            </selectors:StickerSetTemplateSelector.RecentsTemplate>
+                            <selectors:StickerSetTemplateSelector.FavedTemplate>
+                                <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                                    <Border ToolTipService.ToolTip="{x:Bind Title}" Background="Transparent">
+                                        <FontIcon Glyph="&#xE208;" Margin="0,0,0,2"/>
+                                    </Border>
+                                </DataTemplate>
+                            </selectors:StickerSetTemplateSelector.FavedTemplate>
+                        </selectors:StickerSetTemplateSelector>
+                    </ListView.ItemTemplateSelector>
+                    <ListView.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.SavedGifs.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="0" Glyph="&#xE608;" CheckedGlyph="&#xE913;" Width="{ThemeResource TelegramToolBarSmallHeight}" Height="{ThemeResource TelegramToolBarSmallHeight}" FontFamily="{StaticResource TelegramThemeFontFamily}" Style="{StaticResource ModernPivotRadioButtonStyle}"/>
+                            <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" Width="{ThemeResource TelegramToolBarSmallHeight}" Height="{ThemeResource TelegramToolBarSmallHeight}" FontFamily="{StaticResource TelegramThemeFontFamily}" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Padding="4">
+                                <Grid Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                                      CornerRadius="10"
+                                      MinWidth="20"
+                                      Height="20">
+                                    <TextBlock Text="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay}"
+                                               Style="{ThemeResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                               TextAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               TextLineBounds="TrimToBaseline,TrimToCapHeight"
+                                               Margin="5,0,5,0"/>
+                                </Grid>
+                            </controls:PivotRadioButton>
+                            <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="2" Glyph="&#xE121;" Visibility="Collapsed"/>
+                        </StackPanel>
+                    </ListView.Header>
+                    <ListView.Footer>
+                        <StackPanel Orientation="Horizontal">
+                            <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" Width="{ThemeResource TelegramToolBarSmallHeight}" Height="{ThemeResource TelegramToolBarSmallHeight}" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                            <controls:GlyphButton Click="Settings_Click" Width="{ThemeResource TelegramToolBarSmallHeight}" Height="{ThemeResource TelegramToolBarSmallHeight}" Glyph="&#xE115;"/>
+                        </StackPanel>
+                    </ListView.Footer>
+                    <ListView.ItemContainerTransitions>
+                        <TransitionCollection/>
+                    </ListView.ItemContainerTransitions>
+                </ListView>
 
-            <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.Row="2"/>
+                <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.Row="2"/>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
+using TdWindows;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
@@ -26,53 +26,46 @@ namespace Unigram.Converters
             var word1 = string.Empty;
             var word2 = string.Empty;
 
-            var user = value as TLUser;
-            if (user != null)
+            if (value is User user)
             {
                 word1 = user.FirstName ?? string.Empty;
                 word2 = user.LastName ?? string.Empty;
             }
-
-            var chat = value as TLChatBase;
-            if (chat != null)
+            else if (value is Chat chat)
             {
-                var words = chat.DisplayName.Split(new char[] { ' ' });
+                var words = chat.Title.Split(new char[] { ' ' });
+                if (words.Length > 1 && chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+                {
+                    word1 = words[0];
+                    word2 = words[words.Length - 1];
+                }
+                else if (words.Length > 0)
+                {
+                    word1 = words[0];
+                    word2 = string.Empty;
+                }
+            }
+            else if (value is ChatInviteLinkInfo info)
+            {
+                var words = info.Title.Split(new char[] { ' ' });
                 if (words.Length > 0)
                 {
                     word1 = words[0];
                     word2 = string.Empty;
-
-                    //if (words.Length == 1)
-                    //{
-                    //    var si = StringInfo.GetTextElementEnumerator(chat.FullName);
-
-                    //    word1 = si.MoveNext() ? si.GetTextElement() : string.Empty;
-                    //    word2 = si.MoveNext() ? si.GetTextElement() : string.Empty;
-                    //}
-                    //else
-                    //{
-                    //    word1 = words[0];
-                    //    word2 = words[words.Length - 1];
-                    //}
                 }
             }
-
-            if (chat == null && user == null)
+            else if (value is string str)
             {
-                var str = value as string;
-                if (str != null)
+                var words = str.Split(new char[] { ' ' });
+                if (words.Length > 1)
                 {
-                    var words = str.Split(new char[] { ' ' });
-                    if (words.Length > 1)
-                    {
-                        word1 = words[0];
-                        word2 = words[words.Length - 1];
-                    }
-                    else
-                    {
-                        word1 = words[0];
-                        word2 = string.Empty;
-                    }
+                    word1 = words[0];
+                    word2 = words[words.Length - 1];
+                }
+                else
+                {
+                    word1 = words[0];
+                    word2 = string.Empty;
                 }
             }
 

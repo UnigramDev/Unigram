@@ -5,8 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services.Cache;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Strings;
@@ -30,10 +28,10 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class ProxyView : ContentDialog
     {
-        public ProxyView()
+        public ProxyView(bool share)
         {
             InitializeComponent();
-            ShareButton.Visibility = SettingsHelper.IsAuthorized ? Visibility.Visible : Visibility.Collapsed;
+            ShareButton.Visibility = share ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public bool IsProxyEnabled
@@ -155,7 +153,7 @@ namespace Unigram.Controls.Views
             var title = Strings.Android.ProxySettings;
             var link = new Uri(MeUrlPrefixConverter.Convert($"socks?{string.Join("&", builder)}"));
 
-            await ShareView.Current.ShowAsync(link, title);
+            await ShareView.GetForCurrentView().ShowAsync(link, title);
         }
 
         private void Enable_Toggled(object sender, RoutedEventArgs e)

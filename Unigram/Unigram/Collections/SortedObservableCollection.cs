@@ -17,27 +17,28 @@ namespace Unigram.Collections
             _comparer = comparer;
         }
 
+        public SortedObservableCollection(IComparer<T> comparer, IEnumerable<T> source)
+            : base(source)
+        {
+            _comparer = comparer;
+        }
+
         protected override void InsertItem(int index, T item)
         {
-            index = Array.BinarySearch<T>(this.Items.ToArray<T>(), item, _comparer);
+            index = Array.BinarySearch(Items.ToArray(), item, _comparer);
             if (index >= 0) ; /*throw new ArgumentException("Cannot insert duplicated items");*/
             else base.InsertItem(~index, item);
+        }
 
-            //for (int i = 0; i < this.Count; i++)
-            //{
-            //    switch (Math.Sign(_comparer.Compare(this[i], item)))
-            //    {
-            //        case 0:
-            //            throw new InvalidOperationException("Cannot insert duplicated items");
-            //        case 1:
-            //            base.InsertItem(i, item);
-            //            return;
-            //        case -1:
-            //            break;
-            //    }
-            //}
+        public int NextIndexOf(T item)
+        {
+            var index = Array.BinarySearch(Items.Except(new[] { item }).ToArray(), item, _comparer);
+            if (index >= 0)
+            {
+                return -1;
+            }
 
-            //base.InsertItem(this.Count, item);
+            return ~index;
         }
     }
 }

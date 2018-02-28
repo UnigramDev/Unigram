@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api.TL;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,13 +18,17 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            switch (item)
+            var member = item as ChatMember;
+            if (member == null)
             {
-                case TLChannelParticipantCreator channelCreator:
-                case TLChatParticipantCreator chatCreator:
+                return base.SelectTemplateCore(item, container);
+            }
+
+            switch (member.Status)
+            {
+                case ChatMemberStatusCreator creator:
                     return CreatorTemplate ?? AdminTemplate ?? ItemTemplate;
-                case TLChannelParticipantAdmin channelAdmin:
-                case TLChatParticipantAdmin chatAdmin:
+                case ChatMemberStatusAdministrator administrator:
                     return AdminTemplate ?? ItemTemplate;
                 default:
                     return ItemTemplate;

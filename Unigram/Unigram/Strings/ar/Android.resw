@@ -1,44 +1,63 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<root>	
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>1.3</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>آخر ظهور خلال فترة طويلة</value>
   </data>
@@ -349,7 +368,7 @@
     <value>كذلك {0} عضو آخرون يقومون بالكتابة</value>
   </data>
   <data name="AndMoreTypingGroupZero" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="AndMoreTypingGroupOne" xml:space="preserve">
     <value>{0} و شخص اخر يقوموا بالكتابة</value>
@@ -384,11 +403,14 @@
   <data name="AndOtherOther" xml:space="preserve">
     <value>و {0} غيرهم</value>
   </data>
+  <data name="ApkRestricted" xml:space="preserve">
+    <value>تثبيت ملفات APK محظور لهذا التطبيق. يمكنك تفعيل هذا في إعدادات النظام. </value>
+  </data>
   <data name="AppName" xml:space="preserve">
     <value>تيليجرام</value>
   </data>
   <data name="AppNameBeta" xml:space="preserve">
-    <value>نسخة تيليجرام التجريبية</value>
+    <value>تيليجرام</value>
   </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>تطبيق ملف التعريب</value>
@@ -493,6 +515,9 @@
   </data>
   <data name="AreYouSureUnblockContact" xml:space="preserve">
     <value>هل أنت متأكد من رغبتك في إزالة الحظر عن جهة الاتصال هذه؟</value>
+  </data>
+  <data name="AreYouSureWebSessions" xml:space="preserve">
+    <value>هل أنت متأكد من رغبتك في تسجيل الخروج من جميع التطبيقات؟</value>
   </data>
   <data name="ArticleByAuthor" xml:space="preserve">
     <value>من {0}</value>
@@ -604,6 +629,45 @@
   <data name="AutoLockInfo" xml:space="preserve">
     <value>اطلب رمز المرور إذا غبت فترة محددة من الزمن.</value>
   </data>
+  <data name="AutoNightAutomatic" xml:space="preserve">
+    <value>تلقائي</value>
+  </data>
+  <data name="AutoNightBrightness" xml:space="preserve">
+    <value>مؤشر السطوع</value>
+  </data>
+  <data name="AutoNightBrightnessInfo" xml:space="preserve">
+    <value>قم بالتحويل للنمط الليلي عن نزول السطوع تحت  {0}%%.</value>
+  </data>
+  <data name="AutoNightDisabled" xml:space="preserve">
+    <value>معطل</value>
+  </data>
+  <data name="AutoNightFrom" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="AutoNightLocation" xml:space="preserve">
+    <value>الغروب والشروق المحلي</value>
+  </data>
+  <data name="AutoNightPreferred" xml:space="preserve">
+    <value>النمط الليلي المفضل</value>
+  </data>
+  <data name="AutoNightSchedule" xml:space="preserve">
+    <value>جدولة</value>
+  </data>
+  <data name="AutoNightScheduled" xml:space="preserve">
+    <value>مجدول</value>
+  </data>
+  <data name="AutoNightTheme" xml:space="preserve">
+    <value>الوضع الليلي التلقائي</value>
+  </data>
+  <data name="AutoNightTo" xml:space="preserve">
+    <value>حتى</value>
+  </data>
+  <data name="AutoNightUpdateLocation" xml:space="preserve">
+    <value>تحديث المكان</value>
+  </data>
+  <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
+    <value>حساب الغروب والشروق يتطلب التحقق مرة واحدة من موقعك التقريبي. يرجى العلم أن موقعك يتم حفظه في جهازك فقط.\n\nالغروب: {0}\nالشروق: {1}</value>
+  </data>
   <data name="AutodownloadChannels" xml:space="preserve">
     <value>القنوات</value>
   </data>
@@ -630,6 +694,9 @@
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>في إنتظار اتصال %s … </value>
+  </data>
+  <data name="BackgroundRestricted" xml:space="preserve">
+    <value>تم تقييد البيانات الخلفية</value>
   </data>
   <data name="BadgeNumber" xml:space="preserve">
     <value>عداد الشارات</value>
@@ -800,6 +867,9 @@
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>إلغاء التسجيل</value>
+  </data>
+  <data name="CantPlayVideo" xml:space="preserve">
+    <value>لم يستطع التطبيق تشغيل هذا المقطع المرئي. هل تود تجربة تشغيله بمشغل خارجي؟</value>
   </data>
   <data name="Caption" xml:space="preserve">
     <value>تعليق</value>
@@ -1189,6 +1259,9 @@
   <data name="ClearOtherSessionsHelp" xml:space="preserve">
     <value>قم بتسجيل الخروج من جميع الأجهزة الأخرى باستثناء هذا الجهاز</value>
   </data>
+  <data name="ClearOtherWebSessionsHelp" xml:space="preserve">
+    <value>سجل الخروج من جميع التطبيقات التي سجلت الدخول فيها باستخدام تيليجرام.</value>
+  </data>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>هل ترغب في مسح سجل الإيموجي؟</value>
   </data>
@@ -1441,14 +1514,26 @@
   <data name="DaysBoldOther" xml:space="preserve">
     <value>**{0}** يوم</value>
   </data>
+  <data name="DebugClearLogs" xml:space="preserve">
+    <value>مسح السجلات</value>
+  </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>قائمة المعالجة</value>
+  </data>
+  <data name="DebugMenuClearMediaCache" xml:space="preserve">
+    <value>حذف الذاكرة المخبئية للملفات المُرسلة.</value>
   </data>
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>عطل الكاميرا داخل التطبيق</value>
   </data>
+  <data name="DebugMenuDisableLogs" xml:space="preserve">
+    <value>تعطيل السجلات</value>
+  </data>
   <data name="DebugMenuEnableCamera" xml:space="preserve">
     <value>فعل الكاميرا داخل التطبيق</value>
+  </data>
+  <data name="DebugMenuEnableLogs" xml:space="preserve">
+    <value>تمكين السجلات</value>
   </data>
   <data name="DebugMenuImportContacts" xml:space="preserve">
     <value>استيراد جهات الاتصال</value>
@@ -1461,6 +1546,9 @@
   </data>
   <data name="DebugMenuResetDialogs" xml:space="preserve">
     <value>إعادة تعيين الحوارات</value>
+  </data>
+  <data name="DebugSendLogs" xml:space="preserve">
+    <value>أرسل السجلات</value>
   </data>
   <data name="Default" xml:space="preserve">
     <value>افتراضي</value>
@@ -1671,6 +1759,9 @@
   <data name="EmpryUsersPlaceholder" xml:space="preserve">
     <value>إضافة جهات اتصال</value>
   </data>
+  <data name="EnableAllStreamingInfo" xml:space="preserve">
+    <value>بعض الفيديوهات لا يمكن بثها - مثال: جميع الفيديوهات التي تم إرسالها من تيليجرام نسحة ٤.٧ أو قبل.</value>
+  </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>تفعيل التأثيرات المتحركة</value>
   </data>
@@ -1679,6 +1770,9 @@
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
     <value>يمكنك تغيير خادم البروكسي لاحقًا عن طريق الإعدادات (البيانات والتخزين)</value>
+  </data>
+  <data name="EnableStreaming" xml:space="preserve">
+    <value>بث الموسيقى والمقاطع المرئية</value>
   </data>
   <data name="EnabledPasswordText" xml:space="preserve">
     <value>لقد قمت بتفعيل التحقق بخطوتين.
@@ -1827,16 +1921,16 @@
     <value>un1 قام بالتعديل على هذه رسالة:</value>
   </data>
   <data name="EventLogEditedYouChannelPhoto" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogEditedYouChannelTitle" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogEditedYouGroupPhoto" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogEditedYouGroupTitle" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogEmpty" xml:space="preserve">
     <value>**لا توجد أحداث هنا بعد**
@@ -1867,7 +1961,7 @@
     <value>معلومات القناة</value>
   </data>
   <data name="EventLogFilterChannelSettings" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogFilterDeletedMessages" xml:space="preserve">
     <value>رسائل محذوفة</value>
@@ -1906,7 +2000,7 @@
     <value>ما هي العمليات الحديثة؟</value>
   </data>
   <data name="EventLogLeft" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogLeftChannel" xml:space="preserve">
     <value>un1 غادر القناة</value>
@@ -1927,13 +2021,13 @@
     <value>un1 ثبت هذه رسالة:</value>
   </data>
   <data name="EventLogPreviousChannelLink" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogPreviousGroupDescription" xml:space="preserve">
     <value>الوصف السابق</value>
   </data>
   <data name="EventLogPreviousGroupLink" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogPreviousLink" xml:space="preserve">
     <value>الرابط السابق</value>
@@ -1963,7 +2057,7 @@
     <value>تعديل الرسائل</value>
   </data>
   <data name="EventLogPromotedInviteLink" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogPromotedPinMessages" xml:space="preserve">
     <value>ثبت رسائل</value>
@@ -1972,7 +2066,7 @@
     <value>انشر رسائل</value>
   </data>
   <data name="EventLogRemoved" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogRemovedChannelLink" xml:space="preserve">
     <value>un1 قام بحذف رابط القناة</value>
@@ -1990,13 +2084,13 @@
     <value>un1 قام بحذف صورة المجموعة</value>
   </data>
   <data name="EventLogRemovedYouChannelPhoto" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogRemovedYouGroupPhoto" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogRestricted" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogRestrictedReadMessages" xml:space="preserve">
     <value>اقرأ رسائل</value>
@@ -2043,19 +2137,19 @@
     <value>un1  ألغى تثبيت رسالة</value>
   </data>
   <data name="EventLogYouChannelJoined" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogYouGroupJoined" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogYouLeft" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogYouPromoted" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="EventLogYouRestricted" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="Events" xml:space="preserve">
     <value>الأحداث</value>
@@ -2326,6 +2420,9 @@
   </data>
   <data name="FromChatsOther" xml:space="preserve">
     <value>من {0} محادثة</value>
+  </data>
+  <data name="FromFormatted" xml:space="preserve">
+    <value>من {0}</value>
   </data>
   <data name="FromGalley" xml:space="preserve">
     <value>من الجهاز</value>
@@ -2647,7 +2744,7 @@
     <value>Arabic</value>
   </data>
   <data name="LanguageSuggested" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="LastName" xml:space="preserve">
     <value>اسم العائلة</value>
@@ -2670,11 +2767,17 @@
   <data name="LastSeenDate" xml:space="preserve">
     <value>آخر ظهور</value>
   </data>
+  <data name="LastSeenDateFormatted" xml:space="preserve">
+    <value>آخر ظهور {0}</value>
+  </data>
   <data name="LastSeenEverybody" xml:space="preserve">
     <value>الجميع</value>
   </data>
   <data name="LastSeenEverybodyMinus" xml:space="preserve">
     <value>الجميع (-{0})</value>
+  </data>
+  <data name="LastSeenFormatted" xml:space="preserve">
+    <value>آخر ظهور {0}</value>
   </data>
   <data name="LastSeenNobody" xml:space="preserve">
     <value>لا أحد</value>
@@ -2788,6 +2891,9 @@
   </data>
   <data name="LocationUpdated" xml:space="preserve">
     <value>تم تحديثه</value>
+  </data>
+  <data name="LocationUpdatedFormatted" xml:space="preserve">
+    <value>محدث  {0}</value>
   </data>
   <data name="LocationUpdatedJustNow" xml:space="preserve">
     <value>تم تحديثه للتو</value>
@@ -3142,6 +3248,12 @@
   <data name="NoOtherSessionsInfo" xml:space="preserve">
     <value>يمكنك تسجيل الدخول لحسابك في تيليجرام من جوال آخر، جهاز لوحي، أو أجهزة الكمبيوتر، باستخدام نفس رقم الهاتف. تيليجرام سيقوم بمزامنة كافة بياناتك بشكل لحظي.</value>
   </data>
+  <data name="NoOtherWebSessions" xml:space="preserve">
+    <value>غير مسجل الدخول في التطبيقات.</value>
+  </data>
+  <data name="NoOtherWebSessionsInfo" xml:space="preserve">
+    <value>يمكنك تسجيل الدخول في التطبيقات باستخدام حساب تيليجرام الخاص بك.</value>
+  </data>
   <data name="NoPhotos" xml:space="preserve">
     <value>لا توجد صور حتى الآن</value>
   </data>
@@ -3451,6 +3563,9 @@
   <data name="NotificationsEnableCustom" xml:space="preserve">
     <value>تفعيل الإشعارات مخصصة</value>
   </data>
+  <data name="NotificationsImportance" xml:space="preserve">
+    <value>الأهمية</value>
+  </data>
   <data name="NotificationsLed" xml:space="preserve">
     <value>LED</value>
   </data>
@@ -3478,11 +3593,20 @@
   <data name="NotificationsPriorityHigh" xml:space="preserve">
     <value>مرتفع</value>
   </data>
+  <data name="NotificationsPriorityLow" xml:space="preserve">
+    <value>منخفض</value>
+  </data>
   <data name="NotificationsPriorityMax" xml:space="preserve">
     <value>القصوى</value>
   </data>
+  <data name="NotificationsPriorityMedium" xml:space="preserve">
+    <value>عادي</value>
+  </data>
   <data name="NotificationsPrioritySettings" xml:space="preserve">
     <value>كما في الإعدادات</value>
+  </data>
+  <data name="NotificationsPriorityUrgent" xml:space="preserve">
+    <value>مهم جدًا</value>
   </data>
   <data name="NotificationsService" xml:space="preserve">
     <value>خدمة التشغيل المستمر</value>
@@ -3548,7 +3672,7 @@
     <value>افتح قناة</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>افتح مجموعة</value>
+    <value>عرض المجموعة</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>فتح بواسطة...</value>
@@ -3557,13 +3681,16 @@
     <value>افتح باستخدام...</value>
   </data>
   <data name="OpenMessage" xml:space="preserve">
-    <value>افتح الرسالة</value>
+    <value>عرض الرسالة</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>هل ترغب في فتح الرابط باستخدام {0} ؟</value>
   </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>الأجهزة المسجّل دخول منها</value>
+  </data>
+  <data name="OtherWebSessions" xml:space="preserve">
+    <value>مسجل الدخول باستخدام تيليجرام</value>
   </data>
   <data name="OutgoingCalls" xml:space="preserve">
     <value>مكالمات صادرة</value>
@@ -3942,6 +4069,9 @@
   <data name="PleaseReEnterPassword" xml:space="preserve">
     <value>يرجى إعادة إدخال كلمة المرور الخاصة بك:</value>
   </data>
+  <data name="PleaseStreamDownload" xml:space="preserve">
+    <value>يرجى الإنتظار إلى حين تحميل كامل المقطع المرئي.</value>
+  </data>
   <data name="PointsZero" xml:space="preserve">
     <value>{0}</value>
   </data>
@@ -3975,6 +4105,12 @@
   <data name="PriorityInfo" xml:space="preserve">
     <value>الإشعارات الأكثر أهمية ستعمل حتى عندما يكون جهازك في وضعية عدم الإزعاج.</value>
   </data>
+  <data name="PrivacyBots" xml:space="preserve">
+    <value>البوتات والمواقع</value>
+  </data>
+  <data name="PrivacyBotsInfo" xml:space="preserve">
+    <value>المواقع التي استخدمت تيليجرام لتسجيل الدخول إليها.</value>
+  </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
     <value>تعطيل الند للند سيجعل جميع المكالمات تعتمد على خوادم تيليجرام لتجنب الإفصاح عن الـ IP الخاص لك، لكن يقوم بتنزيل جودة الصوت قليلًا.</value>
   </data>
@@ -3998,6 +4134,9 @@
   </data>
   <data name="PrivacyPaymentsClear" xml:space="preserve">
     <value>مسح معلومات عملية الدفع والشحن</value>
+  </data>
+  <data name="PrivacyPaymentsClearAlert" xml:space="preserve">
+    <value>احذف معلومات الشحن واطلب من موردي خدمات الدفع بحذف بطاقاتك الائتمانية المحفوظة؟ يرجى العلم أن تيليجرام لا يحفظ بيانات بطاقتك الائتمانية.</value>
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>يمكنك حذف معلومات الشحن الخاصة بك والطلب من جميع موفري خدمة الدفع حذف بطاقاتك الإئتمانية المسجلة. يرجى الأخذ بالعلم أن تيليجرام لا يقوم بتاتًا بحفظ بيانات بطاقتك الإئتمانية.</value>
@@ -4358,6 +4497,9 @@
   <data name="SecretChatContextBotAlert" xml:space="preserve">
     <value>يرجى ملاحظة أن البوتات أثناء الكتابة يتم تطويرها من مطورين مستقلين. لكي تعمل هذه البوتات، ما تكتبه بعد معرف البوت يذهب لمطور البوت.</value>
   </data>
+  <data name="SecretChatName" xml:space="preserve">
+    <value>تيليجرام</value>
+  </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
     <value>هل ترغب في تفعيل معاينة الروابط المطولة في المحادثات السرية؟ تذكر أن هذه المعاينات يتم إنشاؤها في خوادم تيليجرام.</value>
   </data>
@@ -4699,6 +4841,9 @@
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>إيقاف الكل</value>
   </data>
+  <data name="StopDownload" xml:space="preserve">
+    <value>إيقاف التحميل</value>
+  </data>
   <data name="StopLiveLocation" xml:space="preserve">
     <value>أوقف مشاركة الموقع</value>
   </data>
@@ -4713,6 +4858,9 @@
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>استخدام التخزين</value>
+  </data>
+  <data name="Streaming" xml:space="preserve">
+    <value>البث</value>
   </data>
   <data name="SubscribersZero" xml:space="preserve">
     <value>لا يوجد مشتركين</value>
@@ -4734,6 +4882,24 @@
   </data>
   <data name="Support" xml:space="preserve">
     <value>الدعم</value>
+  </data>
+  <data name="SyncContacts" xml:space="preserve">
+    <value>مزامنة جهات الاتصال</value>
+  </data>
+  <data name="SyncContactsAdded" xml:space="preserve">
+    <value>تم إضافة جهات الاتصال من جهازك إلى حسابك.</value>
+  </data>
+  <data name="SyncContactsInfoOff" xml:space="preserve">
+    <value>قم بالتفعيل لجلب جهات الاتصال من هذا الجهاز إلى حسابك.</value>
+  </data>
+  <data name="SyncContactsInfoOn" xml:space="preserve">
+    <value>سيتم إضافة جهات الإتصال من جهازك إلى حسابك.</value>
+  </data>
+  <data name="SyncContactsOff" xml:space="preserve">
+    <value>لن يتم إضافة جهات الاتصال على الجهاز هذا إلى هذا الحساب.</value>
+  </data>
+  <data name="SyncContactsOn" xml:space="preserve">
+    <value>سيتم إضافة جهات الاتصال على الجهاز هذا إلى هذا الحساب.</value>
   </data>
   <data name="SystemRoot" xml:space="preserve">
     <value>جذر النظام</value>
@@ -4771,11 +4937,23 @@
   <data name="TerminateAllSessions" xml:space="preserve">
     <value>سجل الخروج من كافة الأجهزة الأخرى</value>
   </data>
+  <data name="TerminateAllWebSessions" xml:space="preserve">
+    <value>فك الربط بكافة المواقع</value>
+  </data>
   <data name="TerminateSessionInfo" xml:space="preserve">
     <value>اضغط على الجهاز لتسجيل الخروج منه.</value>
   </data>
   <data name="TerminateSessionQuestion" xml:space="preserve">
     <value>هل ترغب في تسجيل الخروج من هذا الجهاز؟</value>
+  </data>
+  <data name="TerminateWebSessionInfo" xml:space="preserve">
+    <value>اضغط على التطبيق لتسجيل الخروج.</value>
+  </data>
+  <data name="TerminateWebSessionQuestion" xml:space="preserve">
+    <value>فك ربط {0} ؟</value>
+  </data>
+  <data name="TerminateWebSessionStop" xml:space="preserve">
+    <value>حظر {0}</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>تم نسخ النص للحافظة</value>
@@ -4827,6 +5005,9 @@
   </data>
   <data name="TodayAt" xml:space="preserve">
     <value>في</value>
+  </data>
+  <data name="TodayAtFormatted" xml:space="preserve">
+    <value>الساعة {0}</value>
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>إجمالي</value>
@@ -5068,6 +5249,9 @@
   <data name="VideoCaption" xml:space="preserve">
     <value>تعليق المقطع المرئي</value>
   </data>
+  <data name="VideoDoesNotSupportStreaming" xml:space="preserve">
+    <value>هذا المقطع المرئي غير مُخصصاً للبث. قد تحتاج إلى تحميله قبل مشاهدته.</value>
+  </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>الرسائل المرئية</value>
   </data>
@@ -5188,6 +5372,9 @@
   <data name="Warmth" xml:space="preserve">
     <value>الدفء</value>
   </data>
+  <data name="WebSessionsTitle" xml:space="preserve">
+    <value>التطبيقات المسجل الدخول فيها</value>
+  </data>
   <data name="WeeksZero" xml:space="preserve">
     <value>{0} أسبوع</value>
   </data>
@@ -5277,6 +5464,9 @@
   </data>
   <data name="YesterdayAt" xml:space="preserve">
     <value>أمس الساعة</value>
+  </data>
+  <data name="YesterdayAtFormatted" xml:space="preserve">
+    <value>أمس الساعة {0}</value>
   </data>
   <data name="YouBlockedUser" xml:space="preserve">
     <value>المعذرة، لا يمكنك إضافة هذا المستخدم أو البوت للمجموعات بسبب أنك قمت بحظره. فضلًا قم بإزالة الحظر للإستمرار.</value>

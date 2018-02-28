@@ -28,6 +28,12 @@ namespace Unigram.Controls
             this.InitializeComponent();
         }
 
+        public void Update(DialogSearchViewModel viewModel)
+        {
+            DataContext = viewModel;
+            Bindings.Update();
+        }
+
         #region Binding
 
         private string ConvertOf(int index, int count)

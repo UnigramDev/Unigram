@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.IntroPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -207,9 +207,12 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel VerticalAlignment="Center">
-            <Border Width="200" Height="200" Background="Black">
+            <Grid Width="200" Height="200" Background="Transparent">
                 <SwapChainPanel x:Name="SwapChain" Loaded="SwapChain_Loaded" Unloaded="SwapChain_Unloaded" Width="200" Height="200"/>
-            </Border>
+                <Border Width="160" Height="160" CornerRadius="80">
+                    <Image Source="ms-appx:///Assets/Logos/StoreLogo/StoreLogo.scale-400.png"/>
+                </Border>
+            </Grid>
             <StackPanel Opacity="0">
                 <TextBlock Padding="12,0,12,12"
                            Text="Telegram"
@@ -219,8 +222,7 @@
                 <TextBlock Padding="12,0,12,24"
                            common:TextBlockHelper.Markdown="The world's **fastest** messaging app.&#x0a;It is **free** and **secure**."
                            TextAlignment="Center"
-                           Style="{ThemeResource BodyTextBlockStyle}"
-                           MaxWidth="360"/>
+                           Style="{ThemeResource BodyTextBlockStyle}"/>
             </StackPanel>
             <ListView x:Name="Carousel"
                       Style="{StaticResource IndicatorListViewStyle}"

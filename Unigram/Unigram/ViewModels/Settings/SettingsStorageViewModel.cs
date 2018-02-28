@@ -3,29 +3,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
+using TdWindows;
+using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Native;
+using Unigram.Services;
+using Unigram.Views.Settings;
 using Windows.Storage;
 using Windows.Storage.Search;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsStorageViewModel : UnigramViewModelBase
     {
-        public SettingsStorageViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public SettingsStorageViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            ChangeTtlCommand = new RelayCommand(ChangeTtlExecute);
             ClearCacheCommand = new RelayCommand(ClearCacheExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            UpdateCacheSize(resetInitialCacheSize: true, updateDetailedCacheSizes: true);
+            IsLoading = true;
+
+            ProtoService.Send(new GetStorageStatisticsFast(), result =>
+            {
+                if (result is StorageStatisticsFast stats)
+                {
+                    BeginOnUIThread(() => StatisticsFast = stats);
+                }
+            });
+
+            ProtoService.Send(new GetStorageStatistics(25), result =>
+            {
+                if (result is StorageStatistics stats)
+                {
+                    BeginOnUIThread(() => Statistics = stats);
+                }
+            });
+
             TaskCompleted = true;
 
             return Task.CompletedTask;
@@ -33,81 +54,56 @@ namespace Unigram.ViewModels.Settings
 
         private static string[] ExcludedFileNames = new[] { Constants.WallpaperFileName };
 
-        private long _initialCacheSize;
-        public long InitialCacheSize
+        public int FilesTtl
         {
             get
             {
-                return _initialCacheSize;
+                return ApplicationSettings.Current.FilesTtl;
             }
             set
             {
-                Set(ref _initialCacheSize, value);
+                ApplicationSettings.Current.FilesTtl = value;
+                RaisePropertyChanged();
             }
         }
 
-        private double _percentage;
-        public double Percentage
+        private StorageStatisticsFast _statisticsFast;
+        public StorageStatisticsFast StatisticsFast
         {
             get
             {
-                return _percentage;
+                return _statisticsFast;
             }
             set
             {
-                Set(ref _percentage, value);
+                Set(ref _statisticsFast, value);
             }
         }
 
-        private long _cacheSize;
-        public long CacheSize
+        private StorageStatistics _statistics;
+        public StorageStatistics Statistics
         {
             get
             {
-                return _cacheSize;
+                return _statistics;
             }
             set
             {
-                Set(ref _cacheSize, value);
+                Set(ref _statistics, value);
+                ProcessTotal(value);
             }
         }
 
-        private long _imagesCacheSize;
-        public long ImagesCacheSize
+        private StorageStatisticsByChat _totalStatistics;
+        public StorageStatisticsByChat TotalStatistics
         {
             get
             {
-                return _imagesCacheSize;
+                return _totalStatistics;
             }
             set
             {
-                Set(ref _imagesCacheSize, value);
-            }
-        }
-
-        private long _videosCacheSize;
-        public long VideosCacheSize
-        {
-            get
-            {
-                return _videosCacheSize;
-            }
-            set
-            {
-                Set(ref _videosCacheSize, value);
-            }
-        }
-
-        private long _otherFilesCacheSize;
-        public long OtherFilesCacheSize
-        {
-            get
-            {
-                return _otherFilesCacheSize;
-            }
-            set
-            {
-                Set(ref _otherFilesCacheSize, value);
+                Set(ref _totalStatistics, value);
             }
         }
 
@@ -124,70 +120,120 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private void UpdateCacheSize(bool resetInitialCacheSize, bool updateDetailedCacheSizes)
+        public RelayCommand ClearCacheCommand { get; }
+        private void ClearCacheExecute()
         {
-            CacheSize = 0;
-
-            if (resetInitialCacheSize)
+            var statistics = _totalStatistics;
+            if (statistics == null)
             {
-                InitialCacheSize = 0;
+                return;
             }
 
-            try
-            {
-                var cacheSize = NativeUtils.GetDirectorySize(FileUtils.GetTempFileName(string.Empty));
-                CacheSize = cacheSize;
-
-                if (resetInitialCacheSize)
-                {
-                    InitialCacheSize = cacheSize;
-                }
-
-                Percentage = InitialCacheSize > 0 ? Math.Round((double)(CacheSize * 100) / InitialCacheSize, 1) : 0.0D;
-            }
-            catch { }
-            finally
-            {
-                if (updateDetailedCacheSizes)
-                {
-                    var filter = Constants.MediaTypes;
-                    var images = 0L;
-                    var videos = 0L;
-
-                    for (int i = 0; i < filter.Length; i++)
-                    {
-                        if (Constants.PhotoTypes.Contains(filter[i]))
-                        {
-                            images += NativeUtils.GetDirectorySize(FileUtils.GetTempFileName(string.Empty), "\\*" + filter[i]);
-                        }
-                        else
-                        {
-                            videos += NativeUtils.GetDirectorySize(FileUtils.GetTempFileName(string.Empty), "\\*" + filter[i]);
-                        }
-                    }
-
-                    ImagesCacheSize = images;
-                    VideosCacheSize = videos;
-                    OtherFilesCacheSize = Math.Max(_cacheSize - images - videos, 0);
-                }
-            }
+            Clear(statistics);
         }
 
-        public RelayCommand ClearCacheCommand { get; }
-        private async void ClearCacheExecute()
+        public async void Clear(StorageStatisticsByChat byChat)
         {
+            var dialog = new ContentDialogBase();
+            var page = new SettingsStorageOptimizationPage(ProtoService, dialog, byChat);
+            dialog.Content = page;
+
+            var confirm = await dialog.ShowAsync();
+            if (confirm != ContentDialogBaseResult.OK)
+            {
+                return;
+            }
+
+            var types = page.SelectedItems ?? new FileType[0];
+            if (types.IsEmpty())
+            {
+                return;
+            }
+
+            var chatIds = new long[0];
+            var excludedChatIds = new long[0];
+
+            if (byChat.ChatId != 0)
+            {
+                chatIds = new[] { byChat.ChatId };
+            }
+            else if (byChat != _totalStatistics)
+            {
+                excludedChatIds = _statistics.ByChat.Select(x => x.ChatId).Where(x => x != 0).ToArray();
+            }
+
             IsLoading = true;
             TaskCompleted = false;
 
-            await Task.Run(() =>
+            var response = await ProtoService.SendAsync(new OptimizeStorage(long.MaxValue, 0, int.MaxValue, 0, types, chatIds, excludedChatIds, 25));
+            if (response is StorageStatistics statistics)
             {
-                NativeUtils.CleanDirectory(FileUtils.GetTempFileName(string.Empty), 0);
-            });
+                Statistics = statistics;
+            }
 
             IsLoading = false;
-
-            UpdateCacheSize(resetInitialCacheSize: true, updateDetailedCacheSizes: true);
             TaskCompleted = true;
+        }
+
+        private void ProcessTotal(StorageStatistics value)
+        {
+            var result = new StorageStatisticsByChat();
+            result.ByFileType = new List<StorageStatisticsByFileType>();
+
+            foreach (var chat in value.ByChat)
+            {
+                result.Count += chat.Count;
+                result.Size += chat.Size;
+
+                foreach (var type in chat.ByFileType)
+                {
+                    var already = result.ByFileType.FirstOrDefault(x => x.FileType.TypeEquals(type.FileType));
+                    if (already == null)
+                    {
+                        already = new StorageStatisticsByFileType(type.FileType, 0, 0);
+                        result.ByFileType.Add(already);
+                    }
+
+                    already.Count += type.Count;
+                    already.Size += type.Size;
+                }
+            }
+
+            TotalStatistics = result;
+            IsLoading = false;
+        }
+
+        public RelayCommand ChangeTtlCommand { get; }
+        private async void ChangeTtlExecute()
+        {
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var stack = new StackPanel();
+            stack.Margin = new Thickness(12, 16, 12, 0);
+            stack.Children.Add(new RadioButton { Tag = 3, Content = Locale.Declension("Days", 3), IsChecked = FilesTtl == 3 });
+            stack.Children.Add(new RadioButton { Tag = 7, Content = Locale.Declension("Weeks", 1), IsChecked = FilesTtl == 7 });
+            stack.Children.Add(new RadioButton { Tag = 30, Content = Locale.Declension("Months", 1), IsChecked = FilesTtl == 30 });
+            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Android.KeepMediaForever, IsChecked = FilesTtl == 0 });
+
+            dialog.Title = Strings.Android.KeepMedia;
+            dialog.Content = stack;
+            dialog.PrimaryButtonText = Strings.Android.OK;
+            dialog.SecondaryButtonText = Strings.Android.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var mode = 1;
+                foreach (RadioButton current in stack.Children)
+                {
+                    if (current.IsChecked == true)
+                    {
+                        mode = (int)current.Tag;
+                        break;
+                    }
+                }
+
+                FilesTtl = mode;
+            }
         }
     }
 }

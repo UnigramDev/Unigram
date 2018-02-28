@@ -86,14 +86,14 @@ namespace Unigram.Controls
 #endif
             var cancel = false;
 
-            var channel = ViewModel.Parent as TLChannel;
-            if (channel != null)
-            {
-                if (channel.IsBroadcast)
-                {
-                    cancel = !(channel.IsCreator || channel.HasAdminRights);
-                }
-            }
+            //var channel = ViewModel.Parent as TLChannel;
+            //if (channel != null)
+            //{
+            //    if (channel.IsBroadcast)
+            //    {
+            //        cancel = !(channel.IsCreator || channel.HasAdminRights);
+            //    }
+            //}
 
             if (cancel)
             {

@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Common;
@@ -57,7 +56,7 @@ namespace Unigram.Controls
 
             if (ScrollingHost.ScrollableHeight < 200 && Items.Count > 0)
             {
-                if (!ViewModel.IsFirstSliceLoaded)
+                if (ViewModel.IsFirstSliceLoaded != true)
                 {
                     await ViewModel.LoadPreviousSliceAsync(false, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
                 }
@@ -78,12 +77,12 @@ namespace Unigram.Controls
         {
             if (ScrollingHost.ScrollableHeight < 200)
             {
-                if (!ViewModel.IsFirstSliceLoaded)
+                if (ViewModel.IsFirstSliceLoaded != true)
                 {
                     await ViewModel.LoadPreviousSliceAsync(false, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
                 }
 
-                if (!ViewModel.IsLastSliceLoaded)
+                if (ViewModel.IsLastSliceLoaded != true)
                 {
                     await ViewModel.LoadNextSliceAsync();
                 }
@@ -97,13 +96,15 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (ScrollingHost.VerticalOffset < 200 && !e.IsIntermediate)
+            //if (ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0 && !e.IsIntermediate)
+            //if (ItemsStack.FirstCacheIndex == 0 && !e.IsIntermediate)
+            if (ItemsStack.FirstVisibleIndex == 0 && !e.IsIntermediate)
             {
                 await ViewModel.LoadNextSliceAsync(true);
             }
-            else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && !e.IsIntermediate)
+            else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0 && !e.IsIntermediate)
             {
-                if (ViewModel.IsFirstSliceLoaded == false)
+                if (ViewModel.IsFirstSliceLoaded != true)
                 {
                     await ViewModel.LoadPreviousSliceAsync(true, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
                 }
@@ -162,6 +163,5 @@ namespace Unigram.Controls
         {
             return new BubbleListViewItem(this);
         }
-
     }
 }

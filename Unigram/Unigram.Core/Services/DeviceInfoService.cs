@@ -13,18 +13,7 @@ using Windows.System.Profile;
 
 namespace Unigram.Core.Services
 {
-    interface IUserConfiguration
-    {
-        string DeviceModel { get; }
-        string SystemVersion { get; }
-        string AppVersion { get; }
-        string Language { get; }
-        //[propget] HRESULT ConfigurationPath([out][retval] HSTRING* value);
-        //[propget] HRESULT LogPath([out][retval] HSTRING* value);
-        int UserId { get; }
-    }
-
-    public class DeviceInfoService : IDeviceInfoService, IUserConfiguration
+    public class DeviceInfoService : IDeviceInfoService
     {
         public bool IsBackground
         {
@@ -85,8 +74,6 @@ namespace Unigram.Core.Services
         }
 
         public string Language => Windows.System.UserProfile.GlobalizationPreferences.Languages[0];
-
-        public int UserId => SettingsHelper.UserId;
 
         public bool IsLowMemoryDevice
         {

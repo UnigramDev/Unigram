@@ -45,10 +45,10 @@ namespace Unigram.Converters
 
             if (seconds >= 1 && seconds < 21)
             {
-                return LocaleHelper.FormatTTLString(seconds);
+                return Locale.FormatTTLString(seconds);
             }
 
-            return LocaleHelper.FormatTTLString((seconds - 16) * 5);
+            return Locale.FormatTTLString((seconds - 16) * 5);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

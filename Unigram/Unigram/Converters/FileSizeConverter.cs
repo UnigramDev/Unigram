@@ -28,6 +28,24 @@ namespace Unigram.Converters
             return string.Format("{0} GB", ((double)bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
         }
 
+        public static string Convert(long bytesCount, long total)
+        {
+            if (total < 1024L)
+            {
+                return string.Format("{0}", bytesCount);
+            }
+            if (total < 1048576L)
+            {
+                return string.Format("{0} ", ((double)bytesCount / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+            }
+            if (total < 1073741824L)
+            {
+                return string.Format("{0}", ((double)bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+            }
+
+            return string.Format("{0}", ((double)bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+        }
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is long)

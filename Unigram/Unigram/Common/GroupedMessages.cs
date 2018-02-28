@@ -117,32 +117,28 @@ namespace Unigram.Common
             for (int a = 0; a < count; a++)
             {
                 TLMessage messageObject = Messages[a];
-                TLVector<TLPhotoSizeBase> photoThumbs = null;
+                //TLVector<TLPhotoSizeBase> photoThumbs = null;
                 if (a == 0)
                 {
-                    //isOut = messageObject.isOutOwner();
+                    //isOut = messageObject.IsOutOwner();
                 }
-                if (messageObject.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
-                {
-                    photoThumbs = photo.Sizes;
-                }
-                else if (messageObject.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-                {
-                    photoThumbs = new TLVector<TLPhotoSizeBase> { document.Thumb };
-                }
-                TLPhotoSizeBase photoSize = GetClosestPhotoSizeWithSize(photoThumbs, 1280);
+                //if (messageObject.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                //{
+                //    photoThumbs = new TLVector<TLPhotoSizeBase> { document.Thumb };
+                //}
+                //TLPhotoSizeBase photoSize = GetClosestPhotoSizeWithSize(photoThumbs, 1280);
                 int w = 0;
                 int h = 0;
-                if (photoSize is TLPhotoSize size)
-                {
-                    w = size.W;
-                    h = size.H;
-                }
-                else if (photoSize is TLPhotoCachedSize cachedSize)
-                {
-                    w = cachedSize.W;
-                    h = cachedSize.H;
-                }
+                //if (photoSize is TLPhotoSize size)
+                //{
+                //    w = size.W;
+                //    h = size.H;
+                //}
+                //else if (photoSize is TLPhotoCachedSize cachedSize)
+                //{
+                //    w = cachedSize.W;
+                //    h = cachedSize.H;
+                //}
                 GroupedMessagePosition position = new GroupedMessagePosition();
                 position.IsLast = a == count - 1;
                 position.AspectRatio = w / (float)h;
@@ -550,60 +546,60 @@ namespace Unigram.Common
             Height = totalHeight;
         }
 
-        public static TLPhotoSizeBase GetClosestPhotoSizeWithSize(TLVector<TLPhotoSizeBase> sizes, int side)
-        {
-            return GetClosestPhotoSizeWithSize(sizes, side, false);
-        }
+        //public static TLPhotoSizeBase GetClosestPhotoSizeWithSize(TLVector<TLPhotoSizeBase> sizes, int side)
+        //{
+        //    return GetClosestPhotoSizeWithSize(sizes, side, false);
+        //}
 
-        public static TLPhotoSizeBase GetClosestPhotoSizeWithSize(TLVector<TLPhotoSizeBase> sizes, int side, bool byMinSide)
-        {
-            if (sizes == null || sizes.IsEmpty())
-            {
-                return null;
-            }
-            int lastSide = 0;
-            TLPhotoSizeBase closestObject = null;
-            for (int a = 0; a < sizes.Count; a++)
-            {
-                TLPhotoSizeBase obj = sizes[a];
-                if (obj == null)
-                {
-                    continue;
-                }
+        //public static TLPhotoSizeBase GetClosestPhotoSizeWithSize(TLVector<TLPhotoSizeBase> sizes, int side, bool byMinSide)
+        //{
+        //    if (sizes == null || sizes.IsEmpty())
+        //    {
+        //        return null;
+        //    }
+        //    int lastSide = 0;
+        //    TLPhotoSizeBase closestObject = null;
+        //    for (int a = 0; a < sizes.Count; a++)
+        //    {
+        //        TLPhotoSizeBase obj = sizes[a];
+        //        if (obj == null)
+        //        {
+        //            continue;
+        //        }
 
-                int w = 0;
-                int h = 0;
-                if (obj is TLPhotoSize size)
-                {
-                    w = size.W;
-                    h = size.H;
-                }
-                else if (obj is TLPhotoCachedSize cachedSize)
-                {
-                    w = cachedSize.W;
-                    h = cachedSize.H;
-                }
+        //        int w = 0;
+        //        int h = 0;
+        //        if (obj is TLPhotoSize size)
+        //        {
+        //            w = size.W;
+        //            h = size.H;
+        //        }
+        //        else if (obj is TLPhotoCachedSize cachedSize)
+        //        {
+        //            w = cachedSize.W;
+        //            h = cachedSize.H;
+        //        }
 
-                if (byMinSide)
-                {
-                    int currentSide = h >= w ? w : h;
-                    if (closestObject == null || side > 100 && closestObject is TLPhotoSize closestSize && closestSize.Location is TLFileLocation location && location.DCId == int.MinValue || obj is TLPhotoCachedSize || side > lastSide && lastSide < currentSide)
-                    {
-                        closestObject = obj;
-                        lastSide = currentSide;
-                    }
-                }
-                else
-                {
-                    int currentSide = w >= h ? w : h;
-                    if (closestObject == null || side > 100 && closestObject is TLPhotoSize closestSize && closestSize.Location is TLFileLocation location && location.DCId == int.MinValue || obj is TLPhotoCachedSize || currentSide <= side && lastSide < currentSide)
-                    {
-                        closestObject = obj;
-                        lastSide = currentSide;
-                    }
-                }
-            }
-            return closestObject;
-        }
+        //        if (byMinSide)
+        //        {
+        //            int currentSide = h >= w ? w : h;
+        //            if (closestObject == null || side > 100 && closestObject is TLPhotoSize closestSize && closestSize.Location is TLFileLocation location && location.DCId == int.MinValue || obj is TLPhotoCachedSize || side > lastSide && lastSide < currentSide)
+        //            {
+        //                closestObject = obj;
+        //                lastSide = currentSide;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            int currentSide = w >= h ? w : h;
+        //            if (closestObject == null || side > 100 && closestObject is TLPhotoSize closestSize && closestSize.Location is TLFileLocation location && location.DCId == int.MinValue || obj is TLPhotoCachedSize || currentSide <= side && lastSide < currentSide)
+        //            {
+        //                closestObject = obj;
+        //                lastSide = currentSide;
+        //            }
+        //        }
+        //    }
+        //    return closestObject;
+        //}
     }
 }

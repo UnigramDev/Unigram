@@ -103,12 +103,12 @@ namespace Unigram.Controls
                 ViewStateChanged(this, EventArgs.Empty);
             }
 
-            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         private void UpdateVisualState()
@@ -322,7 +322,7 @@ namespace Unigram.Controls
                         UpdateVisualState();
                     }
                     // When the new page is user info show the back button in titlebar.
-                    else if (e.SourcePageType == typeof(UserDetailsPage))
+                    else if (e.SourcePageType == typeof(ProfilePage))
                     {
                         UpdateVisualState();
                     }

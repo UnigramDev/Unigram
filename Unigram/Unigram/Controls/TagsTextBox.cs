@@ -5,8 +5,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
-using Windows.System;
+using TdWindows;
+using Unigram.Common;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -133,7 +133,7 @@ namespace Unigram.Controls
 
         private void OnKeyboardDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Back || e.Key == VirtualKey.Delete)
+            if (e.Key == Windows.System.VirtualKey.Back || e.Key == Windows.System.VirtualKey.Delete)
             {
                 var text = sender as TagsTextBoxItemPresenter;
                 if (text != null)
@@ -154,7 +154,7 @@ namespace Unigram.Controls
             }
             else
             {
-                var text = (TextBox)sender;
+                var text = sender as TextBox;
                 InputPlaceholder.Focus(FocusState.Keyboard);
                 InputPlaceholder.OnKeyDownOverride(e);
                 text.Text = string.Empty;
@@ -173,17 +173,17 @@ namespace Unigram.Controls
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
         {
             var single = element as TagsTextBoxItem;
-            var user = item as TLUser;
+            var user = item as User;
             if (user != null)
             {
-                single.PlaceholderText = user.FullName + Separator;
+                single.PlaceholderText = user.GetFullName() + Separator;
                 single.Content = user;
             }
         }
 
         private void OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Back && InputPlaceholder.Text.Length == 0)
+            if (e.Key == Windows.System.VirtualKey.Back && InputPlaceholder.Text.Length == 0)
             {
                 if (ItemsWrapPanel.Children.Count > 1)
                 {
@@ -200,7 +200,7 @@ namespace Unigram.Controls
                     }
                 }
             }
-            else if (e.Key == VirtualKey.Left && InputPlaceholder.SelectionStart == 0 && InputPlaceholder.SelectionLength == 0)
+            else if (e.Key == Windows.System.VirtualKey.Left && InputPlaceholder.SelectionStart == 0 && InputPlaceholder.SelectionLength == 0)
             {
                 if (ItemsWrapPanel.Children.Count > 1)
                 {

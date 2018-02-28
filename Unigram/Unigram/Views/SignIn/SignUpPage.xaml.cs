@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Telegram.Api.TL.Auth;
 using Unigram.Common;
+using TdWindows;
 
 namespace Unigram.Views.SignIn
 {
@@ -51,7 +52,7 @@ namespace Unigram.Views.SignIn
         {
             public string PhoneNumber { get; set; }
             public string PhoneCode { get; set; }
-            public TLAuthSentCode Result { get; set; }
+            public AuthorizationStateWaitPassword Result { get; set; }
         }
     }
 }

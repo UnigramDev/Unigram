@@ -33,7 +33,7 @@ namespace Unigram.Views.Chats
 
         private void Invite_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigationService.Navigate(typeof(ChatInviteLinkPage), ViewModel.Item.ToPeer());
+            //ViewModel.NavigationService.Navigate(typeof(ChatInviteLinkPage), ViewModel.Item.ToPeer());
         }
     }
 }

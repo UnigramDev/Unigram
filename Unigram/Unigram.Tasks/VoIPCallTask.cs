@@ -1,38 +1,23 @@
-﻿using Org.BouncyCastle.Math;
-using Org.BouncyCastle.Security;
+﻿using libtgvoip;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Net;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.Services.Connection;
-using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Messages.Methods;
-using Telegram.Api.TL.Phone.Methods;
+using Unigram.Common;
 using Unigram.Core;
 using Unigram.Core.Services;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.Calls;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using libtgvoip;
-using Windows.Storage;
-using System.Net;
-using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
-using Telegram.Api.TL.Messages;
-using Telegram.Api.TL.Phone;
-using Unigram.Common;
-using Telegram.Api.Native.TL;
-using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.UI.Notifications;
 
 namespace Unigram.Tasks
 {
@@ -126,9 +111,9 @@ namespace Unigram.Tasks
 
     }
 
-    internal class VoIPCallMediator : IHandle<TLUpdatePhoneCall>, IHandle, IDisposable
+    internal class VoIPCallMediator : IDisposable
     {
-        private readonly Queue<TLUpdatePhoneCall> _queue = new Queue<TLUpdatePhoneCall>();
+        //private readonly Queue<TLUpdatePhoneCall> _queue = new Queue<TLUpdatePhoneCall>();
 
         private AppServiceConnection _connection;
         private MTProtoService _protoService;
@@ -176,8 +161,6 @@ namespace Unigram.Tasks
             if (_protoService != null && _connection != null)
             {
                 VoIPCallTask.Log("Mediator initialized", "Disposing proto service");
-
-                _protoService.Dispose();
                 //_transportService.Close();
             }
 
@@ -193,36 +176,13 @@ namespace Unigram.Tasks
             {
                 VoIPCallTask.Log("Mediator initialized", "Creating proto service");
 
-                var deviceInfoService = new DeviceInfoService();
-                var eventAggregator = new TelegramEventAggregator();
-                var cacheService = new InMemoryCacheService(eventAggregator);
-                var updatesService = new UpdatesService(cacheService, eventAggregator);
-                var connectionService = new ConnectionService(deviceInfoService);
-                var statsService = new StatsService();
-                var publicConfigService = new PublicConfigService();
-                var protoService = new MTProtoService(0, deviceInfoService, updatesService, cacheService, connectionService, statsService);
+                var protoService = new MTProtoService(0);
 
-                protoService.Initialized += (s, args) =>
-                {
-                    VoIPCallTask.Log("ProtoService initialized", "waiting for updates");
+                //protoService.Initialized += (s, args) =>
+                //{
+                //    VoIPCallTask.Log("ProtoService initialized", "waiting for updates");
+                //};
 
-                    updatesService.LoadStateAndUpdate(() =>
-                    {
-                        VoIPCallTask.Log("Difference processed", "Difference processed");
-
-                        if (_phoneCall == null)
-                        {
-                            VoIPCallTask.Log("Difference processed", "No call found in difference");
-
-                            if (_systemCall != null)
-                            {
-                                _systemCall.NotifyCallEnded();
-                            }
-                        }
-                    });
-                };
-
-                eventAggregator.Subscribe(this);
                 //protoService.Initialize();
                 //_protoService = protoService;
                 //_transportService = transportService;
@@ -240,239 +200,239 @@ namespace Unigram.Tasks
 
         private async void ProcessUpdates()
         {
-            while (_queue.Count > 0)
-            {
-                var update = _queue.Dequeue();
+            //while (_queue.Count > 0)
+            //{
+            //    var update = _queue.Dequeue();
 
-                _phoneCall = update.PhoneCall;
+            //    _phoneCall = update.PhoneCall;
 
-                if (update.PhoneCall is TLPhoneCallRequested requested)
-                {
-                    _peer = requested.ToInputPhoneCall();
+            //    if (update.PhoneCall is TLPhoneCallRequested requested)
+            //    {
+            //        _peer = requested.ToInputPhoneCall();
 
-                    var req = new TLPhoneReceivedCall { Peer = new TLInputPhoneCall { Id = requested.Id, AccessHash = requested.AccessHash } };
+            //        var req = new TLPhoneReceivedCall { Peer = new TLInputPhoneCall { Id = requested.Id, AccessHash = requested.AccessHash } };
 
-                    const string caption = "phone.receivedCall";
-                    var response = await SendRequestAsync<bool>(caption, req);
+            //        const string caption = "phone.receivedCall";
+            //        var response = await SendRequestAsync<bool>(caption, req);
 
-                    var responseUser = await SendRequestAsync<TLUser>("voip.getUser", new TLPeerUser { UserId = requested.AdminId });
-                    if (responseUser.Result == null)
-                    {
-                        return;
-                    }
+            //        var responseUser = await SendRequestAsync<TLUser>("voip.getUser", new TLPeerUser { UserId = requested.AdminId });
+            //        if (responseUser.Result == null)
+            //        {
+            //            return;
+            //        }
 
-                    var user = responseUser.Result;
-                    var photo = new Uri("ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png");
-                    if (user.Photo is TLUserProfilePhoto profile && profile.PhotoSmall is TLFileLocation location)
-                    {
-                        var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
-                        var temp = FileUtils.GetTempFileUri(fileName);
+            //        var user = responseUser.Result;
+            //        var photo = new Uri("ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png");
+            //        if (user.Photo is TLUserProfilePhoto profile && profile.PhotoSmall is TLFileLocation location)
+            //        {
+            //            var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+            //            var temp = FileUtils.GetTempFileUri(fileName);
 
-                        photo = temp;
-                    }
+            //            photo = temp;
+            //        }
 
-                    var coordinator = VoipCallCoordinator.GetDefault();
-                    var call = coordinator.RequestNewIncomingCall("Unigram", user.FullName, user.DisplayName, photo, "Unigram", null, "Unigram", null, VoipPhoneCallMedia.Audio, TimeSpan.FromSeconds(128));
+            //        var coordinator = VoipCallCoordinator.GetDefault();
+            //        var call = coordinator.RequestNewIncomingCall("Unigram", user.FullName, user.DisplayName, photo, "Unigram", null, "Unigram", null, VoipPhoneCallMedia.Audio, TimeSpan.FromSeconds(128));
 
-                    _user = user;
-                    _outgoing = false;
-                    _systemCall = call;
-                    _systemCall.AnswerRequested += OnAnswerRequested;
-                    _systemCall.RejectRequested += OnRejectRequested;
-                }
-                else if (update.PhoneCall is TLPhoneCallDiscarded discarded)
-                {
-                    if (false)
-                    {
-                        discarded.IsNeedRating = true;
-                    }
+            //        _user = user;
+            //        _outgoing = false;
+            //        _systemCall = call;
+            //        _systemCall.AnswerRequested += OnAnswerRequested;
+            //        _systemCall.RejectRequested += OnRejectRequested;
+            //    }
+            //    else if (update.PhoneCall is TLPhoneCallDiscarded discarded)
+            //    {
+            //        if (false)
+            //        {
+            //            discarded.IsNeedRating = true;
+            //        }
 
-                    if (discarded.IsNeedRating)
-                    {
-                        await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.setCallRating" }, { "request", TLSerializationService.Current.Serialize(_peer) } });
-                    }
+            //        if (discarded.IsNeedRating)
+            //        {
+            //            await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.setCallRating" }, { "request", TLSerializationService.Current.Serialize(_peer) } });
+            //        }
 
-                    if (discarded.IsNeedDebug)
-                    {
-                        var req = new TLPhoneSaveCallDebug();
-                        req.Debug = new TLDataJSON { Data = _controller.GetDebugLog() };
-                        req.Peer = _peer;
+            //        if (discarded.IsNeedDebug)
+            //        {
+            //            var req = new TLPhoneSaveCallDebug();
+            //            req.Debug = new TLDataJSON { Data = _controller.GetDebugLog() };
+            //            req.Peer = _peer;
 
-                        await SendRequestAsync<bool>("phone.saveCallDebug", req);
-                    }
+            //            await SendRequestAsync<bool>("phone.saveCallDebug", req);
+            //        }
 
-                    await UpdateStateAsync(TLPhoneCallState.Ended);
+            //        await UpdateStateAsync(TLPhoneCallState.Ended);
 
-                    if (_controller != null)
-                    {
-                        _controller.Dispose();
-                        _controller = null;
-                    }
+            //        if (_controller != null)
+            //        {
+            //            _controller.Dispose();
+            //            _controller = null;
+            //        }
 
-                    if (_connection != null)
-                    {
-                        _connection.RequestReceived -= OnRequestReceived;
-                        _connection = null;
-                    }
+            //        if (_connection != null)
+            //        {
+            //            _connection.RequestReceived -= OnRequestReceived;
+            //            _connection = null;
+            //        }
 
-                    if (_systemCall != null)
-                    {
-                        try
-                        {
-                            _systemCall.AnswerRequested -= OnAnswerRequested;
-                            _systemCall.RejectRequested -= OnRejectRequested;
-                            _systemCall.NotifyCallEnded();
-                            _systemCall = null;
-                        }
-                        catch
-                        {
-                            if (_deferral != null)
-                                _deferral.Complete();
-                        }
+            //        if (_systemCall != null)
+            //        {
+            //            try
+            //            {
+            //                _systemCall.AnswerRequested -= OnAnswerRequested;
+            //                _systemCall.RejectRequested -= OnRejectRequested;
+            //                _systemCall.NotifyCallEnded();
+            //                _systemCall = null;
+            //            }
+            //            catch
+            //            {
+            //                if (_deferral != null)
+            //                    _deferral.Complete();
+            //            }
 
-                        Debug.WriteLine("VoIP call disposed");
-                    }
-                    else if (_deferral != null)
-                    {
-                        _deferral.Complete();
-                    }
-                }
-                else if (update.PhoneCall is TLPhoneCallAccepted accepted)
-                {
-                    await UpdateStateAsync(TLPhoneCallState.ExchangingKeys);
+            //            Debug.WriteLine("VoIP call disposed");
+            //        }
+            //        else if (_deferral != null)
+            //        {
+            //            _deferral.Complete();
+            //        }
+            //    }
+            //    else if (update.PhoneCall is TLPhoneCallAccepted accepted)
+            //    {
+            //        await UpdateStateAsync(TLPhoneCallState.ExchangingKeys);
 
-                    _phoneCall = accepted;
+            //        _phoneCall = accepted;
 
-                    auth_key = computeAuthKey(accepted);
+            //        auth_key = computeAuthKey(accepted);
 
-                    byte[] authKeyHash = Utils.ComputeSHA1(auth_key);
-                    byte[] authKeyId = new byte[8];
-                    Buffer.BlockCopy(authKeyHash, authKeyHash.Length - 8, authKeyId, 0, 8);
-                    long fingerprint = Utils.BytesToLong(authKeyId);
-                    //this.authKey = authKey;
-                    //keyFingerprint = fingerprint;
+            //        byte[] authKeyHash = Utils.ComputeSHA1(auth_key);
+            //        byte[] authKeyId = new byte[8];
+            //        Buffer.BlockCopy(authKeyHash, authKeyHash.Length - 8, authKeyId, 0, 8);
+            //        long fingerprint = Utils.BytesToLong(authKeyId);
+            //        //this.authKey = authKey;
+            //        //keyFingerprint = fingerprint;
 
-                    var request = new TLPhoneConfirmCall
-                    {
-                        GA = g_a,
-                        KeyFingerprint = fingerprint,
-                        Peer = new TLInputPhoneCall
-                        {
-                            Id = accepted.Id,
-                            AccessHash = accepted.AccessHash
-                        },
-                        Protocol = new TLPhoneCallProtocol
-                        {
-                            IsUdpP2p = true,
-                            IsUdpReflector = true,
-                            MinLayer = Telegram.Api.Constants.CallsMinLayer,
-                            MaxLayer = Telegram.Api.Constants.CallsMaxLayer,
-                        }
-                    };
+            //        var request = new TLPhoneConfirmCall
+            //        {
+            //            GA = g_a,
+            //            KeyFingerprint = fingerprint,
+            //            Peer = new TLInputPhoneCall
+            //            {
+            //                Id = accepted.Id,
+            //                AccessHash = accepted.AccessHash
+            //            },
+            //            Protocol = new TLPhoneCallProtocol
+            //            {
+            //                IsUdpP2p = true,
+            //                IsUdpReflector = true,
+            //                MinLayer = Telegram.Api.Constants.CallsMinLayer,
+            //                MaxLayer = Telegram.Api.Constants.CallsMaxLayer,
+            //            }
+            //        };
 
-                    var response = await SendRequestAsync<TLPhonePhoneCall>("phone.confirmCall", request);
-                    if (response.IsSucceeded)
-                    {
-                        _systemCall.NotifyCallActive();
-                        Handle(new TLUpdatePhoneCall { PhoneCall = response.Result.PhoneCall });
-                    }
-                }
-                else if (update.PhoneCall is TLPhoneCall call)
-                {
-                    _phoneCall = call;
+            //        var response = await SendRequestAsync<TLPhonePhoneCall>("phone.confirmCall", request);
+            //        if (response.IsSucceeded)
+            //        {
+            //            _systemCall.NotifyCallActive();
+            //            Handle(new TLUpdatePhoneCall { PhoneCall = response.Result.PhoneCall });
+            //        }
+            //    }
+            //    else if (update.PhoneCall is TLPhoneCall call)
+            //    {
+            //        _phoneCall = call;
 
-                    if (auth_key == null)
-                    {
-                        auth_key = computeAuthKey(call);
-                        g_a = call.GAOrB;
-                    }
+            //        if (auth_key == null)
+            //        {
+            //            auth_key = computeAuthKey(call);
+            //            g_a = call.GAOrB;
+            //        }
 
-                    var buffer = TLUtils.Combine(auth_key, g_a);
-                    var sha256 = Utils.ComputeSHA256(buffer);
+            //        var buffer = TLUtils.Combine(auth_key, g_a);
+            //        var sha256 = Utils.ComputeSHA256(buffer);
 
-                    _emojis = EncryptionKeyEmojifier.EmojifyForCall(sha256);
+            //        _emojis = EncryptionKeyEmojifier.EmojifyForCall(sha256);
 
-                    var response = await SendRequestAsync<TLDataJSON>("phone.getCallConfig", new TLPhoneGetCallConfig());
-                    if (response.IsSucceeded)
-                    {
-                        var responseConfig = await SendRequestAsync<TLConfig>("voip.getConfig", new TLPeerUser());
-                        var config = responseConfig.Result;
+            //        var response = await SendRequestAsync<TLDataJSON>("phone.getCallConfig", new TLPhoneGetCallConfig());
+            //        if (response.IsSucceeded)
+            //        {
+            //            var responseConfig = await SendRequestAsync<TLConfig>("voip.getConfig", new TLPeerUser());
+            //            var config = responseConfig.Result;
 
-                        SettingsHelper.CleanUp();
-                        ApplicationSettings.Current.CleanUp();
-                        VoIPControllerWrapper.UpdateServerConfig(response.Result.Data);
+            //            SettingsHelper.CleanUp();
+            //            ApplicationSettings.Current.CleanUp();
+            //            VoIPControllerWrapper.UpdateServerConfig(response.Result.Data);
 
-                        var logFile = ApplicationData.Current.LocalFolder.Path + "\\tgvoip.logFile.txt";
-                        var statsDumpFile = ApplicationData.Current.LocalFolder.Path + "\\tgvoip.statsDump.txt";
+            //            var logFile = ApplicationData.Current.LocalFolder.Path + "\\tgvoip.logFile.txt";
+            //            var statsDumpFile = ApplicationData.Current.LocalFolder.Path + "\\tgvoip.statsDump.txt";
 
-                        if (_controller != null)
-                        {
-                            _controller.Dispose();
-                            _controller = null;
-                        }
+            //            if (_controller != null)
+            //            {
+            //                _controller.Dispose();
+            //                _controller = null;
+            //            }
 
-                        _controller = new VoIPControllerWrapper();
-                        _controller.SetConfig(config.CallPacketTimeoutMs / 1000.0, config.CallConnectTimeoutMs / 1000.0, ApplicationSettings.Current.UseLessData, true, true, true, logFile, statsDumpFile);
+            //            _controller = new VoIPControllerWrapper();
+            //            _controller.SetConfig(config.CallPacketTimeoutMs / 1000.0, config.CallConnectTimeoutMs / 1000.0, ApplicationSettings.Current.UseLessData, true, true, true, logFile, statsDumpFile);
 
-                        if (SettingsHelper.IsCallsProxyEnabled)
-                        {
-                            var server = SettingsHelper.ProxyServer ?? string.Empty;
-                            var port = SettingsHelper.ProxyPort;
-                            var user = SettingsHelper.ProxyUsername ?? string.Empty;
-                            var pass = SettingsHelper.ProxyPassword ?? string.Empty;
+            //            if (SettingsHelper.IsCallsProxyEnabled)
+            //            {
+            //                var server = SettingsHelper.ProxyServer ?? string.Empty;
+            //                var port = SettingsHelper.ProxyPort;
+            //                var user = SettingsHelper.ProxyUsername ?? string.Empty;
+            //                var pass = SettingsHelper.ProxyPassword ?? string.Empty;
 
-                            _controller.SetProxy(ProxyProtocol.SOCKS5, server, (ushort)port, user, pass);
-                        }
-                        else
-                        {
-                            _controller.SetProxy(ProxyProtocol.None, string.Empty, 0, string.Empty, string.Empty);
-                        }
+            //                _controller.SetProxy(ProxyProtocol.SOCKS5, server, (ushort)port, user, pass);
+            //            }
+            //            else
+            //            {
+            //                _controller.SetProxy(ProxyProtocol.None, string.Empty, 0, string.Empty, string.Empty);
+            //            }
 
-                        _controller.CallStateChanged += OnCallStateChanged;
-                        _controller.SignalBarsChanged += OnSignalBarsChanged;
+            //            _controller.CallStateChanged += OnCallStateChanged;
+            //            _controller.SignalBarsChanged += OnSignalBarsChanged;
 
-                        _controller.SetEncryptionKey(auth_key, _outgoing);
+            //            _controller.SetEncryptionKey(auth_key, _outgoing);
 
-                        var connection = call.Connection;
-                        var endpoints = new Endpoint[call.AlternativeConnections.Count + 1];
-                        endpoints[0] = connection.ToEndpoint();
+            //            var connection = call.Connection;
+            //            var endpoints = new Endpoint[call.AlternativeConnections.Count + 1];
+            //            endpoints[0] = connection.ToEndpoint();
 
-                        for (int i = 0; i < call.AlternativeConnections.Count; i++)
-                        {
-                            connection = call.AlternativeConnections[i];
-                            endpoints[i + 1] = connection.ToEndpoint();
-                        }
+            //            for (int i = 0; i < call.AlternativeConnections.Count; i++)
+            //            {
+            //                connection = call.AlternativeConnections[i];
+            //                endpoints[i + 1] = connection.ToEndpoint();
+            //            }
 
-                        var p2p = ApplicationSettings.Current.PeerToPeerMode == 0;
-                        if (_user is TLUser p2pUser)
-                        {
-                            p2p = ApplicationSettings.Current.PeerToPeerMode == 0 || (ApplicationSettings.Current.PeerToPeerMode == 1 && p2pUser.IsContact);
-                        }
+            //            var p2p = ApplicationSettings.Current.PeerToPeerMode == 0;
+            //            if (_user is TLUser p2pUser)
+            //            {
+            //                p2p = ApplicationSettings.Current.PeerToPeerMode == 0 || (ApplicationSettings.Current.PeerToPeerMode == 1 && p2pUser.IsContact);
+            //            }
 
-                        _controller.SetPublicEndpoints(endpoints, call.Protocol.IsUdpP2p && p2p);
-                        _controller.Start();
-                        _controller.Connect();
-                    }
+            //            _controller.SetPublicEndpoints(endpoints, call.Protocol.IsUdpP2p && p2p);
+            //            _controller.Start();
+            //            _controller.Connect();
+            //        }
 
-                    //await Task.Delay(50000);
+            //        //await Task.Delay(50000);
 
-                    //var req = new TLPhoneDiscardCall { Peer = new TLInputPhoneCall { Id = call.Id, AccessHash = call.AccessHash }, Reason = new TLPhoneCallDiscardReasonHangup() };
+            //        //var req = new TLPhoneDiscardCall { Peer = new TLInputPhoneCall { Id = call.Id, AccessHash = call.AccessHash }, Reason = new TLPhoneCallDiscardReasonHangup() };
 
-                    //const string caption = "phone.discardCall";
-                    //await SendRequestAsync<TLUpdatesBase>(caption, req);
+            //        //const string caption = "phone.discardCall";
+            //        //await SendRequestAsync<object>(caption, req);
 
-                    //_systemCall.NotifyCallEnded();
-                }
-                else if (update.PhoneCall is TLPhoneCallWaiting waiting)
-                {
-                    _peer = waiting.ToInputPhoneCall();
+            //        //_systemCall.NotifyCallEnded();
+            //    }
+            //    else if (update.PhoneCall is TLPhoneCallWaiting waiting)
+            //    {
+            //        _peer = waiting.ToInputPhoneCall();
 
-                    if (_state == TLPhoneCallState.Waiting && waiting.HasReceiveDate && waiting.ReceiveDate != 0)
-                    {
-                        await UpdateStateAsync(TLPhoneCallState.Ringing);
-                    }
-                }
-            }
+            //        if (_state == TLPhoneCallState.Waiting && waiting.HasReceiveDate && waiting.ReceiveDate != 0)
+            //        {
+            //            await UpdateStateAsync(TLPhoneCallState.Ringing);
+            //        }
+            //    }
+            //}
         }
 
         public async void OnCallStateChanged(VoIPControllerWrapper sender, CallState newState)
@@ -531,130 +491,130 @@ namespace Unigram.Tasks
             {
                 await UpdateStateAsync(TLPhoneCallState.ExchangingKeys);
 
-                var reqConfig = new TLMessagesGetDHConfig { Version = 0, RandomLength = 256 };
+                //var reqConfig = new TLMessagesGetDHConfig { Version = 0, RandomLength = 256 };
 
-                var config = await SendRequestAsync<TLMessagesDHConfig>("messages.getDhConfig", reqConfig);
-                if (config.IsSucceeded)
-                {
-                    var dh = config.Result;
-                    if (!TLUtils.CheckPrime(dh.P, dh.G))
-                    {
-                        return;
-                    }
+                //var config = await SendRequestAsync<TLMessagesDHConfig>("messages.getDhConfig", reqConfig);
+                //if (config.IsSucceeded)
+                //{
+                //    var dh = config.Result;
+                //    if (!TLUtils.CheckPrime(dh.P, dh.G))
+                //    {
+                //        return;
+                //    }
 
-                    var salt = new byte[256];
-                    var secureRandom = new SecureRandom();
-                    secureRandom.NextBytes(salt);
+                //    var salt = new byte[256];
+                //    var secureRandom = new SecureRandom();
+                //    secureRandom.NextBytes(salt);
 
-                    secretP = dh.P;
-                    a_or_b = salt;
+                //    secretP = dh.P;
+                //    a_or_b = salt;
 
-                    var g_b = MTProtoService.GetGB(salt, dh.G, dh.P);
+                //    var g_b = MTProtoService.GetGB(salt, dh.G, dh.P);
 
-                    var request = new TLPhoneAcceptCall
-                    {
-                        GB = g_b,
-                        Peer = _phoneCall.ToInputPhoneCall(),
-                        Protocol = new TLPhoneCallProtocol
-                        {
-                            IsUdpP2p = true,
-                            IsUdpReflector = true,
-                            MinLayer = Telegram.Api.Constants.CallsMinLayer,
-                            MaxLayer = Telegram.Api.Constants.CallsMaxLayer,
-                        }
-                    };
+                //    var request = new TLPhoneAcceptCall
+                //    {
+                //        GB = g_b,
+                //        Peer = _phoneCall.ToInputPhoneCall(),
+                //        Protocol = new TLPhoneCallProtocol
+                //        {
+                //            IsUdpP2p = true,
+                //            IsUdpReflector = true,
+                //            MinLayer = Telegram.Api.Constants.CallsMinLayer,
+                //            MaxLayer = Telegram.Api.Constants.CallsMaxLayer,
+                //        }
+                //    };
 
-                    var response = await SendRequestAsync<TLPhonePhoneCall>("phone.acceptCall", request);
-                    if (response.IsSucceeded)
-                    {
-                        _systemCall.NotifyCallActive();
-                        Handle(new TLUpdatePhoneCall { PhoneCall = response.Result.PhoneCall });
-                    }
-                }
+                //    var response = await SendRequestAsync<TLPhonePhoneCall>("phone.acceptCall", request);
+                //    if (response.IsSucceeded)
+                //    {
+                //        _systemCall.NotifyCallActive();
+                //        Handle(new TLUpdatePhoneCall { PhoneCall = response.Result.PhoneCall });
+                //    }
+                //}
             }
         }
 
-        private byte[] computeAuthKey(TLPhoneCall call)
-        {
-            BigInteger g_a = new BigInteger(1, call.GAOrB);
-            BigInteger p = new BigInteger(1, secretP);
+        //private byte[] computeAuthKey(TLPhoneCall call)
+        //{
+        //    BigInteger g_a = new BigInteger(1, call.GAOrB);
+        //    BigInteger p = new BigInteger(1, secretP);
 
-            g_a = g_a.ModPow(new BigInteger(1, a_or_b), p);
+        //    g_a = g_a.ModPow(new BigInteger(1, a_or_b), p);
 
-            byte[] authKey = g_a.ToByteArray();
-            if (authKey.Length > 256)
-            {
-                byte[] correctedAuth = new byte[256];
-                Buffer.BlockCopy(authKey, authKey.Length - 256, correctedAuth, 0, 256);
-                authKey = correctedAuth;
-            }
-            else if (authKey.Length < 256)
-            {
-                byte[] correctedAuth = new byte[256];
-                Buffer.BlockCopy(authKey, 0, correctedAuth, 256 - authKey.Length, authKey.Length);
-                for (int a = 0; a < 256 - authKey.Length; a++)
-                {
-                    authKey[a] = 0;
-                }
-                authKey = correctedAuth;
-            }
-            byte[] authKeyHash = Utils.ComputeSHA1(authKey);
-            byte[] authKeyId = new byte[8];
-            Buffer.BlockCopy(authKeyHash, authKeyHash.Length - 8, authKeyId, 0, 8);
+        //    byte[] authKey = g_a.ToByteArray();
+        //    if (authKey.Length > 256)
+        //    {
+        //        byte[] correctedAuth = new byte[256];
+        //        Buffer.BlockCopy(authKey, authKey.Length - 256, correctedAuth, 0, 256);
+        //        authKey = correctedAuth;
+        //    }
+        //    else if (authKey.Length < 256)
+        //    {
+        //        byte[] correctedAuth = new byte[256];
+        //        Buffer.BlockCopy(authKey, 0, correctedAuth, 256 - authKey.Length, authKey.Length);
+        //        for (int a = 0; a < 256 - authKey.Length; a++)
+        //        {
+        //            authKey[a] = 0;
+        //        }
+        //        authKey = correctedAuth;
+        //    }
+        //    byte[] authKeyHash = Utils.ComputeSHA1(authKey);
+        //    byte[] authKeyId = new byte[8];
+        //    Buffer.BlockCopy(authKeyHash, authKeyHash.Length - 8, authKeyId, 0, 8);
 
-            return authKey;
-        }
+        //    return authKey;
+        //}
 
-        private byte[] computeAuthKey(TLPhoneCallAccepted call)
-        {
-            BigInteger p = new BigInteger(1, secretP);
-            BigInteger i_authKey = new BigInteger(1, call.GB);
+        //private byte[] computeAuthKey(TLPhoneCallAccepted call)
+        //{
+        //    BigInteger p = new BigInteger(1, secretP);
+        //    BigInteger i_authKey = new BigInteger(1, call.GB);
 
-            i_authKey = i_authKey.ModPow(new BigInteger(1, a_or_b), p);
+        //    i_authKey = i_authKey.ModPow(new BigInteger(1, a_or_b), p);
 
-            byte[] authKey = i_authKey.ToByteArray();
-            if (authKey.Length > 256)
-            {
-                byte[] correctedAuth = new byte[256];
-                Buffer.BlockCopy(authKey, authKey.Length - 256, correctedAuth, 0, 256);
-                authKey = correctedAuth;
-            }
-            else if (authKey.Length < 256)
-            {
-                byte[] correctedAuth = new byte[256];
-                Buffer.BlockCopy(authKey, 0, correctedAuth, 256 - authKey.Length, authKey.Length);
-                for (int a = 0; a < 256 - authKey.Length; a++)
-                {
-                    authKey[a] = 0;
-                }
-                authKey = correctedAuth;
-            }
+        //    byte[] authKey = i_authKey.ToByteArray();
+        //    if (authKey.Length > 256)
+        //    {
+        //        byte[] correctedAuth = new byte[256];
+        //        Buffer.BlockCopy(authKey, authKey.Length - 256, correctedAuth, 0, 256);
+        //        authKey = correctedAuth;
+        //    }
+        //    else if (authKey.Length < 256)
+        //    {
+        //        byte[] correctedAuth = new byte[256];
+        //        Buffer.BlockCopy(authKey, 0, correctedAuth, 256 - authKey.Length, authKey.Length);
+        //        for (int a = 0; a < 256 - authKey.Length; a++)
+        //        {
+        //            authKey[a] = 0;
+        //        }
+        //        authKey = correctedAuth;
+        //    }
 
-            return authKey;
-        }
+        //    return authKey;
+        //}
 
         private async void OnRejectRequested(VoipPhoneCall sender, CallRejectEventArgs args)
         {
-            if (_phoneCall is TLPhoneCallRequested requested)
-            {
-                var req = new TLPhoneDiscardCall { Peer = new TLInputPhoneCall { Id = requested.Id, AccessHash = requested.AccessHash }, Reason = new TLPhoneCallDiscardReasonBusy() };
+            //if (_phoneCall is TLPhoneCallRequested requested)
+            //{
+            //    var req = new TLPhoneDiscardCall { Peer = new TLInputPhoneCall { Id = requested.Id, AccessHash = requested.AccessHash }, Reason = new TLPhoneCallDiscardReasonBusy() };
 
-                const string caption = "phone.discardCall";
-                var response = await SendRequestAsync<TLUpdatesBase>(caption, req);
-                if (response.IsSucceeded)
-                {
-                    if (response.Result is TLUpdates updates)
-                    {
-                        var update = updates.Updates.FirstOrDefault(x => x is TLUpdatePhoneCall) as TLUpdatePhoneCall;
-                        if (update != null)
-                        {
-                            Handle(update);
-                        }
-                    }
-                }
+            //    const string caption = "phone.discardCall";
+            //    var response = await SendRequestAsync<object>(caption, req);
+            //    if (response.IsSucceeded)
+            //    {
+            //        if (response.Result is TLUpdates updates)
+            //        {
+            //            var update = updates.Updates.FirstOrDefault(x => x is TLUpdatePhoneCall) as TLUpdatePhoneCall;
+            //            if (update != null)
+            //            {
+            //                Handle(update);
+            //            }
+            //        }
+            //    }
 
-                _systemCall.NotifyCallEnded();
-            }
+            //    _systemCall.NotifyCallEnded();
+            //}
         }
 
         private async Task<MTProtoResponse<T>> SendRequestAsync<T>(string caption, TLObject request)
@@ -663,12 +623,8 @@ namespace Unigram.Tasks
             {
                 VoIPCallTask.Log("Sending request", "Via MTProtoService");
 
-                if (caption.Equals("voip.getUser"))
-                {
-                    return new MTProtoResponse<T>(InMemoryCacheService.Current.GetUser(((TLPeerUser)request).UserId));
-                }
-
-                return await _protoService.SendRequestAsync<T>(caption, request);
+                //return await _protoService.SendRequestAsync<T>(caption, request);
+                return null;
             }
             else
             {
@@ -701,129 +657,129 @@ namespace Unigram.Tasks
 
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            var deferral = args.GetDeferral();
-            var message = args.Request.Message;
+            //var deferral = args.GetDeferral();
+            //var message = args.Request.Message;
 
-            if (message.ContainsKey("update"))
-            {
-                var buffer = message["update"] as string;
-                var update = TLSerializationService.Current.Deserialize(buffer) as TLUpdatePhoneCall;
-                if (update != null)
-                {
-                    Handle(update);
-                }
-            }
-            else if (message.ContainsKey("caption"))
-            {
-                var caption = message["caption"] as string;
-                if (caption.Equals("phone.discardCall"))
-                {
-                    if (_phoneCall != null)
-                    {
-                        var buffer = message["request"] as string;
-                        var payload = TLSerializationService.Current.Deserialize<byte[]>(buffer);
-                        var reader = TLObjectSerializer.CreateReader(payload.AsBuffer());
-                        var req = new TLTuple<double>(reader);
-                        reader.Dispose();
+            //if (message.ContainsKey("update"))
+            //{
+            //    var buffer = message["update"] as string;
+            //    var update = TLSerializationService.Current.Deserialize(buffer) as TLUpdatePhoneCall;
+            //    if (update != null)
+            //    {
+            //        Handle(update);
+            //    }
+            //}
+            //else if (message.ContainsKey("caption"))
+            //{
+            //    var caption = message["caption"] as string;
+            //    if (caption.Equals("phone.discardCall"))
+            //    {
+            //        if (_phoneCall != null)
+            //        {
+            //            //var buffer = message["request"] as string;
+            //            //var payload = TLSerializationService.Current.Deserialize<byte[]>(buffer);
+            //            //var reader = TLObjectSerializer.CreateReader(payload.AsBuffer());
+            //            //var req = new TLTuple<double>(reader);
+            //            //reader.Dispose();
 
-                        var missed = _state == TLPhoneCallState.Ringing || (_state == TLPhoneCallState.Waiting && _outgoing);
-                        var declined = _state == TLPhoneCallState.WaitingIncoming;
-                        TLPhoneCallDiscardReasonBase reason = missed
-                            ? new TLPhoneCallDiscardReasonMissed()
-                            : declined
-                            ? (TLPhoneCallDiscardReasonBase)new TLPhoneCallDiscardReasonBusy()
-                            : new TLPhoneCallDiscardReasonHangup();
+            //            //var missed = _state == TLPhoneCallState.Ringing || (_state == TLPhoneCallState.Waiting && _outgoing);
+            //            //var declined = _state == TLPhoneCallState.WaitingIncoming;
+            //            //TLPhoneCallDiscardReasonBase reason = missed
+            //            //    ? new TLPhoneCallDiscardReasonMissed()
+            //            //    : declined
+            //            //    ? (TLPhoneCallDiscardReasonBase)new TLPhoneCallDiscardReasonBusy()
+            //            //    : new TLPhoneCallDiscardReasonHangup();
 
-                        var req2 = new TLPhoneDiscardCall { Peer = _phoneCall.ToInputPhoneCall(), Reason = reason, Duration = (int)req.Item1 };
+            //            //var req2 = new TLPhoneDiscardCall { Peer = _phoneCall.ToInputPhoneCall(), Reason = reason, Duration = (int)req.Item1 };
 
-                        const string caption2 = "phone.discardCall";
-                        var response = await SendRequestAsync<TLUpdatesBase>(caption2, req2);
-                        if (response.IsSucceeded)
-                        {
-                            if (response.Result is TLUpdates updates)
-                            {
-                                var update = updates.Updates.FirstOrDefault(x => x is TLUpdatePhoneCall) as TLUpdatePhoneCall;
-                                if (update != null)
-                                {
-                                    Handle(update);
-                                }
-                            }
-                        }
-                    }
-                    else if (_systemCall != null)
-                    {
-                        _systemCall.AnswerRequested -= OnAnswerRequested;
-                        _systemCall.RejectRequested -= OnRejectRequested;
-                        _systemCall.NotifyCallEnded();
-                        _systemCall = null;
+            //            //const string caption2 = "phone.discardCall";
+            //            //var response = await SendRequestAsync<object>(caption2, req2);
+            //            //if (response.IsSucceeded)
+            //            //{
+            //            //    if (response.Result is TLUpdates updates)
+            //            //    {
+            //            //        var update = updates.Updates.FirstOrDefault(x => x is TLUpdatePhoneCall) as TLUpdatePhoneCall;
+            //            //        if (update != null)
+            //            //        {
+            //            //            Handle(update);
+            //            //        }
+            //            //    }
+            //            //}
+            //        }
+            //        else if (_systemCall != null)
+            //        {
+            //            _systemCall.AnswerRequested -= OnAnswerRequested;
+            //            _systemCall.RejectRequested -= OnRejectRequested;
+            //            _systemCall.NotifyCallEnded();
+            //            _systemCall = null;
 
-                        _phoneCall = new TLPhoneCallDiscarded();
-                        await UpdateStateAsync(TLPhoneCallState.Ended);
-                    }
-                    else if (_deferral != null)
-                    {
-                        _deferral.Complete();
-                    }
-                }
-                else if (caption.Equals("phone.mute") || caption.Equals("phone.unmute"))
-                {
-                    if (_controller != null)
-                    {
-                        _controller.SetMicMute(caption.Equals("phone.mute"));
+            //            _phoneCall = new TLPhoneCallDiscarded();
+            //            await UpdateStateAsync(TLPhoneCallState.Ended);
+            //        }
+            //        else if (_deferral != null)
+            //        {
+            //            _deferral.Complete();
+            //        }
+            //    }
+            //    else if (caption.Equals("phone.mute") || caption.Equals("phone.unmute"))
+            //    {
+            //        if (_controller != null)
+            //        {
+            //            _controller.SetMicMute(caption.Equals("phone.mute"));
 
-                        var coordinator = VoipCallCoordinator.GetDefault();
-                        if (caption.Equals("phone.mute"))
-                        {
-                            coordinator.NotifyMuted();
-                        }
-                        else
-                        {
-                            coordinator.NotifyUnmuted();
-                        }
-                    }
-                }
-                else if (caption.Equals("voip.startCall"))
-                {
-                    var buffer = message["request"] as string;
-                    var req = TLSerializationService.Current.Deserialize<TLUser>(buffer);
+            //            var coordinator = VoipCallCoordinator.GetDefault();
+            //            if (caption.Equals("phone.mute"))
+            //            {
+            //                coordinator.NotifyMuted();
+            //            }
+            //            else
+            //            {
+            //                coordinator.NotifyUnmuted();
+            //            }
+            //        }
+            //    }
+            //    else if (caption.Equals("voip.startCall"))
+            //    {
+            //        var buffer = message["request"] as string;
+            //        var req = TLSerializationService.Current.Deserialize<TLUser>(buffer);
 
-                    _user = req;
-                    OutgoingCall(req.Id, req.AccessHash.Value);
-                }
-                else if (caption.Equals("voip.debugString"))
-                {
-                    if (_controller != null)
-                    {
-                        await args.Request.SendResponseAsync(new ValueSet { { "result", _controller.GetDebugString() }, { "version", VoIPControllerWrapper.GetVersion() } });
-                    }
-                }
-            }
-            else if (message.ContainsKey("voip.callInfo"))
-            {
-                if (_phoneCall != null)
-                {
-                    await args.Request.SendResponseAsync(new ValueSet { { "result", TLSerializationService.Current.Serialize(_phoneCall) } });
-                }
-                else
-                {
-                    await args.Request.SendResponseAsync(new ValueSet { { "error", false } });
-                }
-            }
+            //        _user = req;
+            //        OutgoingCall(req.Id, req.AccessHash.Value);
+            //    }
+            //    else if (caption.Equals("voip.debugString"))
+            //    {
+            //        if (_controller != null)
+            //        {
+            //            await args.Request.SendResponseAsync(new ValueSet { { "result", _controller.GetDebugString() }, { "version", VoIPControllerWrapper.GetVersion() } });
+            //        }
+            //    }
+            //}
+            //else if (message.ContainsKey("voip.callInfo"))
+            //{
+            //    if (_phoneCall != null)
+            //    {
+            //        await args.Request.SendResponseAsync(new ValueSet { { "result", TLSerializationService.Current.Serialize(_phoneCall) } });
+            //    }
+            //    else
+            //    {
+            //        await args.Request.SendResponseAsync(new ValueSet { { "error", false } });
+            //    }
+            //}
 
-            deferral.Complete();
+            //deferral.Complete();
         }
 
-        public void Handle(TLUpdatePhoneCall update)
-        {
-            Debug.WriteLine("[{0:HH:mm:ss.fff}] Processing VoIP update: " + update.PhoneCall, DateTime.Now);
-            _queue.Enqueue(update);
+        //public void Handle(TLUpdatePhoneCall update)
+        //{
+        //    Debug.WriteLine("[{0:HH:mm:ss.fff}] Processing VoIP update: " + update.PhoneCall, DateTime.Now);
+        //    _queue.Enqueue(update);
 
-            if (_initialized)
-            {
-                ProcessUpdates();
-                //await UpdateCallAsync(string.Empty);
-            }
-        }
+        //    if (_initialized)
+        //    {
+        //        ProcessUpdates();
+        //        //await UpdateCallAsync(string.Empty);
+        //    }
+        //}
 
         public void Dispose()
         {
@@ -831,7 +787,6 @@ namespace Unigram.Tasks
 
             if (_protoService != null)
             {
-                _protoService.Dispose();
                 //_transportService.Close();
             }
         }
@@ -848,52 +803,52 @@ namespace Unigram.Tasks
             _systemCall.AnswerRequested += OnAnswerRequested;
             _systemCall.RejectRequested += OnRejectRequested;
 
-            var reqConfig = new TLMessagesGetDHConfig { Version = 0, RandomLength = 256 };
+            //var reqConfig = new TLMessagesGetDHConfig { Version = 0, RandomLength = 256 };
 
-            var config = await SendRequestAsync<TLMessagesDHConfig>("messages.getDhConfig", reqConfig);
-            if (config.IsSucceeded)
-            {
-                var dh = config.Result;
-                if (!TLUtils.CheckPrime(dh.P, dh.G))
-                {
-                    return;
-                }
+            //var config = await SendRequestAsync<TLMessagesDHConfig>("messages.getDhConfig", reqConfig);
+            //if (config.IsSucceeded)
+            //{
+            //    var dh = config.Result;
+            //    if (!TLUtils.CheckPrime(dh.P, dh.G))
+            //    {
+            //        return;
+            //    }
 
-                var salt = new byte[256];
-                var secureRandom = new SecureRandom();
-                secureRandom.NextBytes(salt);
+            //    var salt = new byte[256];
+            //    var secureRandom = new SecureRandom();
+            //    secureRandom.NextBytes(salt);
 
-                secretP = dh.P;
-                a_or_b = salt;
-                g_a = MTProtoService.GetGB(salt, dh.G, dh.P);
+            //    secretP = dh.P;
+            //    a_or_b = salt;
+            //    g_a = MTProtoService.GetGB(salt, dh.G, dh.P);
 
-                var request = new TLPhoneRequestCall
-                {
-                    UserId = new TLInputUser { UserId = userId, AccessHash = accessHash },
-                    RandomId = TLInt.Random(),
-                    GAHash = Utils.ComputeSHA256(g_a),
-                    Protocol = new TLPhoneCallProtocol
-                    {
-                        IsUdpP2p = true,
-                        IsUdpReflector = true,
-                        MinLayer = Telegram.Api.Constants.CallsMinLayer,
-                        MaxLayer = Telegram.Api.Constants.CallsMaxLayer,
-                    }
-                };
+            //    var request = new TLPhoneRequestCall
+            //    {
+            //        UserId = new TLInputUser { UserId = userId, AccessHash = accessHash },
+            //        RandomId = TLInt.Random(),
+            //        GAHash = Utils.ComputeSHA256(g_a),
+            //        Protocol = new TLPhoneCallProtocol
+            //        {
+            //            IsUdpP2p = true,
+            //            IsUdpReflector = true,
+            //            MinLayer = Telegram.Api.Constants.CallsMinLayer,
+            //            MaxLayer = Telegram.Api.Constants.CallsMaxLayer,
+            //        }
+            //    };
 
-                var response = await SendRequestAsync<TLPhonePhoneCall>("phone.requestCall", request);
-                if (response.IsSucceeded)
-                {
-                    var update = new TLUpdatePhoneCall { PhoneCall = response.Result.PhoneCall };
+            //    var response = await SendRequestAsync<TLPhonePhoneCall>("phone.requestCall", request);
+            //    if (response.IsSucceeded)
+            //    {
+            //        var update = new TLUpdatePhoneCall { PhoneCall = response.Result.PhoneCall };
 
-                    Handle(update);
-                    await UpdateStateAsync(TLPhoneCallState.Waiting);
-                }
-                else
-                {
-                    Debugger.Break();
-                }
-            }
+            //        Handle(update);
+            //        await UpdateStateAsync(TLPhoneCallState.Waiting);
+            //    }
+            //    else
+            //    {
+            //        Debugger.Break();
+            //    }
+            //}
         }
     }
 }

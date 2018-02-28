@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api.Helpers;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Windows.UI.Xaml.Data;
 
@@ -14,8 +14,7 @@ namespace Unigram.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var user = value as TLUser;
-            if (user != null)
+            if (value is User user)
             {
                 return GetLabel(user, parameter == null);
             }
@@ -28,48 +27,41 @@ namespace Unigram.Converters
             throw new NotImplementedException();
         }
 
-        public static int GetIndex(TLUser user)
+        public static int GetIndex(User user)
         {
-            if (user.IsBot)
+            if (user.Type is UserTypeBot bot)
             {
                 // Last
-                return user.IsBotChatHistory ? 1 : 0;
+                return bot.CanReadAllGroupMessages ? 1 : 0;
             }
 
-            if (user.HasStatus && user.Status != null)
+            switch (user.Status)
             {
-                switch (user.Status)
-                {
-                    case TLUserStatusOffline offline:
-                        return offline.WasOnline;
-                    case TLUserStatusOnline online:
-                        return int.MaxValue;
-                    case TLUserStatusRecently recently:
-                        // recently
-                        // Before within a week
-                        return 5;
-                    case TLUserStatusLastWeek lastWeek:
-                        // within a week
-                        // Before within a month
-                        return 4;
-                    case TLUserStatusLastMonth lastMonth:
-                        // within a month
-                        // Before long time ago
-                        return 3;
-                    case TLUserStatusEmpty empty:
-                    default:
-                        // long time ago
-                        // Before bots
-                        return 2;
-                }
+                case UserStatusOffline offline:
+                    return offline.WasOnline;
+                case UserStatusOnline online:
+                    return int.MaxValue;
+                case UserStatusRecently recently:
+                    // recently
+                    // Before within a week
+                    return 5;
+                case UserStatusLastWeek lastWeek:
+                    // within a week
+                    // Before within a month
+                    return 4;
+                case UserStatusLastMonth lastMonth:
+                    // within a month
+                    // Before long time ago
+                    return 3;
+                case UserStatusEmpty empty:
+                default:
+                    // long time ago
+                    // Before bots
+                    return 2;
             }
-
-            // long time ago
-            // Before bots
-            return 2;
         }
 
-        public static string GetLabel(TLUser user, bool details)
+        public static string GetLabel(User user, bool details)
         {
             if (user == null)
             {
@@ -80,25 +72,25 @@ namespace Unigram.Converters
             {
                 return Strings.Android.ServiceNotifications;
             }
-            else if (user.IsBot)
+            else if (user.Type is UserTypeBot bot)
             {
                 if (details)
                 {
                     return Strings.Android.Bot;
                 }
 
-                return user.IsBotChatHistory ? Strings.Android.BotStatusRead : Strings.Android.BotStatusCantRead;
+                return bot.CanReadAllGroupMessages ? Strings.Android.BotStatusRead : Strings.Android.BotStatusCantRead;
             }
-            else if (user.IsSelf && details)
-            {
-                return Strings.Android.ChatYourSelf;
-            }
+            //else if (user.IsSelf && details)
+            //{
+            //    return Strings.Android.ChatYourSelf;
+            //}
 
-            if (user.Status is TLUserStatusOffline offline)
+            if (user.Status is UserStatusOffline offline)
             {
                 return FormatDateOnline(offline.WasOnline);
             }
-            else if (user.Status is TLUserStatusOnline online)
+            else if (user.Status is UserStatusOnline online)
             {
                 if (online.Expires > Utils.CurrentTimestamp / 1000)
                 {
@@ -109,15 +101,15 @@ namespace Unigram.Converters
                     return FormatDateOnline(online.Expires);
                 }
             }
-            else if (user.Status is TLUserStatusRecently recently)
+            else if (user.Status is UserStatusRecently recently)
             {
                 return Strings.Android.Lately;
             }
-            else if (user.Status is TLUserStatusLastWeek lastWeek)
+            else if (user.Status is UserStatusLastWeek lastWeek)
             {
                 return Strings.Android.WithinAWeek;
             }
-            else if (user.Status is TLUserStatusLastMonth lastMonth)
+            else if (user.Status is UserStatusLastMonth lastMonth)
             {
                 return Strings.Android.WithinAMonth;
             }

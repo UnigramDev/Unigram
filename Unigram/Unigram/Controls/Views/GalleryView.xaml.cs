@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
-using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Converters;
@@ -37,10 +35,14 @@ using Windows.UI.ViewManagement;
 using Windows.System.Display;
 using Unigram.Common;
 using Windows.Graphics.Display;
+using TdWindows;
+using System.Windows.Input;
+using Windows.Storage.Streams;
+using Unigram.Services;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class GalleryView : ContentDialogBase
+    public sealed partial class GalleryView : ContentDialogBase, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
@@ -98,12 +100,52 @@ namespace Unigram.Controls.Views
             }
         }
 
+        public void Handle(UpdateFile update)
+        {
+            this.BeginOnUIThread(() => UpdateFile(update.File));
+        }
+
+        public void UpdateFile(File file)
+        {
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            foreach (var item in viewModel.Items)
+            {
+                if (item.UpdateFile(file))
+                {
+                    if (Element0.Item == item)
+                    {
+                        Element0.UpdateFile(item, file);
+                    }
+
+                    if (Element1.Item == item)
+                    {
+                        Element1.UpdateFile(item, file);
+                    }
+
+                    if (Element2.Item == item)
+                    {
+                        Element2.UpdateFile(item, file);
+                    }
+                }
+            }
+        }
+
+        public void OpenFile(GalleryItem item, File file)
+        {
+            Play(item, file);
+        }
+
         private void ItemsStackPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var width = 40 + 4 + 4;
             var total = (e.NewSize.Width - width) / 2d;
 
-            List.Padding = new Thickness(total, 0, total, 0);
+            //List.Padding = new Thickness(total, 0, total, 0);
         }
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -160,18 +202,19 @@ namespace Unigram.Controls.Views
             });
         }
 
-        private static GalleryView _current;
-        public static GalleryView Current
+        private static Dictionary<int, WeakReference<GalleryView>> _windowContext = new Dictionary<int, WeakReference<GalleryView>>();
+        public static GalleryView GetForCurrentView()
         {
-            get
+            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+            if (_windowContext.TryGetValue(id, out WeakReference<GalleryView> reference) && reference.TryGetTarget(out GalleryView value))
             {
-                //return new GalleryView();
-
-                if (_current == null)
-                    _current = new GalleryView();
-
-                return _current;
+                return value;
             }
+
+            var context = new GalleryView();
+            _windowContext[id] = new WeakReference<GalleryView>(context);
+
+            return context;
         }
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing)
@@ -196,11 +239,11 @@ namespace Unigram.Controls.Views
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
 
+            parameter.Delegate = this;
             parameter.Items.CollectionChanged -= OnCollectionChanged;
             parameter.Items.CollectionChanged += OnCollectionChanged;
 
-            DataContext = parameter;
-            Bindings.Update();
+            Load(parameter);
 
             PrepareNext(0);
 
@@ -239,7 +282,7 @@ namespace Unigram.Controls.Views
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             var container = GetContainer(0);
-            var root = container?.ContentTemplateRoot as Grid;
+            var root = container.Children[0];
 
             if (root != null && ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem)
             {
@@ -273,8 +316,7 @@ namespace Unigram.Controls.Views
                 Transport.Hide();
             }
 
-            DataContext = null;
-            Bindings.StopTracking();
+            Unload();
 
             Dispose();
             Hide();
@@ -284,13 +326,13 @@ namespace Unigram.Controls.Views
 
         private void ImageView_ImageOpened(object sender, RoutedEventArgs e)
         {
-            var image = sender as FrameworkElement;
-            if (image.DataContext != ViewModel.FirstItem)
+            var image = sender as GalleryContent;
+            if (image.Item != ViewModel.FirstItem)
             {
                 return;
             }
 
-            var item = image.DataContext as GalleryItem;
+            var item = image.Item as GalleryItem;
             if (item == null)
             {
                 return;
@@ -301,7 +343,7 @@ namespace Unigram.Controls.Views
             {
                 Layer.Visibility = Visibility.Visible;
 
-                if (animation.TryStart(image))
+                if (animation.TryStart(image.Children[0]))
                 {
                     animation.Completed += (s, args) =>
                     {
@@ -309,7 +351,7 @@ namespace Unigram.Controls.Views
 
                         if (item.IsVideo)
                         {
-                            Play(image.Parent as Grid, item);
+                            Play(image.Children[0] as Grid, item, item.GetFile());
                         }
                     };
 
@@ -321,15 +363,24 @@ namespace Unigram.Controls.Views
 
             if (item.IsVideo)
             {
-                Play(image.Parent as Grid, item);
+                Play(image.Children[0] as Grid, item, item.GetFile());
             }
         }
 
         #region Binding
 
-        private string ConvertFrom(ITLDialogWith with)
+        private string ConvertFrom(object with)
         {
-            return with is TLUser user && user.IsSelf ? user.FullName : with?.DisplayName;
+            if (with is User user)
+            {
+                return user.GetFullName();
+            }
+            else if (with is Chat chat)
+            {
+                return chat.Title;
+            }
+
+            return null;
         }
 
         private string ConvertDate(int value)
@@ -345,22 +396,7 @@ namespace Unigram.Controls.Views
 
         #endregion
 
-        private void Download_Click(object sender, TransferCompletedEventArgs e)
-        {
-            var border = sender as FrameworkElement;
-            var item = border.DataContext as GalleryItem;
-            if (item == null)
-            {
-                return;
-            }
-
-            if (item.IsVideo)
-            {
-                Play(item);
-            }
-        }
-
-        private void Play(GalleryItem item)
+        private void Play(GalleryItem item, File file)
         {
             try
             {
@@ -370,18 +406,25 @@ namespace Unigram.Controls.Views
                 }
 
                 var container = GetContainer(0);
-                if (container != null && container.ContentTemplateRoot is Grid parent)
-                {
-                    Play(parent, item);
-                }
+                //if (container != null && container.ContentTemplateRoot is Grid parent)
+                //{
+                //    Play(parent, item);
+                //}
+
+                Play(container.Children[0] as Grid, item, file);
             }
             catch { }
         }
 
-        private void Play(Grid parent, GalleryItem item)
+        private void Play(Grid parent, GalleryItem item, File file)
         {
             try
             {
+                if (!file.Local.IsDownloadingCompleted)
+                {
+                    return;
+                }
+
                 if (_surface != null && _mediaPlayerElement != null)
                 {
                     _surface.Children.Remove(_mediaPlayerElement);
@@ -399,7 +442,7 @@ namespace Unigram.Controls.Views
                 var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
                 _mediaPlayer.SetSurfaceSize(new Size(parent.ActualWidth * dpi, parent.ActualHeight * dpi));
 
-                _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
+                _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("file:///" + file.Local.Path));
                 _mediaPlayer.IsLoopingEnabled = item.IsLoop;
                 _mediaPlayer.Play();
 
@@ -457,14 +500,56 @@ namespace Unigram.Controls.Views
             }
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+        }
+
+        private void Load(object parameter)
+        {
+            DataContext = parameter;
+            Bindings.Update();
+
+            if (ViewModel != null)
+            {
+                ViewModel.Aggregator.Subscribe(this);
+            }
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            Unload();
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+        }
+
+        private void Unload()
+        {
+            if (ViewModel != null)
+            {
+                ViewModel.Aggregator.Unsubscribe(this);
+            }
+
             DataContext = null;
             Bindings.StopTracking();
+        }
 
-            Element1.Content = null;
-            Element0.Content = null;
-            Element2.Content = null;
+        private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+            if (args.EventType != CoreAcceleratorKeyEventType.KeyDown && args.EventType != CoreAcceleratorKeyEventType.SystemKeyDown)
+            {
+                return;
+            }
+
+            if (args.VirtualKey == Windows.System.VirtualKey.Left || args.VirtualKey == Windows.System.VirtualKey.GamepadLeftShoulder)
+            {
+                Scroll(-1);
+                args.Handled = true;
+            }
+            else if (args.VirtualKey == Windows.System.VirtualKey.Right || args.VirtualKey == Windows.System.VirtualKey.GamepadRightShoulder)
+            {
+                Scroll(1);
+                args.Handled = true;
+            }
         }
 
         #region Flippitiflip
@@ -496,20 +581,6 @@ namespace Unigram.Controls.Views
             var delta = -point.Properties.MouseWheelDelta;
 
             Scroll(delta);
-        }
-
-        protected override void OnKeyDown(KeyRoutedEventArgs e)
-        {
-            base.OnKeyDown(e);
-
-            if (e.Key == Windows.System.VirtualKey.Left || e.Key == Windows.System.VirtualKey.GamepadLeftShoulder)
-            {
-                Scroll(-1);
-            }
-            else if (e.Key == Windows.System.VirtualKey.Right || e.Key == Windows.System.VirtualKey.GamepadRightShoulder)
-            {
-                Scroll(1);
-            }
         }
 
         private void LayoutRoot_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
@@ -626,8 +697,7 @@ namespace Unigram.Controls.Views
                         Transport.Hide();
                     }
 
-                    DataContext = null;
-                    Bindings.StopTracking();
+                    Unload();
 
                     Dispose();
                     Hide();
@@ -724,9 +794,9 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            ContentControl previous = null;
-            ContentControl target = null;
-            ContentControl next = null;
+            GalleryContent previous = null;
+            GalleryContent target = null;
+            GalleryContent next = null;
             if (Grid.GetColumn(Element1) == direction + 1)
             {
                 previous = Element0;
@@ -758,12 +828,13 @@ namespace Unigram.Controls.Views
             if (set)
             {
                 Dispose();
+                ViewModel.OpenMessage(ViewModel.Items[index]);
             }
 
             _selecting = false;
         }
 
-        private ContentControl GetContainer(int direction)
+        private GalleryContent GetContainer(int direction)
         {
             if (Grid.GetColumn(Element1) == direction + 1)
             {
@@ -781,14 +852,14 @@ namespace Unigram.Controls.Views
             return null;
         }
 
-        private bool TrySet(ContentControl element, object content)
+        private bool TrySet(GalleryContent element, GalleryItem content)
         {
-            if (object.Equals(element.Content, content))
+            if (object.Equals(element.Item, content))
             {
                 return false;
             }
 
-            element.Content = content;
+            element.UpdateItem(this, content);
             return true;
         }
 
@@ -807,5 +878,121 @@ namespace Unigram.Controls.Views
         }
 
         #endregion
+
+        private void ImageView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            /*<MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanView, Mode=OneWay}"
+                                            Text="{CustomResource ShowInChat}"/>
+                            <MenuFlyoutItem x:Name="FlyoutSaveAs"
+                                            Command="{x:Bind ViewModel.SaveCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
+                                            Text="Save as..." />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"
+                                            Text="{CustomResource OpenInExternalApp}" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
+                                            Text="{CustomResource Delete}"/>*/
+
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var item = element.Tag as GalleryItem;
+            if (item == null)
+            {
+                return;
+            }
+
+            CreateFlyoutItem(ref flyout, item.CanView, ViewModel.ViewCommand, item, Strings.Android.ShowInChat);
+            CreateFlyoutItem(ref flyout, ViewModel.CanSave, ViewModel.SaveCommand, item, Strings.Resources.SaveAs);
+            CreateFlyoutItem(ref flyout, ViewModel.CanOpenWith, ViewModel.OpenWithCommand, item, Strings.Android.OpenInExternalApp);
+            CreateFlyoutItem(ref flyout, ViewModel.CanDelete, ViewModel.DeleteCommand, item, Strings.Android.Delete);
+
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                flyout.ShowAt(sender, point);
+            }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, bool create, ICommand command, object parameter, string text)
+        {
+            if (create)
+            {
+                var flyoutItem = new MenuFlyoutItem();
+                flyoutItem.IsEnabled = command != null;
+                flyoutItem.Command = command;
+                flyoutItem.CommandParameter = parameter;
+                flyoutItem.Text = text;
+
+                flyout.Items.Add(flyoutItem);
+            }
+        }
+    }
+
+    public class Test
+    {
+        private MediaStreamSource _source;
+
+        public Test()
+        {
+            _source = new MediaStreamSource(null);
+        }
+    }
+
+    public class Booh : IRandomAccessStream
+    {
+        public IInputStream GetInputStreamAt(ulong position)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IOutputStream GetOutputStreamAt(ulong position)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Seek(ulong position)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IRandomAccessStream CloneStream()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CanRead => throw new NotImplementedException();
+
+        public bool CanWrite => false;
+
+        public ulong Position => throw new NotImplementedException();
+
+        public ulong Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public IAsyncOperationWithProgress<IBuffer, uint> ReadAsync(IBuffer buffer, uint count, InputStreamOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAsyncOperationWithProgress<uint, uint> WriteAsync(IBuffer buffer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAsyncOperation<bool> FlushAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

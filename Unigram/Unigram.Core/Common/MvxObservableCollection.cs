@@ -77,6 +77,11 @@ namespace Unigram.Core.Common
             }
         }
 
+        public void RaiseCollectionChanged(NotifyCollectionChangedEventArgs args)
+        {
+            OnCollectionChanged(args);
+        }
+
         /// <summary>
         /// Adds the specified items collection to the current <see cref="MvxObservableCollection{T}"/> instance.
         /// </summary>
@@ -120,7 +125,7 @@ namespace Unigram.Core.Common
                 }
             }
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, changedItems: items.Reverse().ToList(), startingIndex: index));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, changedItems: items.ToList(), startingIndex: index));
         }
 
         /// <summary>
@@ -142,6 +147,14 @@ namespace Unigram.Core.Common
             }
 
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        public void Clear(bool suppress)
+        {
+            using (SuppressEvents())
+            {
+                Clear();
+            }
         }
 
         public void ReplaceRange(IEnumerable<T> items, int firstIndex, int oldSize)
@@ -271,9 +284,15 @@ namespace Unigram.Core.Common
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, removedItems, start));
         }
 
+        public void Reset()
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
         protected void InvokeOnMainThread(Action action)
         {
-            Execute.BeginOnUIThread(action);
+            action();
+            //Execute.BeginOnUIThread(action);
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)

@@ -1,0 +1,61 @@
+<Page
+    x:Class="Unigram.Views.Settings.SettingsDataAutoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
+            <Setter Property="Padding" Value="0,8,0,8"/>
+        </Style>
+
+        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
+            <Setter Property="Margin" Value="12,8,12,0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:ButtonPageHeader
+            Text="{x:Bind ViewModel.Title, Mode=OneWay}"
+            Command="{x:Bind ViewModel.SendCommand}"
+            Glyph="&#xE10B;"/>
+
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel Margin="0,0,0,48">
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource WhenUsingMobileData}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.Contacts, Mode=TwoWay}"
+                        Header="{CustomResource AutodownloadContacts}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.PrivateChats, Mode=TwoWay}"
+                        Header="{CustomResource AutodownloadPrivateChats}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.Groups, Mode=TwoWay}"
+                        Header="{CustomResource AutodownloadGroupChats}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.Channels, Mode=TwoWay}"
+                        Header="{CustomResource AutodownloadChannels}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+                    <Slider Header="{CustomResource AutodownloadSizeLimit}" Visibility="Collapsed"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

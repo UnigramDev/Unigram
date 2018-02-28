@@ -1,8 +1,8 @@
-﻿<Page x:Class="Unigram.Views.Dialogs.DialogShareLocationPage"
+<Page x:Class="Unigram.Views.Dialogs.DialogShareLocationPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Unigram.Views"
-      xmlns:tl="using:Telegram.Api.TL"
+      xmlns:td="using:TdWindows"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
@@ -58,7 +58,7 @@
                     </Grid>
 
                     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                BorderBrush="{ThemeResource TelegramSeparatorBrush}"
                                 BorderThickness="0,1,0,0">
                         <!-- Current Location -->
                         <Button x:Name="btnCurrentLocation"
@@ -123,14 +123,14 @@
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="tl:TLMessageMediaVenue">
+                <DataTemplate x:DataType="td:Venue">
                     <StackPanel Height="48" Orientation="Horizontal">
                         <Border Height="40" Width="40" CornerRadius="20" Margin="0,0,12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-                            <BitmapIcon UriSource="{x:Bind VenueType, Converter={StaticResource VenueToGlyphConverter}}" Margin="4"/>
+                            <!--<BitmapIcon UriSource="{x:Bind VenueType, Converter={StaticResource VenueToGlyphConverter}}" Margin="4"/>-->
                         </Border>
                         <StackPanel Orientation="Vertical"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center">
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center">
                             <TextBlock Text="{x:Bind Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
                             <TextBlock Text="{x:Bind Address}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                         </StackPanel>

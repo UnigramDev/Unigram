@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="Unigram.Controls.Media.MusicPlaybackItem"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -18,7 +18,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid Background="{ThemeResource MessageMediaBackgroundBrush}" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top">
-            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+            <!--<controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>-->
             <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
         </Grid>
 

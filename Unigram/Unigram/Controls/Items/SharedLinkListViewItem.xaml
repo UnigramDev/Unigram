@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="Unigram.Controls.Items.SharedLinkListViewItem"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -18,7 +18,6 @@
         <Border x:Name="Thumbnail" Background="Gray" VerticalAlignment="Top">
             <controls:ImageView
                 Click="Thumbnail_Click"
-                Source="{Binding Media.WebPage.Photo.Thumb, Converter={StaticResource DefaultPhotoConverter}}"
                 Stretch="UniformToFill"
                 Width="48"
                 Height="48"/>

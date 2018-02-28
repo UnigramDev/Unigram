@@ -1,4 +1,4 @@
-﻿<local:ContentDialogBase
+<local:ContentDialogBase
     x:Class="Unigram.Controls.Views.GalleryView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -16,6 +16,7 @@
     OverlayBrush="{x:Null}"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
+    Loaded="OnLoaded"
     Unloaded="OnUnloaded">
 
     <Control.Resources>
@@ -32,9 +33,9 @@
                                 Source="{TemplateBinding PosterSource}"
                                 Stretch="{TemplateBinding Stretch}" />
                             <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
-                                                      IsFullWindow="{TemplateBinding IsFullWindow}"
-                                                      Stretch="{TemplateBinding Stretch}"
-                                                      MediaPlayer="{TemplateBinding MediaPlayer}"/>
+                                                  IsFullWindow="{TemplateBinding IsFullWindow}"
+                                                  Stretch="{TemplateBinding Stretch}"
+                                                  MediaPlayer="{TemplateBinding MediaPlayer}"/>
                             <Grid x:Name="TimedTextSourcePresenter" />
                         </Grid>
                     </ControlTemplate>
@@ -65,16 +66,16 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewItem">
                         <Grid x:Name="ContentBorder"
-                        Control.IsTemplateFocusTarget="True"
-                        FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                        FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
-                        FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
-                        FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
-                        FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        RenderTransformOrigin="0.5,0.5">
+                              Control.IsTemplateFocusTarget="True"
+                              FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                              FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                              FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                              FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                              FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                              Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              RenderTransformOrigin="0.5,0.5">
                             <Grid.RenderTransform>
                                 <ScaleTransform x:Name="ContentBorderScale" />
                             </Grid.RenderTransform>
@@ -94,9 +95,9 @@
                                         </VisualState.Setters>
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetName="BorderBackground"
-                                            Storyboard.TargetProperty="Opacity"
-                                            Duration="0"
-                                            To="1" />
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Duration="0"
+                                                             To="1" />
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
@@ -112,9 +113,9 @@
                                         </VisualState.Setters>
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetName="BorderBackground"
-                                            Storyboard.TargetProperty="Opacity"
-                                            Duration="0"
-                                            To="1" />
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Duration="0"
+                                                             To="1" />
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
@@ -130,9 +131,9 @@
                                         </VisualState.Setters>
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetName="BorderBackground"
-                                            Storyboard.TargetProperty="Opacity"
-                                            Duration="0"
-                                            To="1" />
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Duration="0"
+                                                             To="1" />
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListAccentLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
@@ -148,9 +149,9 @@
                                         </VisualState.Setters>
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetName="BorderBackground"
-                                            Storyboard.TargetProperty="Opacity"
-                                            Duration="0"
-                                            To="1" />
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Duration="0"
+                                                             To="1" />
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListAccentMediumBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
@@ -166,9 +167,9 @@
                                         </VisualState.Setters>
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetName="BorderBackground"
-                                            Storyboard.TargetProperty="Opacity"
-                                            Duration="0"
-                                            To="1" />
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Duration="0"
+                                                             To="1" />
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListAccentHighBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
@@ -184,9 +185,9 @@
                                     <VisualState x:Name="Disabled">
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetName="ContentBorder"
-                                            Storyboard.TargetProperty="Opacity"
-                                            Duration="0"
-                                            To="{ThemeResource ListViewItemDisabledThemeOpacity}" />
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Duration="0"
+                                                             To="{ThemeResource ListViewItemDisabledThemeOpacity}" />
                                         </Storyboard>
                                     </VisualState>
                                 </VisualStateGroup>
@@ -205,32 +206,32 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <Rectangle x:Name="BorderBackground"
-                            IsHitTestVisible="False"
-                            Fill="{ThemeResource SystemControlHighlightListAccentLowBrush}"
-                            Opacity="0"
-                            Control.IsTemplateFocusTarget="True" />
+                                       IsHitTestVisible="False"
+                                       Fill="{ThemeResource SystemControlHighlightListAccentLowBrush}"
+                                       Opacity="0"
+                                       Control.IsTemplateFocusTarget="True" />
                             <Grid x:Name="ContentPresenterGrid" Background="Transparent" Margin="0,0,0,0">
                                 <Grid.RenderTransform>
                                     <TranslateTransform x:Name="ContentPresenterTranslateTransform" />
                                 </Grid.RenderTransform>
                                 <ContentPresenter x:Name="ContentPresenter"
-                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                Content="{TemplateBinding Content}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Margin="{TemplateBinding Padding}" />
+                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  Content="{TemplateBinding Content}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  Margin="{TemplateBinding Padding}" />
                             </Grid>
                             <!-- The 'Xg' text simulates the amount of space one line of text will occupy.
-                             In the DataPlaceholder state, the Content is not loaded yet so we
-                             approximate the size of the item using placeholder text. -->
+                                 In the DataPlaceholder state, the Content is not loaded yet so we
+                                 approximate the size of the item using placeholder text. -->
                             <TextBlock x:Name="PlaceholderTextBlock"
-                            Opacity="0"
-                            Text="Xg"
-                            Foreground="{x:Null}"
-                            Margin="{TemplateBinding Padding}"
-                            IsHitTestVisible="False"
-                            AutomationProperties.AccessibilityView="Raw" />
+                                       Opacity="0"
+                                       Text="Xg"
+                                       Foreground="{x:Null}"
+                                       Margin="{TemplateBinding Padding}"
+                                       IsHitTestVisible="False"
+                                       AutomationProperties.AccessibilityView="Raw" />
                             <Rectangle x:Name="PlaceholderRect" Visibility="Collapsed" Fill="{ThemeResource ListViewItemPlaceholderBackground}" />
                         </Grid>
                     </ControlTemplate>
@@ -240,21 +241,14 @@
 
         <DataTemplate x:Key="GalleryItemTemplate" x:DataType="viewModels:GalleryItem">
             <controls:AspectView
-                Constraint="{x:Bind Source, Mode=OneWay}"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
-                <Image Source="{x:Bind Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                        Loaded="ImageView_ImageOpened"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Stretch="UniformToFill"
+                <Image Loaded="ImageView_ImageOpened"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Stretch="UniformToFill"
                        IsHitTestVisible="False"/>
-                <local:TransferButton
-                    Completed="Download_Click"
-                    Transferable="{x:Bind Source, Mode=OneWay}" 
-                    IsTransferring="{x:Bind Source.IsTransferring, Mode=OneWay}"
-                    Progress="{x:Bind Source.Progress, Mode=OneWay}"
-                    Style="{StaticResource MediaTransferButtonStyle}"/>
+                <local:FileButton Style="{StaticResource MediaTransferButtonStyle}"/>
             </controls:AspectView>
         </DataTemplate>
     </Control.Resources>
@@ -272,9 +266,9 @@
                     </Grid.ColumnDefinitions>
                     <Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>
 
-                    <ContentControl x:Name="Element2" ContentTemplate="{StaticResource GalleryItemTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-                    <ContentControl x:Name="Element0" ContentTemplate="{StaticResource GalleryItemTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="1"/>
-                    <ContentControl x:Name="Element1" ContentTemplate="{StaticResource GalleryItemTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="2"/>
+                    <controls:GalleryContent x:Name="Element2" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested"/>
+                    <controls:GalleryContent x:Name="Element0" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
+                    <controls:GalleryContent x:Name="Element1" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
                 </Grid>
             </Grid>
         </controls:GalleryTransportControls.Content>
@@ -314,69 +308,69 @@
                            Margin="12,8"
                            Grid.ColumnSpan="3"/>
 
-                <ListView x:Name="List"
-                          ItemsSource="{x:Bind ViewModel.Group}"
-                          SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
-                          ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                          ScrollViewer.HorizontalScrollMode="Auto"
-                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                          ScrollViewer.VerticalScrollMode="Disabled"
-                          SizeChanged="ItemsStackPanel_SizeChanged"
-                          SelectionChanged="List_SelectionChanged"
-                          Grid.ColumnSpan="3"
-                          Grid.Row="1">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsStackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem" BasedOn="{StaticResource ListViewItemExpanded}">
-                            <Setter Property="MinWidth" Value="23"/>
-                            <Setter Property="MinHeight" Value="42"/>
-                            <Setter Property="Height" Value="42"/>
-                            <Setter Property="Margin" Value="0,2,2,0"/>
-                            <Setter Property="Padding" Value="0"/>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="viewModels:GalleryItem">
-                            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                                <Image Source="{x:Bind Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill" Height="42"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                    <ListView.Template>
-                        <ControlTemplate TargetType="ListView">
-                            <Border BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}">
-                                <ScrollViewer x:Name="ScrollViewer"
-                            TabNavigation="{TemplateBinding TabNavigation}"
-                                              HorizontalSnapPointsAlignment="Center"
-                                              HorizontalSnapPointsType="Mandatory"
-                            HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                            IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
-                            VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                            IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
-                            IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                            IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                            ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
-                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                            BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
-                            AutomationProperties.AccessibilityView="Raw">
-                                    <ItemsPresenter Header="{TemplateBinding Header}"
-                                HeaderTemplate="{TemplateBinding HeaderTemplate}"
-                                HeaderTransitions="{TemplateBinding HeaderTransitions}"
-                                Footer="{TemplateBinding Footer}"
-                                FooterTemplate="{TemplateBinding FooterTemplate}"
-                                FooterTransitions="{TemplateBinding FooterTransitions}"
-                                Padding="{TemplateBinding Padding}" />
-                                </ScrollViewer>
-                            </Border>
-                        </ControlTemplate>
-                    </ListView.Template>
-                </ListView>
+                <!--<ListView x:Name="List"
+                     ItemsSource="{x:Bind ViewModel.Group}"
+                     SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                     ScrollViewer.HorizontalScrollMode="Auto"
+                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollMode="Disabled"
+                     SizeChanged="ItemsStackPanel_SizeChanged"
+                     SelectionChanged="List_SelectionChanged"
+                     Grid.ColumnSpan="3"
+                     Grid.Row="1">
+                     <ListView.ItemsPanel>
+                     <ItemsPanelTemplate>
+                     <ItemsStackPanel Orientation="Horizontal" />
+                     </ItemsPanelTemplate>
+                     </ListView.ItemsPanel>
+                     <ListView.ItemContainerStyle>
+                     <Style TargetType="ListViewItem" BasedOn="{StaticResource ListViewItemExpanded}">
+                     <Setter Property="MinWidth" Value="23"/>
+                     <Setter Property="MinHeight" Value="42"/>
+                     <Setter Property="Height" Value="42"/>
+                     <Setter Property="Margin" Value="0,2,2,0"/>
+                     <Setter Property="Padding" Value="0"/>
+                     </Style>
+                     </ListView.ItemContainerStyle>
+                     <ListView.ItemTemplate>
+                     <DataTemplate x:DataType="viewModels:GalleryItem">
+                     <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                     <Image Source="{x:Bind Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill" Height="42"/>
+                     </Grid>
+                     </DataTemplate>
+                     </ListView.ItemTemplate>
+                     <ListView.Template>
+                     <ControlTemplate TargetType="ListView">
+                     <Border BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}">
+                     <ScrollViewer x:Name="ScrollViewer"
+                     TabNavigation="{TemplateBinding TabNavigation}"
+                     HorizontalSnapPointsAlignment="Center"
+                     HorizontalSnapPointsType="Mandatory"
+                     HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                     HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                     IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
+                     VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                     VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                     IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
+                     IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                     IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                     ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
+                     IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                     BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                     AutomationProperties.AccessibilityView="Raw">
+                     <ItemsPresenter Header="{TemplateBinding Header}"
+                     HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                     HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                     Footer="{TemplateBinding Footer}"
+                     FooterTemplate="{TemplateBinding FooterTemplate}"
+                     FooterTransitions="{TemplateBinding FooterTransitions}"
+                     Padding="{TemplateBinding Padding}" />
+                     </ScrollViewer>
+                     </Border>
+                     </ControlTemplate>
+                     </ListView.Template>
+                     </ListView>-->
 
                 <Border x:Name="Details" Grid.Row="2">
                     <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0,0,0" VerticalAlignment="Center">

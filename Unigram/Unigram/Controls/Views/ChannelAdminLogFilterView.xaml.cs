@@ -23,19 +23,19 @@ using Windows.UI.ViewManagement;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Template10.Utils;
-using Telegram.Api.TL.Messages;
 using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Supergroups;
 
 namespace Unigram.Controls.Views
 {
     public sealed partial class ChannelAdminLogFilterView : ContentDialogBase
     {
-        public ChannelAdminLogFilterViewModel ViewModel => DataContext as ChannelAdminLogFilterViewModel;
+        public SupergroupEventLogFilterViewModel ViewModel => DataContext as SupergroupEventLogFilterViewModel;
 
         private ChannelAdminLogFilterView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ChannelAdminLogFilterViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<SupergroupEventLogFilterViewModel>();
         }
 
         private static ChannelAdminLogFilterView _current;
@@ -77,7 +77,7 @@ namespace Unigram.Controls.Views
         //    return ShowAsync(parameter, null);
         //}
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLPeerBase parameter)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(object parameter)
         {
             //ViewModel.IsLoading = true;
             //ViewModel.StickerSet = new TLStickerSet();

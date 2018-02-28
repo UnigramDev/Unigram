@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Channels;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Dialogs;
@@ -33,12 +32,12 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
@@ -148,53 +147,12 @@ namespace Unigram.Controls
 
             if (IsFiltering)
             {
-                View.Autocomplete = GetUsernames(text);
+                //View.Autocomplete = GetUsernames(text);
             }
             else
             {
                 View.Autocomplete = null;
             }
-        }
-
-        private List<TLUser> GetUsernames(string username)
-        {
-            var query = LocaleHelper.GetQuery(username);
-            bool IsMatch(TLUser user)
-            {
-                return user.IsLike(query, StringComparison.OrdinalIgnoreCase);
-            }
-
-            var results = new List<TLUser>();
-
-            if (View.Dialog.Full is TLChatFull chatFull && chatFull.Participants is TLChatParticipants chatParticipants)
-            {
-                foreach (var participant in chatParticipants.Participants)
-                {
-                    if (participant.User != null && IsMatch(participant.User))
-                    {
-                        // Results should be upside down
-                        results.Insert(0, participant.User);
-                    }
-                }
-            }
-            else if (View.Dialog.Full is TLChannelFull channelFull && channelFull.Participants is TLChannelsChannelParticipants channelParticipants)
-            {
-                foreach (var participant in channelParticipants.Participants)
-                {
-                    if (participant.User != null && IsMatch(participant.User))
-                    {
-                        // Results should be upside down
-                        results.Insert(0, participant.User);
-                    }
-                }
-            }
-
-            if (results.Count > 0)
-            {
-                return results;
-            }
-
-            return null;
         }
 
         #region From
@@ -241,7 +199,7 @@ namespace Unigram.Controls
             if (filtering)
             {
                 Focus(FocusState.Keyboard);
-                View.Autocomplete = GetUsernames(string.Empty);
+                //View.Autocomplete = GetUsernames(string.Empty);
             }
         }
     }

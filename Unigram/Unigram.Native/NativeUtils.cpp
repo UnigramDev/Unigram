@@ -1,11 +1,10 @@
 #include "pch.h"
+#include "Helpers\LibraryHelper.h"
 #include "NativeUtils.h"
 
 using namespace Unigram::Native;
 using namespace Platform;
 
-HMODULE NativeUtils::s_user32 = NULL;
-pGetLastInputInfo NativeUtils::s_getLastInputInfo = NULL;
 
 int64 NativeUtils::GetDirectorySize(String^ path)
 {
@@ -36,10 +35,9 @@ void NativeUtils::CleanDirectoryInternal(const std::wstring &path, int days)
 	auto currentTime = FileTimeToSeconds(ft);
 
 	WIN32_FIND_DATA data;
-	HANDLE sh = NULL;
-	sh = FindFirstFile((path + L"\\*").c_str(), &data);
+	HANDLE handle = FindFirstFile((path + L"\\*").c_str(), &data);
 
-	if (sh == INVALID_HANDLE_VALUE)
+	if (handle == INVALID_HANDLE_VALUE)
 	{
 		return;
 	}
@@ -77,18 +75,17 @@ void NativeUtils::CleanDirectoryInternal(const std::wstring &path, int days)
 			}
 		}
 
-	} while (FindNextFile(sh, &data)); // do
+	} while (FindNextFile(handle, &data));
 
-	FindClose(sh);
+	FindClose(handle);
 }
 
 uint64_t NativeUtils::GetDirectorySizeInternal(const std::wstring &path, const std::wstring &filter, uint64_t size)
 {
 	WIN32_FIND_DATA data;
-	HANDLE sh = NULL;
-	sh = FindFirstFile((path + filter).c_str(), &data);
+	HANDLE handle = FindFirstFile((path + filter).c_str(), &data);
 
-	if (sh == INVALID_HANDLE_VALUE)
+	if (handle == INVALID_HANDLE_VALUE)
 	{
 		return size;
 	}
@@ -109,9 +106,9 @@ uint64_t NativeUtils::GetDirectorySizeInternal(const std::wstring &path, const s
 			size += (uint64_t)(data.nFileSizeHigh * (MAXDWORD)+data.nFileSizeLow);
 		}
 
-	} while (FindNextFile(sh, &data)); // do
+	} while (FindNextFile(handle, &data));
 
-	FindClose(sh);
+	FindClose(handle);
 
 	return size;
 }
@@ -132,25 +129,22 @@ ULONGLONG NativeUtils::FileTimeToSeconds(FILETIME& ft)
 
 int32 NativeUtils::GetLastInputTime()
 {
-	if (s_getLastInputInfo == NULL)
-	{
-		pLoadLibraryEx loadLibrary = (pLoadLibraryEx)GetProcAddress(GetKernelModule(), "LoadLibraryExW");
+	typedef BOOL(WINAPI *pGetLastInputInfo)(_Out_ PLASTINPUTINFO);
 
-		s_user32 = loadLibrary(L"User32.dll", NULL, 0x00000001);
-		s_getLastInputInfo = (pGetLastInputInfo)GetProcAddress(s_user32, "GetLastInputInfo");
-	}
+	static const LibraryInstance user32(L"User32.dll", 0x00000001);
+	static const auto getLastInputInfo = user32.GetMethod<pGetLastInputInfo>("GetLastInputInfo");
 
-	if (s_getLastInputInfo == NULL)
+	if (getLastInputInfo == nullptr)
 	{
 		return 0;
 	}
 
-	LASTINPUTINFO last_input;
-	last_input.cbSize = sizeof(last_input);
+	LASTINPUTINFO lastInput;
+	lastInput.cbSize = sizeof(LASTINPUTINFO);
 
-	if (s_getLastInputInfo(&last_input))
+	if (getLastInputInfo(&lastInput))
 	{
-		return last_input.dwTime;
+		return lastInput.dwTime;
 	}
 
 	return 0;

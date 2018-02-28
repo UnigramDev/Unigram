@@ -75,7 +75,7 @@ namespace Unigram.Views.Payments
 
         private string ConvertPay(long amount, string currency)
         {
-            return string.Format(Strings.Android.PaymentCheckoutPay, LocaleHelper.FormatCurrency(amount, currency));
+            return string.Format(Strings.Android.PaymentCheckoutPay, Locale.FormatCurrency(amount, currency));
         }
     }
 }

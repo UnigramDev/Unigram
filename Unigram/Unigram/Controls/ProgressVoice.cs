@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api.TL;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -20,12 +21,6 @@ namespace Unigram.Controls
         public ProgressVoice()
         {
             DefaultStyleKey = typeof(ProgressVoice);
-            //SizeChanged += OnSizeChanged;
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            OnMediaChanged(Media, null);
         }
 
         protected override void OnApplyTemplate()
@@ -33,67 +28,53 @@ namespace Unigram.Controls
             ProgressBarIndicator = (Path)GetTemplateChild("ProgressBarIndicator");
             HorizontalTrackRect = (Path)GetTemplateChild("HorizontalTrackRect");
 
-            OnMediaChanged(Media, Media);
+            if (_deferred != null)
+            {
+                UpdateSlide(_deferred);
+                _deferred = null;
+            }
 
             base.OnApplyTemplate();
         }
 
         #region Media
 
-        public TLMessageMediaBase Media
+        public object Media
         {
-            get { return (TLMessageMediaBase)GetValue(MediaProperty); }
+            get { return (object)GetValue(MediaProperty); }
             set { SetValue(MediaProperty, value); }
         }
 
         public static readonly DependencyProperty MediaProperty =
-            DependencyProperty.Register("Media", typeof(TLMessageMediaBase), typeof(ProgressVoice), new PropertyMetadata(null, OnMediaChanged));
-
-        private static void OnMediaChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ProgressVoice)d).OnMediaChanged((TLMessageMediaBase)e.NewValue, (TLMessageMediaBase)e.OldValue);
-        }
-
-        private void OnMediaChanged(TLMessageMediaBase newValue, TLMessageMediaBase oldValue)
-        {
-            if (newValue is TLMessageMediaDocument documentMedia)
-            {
-                if (documentMedia.Document is TLDocument document)
-                {
-                    var audioAttribute = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
-                    if (audioAttribute != null)
-                    {
-                        if (audioAttribute.HasWaveform)
-                        {
-                            UpdateSlide(audioAttribute.Waveform);
-                        }
-                        else
-                        {
-                            UpdateSlide(new byte[] { 0 });
-                        }
-                    }
-                    else
-                    {
-                        UpdateSlide(new byte[] { 0 });
-                    }
-                }
-            }
-        }
+            DependencyProperty.Register("Media", typeof(object), typeof(ProgressVoice), new PropertyMetadata(null));
 
         #endregion
 
-        private void UpdateSlide(byte[] waveform)
+        private IList<byte> _deferred;
+
+        public void UpdateWave(VoiceNote voiceNote)
+        {
+            UpdateSlide(voiceNote.Waveform);
+        }
+
+        private void UpdateSlide(IList<byte> waveform)
         {
             if (ProgressBarIndicator == null || HorizontalTrackRect == null)
             {
+                _deferred = waveform;
                 return;
             }
 
-            var result = new double[waveform.Length * 8 / 5];
+            if (waveform.Count < 1)
+            {
+                waveform = new byte[1] { 0 };
+            }
+
+            var result = new double[waveform.Count * 8 / 5];
             for (int i = 0; i < result.Length; i++)
             {
                 int j = (i * 5) / 8, shift = (i * 5) % 8;
-                result[i] = ((waveform[j] | ((j + 1 < waveform.Length ? waveform[j + 1] : 0) << 8)) >> shift & 0x1F) / 31.0;
+                result[i] = ((waveform[j] | ((j + 1 < waveform.Count ? waveform[j + 1] : 0) << 8)) >> shift & 0x1F) / 31.0;
             }
 
             //var imageWidth = 209.0;
@@ -103,7 +84,7 @@ namespace Unigram.Controls
 
             var space = 1.0;
             var lineWidth = 2.0;
-            var lines = waveform.Length * 8 / 5;
+            var lines = waveform.Count * 8 / 5;
             var maxLines = (imageWidth - space) / (lineWidth + space);
             var maxWidth = (double)lines / maxLines;
 
@@ -120,14 +101,76 @@ namespace Unigram.Controls
                 var x2 = (int)(index * (lineWidth + space) + lineWidth);
                 var y2 = imageHeight;
 
-                var rectangle1 = new RectangleGeometry();
-                rectangle1.Rect = new Rect(new Point(x1, y1), new Point(x2, y2));
-                geometry1.Children.Add(rectangle1);
-
-                var rectangle2 = new RectangleGeometry();
-                rectangle2.Rect = new Rect(new Point(x1, y1), new Point(x2, y2));
-                geometry2.Children.Add(rectangle2);
+                geometry1.Children.Add(new RectangleGeometry { Rect = new Rect(new Point(x1, y1), new Point(x2, y2)) });
+                geometry2.Children.Add(new RectangleGeometry { Rect = new Rect(new Point(x1, y1), new Point(x2, y2)) });
             }
+
+            //var width = 142;
+            //if (waveform == null || width == 0)
+            //{
+            //    return;
+            //}
+
+            //float totalBarsCount = width / 3;
+            //if (totalBarsCount <= 0.1f)
+            //{
+            //    return;
+            //}
+
+            //int value;
+            //int samplesCount = (waveform.Count * 8 / 5);
+            //float samplesPerBar = samplesCount / totalBarsCount;
+            //float barCounter = 0;
+            //int nextBarNum = 0;
+
+            ////paintInner.setColor(messageObject != null && !messageObject.isOutOwner() && messageObject.isContentUnread() ? outerColor : (selected ? selectedColor : innerColor));
+            ////paintOuter.setColor(outerColor);
+
+            //int y = (24 - 14) / 2;
+            //int barNum = 0;
+            //int lastBarNum;
+            //int drawBarCount;
+
+            //var geometry1 = new GeometryGroup();
+            //var geometry2 = new GeometryGroup();
+
+            //for (int a = 0; a < samplesCount; a++)
+            //{
+            //    if (a != nextBarNum)
+            //    {
+            //        continue;
+            //    }
+            //    drawBarCount = 0;
+            //    lastBarNum = nextBarNum;
+            //    while (lastBarNum == nextBarNum)
+            //    {
+            //        barCounter += samplesPerBar;
+            //        nextBarNum = (int)barCounter;
+            //        drawBarCount++;
+            //    }
+
+            //    int bitPointer = a * 5;
+            //    int byteNum = bitPointer / 8;
+            //    int byteBitOffset = bitPointer - byteNum * 8;
+            //    int currentByteCount = 8 - byteBitOffset;
+            //    int nextByteRest = 5 - currentByteCount;
+            //    value = (byte)((waveform[byteNum] >> byteBitOffset) & ((2 << (Math.Min(5, currentByteCount) - 1)) - 1));
+            //    if (nextByteRest > 0)
+            //    {
+            //        value <<= nextByteRest;
+            //        value |= waveform[byteNum + 1] & ((2 << (nextByteRest - 1)) - 1);
+            //    }
+
+            //    for (int b = 0; b < drawBarCount; b++)
+            //    {
+            //        int x = barNum * 3;
+
+            //        geometry1.Children.Add(new RectangleGeometry { Rect = new Rect(new Point(x, y + 14 - Math.Max(1, 14.0f * value / 31.0f)), new Point(x + 2, y + 14)) });
+            //        geometry2.Children.Add(new RectangleGeometry { Rect = new Rect(new Point(x, y + 14 - Math.Max(1, 14.0f * value / 31.0f)), new Point(x + 2, y + 14)) });
+
+            //        barNum++;
+            //    }
+            //}
 
             ProgressBarIndicator.Data = geometry1;
             HorizontalTrackRect.Data = geometry2;

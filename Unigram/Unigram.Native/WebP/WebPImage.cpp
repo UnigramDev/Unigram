@@ -83,7 +83,7 @@ WebPImage^ WebPImage::CreateFromByteArray(const Array<uint8> ^bytes)
 	return image;
 }
 
-WriteableBitmap ^ Unigram::Native::WebPImage::DecodeFromBuffer(IBuffer ^ buffer)
+WriteableBitmap^ Unigram::Native::WebPImage::DecodeFromBuffer(IBuffer ^ buffer)
 {
 	ComPtr<IBufferByteAccess> bufferByteAccess;
 	reinterpret_cast<IInspectable*>(buffer)->QueryInterface(IID_PPV_ARGS(&bufferByteAccess));
@@ -94,6 +94,11 @@ WriteableBitmap ^ Unigram::Native::WebPImage::DecodeFromBuffer(IBuffer ^ buffer)
 	WebPData webPData = { webPBuffer, buffer->Length };
 
 	return CreateWriteableBitmapFromWebPData(webPData);
+}
+
+WriteableBitmap^ Unigram::Native::WebPImage::DecodeFromPath(String^ path)
+{
+	return nullptr;
 }
 
 WriteableBitmap^ WebPImage::DecodeFromByteArray(const Array<uint8> ^bytes)

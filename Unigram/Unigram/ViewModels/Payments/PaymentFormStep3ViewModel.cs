@@ -6,18 +6,16 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Payments;
 using Unigram.Common;
-using Unigram.Core.Models;
+using Unigram.Models;
 using Unigram.Core.Stripe;
 using Unigram.Views.Payments;
 using Windows.Data.Json;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Payments
 {
@@ -29,7 +27,7 @@ namespace Unigram.ViewModels.Payments
 
         private string _publishableKey;
 
-        public PaymentFormStep3ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public PaymentFormStep3ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -43,46 +41,46 @@ namespace Unigram.ViewModels.Payments
                 return Task.CompletedTask;
             }
 
-            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
-            {
-                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
+            //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            //{
+            //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
 
-                Message = tuple.Item1;
-                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                PaymentForm = tuple.Item2;
+            //    Message = tuple.Item1;
+            //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+            //    PaymentForm = tuple.Item2;
 
-                _info = tuple.Item3;
-                _requestedInfo = tuple.Item4;
-                _shipping = tuple.Item5;
+            //    _info = tuple.Item3;
+            //    _requestedInfo = tuple.Item4;
+            //    _shipping = tuple.Item5;
 
-                if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && _paymentForm.NativeProvider.Equals("stripe"))
-                {
-                    IsNativeUsed = true;
-                    SelectedCountry = null;
+            //    if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && _paymentForm.NativeProvider.Equals("stripe"))
+            //    {
+            //        IsNativeUsed = true;
+            //        SelectedCountry = null;
 
-                    var json = JsonObject.Parse(_paymentForm.NativeParams.Data);
+            //        var json = JsonObject.Parse(_paymentForm.NativeParams.Data);
 
-                    NeedCountry = json.GetNamedBoolean("need_country", false);
-                    NeedZip = json.GetNamedBoolean("need_zip", false);
-                    NeedCardholderName = json.GetNamedBoolean("need_cardholder_name", false);
+            //        NeedCountry = json.GetNamedBoolean("need_country", false);
+            //        NeedZip = json.GetNamedBoolean("need_zip", false);
+            //        NeedCardholderName = json.GetNamedBoolean("need_cardholder_name", false);
 
-                    _publishableKey = json.GetNamedString("publishable_key", string.Empty);
-                }
-                else
-                {
-                    IsNativeUsed = false;
-                    RaisePropertyChanged("Navigate");
-                }
+            //        _publishableKey = json.GetNamedString("publishable_key", string.Empty);
+            //    }
+            //    else
+            //    {
+            //        IsNativeUsed = false;
+            //        RaisePropertyChanged("Navigate");
+            //    }
 
-                //var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
-                //if (info.ShippingAddress == null)
-                //{
-                //    info.ShippingAddress = new TLPostAddress();
-                //}
+            //    //var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
+            //    //if (info.ShippingAddress == null)
+            //    //{
+            //    //    info.ShippingAddress = new TLPostAddress();
+            //    //}
 
-                //Info = info;
-                //SelectedCountry = null;
-            }
+            //    //Info = info;
+            //    //SelectedCountry = null;
+            //}
 
             return Task.CompletedTask;
         }
@@ -221,7 +219,7 @@ namespace Unigram.ViewModels.Payments
                 _paymentForm.SavedCredentials = null;
 
                 ApplicationSettings.Current.TmpPassword = null;
-                ProtoService.ClearSavedInfoAsync(false, true, null, null);
+                LegacyService.ClearSavedInfoAsync(false, true, null, null);
             }
 
             var month = 0;
@@ -363,7 +361,7 @@ namespace Unigram.ViewModels.Payments
 
         public void NavigateToNextStep(string title, string credentials, bool save)
         {
-            NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, title, credentials, save);
+            //NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, title, credentials, save);
         }
     }
 }

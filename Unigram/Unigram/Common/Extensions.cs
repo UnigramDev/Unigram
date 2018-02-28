@@ -1,22 +1,26 @@
 ﻿using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
+using Unigram.Core.Common;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -30,15 +34,139 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
-        public static bool IsAdmin(this TLMessageBase message)
+
+
+        /// <summary>
+        /// Creates a relative path from one file or folder to another.
+        /// </summary>
+        /// <param name="fromPath">Contains the directory that defines the start of the relative path.</param>
+        /// <param name="toPath">Contains the path that defines the endpoint of the relative path.</param>
+        /// <returns>The relative path from the start directory to the end path or <c>toPath</c> if the paths are not related.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="UriFormatException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static String MakeRelativePath(String fromPath, String toPath)
         {
-            // Kludge
-            return message.Parent is TLChannel channel && DialogViewModel.Admins.TryGetValue(channel.Id, out IList<TLChannelParticipantBase> admins) && admins.Any(x => x.UserId == message.FromId);
+            if (String.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
+            if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
+
+            Uri fromUri = new Uri(fromPath);
+            Uri toUri = new Uri(toPath);
+
+            if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
+
+            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+            String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+            if (toUri.Scheme.Equals("file", StringComparison.OrdinalIgnoreCase))
+            {
+                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            }
+
+            return relativePath;
         }
 
-        public static void BeginOnUIThread(this DependencyObject element, Action action)
+        public static async Task<InputFileGenerated> ToGeneratedAsync(this StorageFile file, string conversion = "copy")
         {
-            element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            var props = await file.GetBasicPropertiesAsync();
+
+            return new InputFileGenerated(file.Path, conversion + "#" + props.DateModified.ToString("s"), (int)props.Size);
+        }
+
+        public static async Task<InputThumbnail> ToThumbnailAsync(this StorageFile file, DialogViewModel.VideoConversion video = null, string conversion = "copy")
+        {
+            var props = await file.Properties.GetVideoPropertiesAsync();
+
+            double originalWidth = props.GetWidth();
+            double originalHeight = props.GetHeight();
+
+            if (!video.CropRectangle.IsEmpty)
+            {
+                originalWidth = video.CropRectangle.Width;
+                originalHeight = video.CropRectangle.Height;
+            }
+
+            double ratioX = (double)90 / originalWidth;
+            double ratioY = (double)90 / originalHeight;
+            double ratio = Math.Min(ratioX, ratioY);
+
+            int width = (int)(originalWidth * ratio);
+            int height = (int)(originalHeight * ratio);
+
+            return new InputThumbnail(await file.ToGeneratedAsync(conversion), width, height);
+        }
+
+        public static T RemoveLast<T>(this List<T> list)
+        {
+            if (list.Count > 0)
+            {
+                var last = list[list.Count - 1];
+                list.Remove(last);
+
+                return last;
+            }
+
+            return default(T);
+        }
+
+        public static bool IsEmpty(this Rect rect)
+        {
+            return rect == default(Rect) || (rect.Width == 0 && rect.Height == 0);
+        }
+
+        public static bool GetBoolean(this ApplicationDataContainer container, string key, bool defaultValue)
+        {
+            if (container.Values.TryGetValue(key, out object value) && value is bool result)
+            {
+                return result;
+            }
+
+            return defaultValue;
+        }
+
+        public static int GetInt32(this ApplicationDataContainer container, string key, int defaultValue)
+        {
+            if (container.Values.TryGetValue(key, out object value) && value is int result)
+            {
+                return result;
+            }
+
+            return defaultValue;
+        }
+
+        public static bool GetBoolean(this ApplicationDataCompositeValue container, string key, bool defaultValue)
+        {
+            if (container.TryGetValue(key, out object value) && value is bool result)
+            {
+                return result;
+            }
+
+            return defaultValue;
+        }
+
+        public static int GetInt32(this ApplicationDataCompositeValue container, string key, int defaultValue)
+        {
+            if (container.TryGetValue(key, out object value) && value is int result)
+            {
+                return result;
+            }
+
+            return defaultValue;
+        }
+
+
+
+        public static async void BeginOnUIThread(this DependencyObject element, Action action)
+        {
+            try
+            {
+                await element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+            }
+            catch
+            {
+                // Most likey Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
+            }
         }
 
         public static bool IsCompactOverlaySupported(this ApplicationView view)
@@ -84,6 +212,16 @@ namespace Unigram.Common
             }
 
             return data;
+        }
+
+        public static bool TypeEquals(this object o1, object o2)
+        {
+            if (o1 == null || o2 == null)
+            {
+                return false;
+            }
+
+            return Type.Equals(o1.GetType(), o2.GetType());
         }
 
         public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
@@ -162,66 +300,6 @@ namespace Unigram.Common
             return false;
         }
 
-        public static bool IsLike(this TLUser user, string[] query, StringComparison comp)
-        {
-            return IsLike(user.FullName, user.Username, query, comp);
-        }
-
-        public static bool IsLike(this TLChannel channel, string[] query, StringComparison comp)
-        {
-            return IsLike(channel.Title, channel.Username, query, comp);
-        }
-
-        public static bool IsLike(this TLChat chat, string[] query, StringComparison comp)
-        {
-            return IsLike(chat.Title, null, query, comp);
-        }
-
-        public static bool IsLike(string name, string username, string[] query, StringComparison comp)
-        {
-            var translit = LocaleHelper.Transliterate(name);
-            if (translit.Equals(name, StringComparison.OrdinalIgnoreCase))
-            {
-                translit = null;
-            }
-
-            foreach (var q in query)
-            {
-                if (name.StartsWith(q, comp) || name.Contains(" " + q, comp) || translit != null && (translit.StartsWith(q, comp) || translit.Contains(" " + q, comp)))
-                {
-                    return true;
-                }
-                else if (username != null && username.StartsWith(q, comp))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public static bool IsLike(this string source, string[] queries, StringComparison comp)
-        {
-            foreach (var query in queries)
-            {
-                if (query.Split(' ').All(x =>
-                {
-                    var index = source.IndexOf(x, comp);
-                    if (index > -1)
-                    {
-                        return index == 0 || char.IsSeparator(source[index - 1]) || !char.IsLetterOrDigit(source[index - 1]);
-                    }
-
-                    return false;
-                }))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public static string Format(this string input)
         {
             if (input != null)
@@ -229,7 +307,7 @@ namespace Unigram.Common
                 return input.Trim().Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
             }
 
-            return input;
+            return string.Empty;
         }
 
         public static string TrimStart(this string target, string trimString)
@@ -456,12 +534,13 @@ namespace Unigram.Common
     {
         public async static Task ScrollToItem(this ListViewBase listViewBase, object item, SnapPointsAlignment alignment, bool highlight, double? pixel = null)
         {
-            // get the ScrollViewer withtin the ListView/GridView
             var scrollViewer = listViewBase.GetScrollViewer();
-            // get the SelectorItem to scroll to
-            var selectorItem = listViewBase.ContainerFromItem(item) as SelectorItem;
+            if (scrollViewer == null)
+            {
+                return;
+            }
 
-            // when it's null, means virtualization is on and the item hasn't been realized yet
+            var selectorItem = listViewBase.ContainerFromItem(item) as SelectorItem;
             if (selectorItem == null)
             {
                 // call task-based ScrollIntoViewAsync to realize the item

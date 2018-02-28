@@ -521,6 +521,12 @@ namespace Unigram.Controls
                 }
 
                 UpdateCropRectangle(m_cropRectangle, false);
+
+                var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("Crop");
+                if (animation != null)
+                {
+                    animation.TryStart(m_imageViewer);
+                }
             }
             else
             {
@@ -544,6 +550,11 @@ namespace Unigram.Controls
             }
 
             UpdateCropRectangle(m_cropRectangle, true);
+        }
+
+        public ConnectedAnimation Prepare()
+        {
+            return ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("Crop", m_imageViewer);
         }
 
         private void OnProportionsChanged(ImageCroppingProportions oldValue, ImageCroppingProportions newValue)

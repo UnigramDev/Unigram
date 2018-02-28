@@ -5,11 +5,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
-using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Payments;
 using Unigram.Common;
@@ -17,6 +14,7 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Windows.System;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Payments
 {
@@ -26,7 +24,7 @@ namespace Unigram.ViewModels.Payments
         private string _credentials;
         private bool _save;
 
-        public PaymentFormStep5ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public PaymentFormStep5ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -40,44 +38,44 @@ namespace Unigram.ViewModels.Payments
                 return Task.CompletedTask;
             }
 
-            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
-            {
-                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption, string, string, bool>(from);
+            //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            //{
+            //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption, string, string, bool>(from);
 
-                Message = tuple.Item1;
-                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                PaymentForm = tuple.Item2;
-                Info = tuple.Item3;
-                Shipping = tuple.Item5;
-                CredentialsTitle = string.IsNullOrEmpty(tuple.Item6) ? null : tuple.Item6;
-                Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
-                Provider = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.ProviderId) as TLUser;
+            //    Message = tuple.Item1;
+            //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+            //    PaymentForm = tuple.Item2;
+            //    Info = tuple.Item3;
+            //    Shipping = tuple.Item5;
+            //    CredentialsTitle = string.IsNullOrEmpty(tuple.Item6) ? null : tuple.Item6;
+            //    Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
+            //    Provider = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.ProviderId) as TLUser;
 
-                if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard && _credentialsTitle == null)
-                {
-                    CredentialsTitle = savedCard.Title;
-                }
+            //    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard && _credentialsTitle == null)
+            //    {
+            //        CredentialsTitle = savedCard.Title;
+            //    }
 
-                var amount = 0L;
-                foreach (var price in _paymentForm.Invoice.Prices)
-                {
-                    amount += price.Amount;
-                }
+            //    var amount = 0L;
+            //    foreach (var price in _paymentForm.Invoice.Prices)
+            //    {
+            //        amount += price.Amount;
+            //    }
 
-                if (_shipping != null)
-                {
-                    foreach (var price in _shipping.Prices)
-                    {
-                        amount += price.Amount;
-                    }
-                }
+            //    if (_shipping != null)
+            //    {
+            //        foreach (var price in _shipping.Prices)
+            //        {
+            //            amount += price.Amount;
+            //        }
+            //    }
 
-                TotalAmount = amount;
+            //    TotalAmount = amount;
 
-                _requestedInfo = tuple.Item4;
-                _credentials = tuple.Item7;
-                _save = tuple.Item8;
-            }
+            //    _requestedInfo = tuple.Item4;
+            //    _credentials = tuple.Item7;
+            //    _save = tuple.Item8;
+            //}
 
             return Task.CompletedTask;
         }
@@ -165,7 +163,7 @@ namespace Unigram.ViewModels.Payments
         {
             var disclaimer = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.PaymentWarningText, _bot.FullName, _provider.FullName), Strings.Android.PaymentWarning, Strings.Android.OK);
 
-            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.PaymentTransactionMessage, LocaleHelper.FormatCurrency(_totalAmount, _paymentForm.Invoice.Currency), _bot.FullName, _invoice.Title), Strings.Android.PaymentTransactionReview, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.PaymentTransactionMessage, Locale.FormatCurrency(_totalAmount, _paymentForm.Invoice.Currency), _bot.FullName, _invoice.Title), Strings.Android.PaymentTransactionReview, Strings.Android.OK, Strings.Android.Cancel);
             if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
                 return;
@@ -183,7 +181,7 @@ namespace Unigram.ViewModels.Payments
                 credentials = new TLInputPaymentCredentials { Data = new TLDataJSON { Data = _credentials }, IsSave = _save };
             }
 
-            var response = await ProtoService.SendPaymentFormAsync(_message.Id, _requestedInfo?.Id, _shipping?.Id, credentials);
+            var response = await LegacyService.SendPaymentFormAsync(_message.Id, _requestedInfo?.Id, _shipping?.Id, credentials);
             if (response.IsSucceeded)
             {
                 if (response.Result is TLPaymentsPaymentVerficationNeeded verificationNeeded)

@@ -76,7 +76,7 @@ namespace Unigram.Controls
         protected virtual void MaskTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+            var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
             var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
             var overlayBrush = OverlayBrush as SolidColorBrush;
 
@@ -102,7 +102,7 @@ namespace Unigram.Controls
         protected void UnmaskTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+            var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
             var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
 
             titlebar.BackgroundColor = backgroundBrush.Color;
@@ -219,7 +219,7 @@ namespace Unigram.Controls
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
             BootStrapper.BackRequested += OnBackRequested;
-            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
             //Window.Current.SizeChanged += OnSizeChanged;
 
             OnVisibleBoundsChanged(_applicationView, null);
@@ -234,7 +234,7 @@ namespace Unigram.Controls
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
             _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
             BootStrapper.BackRequested -= OnBackRequested;
-            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         private void OnBackRequested(object sender, HandledEventArgs e)
@@ -247,7 +247,7 @@ namespace Unigram.Controls
         {
             if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
             {
-                App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+                WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
 
                 var e = new HandledEventArgs();
                 OnBackRequestedOverride(sender, e);
@@ -481,7 +481,7 @@ namespace Unigram.Controls
 
         public string NavigationState { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public object CurrentPageParam => throw new NotImplementedException();
+        public object CurrentPageParam => null;
 
         public Type CurrentPageType => throw new NotImplementedException();
 

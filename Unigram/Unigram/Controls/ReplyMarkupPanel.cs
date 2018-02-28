@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api.TL;
 using Unigram.Core.Services;
+using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -15,12 +17,22 @@ namespace Unigram.Controls
 {
     public class ReplyMarkupButtonClickEventArgs : EventArgs
     {
-        public ReplyMarkupButtonClickEventArgs(TLKeyboardButtonBase button)
+        public ReplyMarkupButtonClickEventArgs(KeyboardButton button)
         {
             Button = button;
         }
 
-        public TLKeyboardButtonBase Button { get; private set; }
+        public KeyboardButton Button { get; private set; }
+    }
+
+    public class ReplyMarkupInlineButtonClickEventArgs : EventArgs
+    {
+        public ReplyMarkupInlineButtonClickEventArgs(InlineKeyboardButton button)
+        {
+            Button = button;
+        }
+
+        public InlineKeyboardButton Button { get; private set; }
     }
 
     public class ReplyMarkupPanel : Grid
@@ -45,46 +57,16 @@ namespace Unigram.Controls
 
         //#endregion
 
-        private TLMessage _message;
-        public TLMessage Message
-        {
-            get
-            {
-                return _message;
-            }
-            set
-            {
-                _message = value;
-                OnReplyMarkupChanged(_replyMarkup, _replyMarkup);
-            }
-        }
-
-        private TLReplyMarkupBase _replyMarkup;
-        public TLReplyMarkupBase ReplyMarkup
-        {
-            get
-            {
-                return _replyMarkup;
-            }
-            set
-            {
-                _replyMarkup = value;
-                OnReplyMarkupChanged(value, value);
-            }
-        }
-
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
             _keyboardHeight = args.OccludedRect.Height;
         }
 
-        private void UpdateSize()
+        private void UpdateSize(ReplyMarkup markup, bool inline)
         {
-            var inline = Message is TLMessage;
-            if (ReplyMarkup is TLReplyKeyboardMarkup && !inline && Parent is ScrollViewer scroll)
+            if (markup is ReplyMarkupShowKeyboard keyboard && !inline && Parent is ScrollViewer scroll)
             {
-                var keyboard = ReplyMarkup as TLReplyKeyboardMarkup;
-                if (keyboard.IsResize)
+                if (keyboard.ResizeKeyboard)
                 {
                     scroll.Height = double.NaN;
                     scroll.MaxHeight = _keyboardHeight;
@@ -95,27 +77,28 @@ namespace Unigram.Controls
                     scroll.MaxHeight = _keyboardHeight;
                 }
             }
-            else if (ReplyMarkup is TLReplyKeyboardHide && !inline && Parent is ScrollViewer scroll2)
+            else if (markup is ReplyMarkupRemoveKeyboard && !inline && Parent is ScrollViewer scroll2)
             {
                 scroll2.Height = 0;
                 scroll2.MaxHeight = _keyboardHeight;
             }
         }
 
-        private void OnReplyMarkupChanged(TLReplyMarkupBase newValue, TLReplyMarkupBase oldValue)
+        public bool Update(MessageViewModel message, ReplyMarkup markup, bool inline = true)
         {
-            var inline = Message is TLMessage;
+            //var inline = Message is TLMessage;
+            //var inline = true;
             var resize = false;
 
-            TLVector<TLKeyboardButtonRow> rows = null;
-            if (newValue is TLReplyKeyboardMarkup keyboardMarkup && !inline)
+            List<List<object>> rows = null;
+            if (markup is ReplyMarkupShowKeyboard keyboardMarkup && !inline)
             {
-                rows = keyboardMarkup.Rows;
-                resize = keyboardMarkup.IsResize;
+                rows = keyboardMarkup.Rows.Select(x => x.Select(y => y as object).ToList()).ToList();
+                resize = keyboardMarkup.ResizeKeyboard;
             }
-            else if (newValue is TLReplyInlineMarkup inlineMarkup && inline)
+            else if (markup is ReplyMarkupInlineKeyboard inlineMarkup && inline)
             {
-                rows = inlineMarkup.Rows;
+                rows = inlineMarkup.Rows.Select(x => x.Select(y => y as object).ToList()).ToList();
 
                 //if (!double.IsNaN(Height))
                 //{
@@ -123,17 +106,17 @@ namespace Unigram.Controls
                 //}
             }
 
-            UpdateSize();
+            UpdateSize(markup, inline);
             Children.Clear();
             RowDefinitions.Clear();
 
             var receipt = false;
-            if (DataContext is TLMessage message && message.Media is TLMessageMediaInvoice invoiceMedia)
+            if (message != null && message.Content is MessageInvoice invoice)
             {
-                receipt = invoiceMedia.HasReceiptMsgId;
+                receipt = invoice.ReceiptMessageId != 0;
             }
 
-            if (rows != null && ((inline && newValue is TLReplyInlineMarkup) || (!inline && newValue is TLReplyKeyboardMarkup)))
+            if (rows != null && ((inline && markup is ReplyMarkupInlineKeyboard) || (!inline && markup is ReplyMarkupShowKeyboard)))
             {
                 for (int j = 0; j < rows.Count; j++)
                 {
@@ -144,11 +127,10 @@ namespace Unigram.Controls
                     panel.VerticalAlignment = VerticalAlignment.Stretch;
                     panel.Margin = new Thickness(-1, 0, -1, 0);
 
-                    for (int i = 0; i < row.Buttons.Count; i++)
+                    for (int i = 0; i < row.Count; i++)
                     {
                         var button = new GlyphButton();
-                        button.DataContext = row.Buttons[i];
-                        button.Content = row.Buttons[i].Text;
+                        button.DataContext = row[i];
                         button.Margin = new Thickness(1, 2, 1, 0);
                         button.HorizontalAlignment = HorizontalAlignment.Stretch;
                         button.VerticalAlignment = VerticalAlignment.Stretch;
@@ -163,21 +145,31 @@ namespace Unigram.Controls
                             button.Style = App.Current.Resources["ReplyKeyboardMarkupButtonStyle"] as Style;
                         }
 
-                        if (row.Buttons[i] is TLKeyboardButtonUrl)
+                        if (row[i] is InlineKeyboardButton inlineButton)
                         {
-                            button.Glyph = "\uE143";
+                            button.Content = inlineButton.Text;
+
+                            if (inlineButton.Type is InlineKeyboardButtonTypeUrl)
+                            {
+                                button.Glyph = "\uE143";
+                            }
+                            else if (inlineButton.Type is InlineKeyboardButtonTypeSwitchInline)
+                            {
+                                button.Glyph = "\uEE35";
+                            }
+                            // TODO: ku fu???
+                            //else if (row[i] is TLKeyboardButton && inline)
+                            //{
+                            //    button.Glyph = "\uE15F";
+                            //}
+                            else if (inlineButton.Type is InlineKeyboardButtonTypeBuy && receipt)
+                            {
+                                button.Content = Strings.Android.PaymentReceipt;
+                            }
                         }
-                        else if (row.Buttons[i] is TLKeyboardButtonSwitchInline)
+                        else if (row[i] is KeyboardButton keyboardButton)
                         {
-                            button.Glyph = "\uEE35";
-                        }
-                        else if (row.Buttons[i] is TLKeyboardButton && inline)
-                        {
-                            button.Glyph = "\uE15F";
-                        }
-                        else if (row.Buttons[i] is TLKeyboardButtonBuy && receipt)
-                        {
-                            button.Content = Strings.Android.PaymentReceipt;
+                            button.Content = keyboardButton.Text;
                         }
 
                         SetColumn(button, i);
@@ -194,30 +186,33 @@ namespace Unigram.Controls
 
                 if (Children.Count > 0 && !inline)
                 {
-                    var page = this.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
-                    if (page != null)
-                    {
-                        page.ShowMarkup();
-                    }
-
                     Padding = new Thickness(0, 0, 0, 4);
+                    return true;
                 }
                 else if (!inline)
                 {
                     Padding = new Thickness();
+                    return false;
                 }
             }
+
+            return false;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            if (button.DataContext is TLKeyboardButtonBase btn)
+            if (button.DataContext is KeyboardButton btn)
             {
                 ButtonClick?.Invoke(this, new ReplyMarkupButtonClickEventArgs(btn));
+            }
+            else if (button.DataContext is InlineKeyboardButton inlineBtn)
+            {
+                InlineButtonClick?.Invoke(this, new ReplyMarkupInlineButtonClickEventArgs(inlineBtn));
             }
         }
 
         public event EventHandler<ReplyMarkupButtonClickEventArgs> ButtonClick;
+        public event EventHandler<ReplyMarkupInlineButtonClickEventArgs> InlineButtonClick;
     }
 }

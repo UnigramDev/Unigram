@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Services;
@@ -19,7 +17,7 @@ namespace Unigram.ViewModels.Settings
     {
         private readonly IPasscodeService _passcodeService;
 
-        public SettingsSecurityPasscodeViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPasscodeService passcodeService)
+        public SettingsSecurityPasscodeViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IPasscodeService passcodeService)
             : base(protoService, cacheService, aggregator)
         {
             _passcodeService = passcodeService;
@@ -63,11 +61,11 @@ namespace Unigram.ViewModels.Settings
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 0,           Content = LocaleHelper.FormatAutoLock(0),           IsChecked = timeout == 0 });
-            stack.Children.Add(new RadioButton { Tag = 1 * 60,      Content = LocaleHelper.FormatAutoLock(1 * 60),      IsChecked = timeout == 1 * 60 });
-            stack.Children.Add(new RadioButton { Tag = 5 * 60,      Content = LocaleHelper.FormatAutoLock(5 * 60),      IsChecked = timeout == 5 * 60 });
-            stack.Children.Add(new RadioButton { Tag = 1 * 60 * 60, Content = LocaleHelper.FormatAutoLock(1 * 60 * 60), IsChecked = timeout == 1 * 60 * 60 });
-            stack.Children.Add(new RadioButton { Tag = 5 * 60 * 60, Content = LocaleHelper.FormatAutoLock(5 * 60 * 60), IsChecked = timeout == 5 * 60 * 60 });
+            stack.Children.Add(new RadioButton { Tag = 0,           Content = Locale.FormatAutoLock(0),           IsChecked = timeout == 0 });
+            stack.Children.Add(new RadioButton { Tag = 1 * 60,      Content = Locale.FormatAutoLock(1 * 60),      IsChecked = timeout == 1 * 60 });
+            stack.Children.Add(new RadioButton { Tag = 5 * 60,      Content = Locale.FormatAutoLock(5 * 60),      IsChecked = timeout == 5 * 60 });
+            stack.Children.Add(new RadioButton { Tag = 1 * 60 * 60, Content = Locale.FormatAutoLock(1 * 60 * 60), IsChecked = timeout == 1 * 60 * 60 });
+            stack.Children.Add(new RadioButton { Tag = 5 * 60 * 60, Content = Locale.FormatAutoLock(5 * 60 * 60), IsChecked = timeout == 5 * 60 * 60 });
 
             dialog.Title = Strings.Android.AutoLock;
             dialog.Content = stack;

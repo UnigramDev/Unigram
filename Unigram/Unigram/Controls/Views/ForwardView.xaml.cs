@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
 using Unigram.Views;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -25,6 +24,7 @@ using Windows.UI;
 using Template10.Utils;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
+using TdWindows;
 
 namespace Unigram.Controls.Views
 {
@@ -45,19 +45,22 @@ namespace Unigram.Controls.Views
             Bindings.Update();
         }
 
-        private static ForwardView _current;
-        public static ForwardView Current
+        private static Dictionary<int, WeakReference<ForwardView>> _windowContext = new Dictionary<int, WeakReference<ForwardView>>();
+        public static ForwardView GetForCurrentView()
         {
-            get
+            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+            if (_windowContext.TryGetValue(id, out WeakReference<ForwardView> reference) && reference.TryGetTarget(out ForwardView value))
             {
-                if (_current == null)
-                    _current = new ForwardView();
-
-                return _current;
+                return value;
             }
+
+            var context = new ForwardView();
+            _windowContext[id] = new WeakReference<ForwardView>(context);
+
+            return context;
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLKeyboardButtonSwitchInline switchInline, TLUser bot)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
         {
             ViewModel.SwitchInline = switchInline;
             ViewModel.SwitchInlineBot = bot;
@@ -293,7 +296,7 @@ namespace Unigram.Controls.Views
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.SelectedItem = e.ClickedItem as ITLDialogWith;
+            ViewModel.SelectedItem = e.ClickedItem as Chat;
             ViewModel.SendCommand.Execute();
         }
     }

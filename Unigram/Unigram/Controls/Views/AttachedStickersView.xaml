@@ -1,4 +1,4 @@
-﻿<controls:ContentDialogBase
+<controls:ContentDialogBase
     x:Class="Unigram.Controls.Views.AttachedStickersView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,7 +7,7 @@
     xmlns:common="using:Unigram.Common"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:controls="using:Unigram.Controls"
-    xmlns:tl="using:Telegram.Api.TL"
+    xmlns:td="using:TdWindows"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -33,6 +33,7 @@
             ItemsSource="{x:Bind ViewSource.View}"
             ItemClick="List_ItemClick"
             IsItemClickEnabled="True"
+            ContainerContentChanging="OnContainerContentChanging"
             SelectionMode="None"
             Padding="12,0"
             Loaded="GridView_Loaded"
@@ -42,10 +43,8 @@
                 <common:FluidGridViewTrigger RowsOrColumns="5"/>
             </common:FluidGridView.Triggers>
             <GridView.ItemTemplate>
-                <DataTemplate x:DataType="tl:TLDocument">
-                    <Border Margin="2">
-                        <Image x:Phase="3" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"/>
-                    </Border>
+                <DataTemplate>
+                    <Image Margin="2"/>
                 </DataTemplate>
             </GridView.ItemTemplate>
             <GridView.Header>
@@ -57,7 +56,7 @@
             <GridView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
-                        <DataTemplate x:DataType="tl:TLStickerSetMultiCovered">
+                        <DataTemplate x:DataType="td:StickerSetInfo">
                             <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                                   Height="{ThemeResource AppBarThemeCompactHeight}" 
                                   Loaded="GroupHeader_Loaded"
@@ -70,11 +69,8 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock Text="{x:Bind Set.Title}" VerticalAlignment="Bottom" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
-                                    <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Margin="12,0" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1">
-                                        <Run Text="{x:Bind Set.Count}"/>
-                                        <Run Text="stickers"/>
-                                    </TextBlock>
+                                    <TextBlock Text="{x:Bind Title}" VerticalAlignment="Bottom" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Bind Size, Converter={StaticResource StringPluralConverter}, ConverterParameter=Stickers}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Margin="12,0" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
                                 </Grid>
                             </Grid>
                         </DataTemplate>
@@ -136,7 +132,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Border x:Name="LineBottom" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+            <Border x:Name="LineBottom" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
 
             
             <!--<Button Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"

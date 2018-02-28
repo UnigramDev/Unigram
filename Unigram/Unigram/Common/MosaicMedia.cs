@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api.TL;
 using Windows.Foundation;
 
@@ -22,6 +23,15 @@ namespace Unigram.Common
         }
     }
 
+    public class MosaicMediaRow : List<MosaicMediaPosition>
+    {
+        public MosaicMediaRow(int count)
+            : base(count)
+        {
+
+        }
+    }
+
     public class MosaicMedia
     {
         private IList _items;
@@ -36,23 +46,33 @@ namespace Unigram.Common
             _items = items;
         }
 
-        public static IList<IList<MosaicMediaPosition>> Calculate(IList items)
+        public static IList<MosaicMediaRow> Calculate(IList items)
         {
             var width = 320;
             var mosaic = new MosaicMedia(items);
             var preferredRowSize = mosaic.PrepareLayout(width);
 
-            var result = new IList<MosaicMediaPosition>[mosaic.rows.Count];
+            var result = new MosaicMediaRow[mosaic.rows.Count == 0 ? items.Count : mosaic.rows.Count];
 
-            var index = 0;
-            for (int i = 0; i < mosaic.rows.Count; i++)
+            if (mosaic.rows.Count == 0)
             {
-                result[i] = new MosaicMediaPosition[mosaic.rows[i].Count];
-
-                for (int j = 0; j < mosaic.rows[i].Count; j++)
+                for (int k = 0; k < items.Count; k++)
                 {
-                    result[i][j] = new MosaicMediaPosition(items[index], mosaic.itemSpans[index] / preferredRowSize);
-                    index++;
+                    result[k] = new MosaicMediaRow(1) { new MosaicMediaPosition(items[k], 0) };
+                }
+            }
+            else
+            {
+                var index = 0;
+                for (int i = 0; i < mosaic.rows.Count; i++)
+                {
+                    result[i] = new MosaicMediaRow(mosaic.rows[i].Count);
+
+                    for (int j = 0; j < mosaic.rows[i].Count; j++)
+                    {
+                        result[i].Add(new MosaicMediaPosition(items[index], mosaic.itemSpans[index] / preferredRowSize));
+                        index++;
+                    }
                 }
             }
 
@@ -258,52 +278,67 @@ namespace Unigram.Common
 
         protected Size GetSizeForItem(int i)
         {
-            if (_items[i] is TLDocument document)
+            if (_items[i] is Animation animation)
             {
-                var size = new Size(100, 100);
-                if (document.Thumb is TLPhotoSize photoSize)
+                return new Size(animation.Width, animation.Height);
+            }
+            else if (_items[i] is InlineQueryResult inlineResult)
+            {
+                if (inlineResult.IsMedia())
                 {
-                    size.Width = photoSize.W;
-                    size.Height = photoSize.H;
-                }
-                else if (document.Thumb is TLPhotoCachedSize photoCachedSize)
-                {
-                    size.Width = photoCachedSize.W;
-                    size.Height = photoCachedSize.H;
-                }
-
-                for (int j = 0; j < document.Attributes.Count; j++)
-                {
-                    if (document.Attributes[j] is TLDocumentAttributeVideo videoAttribute)
+                    switch (inlineResult)
                     {
-                        size.Width = videoAttribute.W;
-                        size.Height = videoAttribute.H;
-                        break;
-                    }
-                    else if (document.Attributes[j] is TLDocumentAttributeImageSize imageSizeAttribute)
-                    {
-                        size.Width = imageSizeAttribute.W;
-                        size.Height = imageSizeAttribute.H;
-                        break;
+                        case InlineQueryResultAnimation animationResult:
+                            return new Size(animationResult.Animation.Width, animationResult.Animation.Height);
+                        case InlineQueryResultPhoto photoResult:
+                            var big = photoResult.Photo.GetBig();
+                            if (big != null)
+                            {
+                                return new Size(big.Width, big.Height);
+                            }
+                            return Size.Empty;
+                        default:
+                            return Size.Empty;
                     }
                 }
-
-                return size;
+                else
+                {
+                    return Size.Empty;
+                }
             }
 
-            //    TLRPC.Document document = recentGifs.get(i);
-            //    size.width = document.thumb != null && document.thumb.w != 0 ? document.thumb.w : 100;
-            //    size.height = document.thumb != null && document.thumb.h != 0 ? document.thumb.h : 100;
-            //    for (int b = 0; b < document.attributes.size(); b++)
+            //if (_items[i] is TLDocument document)
+            //{
+            //    var size = new Size(100, 100);
+            //    if (document.Thumb is TLPhotoSize photoSize)
             //    {
-            //        TLRPC.DocumentAttribute attribute = document.attributes.get(b);
-            //        if (attribute instanceof TLRPC.TL_documentAttributeImageSize || attribute instanceof TLRPC.TL_documentAttributeVideo) {
-            //        size.width = attribute.w;
-            //        size.height = attribute.h;
-            //        break;
+            //        size.Width = photoSize.W;
+            //        size.Height = photoSize.H;
             //    }
+            //    else if (document.Thumb is TLPhotoCachedSize photoCachedSize)
+            //    {
+            //        size.Width = photoCachedSize.W;
+            //        size.Height = photoCachedSize.H;
+            //    }
+
+            //    for (int j = 0; j < document.Attributes.Count; j++)
+            //    {
+            //        if (document.Attributes[j] is TLDocumentAttributeVideo videoAttribute)
+            //        {
+            //            size.Width = videoAttribute.W;
+            //            size.Height = videoAttribute.H;
+            //            break;
+            //        }
+            //        else if (document.Attributes[j] is TLDocumentAttributeImageSize imageSizeAttribute)
+            //        {
+            //            size.Width = imageSizeAttribute.W;
+            //            size.Height = imageSizeAttribute.H;
+            //            break;
+            //        }
+            //    }
+
+            //    return size;
             //}
-            //                return size;
 
             return new Size(100, 100);
         }

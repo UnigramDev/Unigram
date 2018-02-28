@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Account;
 using Unigram.Common;
@@ -19,6 +17,7 @@ using Windows.Security.Cryptography.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -26,7 +25,7 @@ namespace Unigram.ViewModels.Settings
     {
         private TLAccountPassword _passwordBase;
 
-        public SettingsSecurityEnterPasswordViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public SettingsSecurityEnterPasswordViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -94,22 +93,15 @@ namespace Unigram.ViewModels.Settings
             var hashed = hasher.HashData(input);
             CryptographicBuffer.CopyToByteArray(hashed, out byte[] data);
 
-            var response = await ProtoService.CheckPasswordAsync(data);
+            var response = await LegacyService.CheckPasswordAsync(data);
             if (response.IsSucceeded)
             {
-                SettingsHelper.IsAuthorized = true;
-                SettingsHelper.UserId = response.Result.User.Id;
-                ProtoService.CurrentUserId = response.Result.User.Id;
-                ProtoService.SetInitState();
-
                 // TODO: maybe ask about notifications?
 
                 NavigationService.Navigate(typeof(MainPage));
             }
             else
             {
-                TLUtils.WriteLog("auth.checkPassword error " + response.Error);
-
                 if (response.Error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
                 {
                     //await new MessageDialog(Resources.PasswordInvalidString, Resources.Error).ShowAsync();
@@ -136,7 +128,7 @@ namespace Unigram.ViewModels.Settings
             {
                 IsLoading = true;
 
-                var response = await ProtoService.RequestPasswordRecoveryAsync();
+                var response = await LegacyService.RequestPasswordRecoveryAsync();
                 if (response.IsSucceeded)
                 {
                     await TLMessageDialog.ShowAsync(string.Format("We have sent a recovery code to the e-mail you provided:\n\n{0}", response.Result.EmailPattern), "Telegram", "OK");

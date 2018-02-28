@@ -4,11 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Template10.Common;
 using Template10.Mvvm;
+using Unigram.Services;
 
 namespace Unigram.ViewModels
 {
@@ -17,24 +16,41 @@ namespace Unigram.ViewModels
     /// </summary>
     public class UnigramViewModelBase : ViewModelBase
     {
-        private readonly IMTProtoService _protoService;
+        private readonly IMTProtoService _legacyService;
+
+        private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
-        private readonly ITelegramEventAggregator _aggregator;
+        private readonly IEventAggregator _aggregator;
 
         private readonly IDispatcherWrapper _dispatcher;
 
-        public UnigramViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
-            : this(protoService, cacheService, aggregator, null)
-        {
-        }
+        //public UnigramViewModelBase(IMTProtoService legacyService, ICacheService cacheService, IEventAggregator aggregator)
+        //    : this(legacyService, cacheService, aggregator, null)
+        //{
+        //}
 
-        public UnigramViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IDispatcherWrapper dispatcher)
+        //public UnigramViewModelBase(IMTProtoService legacyService, ICacheService cacheService, IEventAggregator aggregator, IDispatcherWrapper dispatcher)
+        //{
+        //    _legacyService = legacyService;
+        //    _cacheService = cacheService;
+        //    _aggregator = aggregator;
+
+        //    _dispatcher = dispatcher;
+        //}
+
+        public UnigramViewModelBase(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
         {
             _protoService = protoService;
             _cacheService = cacheService;
             _aggregator = aggregator;
+        }
 
-            _dispatcher = dispatcher;
+        public UnigramViewModelBase(IProtoService protoService, IMTProtoService legacyService, ICacheService cacheService, IEventAggregator aggregator)
+        {
+            _protoService = protoService;
+            _legacyService = legacyService;
+            _cacheService = cacheService;
+            _aggregator = aggregator;
         }
 
         //public override IDispatcherWrapper Dispatcher
@@ -49,15 +65,23 @@ namespace Unigram.ViewModels
         //    }
         //}
 
-        /// <summary>
-        /// Gets a reference to the <see cref="Telegram.Api.Services.IMTProtoService"/> 
-        /// class that handle API requests
-        /// </summary>
-        public IMTProtoService ProtoService
+        public IProtoService ProtoService
         {
             get
             {
                 return _protoService;
+            }
+        }
+
+        /// <summary>
+        /// Gets a reference to the <see cref="Telegram.Api.Services.IMTProtoService"/> 
+        /// class that handle API requests
+        /// </summary>
+        public IMTProtoService LegacyService
+        {
+            get
+            {
+                return _legacyService;
             }
         }
 
@@ -73,7 +97,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public ITelegramEventAggregator Aggregator
+        public IEventAggregator Aggregator
         {
             get
             {
@@ -101,6 +125,16 @@ namespace Unigram.ViewModels
             {
                 dispatcher.Dispatch(action);
             }
+        }
+
+        protected void NavigateOnUIThread(Type page)
+        {
+            NavigateOnUIThread(page, null);
+        }
+
+        protected void NavigateOnUIThread(Type page, object param)
+        {
+            BeginOnUIThread(() => NavigationService.Navigate(page, param));
         }
     }
 }

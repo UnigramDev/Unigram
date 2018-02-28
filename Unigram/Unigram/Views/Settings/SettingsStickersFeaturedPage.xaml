@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Settings.SettingsStickersFeaturedPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -22,6 +22,7 @@
                   ItemTemplate="{StaticResource StickerSetItemTemplate}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
+                  ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
                   Grid.Row="1">
             <ListView.ItemContainerStyle>

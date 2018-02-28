@@ -14,6 +14,10 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using TdWindows;
+using Unigram.Converters;
+using Unigram.Controls;
+using Unigram.Common;
 
 namespace Unigram.Views.Channels
 {
@@ -30,6 +34,47 @@ namespace Unigram.Views.Channels
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var chat = args.Item as Chat;
+
+            if (args.Phase == 0)
+            {
+                var title = content.Children[1] as TextBlock;
+                title.Text = ViewModel.ProtoService.GetTitle(chat);
+            }
+            else if (args.Phase == 1)
+            {
+                if (chat.Type is ChatTypeSupergroup super)
+                {
+                    var supergroup = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
+                    if (supergroup != null)
+                    {
+                        var subtitle = content.Children[2] as TextBlock;
+                        subtitle.Text = MeUrlPrefixConverter.Convert(supergroup.Username, true);
+                    }
+                }
+            }
+            else if (args.Phase == 2)
+            {
+                var photo = content.Children[0] as ProfilePicture;
+                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36, 36);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(OnContainerContentChanging);
+            }
+
+            args.Handled = true;
         }
     }
 }

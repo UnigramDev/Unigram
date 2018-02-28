@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Settings.SettingsStickersPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -22,6 +22,7 @@
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   DragItemsCompleted="ListView_DragItemsCompleted"
+                  ContainerContentChanging="OnContainerContentChanging"
                   CanReorderItems="True"
                   CanDragItems="True"
                   SelectionMode="None"

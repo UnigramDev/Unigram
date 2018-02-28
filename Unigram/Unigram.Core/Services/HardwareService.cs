@@ -53,7 +53,7 @@ namespace Unigram.Core.Services
             IsVideoAvailable = devices.Count > 0;
         }
 
-        private bool _isMicrophoneAvailable;
+        private bool _isMicrophoneAvailable = true;
         public bool IsMicrophoneAvailable
         {
             get
@@ -62,11 +62,11 @@ namespace Unigram.Core.Services
             }
             private set
             {
-                Set(ref _isMicrophoneAvailable, value);
+                //Set(ref _isMicrophoneAvailable, value);
             }
         }
 
-        private bool _isVideoAvailable;
+        private bool _isVideoAvailable = true;
         public bool IsVideoAvailable
         {
             get
@@ -75,7 +75,7 @@ namespace Unigram.Core.Services
             }
             private set
             {
-                Set(ref _isVideoAvailable, value);
+                //Set(ref _isVideoAvailable, value);
             }
         }
     }

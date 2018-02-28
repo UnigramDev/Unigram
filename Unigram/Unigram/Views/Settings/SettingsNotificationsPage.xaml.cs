@@ -37,7 +37,7 @@ namespace Unigram.Views.Settings
 
         private async void Group_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.GroupAlert = GroupPreview.IsChecked == true;
+            ViewModel.GroupAlert = GroupAlert.IsChecked == true;
             ViewModel.GroupPreview = GroupPreview.IsChecked == true;
 
             await ViewModel.UpdateGroupAsync();

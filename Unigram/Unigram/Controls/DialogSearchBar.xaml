@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="Unigram.Controls.DialogSearchBar"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -27,11 +27,11 @@
             <controls:GlyphButton Command="{x:Bind ViewModel.FilterCommand}" Glyph="&#xE2AF;" AllowFocusOnInteraction="False" Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1"/>
         </Grid>
 
-        <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.TotalItems), Mode=OneWay, FallbackValue=''}" Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="12,0" VerticalAlignment="Center" Grid.Column="2"/>
+        <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}" Visibility="{x:Bind ViewModel.Items.TotalCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="12,0" VerticalAlignment="Center" Grid.Column="2"/>
 
         <controls:GlyphButton Command="{x:Bind ViewModel.PreviousCommand}" Glyph="&#xE0A0;" AllowFocusOnInteraction="False" Grid.Column="3"/>
         <controls:GlyphButton Command="{x:Bind ViewModel.NextCommand}" Glyph="&#xE0A1;" AllowFocusOnInteraction="False" Grid.Column="4"/>
 
-        <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="5"/>
+        <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource TelegramSeparatorBrush}" Grid.ColumnSpan="5"/>
     </Grid>
 </UserControl>

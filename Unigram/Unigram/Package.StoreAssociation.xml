@@ -360,14 +360,22 @@
   <ProductReservedInfo>
     <MainPackageIdentityName>38833FF26BA1D.UnigramPreview</MainPackageIdentityName>
     <ReservedNames>
+      <ReservedName>Unigram X</ReservedName>
       <ReservedName>Unigram Preview</ReservedName>
       <ReservedName>Unigram (Alpha)</ReservedName>
       <ReservedName>Unigram (Beta)</ReservedName>
       <ReservedName>Unigram Alpha</ReservedName>
       <ReservedName>Unigram Beta</ReservedName>
       <ReservedName>Unigram</ReservedName>
+      <ReservedName>Unigram for Telegram</ReservedName>
+      <ReservedName>Unigram - Telegram, universal</ReservedName>
+      <ReservedName>Unigram - A Telegram immersive experience</ReservedName>
+      <ReservedName>Unigram - A Telegram universal experience</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
-  <AccountPackageIdentityNames />
+  <AccountPackageIdentityNames>
+    <MainPackageIdentityName>38833FF26BA1D.TelegramX</MainPackageIdentityName>
+    <MainPackageIdentityName>38833FF26BA1D.UnigramExperimental</MainPackageIdentityName>
+  </AccountPackageIdentityNames>
   <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9N97ZCKPD60Q" />
 </StoreAssociation>

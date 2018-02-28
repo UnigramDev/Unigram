@@ -57,14 +57,6 @@ namespace Unigram.Controls.Media
             Playback.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
         }
 
-        private void Download_Click(object sender, TransferCompletedEventArgs e)
-        {
-            if (DataContext is TLMessage message)
-            {
-                Playback.Enqueue(message);
-            }
-        }
-
         private void OnCurrentItemChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             UpdateGlyph();
@@ -78,52 +70,52 @@ namespace Unigram.Controls.Media
 
         private void UpdateGlyph()
         {
-            if (DataContext is TLMessage message && Equals(Playback.CurrentItem, message))
-            {
-                PlaybackPanel.Visibility = Visibility.Visible;
-                PlaybackButton.Glyph = Playback.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
-                UpdateDuration();
-            }
-            else
-            {
-                PlaybackPanel.Visibility = Visibility.Collapsed;
-                UpdateDuration();
-            }
+            //if (DataContext is TLMessage message && Equals(Playback.CurrentItem, message))
+            //{
+            //    PlaybackPanel.Visibility = Visibility.Visible;
+            //    PlaybackButton.Glyph = Playback.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
+            //    UpdateDuration();
+            //}
+            //else
+            //{
+            //    PlaybackPanel.Visibility = Visibility.Collapsed;
+            //    UpdateDuration();
+            //}
         }
 
         private void UpdateDuration()
         {
-            if (DataContext is TLMessage message && message.Media is TLMessageMediaDocument mediaDocument && mediaDocument.Document is TLDocument document)
-            {
-                var audio = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
-                if (audio == null)
-                {
-                    return;
-                }
+            //if (DataContext is TLMessage message && message.Media is TLMessageMediaDocument mediaDocument && mediaDocument.Document is TLDocument document)
+            //{
+            //    var audio = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+            //    if (audio == null)
+            //    {
+            //        return;
+            //    }
 
-                if (audio.HasPerformer && audio.HasTitle)
-                {
-                    TitleLabel.Text = audio.Title;
-                    SubtitleLabel.Text = audio.Performer;
-                }
-                else if (audio.HasPerformer && !audio.HasTitle)
-                {
-                    TitleLabel.Text = Strings.Android.AudioUnknownTitle;
-                    SubtitleLabel.Text = audio.Performer;
-                }
-                else if (audio.HasTitle && !audio.HasPerformer)
-                {
-                    TitleLabel.Text = audio.Title;
-                    SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
-                }
-                else
-                {
-                    TitleLabel.Text = Strings.Android.AudioUnknownTitle;
-                    SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
-                }
+            //    if (audio.HasPerformer && audio.HasTitle)
+            //    {
+            //        TitleLabel.Text = audio.Title;
+            //        SubtitleLabel.Text = audio.Performer;
+            //    }
+            //    else if (audio.HasPerformer && !audio.HasTitle)
+            //    {
+            //        TitleLabel.Text = Strings.Android.AudioUnknownTitle;
+            //        SubtitleLabel.Text = audio.Performer;
+            //    }
+            //    else if (audio.HasTitle && !audio.HasPerformer)
+            //    {
+            //        TitleLabel.Text = audio.Title;
+            //        SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
+            //    }
+            //    else
+            //    {
+            //        TitleLabel.Text = Strings.Android.AudioUnknownTitle;
+            //        SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
+            //    }
 
-                //DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
-            }
+            //    //DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
+            //}
         }
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
@@ -138,15 +130,15 @@ namespace Unigram.Controls.Media
             }
         }
 
-        private bool Equals(TLMessage x, TLMessage y)
-        {
-            if (x == null || y == null)
-            {
-                return false;
-            }
+        //private bool Equals(TLMessage x, TLMessage y)
+        //{
+        //    if (x == null || y == null)
+        //    {
+        //        return false;
+        //    }
 
-            return x.Id == y.Id && x.ToId.Equals(y.ToId);
-        }
+        //    return x.Id == y.Id && x.ToId.Equals(y.ToId);
+        //}
 
         /// <summary>
         /// x:Bind hack
