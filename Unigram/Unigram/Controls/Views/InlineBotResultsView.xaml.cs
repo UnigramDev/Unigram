@@ -83,11 +83,11 @@ namespace Unigram.Controls.Views
                 {
                     if (restricted.IsForever())
                     {
-                        return Strings.Android.AttachInlineRestrictedForever;
+                        return Strings.Resources.AttachInlineRestrictedForever;
                     }
                     else
                     {
-                        return string.Format(Strings.Android.AttachInlineRestricted, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate));
+                        return string.Format(Strings.Resources.AttachInlineRestricted, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate));
                     }
                 }
             }

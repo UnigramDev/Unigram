@@ -15,6 +15,6 @@ namespace Unigram.ViewModels.Settings.Privacy
         {
         }
 
-        public override string Title => Strings.Android.AlwaysShareWithTitle;
+        public override string Title => Strings.Resources.AlwaysShareWithTitle;
     }
 }

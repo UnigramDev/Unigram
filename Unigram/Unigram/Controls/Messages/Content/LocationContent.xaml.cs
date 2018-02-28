@@ -61,7 +61,7 @@ namespace Unigram.Controls.Messages.Content
                 else
                 {
                     LivePanel.Visibility = Visibility.Visible;
-                    Title.Text = Strings.Android.AttachLiveLocation;
+                    Title.Text = Strings.Resources.AttachLiveLocation;
                 }
             }
             else

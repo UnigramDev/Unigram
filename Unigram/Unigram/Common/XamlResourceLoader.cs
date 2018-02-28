@@ -14,7 +14,7 @@ namespace Unigram.Common
 
         public XamlResourceLoader()
         {
-            _loader = ResourceLoader.GetForViewIndependentUse("Android");
+            _loader = ResourceLoader.GetForViewIndependentUse("Resources");
         }
 
         protected override object GetResource(string resourceId, string objectType, string propertyName, string propertyType)

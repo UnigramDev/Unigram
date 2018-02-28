@@ -141,11 +141,11 @@ namespace Unigram.Controls.Messages
 
             if (signMessagesToggled.SignMessages)
             {
-                content = ReplaceWithLink(Strings.Android.EventLogToggledSignaturesOn, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogToggledSignaturesOn, "un1", fromUser, ref entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.Android.EventLogToggledSignaturesOff, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogToggledSignaturesOff, "un1", fromUser, ref entities);
             }
 
             return (content, entities);
@@ -160,11 +160,11 @@ namespace Unigram.Controls.Messages
 
             if (stickerSetChanged.NewStickerSetId == 0)
             {
-                content = ReplaceWithLink(Strings.Android.EventLogRemovedStickersSet, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogRemovedStickersSet, "un1", fromUser, ref entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.Android.EventLogChangedStickersSet, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogChangedStickersSet, "un1", fromUser, ref entities);
             }
 
             return (content, entities);
@@ -179,11 +179,11 @@ namespace Unigram.Controls.Messages
 
             if (invitesToggled.AnyoneCanInvite)
             {
-                content = ReplaceWithLink(Strings.Android.EventLogToggledInvitesOn, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogToggledInvitesOn, "un1", fromUser, ref entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.Android.EventLogToggledInvitesOff, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogToggledInvitesOff, "un1", fromUser, ref entities);
             }
 
             return (content, entities);
@@ -198,11 +198,11 @@ namespace Unigram.Controls.Messages
 
             if (isAllHistoryAvailableToggled.IsAllHistoryAvailable)
             {
-                content = ReplaceWithLink(Strings.Android.EventLogToggledInvitesHistoryOn, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogToggledInvitesHistoryOn, "un1", fromUser, ref entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.Android.EventLogToggledInvitesHistoryOff, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogToggledInvitesHistoryOff, "un1", fromUser, ref entities);
             }
 
             return (content, entities);
@@ -215,7 +215,7 @@ namespace Unigram.Controls.Messages
 
             var fromUser = message.GetSenderUser();
 
-            content = ReplaceWithLink(Strings.Android.EventLogUnpinnedMessages, "un1", fromUser, ref entities);
+            content = ReplaceWithLink(Strings.Resources.EventLogUnpinnedMessages, "un1", fromUser, ref entities);
 
             return (content, entities);
         }
@@ -227,7 +227,7 @@ namespace Unigram.Controls.Messages
 
             var fromUser = message.GetSenderUser();
 
-            content = ReplaceWithLink(Strings.Android.EventLogDeletedMessages, "un1", fromUser, ref entities);
+            content = ReplaceWithLink(Strings.Resources.EventLogDeletedMessages, "un1", fromUser, ref entities);
 
             return (content, entities);
         }
@@ -241,11 +241,11 @@ namespace Unigram.Controls.Messages
 
             if (messageEdited.NewMessage.Content is MessageText)
             {
-                content = ReplaceWithLink(Strings.Android.EventLogEditedMessages, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogEditedMessages, "un1", fromUser, ref entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.Android.EventLogEditedCaption, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogEditedCaption, "un1", fromUser, ref entities);
             }
 
             return (content, entities);
@@ -260,11 +260,11 @@ namespace Unigram.Controls.Messages
 
             if (message.IsChannelPost)
             {
-                content = ReplaceWithLink(Strings.Android.EventLogEditedChannelDescription, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogEditedChannelDescription, "un1", fromUser, ref entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.Android.EventLogEditedGroupDescription, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogEditedGroupDescription, "un1", fromUser, ref entities);
             }
 
             return (content, entities);
@@ -277,7 +277,7 @@ namespace Unigram.Controls.Messages
 
             var fromUser = message.GetSenderUser();
 
-            content = ReplaceWithLink(Strings.Android.EventLogPinnedMessages, "un1", fromUser, ref entities);
+            content = ReplaceWithLink(Strings.Resources.EventLogPinnedMessages, "un1", fromUser, ref entities);
 
             return (content, entities);
         }
@@ -291,11 +291,11 @@ namespace Unigram.Controls.Messages
 
             if (string.IsNullOrEmpty(usernameChanged.NewUsername))
             {
-                content = ReplaceWithLink(Strings.Android.EventLogRemovedGroupLink, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogRemovedGroupLink, "un1", fromUser, ref entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.Android.EventLogChangedGroupLink, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.Resources.EventLogChangedGroupLink, "un1", fromUser, ref entities);
             }
 
             return (content, entities);
@@ -310,11 +310,11 @@ namespace Unigram.Controls.Messages
 
             if (message.IsOutgoing)
             {
-                content = Strings.Android.ActionYouCreateGroup;
+                content = Strings.Resources.ActionYouCreateGroup;
             }
             else
             {
-                content = ReplaceWithLink(Strings.Android.ActionCreateGroup, "un1", message.GetSenderUser(), ref entities);
+                content = ReplaceWithLink(Strings.Resources.ActionCreateGroup, "un1", message.GetSenderUser(), ref entities);
             }
 
             return (content, entities);
@@ -344,11 +344,11 @@ namespace Unigram.Controls.Messages
                     {
                         if (singleUserId == message.ProtoService.GetMyId())
                         {
-                            content = Strings.Android.ChannelJoined;
+                            content = Strings.Resources.ChannelJoined;
                         }
                         else
                         {
-                            content = ReplaceWithLink(Strings.Android.EventLogChannelJoined, "un1", fromUser, ref entities);
+                            content = ReplaceWithLink(Strings.Resources.EventLogChannelJoined, "un1", fromUser, ref entities);
                         }
                     }
                     else
@@ -357,20 +357,20 @@ namespace Unigram.Controls.Messages
                         {
                             if (singleUserId == message.ProtoService.GetMyId())
                             {
-                                content = Strings.Android.ChannelMegaJoined;
+                                content = Strings.Resources.ChannelMegaJoined;
                             }
                             else
                             {
-                                content = ReplaceWithLink(Strings.Android.ActionAddUserSelfMega, "un1", fromUser, ref entities);
+                                content = ReplaceWithLink(Strings.Resources.ActionAddUserSelfMega, "un1", fromUser, ref entities);
                             }
                         }
                         else if (message.IsOutgoing)
                         {
-                            content = Strings.Android.ActionAddUserSelfYou;
+                            content = Strings.Resources.ActionAddUserSelfYou;
                         }
                         else
                         {
-                            content = ReplaceWithLink(Strings.Android.ActionAddUserSelf, "un1", fromUser, ref entities);
+                            content = ReplaceWithLink(Strings.Resources.ActionAddUserSelf, "un1", fromUser, ref entities);
                         }
                     }
                 }
@@ -378,7 +378,7 @@ namespace Unigram.Controls.Messages
                 {
                     if (message.IsOutgoing)
                     {
-                        content = ReplaceWithLink(Strings.Android.ActionYouAddUser, "un2", whoUser, ref entities);
+                        content = ReplaceWithLink(Strings.Resources.ActionYouAddUser, "un2", whoUser, ref entities);
                     }
                     else if (singleUserId == message.ProtoService.GetMyId())
                     {
@@ -388,21 +388,21 @@ namespace Unigram.Controls.Messages
                         {
                             if (supergroup.IsChannel)
                             {
-                                content = ReplaceWithLink(Strings.Android.ChannelAddedBy, "un1", fromUser, ref entities);
+                                content = ReplaceWithLink(Strings.Resources.ChannelAddedBy, "un1", fromUser, ref entities);
                             }
                             else
                             {
-                                content = ReplaceWithLink(Strings.Android.MegaAddedBy, "un1", fromUser, ref entities);
+                                content = ReplaceWithLink(Strings.Resources.MegaAddedBy, "un1", fromUser, ref entities);
                             }
                         }
                         else
                         {
-                            content = ReplaceWithLink(Strings.Android.ActionAddUserYou, "un1", fromUser, ref entities);
+                            content = ReplaceWithLink(Strings.Resources.ActionAddUserYou, "un1", fromUser, ref entities);
                         }
                     }
                     else
                     {
-                        content = ReplaceWithLink(Strings.Android.ActionAddUser, "un1", fromUser, ref entities);
+                        content = ReplaceWithLink(Strings.Resources.ActionAddUser, "un1", fromUser, ref entities);
                         content = ReplaceWithLink(content, "un2", whoUser, ref entities);
                     }
                 }
@@ -411,11 +411,11 @@ namespace Unigram.Controls.Messages
             {
                 if (message.IsOutgoing)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionYouAddUser, "un2", chatAddMembers.MemberUserIds, message.ProtoService, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionYouAddUser, "un2", chatAddMembers.MemberUserIds, message.ProtoService, ref entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionAddUser, "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionAddUser, "un1", message.GetSenderUser(), ref entities);
                     content = ReplaceWithLink(content, "un2", chatAddMembers.MemberUserIds, message.ProtoService, ref entities);
                 }
             }
@@ -431,17 +431,17 @@ namespace Unigram.Controls.Messages
             var chat = message.GetChat();
             if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
-                content = Strings.Android.ActionChannelChangedPhoto;
+                content = Strings.Resources.ActionChannelChangedPhoto;
             }
             else
             {
                 if (message.IsOutgoing)
                 {
-                    content = Strings.Android.ActionYouChangedPhoto;
+                    content = Strings.Resources.ActionYouChangedPhoto;
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionChangedPhoto, "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionChangedPhoto, "un1", message.GetSenderUser(), ref entities);
                 }
             }
 
@@ -456,17 +456,17 @@ namespace Unigram.Controls.Messages
             var chat = message.GetChat();
             if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
-                content = Strings.Android.ActionChannelChangedTitle.Replace("un2", chatChangeTitle.Title);
+                content = Strings.Resources.ActionChannelChangedTitle.Replace("un2", chatChangeTitle.Title);
             }
             else
             {
                 if (message.IsOutgoing)
                 {
-                    content = Strings.Android.ActionYouChangedTitle.Replace("un2", chatChangeTitle.Title);
+                    content = Strings.Resources.ActionYouChangedTitle.Replace("un2", chatChangeTitle.Title);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionChangedTitle.Replace("un2", chatChangeTitle.Title), "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionChangedTitle.Replace("un2", chatChangeTitle.Title), "un1", message.GetSenderUser(), ref entities);
                 }
             }
 
@@ -484,11 +484,11 @@ namespace Unigram.Controls.Messages
             {
                 if (message.IsOutgoing)
                 {
-                    content = Strings.Android.ActionYouLeftUser;
+                    content = Strings.Resources.ActionYouLeftUser;
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionLeftUser, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionLeftUser, "un1", fromUser, ref entities);
                 }
             }
             else
@@ -496,15 +496,15 @@ namespace Unigram.Controls.Messages
                 var whoUser = message.ProtoService.GetUser(chatDeleteMember.UserId);
                 if (message.IsOutgoing)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionYouKickUser, "un2", whoUser, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionYouKickUser, "un2", whoUser, ref entities);
                 }
                 else if (chatDeleteMember.UserId == message.ProtoService.GetMyId())
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionKickUserYou, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionKickUserYou, "un1", fromUser, ref entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionKickUser, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionKickUser, "un1", fromUser, ref entities);
                     content = ReplaceWithLink(content, "un2", whoUser, ref entities);
                 }
             }
@@ -520,17 +520,17 @@ namespace Unigram.Controls.Messages
             var chat = message.GetChat();
             if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
-                content = Strings.Android.ActionChannelRemovedPhoto;
+                content = Strings.Resources.ActionChannelRemovedPhoto;
             }
             else
             {
                 if (message.IsOutgoing)
                 {
-                    content = Strings.Android.ActionYouRemovedPhoto;
+                    content = Strings.Resources.ActionYouRemovedPhoto;
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionRemovedPhoto, "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionRemovedPhoto, "un1", message.GetSenderUser(), ref entities);
                 }
             }
 
@@ -544,11 +544,11 @@ namespace Unigram.Controls.Messages
 
             if (message.IsOutgoing)
             {
-                content = Strings.Android.ActionInviteYou;
+                content = Strings.Resources.ActionInviteYou;
             }
             else
             {
-                content = ReplaceWithLink(Strings.Android.ActionInviteUser, "un1", message.GetSenderUser(), ref entities);
+                content = ReplaceWithLink(Strings.Resources.ActionInviteUser, "un1", message.GetSenderUser(), ref entities);
             }
 
             return (content, entities);
@@ -563,22 +563,22 @@ namespace Unigram.Controls.Messages
             {
                 if (message.IsOutgoing)
                 {
-                    content = string.Format(Strings.Android.MessageLifetimeChangedOutgoing, Locale.FormatTTLString(chatSetTtl.Ttl));
+                    content = string.Format(Strings.Resources.MessageLifetimeChangedOutgoing, Locale.FormatTTLString(chatSetTtl.Ttl));
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Android.MessageLifetimeChanged, "un1", Locale.FormatTTLString(chatSetTtl.Ttl)), "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.MessageLifetimeChanged, "un1", Locale.FormatTTLString(chatSetTtl.Ttl)), "un1", message.GetSenderUser(), ref entities);
                 }
             }
             else
             {
                 if (message.IsOutgoing)
                 {
-                    content = Strings.Android.MessageLifetimeYouRemoved;
+                    content = Strings.Resources.MessageLifetimeYouRemoved;
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Android.MessageLifetimeRemoved, "un1"), "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.MessageLifetimeRemoved, "un1"), "un1", message.GetSenderUser(), ref entities);
                 }
             }
 
@@ -587,17 +587,17 @@ namespace Unigram.Controls.Messages
 
         private static (string, IList<TextEntity>) UpdateChatUpgradeFrom(MessageViewModel message, MessageChatUpgradeFrom chatUpgradeFrom, bool active)
         {
-            return (Strings.Android.ActionMigrateFromGroup, null);
+            return (Strings.Resources.ActionMigrateFromGroup, null);
         }
 
         private static (string, IList<TextEntity>) UpdateChatUpgradeTo(MessageViewModel message, MessageChatUpgradeTo chatUpgradeTo, bool active)
         {
-            return (Strings.Android.ActionMigrateFromGroup, null);
+            return (Strings.Resources.ActionMigrateFromGroup, null);
         }
 
         private static (string, IList<TextEntity>) UpdateContactRegistered(MessageViewModel message, MessageContactRegistered contactRegistered, bool active)
         {
-            return (string.Format(Strings.Android.NotificationContactJoined, message.GetSenderUser().GetFullName()), null);
+            return (string.Format(Strings.Resources.NotificationContactJoined, message.GetSenderUser().GetFullName()), null);
         }
 
         private static (string, IList<TextEntity>) UpdateCustomServiceAction(MessageViewModel message, MessageCustomServiceAction customServiceAction, bool active)
@@ -615,22 +615,22 @@ namespace Unigram.Controls.Messages
             {
                 if (message.SenderUserId == message.ProtoService.GetMyId())
                 {
-                    content = string.Format(Strings.Android.ActionYouScored, Locale.Declension("Points", gameScore.Score));
+                    content = string.Format(Strings.Resources.ActionYouScored, Locale.Declension("Points", gameScore.Score));
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Android.ActionUserScored, Locale.Declension("Points", gameScore.Score)), "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserScored, Locale.Declension("Points", gameScore.Score)), "un1", message.GetSenderUser(), ref entities);
                 }
             }
             else
             {
                 if (message.SenderUserId == message.ProtoService.GetMyId())
                 {
-                    content = string.Format(Strings.Android.ActionYouScoredInGame, Locale.Declension("Points", gameScore.Score));
+                    content = string.Format(Strings.Resources.ActionYouScoredInGame, Locale.Declension("Points", gameScore.Score));
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Android.ActionUserScoredInGame, Locale.Declension("Points", gameScore.Score)), "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserScoredInGame, Locale.Declension("Points", gameScore.Score)), "un1", message.GetSenderUser(), ref entities);
                 }
 
                 content = ReplaceWithLink(content, "un2", game, ref entities);
@@ -648,11 +648,11 @@ namespace Unigram.Controls.Messages
 
             if (invoice != null)
             {
-                content = string.Format(Strings.Android.PaymentSuccessfullyPaid, Locale.FormatCurrency(paymentSuccessful.TotalAmount, paymentSuccessful.Currency), message.ProtoService.GetTitle(chat), invoice.Title);
+                content = string.Format(Strings.Resources.PaymentSuccessfullyPaid, Locale.FormatCurrency(paymentSuccessful.TotalAmount, paymentSuccessful.Currency), message.ProtoService.GetTitle(chat), invoice.Title);
             }
             else
             {
-                content = string.Format(Strings.Android.PaymentSuccessfullyPaidNoItem, Locale.FormatCurrency(paymentSuccessful.TotalAmount, paymentSuccessful.Currency), message.ProtoService.GetTitle(chat));
+                content = string.Format(Strings.Resources.PaymentSuccessfullyPaidNoItem, Locale.FormatCurrency(paymentSuccessful.TotalAmount, paymentSuccessful.Currency), message.ProtoService.GetTitle(chat));
             }
 
             return (content, null);
@@ -670,57 +670,57 @@ namespace Unigram.Controls.Messages
 
             if (reply == null)
             {
-                content = ReplaceWithLink(Strings.Android.ActionPinnedNoText, "un1", sender ?? (BaseObject)chat, ref entities);
+                content = ReplaceWithLink(Strings.Resources.ActionPinnedNoText, "un1", sender ?? (BaseObject)chat, ref entities);
             }
             else
             {
                 if (reply.Content is MessageAudio)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionPinnedMusic, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedMusic, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageVideo)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionPinnedVideo, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedVideo, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageAnimation)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionPinnedGif, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedGif, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageVoiceNote)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionPinnedVoice, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedVoice, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageVideoNote)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionPinnedRound, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedRound, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageSticker)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionPinnedSticker, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedSticker, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageDocument)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionPinnedFile, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedFile, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageLocation location)
                 {
-                    content = ReplaceWithLink(location.LivePeriod > 0 ? Strings.Android.ActionPinnedGeoLive : Strings.Android.ActionPinnedGeo, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(location.LivePeriod > 0 ? Strings.Resources.ActionPinnedGeoLive : Strings.Resources.ActionPinnedGeo, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageVenue)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionPinnedGeo, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedGeo, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageContact)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionPinnedContact, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedContact, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessagePhoto)
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionPinnedPhoto, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedPhoto, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageGame game)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Android.ActionPinnedGame, "\uD83C\uDFAE " + game.Game.Title), "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionPinnedGame, "\uD83C\uDFAE " + game.Game.Title), "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageText text)
                 {
@@ -730,11 +730,11 @@ namespace Unigram.Controls.Messages
                         mess = mess.Substring(0, Math.Min(mess.Length, 20)) + "...";
                     }
 
-                    content = ReplaceWithLink(string.Format(Strings.Android.ActionPinnedText, mess), "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionPinnedText, mess), "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Android.ActionPinnedNoText, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedNoText, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
             }
 
@@ -748,11 +748,11 @@ namespace Unigram.Controls.Messages
 
             if (message.IsOutgoing)
             {
-                content = Strings.Android.ActionTakeScreenshootYou;
+                content = Strings.Resources.ActionTakeScreenshootYou;
             }
             else
             {
-                content = ReplaceWithLink(Strings.Android.ActionTakeScreenshoot, "un1", message.GetSenderUser(), ref entities);
+                content = ReplaceWithLink(Strings.Resources.ActionTakeScreenshoot, "un1", message.GetSenderUser(), ref entities);
             }
 
             return (content, entities);
@@ -765,11 +765,11 @@ namespace Unigram.Controls.Messages
             var chat = message.GetChat();
             if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
-                content = Strings.Android.ActionCreateChannel;
+                content = Strings.Resources.ActionCreateChannel;
             }
             else
             {
-                content = Strings.Android.ActionCreateMega;
+                content = Strings.Resources.ActionCreateMega;
             }
 
             return (content, null);
@@ -777,12 +777,12 @@ namespace Unigram.Controls.Messages
 
         private static (string, IList<TextEntity>) UpdateExpiredPhoto(MessageViewModel message, MessageExpiredPhoto expiredPhoto, bool active)
         {
-            return (Strings.Android.AttachPhotoExpired, null);
+            return (Strings.Resources.AttachPhotoExpired, null);
         }
 
         private static (string, IList<TextEntity>) UpdateExpiredVideo(MessageViewModel message, MessageExpiredVideo expiredVideo, bool active)
         {
-            return (Strings.Android.AttachVideoExpired, null);
+            return (Strings.Resources.AttachVideoExpired, null);
         }
 
 

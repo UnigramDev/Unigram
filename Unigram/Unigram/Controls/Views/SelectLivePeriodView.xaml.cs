@@ -23,12 +23,12 @@ namespace Unigram.Controls.Views
         {
             this.InitializeComponent();
 
-            Title = Strings.Android.SendLiveLocation;
-            PrimaryButtonText = Strings.Android.ShareFile;
-            SecondaryButtonText = Strings.Android.Cancel;
+            Title = Strings.Resources.SendLiveLocation;
+            PrimaryButtonText = Strings.Resources.ShareFile;
+            SecondaryButtonText = Strings.Resources.Cancel;
             Footer.Text = single
-                ? string.Format(Strings.Android.LiveLocationAlertPrivate, name)
-                : Strings.Android.LiveLocationAlertGroup;
+                ? string.Format(Strings.Resources.LiveLocationAlertPrivate, name)
+                : Strings.Resources.LiveLocationAlertGroup;
 
             FieldSeconds.ItemsSource = new int[] { 15 * 60, 1 * 60 * 60, 8 * 60 * 60 };
         }

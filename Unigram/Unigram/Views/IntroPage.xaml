@@ -210,7 +210,7 @@
             <Grid Width="200" Height="200" Background="Transparent">
                 <SwapChainPanel x:Name="SwapChain" Loaded="SwapChain_Loaded" Unloaded="SwapChain_Unloaded" Width="200" Height="200"/>
                 <Border Width="160" Height="160" CornerRadius="80">
-                    <Image Source="ms-appx:///Assets/Logos/StoreLogo/StoreLogo.scale-400.png"/>
+                    <Image Source="ms-appx:///Assets/Mockup/a0.png"/>
                 </Border>
             </Grid>
             <StackPanel Opacity="0">

@@ -718,6 +718,7 @@
             <Grid Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}">
                 <views:InlineBotResultsView x:Name="InlinePanel" ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>
                 <controls:ZoomableGridView
+                    x:Name="StickerPack"
                     ItemsSource="{x:Bind ViewModel.StickerPack, Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.StickerPack, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                     AllowFocusOnInteraction="False"

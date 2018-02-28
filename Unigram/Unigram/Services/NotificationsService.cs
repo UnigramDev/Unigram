@@ -269,7 +269,7 @@ namespace Unigram.Services
                     }
                     else if (from.Type is UserTypeDeleted)
                     {
-                        result = $"{Strings.Android.HiddenName}: ";
+                        result = $"{Strings.Resources.HiddenName}: ";
                     }
                     else
                     {
@@ -284,24 +284,24 @@ namespace Unigram.Services
             }
             if (message.Content is MessageExpiredVideo)
             {
-                return result + Strings.Android.AttachVideoExpired;
+                return result + Strings.Resources.AttachVideoExpired;
             }
             else if (message.Content is MessageExpiredPhoto)
             {
-                return result + Strings.Android.AttachPhotoExpired;
+                return result + Strings.Resources.AttachPhotoExpired;
             }
             else if (message.Content is MessageVideoNote)
             {
-                return result + Strings.Android.AttachRound;
+                return result + Strings.Resources.AttachRound;
             }
             else if (message.Content is MessageSticker sticker)
             {
                 if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
                 {
-                    return result + Strings.Android.AttachSticker;
+                    return result + Strings.Resources.AttachSticker;
                 }
 
-                return result + $"{sticker.Sticker.Emoji} {Strings.Android.AttachSticker}";
+                return result + $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
             }
 
             string GetCaption(string caption)
@@ -311,15 +311,15 @@ namespace Unigram.Services
 
             if (message.Content is MessageVoiceNote voiceNote)
             {
-                return result + Strings.Android.AttachAudio + GetCaption(voiceNote.Caption.Text);
+                return result + Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text);
             }
             else if (message.Content is MessageVideo video)
             {
-                return result + Strings.Android.AttachVideo + GetCaption(video.Caption.Text);
+                return result + Strings.Resources.AttachVideo + GetCaption(video.Caption.Text);
             }
             else if (message.Content is MessageAnimation animation)
             {
-                return result + Strings.Android.AttachGif + GetCaption(animation.Caption.Text);
+                return result + Strings.Resources.AttachGif + GetCaption(animation.Caption.Text);
             }
             else if (message.Content is MessageAudio audio)
             {
@@ -328,18 +328,18 @@ namespace Unigram.Services
 
                 if (performer == null && title == null)
                 {
-                    return result + Strings.Android.AttachMusic + GetCaption(audio.Caption.Text);
+                    return result + Strings.Resources.AttachMusic + GetCaption(audio.Caption.Text);
                 }
                 else
                 {
-                    return $"{result}{performer ?? Strings.Android.AudioUnknownArtist} - {title ?? Strings.Android.AudioUnknownTitle}" + GetCaption(audio.Caption.Text);
+                    return $"{result}{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}" + GetCaption(audio.Caption.Text);
                 }
             }
             else if (message.Content is MessageDocument document)
             {
                 if (string.IsNullOrEmpty(document.Document.FileName))
                 {
-                    return result + Strings.Android.AttachDocument + GetCaption(document.Caption.Text);
+                    return result + Strings.Resources.AttachDocument + GetCaption(document.Caption.Text);
                 }
 
                 return result + document.Document.FileName + GetCaption(document.Caption.Text);
@@ -350,28 +350,28 @@ namespace Unigram.Services
             }
             else if (message.Content is MessageContact)
             {
-                return result + Strings.Android.AttachContact;
+                return result + Strings.Resources.AttachContact;
             }
             else if (message.Content is MessageLocation location)
             {
-                return result + (location.LivePeriod > 0 ? Strings.Android.AttachLiveLocation : Strings.Android.AttachLocation);
+                return result + (location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation);
             }
             else if (message.Content is MessageVenue vanue)
             {
-                return result + $"{Strings.Android.AttachLocation}, ";
+                return result + $"{Strings.Resources.AttachLocation}, ";
             }
             else if (message.Content is MessagePhoto photo)
             {
                 if (string.IsNullOrEmpty(photo.Caption.Text))
                 {
-                    return result + Strings.Android.AttachPhoto;
+                    return result + Strings.Resources.AttachPhoto;
                 }
 
-                return result + $"{Strings.Android.AttachPhoto}, ";
+                return result + $"{Strings.Resources.AttachPhoto}, ";
             }
             else if (message.Content is MessageUnsupported)
             {
-                return result + Strings.Android.UnsupportedAttachment;
+                return result + Strings.Resources.UnsupportedAttachment;
             }
 
             return result;

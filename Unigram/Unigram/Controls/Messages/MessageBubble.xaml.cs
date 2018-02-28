@@ -168,7 +168,7 @@ namespace Unigram.Controls.Messages
             {
                 if (admin != null && !message.IsOutgoing && message.Delegate != null && message.Delegate.IsAdmin(message.SenderUserId))
                 {
-                    paragraph.Inlines.Add(new Run { Text = " " + Strings.Android.ChatAdmin, Foreground = null });
+                    paragraph.Inlines.Add(new Run { Text = " " + Strings.Resources.ChatAdmin, Foreground = null });
                 }
             }
 
@@ -179,9 +179,9 @@ namespace Unigram.Controls.Messages
                 if (paragraph.Inlines.Count > 0)
                     paragraph.Inlines.Add(new LineBreak());
 
-                paragraph.Inlines.Add(new Run { Text = Strings.Android.ForwardedMessage, FontWeight = FontWeights.Normal });
+                paragraph.Inlines.Add(new Run { Text = Strings.Resources.ForwardedMessage, FontWeight = FontWeights.Normal });
                 paragraph.Inlines.Add(new LineBreak());
-                paragraph.Inlines.Add(new Run { Text = Strings.Android.From + " ", FontWeight = FontWeights.Normal });
+                paragraph.Inlines.Add(new Run { Text = Strings.Resources.From + " ", FontWeight = FontWeights.Normal });
 
                 var title = string.Empty;
                 if (message.ForwardInfo is MessageForwardedFromUser fromUser)
@@ -580,7 +580,7 @@ namespace Unigram.Controls.Messages
             }
             else if (message.Content is MessageUnsupported unsupported)
             {
-                GetEntities(message, Strings.Android.UnsupportedMedia);
+                GetEntities(message, Strings.Resources.UnsupportedMedia);
                 result = true;
             }
             else if (message.Content is MessageVenue venue)
@@ -662,42 +662,38 @@ namespace Unigram.Controls.Messages
                 }
                 else if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeBotCommand)
                 {
+                    var hyperlink = new Hyperlink();
                     var data = text.Substring(entity.Offset, entity.Length);
 
-                    var hyperlink = new Hyperlink();
                     hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
                     hyperlink.Inlines.Add(new Run { Text = data });
                     //hyperlink.Foreground = foreground;
                     span.Inlines.Add(hyperlink);
 
-                    //if (entity is TLMessageEntityUrl)
-                    //{
-                    //    SetEntity(hyperlink, (string)data);
-                    //}
+                    if (entity.Type is TextEntityTypeUrl)
+                    {
+                        MessageHelper.SetEntity(hyperlink, data);
+                    }
                 }
                 else if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeMentionName)
                 {
+                    var hyperlink = new Hyperlink();
                     object data;
                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                     {
                         data = textUrl.Url;
+                        MessageHelper.SetEntity(hyperlink, textUrl.Url);
+                        ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                     }
                     else if (entity.Type is TextEntityTypeMentionName mentionName)
                     {
                         data = mentionName.UserId;
                     }
 
-                    var hyperlink = new Hyperlink();
                     hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
                     hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
                     //hyperlink.Foreground = foreground;
                     span.Inlines.Add(hyperlink);
-
-                    //if (entity is TLMessageEntityTextUrl textUrl)
-                    //{
-                    //    SetEntity(hyperlink, textUrl.Url);
-                    //    ToolTipService.SetToolTip(hyperlink, textUrl.Url);
-                    //}
                 }
 
                 previous = entity.Offset + entity.Length;
@@ -706,6 +702,11 @@ namespace Unigram.Controls.Messages
             if (text.Length > previous)
             {
                 span.Inlines.Add(new Run { Text = text.Substring(previous) });
+            }
+
+            if (MessageHelper.IsAnyCharacterRightToLeft(text))
+            {
+                span.Inlines.Add(new LineBreak());
             }
 
             return true;

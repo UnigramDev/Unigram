@@ -148,10 +148,10 @@ namespace Unigram.ViewModels
             else
             {
                 var dialog = new TLMessageDialog();
-                dialog.Title = Strings.Android.Message;
-                dialog.Message = string.Format(Strings.Android.AreYouSureDeleteMessages, Locale.Declension("Messages", 1));
-                dialog.PrimaryButtonText = Strings.Android.OK;
-                dialog.SecondaryButtonText = Strings.Android.Cancel;
+                dialog.Title = Strings.Resources.Message;
+                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", 1));
+                dialog.PrimaryButtonText = Strings.Resources.OK;
+                dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
                 if (message.CanBeDeletedForAllUsers && message.CanBeDeletedOnlyForSelf)
                 {
@@ -160,12 +160,12 @@ namespace Unigram.ViewModels
                         var user = ProtoService.GetUser(privata.UserId);
                         if (user != null && !(user.Type is UserTypeBot))
                         {
-                            dialog.CheckBoxLabel = string.Format(Strings.Android.DeleteForUser, ProtoService.GetTitle(chat));
+                            dialog.CheckBoxLabel = string.Format(Strings.Resources.DeleteForUser, ProtoService.GetTitle(chat));
                         }
                     }
                     else if (chat.Type is ChatTypeBasicGroup)
                     {
-                        dialog.CheckBoxLabel = Strings.Android.DeleteForAll;
+                        dialog.CheckBoxLabel = Strings.Resources.DeleteForAll;
                     }
                 }
 
@@ -305,10 +305,10 @@ namespace Unigram.ViewModels
             //else
             {
                 var dialog = new TLMessageDialog();
-                dialog.Title = Strings.Android.Message;
-                dialog.Message = string.Format(Strings.Android.AreYouSureDeleteMessages, Locale.Declension("Messages", messages.Count));
-                dialog.PrimaryButtonText = Strings.Android.OK;
-                dialog.SecondaryButtonText = Strings.Android.Cancel;
+                dialog.Title = Strings.Resources.Message;
+                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", messages.Count));
+                dialog.PrimaryButtonText = Strings.Resources.OK;
+                dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
                 var canBeDeletedForAllUsers = messages.All(x => x.CanBeDeletedForAllUsers);
                 var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
@@ -320,12 +320,12 @@ namespace Unigram.ViewModels
                         var user = ProtoService.GetUser(privata.UserId);
                         if (user != null && !(user.Type is UserTypeBot))
                         {
-                            dialog.CheckBoxLabel = string.Format(Strings.Android.DeleteForUser, ProtoService.GetTitle(chat));
+                            dialog.CheckBoxLabel = string.Format(Strings.Resources.DeleteForUser, ProtoService.GetTitle(chat));
                         }
                     }
                     else if (chat.Type is ChatTypeBasicGroup)
                     {
-                        dialog.CheckBoxLabel = Strings.Android.DeleteForAll;
+                        dialog.CheckBoxLabel = Strings.Resources.DeleteForAll;
                     }
                 }
 
@@ -403,14 +403,14 @@ namespace Unigram.ViewModels
                     if (message.ForwardInfo is MessageForwardedPost forwardedPost)
                     {
                         var from = ProtoService.GetChat(forwardedPost.ChatId);
-                        builder.AppendLine($"[{Strings.Android.ForwardedMessage}]");
-                        builder.AppendLine($"[{Strings.Android.From} {ProtoService.GetTitle(from)}]");
+                        builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
+                        builder.AppendLine($"[{Strings.Resources.From} {ProtoService.GetTitle(from)}]");
                     }
                     else if (message.ForwardInfo is MessageForwardedFromUser forwardedFromUser)
                     {
                         var from = ProtoService.GetUser(forwardedFromUser.SenderUserId);
-                        builder.AppendLine($"[{Strings.Android.ForwardedMessage}]");
-                        builder.AppendLine($"[{Strings.Android.From} {from.GetFullName()}]");
+                        builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
+                        builder.AppendLine($"[{Strings.Resources.From} {from.GetFullName()}]");
                     }
 
                     if (message.ReplyToMessage != null)
@@ -424,7 +424,7 @@ namespace Unigram.ViewModels
 
                     if (message.Content is MessagePhoto photo)
                     {
-                        builder.Append($"[{Strings.Android.AttachPhoto}]");
+                        builder.Append($"[{Strings.Resources.AttachPhoto}]");
 
                         if (photo.Caption != null && !string.IsNullOrEmpty(photo.Caption.Text))
                         {
@@ -434,7 +434,7 @@ namespace Unigram.ViewModels
                     }
                     else if (message.Content is MessageVoiceNote voiceNote)
                     {
-                        builder.Append($"[{Strings.Android.AttachAudio}]");
+                        builder.Append($"[{Strings.Resources.AttachAudio}]");
 
                         if (voiceNote.Caption != null && !string.IsNullOrEmpty(voiceNote.Caption.Text))
                         {
@@ -444,7 +444,7 @@ namespace Unigram.ViewModels
                     }
                     else if (message.Content is MessageVideo video)
                     {
-                        builder.Append($"[{Strings.Android.AttachVideo}]");
+                        builder.Append($"[{Strings.Resources.AttachVideo}]");
 
                         if (video.Caption != null && !string.IsNullOrEmpty(video.Caption.Text))
                         {
@@ -454,11 +454,11 @@ namespace Unigram.ViewModels
                     }
                     else if (message.Content is MessageVideoNote)
                     {
-                        builder.Append($"[{Strings.Android.AttachRound}]");
+                        builder.Append($"[{Strings.Resources.AttachRound}]");
                     }
                     else if (message.Content is MessageAnimation animation)
                     {
-                        builder.Append($"[{Strings.Android.AttachGif}]");
+                        builder.Append($"[{Strings.Resources.AttachGif}]");
 
                         if (animation.Caption != null && !string.IsNullOrEmpty(animation.Caption.Text))
                         {
@@ -470,16 +470,16 @@ namespace Unigram.ViewModels
                     {
                         if (!string.IsNullOrEmpty(sticker.Sticker.Emoji))
                         {
-                            builder.Append($"[{sticker.Sticker.Emoji} {Strings.Android.AttachSticker}]");
+                            builder.Append($"[{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}]");
                         }
                         else
                         {
-                            builder.Append($"[{Strings.Android.AttachSticker}]");
+                            builder.Append($"[{Strings.Resources.AttachSticker}]");
                         }
                     }
                     else if (message.Content is MessageAudio audio)
                     {
-                        builder.Append($"[{Strings.Android.AttachMusic}]");
+                        builder.Append($"[{Strings.Resources.AttachMusic}]");
 
                         if (audio.Caption != null && !string.IsNullOrEmpty(audio.Caption.Text))
                         {
@@ -489,12 +489,12 @@ namespace Unigram.ViewModels
                     }
                     else if (message.Content is MessageLocation location)
                     {
-                        builder.AppendLine($"[{Strings.Android.AttachLocation}]");
+                        builder.AppendLine($"[{Strings.Resources.AttachLocation}]");
                         builder.Append(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", location.Location.Latitude, location.Location.Longitude));
                     }
                     else if (message.Content is MessageVenue venue)
                     {
-                        builder.AppendLine($"[{Strings.Android.AttachLocation}]");
+                        builder.AppendLine($"[{Strings.Resources.AttachLocation}]");
                         builder.AppendLine(venue.Venue.Title);
                         builder.AppendLine(venue.Venue.Address);
                         builder.Append(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", venue.Venue.Location.Latitude, venue.Venue.Location.Longitude));
@@ -685,7 +685,7 @@ namespace Unigram.ViewModels
             //        //this.IsWorking = false;
             //        //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.MESSAGE_ID_INVALID))
             //        //{
-            //        //    MessageBox.Show(Strings.Resources.EditMessageError, Strings.Resources.Error, 0);
+            //        //    MessageBox.Show(Strings.Additional.EditMessageError, Strings.Additional.Error, 0);
             //        //    return;
             //        //}
             //        Execute.ShowDebugMessage("messages.getMessageEditData error " + response.Error);
@@ -711,7 +711,7 @@ namespace Unigram.ViewModels
 
                 if (fullInfo.PinnedMessageId == message.Id)
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(Strings.Android.UnpinMessageAlert, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                    var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         ProtoService.Send(new UnpinSupergroupMessage(supergroup.SupergroupId));
@@ -720,14 +720,14 @@ namespace Unigram.ViewModels
                 else
                 {
                     var dialog = new TLMessageDialog();
-                    dialog.Title = Strings.Android.AppName;
-                    dialog.Message = supergroup.IsChannel ? Strings.Android.PinMessageAlertChannel : Strings.Android.PinMessageAlert;
-                    dialog.PrimaryButtonText = Strings.Android.OK;
-                    dialog.SecondaryButtonText = Strings.Android.Cancel;
+                    dialog.Title = Strings.Resources.AppName;
+                    dialog.Message = supergroup.IsChannel ? Strings.Resources.PinMessageAlertChannel : Strings.Resources.PinMessageAlert;
+                    dialog.PrimaryButtonText = Strings.Resources.OK;
+                    dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
                     if (!supergroup.IsChannel)
                     {
-                        dialog.CheckBoxLabel = Strings.Android.PinNotify;
+                        dialog.CheckBoxLabel = Strings.Resources.PinNotify;
                         dialog.IsChecked = true;
                     }
 
@@ -779,7 +779,7 @@ namespace Unigram.ViewModels
                     else
                     {
                         // TODO:
-                        await TLMessageDialog.ShowAsync("Payments are coming soon!", Strings.Android.AppName, "OK");
+                        await TLMessageDialog.ShowAsync("Payments are coming soon!", Strings.Resources.AppName, "OK");
                         return;
 
                         var response = await ProtoService.SendAsync(new GetPaymentForm(chat.Id, message.Id));
@@ -852,7 +852,7 @@ namespace Unigram.ViewModels
                         }
                         else
                         {
-                            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.OpenUrlAlert, urlButton.Url), Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, urlButton.Url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                             if (confirm != ContentDialogResult.Primary)
                             {
                                 return;
@@ -958,17 +958,17 @@ namespace Unigram.ViewModels
                             return;
                         }
 
-                        var content = Strings.Android.AreYouSureShareMyContactInfo;
+                        var content = Strings.Resources.AreYouSureShareMyContactInfo;
                         if (chat.Type is ChatTypePrivate privata)
                         {
                             var withUser = ProtoService.GetUser(privata.UserId);
                             if (withUser != null)
                             {
-                                content = withUser.Type is UserTypeBot ? Strings.Android.AreYouSureShareMyContactInfoBot : string.Format(Strings.Android.AreYouSureShareMyContactInfoUser, PhoneNumber.Format(cached.PhoneNumber), withUser.GetFullName());
+                                content = withUser.Type is UserTypeBot ? Strings.Resources.AreYouSureShareMyContactInfoBot : string.Format(Strings.Resources.AreYouSureShareMyContactInfoUser, PhoneNumber.Format(cached.PhoneNumber), withUser.GetFullName());
                             }
                         }
 
-                        var confirm = await TLMessageDialog.ShowAsync(content, Strings.Android.ShareYouPhoneNumberTitle, Strings.Android.OK, Strings.Android.Cancel);
+                        var confirm = await TLMessageDialog.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
                             await SendContactAsync(new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, cached.Id));
@@ -977,7 +977,7 @@ namespace Unigram.ViewModels
                 }
                 else if (keyboardButton.Type is KeyboardButtonTypeRequestLocation requestLocation)
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ShareYouLocationInfo, Strings.Android.ShareYouLocationTitle, Strings.Android.OK, Strings.Android.Cancel);
+                    var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ShareYouLocationInfo, Strings.Resources.ShareYouLocationTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         var location = await _locationService.GetPositionAsync();

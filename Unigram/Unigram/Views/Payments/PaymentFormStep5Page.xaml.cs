@@ -34,7 +34,7 @@ namespace Unigram.Views.Payments
 
         private string ConvertTitle(bool test)
         {
-            return (test ? "Test " : string.Empty) +  Strings.Android.PaymentCheckout;
+            return (test ? "Test " : string.Empty) +  Strings.Resources.PaymentCheckout;
         }
 
         private string ConvertAddress(TLPostAddress address)
@@ -75,7 +75,7 @@ namespace Unigram.Views.Payments
 
         private string ConvertPay(long amount, string currency)
         {
-            return string.Format(Strings.Android.PaymentCheckoutPay, Locale.FormatCurrency(amount, currency));
+            return string.Format(Strings.Resources.PaymentCheckoutPay, Locale.FormatCurrency(amount, currency));
         }
     }
 }

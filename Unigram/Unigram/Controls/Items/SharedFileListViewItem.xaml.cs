@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using TdWindows;
 using Unigram.Converters;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -21,6 +22,7 @@ namespace Unigram.Controls.Items
     public sealed partial class SharedFileListViewItem : UserControl
     {
         private IProtoService _protoService;
+        private IMessageDelegate _delegate;
         private Message _message;
 
         public SharedFileListViewItem()
@@ -28,9 +30,10 @@ namespace Unigram.Controls.Items
             InitializeComponent();
         }
 
-        public void UpdateMessage(IProtoService protoService, Message message)
+        public void UpdateMessage(IProtoService protoService, IMessageDelegate delegato, Message message)
         {
             _protoService = protoService;
+            _delegate = delegato;
             _message = message;
 
             var document = message.Content as MessageDocument;
@@ -169,7 +172,7 @@ namespace Unigram.Controls.Items
             }
             else
             {
-                //_message.Delegate.OpenFile(file);
+                _delegate.OpenFile(file);
             }
         }
     }

@@ -31,7 +31,7 @@ namespace Unigram.Controls
         {
             if (message.Equals("Wallpaper"))
             {
-                Reload();
+                this.BeginOnUIThread(Reload);
             }
         }
 

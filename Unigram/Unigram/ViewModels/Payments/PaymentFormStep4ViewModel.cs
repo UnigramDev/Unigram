@@ -47,7 +47,7 @@ namespace Unigram.ViewModels.Payments
             //    PaymentForm = tuple.Item2;
 
             //        // TODO: real hint
-            //        PasswordHint = Strings.Android.LoginPassword;
+            //        PasswordHint = Strings.Resources.LoginPassword;
 
             //    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
             //    {

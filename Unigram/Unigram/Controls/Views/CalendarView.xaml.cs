@@ -23,8 +23,8 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
 
-            PrimaryButtonText = Strings.Android.OK;
-            SecondaryButtonText = Strings.Android.Cancel;
+            PrimaryButtonText = Strings.Resources.OK;
+            SecondaryButtonText = Strings.Resources.Cancel;
         }
 
         public DateTimeOffset MinDate

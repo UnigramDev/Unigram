@@ -51,7 +51,7 @@ namespace Unigram.ViewModels.Supergroups
             _query = query;
 
             _local = new KeyedList<string, object>(null as string);
-            _remote = new KeyedList<string, object>(Strings.Android.GlobalSearch);
+            _remote = new KeyedList<string, object>(Strings.Resources.GlobalSearch);
 
             Add(_local);
             Add(_remote);

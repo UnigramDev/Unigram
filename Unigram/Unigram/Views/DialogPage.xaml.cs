@@ -360,6 +360,8 @@ namespace Unigram.Views
             Messages.ScrollingHost.ViewChanged -= OnViewChanged;
             Messages.ScrollingHost.ViewChanged += OnViewChanged;
 
+            ViewVisibleMessages(false);
+
 
 
             TextField.FocusMaybe(FocusState.Keyboard);
@@ -646,7 +648,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Android.AttachMediaRestrictedForever, Strings.Android.AttachMediaRestricted);
+            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
             if (restricted)
             {
                 return;
@@ -876,7 +878,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Android.AttachStickersRestrictedForever, Strings.Android.AttachStickersRestricted);
+            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted);
             if (restricted)
             {
                 return;
@@ -1045,42 +1047,42 @@ namespace Unigram.Views
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ProtoService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId) : null;
 
-            CreateFlyoutItem(ref flyout, ViewModel.SearchCommand, Strings.Android.Search);
+            CreateFlyoutItem(ref flyout, ViewModel.SearchCommand, Strings.Resources.Search);
 
             if (supergroup != null && !(supergroup.Status is ChatMemberStatusCreator) && (supergroup.IsChannel || !string.IsNullOrEmpty(supergroup.Username)))
             {
-                CreateFlyoutItem(ref flyout, ViewModel.ReportCommand, Strings.Android.ReportChat);
+                CreateFlyoutItem(ref flyout, ViewModel.ReportCommand, Strings.Resources.ReportChat);
             }
             if (user != null)
             {
                 if (ViewModel.IsShareContactAvailable)
                 {
-                    CreateFlyoutItem(ref flyout, ViewModel.ShareContactCommand, Strings.Android.ShareMyContactInfo);
+                    CreateFlyoutItem(ref flyout, ViewModel.ShareContactCommand, Strings.Resources.ShareMyContactInfo);
                 }
                 else if (ViewModel.IsAddContactAvailable)
                 {
-                    CreateFlyoutItem(ref flyout, ViewModel.AddContactCommand, Strings.Android.AddToContacts);
+                    CreateFlyoutItem(ref flyout, ViewModel.AddContactCommand, Strings.Resources.AddToContacts);
                 }
             }
             if (secret)
             {
-                CreateFlyoutItem(ref flyout, ViewModel.SetTimerCommand, Strings.Android.SetTimer);
+                CreateFlyoutItem(ref flyout, ViewModel.SetTimerCommand, Strings.Resources.SetTimer);
             }
             if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && string.IsNullOrEmpty(supergroup.Username)))
             {
-                CreateFlyoutItem(ref flyout, ViewModel.DialogClearCommand, Strings.Android.ClearHistory);
+                CreateFlyoutItem(ref flyout, ViewModel.DialogClearCommand, Strings.Resources.ClearHistory);
             }
             if (user != null)
             {
-                CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Android.DeleteChatUser);
+                CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Resources.DeleteChatUser);
             }
             if (basicGroup != null)
             {
-                CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Android.DeleteAndExit);
+                CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Resources.DeleteAndExit);
             }
             if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
-                CreateFlyoutItem(ref flyout, chat.NotificationSettings.MuteFor == 0 ? ViewModel.MuteCommand : ViewModel.UnmuteCommand, chat.NotificationSettings.MuteFor == 0 ? Strings.Android.MuteNotifications : Strings.Android.UnmuteNotifications);
+                CreateFlyoutItem(ref flyout, chat.NotificationSettings.MuteFor == 0 ? ViewModel.MuteCommand : ViewModel.UnmuteCommand, chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.MuteNotifications : Strings.Resources.UnmuteNotifications);
             }
 
             //if (currentUser == null || !currentUser.IsSelf)
@@ -1089,7 +1091,7 @@ namespace Unigram.Views
             //}
             //else if (currentUser.IsSelf)
             //{
-            //    CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
+            //    CreateFlyoutItem(ref flyout, null, Strings.Resources.AddShortcut);
             //}
             if (user != null && user.Type is UserTypeBot)
             {
@@ -1098,12 +1100,12 @@ namespace Unigram.Views
                 {
                     if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("settings")))
                     {
-                        CreateFlyoutItem(ref flyout, null, Strings.Android.BotSettings);
+                        CreateFlyoutItem(ref flyout, null, Strings.Resources.BotSettings);
                     }
 
                     if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("help")))
                     {
-                        CreateFlyoutItem(ref flyout, null, Strings.Android.BotHelp);
+                        CreateFlyoutItem(ref flyout, null, Strings.Resources.BotHelp);
                     }
                 }
             }
@@ -1137,26 +1139,26 @@ namespace Unigram.Views
             //}
 
             // Generic
-            CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Android.Reply);
-            CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, message, ViewModel.PinnedMessage?.Id == message.Id ? Strings.Android.UnpinMessage : Strings.Android.PinMessage);
-            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Android.Edit);
-            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Android.Forward);
-            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Android.Delete);
-            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Resources.Select);
-            CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Android.Copy);
-            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.Resources.CopyImage);
-            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, message, Strings.Android.CopyLink);
+            CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply);
+            CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, message, ViewModel.PinnedMessage?.Id == message.Id ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage);
+            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit);
+            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward);
+            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete);
+            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select);
+            CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy);
+            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.Additional.CopyImage);
+            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, message, Strings.Resources.CopyLink);
 
             // Stickers
-            //CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), message, Strings.Android.AddToStickers);
-            CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.Android.AddToFavorites);
-            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.Android.DeleteFromFavorites);
+            //CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), message, Strings.Resources.AddToStickers);
+            CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.Resources.AddToFavorites);
+            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.Resources.DeleteFromFavorites);
 
-            CreateFlyoutItem(ref flyout, MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.Android.SaveToGIFs);
-            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, message, Strings.Resources.SaveAs);
+            CreateFlyoutItem(ref flyout, MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.Resources.SaveToGIFs);
+            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, message, Strings.Additional.SaveAs);
 
-            CreateFlyoutItem(ref flyout, MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.Android.AddContactTitle);
-            //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Android.SaveToDownloads);
+            CreateFlyoutItem(ref flyout, MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.Resources.AddContactTitle);
+            //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Resources.SaveToDownloads);
 
             //sender.ContextFlyout = menu;
 
@@ -1776,7 +1778,7 @@ namespace Unigram.Views
 
         public string ConvertEmptyText(int userId)
         {
-            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? Strings.Android.GotAQuestion : Strings.Android.NoMessages;
+            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? Strings.Resources.GotAQuestion : Strings.Resources.NoMessages;
         }
 
         public string ConvertSelectedCount(int count, bool items)
@@ -1784,11 +1786,11 @@ namespace Unigram.Views
             if (items)
             {
                 // TODO: Send 1 Photo/Video
-                return count > 0 ? string.Format(Strings.Android.SendItems, count) : Strings.Android.ChatGallery;
+                return count > 0 ? string.Format(Strings.Resources.SendItems, count) : Strings.Resources.ChatGallery;
             }
             else
             {
-                return count > 0 ? count > 1 ? Strings.Android.SendAsFiles : Strings.Android.SendAsFile : Strings.Android.ChatDocument;
+                return count > 0 ? count > 1 ? Strings.Resources.SendAsFiles : Strings.Resources.SendAsFile : Strings.Resources.ChatDocument;
             }
         }
 
@@ -2015,7 +2017,7 @@ namespace Unigram.Views
         private void ServiceMessage_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as FrameworkElement;
-            var message = button.DataContext as MessageViewModel;
+            var message = button.Tag as MessageViewModel;
 
             if (message == null)
             {
@@ -2028,7 +2030,7 @@ namespace Unigram.Views
         private void Message_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             var button = sender as FrameworkElement;
-            var message = button.DataContext as TLMessageBase;
+            var message = button.Tag as MessageViewModel;
 
             if (message == null)
             {
@@ -2118,6 +2120,7 @@ namespace Unigram.Views
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
                     //DownloadFile(file.Id, sticker);
+                    ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1));
                 }
             }
             else
@@ -2159,7 +2162,7 @@ namespace Unigram.Views
 
             UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
 
-            ReportSpam.Text = chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret ? Strings.Android.ReportSpam : Strings.Android.ReportSpamAndLeave;
+            ReportSpam.Text = chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret ? Strings.Resources.ReportSpam : Strings.Resources.ReportSpamAndLeave;
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -2192,7 +2195,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ShowAction(chat.NotificationSettings.MuteFor == 0 ? Strings.Android.ChannelMute : Strings.Android.ChannelUnmute, true);
+                    ShowAction(chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.ChannelMute : Strings.Resources.ChannelUnmute, true);
                 }
             }
         }
@@ -2238,7 +2241,7 @@ namespace Unigram.Views
             else
             {
                 PinnedMessagePanel.Visibility = Visibility.Visible;
-                PinnedMessage.UpdateMessage(message, loading, Strings.Android.PinnedMessage);
+                PinnedMessage.UpdateMessage(message, loading, Strings.Resources.PinnedMessage);
             }
         }
 
@@ -2253,7 +2256,7 @@ namespace Unigram.Views
             HeaderPanel.Visibility = user.Id == ViewModel.ProtoService.GetMyId() ? Visibility.Collapsed : Visibility.Visible;
             SavedMessages.Visibility = user.Id == ViewModel.ProtoService.GetMyId() ? Visibility.Visible : Visibility.Collapsed;
 
-            TextField.PlaceholderText = Strings.Android.TypeMessage;
+            TextField.PlaceholderText = Strings.Resources.TypeMessage;
             ViewModel.LastSeen = LastSeenConverter.GetLabel(user, true);
         }
 
@@ -2261,7 +2264,7 @@ namespace Unigram.Views
         {
             if (fullInfo.IsBlocked)
             {
-                ShowAction(Strings.Android.Unblock, true);
+                ShowAction(Strings.Resources.Unblock, true);
             }
             else if (!secret)
             {
@@ -2290,11 +2293,11 @@ namespace Unigram.Views
             }
             else if (secretChat.State is SecretChatStatePending)
             {
-                ShowAction(string.Format(Strings.Android.AwaitingEncryption, ViewModel.ProtoService.GetTitle(chat)), false);
+                ShowAction(string.Format(Strings.Resources.AwaitingEncryption, ViewModel.ProtoService.GetTitle(chat)), false);
             }
             else if (secretChat.State is SecretChatStateClosed)
             {
-                ShowAction(Strings.Android.EncryptionRejected, false);
+                ShowAction(Strings.Resources.EncryptionRejected, false);
             }
         }
 
@@ -2309,7 +2312,7 @@ namespace Unigram.Views
             HeaderPanel.Visibility = Visibility.Visible;
             SavedMessages.Visibility = Visibility.Collapsed;
 
-            TextField.PlaceholderText = Strings.Android.TypeMessage;
+            TextField.PlaceholderText = Strings.Resources.TypeMessage;
             ViewModel.LastSeen = Locale.Declension("Members", group.MemberCount);
         }
 
@@ -2359,33 +2362,33 @@ namespace Unigram.Views
                 }
                 else if (group.Status is ChatMemberStatusLeft)
                 {
-                    ShowAction(Strings.Android.ChannelJoin, true);
+                    ShowAction(Strings.Resources.ChannelJoin, true);
                 }
                 else
                 {
-                    ShowAction(chat.NotificationSettings.MuteFor == 0 ? Strings.Android.ChannelMute : Strings.Android.ChannelUnmute, true);
+                    ShowAction(chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.ChannelMute : Strings.Resources.ChannelUnmute, true);
                 }
             }
             else
             {
                 if (group.Status is ChatMemberStatusLeft)
                 {
-                    ShowAction(Strings.Android.ChannelJoin, true);
+                    ShowAction(Strings.Resources.ChannelJoin, true);
                 }
                 else if (group.Status is ChatMemberStatusRestricted restricted && !restricted.CanSendMessages)
                 {
                     if (restricted.IsForever())
                     {
-                        ShowAction(Strings.Android.SendMessageRestrictedForever, false);
+                        ShowAction(Strings.Resources.SendMessageRestrictedForever, false);
                     }
                     else
                     {
-                        ShowAction(string.Format(Strings.Android.SendMessageRestricted, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate)), false);
+                        ShowAction(string.Format(Strings.Resources.SendMessageRestricted, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate)), false);
                     }
                 }
                 else if (group.Status is ChatMemberStatusBanned)
                 {
-                    ShowAction(Strings.Android.DeleteChat, true);
+                    ShowAction(Strings.Resources.DeleteChat, true);
                 }
                 else
                 {
@@ -2396,7 +2399,7 @@ namespace Unigram.Views
             HeaderPanel.Visibility = Visibility.Visible;
             SavedMessages.Visibility = Visibility.Collapsed;
 
-            TextField.PlaceholderText = group.IsChannel ? Strings.Android.ChannelBroadcast : Strings.Android.TypeMessage;
+            TextField.PlaceholderText = group.IsChannel ? Strings.Resources.ChannelBroadcast : Strings.Resources.TypeMessage;
             ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
 
             var response = await ViewModel.ProtoService.SendAsync(new GetSupergroupMembers(group.Id, new SupergroupMembersFilterBots(), 0, 200));
@@ -2461,7 +2464,7 @@ namespace Unigram.Views
 
 
 
-        public void UpdateFile(TdWindows.File file)
+        public async void UpdateFile(TdWindows.File file)
         {
             //for (int i = 0; i < Messages.Items.Count; i++)
             //{
@@ -2618,6 +2621,35 @@ namespace Unigram.Views
                         var photo = content.Children[0] as ProfilePicture;
                         photo.Source = PlaceholderHelper.GetUser(null, user, 36, 36);
                     }
+                }
+            }
+
+            if (!file.Local.IsDownloadingCompleted)
+            {
+                return;
+            }
+
+            foreach (Sticker sticker in StickerPack.Items)
+            {
+                if (sticker.UpdateFile(file) && file.Id == sticker.Thumbnail?.Photo.Id)
+                {
+                    var container = StickerPack.ContainerFromItem(sticker) as SelectorItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var photo = container.ContentTemplateRoot as Image;
+                    if (photo == null)
+                    {
+                        continue;
+                    }
+
+                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    var buffer = await FileIO.ReadBufferAsync(temp);
+
+                    //var photo = content.Children[0] as Image;
+                    photo.Source = WebPImage.DecodeFromBuffer(buffer);
                 }
             }
         }

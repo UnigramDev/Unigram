@@ -153,7 +153,7 @@ namespace Unigram.ViewModels.Chats
             dataPackage.SetText(_inviteLink);
             ClipboardEx.TrySetContent(dataPackage);
 
-            await TLMessageDialog.ShowAsync(Strings.Android.LinkCopied, Strings.Android.AppName, Strings.Android.OK);
+            await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
 
         public RelayCommand RevokeCommand { get; }
@@ -165,7 +165,7 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.RevokeAlert, Strings.Android.RevokeLink, Strings.Android.RevokeButton, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.RevokeAlert, Strings.Resources.RevokeLink, Strings.Resources.RevokeButton, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

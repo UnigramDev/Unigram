@@ -109,7 +109,7 @@ namespace Unigram.Controls.Messages
                 bot = true;
             }
 
-            EditedLabel.Text = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard) ? $"{Strings.Android.EditedMessage}\u00A0\u2009" : string.Empty;
+            EditedLabel.Text = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard) ? $"{Strings.Resources.EditedMessage}\u00A0\u2009" : string.Empty;
         }
 
         private void ConvertState(MessageViewModel message)
@@ -180,7 +180,7 @@ namespace Unigram.Controls.Messages
                 var editDate = BindConvert.Current.LongDate.Format(edit);
                 var editTime = BindConvert.Current.LongTime.Format(edit);
 
-                text += $"\r\n{Strings.Android.EditedMessage}: {editDate} {editTime}";
+                text += $"\r\n{Strings.Resources.EditedMessage}: {editDate} {editTime}";
             }
 
             if (message.ForwardInfo is MessageForwardedPost forwardedPost)
@@ -189,7 +189,7 @@ namespace Unigram.Controls.Messages
                 var originalDate = BindConvert.Current.LongDate.Format(original);
                 var originalTime = BindConvert.Current.LongTime.Format(original);
 
-                text += $"\r\n{Strings.Resources.OriginalMessage}: {originalDate} {originalTime}";
+                text += $"\r\n{Strings.Additional.OriginalMessage}: {originalDate} {originalTime}";
             }
             else if (message.ForwardInfo is MessageForwardedFromUser forwardedFromUser)
             {
@@ -197,7 +197,7 @@ namespace Unigram.Controls.Messages
                 var originalDate = BindConvert.Current.LongDate.Format(original);
                 var originalTime = BindConvert.Current.LongTime.Format(original);
 
-                text += $"\r\n{Strings.Resources.OriginalMessage}: {originalDate} {originalTime}";
+                text += $"\r\n{Strings.Additional.OriginalMessage}: {originalDate} {originalTime}";
             }
 
             tooltip.Content = text;

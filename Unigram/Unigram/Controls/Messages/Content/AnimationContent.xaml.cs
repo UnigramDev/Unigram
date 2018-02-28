@@ -103,7 +103,7 @@ namespace Unigram.Controls.Messages.Content
                 Button.Glyph = "\uE118";
                 Button.Progress = 0;
 
-                Subtitle.Text = Strings.Android.AttachGif + ", " + FileSizeConverter.Convert(size);
+                Subtitle.Text = Strings.Resources.AttachGif + ", " + FileSizeConverter.Convert(size);
                 Overlay.Opacity = 1;
 
                 if (message.Delegate.CanBeDownloaded(message))

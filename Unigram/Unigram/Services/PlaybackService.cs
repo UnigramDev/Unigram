@@ -316,8 +316,8 @@ namespace Unigram.Services
             {
                 var props = item.GetDisplayProperties();
                 props.Type = MediaPlaybackType.Music;
-                props.MusicProperties.Title = string.IsNullOrEmpty(audio.Audio.Title) ? Strings.Android.AudioUnknownTitle : audio.Audio.Title;
-                props.MusicProperties.Artist = string.IsNullOrEmpty(audio.Audio.Performer) ? Strings.Android.AudioUnknownArtist : audio.Audio.Performer;
+                props.MusicProperties.Title = string.IsNullOrEmpty(audio.Audio.Title) ? Strings.Resources.AudioUnknownTitle : audio.Audio.Title;
+                props.MusicProperties.Artist = string.IsNullOrEmpty(audio.Audio.Performer) ? Strings.Resources.AudioUnknownArtist : audio.Audio.Performer;
 
                 item.ApplyDisplayProperties(props);
             }

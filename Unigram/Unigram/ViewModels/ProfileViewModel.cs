@@ -410,7 +410,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureBlockContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureBlockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -435,7 +435,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureUnblockContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -476,10 +476,10 @@ namespace Unigram.ViewModels
             //var user = Item as TLUser;
             //if (user != null)
             //{
-            //    var opt1 = new RadioButton { Content = Strings.Android.ReportChatSpam, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-            //    var opt2 = new RadioButton { Content = Strings.Android.ReportChatViolence, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-            //    var opt3 = new RadioButton { Content = Strings.Android.ReportChatPornography, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
-            //    var opt4 = new RadioButton { Content = Strings.Android.ReportChatOther, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
+            //    var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
+            //    var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
+            //    var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch };
+            //    var opt4 = new RadioButton { Content = Strings.Resources.ReportChatOther, Margin = new Thickness(0, 8, 0, 8), HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
             //    var stack = new StackPanel();
             //    stack.Children.Add(opt1);
             //    stack.Children.Add(opt2);
@@ -489,11 +489,11 @@ namespace Unigram.ViewModels
 
             //    var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             //    dialog.Content = stack;
-            //    dialog.Title = Strings.Android.ReportChat;
+            //    dialog.Title = Strings.Resources.ReportChat;
             //    dialog.IsPrimaryButtonEnabled = true;
             //    dialog.IsSecondaryButtonEnabled = true;
-            //    dialog.PrimaryButtonText = Strings.Android.OK;
-            //    dialog.SecondaryButtonText = Strings.Android.Cancel;
+            //    dialog.PrimaryButtonText = Strings.Resources.OK;
+            //    dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             //    var dialogResult = await dialog.ShowQueuedAsync();
             //    if (dialogResult == ContentDialogResult.Primary)
@@ -509,12 +509,12 @@ namespace Unigram.ViewModels
             //        if (reason is TLInputReportReasonOther other)
             //        {
             //            var input = new InputDialog();
-            //            input.Title = Strings.Android.ReportChat;
-            //            input.PlaceholderText = Strings.Android.ReportChatDescription;
+            //            input.Title = Strings.Resources.ReportChat;
+            //            input.PlaceholderText = Strings.Resources.ReportChatDescription;
             //            input.IsPrimaryButtonEnabled = true;
             //            input.IsSecondaryButtonEnabled = true;
-            //            input.PrimaryButtonText = Strings.Android.OK;
-            //            input.SecondaryButtonText = Strings.Android.Cancel;
+            //            input.PrimaryButtonText = Strings.Resources.OK;
+            //            input.SecondaryButtonText = Strings.Resources.Cancel;
 
             //            var inputResult = await input.ShowQueuedAsync();
             //            if (inputResult == ContentDialogResult.Primary)
@@ -545,7 +545,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureSecretChat, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -594,13 +594,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.ConvertGroupInfo2 + "\n\n" + Strings.Android.ConvertGroupInfo3, Strings.Android.ConvertGroup, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ConvertGroupInfo2 + "\n\n" + Strings.Resources.ConvertGroupInfo3, Strings.Resources.ConvertGroup, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var warning = await TLMessageDialog.ShowAsync(Strings.Android.ConvertGroupAlert, Strings.Android.ConvertGroupAlertWarning, Strings.Android.OK, Strings.Android.Cancel);
+            var warning = await TLMessageDialog.ShowAsync(Strings.Resources.ConvertGroupAlert, Strings.Resources.ConvertGroupAlertWarning, Strings.Resources.OK, Strings.Resources.Cancel);
             if (warning != ContentDialogResult.Primary)
             {
                 return;
@@ -763,17 +763,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var message = Strings.Android.AreYouSureDeleteAndExit;
+            var message = Strings.Resources.AreYouSureDeleteAndExit;
             if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
-                message = Strings.Android.AreYouSureDeleteThisChat;
+                message = Strings.Resources.AreYouSureDeleteThisChat;
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
-                message = super.IsChannel ? Strings.Android.ChannelLeaveAlert : Strings.Android.MegaLeaveAlert;
+                message = super.IsChannel ? Strings.Resources.ChannelLeaveAlert : Strings.Resources.MegaLeaveAlert;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 if (chat.Type is ChatTypePrivate privata)
@@ -801,7 +801,7 @@ namespace Unigram.ViewModels
             //    return;
             //}
 
-            //var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureDeleteContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            //var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureDeleteContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             //if (confirm != ContentDialogResult.Primary)
             //{
             //    return;
@@ -1032,7 +1032,7 @@ namespace Unigram.ViewModels
 
                     if (untrust)
                     {
-                        var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.OpenUrlAlert, url), Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+                        var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;

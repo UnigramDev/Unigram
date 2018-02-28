@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsBlockedUsersViewModel : UnigramViewModelBase, IHandle<UpdateFile>
+    public class SettingsBlockedUsersViewModel : UnigramViewModelBase, IHandle<UpdateUserFullInfo>, IHandle<UpdateFile>
     {
         public IFileDelegate Delegate { get; set; }
 
@@ -46,6 +46,18 @@ namespace Unigram.ViewModels.Settings
         {
             Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
+        }
+
+        public void Handle(UpdateUserFullInfo update)
+        {
+            BeginOnUIThread(() =>
+            {
+                var already = Items.FirstOrDefault(x => x.Id == update.UserId);
+                if (already != null && !update.UserFullInfo.IsBlocked)
+                {
+                    Items.Remove(already);
+                }
+            });
         }
 
         public void Handle(UpdateFile update)
@@ -101,7 +113,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<User> UnblockCommand { get; }
         private async void UnblockExecute(User user)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureUnblockContact, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 ProtoService.Send(new UnblockUser(user.Id));

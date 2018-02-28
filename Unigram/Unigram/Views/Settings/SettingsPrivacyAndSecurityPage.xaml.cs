@@ -83,7 +83,7 @@ namespace Unigram.Views.Settings
 
         private string ConvertSync(bool sync)
         {
-            return sync ? Strings.Android.SyncContactsInfoOn : Strings.Android.SyncContactsInfoOff;
+            return sync ? Strings.Resources.SyncContactsInfoOn : Strings.Resources.SyncContactsInfoOff;
         }
 
         private string ConvertP2P(int mode)
@@ -92,11 +92,11 @@ namespace Unigram.Views.Settings
             {
                 case 0:
                 default:
-                    return Strings.Android.LastSeenEverybody;
+                    return Strings.Resources.LastSeenEverybody;
                 case 1:
-                    return Strings.Android.LastSeenContacts;
+                    return Strings.Resources.LastSeenContacts;
                 case 2:
-                    return Strings.Android.LastSeenNobody;
+                    return Strings.Resources.LastSeenNobody;
             }
         }
 

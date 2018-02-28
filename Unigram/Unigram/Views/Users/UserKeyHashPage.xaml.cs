@@ -139,7 +139,7 @@ namespace Unigram.Views.Users
                 Texture.Source = bitmap;
                 Hash.Text = builder.ToString();
 
-                TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Android.EncryptionKeyDescription, user.FirstName, user.FirstName));
+                TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.EncryptionKeyDescription, user.FirstName, user.FirstName));
             }
         }
     }

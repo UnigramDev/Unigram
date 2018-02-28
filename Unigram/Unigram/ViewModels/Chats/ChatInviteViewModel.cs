@@ -57,7 +57,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public override string Title => Strings.Android.SelectContact;
+        public override string Title => Strings.Resources.SelectContact;
 
         public override int Maximum => 1;
 
@@ -116,7 +116,7 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AddToTheGroup, user.GetFullName()), Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.AddToTheGroup, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

@@ -503,7 +503,7 @@ namespace Unigram.Controls.Views
             if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.ProtoService.GetMyId())
             {
                 photo.Source = PlaceholderHelper.GetChat(null, chat, 48, 48);
-                title.Text = Strings.Android.SavedMessages;
+                title.Text = Strings.Resources.SavedMessages;
             }
             else
             {

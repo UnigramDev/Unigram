@@ -51,11 +51,11 @@ namespace Unigram.Views.Settings
             {
                 default:
                 case DataSavingMode.Never:
-                    return Strings.Android.UseLessDataNever;
+                    return Strings.Resources.UseLessDataNever;
                 case DataSavingMode.MobileOnly:
-                    return Strings.Android.UseLessDataOnMobile;
+                    return Strings.Resources.UseLessDataOnMobile;
                 case DataSavingMode.Always:
-                    return Strings.Android.UseLessDataAlways;
+                    return Strings.Resources.UseLessDataAlways;
             }
         }
 

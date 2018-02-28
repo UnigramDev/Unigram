@@ -50,7 +50,7 @@ namespace Unigram.Views.Settings
         {
             get
             {
-                return string.Format(Strings.Android.UsernameHelpLink, string.Empty).TrimEnd();
+                return string.Format(Strings.Resources.UsernameHelpLink, string.Empty).TrimEnd();
             }
         }
 

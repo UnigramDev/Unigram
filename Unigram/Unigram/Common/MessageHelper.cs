@@ -85,7 +85,7 @@ namespace Unigram.Common
         }
         #endregion
 
-        private static bool IsAnyCharacterRightToLeft(string s)
+        public static bool IsAnyCharacterRightToLeft(string s)
         {
             //if (s.Length > 2)
             //{
@@ -316,20 +316,20 @@ namespace Unigram.Common
             await ForwardView.GetForCurrentView().ShowAsync(text, hasUrl);
         }
 
-        public static async void NavigateToSocks(IProtoService protoService, string server, int port, string user, string pass)
+        public static async void NavigateToSocks(IProtoService protoService, string server, int port, string username, string password)
         {
-            var userText = user != null ? string.Format($"{Strings.Android.UseProxyUsername}: {user}\n", user) : string.Empty;
-            var passText = pass != null ? string.Format($"{Strings.Android.UseProxyPassword}: {pass}\n", pass) : string.Empty;
-            var confirm = await TLMessageDialog.ShowAsync($"{Strings.Android.EnableProxyAlert}\n\n{Strings.Android.UseProxyAddress}: {server}\n{Strings.Android.UseProxyPort}: {port}\n{userText}{passText}\n{Strings.Android.EnableProxyAlert2}", Strings.Android.Proxy, Strings.Android.ConnectingToProxyEnable, Strings.Android.Cancel);
+            var userText = username != null ? string.Format($"{Strings.Resources.UseProxyUsername}: {username}\n", username) : string.Empty;
+            var passText = password != null ? string.Format($"{Strings.Resources.UseProxyPassword}: {password}\n", password) : string.Empty;
+            var confirm = await TLMessageDialog.ShowAsync($"{Strings.Resources.EnableProxyAlert}\n\n{Strings.Resources.UseProxyAddress}: {server}\n{Strings.Resources.UseProxyPort}: {port}\n{userText}{passText}\n{Strings.Resources.EnableProxyAlert2}", Strings.Resources.Proxy, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                SettingsHelper.ProxyServer = server;
+                SettingsHelper.ProxyServer = server ?? string.Empty;
                 SettingsHelper.ProxyPort = port;
-                SettingsHelper.ProxyUsername = user;
-                SettingsHelper.ProxyPassword = pass;
+                SettingsHelper.ProxyUsername = username ?? string.Empty;
+                SettingsHelper.ProxyPassword = password ?? string.Empty;
                 SettingsHelper.IsProxyEnabled = true;
 
-                protoService.Send(new SetProxy(new ProxySocks5(server, port, user, pass)));
+                protoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
             }
         }
 
@@ -431,7 +431,7 @@ namespace Unigram.Common
                         var import = await protoService.SendAsync(new JoinChatByInviteLink(link));
                         if (import is Ok)
                         {
-                            await TLMessageDialog.ShowAsync("Joined", Strings.Android.AppName, Strings.Android.OK);
+                            await TLMessageDialog.ShowAsync("Joined", Strings.Resources.AppName, Strings.Resources.OK);
                         }
                         else if (import is Error error)
                         {
@@ -442,17 +442,17 @@ namespace Unigram.Common
                             }
                             if (error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
                             {
-                                //MessageBox.Show(Strings.Resources.GroupNotExistsError, Strings.Resources.Error, 0);
+                                //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
                                 return;
                             }
                             else if (error.TypeEquals(TLErrorType.USERS_TOO_MUCH))
                             {
-                                //MessageBox.Show(Strings.Resources.UsersTooMuch, Strings.Resources.Error, 0);
+                                //MessageBox.Show(Strings.Additional.UsersTooMuch, Strings.Additional.Error, 0);
                                 return;
                             }
                             else if (error.TypeEquals(TLErrorType.BOTS_TOO_MUCH))
                             {
-                                //MessageBox.Show(Strings.Resources.BotsTooMuch, Strings.Resources.Error, 0);
+                                //MessageBox.Show(Strings.Additional.BotsTooMuch, Strings.Additional.Error, 0);
                                 return;
                             }
                             else if (error.TypeEquals(TLErrorType.USER_ALREADY_PARTICIPANT))
@@ -474,7 +474,7 @@ namespace Unigram.Common
                 }
                 if (error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
                 {
-                    //MessageBox.Show(Strings.Resources.GroupNotExistsError, Strings.Resources.Error, 0);
+                    //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
                     await TLMessageDialog.ShowAsync("This invite link is broken or has expired.", "Warning", "OK");
                     return;
                 }
@@ -559,7 +559,7 @@ namespace Unigram.Common
                 {
                     var link = text.SelectedText;
 
-                    var copy = new MenuFlyoutItem { Text = Strings.Android.Copy, DataContext = link };
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link };
 
                     copy.Click += LinkCopy_Click;
 
@@ -583,8 +583,8 @@ namespace Unigram.Common
                         return;
                     }
 
-                    var open = new MenuFlyoutItem { Text = Strings.Android.Open, DataContext = link };
-                    var copy = new MenuFlyoutItem { Text = Strings.Android.Copy, DataContext = link };
+                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link };
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link };
 
                     open.Click += LinkOpen_Click;
                     copy.Click += LinkCopy_Click;

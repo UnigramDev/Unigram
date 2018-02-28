@@ -80,8 +80,8 @@ namespace Unigram.Views
 
             dialog.Title = "Verbosity Level";
             dialog.Content = stack;
-            dialog.PrimaryButtonText = Strings.Android.OK;
-            dialog.SecondaryButtonText = Strings.Android.Cancel;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)

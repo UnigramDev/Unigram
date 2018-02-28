@@ -87,7 +87,7 @@ namespace Unigram.Controls.Messages
             else if (embedded.EditingMessage != null)
             {
                 MessageId = embedded.EditingMessage.Id;
-                GetMessageTemplate(embedded.EditingMessage, Strings.Android.Edit);
+                GetMessageTemplate(embedded.EditingMessage, Strings.Resources.Edit);
             }
             else if (embedded.ReplyToMessage != null)
             {
@@ -251,7 +251,7 @@ namespace Unigram.Controls.Messages
         //        {
         //            if (!string.IsNullOrEmpty(editMessage.Message) && (editMessage.Media == null || editMessage.Media is TLMessageMediaEmpty || editMessage.Media is TLMessageMediaWebPage))
         //            {
-        //                return SetTextTemplate(editMessage, Strings.Android.Edit);
+        //                return SetTextTemplate(editMessage, Strings.Resources.Edit);
         //            }
 
         //            var media = editMessage.Media;
@@ -260,56 +260,56 @@ namespace Unigram.Controls.Messages
         //                switch (media.TypeId)
         //                {
         //                    case TLType.MessageMediaPhoto:
-        //                        return SetPhotoTemplate(editMessage, Strings.Android.Edit);
+        //                        return SetPhotoTemplate(editMessage, Strings.Resources.Edit);
         //                    case TLType.MessageMediaGeo:
-        //                        return SetGeoTemplate(editMessage, Strings.Android.Edit);
+        //                        return SetGeoTemplate(editMessage, Strings.Resources.Edit);
         //                    case TLType.MessageMediaGeoLive:
-        //                        return SetGeoLiveTemplate(editMessage, Strings.Android.Edit);
+        //                        return SetGeoLiveTemplate(editMessage, Strings.Resources.Edit);
         //                    case TLType.MessageMediaVenue:
-        //                        return SetVenueTemplate(editMessage, Strings.Android.Edit);
+        //                        return SetVenueTemplate(editMessage, Strings.Resources.Edit);
         //                    case TLType.MessageMediaContact:
-        //                        return SetContactTemplate(editMessage, Strings.Android.Edit);
+        //                        return SetContactTemplate(editMessage, Strings.Resources.Edit);
         //                    case TLType.MessageMediaGame:
-        //                        return SetGameTemplate(editMessage, Strings.Android.Edit);
+        //                        return SetGameTemplate(editMessage, Strings.Resources.Edit);
         //                    case TLType.MessageMediaEmpty:
-        //                        return SetUnsupportedTemplate(editMessage, Strings.Android.Edit);
+        //                        return SetUnsupportedTemplate(editMessage, Strings.Resources.Edit);
         //                    case TLType.MessageMediaDocument:
         //                        if (editMessage.IsSticker())
         //                        {
-        //                            return SetStickerTemplate(editMessage, Strings.Android.Edit);
+        //                            return SetStickerTemplate(editMessage, Strings.Resources.Edit);
         //                        }
         //                        else if (editMessage.IsGif())
         //                        {
-        //                            return SetGifTemplate(editMessage, Strings.Android.Edit);
+        //                            return SetGifTemplate(editMessage, Strings.Resources.Edit);
         //                        }
         //                        else if (editMessage.IsVoice())
         //                        {
-        //                            return SetVoiceMessageTemplate(editMessage, Strings.Android.Edit);
+        //                            return SetVoiceMessageTemplate(editMessage, Strings.Resources.Edit);
         //                        }
         //                        else if (editMessage.IsVideo())
         //                        {
-        //                            return SetVideoTemplate(editMessage, Strings.Android.Edit);
+        //                            return SetVideoTemplate(editMessage, Strings.Resources.Edit);
         //                        }
         //                        else if (editMessage.IsRoundVideo())
         //                        {
-        //                            return SetRoundVideoTemplate(editMessage, Strings.Android.Edit);
+        //                            return SetRoundVideoTemplate(editMessage, Strings.Resources.Edit);
         //                        }
         //                        else if (editMessage.IsAudio())
         //                        {
-        //                            return SetAudioTemplate(editMessage, Strings.Android.Edit);
+        //                            return SetAudioTemplate(editMessage, Strings.Resources.Edit);
         //                        }
 
-        //                        return SetDocumentTemplate(editMessage, Strings.Android.Edit);
+        //                        return SetDocumentTemplate(editMessage, Strings.Resources.Edit);
         //                    case TLType.MessageMediaUnsupported:
-        //                        return SetUnsupportedMediaTemplate(editMessage, Strings.Android.Edit);
+        //                        return SetUnsupportedMediaTemplate(editMessage, Strings.Resources.Edit);
         //                }
         //            }
         //        }
 
-        //        return SetUnsupportedTemplate(editMessage, Strings.Android.Edit);
+        //        return SetUnsupportedTemplate(editMessage, Strings.Resources.Edit);
         //    }
 
-        //    return SetUnsupportedTemplate(null, Strings.Android.Edit);
+        //    return SetUnsupportedTemplate(null, Strings.Resources.Edit);
         //}
 
         #endregion
@@ -534,7 +534,7 @@ namespace Unigram.Controls.Messages
             // 🖼
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Android.AttachPhoto;
+            ServiceLabel.Text = Strings.Resources.AttachPhoto;
             MessageLabel.Text = string.Empty;
 
             if (message.Ttl > 0)
@@ -589,7 +589,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = location.LivePeriod > 0 ? Strings.Android.AttachLiveLocation : Strings.Android.AttachLocation;
+            ServiceLabel.Text = location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation;
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -603,7 +603,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Android.AttachLocation + ", " + venue.Venue.Title.Replace("\r\n", "\n").Replace('\n', ' ');
+            ServiceLabel.Text = Strings.Resources.AttachLocation + ", " + venue.Venue.Title.Replace("\r\n", "\n").Replace('\n', ' ');
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -635,7 +635,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Android.AttachContact;
+            ServiceLabel.Text = Strings.Resources.AttachContact;
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -649,7 +649,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Android.AttachAudio;
+            ServiceLabel.Text = Strings.Resources.AttachAudio;
             MessageLabel.Text = string.Empty;
 
             //var document = documentMedia.Document as TLDocument;
@@ -675,7 +675,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Android.AttachAudio;
+            ServiceLabel.Text = Strings.Resources.AttachAudio;
             MessageLabel.Text = string.Empty;
 
             if (voiceNote.Caption != null && !string.IsNullOrWhiteSpace(voiceNote.Caption.Text))
@@ -722,7 +722,7 @@ namespace Unigram.Controls.Messages
             Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Android.AttachVideo;
+            ServiceLabel.Text = Strings.Resources.AttachVideo;
             MessageLabel.Text = string.Empty;
 
             if (message.Ttl > 0)
@@ -762,7 +762,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Android.AttachRound;
+            ServiceLabel.Text = Strings.Resources.AttachRound;
             MessageLabel.Text = string.Empty;
 
             ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = new CornerRadius(18);
@@ -784,7 +784,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Android.AttachGif;
+            ServiceLabel.Text = Strings.Resources.AttachGif;
             MessageLabel.Text = string.Empty;
 
             if (animation.Caption != null && !string.IsNullOrWhiteSpace(animation.Caption.Text))
@@ -811,7 +811,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = string.IsNullOrEmpty(sticker.Sticker.Emoji) ? Strings.Android.AttachSticker : $"{sticker.Sticker.Emoji} {Strings.Android.AttachSticker}";
+            ServiceLabel.Text = string.IsNullOrEmpty(sticker.Sticker.Emoji) ? Strings.Resources.AttachSticker : $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -921,7 +921,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = string.Empty;
-            ServiceLabel.Text = Strings.Android.Loading;
+            ServiceLabel.Text = Strings.Resources.Loading;
             MessageLabel.Text = string.Empty;
             return true;
         }
@@ -934,7 +934,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = string.Empty;
-            ServiceLabel.Text = message == null ? Strings.Resources.DeletedMessage : string.Empty;
+            ServiceLabel.Text = message == null ? Strings.Additional.DeletedMessage : string.Empty;
             MessageLabel.Text = string.Empty;
             return true;
         }
@@ -947,7 +947,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Android.UnsupportedAttachment;
+            ServiceLabel.Text = Strings.Resources.UnsupportedAttachment;
             MessageLabel.Text = string.Empty;
 
             return true;

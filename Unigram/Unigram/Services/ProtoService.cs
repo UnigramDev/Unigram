@@ -333,11 +333,11 @@ namespace Unigram.Services
             {
                 if (user.Type is UserTypeDeleted)
                 {
-                    return Strings.Android.HiddenName;
+                    return Strings.Resources.HiddenName;
                 }
                 else if (user.Id == GetMyId())
                 {
-                    return Strings.Android.SavedMessages;
+                    return Strings.Resources.SavedMessages;
                 }
             }
 
@@ -628,16 +628,16 @@ namespace Unigram.Services
                 switch (updateConnectionState.State)
                 {
                     case ConnectionStateWaitingForNetwork waitingForNetwork:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Android.WaitingForNetwork);
+                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.WaitingForNetwork);
                         break;
                     case ConnectionStateConnecting connecting:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Android.Connecting);
+                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.Connecting);
                         break;
                     case ConnectionStateConnectingToProxy connectingToProxy:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Android.ConnectingToProxy);
+                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.ConnectingToProxy);
                         break;
                     case ConnectionStateUpdating updating:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Android.Updating);
+                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.Updating);
                         break;
                     case ConnectionStateReady ready:
                         Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = string.Empty);

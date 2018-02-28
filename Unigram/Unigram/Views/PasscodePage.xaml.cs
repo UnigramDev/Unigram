@@ -124,7 +124,7 @@ namespace Unigram.Views
 
             if (await KeyCredentialManager.IsSupportedAsync())
             {
-                var result = await KeyCredentialManager.OpenAsync(Strings.Android.AppName);
+                var result = await KeyCredentialManager.OpenAsync(Strings.Resources.AppName);
                 if (result.Credential != null)
                 {
                     var signResult = await result.Credential.RequestSignAsync(CryptographicBuffer.ConvertStringToBinary(Package.Current.Id.Name, BinaryStringEncoding.Utf8));
@@ -139,7 +139,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    var creationResult = await KeyCredentialManager.RequestCreateAsync(Strings.Android.AppName, KeyCredentialCreationOption.ReplaceExisting);
+                    var creationResult = await KeyCredentialManager.RequestCreateAsync(Strings.Resources.AppName, KeyCredentialCreationOption.ReplaceExisting);
                     if (creationResult.Status == KeyCredentialStatus.Success)
                     {
                         Unlock();

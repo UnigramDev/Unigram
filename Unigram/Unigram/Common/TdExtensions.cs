@@ -444,7 +444,7 @@ namespace Unigram.Common
             }
             else
             {
-                return $"{performer ?? Strings.Android.AudioUnknownArtist} - {title ?? Strings.Android.AudioUnknownTitle}";
+                return $"{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}";
             }
         }
 
@@ -504,7 +504,7 @@ namespace Unigram.Common
         {
             if (user.Type is UserTypeDeleted)
             {
-                return Strings.Android.HiddenName;
+                return Strings.Resources.HiddenName;
             }
 
             return string.IsNullOrEmpty(user.LastName) ? user.FirstName : $"{user.FirstName} {user.LastName}";

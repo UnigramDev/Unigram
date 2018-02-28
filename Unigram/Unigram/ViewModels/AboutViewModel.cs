@@ -40,7 +40,7 @@ namespace Unigram.ViewModels
 
         public string Version { get; } = GetVersion();
 
-        public string AppName { get; } = Strings.Branding.ApplicationName;
+        public string AppName { get; } = Strings.Resources.AppName;
 
         #region Useful
 

@@ -19,7 +19,7 @@ namespace Unigram.ViewModels.SecretChats
         {
         }
 
-        public override string Title => Strings.Android.NewSecretChat;
+        public override string Title => Strings.Resources.NewSecretChat;
 
         public override int Maximum => 1;
 
@@ -30,7 +30,7 @@ namespace Unigram.ViewModels.SecretChats
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AreYouSureSecretChat, Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

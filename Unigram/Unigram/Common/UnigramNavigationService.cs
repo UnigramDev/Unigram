@@ -24,6 +24,11 @@ namespace Unigram.Common
 
         public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null)
         {
+            if (chat == null)
+            {
+                return;
+            }
+
             if (chat.Type is ChatTypePrivate privata)
             {
                 var user = _protoService.GetUser(privata.UserId);

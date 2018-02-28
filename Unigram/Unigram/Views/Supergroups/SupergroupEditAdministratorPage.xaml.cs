@@ -85,12 +85,12 @@ namespace Unigram.Views.Supergroups
 
             PermissionsPanel.Visibility = Visibility.Visible;
 
-            ChangeInfo.Header = group.IsChannel ? Strings.Android.EditAdminChangeChannelInfo : Strings.Android.EditAdminChangeGroupInfo;
+            ChangeInfo.Header = group.IsChannel ? Strings.Resources.EditAdminChangeChannelInfo : Strings.Resources.EditAdminChangeGroupInfo;
             PostMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             EditMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-            DeleteMessages.Header = group.IsChannel ? Strings.Android.EditAdminDeleteMessages : Strings.Android.EditAdminGroupDeleteMessages;
+            DeleteMessages.Header = group.IsChannel ? Strings.Resources.EditAdminDeleteMessages : Strings.Resources.EditAdminGroupDeleteMessages;
             BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-            AddUsers.Header = group.AnyoneCanInvite ? Strings.Android.EditAdminAddUsersViaLink : Strings.Android.EditAdminAddUsers;
+            AddUsers.Header = group.AnyoneCanInvite ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
         }
     }
 }

@@ -97,19 +97,19 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Title.PlaceholderText = group.IsChannel ? Strings.Android.EnterChannelName : Strings.Android.GroupName;
+            Title.PlaceholderText = group.IsChannel ? Strings.Resources.EnterChannelName : Strings.Resources.GroupName;
 
-            Public.Content = group.IsChannel ? Strings.Android.ChannelPublic : Strings.Android.MegaPublic;
-            PublicInfo.Text = group.IsChannel ? Strings.Android.ChannelPublicInfo : Strings.Android.MegaPublicInfo;
+            Public.Content = group.IsChannel ? Strings.Resources.ChannelPublic : Strings.Resources.MegaPublic;
+            PublicInfo.Text = group.IsChannel ? Strings.Resources.ChannelPublicInfo : Strings.Resources.MegaPublicInfo;
 
-            Private.Content = group.IsChannel ? Strings.Android.ChannelPrivate : Strings.Android.MegaPrivate;
-            PrivateInfo.Text = group.IsChannel ? Strings.Android.ChannelPrivateInfo : Strings.Android.MegaPrivateInfo;
+            Private.Content = group.IsChannel ? Strings.Resources.ChannelPrivate : Strings.Resources.MegaPrivate;
+            PrivateInfo.Text = group.IsChannel ? Strings.Resources.ChannelPrivateInfo : Strings.Resources.MegaPrivateInfo;
 
-            UsernameHelp.Text = group.IsChannel ? Strings.Android.ChannelUsernameHelp : Strings.Android.MegaUsernameHelp;
-            PrivateLinkHelp.Text = group.IsChannel ? Strings.Android.ChannelPrivateLinkHelp : Strings.Android.MegaPrivateLinkHelp;
+            UsernameHelp.Text = group.IsChannel ? Strings.Resources.ChannelUsernameHelp : Strings.Resources.MegaUsernameHelp;
+            PrivateLinkHelp.Text = group.IsChannel ? Strings.Resources.ChannelPrivateLinkHelp : Strings.Resources.MegaPrivateLinkHelp;
 
-            Delete.Content = group.IsChannel ? Strings.Android.ChannelDelete : Strings.Android.DeleteMega;
-            DeleteInfo.Text = group.IsChannel ? Strings.Android.ChannelDeleteInfo : Strings.Android.MegaDeleteInfo;
+            Delete.Content = group.IsChannel ? Strings.Resources.ChannelDelete : Strings.Resources.DeleteMega;
+            DeleteInfo.Text = group.IsChannel ? Strings.Resources.ChannelDeleteInfo : Strings.Resources.MegaDeleteInfo;
 
 
             ViewModel.Title = chat.Title;

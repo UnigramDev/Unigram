@@ -15,7 +15,7 @@ namespace Unigram.Converters
 
         public StringFormatConverter()
         {
-            _loader = ResourceLoader.GetForViewIndependentUse("Android");
+            _loader = ResourceLoader.GetForViewIndependentUse("Resources");
         }
 
         public object Convert(object value, Type targetType, object parameter, string language)

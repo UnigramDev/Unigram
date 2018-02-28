@@ -174,10 +174,10 @@ namespace Unigram.ViewModels.Channels
                 }
 
                 var dialog = new TLMessageDialog();
-                dialog.Title = Strings.Android.AppName;
-                dialog.Message = string.Format(Strings.Android.RevokeLinkAlert, supergroup.Username, chat.Title);
-                dialog.PrimaryButtonText = Strings.Android.RevokeButton;
-                dialog.SecondaryButtonText = Strings.Android.Cancel;
+                dialog.Title = Strings.Resources.AppName;
+                dialog.Message = string.Format(Strings.Resources.RevokeLinkAlert, supergroup.Username, chat.Title);
+                dialog.PrimaryButtonText = Strings.Resources.RevokeButton;
+                dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
@@ -310,7 +310,7 @@ namespace Unigram.ViewModels.Channels
             //    {
             //        IsLoading = false;
             //        IsAvailable = false;
-            //        ErrorMessage = Strings.Android.UsernameInUse;
+            //        ErrorMessage = Strings.Resources.UsernameInUse;
             //    }
             //}
             //else
@@ -319,13 +319,13 @@ namespace Unigram.ViewModels.Channels
             //    {
             //        IsLoading = false;
             //        IsAvailable = false;
-            //        ErrorMessage = Strings.Android.UsernameInvalid;
+            //        ErrorMessage = Strings.Resources.UsernameInvalid;
             //    }
             //    else if (response.Error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
             //    {
             //        IsLoading = false;
             //        IsAvailable = false;
-            //        ErrorMessage = Strings.Android.UsernameInUse;
+            //        ErrorMessage = Strings.Resources.UsernameInUse;
             //    }
             //    else if (response.Error.TypeEquals(TLErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
             //    {
@@ -349,15 +349,15 @@ namespace Unigram.ViewModels.Channels
                 }
                 else if (_username.Length < 5)
                 {
-                    ErrorMessage = Strings.Android.UsernameInvalidShort;
+                    ErrorMessage = Strings.Resources.UsernameInvalidShort;
                 }
                 else if (_username.Length > 32)
                 {
-                    ErrorMessage = Strings.Android.UsernameInvalidLong;
+                    ErrorMessage = Strings.Resources.UsernameInvalidLong;
                 }
                 else
                 {
-                    ErrorMessage = Strings.Android.UsernameInvalid;
+                    ErrorMessage = Strings.Resources.UsernameInvalid;
                 }
             }
             else

@@ -145,8 +145,8 @@ namespace Unigram.ViewModels.Settings
         {
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
-            var checkShipping = new CheckBox { Content = Strings.Android.PrivacyClearShipping, IsChecked = true };
-            var checkPayment = new CheckBox { Content = Strings.Android.PrivacyClearPayment, IsChecked = true };
+            var checkShipping = new CheckBox { Content = Strings.Resources.PrivacyClearShipping, IsChecked = true };
+            var checkPayment = new CheckBox { Content = Strings.Resources.PrivacyClearPayment, IsChecked = true };
 
             var toggle = new RoutedEventHandler((s, args) =>
             {
@@ -162,10 +162,10 @@ namespace Unigram.ViewModels.Settings
             stack.Children.Add(checkShipping);
             stack.Children.Add(checkPayment);
 
-            dialog.Title = Strings.Android.PrivacyPayments;
+            dialog.Title = Strings.Resources.PrivacyPayments;
             dialog.Content = stack;
-            dialog.PrimaryButtonText = Strings.Android.ClearButton;
-            dialog.SecondaryButtonText = Strings.Android.Cancel;
+            dialog.PrimaryButtonText = Strings.Resources.ClearButton;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -226,10 +226,10 @@ namespace Unigram.ViewModels.Settings
                 selected.IsChecked = true;
             }
 
-            dialog.Title = Strings.Android.DeleteAccountTitle;
+            dialog.Title = Strings.Resources.DeleteAccountTitle;
             dialog.Content = stack;
-            dialog.PrimaryButtonText = Strings.Android.OK;
-            dialog.SecondaryButtonText = Strings.Android.Cancel;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -258,14 +258,14 @@ namespace Unigram.ViewModels.Settings
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Android.LastSeenEverybody, IsChecked = PeerToPeerMode == 0 });
-            stack.Children.Add(new RadioButton { Tag = 1, Content = Strings.Android.LastSeenContacts, IsChecked = PeerToPeerMode == 1 });
-            stack.Children.Add(new RadioButton { Tag = 2, Content = Strings.Android.LastSeenNobody, IsChecked = PeerToPeerMode == 2 });
+            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Resources.LastSeenEverybody, IsChecked = PeerToPeerMode == 0 });
+            stack.Children.Add(new RadioButton { Tag = 1, Content = Strings.Resources.LastSeenContacts, IsChecked = PeerToPeerMode == 1 });
+            stack.Children.Add(new RadioButton { Tag = 2, Content = Strings.Resources.LastSeenNobody, IsChecked = PeerToPeerMode == 2 });
 
-            dialog.Title = Strings.Android.PrivacyCallsP2PTitle;
+            dialog.Title = Strings.Resources.PrivacyCallsP2PTitle;
             dialog.Content = stack;
-            dialog.PrimaryButtonText = Strings.Android.OK;
-            dialog.SecondaryButtonText = Strings.Android.Cancel;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)

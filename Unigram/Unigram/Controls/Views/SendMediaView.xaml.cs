@@ -98,7 +98,7 @@ namespace Unigram.Controls.Views
         {
             get
             {
-                return SelectedItems.Count > 1 && !SelectedItems.Any(x => x.TTLSeconds.HasValue);
+                return SelectedItems.Count > 1 && !SelectedItems.Any(x => x.Ttl.HasValue);
             }
         }
 
@@ -204,7 +204,7 @@ namespace Unigram.Controls.Views
 
         private string ConvertGrouped(bool grouped)
         {
-            return grouped ? Strings.Android.GroupPhotosHelp : Strings.Android.SinglePhotosHelp;
+            return grouped ? Strings.Resources.GroupPhotosHelp : Strings.Resources.SinglePhotosHelp;
         }
 
         private bool ConvertSelected(StorageMedia media)
@@ -393,11 +393,11 @@ namespace Unigram.Controls.Views
 
         private void OnSecondsChanged(DependencyObject sender, DependencyProperty dp)
         {
-            VisualStateManager.GoToState(TTLSeconds, SelectedItem.TTLSeconds == null ? "Unselected" : "Selected", false);
+            VisualStateManager.GoToState(TTLSeconds, SelectedItem.Ttl == null ? "Unselected" : "Selected", false);
             //VisualStateManager.GoToState(this, SelectedItem.TTLSeconds == null ? "Unselected" : "Selected", false);
 
             // TODO: WRONG!!!
-            if (SelectedItem.TTLSeconds == null)
+            if (SelectedItem.Ttl == null)
             {
                 TTLSeconds.ClearValue(Button.ForegroundProperty);
             }
@@ -410,12 +410,12 @@ namespace Unigram.Controls.Views
         private async void TTLSeconds_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new SelectTTLSecondsView(SelectedItem.IsPhoto);
-            dialog.TTLSeconds = SelectedItem.TTLSeconds;
+            dialog.TTLSeconds = SelectedItem.Ttl;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                SelectedItem.TTLSeconds = dialog.TTLSeconds;
+                SelectedItem.Ttl = dialog.TTLSeconds;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
             }
         }

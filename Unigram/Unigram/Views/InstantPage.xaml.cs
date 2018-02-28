@@ -359,7 +359,7 @@ namespace Unigram.Views
             if (block.Author != null)
             {
                 var span = new Span();
-                textBlock.Inlines.Add(new Run { Text = string.Format(Strings.Android.ArticleByAuthor, string.Empty) });
+                textBlock.Inlines.Add(new Run { Text = string.Format(Strings.Resources.ArticleByAuthor, string.Empty) });
                 textBlock.Inlines.Add(span);
                 ProcessRichText(block.Author, span);
             }

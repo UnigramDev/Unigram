@@ -212,12 +212,12 @@ namespace Unigram.ViewModels.Settings
             stack.Children.Add(new RadioButton { Tag = 3, Content = Locale.Declension("Days", 3), IsChecked = FilesTtl == 3 });
             stack.Children.Add(new RadioButton { Tag = 7, Content = Locale.Declension("Weeks", 1), IsChecked = FilesTtl == 7 });
             stack.Children.Add(new RadioButton { Tag = 30, Content = Locale.Declension("Months", 1), IsChecked = FilesTtl == 30 });
-            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Android.KeepMediaForever, IsChecked = FilesTtl == 0 });
+            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Resources.KeepMediaForever, IsChecked = FilesTtl == 0 });
 
-            dialog.Title = Strings.Android.KeepMedia;
+            dialog.Title = Strings.Resources.KeepMedia;
             dialog.Content = stack;
-            dialog.PrimaryButtonText = Strings.Android.OK;
-            dialog.SecondaryButtonText = Strings.Android.Cancel;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)

@@ -34,7 +34,7 @@ namespace Unigram.Views.Payments
 
         private string ConvertTitle(bool test)
         {
-            return (test ? "Test " : string.Empty) + Strings.Android.PaymentReceipt;
+            return (test ? "Test " : string.Empty) + Strings.Resources.PaymentReceipt;
         }
 
         private string ConvertAddress(ShippingAddress address)

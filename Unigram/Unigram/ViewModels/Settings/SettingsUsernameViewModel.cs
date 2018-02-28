@@ -109,7 +109,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = Strings.Android.UsernameInUse;
+                    ErrorMessage = Strings.Resources.UsernameInUse;
                 }
             }
             else if (response is Error error)
@@ -118,13 +118,13 @@ namespace Unigram.ViewModels.Settings
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = Strings.Android.UsernameInvalid;
+                    ErrorMessage = Strings.Resources.UsernameInvalid;
                 }
                 else if (error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
                 {
                     IsLoading = false;
                     IsAvailable = false;
-                    ErrorMessage = Strings.Android.UsernameInUse;
+                    ErrorMessage = Strings.Resources.UsernameInUse;
                 }
                 else if (error.TypeEquals(TLErrorType.USERNAME_NOT_OCCUPIED))
                 {
@@ -149,15 +149,15 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (_username.Length < 5)
                 {
-                    ErrorMessage = Strings.Android.UsernameInvalidShort;
+                    ErrorMessage = Strings.Resources.UsernameInvalidShort;
                 }
                 else if (_username.Length > 32)
                 {
-                    ErrorMessage = Strings.Android.UsernameInvalidLong;
+                    ErrorMessage = Strings.Resources.UsernameInvalidLong;
                 }
                 else
                 {
-                    ErrorMessage = Strings.Android.UsernameInvalid;
+                    ErrorMessage = Strings.Resources.UsernameInvalid;
                 }
             }
             else
@@ -210,24 +210,24 @@ namespace Unigram.ViewModels.Settings
                 if (error.CodeEquals(TLErrorCode.FLOOD))
                 {
                     //this.HasError = true;
-                    //this.Error = Strings.Resources.FloodWaitString;
+                    //this.Error = Strings.Additional.FloodWaitString;
                     //Telegram.Api.Helpers.Dispatch(delegate
                     //{
-                    //    MessageBox.Show(Strings.Resources.FloodWaitString, Strings.Resources.Error, 0);
+                    //    MessageBox.Show(Strings.Additional.FloodWaitString, Strings.Additional.Error, 0);
                     //});
                 }
                 else if (error.CodeEquals(TLErrorCode.INTERNAL))
                 {
                     //StringBuilder messageBuilder = new StringBuilder();
-                    //messageBuilder.AppendLine(Strings.Resources.ServerErrorMessage);
+                    //messageBuilder.AppendLine(Strings.Additional.ServerErrorMessage);
                     //messageBuilder.AppendLine();
                     //messageBuilder.AppendLine("Method: account.updateUsername");
                     //messageBuilder.AppendLine("Result: " + error);
                     //this.HasError = true;
-                    //this.Error = Strings.Resources.ServerError;
+                    //this.Error = Strings.Additional.ServerError;
                     //Telegram.Api.Helpers.Dispatch(delegate
                     //{
-                    //    MessageBox.Show(messageBuilder.ToString(), Strings.Resources.ServerError, 0);
+                    //    MessageBox.Show(messageBuilder.ToString(), Strings.Additional.ServerError, 0);
                     //});
                 }
                 else if (error.CodeEquals(TLErrorCode.BAD_REQUEST))
@@ -235,19 +235,19 @@ namespace Unigram.ViewModels.Settings
                     if (error.TypeEquals(TLErrorType.USERNAME_INVALID))
                     {
                         //this.HasError = true;
-                        //this.Error = Strings.Resources.UsernameInvalid;
+                        //this.Error = Strings.Additional.UsernameInvalid;
                         //Telegram.Api.Helpers.Dispatch(delegate
                         //{
-                        //    MessageBox.Show(Strings.Resources.UsernameInvalid, Strings.Resources.Error, 0);
+                        //    MessageBox.Show(Strings.Additional.UsernameInvalid, Strings.Additional.Error, 0);
                         //});
                     }
                     else if (error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
                     {
                         //this.HasError = true;
-                        //this.Error = Strings.Resources.UsernameOccupied;
+                        //this.Error = Strings.Additional.UsernameOccupied;
                         //Telegram.Api.Helpers.Dispatch(delegate
                         //{
-                        //    MessageBox.Show(Strings.Resources.UsernameOccupied, Strings.Resources.Error, 0);
+                        //    MessageBox.Show(Strings.Additional.UsernameOccupied, Strings.Additional.Error, 0);
                         //});
                     }
                     else if (error.TypeEquals(TLErrorType.USERNAME_NOT_MODIFIED))
@@ -276,7 +276,7 @@ namespace Unigram.ViewModels.Settings
             dataPackage.SetText(MeUrlPrefixConverter.Convert(_username));
             ClipboardEx.TrySetContent(dataPackage);
 
-            await TLMessageDialog.ShowAsync(Strings.Android.LinkCopied, Strings.Android.AppName, Strings.Android.OK);
+            await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
     }
 }

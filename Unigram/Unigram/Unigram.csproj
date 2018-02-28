@@ -22,7 +22,7 @@
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
-    <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
+    <!--<BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>-->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -381,15 +381,10 @@
     <Compile Include="Services\PasscodeService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\ProtoService.cs" />
-    <Compile Include="Strings\en\Android.cs">
+    <Compile Include="Strings\en\Additional.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Android.resw</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\en\Branding.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Branding.resw</DependentUpon>
+      <DependentUpon>Additional.resw</DependentUpon>
     </Compile>
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>
@@ -1204,77 +1199,44 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <PRIResource Include="Strings\en\Resources.resw">
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <SubType>Designer</SubType>
-      <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.cs</LastGenOutput>
-    </PRIResource>
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
     <None Include="Assets\Fonts\Telegram.json" />
-    <PRIResource Include="Strings\en\Branding.resw">
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+    <PRIResource Include="Strings\uk\Additional.resw" />
+    <PRIResource Include="Strings\ru\Additional.resw" />
+    <PRIResource Include="Strings\pt-BR\Additional.resw" />
+    <PRIResource Include="Strings\nl\Additional.resw" />
+    <PRIResource Include="Strings\ms\Additional.resw" />
+    <PRIResource Include="Strings\ko\Additional.resw" />
+    <PRIResource Include="Strings\it\Additional.resw" />
+    <PRIResource Include="Strings\id\Additional.resw" />
+    <PRIResource Include="Strings\fr\Additional.resw" />
+    <PRIResource Include="Strings\es\Additional.resw" />
+    <PRIResource Include="Strings\en\Additional.resw">
       <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>Branding.cs</LastGenOutput>
-    </PRIResource>
-    <PRIResource Include="Strings\en\Android.resw">
+      <LastGenOutput>Additional.cs</LastGenOutput>
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>ReswFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Android.cs</LastGenOutput>
     </PRIResource>
-    <PRIResource Include="Strings\it\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\fr\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\de\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\es\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\ko\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\nl\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\pt-BR\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\ru\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\uk\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\ms\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\id\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\ar\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
+    <PRIResource Include="Strings\de\Additional.resw" />
+    <PRIResource Include="Strings\ar\Additional.resw" />
     <PRIResource Include="Strings\ar\Resources.resw" />
     <PRIResource Include="Strings\de\Resources.resw" />
+    <PRIResource Include="Strings\en\Resources.resw">
+      <Generator>ReswFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.cs</LastGenOutput>
+      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+    </PRIResource>
     <PRIResource Include="Strings\es\Resources.resw" />
+    <PRIResource Include="Strings\fa\Resources.resw" />
     <PRIResource Include="Strings\fr\Resources.resw" />
     <PRIResource Include="Strings\id\Resources.resw" />
     <PRIResource Include="Strings\it\Resources.resw" />
     <PRIResource Include="Strings\ko\Resources.resw" />
     <PRIResource Include="Strings\ms\Resources.resw" />
+    <PRIResource Include="Strings\nl\Resources.resw" />
     <PRIResource Include="Strings\pt-BR\Resources.resw" />
     <PRIResource Include="Strings\ru\Resources.resw" />
     <PRIResource Include="Strings\uk\Resources.resw" />
-    <PRIResource Include="Strings\nl\Resources.resw" />
-    <PRIResource Include="Strings\fa\Android.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1365,6 +1327,7 @@
     <None Include="Package.StoreAssociation.xml">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Assets\Mockup\a0.png" />
     <Content Include="Assets\Noise.jpg" />
     <Content Include="Assets\Sounds\Default.wav" />
     <Content Include="Assets\Sounds\Sound1.wav" />

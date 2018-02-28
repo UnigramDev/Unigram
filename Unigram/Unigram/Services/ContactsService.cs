@@ -268,10 +268,18 @@ namespace Unigram.Services
             if (contactsList.Count == 0)
             {
                 contactList = await store.CreateContactListAsync("Unigram");
+                contactList.OtherAppWriteAccess = ContactListOtherAppWriteAccess.None;
+                await contactList.SaveAsync();
             }
             else
             {
                 contactList = contactsList[0];
+
+                if (contactList.OtherAppWriteAccess != ContactListOtherAppWriteAccess.None)
+                {
+                    contactList.OtherAppWriteAccess = ContactListOtherAppWriteAccess.None;
+                    await contactList.SaveAsync();
+                }
             }
 
             return contactList;

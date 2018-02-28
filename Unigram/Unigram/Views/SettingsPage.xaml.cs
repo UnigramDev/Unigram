@@ -255,7 +255,7 @@ namespace Unigram.Views
         {
             if (string.IsNullOrEmpty(username))
             {
-                return Strings.Android.UsernameEmpty;
+                return Strings.Resources.UsernameEmpty;
             }
 
             return "@" + username;
@@ -265,7 +265,7 @@ namespace Unigram.Views
         {
             if (string.IsNullOrEmpty(about))
             {
-                return Strings.Android.UserBioEmpty;
+                return Strings.Resources.UserBioEmpty;
             }
 
             return about;
@@ -279,12 +279,12 @@ namespace Unigram.Views
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
             PhoneNumber.Content = Telegram.Helpers.PhoneNumber.Format(user.PhoneNumber);
-            Username.Content = string.IsNullOrEmpty(user.Username) ? Strings.Android.UsernameEmpty : $"@{user.Username}";
+            Username.Content = string.IsNullOrEmpty(user.Username) ? Strings.Resources.UsernameEmpty : $"@{user.Username}";
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret)
         {
-            Bio.Content = string.IsNullOrEmpty(fullInfo.Bio) ? Strings.Android.UserBioEmpty : fullInfo.Bio;
+            Bio.Content = string.IsNullOrEmpty(fullInfo.Bio) ? Strings.Resources.UserBioEmpty : fullInfo.Bio;
         }
 
         public void UpdateUserStatus(Chat chat, User user)
