@@ -76,16 +76,16 @@ namespace Unigram.Models
             }
         }
 
-        protected int? _ttlSeconds;
-        public int? TTLSeconds
+        protected int? _ttl;
+        public int? Ttl
         {
             get
             {
-                return _ttlSeconds;
+                return _ttl;
             }
             set
             {
-                Set(ref _ttlSeconds, value);
+                Set(ref _ttl, value);
             }
         }
 
@@ -99,6 +99,19 @@ namespace Unigram.Models
             set
             {
                 Set(ref _isSelected, value);
+            }
+        }
+
+        protected bool _isForceFile;
+        public bool IsForceFile
+        {
+            get
+            {
+                return _isForceFile;
+            }
+            set
+            {
+                Set(ref _isForceFile, value);
             }
         }
 
