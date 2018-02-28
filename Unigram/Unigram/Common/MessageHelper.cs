@@ -398,7 +398,14 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    navigation.NavigateToChat(chat);
+                    if (long.TryParse(post, out long message))
+                    {
+                        navigation.NavigateToChat(chat, message: message << 20);
+                    }
+                    else
+                    {
+                        navigation.NavigateToChat(chat);
+                    }
                 }
             }
             else
