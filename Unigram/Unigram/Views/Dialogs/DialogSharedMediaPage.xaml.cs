@@ -254,7 +254,7 @@ namespace Unigram.Views.Dialogs
             {
                 if (args.ItemContainer.ContentTemplateRoot is SharedFileListViewItem content)
                 {
-                    content.UpdateMessage(ViewModel.ProtoService, message);
+                    content.UpdateMessage(ViewModel.ProtoService, ViewModel, message);
                 }
             }
             else if (message.Content is MessageText)

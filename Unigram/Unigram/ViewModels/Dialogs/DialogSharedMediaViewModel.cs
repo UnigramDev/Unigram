@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using System.Threading.Tasks;
@@ -13,13 +12,14 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
 using TdWindows;
-using System.IO;
 using Windows.Storage.Pickers;
 using Windows.Storage;
+using Windows.UI.Xaml;
+using System.Linq;
 
 namespace Unigram.ViewModels.Dialogs
 {
-    public class DialogSharedMediaViewModel : UnigramViewModelBase, IHandle<UpdateFile>
+    public class DialogSharedMediaViewModel : UnigramViewModelBase, IMessageDelegate, IHandle<UpdateFile>
     {
         public IFileDelegate Delegate { get; set; }
 
@@ -142,10 +142,10 @@ namespace Unigram.ViewModels.Dialogs
             var fileName = result.FileName;
             if (string.IsNullOrEmpty(fileName))
             {
-                fileName = Path.GetFileName(file.Local.Path);
+                fileName = System.IO.Path.GetFileName(file.Local.Path);
             }
 
-            var extension = Path.GetExtension(fileName);
+            var extension = System.IO.Path.GetExtension(fileName);
             if (string.IsNullOrEmpty(extension))
             {
                 extension = ".dat";
@@ -422,6 +422,98 @@ namespace Unigram.ViewModels.Dialogs
 
             SelectedItems = new List<Message> { message };
             RaisePropertyChanged("SelectedItems");
+        }
+
+        #endregion
+
+        #region Delegate
+
+        public bool CanBeDownloaded(MessageViewModel message)
+        {
+            return true;
+        }
+
+        public void DownloadFile(MessageViewModel message, TdWindows.File file)
+        {
+        }
+
+        public void OpenReply(MessageViewModel message)
+        {
+        }
+
+        public async void OpenFile(File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                try
+                {
+                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    var result = await Windows.System.Launcher.LaunchFileAsync(temp);
+                    //var folder = await temp.GetParentAsync();
+                    //var options = new Windows.System.FolderLauncherOptions();
+                    //options.ItemsToSelect.Add(temp);
+
+                    //var result = await Windows.System.Launcher.LaunchFolderAsync(folder, options);
+                }
+                catch { }
+            }
+        }
+
+        public void OpenWebPage(WebPage webPage)
+        {
+        }
+
+        public void OpenSticker(Sticker sticker)
+        {
+        }
+
+        public void OpenLocation(Location location, string title)
+        {
+        }
+
+        public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)
+        {
+        }
+
+        public void OpenMedia(MessageViewModel message, FrameworkElement target)
+        {
+        }
+
+        public void PlayMessage(MessageViewModel message)
+        {
+        }
+
+        public void OpenUsername(string username)
+        {
+        }
+
+        public void OpenUser(int userId)
+        {
+        }
+
+        public void OpenChat(long chatId)
+        {
+        }
+
+        public void OpenChat(long chatId, long messageId)
+        {
+        }
+
+        public void OpenViaBot(int viaBotUserId)
+        {
+        }
+
+        public void OpenUrl(string url, bool untrust)
+        {
+        }
+
+        public void SendBotCommand(string command)
+        {
+        }
+
+        public bool IsAdmin(int userId)
+        {
+            return false;
         }
 
         #endregion
