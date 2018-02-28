@@ -662,42 +662,38 @@ namespace Unigram.Controls.Messages
                 }
                 else if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeBotCommand)
                 {
+                    var hyperlink = new Hyperlink();
                     var data = text.Substring(entity.Offset, entity.Length);
 
-                    var hyperlink = new Hyperlink();
                     hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
                     hyperlink.Inlines.Add(new Run { Text = data });
                     //hyperlink.Foreground = foreground;
                     span.Inlines.Add(hyperlink);
 
-                    //if (entity is TLMessageEntityUrl)
-                    //{
-                    //    SetEntity(hyperlink, (string)data);
-                    //}
+                    if (entity.Type is TextEntityTypeUrl)
+                    {
+                        MessageHelper.SetEntity(hyperlink, data);
+                    }
                 }
                 else if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeMentionName)
                 {
+                    var hyperlink = new Hyperlink();
                     object data;
                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                     {
                         data = textUrl.Url;
+                        MessageHelper.SetEntity(hyperlink, textUrl.Url);
+                        ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                     }
                     else if (entity.Type is TextEntityTypeMentionName mentionName)
                     {
                         data = mentionName.UserId;
                     }
 
-                    var hyperlink = new Hyperlink();
                     hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
                     hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
                     //hyperlink.Foreground = foreground;
                     span.Inlines.Add(hyperlink);
-
-                    //if (entity is TLMessageEntityTextUrl textUrl)
-                    //{
-                    //    SetEntity(hyperlink, textUrl.Url);
-                    //    ToolTipService.SetToolTip(hyperlink, textUrl.Url);
-                    //}
                 }
 
                 previous = entity.Offset + entity.Length;

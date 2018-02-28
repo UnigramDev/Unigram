@@ -2017,7 +2017,7 @@ namespace Unigram.Views
         private void ServiceMessage_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as FrameworkElement;
-            var message = button.DataContext as MessageViewModel;
+            var message = button.Tag as MessageViewModel;
 
             if (message == null)
             {
@@ -2030,7 +2030,7 @@ namespace Unigram.Views
         private void Message_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             var button = sender as FrameworkElement;
-            var message = button.DataContext as TLMessageBase;
+            var message = button.Tag as MessageViewModel;
 
             if (message == null)
             {
