@@ -680,6 +680,9 @@
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Фонові дані обмежені.</value>
   </data>
+  <data name="BackgroundRestricted" xml:space="preserve">
+    <value>Фонові дані обмежені.</value>
+  </data>
   <data name="BadgeNumber" xml:space="preserve">
     <value>Лічильник значків</value>
   </data>

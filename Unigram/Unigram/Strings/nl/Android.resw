@@ -681,6 +681,9 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general-questions">veel
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Achtergrondgegevens beperkt.</value>
   </data>
+  <data name="BackgroundRestricted" xml:space="preserve">
+    <value>Achtergrondgegevens beperkt.</value>
+  </data>
   <data name="BadgeNumber" xml:space="preserve">
     <value>Badgenummer</value>
   </data>

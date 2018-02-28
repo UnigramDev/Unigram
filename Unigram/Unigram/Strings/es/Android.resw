@@ -681,6 +681,9 @@ Por favor, mira las <![CDATA[<a href="https://telegram.org/faq/es#preguntas-gene
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Datos en segundo plano restringidos.</value>
   </data>
+  <data name="BackgroundRestricted" xml:space="preserve">
+    <value>Datos en segundo plano restringidos.</value>
+  </data>
   <data name="BadgeNumber" xml:space="preserve">
     <value>Globo en el ícono</value>
   </data>

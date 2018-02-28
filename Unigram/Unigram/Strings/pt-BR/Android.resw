@@ -681,6 +681,9 @@ Por favor verifique a página de <![CDATA[<a href="https://telegram.org/faq/br#q
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Dados em segundo plano restringidos.</value>
   </data>
+  <data name="BackgroundRestricted" xml:space="preserve">
+    <value>Dados em segundo plano restringidos.</value>
+  </data>
   <data name="BadgeNumber" xml:space="preserve">
     <value>Contador no Ícone</value>
   </data>

@@ -679,6 +679,9 @@ Sila lihat  <![CDATA[<a href="https://telegram.org/faq#general">Soalan Lazim Tel
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Data latar belakang terhad.</value>
   </data>
+  <data name="BackgroundRestricted" xml:space="preserve">
+    <value>Data latar belakang terhad.</value>
+  </data>
   <data name="BadgeNumber" xml:space="preserve">
     <value>Pembilang Lencana</value>
   </data>

@@ -677,6 +677,9 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Data latar belakang dibatasi</value>
   </data>
+  <data name="BackgroundRestricted" xml:space="preserve">
+    <value>Data latar belakang dibatasi</value>
+  </data>
   <data name="BadgeNumber" xml:space="preserve">
     <value>Penghitung Tanda</value>
   </data>
