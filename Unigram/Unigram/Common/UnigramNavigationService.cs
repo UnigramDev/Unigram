@@ -86,9 +86,18 @@ namespace Unigram.Common
             }
         }
 
-        public void NavigateToChat(long chatId, long? message = null, string accessToken = null)
+        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null)
         {
             var chat = _protoService.GetChat(chatId);
+            if (chat == null)
+            {
+                var response = await _protoService.SendAsync(new GetChat(chatId));
+                if (response is Chat result)
+                {
+                    chat = result;
+                }
+            }
+
             if (chat == null)
             {
                 return;
