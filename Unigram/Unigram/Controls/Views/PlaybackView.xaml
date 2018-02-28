@@ -1,4 +1,4 @@
-﻿<controls:ContentDialogBase
+<controls:ContentDialogBase
     x:Class="Unigram.Controls.Views.PlaybackView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -192,34 +192,34 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <ScrollContentPresenter x:Name="ScrollContentPresenter"
-                                                    Grid.RowSpan="2"
-                                                    Grid.ColumnSpan="2"
-                                                    ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                                        Grid.RowSpan="2"
+                                                        Grid.ColumnSpan="2"
+                                                        ContentTemplate="{TemplateBinding ContentTemplate}" />
                                 <Grid
-                                Grid.RowSpan="2"
-                                Grid.ColumnSpan="2" />
+                                    Grid.RowSpan="2"
+                                    Grid.ColumnSpan="2" />
                                 <ScrollBar x:Name="VerticalScrollBar"
-                                            Grid.Column="1"
-                                            IsTabStop="False"
-                                            Maximum="{TemplateBinding ScrollableHeight}"
-                                            Orientation="Vertical"
-                                            Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                                            Value="{TemplateBinding VerticalOffset}"
-                                            ViewportSize="{TemplateBinding ViewportHeight}"
-                                            HorizontalAlignment="Right"
+                                           Grid.Column="1"
+                                           IsTabStop="False"
+                                           Maximum="{TemplateBinding ScrollableHeight}"
+                                           Orientation="Vertical"
+                                           Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                           Value="{TemplateBinding VerticalOffset}"
+                                           ViewportSize="{TemplateBinding ViewportHeight}"
+                                           HorizontalAlignment="Right"
                                            Margin="{TemplateBinding Padding}"/>
                                 <ScrollBar x:Name="HorizontalScrollBar"
-                                       IsTabStop="False"
-                                       Maximum="{TemplateBinding ScrollableWidth}"
-                                       Orientation="Horizontal"
-                                       Grid.Row="1"
-                                       Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
-                                       Value="{TemplateBinding HorizontalOffset}"
-                                       ViewportSize="{TemplateBinding ViewportWidth}" />
+                                           IsTabStop="False"
+                                           Maximum="{TemplateBinding ScrollableWidth}"
+                                           Orientation="Horizontal"
+                                           Grid.Row="1"
+                                           Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                                           Value="{TemplateBinding HorizontalOffset}"
+                                           ViewportSize="{TemplateBinding ViewportWidth}" />
                                 <Border x:Name="ScrollBarSeparator"
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    Background="{ThemeResource ScrollViewerScrollBarSeparatorBackground}" />
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Background="{ThemeResource ScrollViewerScrollBarSeparatorBackground}" />
                             </Grid>
                         </Border>
                     </ControlTemplate>
@@ -566,7 +566,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Border x:Name="LineAccent" BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}" IsHitTestVisible="False"/>
-                            <Border x:Name="LineTop" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.Row="2"/>
+                            <Border x:Name="LineTop" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.Row="2"/>
 
                             <Grid Padding="12,6,0,0">
                                 <Grid.ColumnDefinitions>
@@ -585,9 +585,9 @@
                                 </StackPanel>
 
                                 <Button x:Name="btnOptions"
-                                            Padding="16,23,16,0"
-                                            Style="{StaticResource EllipsisButton}"
-                                            Grid.Column="2">
+                                        Padding="16,23,16,0"
+                                        Style="{StaticResource EllipsisButton}"
+                                        Grid.Column="2">
                                     <FontIcon x:Name="EllipsisIcon"
                                               VerticalAlignment="Center"
                                               FontFamily="{ThemeResource SymbolThemeFontFamily}"

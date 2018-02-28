@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +32,30 @@ namespace Unigram.Models
 
         public override uint Width => Properties.GetWidth();
         public override uint Height => Properties.GetHeight();
+
+        //private bool? _isAnimatable;
+        //public override bool IsAnimatable
+        //{
+        //    get
+        //    {
+        //        if (_isAnimatable == null)
+        //        {
+        //            try
+        //            {
+        //                using (var archive = ZipFile.OpenRead(File.Path))
+        //                {
+        //                    _isAnimatable = true;
+        //                }
+        //            }
+        //            catch
+        //            {
+        //                _isAnimatable = false;
+        //            }
+        //        }
+
+        //        return _isAnimatable ?? false;
+        //    }
+        //}
 
         public Task<StorageFile> GetFileAsync()
         {

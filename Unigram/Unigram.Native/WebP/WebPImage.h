@@ -36,6 +36,7 @@ namespace Unigram
 		public:
 			static WebPImage^ CreateFromByteArray(const Array<uint8> ^bytes);
 
+			static WriteableBitmap^ DecodeFromPath(String^ path);
 			static WriteableBitmap^ DecodeFromBuffer(IBuffer^ buffer);
 			static WriteableBitmap^ DecodeFromByteArray(const Array<uint8> ^bytes);
 			static IRandomAccessStream^ Encode(const Array<uint8> ^bytes);

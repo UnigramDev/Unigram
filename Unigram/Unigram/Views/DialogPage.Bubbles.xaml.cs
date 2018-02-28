@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -45,27 +44,30 @@ using Windows.Media.Playback;
 using Unigram.Common;
 using Unigram.Controls.Messages;
 using LinqToVisualTree;
+using TdWindows;
 
 namespace Unigram.Views
 {
-    public partial class DialogPage : Page, IGifPlayback
+    public partial class DialogPage : Page
     {
         private ItemsStackPanel _panel;
-        private Dictionary<string, MediaPlayerItem> _old = new Dictionary<string, MediaPlayerItem>();
 
-        private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private void OnViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 120)
+            if (Messages.ScrollingHost.ScrollableHeight > 0)
             {
-                //if (ViewModel.IsFirstSliceLoaded)
-                //{
-                //    Messages.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, false);
-                //}
-                //else
-                //{
-                //    Messages.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
-                //}
+                return;
+            }
 
+            Arrow.Visibility = Visibility.Collapsed;
+
+            ViewVisibleMessages(false);
+        }
+
+        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 120 && ViewModel.IsFirstSliceLoaded != false)
+            {
                 Arrow.Visibility = Visibility.Collapsed;
             }
             else
@@ -73,175 +75,151 @@ namespace Unigram.Views
                 Arrow.Visibility = Visibility.Visible;
             }
 
-            //if (ViewModel.Peer is TLInputPeerUser)
-            //{
-            //    lvDialogs.ScrollingHost.ViewChanged -= OnViewChanged;
-            //    return;
-            //}
+            ViewVisibleMessages(e.IsIntermediate);
+            //UpdateHeaderDate();
+        }
 
-            var index0 = _panel.FirstVisibleIndex;
-            var index1 = _panel.LastVisibleIndex;
-
-            var show = false;
-            var date = DateTime.Now;
-            var message0 = default(TLMessageCommonBase);
-
-            if (index0 > -1 && index1 > -1 /*&& (index0 != _lastIndex0 || index1 != _lastIndex1)*/ && !e.IsIntermediate)
+        private void ViewVisibleMessages(bool intermediate)
+        {
+            var chat = ViewModel.Chat;
+            if (chat == null)
             {
-                var container0 = Messages.ContainerFromIndex(index0);
-                if (container0 != null)
+                return;
+            }
+
+            if (_panel == null || _panel.FirstVisibleIndex < 0)
+            {
+                return;
+            }
+
+            var messages = new List<long>(_panel.LastVisibleIndex - _panel.FirstVisibleIndex);
+            var animations = new List<MessageViewModel>(_panel.LastVisibleIndex - _panel.FirstVisibleIndex);
+
+            for (int i = _panel.FirstVisibleIndex; i <= _panel.LastVisibleIndex; i++)
+            {
+                var container = Messages.ContainerFromIndex(i) as SelectorItem;
+                if (container == null)
                 {
-                    var item0 = Messages.ItemFromContainer(container0);
-                    if (item0 != null)
-                    {
-                        message0 = item0 as TLMessageCommonBase;
-                        var date0 = BindConvert.Current.DateTime(message0.Date);
-
-                        var service0 = message0 as TLMessageService;
-                        if (service0 != null)
-                        {
-                            show = !(service0.Action is TLMessageActionDate);
-                        }
-                        else
-                        {
-                            show = true;
-                        }
-
-                        date = date0.Date;
-                    }
+                    continue;
                 }
 
-                var mentionIds = new TLVector<int>();
-                var unreadId = 0;
-                var dialog = ViewModel.Dialog;
-
-                var messages = new List<TLMessage>(index1 - index0);
-                var auto = ApplicationSettings.Current.IsAutoPlayEnabled;
-                var news = new Dictionary<string, MediaPlayerItem>();
-
-                for (int i = index0; i <= index1; i++)
+                var message = Messages.ItemFromContainer(container) as MessageViewModel;
+                if (message == null || message.Id == 0)
                 {
-                    var container = Messages.ContainerFromIndex(i) as ListViewItem;
-                    if (container != null)
-                    {
-                        var item = Messages.ItemFromContainer(container);
-                        if (item is TLMessageCommonBase commonMessage && !commonMessage.IsOut)
-                        {
-                            //if (/*commonMessage.IsUnread ||*/ commonMessage.Id > dialog?.ReadInboxMaxId)
-                            //{
-                            //    commonMessage.SetUnread(false);
-
-                            //    unreadId = commonMessage.Id > unreadId ? commonMessage.Id : unreadId;
-                            //}
-
-                            if (commonMessage.IsMentioned && commonMessage.IsMediaUnread)
-                            {
-                                commonMessage.IsMediaUnread = false;
-                                commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
-
-                                mentionIds.Add(commonMessage.Id);
-                            }
-                        }
-
-                        var message = item as TLMessage;
-                        if (message == null)
-                        {
-                            continue;
-                        }
-
-                        messages.Add(message);
-                    }
+                    continue;
                 }
 
-                Play(messages, auto);
+                if (message.ContainsUnreadMention)
+                {
+                    ViewModel.SetLastViewedMention(message.Id);
+                }
 
-                //if (unreadId > 0)
+                messages.Add(message.Id);
+                animations.Add(message);
+            }
+
+            if (messages.Count > 0 && _windowContext.ActivationState != CoreWindowActivationState.Deactivated)
+            {
+                ViewModel.ProtoService.Send(new ViewMessages(chat.Id, messages, false));
+            }
+
+            if (animations.Count > 0 && !intermediate)
+            {
+                Play(animations, ApplicationSettings.Current.IsAutoPlayEnabled);
+            }
+        }
+
+        private void UpdateHeaderDate()
+        {
+            if (_panel == null || _panel.FirstVisibleIndex < 0)
+            {
+                return;
+            }
+
+            var minItem = true;
+            var minDate = true;
+
+            for (int i = _panel.FirstVisibleIndex; i <= _panel.LastVisibleIndex; i++)
+            {
+                var container = Messages.ContainerFromIndex(i) as SelectorItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
+                var message = Messages.ItemFromContainer(container) as MessageViewModel;
+                if (message == null)
+                {
+                    continue;
+                }
+
+                //if (i == _panel.FirstVisibleIndex)
                 //{
-                //    if (dialog != null)
-                //    {
-                //        dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1 - ViewModel.Items.Count(x => x.Id > dialog.ReadInboxMaxId && x.Id < unreadId));
-                //        dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-
-                //        dialog.ReadInboxMaxId = unreadId;
-                //    }
-
-                //    var container = Messages.ContainerFromItem(ViewModel.Items.FirstOrDefault(x => x.Id == unreadId)) as ListViewItem;
-                //    var bubble = container.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
-                //    if (bubble != null)
-                //    {
-                //        bubble.Highlight();
-                //    }
-
-                //    if (ViewModel.With is TLChannel channel)
-                //    {
-                //        ViewModel.ProtoService.ReadHistoryAsync(channel, unreadId, null);
-                //    }
-                //    else
-                //    {
-                //        ViewModel.ProtoService.ReadHistoryAsync(ViewModel.Peer, unreadId, 0, null);
-                //    }
+                //    DateHeaderLabel.Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date));
                 //}
 
-                if (mentionIds.Count > 0)
-                {
-                    if (dialog != null)
-                    {
-                        dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - mentionIds.Count);
-                        dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
-                    }
+                var transform = container.TransformToVisual(DateHeaderRelative);
+                var point = transform.TransformPoint(new Point());
+                var height = (float)DateHeader.ActualHeight;
+                var offset = (float)point.Y + height;
 
-                    if (ViewModel.With is TLChannel channel)
+                if (point.Y + container.ActualHeight >= 0 && minItem)
+                {
+                    minItem = false;
+                    DateHeaderLabel.Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date));
+                }
+
+                if (message.Content is MessageHeaderDate && minDate)
+                {
+                    minDate = false;
+
+                    if (offset >= 0 && offset < height)
                     {
-                        ViewModel.ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), mentionIds, null);
+                        container.Opacity = 0;
                     }
                     else
                     {
-                        ViewModel.ProtoService.ReadMessageContentsAsync(mentionIds, null);
+                        container.Opacity = 1;
+                    }
+
+                    if (offset >= height && offset < height * 2)
+                    {
+                        _dateHeader.Offset = new Vector3(0, -height * 2 + offset, 0);
+                    }
+                    else
+                    {
+                        _dateHeader.Offset = new Vector3();
                     }
                 }
-            }
-
-            if (show)
-            {
-                var paragraph = new Paragraph();
-                paragraph.Inlines.Add(new Run { Text = DateTimeToFormatConverter.ConvertDayGrouping(date) });
-
-                DateHeader.DataContext = message0;
-                DateHeader.Visibility = Visibility.Visible;
-                DateHeaderLabel.Blocks.Clear();
-                DateHeaderLabel.Blocks.Add(paragraph);
-            }
-            else
-            {
-                DateHeader.Visibility = Visibility.Collapsed;
-            }
-
-            if (e.IsIntermediate == false)
-            {
-                await Task.Delay(4000);
-                DateHeader.Visibility = Visibility.Collapsed;
+                else
+                {
+                    container.Opacity = 1;
+                }
             }
         }
 
         class MediaPlayerItem
         {
+            public File File { get; set; }
             public Grid Container { get; set; }
             public MediaPlayerView Presenter { get; set; }
             public bool Watermark { get; set; }
         }
 
-        public void Play(TLMessage message)
-        {
-            var document = message.GetDocument();
-            if (document == null || !TLMessage.IsGif(document))
-            {
-                return;
-            }
+        private Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
 
-            var fileName = FileUtils.GetTempFileUrl(document.GetFileName());
-            if (_old.ContainsKey(fileName))
+        public void PlayMessage(MessageViewModel message)
+        {
+            //var document = message.GetDocument();
+            //if (document == null || !TLMessage.IsGif(document))
+            //{
+            //    return;
+            //}
+
+            //var fileName = FileUtils.GetTempFileUrl(document.GetFileName());
+            if (_old.ContainsKey(message.Id))
             {
-                Play(new TLMessage[0], false);
+                Play(new MessageViewModel[0], false);
             }
             else
             {
@@ -249,9 +227,9 @@ namespace Unigram.Views
             }
         }
 
-        public void Play(IEnumerable<TLMessage> items, bool auto)
+        public void Play(IEnumerable<MessageViewModel> items, bool auto)
         {
-            var news = new Dictionary<string, MediaPlayerItem>();
+            var news = new Dictionary<long, MediaPlayerItem>();
 
             foreach (var message in items)
             {
@@ -261,14 +239,13 @@ namespace Unigram.Views
                     continue;
                 }
 
-                var document = message.GetDocument();
-                if (document == null || !(TLMessage.IsGif(document) /*|| TLMessage.IsRoundVideo(document)*/))
+                var animation = message.GetAnimation();
+                if (animation == null)
                 {
                     continue;
                 }
 
-                var fileName = document.GetFileName();
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                if (animation.Local.IsDownloadingCompleted)
                 {
                     var root = container.ContentTemplateRoot as FrameworkElement;
                     if (root is Grid grid)
@@ -277,17 +254,21 @@ namespace Unigram.Views
                     }
 
                     var media = root.FindName("Media") as ContentControl;
-                    var panel = media.ContentTemplateRoot as FrameworkElement;
+                    var panel = media.ContentTemplateRoot as Panel;
 
-                    if (message.Media is TLMessageMediaWebPage)
+                    if (message.Content is MessageText)
                     {
                         media = panel.FindName("Media") as ContentControl;
-                        panel = media.ContentTemplateRoot as FrameworkElement;
+                        panel = media.ContentTemplateRoot as Panel;
                     }
-                    else if (message.Media is TLMessageMediaGame)
+                    else if (message.Content is MessageGame)
                     {
-                        panel = panel.FindName("Media") as FrameworkElement;
+                        panel = panel.FindName("Media") as Panel;
                     }
+                    //else if (message.Media is TLMessageMediaGame)
+                    //{
+                    //    panel = panel.FindName("Media") as FrameworkElement;
+                    //}
                     //else if (message.IsRoundVideo())
                     //{
                     //    panel = panel.FindName("Inner") as FrameworkElement;
@@ -295,7 +276,8 @@ namespace Unigram.Views
 
                     if (panel is Grid final)
                     {
-                        news[FileUtils.GetTempFileUrl(fileName)] = new MediaPlayerItem { Container = final, Watermark = message.Media is TLMessageMediaGame };
+                        final.Tag = message;
+                        news[message.Id] = new MediaPlayerItem { File = animation, Container = final, Watermark = message.Content is MessageGame };
                     }
                 }
             }
@@ -326,26 +308,32 @@ namespace Unigram.Views
 
             foreach (var item in news.Keys.Except(_old.Keys).ToList())
             {
+                if (_old.ContainsKey(item))
+                {
+                    continue;
+                }
+
                 var container = news[item].Container;
                 if (container != null && container.Children.Count < 5)
                 {
                     var player = new MediaPlayer();
                     player.AutoPlay = true;
-                    player.IsMuted = true;
+                    player.IsMuted = auto;
                     player.IsLoopingEnabled = true;
                     player.CommandManager.IsEnabled = false;
-                    player.Source = MediaSource.CreateFromUri(new Uri(item));
+                    player.Source = MediaSource.CreateFromUri(new Uri("file:///" + news[item].File.Local.Path));
 
                     var presenter = new MediaPlayerView();
                     presenter.MediaPlayer = player;
                     presenter.IsHitTestVisible = false;
-                    presenter.Constraint = container.DataContext;
+                    presenter.Constraint = container.Tag;
 
                     news[item].Presenter = presenter;
-                    container.Children.Insert(news[item].Watermark ? 2 : 2, presenter);
+                    //container.Children.Insert(news[item].Watermark ? 2 : 2, presenter);
+                    container.Children.Add(presenter);
                 }
 
-                _old.Add(item, news[item]);
+                _old[item] = news[item];
             }
         }
 
@@ -443,6 +431,61 @@ namespace Unigram.Views
 #if ENABLE_DEBUG_SPEW
                 Debug.Assert(added == true, "Recycle queue should never have dupes. If so, we may be incorrectly reusing a container that is already in use!");
 #endif // ENABLE_DEBUG_SPEW
+
+                return;
+            }
+
+            var message = args.Item as MessageViewModel;
+
+            var content = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
+            if (content is Grid grid)
+            {
+                var photo = grid.FindName("Photo") as ProfilePicture;
+                if (photo != null)
+                {
+                    photo.Tag = message;
+
+                    if (message.IsSaved())
+                    {
+                        if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                        {
+                            var user = message.ProtoService.GetUser(fromUser.SenderUserId);
+                            if (user != null)
+                            {
+                                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 32, 32);
+                            }
+                        }
+                        else if (message.ForwardInfo is MessageForwardedPost post)
+                        {
+                            var chat = message.ProtoService.GetChat(post.ForwardedFromChatId);
+                            if (chat != null)
+                            {
+                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 32, 32);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var user = message.GetSenderUser();
+                        if (user != null)
+                        {
+                            photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 32, 32);
+                        }
+                    }
+                }
+
+                content = grid.FindName("Bubble") as FrameworkElement;
+            }
+
+            if (content is MessageBubble bubble)
+            {
+                bubble.UpdateMessage(args.Item as MessageViewModel);
+                args.Handled = true;
+            }
+            else if (content is MessageService service)
+            {
+                service.UpdateMessage(args.Item as MessageViewModel);
+                args.Handled = true;
             }
         }
 
@@ -457,66 +500,47 @@ namespace Unigram.Views
 
         private string SelectTemplateCore(object item)
         {
-            var messageBase = item as TLMessageBase;
-            if (messageBase == null || messageBase is TLMessageEmpty)
+            //if (item is MessageViewModel message)
+            //{
+
+            //}
+            var message = item as MessageViewModel;
+            if (message == null)
             {
                 return "EmptyMessageTemplate";
             }
-            else if (messageBase is TLMessage message)
+
+
+            if (message.IsService())
             {
-                if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
-                {
-                    return "ServiceMessageTemplate";
-                }
-                else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
-                {
-                    return "ServiceMessageTemplate";
-                }
-
-                if (message.IsSaved())
-                {
-                    return "ChatFriendMessageTemplate";
-                }
-
-                if (message.IsOut && !message.IsPost)
-                {
-                    return "UserMessageTemplate";
-                }
-                else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
-                {
-                    return "ChatFriendMessageTemplate";
-                }
-
-                return "FriendMessageTemplate";
-            }
-            else if (messageBase is TLMessageService serviceMessage)
-            {
-                if (serviceMessage.Action is TLMessageActionChatEditPhoto)
+                if (message.Content is MessageChatChangePhoto)
                 {
                     return "ServiceMessagePhotoTemplate";
-                }
-                else if (serviceMessage.Action is TLMessageActionHistoryClear)
-                {
-                    return "EmptyMessageTemplate";
-                }
-                //else if (serviceMessage.Action is TLMessageActionDate)
-                //{
-                //    return "ServiceMessageDateTemplate";
-                //}
-                //else if (serviceMessage.Action is TLMessageActionUnreadMessages)
-                //{
-                //    //return ServiceMessageUnreadTemplate;
-                //    return "ServiceMessageLocalTemplate";
-                //}
-                else if (serviceMessage.Action is TLMessageActionPhoneCall)
-                {
-                    return serviceMessage.IsOut ? "ServiceUserCallMessageTemplate" : "ServiceFriendCallMessageTemplate";
                 }
 
                 return "ServiceMessageTemplate";
             }
 
-            return "EmptyMessageTemplate";
+            if (message.IsChannelPost)
+            {
+                return "FriendMessageTemplate";
+            }
+            else if (message.IsSaved())
+            {
+                return "ChatFriendMessageTemplate";
+            }
+            else if (message.IsOutgoing)
+            {
+                return "UserMessageTemplate";
+            }
+
+            var chat = message.GetChat();
+            if (chat != null && chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup)
+            {
+                return "ChatFriendMessageTemplate";
+            }
+
+            return "FriendMessageTemplate";
         }
     }
 

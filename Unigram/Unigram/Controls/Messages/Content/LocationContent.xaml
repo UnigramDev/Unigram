@@ -1,0 +1,39 @@
+<StackPanel
+    x:Class="Unigram.Controls.Messages.Content.LocationContent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Messages.Content"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+        <controls:ImageView x:Name="Texture" Click="Button_Click" MaxWidth="320" MaxHeight="240"/>
+        <Canvas Width="40" Height="47.691" Margin="0,-48,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
+            <Path Width="40" Height="47.691" Data="F1M20,47.691C20,47.691 0,33.847 0,20 0,8.955 8.955,0 20,0 31.044,0 40,8.955 40,20 40,33.847 20,47.691 20,47.691" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
+            <Border Height="40" Width="40">
+                <controls:ProfilePicture Source="{Binding Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="32" Height="32" IsHitTestVisible="False" Margin="4,3,4,4" VerticalAlignment="Top"/>
+            </Border>
+            <Path x:Name="PinDot" Canvas.Left="13" Canvas.Top="13" Width="14" Height="14" Data="F1M7,0C3.135,0 0,3.136 0,7 0,10.865 3.135,14 7,14 10.865,14 14,10.865 14,7 14,3.136 10.865,0 7,0" Fill="White" StrokeThickness="0" />
+        </Canvas>
+    </Grid>
+    <Grid x:Name="LivePanel" Padding="{ThemeResource MessageContentPadding}">
+        <!-- Visibility="{Binding Self, Converter={StaticResource GeoLiveToVisibilityConverter}}" -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}">
+            <Run x:Name="Title" FontWeight="SemiBold"/>
+            <LineBreak/>
+            <Run x:Name="Subtitle"/>
+        </TextBlock>
+        <Grid Width="36" Height="36" Margin="0,2,0,-2" Grid.Column="1">
+            <Ellipse Stroke="{ThemeResource MessageHeaderBorderBrush}" Opacity="0.2" StrokeThickness="2"/>
+            <controls:PeriodTimer Background="Transparent" Value="{Binding}" Period="{Binding Media.Period}" IsHitTestVisible="False"/>
+        </Grid>
+    </Grid>
+</StackPanel>

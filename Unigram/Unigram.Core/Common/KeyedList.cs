@@ -21,7 +21,7 @@ namespace Unigram.Common
             set
             {
                 _key = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Key"));
+                //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Key"));
             }
         }
 
@@ -44,9 +44,9 @@ namespace Unigram.Common
 
         public void Update()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Count"));
+            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Count"));
         }
 
-        protected override event PropertyChangedEventHandler PropertyChanged;
+        //protected override event PropertyChangedEventHandler PropertyChanged;
     }
 }

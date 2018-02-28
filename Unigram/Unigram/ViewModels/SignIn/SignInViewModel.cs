@@ -1,37 +1,29 @@
-using System.Collections.Generic;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Unigram.Views.SignIn;
-using Telegram.Api.Aggregator;
-using Unigram.Common;
-using Unigram.Core.Models;
 using System;
-using Telegram.Api.Helpers;
-using Windows.UI.Popups;
-using Telegram.Api.TL;
-using Telegram.Api;
-using Windows.UI.Xaml;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Controls;
-using Windows.System;
-using Windows.UI.Core;
-using Telegram.Api.TL.Auth.Methods;
-using System.Diagnostics;
-using Unigram.Views;
-using Unigram.Controls.Views;
-using Windows.UI.Xaml.Controls;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using TdWindows;
+using Telegram.Api.Helpers;
+using Telegram.Api.Services;
+using Telegram.Api.TL;
+using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Controls.Views;
+using Unigram.Models;
+using Unigram.Services;
+using Unigram.Views;
+using Unigram.Views.SignIn;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.SignIn
 {
     public class SignInViewModel : UnigramViewModelBase
     {
-        public SignInViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public SignInViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            ProtoService.GotUserCountry += GotUserCountry;
+            //LegacyService.GotUserCountry += GotUserCountry;
 
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ProxyCommand = new RelayCommand(ProxyExecute);
@@ -39,10 +31,10 @@ namespace Unigram.ViewModels.SignIn
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (!string.IsNullOrEmpty(ProtoService.Country))
-            {
-                GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
-            }
+            //if (!string.IsNullOrEmpty(LegacyService.Country))
+            //{
+            //    GotUserCountry(this, new CountryEventArgs { Country = LegacyService.Country });
+            //}
 
             IsLoading = false;
             return Task.CompletedTask;
@@ -155,26 +147,20 @@ namespace Unigram.ViewModels.SignIn
 
             IsLoading = true;
 
-            var response = await ProtoService.SendCodeAsync(_phoneCode + _phoneNumber, /* TODO: Verify */ null);
-            if (response.IsSucceeded)
-            {
-                var state = new SignInSentCodePage.NavigationParameters
-                {
-                    PhoneNumber = PhoneCode.TrimStart('+') + PhoneNumber,
-                    Result = response.Result,
-                };
+            var phoneNumber = (_phoneCode + _phoneNumber).Replace(" ", string.Empty);
 
-                NavigationService.Navigate(typeof(SignInSentCodePage), state);
-            }
-            else if (response.Error != null)
+            await ProtoService.SendAsync(new SetOption("x_phonenumber", new OptionValueString(phoneNumber)));
+
+            var response = await ProtoService.SendAsync(new SetAuthenticationPhoneNumber(phoneNumber, false, false));
+            if (response is Error error)
             {
                 IsLoading = false;
 
-                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_INVALID))
+                if (error.TypeEquals(TLErrorType.PHONE_NUMBER_INVALID))
                 {
                     //needShowInvalidAlert(req.phone_number, false);
                 }
-                else if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
+                else if (error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Android.PhoneNumberFlood, Strings.Android.AppName, Strings.Android.OK);
                 }
@@ -182,21 +168,21 @@ namespace Unigram.ViewModels.SignIn
                 //{
                 //    needShowInvalidAlert(req.phone_number, true);
                 //}
-                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || response.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
+                else if (error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Android.InvalidCode, Strings.Android.AppName, Strings.Android.OK);
                 }
-                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
+                else if (error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Android.CodeExpired, Strings.Android.AppName, Strings.Android.OK);
                 }
-                else if (response.Error.ErrorMessage.StartsWith("FLOOD_WAIT"))
+                else if (error.Message.StartsWith("FLOOD_WAIT"))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Android.FloodWait, Strings.Android.AppName, Strings.Android.OK);
                 }
-                else if (response.Error.ErrorCode != -1000)
+                else if (error.Code != -1000)
                 {
-                    await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Android.AppName, Strings.Android.OK);
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Android.AppName, Strings.Android.OK);
                 }
             }
         }
@@ -204,7 +190,7 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand ProxyCommand { get; }
         private async void ProxyExecute()
         {
-            var dialog = new ProxyView();
+            var dialog = new ProxyView(false);
             dialog.Server = SettingsHelper.ProxyServer;
             dialog.Port = SettingsHelper.ProxyPort.ToString();
             dialog.Username = SettingsHelper.ProxyUsername;
@@ -217,16 +203,23 @@ namespace Unigram.ViewModels.SignIn
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                SettingsHelper.ProxyServer = dialog.Server;
-                SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
-                SettingsHelper.ProxyUsername = dialog.Username;
-                SettingsHelper.ProxyPassword = dialog.Password;
-                SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
+                var server = SettingsHelper.ProxyServer = dialog.Server;
+                var port = SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
+                var username = SettingsHelper.ProxyUsername = dialog.Username;
+                var password = SettingsHelper.ProxyPassword = dialog.Password;
+                var newValue = SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
                 SettingsHelper.IsCallsProxyEnabled = dialog.IsCallsProxyEnabled;
 
-                if (SettingsHelper.IsProxyEnabled || SettingsHelper.IsProxyEnabled != enabled)
+                if (newValue || newValue != enabled)
                 {
-                    UnigramContainer.Current.ResolveType<IMTProtoService>().ToggleProxy();
+                    if (newValue)
+                    {
+                        ProtoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
+                    }
+                    else
+                    {
+                        ProtoService.Send(new SetProxy(new ProxyEmpty()));
+                    }
                 }
             }
         }

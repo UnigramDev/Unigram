@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
+using TdWindows;
 using Unigram.Converters;
+using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Globalization.DateTimeFormatting;
@@ -16,134 +17,190 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class MessageFooter : HackedContentPresenter
+    public sealed partial class MessageFooter : ContentPresenter
     {
-        public TLMessage ViewModel => DataContext as TLMessage;
-
-        public BindConvert Convert => BindConvert.Current;
-
-        private TLMessage _oldValue;
+        private MessageViewModel _mesage;
 
         public MessageFooter()
         {
             InitializeComponent();
         }
 
-        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        public void UpdateMessage(MessageViewModel message)
         {
-            if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
-            if (ViewModel == null) Bindings.StopTracking();
+            _mesage = message;
 
-            _oldValue = ViewModel;
-        }
-        
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            Bindings.StopTracking();
+            ConvertState(message);
+            ConvertDate(message);
+            ConvertEdited(message);
+            ConvertViews(message);
         }
 
-        public string ConvertViews(TLMessage message, int? views)
+        public void UpdateMessageState(MessageViewModel message)
         {
-            var number = string.Empty;
+            ConvertState(message);
+        }
 
-            if (message.HasViews)
+        public void UpdateMessageEdited(MessageViewModel message)
+        {
+            ConvertEdited(message);
+        }
+
+        public void UpdateMessageViews(MessageViewModel message)
+        {
+            ConvertViews(message);
+        }
+
+        public void ConvertDate(MessageViewModel message)
+        {
+            DateLabel.Text = BindConvert.Current.Date(message.Date);
+        }
+
+        public void Mockup(bool outgoing, DateTime date)
+        {
+            DateLabel.Text = BindConvert.Current.ShortTime.Format(date);
+            StateLabel.Text = outgoing ? "\u00A0\u00A0\uE601" : string.Empty;
+        }
+
+        public void ConvertViews(MessageViewModel message)
+        {
+            if (message.Views > 0)
             {
                 //ViewsGlyph.Text = "\uE607\u2009";
-                ViewsGlyph.Text = "\uE607\u00A0\u00A0";
 
-                number = Convert.ShortNumber(Math.Max(views ?? 1, 1));
+                var number = BindConvert.Current.ShortNumber(Math.Max(message.Views, 1));
                 number += "   ";
 
-                if (message.IsPost && message.HasPostAuthor && message.PostAuthor != null)
+                if (message.IsChannelPost && !string.IsNullOrEmpty(message.AuthorSignature))
                 {
-                    number += $"{message.PostAuthor}, ";
+                    number += $"{message.AuthorSignature}, ";
                 }
-                else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                else if (message.ForwardInfo is MessageForwardedPost forwardedPost && !string.IsNullOrEmpty(forwardedPost.AuthorSignature))
                 {
-                    number += $"{message.FwdFrom.PostAuthor}, ";
+                    number += $"{forwardedPost.AuthorSignature}, ";
                 }
+
+                ViewsGlyph.Text = "\uE607\u00A0\u00A0";
+                ViewsLabel.Text = number;
             }
             else
             {
                 ViewsGlyph.Text = string.Empty;
+                ViewsLabel.Text = string.Empty;
             }
-
-            return number;
         }
 
-        private string ConvertEdit(bool hasEditDate, bool hasViaBotId, TLReplyMarkupBase replyMarkup)
+        private void ConvertEdited(MessageViewModel message)
         {
-            var message = ViewModel;
+            //var message = ViewModel;
+            //var bot = false;
+            //if (message.From != null)
+            //{
+            //    bot = message.From.IsBot;
+            //}
+
             var bot = false;
-            if (message.From != null)
+
+            var sender = message.GetSenderUser();
+            if (sender != null && sender.Type is UserTypeBot)
             {
-                bot = message.From.IsBot;
+                bot = true;
             }
 
-            return hasEditDate && !hasViaBotId && !bot && !(replyMarkup is TLReplyInlineMarkup) ? $"{Strings.Android.EditedMessage}\u00A0\u2009" : string.Empty;
+            EditedLabel.Text = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard) ? $"{Strings.Android.EditedMessage}\u00A0\u2009" : string.Empty;
         }
 
-        private string ConvertState(bool isOut, bool isPost, bool isSaved, TLMessageState value)
+        private void ConvertState(MessageViewModel message)
         {
-            if (!isOut || isPost || isSaved)
+            if (message.IsOutgoing && !message.IsChannelPost && !message.IsSaved())
             {
-                return string.Empty;
-            }
+                var maxId = 0L;
 
-            switch (value)
+                var chat = message.GetChat();
+                if (chat != null)
+                {
+                    maxId = chat.LastReadOutboxMessageId;
+                }
+
+                if (message.SendingState is MessageSendingStateFailed)
+                {
+                    StateLabel.Text = "\u00A0\u00A0\uE611";
+                }
+                else if (message.SendingState is MessageSendingStatePending)
+                {
+                    StateLabel.Text = "\u00A0\u00A0\uE600";
+                }
+                else if (message.Id <= maxId)
+                {
+                    StateLabel.Text = "\u00A0\u00A0\uE601";
+                }
+                else
+                {
+                    StateLabel.Text = "\u00A0\u00A0\uE602";
+                }
+            }
+            else
             {
-                case TLMessageState.Sending:
-                    return "\u00A0\u00A0\uE600";
-                case TLMessageState.Confirmed:
-                    return "\u00A0\u00A0\uE602";
-                case TLMessageState.Read:
-                    return "\u00A0\u00A0\uE601";
-                default:
-                    return "\u00A0\u00A0\uFFFD";
+                StateLabel.Text = string.Empty;
             }
         }
 
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
         {
-            var message = ViewModel;
-            var tooltip = sender as ToolTip;
-            if (tooltip != null && message != null)
+            var message = _mesage;
+            if (message == null)
             {
-                var date = Convert.DateTime(message.Date);
-                var text = $"{Convert.LongDate.Format(date)} {Convert.LongTime.Format(date)}";
-
-                var bot = false;
-                if (message.From != null)
-                {
-                    bot = message.From.IsBot;
-                }
-
-                if (message.HasEditDate && !message.HasViaBotId && !bot && !(message.ReplyMarkup is TLReplyInlineMarkup))
-                {
-                    var edit = Convert.DateTime(message.EditDate.Value);
-                    text += $"\r\n{Strings.Android.EditedMessage}: {Convert.LongDate.Format(edit)} {Convert.LongTime.Format(edit)}";
-                }
-
-                if (message.HasFwdFrom && message.FwdFrom != null)
-                {
-                    var original = Convert.DateTime(message.FwdFrom.Date);
-                    text += $"\r\n{Strings.Resources.OriginalMessage}: {Convert.LongDate.Format(original)} {Convert.LongTime.Format(original)}";
-                }
-
-                tooltip.Content = text;
+                return;
             }
-        }
-    }
 
-    public class HackedContentPresenter : ContentPresenter
-    {
-        /// <summary>
-        /// x:Bind hack
-        /// </summary>
-        public new event TypedEventHandler<FrameworkElement, object> Loading;
+            var tooltip = sender as ToolTip;
+            if (tooltip == null)
+            {
+                return;
+            }
+
+            var dateTime = BindConvert.Current.DateTime(message.Date);
+            var date = BindConvert.Current.LongDate.Format(dateTime);
+            var time = BindConvert.Current.LongTime.Format(dateTime);
+
+            var text = $"{date} {time}";
+
+            var bot = false;
+            var user = message.GetSenderUser();
+            if (user != null)
+            {
+                bot = user.Type is UserTypeBot;
+            }
+
+            if (message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard))
+            {
+                var edit = BindConvert.Current.DateTime(message.EditDate);
+                var editDate = BindConvert.Current.LongDate.Format(edit);
+                var editTime = BindConvert.Current.LongTime.Format(edit);
+
+                text += $"\r\n{Strings.Android.EditedMessage}: {editDate} {editTime}";
+            }
+
+            if (message.ForwardInfo is MessageForwardedPost forwardedPost)
+            {
+                var original = BindConvert.Current.DateTime(forwardedPost.Date);
+                var originalDate = BindConvert.Current.LongDate.Format(original);
+                var originalTime = BindConvert.Current.LongTime.Format(original);
+
+                text += $"\r\n{Strings.Resources.OriginalMessage}: {originalDate} {originalTime}";
+            }
+            else if (message.ForwardInfo is MessageForwardedFromUser forwardedFromUser)
+            {
+                var original = BindConvert.Current.DateTime(forwardedFromUser.Date);
+                var originalDate = BindConvert.Current.LongDate.Format(original);
+                var originalTime = BindConvert.Current.LongTime.Format(original);
+
+                text += $"\r\n{Strings.Resources.OriginalMessage}: {originalDate} {originalTime}";
+            }
+
+            tooltip.Content = text;
+        }
     }
 }

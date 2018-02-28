@@ -5,8 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
-using Telegram.Api.Native.TL;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Services.SerializationService;
 using Unigram.Common;
@@ -36,26 +34,34 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var buffer = TLSerializationService.Current.Deserialize((string)e.Parameter) as byte[];
-            if (buffer == null)
+            var bundle = TLSerializationService.Current.Deserialize((string)e.Parameter) as TdBundle;
+            if (bundle == null)
             {
                 return;
             }
 
-            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
-            {
-                var tuple = new TLTuple<string, string, string, TLMessage>(from);
+            bundle.TryGetValue("title", out string title);
+            bundle.TryGetValue("username", out string username);
 
-                _shareMessage = tuple.Item4;
+            bundle.TryGetValue("url", out string url);
 
-                TitleLabel.Text = tuple.Item1;
-                UsernameLabel.Text = "@" + tuple.Item2;
+            bundle.TryGetValue("message", out long messageId);
+            bundle.TryGetValue("chat", out long chatId);
 
-                TitleLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item1) ? Visibility.Collapsed : Visibility.Visible;
-                UsernameLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item2) ? Visibility.Collapsed : Visibility.Visible;
+            //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            //{
+            //    var tuple = new TLTuple<string, string, string, TLMessage>(from);
 
-                View.Navigate(new Uri(tuple.Item3));
-            }
+            //    _shareMessage = tuple.Item4;
+
+            TitleLabel.Text = title ?? string.Empty;
+            UsernameLabel.Text = "@" + (username ?? string.Empty);
+
+            TitleLabel.Visibility = string.IsNullOrWhiteSpace(title) ? Visibility.Collapsed : Visibility.Visible;
+            UsernameLabel.Visibility = string.IsNullOrWhiteSpace(username) ? Visibility.Collapsed : Visibility.Visible;
+
+            View.Navigate(new Uri(url));
+            //}
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -65,7 +71,7 @@ namespace Unigram.Views
 
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.Current.ShowAsync(_shareMessage);
+            //await ShareView.GetForCurrentView().ShowAsync(_shareMessage);
         }
 
         private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
@@ -74,7 +80,7 @@ namespace Unigram.Views
             {
                 this.BeginOnUIThread(async () =>
                 {
-                    await ShareView.Current.ShowAsync(_shareMessage, withMyScore);
+                    //await ShareView.GetForCurrentView().ShowAsync(_shareMessage, withMyScore);
                 });
             }));
         }

@@ -43,10 +43,10 @@ namespace Unigram.Core.Common
             return false;
         }
 
-        public static TLInputGeoPointBase ToInputGeoPoint(this Geoposition position)
-        {
-            return new TLInputGeoPoint { Lat = position.Coordinate.Point.Position.Latitude, Long = position.Coordinate.Point.Position.Longitude };
-        }
+        //public static TLInputGeoPointBase ToInputGeoPoint(this Geoposition position)
+        //{
+        //    return new TLInputGeoPoint { Lat = position.Coordinate.Point.Position.Latitude, Long = position.Coordinate.Point.Position.Longitude };
+        //}
 
 
 

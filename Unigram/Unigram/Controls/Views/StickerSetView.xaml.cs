@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
@@ -23,13 +22,16 @@ using Windows.UI.ViewManagement;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Template10.Utils;
-using Telegram.Api.TL.Messages;
-using Telegram.Api.Services.Cache;
 using Unigram.Converters;
+using TdWindows;
+using Windows.Storage;
+using Unigram.Native;
+using Unigram.Common;
+using Unigram.Services;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class StickerSetView : ContentDialogBase
+    public sealed partial class StickerSetView : ContentDialogBase, IFileDelegate, IHandle<UpdateFile>
     {
         public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
 
@@ -39,49 +41,52 @@ namespace Unigram.Controls.Views
             DataContext = UnigramContainer.Current.ResolveType<StickerSetViewModel>();
         }
 
-        private static StickerSetView _current;
-        public static StickerSetView Current
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            get
-            {
-                if (_current == null)
-                    _current = new StickerSetView();
+            ViewModel.Aggregator.Subscribe(this);
+        }
 
-                return _current;
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Aggregator.Unsubscribe(this);
+        }
+
+        private static Dictionary<int, WeakReference<StickerSetView>> _windowContext = new Dictionary<int, WeakReference<StickerSetView>>();
+        public static StickerSetView GetForCurrentView()
+        {
+            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+            if (_windowContext.TryGetValue(id, out WeakReference<StickerSetView> reference) && reference.TryGetTarget(out StickerSetView value))
+            {
+                return value;
             }
+
+            var context = new StickerSetView();
+            _windowContext[id] = new WeakReference<StickerSetView>(context);
+
+            return context;
         }
 
         public ItemClickEventHandler ItemClick { get; set; }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSet parameter)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(StickerSet parameter)
         {
             return ShowAsync(parameter, null);
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSet parameter, ItemClickEventHandler callback)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(StickerSet parameter, ItemClickEventHandler callback)
         {
-            return ShowAsync(new TLInputStickerSetID { Id = parameter.Id, AccessHash = parameter.AccessHash }, callback);
+            return ShowAsync(parameter.Id, callback);
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSetCoveredBase parameter)
-        {
-            return ShowAsync(parameter, null);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSetCoveredBase parameter, ItemClickEventHandler callback)
-        {
-            return ShowAsync(new TLInputStickerSetID { Id = parameter.Set.Id, AccessHash = parameter.Set.AccessHash }, callback);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickerSetBase parameter)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(long parameter)
         {
             return ShowAsync(parameter, null);
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickerSetBase parameter, ItemClickEventHandler callback)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(long parameter, ItemClickEventHandler callback)
         {
             ViewModel.IsLoading = true;
-            ViewModel.StickerSet = new TLStickerSet();
+            ViewModel.StickerSet = new StickerSet();
             ViewModel.Items.Clear();
 
             RoutedEventHandler handler = null;
@@ -96,32 +101,46 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessagesStickerSet parameter)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(string parameter)
         {
             return ShowAsync(parameter, null);
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessagesStickerSet parameter, ItemClickEventHandler callback)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(string parameter, ItemClickEventHandler callback)
         {
-            ViewModel.IsLoading = false;
-            ViewModel.StickerSet = parameter.Set;
-            ViewModel.Items.ReplaceWith(parameter.Documents);
+            ViewModel.IsLoading = true;
+            ViewModel.StickerSet = new StickerSet();
+            ViewModel.Items.Clear();
 
+            RoutedEventHandler handler = null;
+            handler = new RoutedEventHandler(async (s, args) =>
+            {
+                Loaded -= handler;
+                ItemClick = callback;
+                await ViewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+            });
+
+            Loaded += handler;
             return ShowAsync();
         }
 
         private string ConvertIsInstalled(bool installed, bool archived, bool official, bool masks)
         {
+            if (ViewModel == null || ViewModel.StickerSet == null || ViewModel.StickerSet.Stickers == null)
+            {
+                return string.Empty;
+            }
+
             if (installed && !archived)
             {
                 return official
-                    ? string.Format(masks ? "Archive {0} masks" : "Archive {0} stickers", ViewModel.StickerSet.Count)
-                    : string.Format(masks ? "Remove {0} masks" : "Remove {0} stickers", ViewModel.StickerSet.Count);
+                    ? string.Format(masks ? "Archive {0} masks" : "Archive {0} stickers", ViewModel.StickerSet.Stickers.Count)
+                    : string.Format(masks ? "Remove {0} masks" : "Remove {0} stickers", ViewModel.StickerSet.Stickers.Count);
             }
 
             return official || archived
-                ? string.Format(masks ? "Show {0} masks" : "Show {0} stickers", ViewModel.StickerSet.Count)
-                : string.Format(masks ? "Add {0} masks" : "Add {0} stickers", ViewModel.StickerSet.Count);
+                ? string.Format(masks ? "Show {0} masks" : "Show {0} stickers", ViewModel.StickerSet.Stickers.Count)
+                : string.Format(masks ? "Add {0} masks" : "Add {0} stickers", ViewModel.StickerSet.Stickers.Count);
         }
 
         private ScrollViewer _scrollingHost;
@@ -333,9 +352,96 @@ namespace Unigram.Controls.Views
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
             var title = ViewModel.StickerSet.Title;
-            var link = new Uri(MeUrlPrefixConverter.Convert($"addstickers/{ViewModel.StickerSet.ShortName}"));
+            var link = new Uri(MeUrlPrefixConverter.Convert($"addstickers/{ViewModel.StickerSet.Name}"));
 
-            await ShareView.Current.ShowAsync(link, title);
+            await ShareView.GetForCurrentView().ShowAsync(link, title);
+        }
+
+        private async void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var sticker = args.Item as Sticker;
+
+            if (args.Phase == 0)
+            {
+                var title = content.Children[1] as TextBlock;
+                title.Text = sticker.Emoji;
+            }
+            else if (args.Phase == 1)
+            {
+            }
+            else if (args.Phase == 2)
+            {
+                var photo = content.Children[0] as Image;
+
+                if (sticker == null || sticker.Thumbnail == null)
+                {
+                    return;
+                }
+
+                var file = sticker.Thumbnail.Photo;
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    var buffer = await FileIO.ReadBufferAsync(temp);
+
+                    photo.Source = WebPImage.DecodeFromBuffer(buffer);
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    photo.Source = null;
+                    ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1));
+                }
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(OnContainerContentChanging);
+            }
+
+            args.Handled = true;
+        }
+
+        public void Handle(UpdateFile update)
+        {
+            if (!update.File.Local.IsDownloadingCompleted)
+            {
+                return;
+            }
+
+            this.BeginOnUIThread(() => UpdateFile(update.File));
+        }
+
+        public async void UpdateFile(File file)
+        {
+            foreach (Sticker sticker in List.Items)
+            {
+                if (sticker.UpdateFile(file) && file.Id == sticker.Thumbnail?.Photo.Id)
+                {
+                    var container = List.ContainerFromItem(sticker) as SelectorItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var content = container.ContentTemplateRoot as Grid;
+                    if (content == null)
+                    {
+                        continue;
+                    }
+
+                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    var buffer = await FileIO.ReadBufferAsync(temp);
+
+                    var photo = content.Children[0] as Image;
+                    photo.Source = WebPImage.DecodeFromBuffer(buffer);
+                }
+            }
         }
     }
 }

@@ -4,13 +4,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
+using TdWindows;
 using Template10.Utils;
+using Unigram.Native;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
+using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -41,19 +44,22 @@ namespace Unigram.Controls.Views
             //};
         }
 
-        private static AttachedStickersView _current;
-        public static AttachedStickersView Current
+        private static Dictionary<int, WeakReference<AttachedStickersView>> _windowContext = new Dictionary<int, WeakReference<AttachedStickersView>>();
+        public static AttachedStickersView GetForCurrentView()
         {
-            get
+            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+            if (_windowContext.TryGetValue(id, out WeakReference<AttachedStickersView> reference) && reference.TryGetTarget(out AttachedStickersView value))
             {
-                if (_current == null)
-                    _current = new AttachedStickersView();
-
-                return _current;
+                return value;
             }
+
+            var context = new AttachedStickersView();
+            _windowContext[id] = new WeakReference<AttachedStickersView>(context);
+
+            return context;
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickeredMediaBase parameter)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(long parameter)
         {
             ViewModel.IsLoading = true;
             ViewModel.Items.Clear();
@@ -69,20 +75,10 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLVector<TLStickerSetCoveredBase> parameter)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(IList<StickerSetInfo> parameter)
         {
             ViewModel.IsLoading = false;
-            ViewModel.Items.Clear();
-            ViewModel.Items.AddRange(parameter.Select(
-                set =>
-                {
-                    if (set is TLStickerSetCovered covered)
-                    {
-                        return new TLStickerSetMultiCovered { Set = covered.Set, Covers = new TLVector<TLDocumentBase> { covered.Cover } };
-                    }
-
-                    return set as TLStickerSetMultiCovered;
-                }));
+            ViewModel.Items.ReplaceWith(parameter);
 
             return ShowAsync();
         }
@@ -144,7 +140,7 @@ namespace Unigram.Controls.Views
         private void GroupHeader_Loaded(object sender, RoutedEventArgs e)
         {
             var groupHeader = sender as Grid;
-            if (groupHeader != null && groupHeader.DataContext is TLStickerSetMultiCovered covered && covered == ViewModel.Items[0])
+            if (groupHeader != null && groupHeader.DataContext is StickerSetInfo covered && covered == ViewModel.Items[0])
             {
                 LineAccent = groupHeader.FindName("LineAccent") as Border;
 
@@ -275,11 +271,51 @@ namespace Unigram.Controls.Views
         {
             Hide(ContentDialogBaseResult.OK);
 
-            var item = e.ClickedItem as TLDocument;
+            var item = e.ClickedItem as Sticker;
             if (item != null)
             {
-                await StickerSetView.Current.ShowAsync(item.StickerSet);
+                await StickerSetView.GetForCurrentView().ShowAsync(item.SetId);
             }
+        }
+
+        private async void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as Image;
+            var sticker = args.Item as Sticker;
+
+            if (sticker == null || sticker.Thumbnail == null)
+            {
+                content.Source = null;
+                return;
+            }
+
+            if (args.Phase < 2)
+            {
+                content.Source = null;
+                args.RegisterUpdateCallback(OnContainerContentChanging);
+            }
+            else
+            {
+                var file = sticker.Thumbnail.Photo;
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    var buffer = await FileIO.ReadBufferAsync(temp);
+
+                    content.Source = WebPImage.DecodeFromBuffer(buffer);
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    ViewModel.ProtoService.Send(new DownloadFile(1, file.Id));
+                }
+            }
+
+            args.Handled = true;
         }
     }
 }

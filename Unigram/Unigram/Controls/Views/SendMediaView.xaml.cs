@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
+using TdWindows;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Converters;
@@ -26,6 +26,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -423,7 +424,7 @@ namespace Unigram.Controls.Views
         {
             var text = CaptionInput.Text.ToString();
 
-            if (e.ClickedItem is TLUser user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.SelectionStart, text.Length)), out string username))
+            if (e.ClickedItem is User user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.SelectionStart, text.Length)), out string username, out int index))
             {
                 var insert = $"@{user.Username} ";
                 var start = CaptionInput.SelectionStart - 1 - username.Length;
@@ -491,6 +492,15 @@ namespace Unigram.Controls.Views
                         width = (uint)(width * ratio);
                         height = (uint)(height * ratio);
                     }
+
+                    //var container = Flip.ContainerFromItem(Flip.SelectedItem) as SelectorItem;
+                    //if (container != null)
+                    //{
+                    //    var content = container.ContentTemplateRoot as Border;
+                    //    var zoom = content.Child as Viewbox;
+
+                    //    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("Crop", zoom);
+                    //}
 
                     Cropper.SetSource(media.File, source, width, height);
                     Cropper.Proportions = media.CropProportions;

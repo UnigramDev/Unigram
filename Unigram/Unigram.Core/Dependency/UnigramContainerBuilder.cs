@@ -27,16 +27,17 @@ namespace Unigram.Views
 
         public void Build(Func<ContainerBuilder, int, IContainer> factory)
         {
-            for (int i = 0; i < Telegram.Api.Constants.AccountsMaxCount; i++)
-            {
-                //if (_containers.ContainsKey(i))
-                if (_containers[i] != null)
-                {
-                    continue;
-                }
+            //for (int i = 0; i < Telegram.Api.Constants.AccountsMaxCount; i++)
+            //{
+            //    //if (_containers.ContainsKey(i))
+            //    if (_containers[i] != null)
+            //    {
+            //        continue;
+            //    }
 
-                _containers[i] = factory(new ContainerBuilder(), i);
-            }
+            //}
+
+            _containers[0] = factory(new ContainerBuilder(), 0);
         }
 
         public TService ResolveType<TService>(int account = int.MaxValue)

@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api.TL;
 using Unigram.Core.Models;
 using Windows.ApplicationModel.ExtendedExecution;
@@ -21,7 +22,7 @@ namespace Unigram.Core.Services
 
         Task<Geocoordinate> GetPositionAsync();
 
-        Task<List<TLMessageMediaVenue>> GetVenuesAsync(double latitude, double longitute, string query = null);
+        Task<List<TdWindows.Venue>> GetVenuesAsync(double latitude, double longitute, string query = null);
     }
 
     public class LocationService : ILocationService
@@ -94,7 +95,7 @@ namespace Unigram.Core.Services
             return null;
         }
 
-        public async Task<List<TLMessageMediaVenue>> GetVenuesAsync(double latitude, double longitute, string query = null)
+        public async Task<List<TdWindows.Venue>> GetVenuesAsync(double latitude, double longitute, string query = null)
         {
             var builder = new StringBuilder("https://api.foursquare.com/v2/venues/search/?");
             if (string.IsNullOrEmpty(query) == false)
@@ -108,45 +109,49 @@ namespace Unigram.Core.Services
             builder.Append(string.Format("{0}={1}&", "client_secret", "WEEZHCKI040UVW2KWW5ZXFAZ0FMMHKQ4HQBWXVSX4WXWBWYN"));
             builder.Append(string.Format("{0}={1},{2}&", "ll", latitude.ToString(new CultureInfo("en-US")), longitute.ToString(new CultureInfo("en-US"))));
 
-            var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Get, builder.ToString());
-
-            var response = await client.SendAsync(request);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var json = await Task.Run(() => JsonConvert.DeserializeObject<FoursquareRootObject>(content));
+                var client = new HttpClient();
+                var request = new HttpRequestMessage(HttpMethod.Get, builder.ToString());
 
-                if (json?.response?.venues != null)
+                var response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
                 {
-                    var result = new List<TLMessageMediaVenue>();
-                    foreach (var item in json.response.venues)
-                    {
-                        var venue = new TLMessageMediaVenue();
-                        venue.VenueId = item.id;
-                        venue.Title = item.name;
-                        venue.Address = item.location.address ?? item.location.city ?? item.location.country;
-                        venue.Provider = "foursquare";
-                        venue.Geo = new TLGeoPoint { Lat = item.location.lat, Long = item.location.lng };
+                    var content = await response.Content.ReadAsStringAsync();
+                    var json = await Task.Run(() => JsonConvert.DeserializeObject<FoursquareRootObject>(content));
 
-                        if (item.categories != null && item.categories.Count > 0)
+                    if (json?.response?.venues != null)
+                    {
+                        var result = new List<TdWindows.Venue>();
+                        foreach (var item in json.response.venues)
                         {
-                            var icon = item.categories[0].icon;
-                            if (icon != null)
-                            {
-                                venue.VenueType = icon.prefix.Replace("https://ss3.4sqi.net/img/categories_v2/", string.Empty).TrimEnd('_');
-                                //location.Icon = string.Format("https://ss3.4sqi.net/img/categories_v2/{0}_88.png");
-                            }
+                            var venue = new TdWindows.Venue();
+                            venue.Id = item.id;
+                            venue.Title = item.name;
+                            venue.Address = item.location.address ?? item.location.city ?? item.location.country;
+                            venue.Provider = "foursquare";
+                            venue.Location = new TdWindows.Location(item.location.lat, item.location.lng);
+
+                            //if (item.categories != null && item.categories.Count > 0)
+                            //{
+                            //    var icon = item.categories[0].icon;
+                            //    if (icon != null)
+                            //    {
+                            //        venue.VenueType = icon.prefix.Replace("https://ss3.4sqi.net/img/categories_v2/", string.Empty).TrimEnd('_');
+                            //        //location.Icon = string.Format("https://ss3.4sqi.net/img/categories_v2/{0}_88.png");
+                            //    }
+                            //}
+
+                            result.Add(venue);
                         }
 
-                        result.Add(venue);
+                        return result;
                     }
-
-                    return result;
                 }
             }
+            catch { }
 
-            return new List<TLMessageMediaVenue>();
+            return new List<TdWindows.Venue>();
         }
     }
 }

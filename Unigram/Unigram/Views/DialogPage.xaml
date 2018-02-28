@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.DialogPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,6 +6,7 @@
     xmlns:local="using:Unigram.Views"
     xmlns:common="using:Unigram.Common"
     xmlns:views="using:Unigram.Controls.Views"
+    xmlns:items="using:Unigram.Controls.Items"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:native="using:Unigram.Native"
     xmlns:selectors="using:Unigram.Selectors"
@@ -23,7 +24,6 @@
     <Page.Transitions>
         <TransitionCollection>
             <NavigationThemeTransition>
-                <!--<ContinuumNavigationTransitionInfo />-->
                 <SuppressNavigationTransitionInfo />
             </NavigationThemeTransition>
         </TransitionCollection>
@@ -31,32 +31,6 @@
 
     <Page.Resources>
         <x:Double x:Key="MenuFlyoutMaxWidth">360</x:Double>
-
-        <Style TargetType="ListViewHeaderItem">
-            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-            <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-            <Setter Property="Background" Value="Red" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Top" />
-            <Setter Property="MinHeight" Value="{ThemeResource ListViewHeaderItemMinHeight}" />
-            <Setter Property="UseSystemFocusVisuals" Value="True" />
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewHeaderItem">
-                        <ContentPresenter x:Name="ContentPresenter"
-                                          Margin="{TemplateBinding Padding}"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
         <Style x:Key="AutocompleteListViewStyle" TargetType="ListView">
             <Setter Property="IsTabStop" Value="False" />
@@ -192,26 +166,26 @@
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,8" ContextRequested="Message_ContextRequested">
-                <controls:SimpleButton Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Style="{StaticResource ServiceButtonStyle}">
-                    <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
-                </controls:SimpleButton>
+                <messages:MessageService Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Style="{StaticResource ServiceButtonStyle}">
+                    <TextBlock Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                </messages:MessageService>
 
                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                    <controls:ProfilePicture Click="Media_Click" Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                    <controls:ProfilePicture Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                 </Border>
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <controls:SimpleButton Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Margin="0,8,0,8" Style="{StaticResource ServiceButtonStyle}">
-                <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
-            </controls:SimpleButton>
+            <messages:MessageService Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Margin="0,4,0,6" Style="{StaticResource ServiceButtonStyle}">
+                <TextBlock Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}"/>
+            </messages:MessageService>
         </DataTemplate>
 
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested">
+            <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" DoubleTapped="Message_DoubleTapped">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -222,83 +196,55 @@
             </messages:MessageBubble>
         </DataTemplate>
 
-        <DataTemplate x:Key="FriendMessageTemplate" x:DataType="models:TLMessage">
+        <DataTemplate x:Key="FriendMessageTemplate">
             <Grid HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested"/>
+                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" DoubleTapped="Message_DoubleTapped"/>
 
-                <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
-                        Background="{ThemeResource MessageServiceBackgroundBrush}"
-                        VerticalAlignment="Bottom"
-                        CornerRadius="14"
-                        Margin="8,0,0,4"
-                        Grid.Column="1">
-                    <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
-                </Border>
+                <!--<Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
+                     Background="{ThemeResource MessageServiceBackgroundBrush}"
+                     VerticalAlignment="Bottom"
+                     CornerRadius="14"
+                     Margin="8,0,0,4"
+                     Grid.Column="1">
+                     <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                     </Border>-->
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="ChatFriendMessageTemplate" x:DataType="models:TLMessage">
+        <DataTemplate x:Key="ChatFriendMessageTemplate">
             <Grid Margin="-52,0,0,0" HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="52"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePicture x:Phase="3"
-                                         x:Name="PhotoBubble"
-                                         Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                         Source="{x:Bind Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                         Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                         Click="Photo_Click"/>
-                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" Grid.Column="1"/>
+                <controls:ProfilePicture x:Name="Photo"
+                                         Click="Photo_Click"
+                                         Style="{StaticResource MessageBubbleProfilePictureStyle}"/>
+                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" DoubleTapped="Message_DoubleTapped" Grid.Column="1"/>
 
-                <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
-                        Background="{ThemeResource MessageServiceBackgroundBrush}"
-                        VerticalAlignment="Bottom"
-                        CornerRadius="14"
-                        Margin="8,0,0,4"
-                        Grid.Column="2">
-                    <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
-                </Border>
-                <Border Visibility="{x:Bind FwdFrom.HasSavedFromMsgId, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
-                        Background="{ThemeResource MessageServiceBackgroundBrush}"
-                        VerticalAlignment="Bottom"
-                        CornerRadius="14"
-                        Margin="8,0,0,4"
-                        Grid.Column="2">
-                    <controls:GlyphButton Click="View_Click" Glyph="&#xE90B;" FontFamily="{StaticResource TelegramThemeFontFamily}" Padding="0,2,0,0" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
-                </Border>
+                <!--<Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
+                     Background="{ThemeResource MessageServiceBackgroundBrush}"
+                     VerticalAlignment="Bottom"
+                     CornerRadius="14"
+                     Margin="8,0,0,4"
+                     Grid.Column="2">
+                     <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                     </Border>
+                     <Border Visibility="{x:Bind FwdFrom.HasSavedFromMsgId, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                     Background="{ThemeResource MessageServiceBackgroundBrush}"
+                     VerticalAlignment="Bottom"
+                     CornerRadius="14"
+                     Margin="8,0,0,4"
+                     Grid.Column="2">
+                     <controls:GlyphButton Click="View_Click" Glyph="&#xE90B;" FontFamily="{StaticResource TelegramThemeFontFamily}" Padding="0,2,0,0" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                     </Border>-->
             </Grid>
         </DataTemplate>
-
-        <DataTemplate x:Key="ServiceUserCallMessageTemplate">
-            <messages:PhoneCallMessageBubble ContextRequested="Message_ContextRequested">
-                <StackPanel.Resources>
-                    <ResourceDictionary>
-                        <ResourceDictionary.MergedDictionaries>
-                            <ResourceDictionary Source="ms-appx:///Themes/AccentOut.xaml"/>
-                        </ResourceDictionary.MergedDictionaries>
-                    </ResourceDictionary>
-                </StackPanel.Resources>
-            </messages:PhoneCallMessageBubble>
-        </DataTemplate>
-
-        <DataTemplate x:Key="ServiceFriendCallMessageTemplate">
-            <messages:PhoneCallMessageBubble ContextRequested="Message_ContextRequested"/>
-        </DataTemplate>
-
-        <!--<selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
-             UserMessageTemplate="{StaticResource UserMessageTemplate}"
-             FriendMessageTemplate="{StaticResource FriendMessageTemplate}"
-             ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
-             ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
-             ServiceMessagePhotoTemplate="{StaticResource ServiceMessagePhotoTemplate}"
-             ServiceUserCallTemplate="{StaticResource ServiceUserCallMessageTemplate}"
-             ServiceFriendCallTemplate="{StaticResource ServiceFriendCallMessageTemplate}"/>-->
     </Page.Resources>
 
     <Grid x:Name="LayoutRoot"
@@ -361,6 +307,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
+        <controls:DialogBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.RowSpan="5"/>
+
         <Grid Padding="0,0,0,4" VerticalAlignment="Bottom" Grid.RowSpan="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="Show"/>
@@ -384,31 +332,30 @@
                             Grid.ColumnSpan="3">
                         <Button.Content>
                             <Grid>
-                                <TextBlock Text="{CustomResource SavedMessages}" VerticalAlignment="Center" Margin="12,0" Visibility="{x:Bind ViewModel.WithUser.IsSelf, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <TextBlock x:Name="SavedMessages" Visibility="Collapsed" Text="{CustomResource SavedMessages}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
 
-                                <Grid Visibility="{x:Bind ViewModel.WithUser.IsSelf, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert, FallbackValue=Visible}">
+                                <Grid x:Name="HeaderPanel">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
+                                    <controls:ProfilePicture x:Name="Photo" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
 
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
-                                        <TextBlock x:Name="tblDialogName"
-                                                   Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}"
+                                        <TextBlock x:Name="Title"
                                                    Style="{StaticResource BaseTextBlockStyle}"
                                                    TextWrapping="NoWrap"
                                                    TextTrimming="CharacterEllipsis"
                                                    MaxLines="1"/>
                                         <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                                            <TextBlock x:Name="tblDialogStatus"
-                                                       Visibility="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                            <TextBlock x:Name="Subtitle"
                                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                                       Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}" />
-                                            <TextBlock Text="{x:Bind ViewModel.Dialog.TypingSubtitle, Mode=OneWay}"
-                                                       Visibility="{x:Bind (Visibility)ViewModel.Dialog.IsTyping, Mode=OneWay}"
+                                                       Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}"
+                                                       Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
+                                            <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
+                                                       Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                        Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                                                        Style="{StaticResource CaptionTextBlockStyle}"/>
                                         </Grid>
@@ -441,7 +388,7 @@
                     </Button>
                 </Grid>
 
-                <Grid x:Name="ManagePanel" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
+                <Grid x:Name="ManagePanel" Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -478,7 +425,7 @@
         </controls:ContentPageHeader>
 
         <controls:DialogSearchToolBar
-            DataContext="{x:Bind ViewModel.Search, Mode=OneWay}"
+            x:Name="SearchToolBar"
             Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
             Grid.RowSpan="3"
             Canvas.ZIndex="100000"/>
@@ -494,6 +441,9 @@
                                      ShowsScrollingPlaceholders="False"
                                      SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                                      SelectionChanged="List_SelectionChanged"
+                                     ChoosingItemContainer="OnChoosingItemContainer"
+                                     ContainerContentChanging="OnContainerContentChanging"
+                                     Padding="0,0,0,2"
                                      Grid.ColumnSpan="2">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -602,7 +552,8 @@
                             <RowDefinition/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <StackPanel Visibility="{x:Bind ConvertBotInfo(ViewModel.FullUser.BotInfo, ViewModel.IsLastSliceLoaded), Mode=OneWay, FallbackValue=Collapsed}"
+                        <StackPanel x:Name="BotInfoPanel"
+                                    Visibility="Collapsed"
                                     Padding="{ThemeResource MessageContentPadding}"
                                     Background="{ThemeResource MessageBackgroundBrush}"
                                     BorderBrush="{ThemeResource MessageBorderBrush}"
@@ -611,21 +562,18 @@
                                     MaxWidth="360"
                                     Margin="12,12,12,8">
                             <TextBlock Text="What can this bot do?" Style="{StaticResource BaseTextBlockStyle}"/>
-                            <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.FullUser.BotInfo.Description, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"/>
                         </StackPanel>
                         <Border Height="4" Grid.Row="1"/>
                     </Grid>
                 </ListView.Header>
-                <ListView.Footer>
-                    <Border Height="2"/>
-                </ListView.Footer>
             </controls:BubbleListView>
 
-            <Border Visibility="{x:Bind ConvertIsEmpty(ViewModel.IsEmpty, ViewModel.WithUser.IsSelf, ViewModel.WithUser.IsBot, x:False), Mode=OneWay, FallbackValue=Collapsed}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,7" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
-                <TextBlock Text="{x:Bind ConvertEmptyText(ViewModel.WithUser.Id), Mode=OneWay, FallbackValue=Collapsed}" Foreground="White" Style="{ThemeResource CaptionTextBlockStyle}"/>
+            <Border Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,7" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                <TextBlock x:Name="EmptyLabel" Foreground="White" Style="{ThemeResource CaptionTextBlockStyle}"/>
             </Border>
 
-            <StackPanel Visibility="{x:Bind ConvertIsEmpty(ViewModel.IsEmpty, ViewModel.WithUser.IsSelf, ViewModel.WithUser.IsBot, x:True), Mode=OneWay, FallbackValue=Collapsed}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+            <StackPanel Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <FontIcon Glyph="&#xE753;" Foreground="White" FontSize="64"/>
                 <TextBlock Text="{CustomResource ChatYourSelfTitle}" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>
                 <TextBlock Foreground="White" Style="{ThemeResource BodyTextBlockStyle}">
@@ -647,10 +595,17 @@
                  <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Background="{ThemeResource MessageServiceBackgroundBrush}" Style="{StaticResource SkypeProgressRingStyle}"/>
                  </Border>-->
 
-            <StackPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <controls:PlaybackHeader/>
 
-                <Grid x:Name="PinnedMessage"
+                <Grid x:Name="PinnedMessagePanel"
                       Visibility="{x:Bind ViewModel.PinnedMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
                       Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                       MinHeight="{ThemeResource AppBarThemeCompactHeight}"
@@ -661,49 +616,51 @@
                     </Grid.ColumnDefinitions>
 
                     <Button x:Name="btnPinnedMessage" Command="{x:Bind ViewModel.PinnedCommand}" Padding="0,0,48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                        <messages:MessageReference Click="Reply_Click" Title="{CustomResource PinnedMessage}" Message="{x:Bind ViewModel.PinnedMessage.SelfBase, Mode=OneWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
+                        <messages:MessageReference x:Name="PinnedMessage" Click="Reply_Click" VerticalAlignment="Stretch" Margin="0" Padding="12,6"/>
                     </Button>
 
                     <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE10A;" FontSize="16" Grid.Column="1"/>
 
-                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
                 </Grid>
                 <Grid x:Name="InformativeMessage"
                       Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
                       Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                       MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                      Grid.Row="1">
-                    <messages:MessageReference Message="{x:Bind ViewModel.InformativeMessage, Mode=TwoWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
+                      Grid.Row="2">
+                    <!--<messages:MessageReference Message="{x:Bind ViewModel.InformativeMessage, Mode=OneWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>-->
 
-                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
                 </Grid>
 
                 <Grid Visibility="{x:Bind (Visibility)ViewModel.IsReportSpam, Mode=OneWay}"
-                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      Grid.Row="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="48"/>
                     </Grid.ColumnDefinitions>
 
                     <Button Command="{x:Bind ViewModel.ReportSpamCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                        <TextBlock Text="{x:Bind ConvertReportSpam(ViewModel.With), Mode=OneWay}" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <TextBlock x:Name="ReportSpam" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </Button>
 
                     <controls:GlyphButton Command="{x:Bind ViewModel.HideReportSpamCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
 
-                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                 </Grid>
 
-                <controls:SimpleButton Click="Date_Click" x:Name="DateHeader" Visibility="Collapsed" Margin="0,8,0,2" HorizontalAlignment="Center" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.ColumnSpan="2">
-                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
-                        <RichTextBlock x:Name="DateHeaderLabel" IsTextSelectionEnabled="False" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
+                <StackPanel x:Name="DateHeaderRelative" x:DeferLoadStrategy="Lazy" Grid.Row="4">
+                    <Border x:Name="DateHeaderPanel" HorizontalAlignment="Center">
+                        <messages:MessageService x:Name="DateHeader" Click="Date_Click" BorderThickness="0,4,0,4" Style="{StaticResource ServiceButtonStyle}">
+                            <TextBlock x:Name="DateHeaderLabel" Text="31 dicembre 2017" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                        </messages:MessageService>
                     </Border>
-                </controls:SimpleButton>
-            </StackPanel>
+                </StackPanel>
+            </Grid>
 
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,6">
-                <StackPanel Visibility="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
-                            RightTapped="Mentions_RightTapped">
+                <StackPanel x:Name="MentionsPanel" Visibility="Collapsed" RightTapped="Mentions_RightTapped">
                     <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
                             MinWidth="20"
                             Height="20"
@@ -711,15 +668,14 @@
                             HorizontalAlignment="Center"
                             Margin="0,0,0,-12"
                             Canvas.ZIndex="1">
-                        <TextBlock Text="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay}"
+                        <TextBlock x:Name="Mentions"
                                    Style="{ThemeResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                    TextAlignment="Center"
                                    Margin="4,2,4,0"/>
                     </Border>
                     <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                            Visibility="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            BorderBrush="{ThemeResource TelegramSeparatorBrush}"
                             BorderThickness="1"
                             CornerRadius="24"
                             Margin="12,6"
@@ -740,14 +696,14 @@
                             HorizontalAlignment="Center"
                             Margin="0,6,0,-12"
                             Canvas.ZIndex="1">
-                        <TextBlock Text="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay}"
+                        <TextBlock x:Name="UnreadCount"
                                    Style="{ThemeResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                    TextAlignment="Center"
                                    Margin="4,2,4,0"/>
                     </Border>
                     <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            BorderBrush="{ThemeResource TelegramSeparatorBrush}"
                             BorderThickness="1"
                             CornerRadius="24"
                             Margin="12,6"
@@ -760,7 +716,7 @@
             </StackPanel>
 
             <Grid Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}">
-                <views:InlineBotResultsView ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>
+                <views:InlineBotResultsView x:Name="InlinePanel" ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>
                 <controls:ZoomableGridView
                     ItemsSource="{x:Bind ViewModel.StickerPack, Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.StickerPack, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
@@ -768,6 +724,7 @@
                     IsItemClickEnabled="True"
                     ItemClick="Stickers_ItemClick"
                     SelectionMode="None"
+                    ContainerContentChanging="StickerPack_ContainerContentChanging"
                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
                     ScrollViewer.VerticalScrollMode="Disabled"
                     ScrollViewer.IsVerticalRailEnabled="False"
@@ -777,7 +734,7 @@
                     VerticalAlignment="Bottom"
                     Padding="8,0"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    BorderBrush="{ThemeResource TelegramSeparatorBrush}"
                     Style="{StaticResource ZoomableListViewStyle}"
                     BorderThickness="0,1,0,0">
                     <GridView.ItemsPanel>
@@ -785,9 +742,14 @@
                             <ItemsStackPanel Orientation="Horizontal"/>
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
+                    <!--<GridView.ItemTemplate>
+                         <DataTemplate x:DataType="tl:TLDocument">
+                         <Image x:Phase="3" Margin="4,8" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="60" Height="60"/>
+                         </DataTemplate>
+                         </GridView.ItemTemplate>-->
                     <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="tl:TLDocument">
-                            <Image x:Phase="3" Margin="4,8" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="60" Height="60"/>
+                        <DataTemplate>
+                            <Image Margin="4,8" Width="60" Height="60"/>
                         </DataTemplate>
                     </GridView.ItemTemplate>
                     <GridView.ItemContainerStyle>
@@ -804,6 +766,7 @@
                           ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
                           Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                           ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                          ContainerContentChanging="Autocomplete_ContainerContentChanging"
                           AllowFocusOnInteraction="False"
                           IsItemClickEnabled="True"
                           ItemClick="Autocomplete_ItemClick"
@@ -811,7 +774,7 @@
                     <ListView.Header>
                         <Border x:Name="AutocompleteHeader"
                                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                            <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Top" Height="1"/>
+                            <Rectangle Fill="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Top" Height="1"/>
                         </Border>
                     </ListView.Header>
                     <ListView.ItemsPanel>
@@ -835,7 +798,7 @@
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                       Visibility="Collapsed"
                       Grid.Row="4">
-            <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" AllowFocusOnInteraction="False" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0,4,0"/>
+            <controls:ReplyMarkupPanel x:Name="ReplyMarkup" AllowFocusOnInteraction="False" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0,4,0"/>
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
@@ -863,14 +826,14 @@
                 </Grid.ColumnDefinitions>
 
 
-                <Grid Visibility="{x:Bind ViewModel.ReplyInfo, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Grid.ColumnSpan="4">
+                <Grid Visibility="{x:Bind ViewModel.EmbedData, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Grid.ColumnSpan="4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="48"/>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <messages:MessageReference Message="{x:Bind ViewModel.ReplyInfo,Mode=OneWay}" Click="Reply_Click" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="-10,0,0,0" BorderBrush="Transparent" Grid.Column="1"/>
-                    <FontIcon Glyph="{x:Bind ViewModel.ReplyInfo, Mode=OneWay, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
+                    <messages:MessageReference Message="{x:Bind ViewModel.EmbedData, Mode=OneWay}" Click="Reply_Click" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="-10,0,0,0" BorderBrush="Transparent" Grid.Column="1"/>
+                    <FontIcon Glyph="{x:Bind ViewModel.EmbedData, Mode=OneWay, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
 
                     <controls:GlyphButton Command="{x:Bind ViewModel.ClearReplyCommand}" AllowFocusOnInteraction="False" Glyph="&#xE10A;" Grid.Column="2"/>
                 </Grid>
@@ -879,11 +842,10 @@
                     <controls:BubbleTextBox
                         x:Name="TextField"
                         Background="Transparent"
-                        Reply="{x:Bind ViewModel.Reply, Mode=OneWay}"
+                        Reply="{x:Bind ViewModel.EmbedData, Mode=OneWay}"
                         Messages="{x:Bind Messages}"
                         Autocomplete="{x:Bind ListAutocomplete}"
                         AcceptsReturn="False"
-                        PlaceholderText="{x:Bind ConvertPlaceholder(ViewModel.With), Mode=OneWay}"
                         BorderThickness="0"
                         Padding="48,4,0,6"
                         TextWrapping="Wrap"
@@ -893,7 +855,7 @@
                         VerticalContentAlignment="Bottom"
                         PreventKeyboardDisplayOnProgrammaticFocus="True"
                         MinHeight="48"
-                        MaxHeight="96"
+                        MaxHeight="288"
                         TextChanged="TextField_TextChanged"
                         LostFocus="TextField_LostFocus"
                         Capture="TextField_Tapped"/>
@@ -982,7 +944,7 @@
                     </StackPanel>
                 </Border>
 
-                <Grid Visibility="{x:Bind ViewModel.ReplyInfo, Mode=OneWay, Converter={StaticResource EditToVisibilityConverter}, ConverterParameter=invert}" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1">
+                <Grid Visibility="{x:Bind ViewModel.EmbedData, Mode=OneWay, Converter={StaticResource EditToVisibilityConverter}, ConverterParameter=invert}" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -1016,7 +978,6 @@
                                                     UncheckedGlyph="&#xE90F;"
                                                     IsChecked="True"
                                                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                                    Visibility="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                                     FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                     VerticalAlignment="Bottom"/>
                     </Border>
@@ -1030,7 +991,7 @@
                                               VerticalAlignment="Bottom"/>
                     </Border>
 
-                    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="3" Canvas.ZIndex="1000">
+                    <Grid x:Name="ButtonRecord" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Bottom" Grid.Column="3" Canvas.ZIndex="1000">
                         <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         <controls:VoiceButton x:Name="btnVoiceMessage"
                                               AllowFocusOnInteraction="False"
@@ -1067,7 +1028,7 @@
                 </Border>
 
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                        Visibility="{x:Bind ViewModel.ReplyInfo, Mode=OneWay, Converter={StaticResource EditToVisibilityConverter}}"
+                        Visibility="{x:Bind ViewModel.EmbedData, Mode=OneWay, Converter={StaticResource EditToVisibilityConverter}}"
                         HorizontalAlignment="Right"
                         Grid.Column="3"
                         Grid.Row="1">
@@ -1080,30 +1041,32 @@
                                           Padding="0,2,0,0"/>
                 </Border>
 
-                <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="4" Grid.RowSpan="2"/>
+                <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource TelegramSeparatorBrush}" Grid.ColumnSpan="4" Grid.RowSpan="2"/>
             </Grid>
         </ContentControl>
 
         <controls:BubbleBottomButton
-            TextArea="{x:Bind TextArea, Mode=OneWay}"
-            With="{x:Bind ViewModel.With, Mode=OneWay}"
-            HasAccessToken="{x:Bind ViewModel.HasAccessToken, Mode=OneWay}"
-            ToggleMuteCommand="{x:Bind ViewModel.ToggleMuteCommand}"
-            DeleteAndExitCommand="{x:Bind ViewModel.DialogDeleteCommand}"
-            JoinCommand="{x:Bind ViewModel.JoinChannelCommand}"
-            UnblockCommand="{x:Bind ViewModel.UnblockCommand}"
-            StartCommand="{x:Bind ViewModel.StartCommand}"
+            x:Name="Action"
+            Command="{x:Bind ViewModel.ActionCommand}"
+            Height="{ThemeResource AppBarThemeCompactHeight}"
             Grid.Row="3">
-            <Button.ContentTemplate>
-                <DataTemplate x:DataType="x:String">
-                    <TextBlock Text="{x:Bind}" TextWrapping="Wrap" TextAlignment="Center"/>
-                </DataTemplate>
-            </Button.ContentTemplate>
+            <Button.Content>
+                <TextBlock x:Name="ActionLabel" TextWrapping="Wrap" TextAlignment="Center"/>
+            </Button.Content>
         </controls:BubbleBottomButton>
 
         <controls:DialogSearchBar
-            DataContext="{x:Bind ViewModel.Search, Mode=OneWay}"
+            x:Name="SearchBar"
             Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
             Grid.Row="3"/>
+
+        <Grid Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Click="DebugScrollSet_Click" Content="Set"/>
+            <Slider ValueChanged="DebugScroll_ValueChanged" Minimum="-100" Maximum="100" Grid.Column="1"/>
+        </Grid>
     </Grid>
 </Page>

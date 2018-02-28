@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Navigation;
 
@@ -19,7 +17,7 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsUsernameViewModel : UnigramViewModelBase
     {
-        public SettingsUsernameViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public SettingsUsernameViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
@@ -32,22 +30,10 @@ namespace Unigram.ViewModels.Settings
             IsLoading = false;
             ErrorMessage = null;
 
-            var cached = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
-            if (cached != null)
+            var response = await ProtoService.SendAsync(new GetMe());
+            if (response is User user)
             {
-                _username = cached.HasUsername ? cached.Username : string.Empty;
-            }
-            else
-            {
-                var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
-                if (response.IsSucceeded)
-                {
-                    var user = response.Result.FirstOrDefault() as TLUser;
-                    if (user != null)
-                    {
-                        _username = user.HasUsername ? user.Username : string.Empty;
-                    }
-                }
+                _username = user.Username;
             }
 
             RaisePropertyChanged(() => Username);
@@ -108,10 +94,12 @@ namespace Unigram.ViewModels.Settings
 
         public async void CheckAvailability(string text)
         {
-            var response = await ProtoService.CheckUsernameAsync(text);
-            if (response.IsSucceeded)
+            var myid = ProtoService.GetOption<OptionValueInteger>("my_id");
+
+            var response = await ProtoService.SendAsync(new SearchPublicChat(text));
+            if (response is Chat chat)
             {
-                if (response.Result)
+                if (chat.Type is ChatTypePrivate privata && privata.UserId == myid.Value)
                 {
                     IsLoading = false;
                     IsAvailable = true;
@@ -124,19 +112,25 @@ namespace Unigram.ViewModels.Settings
                     ErrorMessage = Strings.Android.UsernameInUse;
                 }
             }
-            else
+            else if (response is Error error)
             {
-                if (response.Error.TypeEquals(TLErrorType.USERNAME_INVALID))
+                if (error.TypeEquals(TLErrorType.USERNAME_INVALID))
                 {
                     IsLoading = false;
                     IsAvailable = false;
                     ErrorMessage = Strings.Android.UsernameInvalid;
                 }
-                else if (response.Error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
+                else if (error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
                 {
                     IsLoading = false;
                     IsAvailable = false;
                     ErrorMessage = Strings.Android.UsernameInUse;
+                }
+                else if (error.TypeEquals(TLErrorType.USERNAME_NOT_OCCUPIED))
+                {
+                    IsLoading = false;
+                    IsAvailable = true;
+                    ErrorMessage = null;
                 }
             }
         }
@@ -206,19 +200,14 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var response = await ProtoService.UpdateUsernameAsync(Username);
-            if (response.IsSucceeded)
+            var response = await ProtoService.SendAsync(new SetUsername(_username));
+            if (response is Ok)
             {
-                CacheService.SyncUser(response.Result, (callback) =>
-                {
-                    //Aggregator.Publish(new UserNameChangedEventArgs(result));
-                });
-
                 NavigationService.GoBack();
             }
-            else
+            else if (response is Error error)
             {
-                if (response.Error.CodeEquals(TLErrorCode.FLOOD))
+                if (error.CodeEquals(TLErrorCode.FLOOD))
                 {
                     //this.HasError = true;
                     //this.Error = Strings.Resources.FloodWaitString;
@@ -227,7 +216,7 @@ namespace Unigram.ViewModels.Settings
                     //    MessageBox.Show(Strings.Resources.FloodWaitString, Strings.Resources.Error, 0);
                     //});
                 }
-                else if (response.Error.CodeEquals(TLErrorCode.INTERNAL))
+                else if (error.CodeEquals(TLErrorCode.INTERNAL))
                 {
                     //StringBuilder messageBuilder = new StringBuilder();
                     //messageBuilder.AppendLine(Strings.Resources.ServerErrorMessage);
@@ -241,9 +230,9 @@ namespace Unigram.ViewModels.Settings
                     //    MessageBox.Show(messageBuilder.ToString(), Strings.Resources.ServerError, 0);
                     //});
                 }
-                else if (response.Error.CodeEquals(TLErrorCode.BAD_REQUEST))
+                else if (error.CodeEquals(TLErrorCode.BAD_REQUEST))
                 {
-                    if (response.Error.TypeEquals(TLErrorType.USERNAME_INVALID))
+                    if (error.TypeEquals(TLErrorType.USERNAME_INVALID))
                     {
                         //this.HasError = true;
                         //this.Error = Strings.Resources.UsernameInvalid;
@@ -252,7 +241,7 @@ namespace Unigram.ViewModels.Settings
                         //    MessageBox.Show(Strings.Resources.UsernameInvalid, Strings.Resources.Error, 0);
                         //});
                     }
-                    else if (response.Error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
+                    else if (error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
                     {
                         //this.HasError = true;
                         //this.Error = Strings.Resources.UsernameOccupied;
@@ -261,7 +250,7 @@ namespace Unigram.ViewModels.Settings
                         //    MessageBox.Show(Strings.Resources.UsernameOccupied, Strings.Resources.Error, 0);
                         //});
                     }
-                    else if (response.Error.TypeEquals(TLErrorType.USERNAME_NOT_MODIFIED))
+                    else if (error.TypeEquals(TLErrorType.USERNAME_NOT_MODIFIED))
                     {
                         NavigationService.GoBack();
                     }

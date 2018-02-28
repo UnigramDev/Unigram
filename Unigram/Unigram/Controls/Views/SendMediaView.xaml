@@ -1,4 +1,4 @@
-﻿<controls:ContentDialogBase
+<controls:ContentDialogBase
     x:Class="Unigram.Controls.Views.SendMediaView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -676,7 +676,7 @@
                 </FlipView.ItemTemplate>
             </local:HeaderFlipView>
 
-            <Border Visibility="{x:Bind SelectedItem.IsVideo, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#99000000" CornerRadius="18" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12" Grid.Row="1">
+            <Border Visibility="{x:Bind SelectedItem.IsAnimatable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#99000000" CornerRadius="18" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12" Grid.Row="1">
                 <controls:GlyphToggleButton UncheckedGlyph="&#xE15D;"
                                             CheckedGlyph="&#xE198;"
                                             IsChecked="{Binding SelectedItem.IsMuted, Mode=TwoWay}"
@@ -740,7 +740,7 @@
                 <ListView.Header>
                     <Border x:Name="AutocompleteHeader"
                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                        <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Top" Height="1"/>
+                        <Rectangle Fill="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Top" Height="1"/>
                     </Border>
                 </ListView.Header>
                 <ListView.ItemsPanel>

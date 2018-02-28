@@ -7,7 +7,7 @@
 
 using Microsoft::WRL::ComPtr;
 
-static LibraryInstance s_mfPlat(L"Mfplat.dll");
+static const LibraryInstance s_mfPlat(L"Mfplat.dll");
 
 HRESULT MFScheduleWorkItem(IMFAsyncCallback* pCallback, IUnknown* pState, INT64 Timeout, MFWORKITEM_KEY* pKey)
 {

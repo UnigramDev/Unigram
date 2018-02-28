@@ -368,7 +368,7 @@ String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
 	}
 
 	std::wstringstream almost;
-	almost << L"ms-appdata:///local/temp/placeholders/"
+	almost << L"ms-appdata:///local/temp/"
 		<< group->Data()
 		<< L"_placeholder.png";
 
@@ -642,7 +642,7 @@ void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, Strin
 
 void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
 {
-	bool allow = true;
+	bool allow = false;
 	//auto settings = ApplicationData::Current->LocalSettings;
 	//if (settings->Values->HasKey("SessionGuid"))
 	//{

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api.TL;
+using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -23,27 +25,12 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is TLUser user)
-            {
-                return UserTemplate;
-            }
-
-            if (item is TLChat chat)
+            if (item is SearchResult)
             {
                 return ChatTemplate;
             }
 
-            if (item is TLChannel channel)
-            {
-                return ChannelTemplate;
-            }
-
-            if (item is TLChannelForbidden channelForbidden)
-            {
-                return ChannelForbiddenTemplate;
-            }
-
-            if (item is TLDialog dialog)
+            if (item is Message)
             {
                 return MessageTemplate;
             }

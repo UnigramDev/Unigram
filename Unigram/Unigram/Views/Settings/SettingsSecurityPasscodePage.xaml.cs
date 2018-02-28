@@ -78,5 +78,15 @@ namespace Unigram.Views.Settings
                 InactivityHelper.Initialize(timeout);
             }
         }
+
+        #region Binding
+
+        private string ConvertAutolock(int seconds)
+        {
+            return Locale.FormatAutoLock(seconds);
+        }
+
+        #endregion
+
     }
 }

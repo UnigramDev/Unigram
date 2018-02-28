@@ -12,7 +12,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Media.Imaging;
@@ -23,10 +22,12 @@ using Windows.UI.Xaml.Markup;
 using System.Linq;
 using Windows.UI.Xaml.Media;
 using Telegram.Api.Helpers;
+using TdWindows;
+using Windows.Media.Capture;
 
 namespace Unigram.Views
 {
-    public sealed partial class SettingsPage : Page
+    public sealed partial class SettingsPage : Page, IUserDelegate, IFileDelegate
     {
         public SettingsViewModel ViewModel => DataContext as SettingsViewModel;
 
@@ -34,18 +35,21 @@ namespace Unigram.Views
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<SettingsViewModel>();
+            ViewModel.Delegate = this;
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-#if DEBUG
-            var optionAccounts = new HyperButton();
-            optionAccounts.Style = App.Current.Resources["HyperButtonStyle"] as Style;
-            optionAccounts.Click += Accounts_Click;
-            optionAccounts.Content = "Accounts management";
+            Diagnostics.Text = $"Unigram X {AboutViewModel.GetVersion()}";
 
-            OptionsGroup3.Children.Clear();
-            OptionsGroup3.Children.Add(optionAccounts);
-#endif
+//#if DEBUG
+//            var optionAccounts = new HyperButton();
+//            optionAccounts.Style = App.Current.Resources["HyperButtonStyle"] as Style;
+//            optionAccounts.Click += Accounts_Click;
+//            optionAccounts.Content = "Accounts management";
+
+//            OptionsGroup3.Children.Clear();
+//            OptionsGroup3.Children.Add(optionAccounts);
+//#endif
         }
 
         public MasterDetailView MasterDetail { get; set; }
@@ -68,30 +72,52 @@ namespace Unigram.Views
 
         public async void EditName_Click(object sender, RoutedEventArgs e)
         {
-            await MasterDetail.NavigationService.NavigateModalAsync(typeof(EditYourNameView));
-        }
-
-        private async void About_Click(object sender, RoutedEventArgs e)
-        {
-            var full = ViewModel.Full as TLUserFull;
-            if (full == null)
+            var chat = ViewModel.Chat;
+            if (chat == null)
             {
                 return;
             }
 
-            var dialog = new EditYourAboutView();
-            dialog.About = full.About;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
+            if (chat.Type is ChatTypePrivate privata)
             {
-                var about = dialog.About;
-
-                var response = await ViewModel.ProtoService.UpdateProfileAsync(null, null, about);
-                if (response.IsSucceeded)
+                var user = ViewModel.ProtoService.GetUser(privata.UserId);
+                if (user == null)
                 {
-                    ViewModel.Full.About = about;
-                    ViewModel.Full.RaisePropertyChanged(() => ViewModel.Full.About);
+                    return;
+                }
+
+                var dialog = new EditUserNameView(user.FirstName, user.LastName);
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    ViewModel.ProtoService.Send(new SetName(dialog.FirstName, dialog.LastName));
+                }
+            }
+        }
+
+        private async void About_Click(object sender, RoutedEventArgs e)
+        {
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                var user = ViewModel.ProtoService.GetUserFull(privata.UserId);
+                if (user == null)
+                {
+                    return;
+                }
+
+                var dialog = new EditYourAboutView(user.Bio);
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    ViewModel.ProtoService.Send(new SetBio(dialog.About));
                 }
             }
         }
@@ -133,12 +159,22 @@ namespace Unigram.Views
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
-            var user = ViewModel.Self;
-            var userFull = ViewModel.Full as TLUserFull;
-            if (userFull != null && userFull.ProfilePhoto is TLPhoto && user != null)
+            var chat = ViewModel.Chat;
+            if (chat == null)
             {
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, userFull, user);
-                await GalleryView.Current.ShowAsync(viewModel, () => Photo);
+                return;
+            }
+
+            if (chat.Type is ChatTypePrivate)
+            {
+                var user = ViewModel.ProtoService.GetUser(chat);
+                if (user == null || user.ProfilePhoto == null)
+                {
+                    return;
+                }
+
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user);
+                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
         }
 
@@ -165,94 +201,55 @@ namespace Unigram.Views
             }
         }
 
-        private async void Questions_Click(object sender, RoutedEventArgs e)
+        private async void EditCamera_Click(object sender, RoutedEventArgs e)
         {
-            var response = await ViewModel.ProtoService.GetWebPageAsync("https://telegram.org/faq", 0);
-            if (response.IsSucceeded && response.Result is TLWebPage webPage && webPage.HasCachedPage)
+            var capture = new CameraCaptureUI();
+            capture.PhotoSettings.AllowCropping = false;
+            capture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
+            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.MediumXga;
+
+            var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
+            if (file != null)
             {
-                MasterDetail.NavigationService.Navigate(typeof(InstantPage), response.Result);
-            }
-            else
-            {
-                await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
+                var dialog = new EditYourPhotoView(file)
+                {
+                    CroppingProportions = ImageCroppingProportions.Square,
+                    IsCropEnabled = false
+                };
+                var dialogResult = await dialog.ShowAsync();
+                if (dialogResult == ContentDialogBaseResult.OK)
+                {
+                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
+                }
             }
         }
 
-        private async void Theme_Click(object sender, RoutedEventArgs e)
+        private async void Questions_Click(object sender, RoutedEventArgs e)
         {
-            if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
-            {
-                var remove = await FileUtils.TryGetTempItemAsync("theme.xaml");
-                if (remove != null)
-                {
-                    await remove.DeleteAsync();
+            MasterDetail.NavigationService.Navigate(typeof(InstantPage), "https://telegram.org/faq");
 
-                    Theme.Current.Update();
-                    App.NotifyThemeChanged();
-                }
-
-                return;
-            }
-
-            var picker = new FileOpenPicker();
-            picker.FileTypeFilter.Add(".xaml");
-
-            var file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                var result = await FileUtils.CreateTempFileAsync("theme.xaml");
-                await file.CopyAndReplaceAsync(result);
-
-                Theme.Current.Update();
-                App.NotifyThemeChanged();
-
-                //var text = await FileIO.ReadTextAsync(file);
-
-                //var dictionary = XamlReader.Load(text) as ResourceDictionary;
-                //if (dictionary == null)
-                //{
-                //    return;
-                //}
-
-                //var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
-                //if (accent == null)
-                //{
-                //    return;
-                //}
-
-                //foreach (var theme in dictionary.ThemeDictionaries)
-                //{
-                //    var item = theme.Value as ResourceDictionary;
-                //    if (accent.ThemeDictionaries.TryGetValue(theme.Key, out object value))
-                //    {
-                //        var pair = value as ResourceDictionary;
-                //        if (pair == null)
-                //        {
-                //            continue;
-                //        }
-
-                //        foreach (var key in item)
-                //        {
-                //            if (pair.ContainsKey(key.Key))
-                //            {
-                //                try
-                //                {
-                //                    pair[key.Key] = key.Value;
-                //                }
-                //                catch
-                //                {
-                //                    Debug.WriteLine("Theme: unable to apply " + key.Key);
-                //                }
-                //            }
-                //        }
-                //    }
-                //}
-
-                //App.RaiseThemeChanged();
-            }
+            //var response = await ViewModel.LegacyService.GetWebPageAsync("https://telegram.org/faq", 0);
+            //if (response.IsSucceeded && response.Result is TLWebPage webPage && webPage.HasCachedPage)
+            //{
+            //    MasterDetail.NavigationService.Navigate(typeof(InstantPage), response.Result);
+            //}
+            //else
+            //{
+            //    await Windows.System.Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
+            //}
         }
 
         #region Binding
+
+        private string ConvertFullName(User user)
+        {
+            if (string.IsNullOrEmpty(user.LastName))
+            {
+                return user.FirstName;
+            }
+
+            return $"{user.FirstName} {user.LastName}";
+        }
 
         private string ConvertUsername(string username)
         {
@@ -274,64 +271,63 @@ namespace Unigram.Views
             return about;
         }
 
+        public void UpdateUser(Chat chat, User user, bool secret)
+        {
+            Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64, 64);
+            Title.Text = user.GetFullName();
+
+            Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
+
+            PhoneNumber.Content = Telegram.Helpers.PhoneNumber.Format(user.PhoneNumber);
+            Username.Content = string.IsNullOrEmpty(user.Username) ? Strings.Android.UsernameEmpty : $"@{user.Username}";
+        }
+
+        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret)
+        {
+            Bio.Content = string.IsNullOrEmpty(fullInfo.Bio) ? Strings.Android.UserBioEmpty : fullInfo.Bio;
+        }
+
+        public void UpdateUserStatus(Chat chat, User user)
+        {
+        }
+
+        public void UpdateChat(Chat chat)
+        {
+        }
+
+        public void UpdateChatTitle(Chat chat)
+        {
+        }
+
+        public void UpdateChatPhoto(Chat chat)
+        {
+        }
+
+
+
+        public void UpdateFile(File file)
+        {
+            var chat = ViewModel.Chat;
+            if (chat != null && chat.UpdateFile(file))
+            {
+                Photo.Source = PlaceholderHelper.GetChat(null, chat, 64, 64);
+            }
+        }
+
         #endregion
-    }
 
-    // Experiment
-    public class TableStackPanel : StackPanel
-    {
-        //protected override Size ArrangeOverride(Size finalSize)
-        //{
-        //    if (finalSize.Width >= 500)
-        //    {
-        //        //Margin = new Thickness(12, 0, 12, 0);
-        //        //CornerRadius = new CornerRadius(8);
-        //        //BorderThickness = new Thickness(0);
+        private int _advanced;
 
-        //        HyperButton first = null;
-        //        HyperButton last = null;
+        private void Diagnostics_Click(object sender, RoutedEventArgs e)
+        {
+            _advanced++;
 
-        //        foreach (var item in Children)
-        //        {
-        //            if (item.Visibility == Visibility.Visible)
-        //            {
-        //                if (first == null)
-        //                {
-        //                    first = item as HyperButton;
-        //                }
+            if (_advanced >= 10)
+            {
+                _advanced = 0;
 
-        //                last = item as HyperButton;
-
-        //                if (last != null)
-        //                {
-        //                    last.BorderBrush = Application.Current.Resources["SystemControlForegroundBaseLowBrush"] as SolidColorBrush;
-        //                }
-        //            }
-        //        }
-
-        //        var lastRadius = new CornerRadius(0, 0, 8, 8);
-
-        //        if (first != null)
-        //        {
-        //            if (first == last)
-        //            {
-        //                last.CornerRadius = new CornerRadius(8, 8, 8, 8);
-        //                last.BorderBrush = null;
-        //            }
-        //            else
-        //            {
-        //                first.CornerRadius = new CornerRadius(8, 8, 0, 0);
-
-        //                if (last != null)
-        //                {
-        //                    last.CornerRadius = new CornerRadius(0, 0, 8, 8);
-        //                    last.BorderBrush = null;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return base.ArrangeOverride(finalSize);
-        //}
+                MasterDetail.NavigationService.Navigate(typeof(DiagnosticsPage));
+            }
+        }
     }
 }

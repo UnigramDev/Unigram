@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Core.Common;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsLanguageViewModel : UnigramViewModelBase
     {
-        public SettingsLanguageViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public SettingsLanguageViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new MvxObservableCollection<TLLangPackLanguage>();
+            Items = new MvxObservableCollection<object>();
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -28,28 +27,28 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var response = await ProtoService.GetLanguagesAsync();
-            if (response.IsSucceeded)
-            {
-                Items.ReplaceWith(response.Result.OrderBy(x => x.NativeName));
+            //var response = await LegacyService.GetLanguagesAsync();
+            //if (response.IsSucceeded)
+            //{
+            //    Items.ReplaceWith(response.Result.OrderBy(x => x.NativeName));
 
-                var context = ResourceContext.GetForCurrentView();
-                if (context.Languages.Count > 0)
-                {
-                    var key = context.Languages[0];
-                    var already = Items.FirstOrDefault(x => key.StartsWith(x.LangCode, StringComparison.OrdinalIgnoreCase));
-                    if (already != null)
-                    {
-                        SelectedItem = already;
-                    }
-                }
-            }
+            //    var context = ResourceContext.GetForCurrentView();
+            //    if (context.Languages.Count > 0)
+            //    {
+            //        var key = context.Languages[0];
+            //        var already = Items.FirstOrDefault(x => key.StartsWith(x.LangCode, StringComparison.OrdinalIgnoreCase));
+            //        if (already != null)
+            //        {
+            //            SelectedItem = already;
+            //        }
+            //    }
+            //}
         }
 
-        public MvxObservableCollection<TLLangPackLanguage> Items { get; private set; }
+        public MvxObservableCollection<object> Items { get; private set; }
 
-        private TLLangPackLanguage _selectedItem;
-        public TLLangPackLanguage SelectedItem
+        private object _selectedItem;
+        public object SelectedItem
         {
             get
             {

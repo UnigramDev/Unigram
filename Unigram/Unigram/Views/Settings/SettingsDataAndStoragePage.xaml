@@ -1,9 +1,10 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Settings.SettingsDataAndStoragePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -24,7 +25,7 @@
         <Style x:Key="SubtitleButtonStyle" TargetType="controls:BadgeButton">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="12,0,0,0"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -86,6 +87,13 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <common:AutoDownloadType x:Key="AutoDownloadPhotos">Photos</common:AutoDownloadType>
+        <common:AutoDownloadType x:Key="AutoDownloadVideos">Videos</common:AutoDownloadType>
+        <common:AutoDownloadType x:Key="AutoDownloadDocuments">Documents</common:AutoDownloadType>
+        <common:AutoDownloadType x:Key="AutoDownloadVoiceNotes">VoiceNotes</common:AutoDownloadType>
+        <common:AutoDownloadType x:Key="AutoDownloadVideoNotes">VideoNotes</common:AutoDownloadType>
+        <common:AutoDownloadType x:Key="AutoDownloadAnimations">Animations</common:AutoDownloadType>
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -101,37 +109,68 @@
                       Grid.Row="1">
             <StackPanel Margin="0,0,0,48">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource AutomaticMediaDownload}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:BadgeButton
-                        Badge="{x:Bind ViewModel.AutoDownloads[0].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        CommandParameter="{x:Bind ViewModel.AutoDownloads[0].Type}"
-                        Content="{CustomResource WhenUsingMobileData}"
-                        Style="{StaticResource SubtitleButtonStyle}"/>
-                    <controls:BadgeButton
-                        Badge="{x:Bind ViewModel.AutoDownloads[1].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        CommandParameter="{x:Bind ViewModel.AutoDownloads[1].Type}"
-                        Content="{CustomResource WhenConnectedOnWiFi}"
-                        Style="{StaticResource SubtitleButtonStyle}"/>
-                    <controls:BadgeButton
-                        Badge="{x:Bind ViewModel.AutoDownloads[2].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        CommandParameter="{x:Bind ViewModel.AutoDownloads[2].Type}"
-                        Content="{CustomResource WhenRoaming}"
-                        Style="{StaticResource SubtitleButtonStyle}"/>
-                </StackPanel>
-                
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource DataUsage}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:HyperButton
                         Tag="{CustomResource StorageUsage}"
                         Click="Storage_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                     <controls:HyperButton
-                        Tag="Network usage"
+                        Tag="Network Usage"
                         Click="Stats_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
+                </StackPanel>
+                
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource AutomaticMediaDownload}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.AutoDownloadEnabled, Mode=TwoWay}"
+                        Header="{CustomResource AutoDownloadMedia}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+
+                    <controls:HyperButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        CommandParameter="{StaticResource AutoDownloadPhotos}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Tag="{CustomResource LocalPhotoCache}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        CommandParameter="{StaticResource AutoDownloadVideos}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Tag="{CustomResource LocalVideoCache}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        CommandParameter="{StaticResource AutoDownloadDocuments}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Tag="{CustomResource FilesDataUsage}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <!--<controls:HyperButton
+                         Tag="{CustomResource AttachMusic}"
+                         Style="{StaticResource HyperDetailButtonStyle}"/>-->
+                    <controls:HyperButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        CommandParameter="{StaticResource AutoDownloadVoiceNotes}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Tag="{CustomResource AudioAutodownload}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        CommandParameter="{StaticResource AutoDownloadVideoNotes}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Tag="{CustomResource VideoMessagesAutodownload}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        CommandParameter="{StaticResource AutoDownloadAnimations}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Tag="{CustomResource LocalGifCache}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton
+                        Command="{x:Bind ViewModel.ResetAutoDownloadCommand}"
+                        Tag="{CustomResource ResetAutomaticMediaDownload}"
+                        Style="{StaticResource HyperDetailButtonStyle}"
+                        Foreground="Red"/>
                 </StackPanel>
                 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
@@ -146,7 +185,7 @@
                     <TextBlock Text="{CustomResource Proxy}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:HyperButton
                         Tag="{CustomResource ProxySettings}"
-                        Click="Proxy_Click"
+                        Command="{x:Bind ViewModel.ProxyCommand}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                 </StackPanel>
             </StackPanel>

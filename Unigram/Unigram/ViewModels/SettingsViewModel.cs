@@ -3,162 +3,125 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.Services.FileManager;
-using Telegram.Api.Services.Updates;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Helpers;
 using Unigram.Core.Services;
 using Unigram.Services;
-using Unigram.Strings;
 using Unigram.Views;
 using Windows.Storage;
-using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using TdWindows;
+using Windows.ApplicationModel.Core;
+using Windows.Foundation.Metadata;
 
 namespace Unigram.ViewModels
 {
-   public class SettingsViewModel : UnigramViewModelBase
+   public class SettingsViewModel : UnigramViewModelBase,
+        IHandle<UpdateUser>,
+        IHandle<UpdateUserFullInfo>
     {
-        private readonly IUpdatesService _updatesService;
-        private readonly IPushService _pushService;
+        private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
-        private readonly IUploadFileManager _uploadFileManager;
-        private readonly IStickersService _stickersService;
 
-        public SettingsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUpdatesService updatesService, IPushService pushService, IContactsService contactsService, IUploadFileManager uploadFileManager, IStickersService stickersService) 
+        public IUserDelegate Delegate { get; set; }
+
+        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService) 
             : base(protoService, cacheService, aggregator)
         {
-            _updatesService = updatesService;
             _pushService = pushService;
             _contactsService = contactsService;
-            _uploadFileManager = uploadFileManager;
-            _stickersService = stickersService;
 
             AskCommand = new RelayCommand(AskExecute);
             LogoutCommand = new RelayCommand(LogoutExecute);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
+
+            Aggregator.Subscribe(this);
+        }
+
+        private Chat _chat;
+        public Chat Chat
+        {
+            get
+            {
+                return _chat;
+            }
+            set
+            {
+                Set(ref _chat, value);
+            }
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var cached = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
-            if (cached != null)
+            var response = await ProtoService.SendAsync(new CreatePrivateChat(ProtoService.GetMyId(), false));
+            if (response is Chat chat)
             {
-                Self = cached;
-            }
-            else
-            {
-                var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
-                if (response.IsSucceeded)
+                Chat = chat;
+                Delegate?.UpdateChat(chat);
+
+                if (chat.Type is ChatTypePrivate privata)
                 {
-                    var result = response.Result.FirstOrDefault() as TLUser;
-                    if (result != null)
+                    var item = ProtoService.GetUser(privata.UserId);
+                    var cache = ProtoService.GetUserFull(privata.UserId);
+
+                    Delegate?.UpdateUser(chat, item, false);
+
+                    if (cache == null)
                     {
-                        Self = result;
-                        SettingsHelper.UserId = result.Id;
+                        ProtoService.Send(new GetUserFullInfo(privata.UserId));
+                    }
+                    else
+                    {
+                        Delegate?.UpdateUserFullInfo(chat, item, cache, false);
                     }
                 }
             }
+        }
 
-            var user = Self;
-            if (user == null)
+
+        public void Handle(UpdateUser update)
+        {
+            var chat = _chat;
+            if (chat == null)
             {
                 return;
             }
 
-            var full = CacheService.GetFullUser(user.Id);
-            if (full == null)
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == update.User.Id)
             {
-                var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
-                if (response.IsSucceeded)
-                {
-                    full = response.Result;
-                }
+                BeginOnUIThread(() => Delegate?.UpdateUser(chat, update.User, false));
             }
-
-            Full = full;
+            else if (chat.Type is ChatTypeSecret secret && secret.UserId == update.User.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateUser(chat, update.User, true));
+            }
         }
 
-        private TLUser _self;
-        public TLUser Self
+        public void Handle(UpdateUserFullInfo update)
         {
-            get
+            var chat = _chat;
+            if (chat == null)
             {
-                return _self;
+                return;
             }
-            set
+
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
             {
-                Set(ref _self, value);
+                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false));
             }
         }
 
-        private TLUserFull _full;
-        public TLUserFull Full
-        {
-            get
-            {
-                return _full;
-            }
-            set
-            {
-                Set(ref _full, value);
-            }
-        }
+
 
         public RelayCommand<StorageFile> EditPhotoCommand { get; }
         private async void EditPhotoExecute(StorageFile file)
         {
-            var fileLocation = new TLFileLocation
-            {
-                VolumeId = TLLong.Random(),
-                LocalId = TLInt.Random(),
-                Secret = TLLong.Random(),
-                DCId = 0
-            };
-
-            var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-            var fileCache = await FileUtils.CreateTempFileAsync(fileName);
-
-            //var fileScale = await ImageHelper.ScaleJpegAsync(file, fileCache, 640, 0.77);
-
-            await file.CopyAndReplaceAsync(fileCache);
-            var fileScale = fileCache;
-
-            var basicProps = await fileScale.GetBasicPropertiesAsync();
-            var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
-
-            var fileId = TLLong.Random();
-            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name);
-            if (upload != null)
-            {
-                var response = await ProtoService.UploadProfilePhotoAsync(upload.ToInputFile() as TLInputFile);
-                if (response.IsSucceeded)
-                {
-                    var user = Self as TLUser;
-                    if (user == null)
-                    {
-                        return;
-                    }
-
-                    var userFull = CacheService.GetFullUser(user.Id);
-                    if (userFull == null)
-                    {
-                        return;
-                    }
-
-                    userFull.HasProfilePhoto = true;
-                    userFull.ProfilePhoto = response.Result.Photo;
-                    userFull.RaisePropertyChanged(() => userFull.ProfilePhoto);
-                }
-            }
+            var props = await file.GetBasicPropertiesAsync();
+            var response = await ProtoService.SendAsync(new SetProfilePhoto(await file.ToGeneratedAsync()));
         }
 
         public RelayCommand AskCommand { get; }
@@ -167,10 +130,10 @@ namespace Unigram.ViewModels
             var confirm = await TLMessageDialog.ShowAsync(Strings.Android.AskAQuestionInfo, Strings.Android.AskAQuestion, Strings.Android.AskButton, Strings.Android.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                var response = await ProtoService.GetSupportAsync();
-                if (response.IsSucceeded)
+                var response = await ProtoService.SendAsync(new GetSupportUser());
+                if (response is User)
                 {
-                    NavigationService.NavigateToDialog(response.Result.User);
+                    NavigationService.NavigateToChat(null);
                 }
             }
         }
@@ -185,26 +148,25 @@ namespace Unigram.ViewModels
             }
 
             await _pushService.UnregisterAsync();
+            await _contactsService.RemoveAsync();
 
-            var response = await ProtoService.LogOutAsync();
-            if (response.IsSucceeded)
+            await ProtoService.SendAsync(new LogOut());
+
+            if (ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "RequestRestartAsync"))
             {
-                await _contactsService.RemoveAsync();
-
-                SettingsHelper.IsAuthorized = false;
-                SettingsHelper.UserId = 0;
-                //ProtoService.ClearQueue();
-                _updatesService.ClearState();
-                _stickersService.Cleanup();
-                CacheService.ClearAsync();
-                CacheService.ClearConfigImportAsync();
-
-                App.Current.Exit();
+                await CoreApplication.RequestRestartAsync(string.Empty);
             }
             else
             {
-
+                App.Current.Exit();
             }
+        }
+
+        protected override void BeginOnUIThread(Action action)
+        {
+            // This is somehow needed because this viewmodel requires a Dispatcher
+            // in some situations where base one might be null.
+            Execute.BeginOnUIThread(action);
         }
     }
 }

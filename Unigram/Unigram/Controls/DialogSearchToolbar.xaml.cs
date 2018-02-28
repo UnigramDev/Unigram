@@ -17,9 +17,15 @@ namespace Unigram.Controls
 
         public DialogSearchToolBar()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
+        }
+
+        public void Update(DialogSearchViewModel viewModel)
+        {
+            DataContext = viewModel;
+            Bindings.Update();
         }
 
         private async void OnVisibilityChanged(DependencyObject sender, DependencyProperty dp)

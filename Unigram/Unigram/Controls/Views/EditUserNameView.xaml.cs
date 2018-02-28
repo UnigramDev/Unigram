@@ -15,15 +15,25 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Controls.Views
 {
     public sealed partial class EditUserNameView : ContentDialog
     {
-        private EditUserNameView()
+        public EditUserNameView()
         {
             InitializeComponent();
+
+            Title = Strings.Android.EditName;
+            PrimaryButtonText = Strings.Android.OK;
+            SecondaryButtonText = Strings.Android.Cancel;
+        }
+
+        public EditUserNameView(string firstName, string lastName)
+        {
+            InitializeComponent();
+
+            FirstName = firstName;
+            LastName = lastName;
 
             Title = Strings.Android.EditName;
             PrimaryButtonText = Strings.Android.OK;
@@ -61,18 +71,6 @@ namespace Unigram.Controls.Views
             private set
             {
                 TextLastName.Text = value ?? string.Empty;
-            }
-        }
-
-        private static EditUserNameView _current;
-        public static EditUserNameView Current
-        {
-            get
-            {
-                if (_current == null)
-                    _current = new EditUserNameView();
-
-                return _current;
             }
         }
 

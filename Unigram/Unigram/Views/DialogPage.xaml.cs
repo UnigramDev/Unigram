@@ -10,7 +10,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
@@ -32,7 +31,6 @@ using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.Storage.Search;
 using Windows.Storage.Streams;
-using Windows.System;
 using Windows.System.Profile;
 using Windows.UI.Composition;
 using Windows.UI.Core;
@@ -59,16 +57,28 @@ using LinqToVisualTree;
 using Unigram.Models;
 using System.Windows.Input;
 using Unigram.Views.Dialogs;
+using Unigram.Controls.Items;
+using TdWindows;
+using Unigram.Selectors;
+using Unigram.ViewModels.Users;
+using Newtonsoft.Json;
+using Windows.UI.Xaml.Documents;
+using Windows.ApplicationModel;
 
 namespace Unigram.Views
 {
-    public sealed partial class DialogPage : Page, IMasterDetailPage
+    public sealed partial class DialogPage : Page, IMasterDetailPage, IDialogDelegate
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         public BindConvert Convert => BindConvert.Current;
 
+        private DialogViewModel _viewModel;
         private double _lastKnownKeyboardHeight = 260;
+
+        private readonly WindowContext _windowContext;
+
+        private bool _myPeople;
 
         private DispatcherTimer _elapsedTimer;
         private Visual _messageVisual;
@@ -76,6 +86,9 @@ namespace Unigram.Views
         private Visual _elapsedVisual;
         private Visual _slideVisual;
         private Visual _rootVisual;
+
+        private Visual _dateHeaderPanel;
+        private Visual _dateHeader;
 
         private Visual _autocompleteLayer;
         private InsetClip _autocompleteInset;
@@ -85,23 +98,33 @@ namespace Unigram.Views
         public DialogPage()
         {
             InitializeComponent();
+            DataContextChanged += (s, args) =>
+             {
+                 _viewModel = ViewModel;
+             };
             DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
+            ViewModel.Delegate = this;
+            ViewModel.Sticker_Click = Stickers_ItemClick;
 
-            //NavigationCacheMode = NavigationCacheMode.Required;
+            NavigationCacheMode = NavigationCacheMode.Required;
 
             _typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ServiceMessageLocalTemplate", new HashSet<SelectorItem>());
-            //_typeToItemHashSetMapping.Add("ServiceMessageDateTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ServiceUserCallMessageTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ServiceFriendCallMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
 
-            Messages.ChoosingItemContainer += OnChoosingItemContainer;
-            Messages.ContainerContentChanging += OnContainerContentChanging;
+            _windowContext = WindowContext.GetForCurrentView();
+
+            if (_windowContext.ContactPanel != null)
+            {
+                _myPeople = true;
+                _windowContext.ContactPanel.LaunchFullAppRequested += ContactPanel_LaunchFullAppRequested;
+
+                Header.Visibility = Visibility.Collapsed;
+                FindName("BackgroundPresenter");
+            }
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -111,7 +134,7 @@ namespace Unigram.Views
             ViewModel.PropertyChanged += OnPropertyChanged;
 
             StickersPanel.StickerClick = Stickers_ItemClick;
-            StickersPanel.GifClick = Gifs_ItemClick;
+            StickersPanel.AnimationClick = Animations_ItemClick;
 
             Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
             StickersPanel.RegisterPropertyChangedCallback(FrameworkElement.VisibilityProperty, StickersPanel_VisibilityChanged);
@@ -127,6 +150,14 @@ namespace Unigram.Views
             _ellipseVisual.Scale = new Vector3(0);
 
             _rootVisual.Clip = _compositor.CreateInsetClip(0, -100, 0, 0);
+
+            if (DateHeaderPanel != null)
+            {
+                _dateHeaderPanel = ElementCompositionPreview.GetElementVisual(DateHeaderPanel);
+                _dateHeader = ElementCompositionPreview.GetElementVisual(DateHeader);
+
+                _dateHeaderPanel.Clip = _compositor.CreateInsetClip();
+            }
 
             _elapsedTimer = new DispatcherTimer();
             _elapsedTimer.Interval = TimeSpan.FromMilliseconds(100);
@@ -171,6 +202,29 @@ namespace Unigram.Views
             //}
         }
 
+        private void ContactPanel_LaunchFullAppRequested(Windows.ApplicationModel.Contacts.ContactPanel sender, Windows.ApplicationModel.Contacts.ContactPanelLaunchFullAppRequestedEventArgs args)
+        {
+            sender.ClosePanel();
+            args.Handled = true;
+
+            this.BeginOnUIThread(async () =>
+            {
+                var chat = ViewModel.Chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                if (chat.Type is ChatTypePrivate privata)
+                {
+                    var options = new Windows.System.LauncherOptions();
+                    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
+
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri("tg://toast?from_id=" + privata.UserId), options);
+                }
+            });
+        }
+
         private void TextField_LostFocus(object sender, RoutedEventArgs e)
         {
             if (StickersPanel.Visibility == Visibility.Visible && TextField.FocusState == FocusState.Unfocused)
@@ -187,52 +241,70 @@ namespace Unigram.Views
             }
         }
 
-        //protected override async void OnNavigatedTo(NavigationEventArgs e)
-        //{
-        //    if (MainPage.TryGetPeerFromParameter(e.Parameter, out TLPeerBase peer))
-        //    {
-        //        DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>(peer);
-
-        //        CheckMessageBoxEmpty();
-
-        //        ViewModel.PropertyChanged -= OnPropertyChanged;
-        //        ViewModel.PropertyChanged += OnPropertyChanged;
-
-        //        await ViewModel.OnNavigatedToAsync(TLSerializationService.Current.Deserialize((string)e.Parameter), e.NavigationMode, null);
-        //    }
-
-        //    base.OnNavigatedTo(e);
-        //}
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            TextField.FocusMaybe(FocusState.Keyboard);
+            if (ViewModel != null)
+            {
+                ViewModel.PropertyChanged -= OnPropertyChanged;
+
+                ViewModel.Delegate = null;
+                ViewModel.TextField = null;
+                ViewModel.ListField = null;
+
+                //Bindings.StopTracking();
+            }
+
+            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
+
+            ViewModel.Delegate = this;
+            ViewModel.TextField = TextField;
+            ViewModel.ListField = Messages;
+            ViewModel.Sticker_Click = Stickers_ItemClick;
+
+            ViewModel.SetText(null, false);
+
+            CheckMessageBoxEmpty();
+
+            SearchToolBar.Update(ViewModel.Search);
+            SearchBar.Update(ViewModel.Search);
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+            //Bindings.Update();
+
+            //LosingFocus -= DialogPage_LosingFocus;
+            //LosingFocus += DialogPage_LosingFocus;
+
+            if (App.DataPackage != null)
+            {
+                var package = App.DataPackage;
+                App.DataPackage = null;
+                await HandlePackageAsync(package);
+            }
 
             base.OnNavigatedTo(e);
+
+            TextField.FocusMaybe(FocusState.Keyboard);
         }
 
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            //if (_panel != null && ViewModel.With != null)
-            //{
-            //    var container = Messages.ContainerFromIndex(_panel.FirstVisibleIndex);
-            //    if (container != null)
-            //    {
-            //        var peer = ViewModel.With.ToPeer();
-            //        var item = Messages.ItemFromContainer(container) as TLMessageBase;
-
-            //        ApplicationSettings.Current.AddOrUpdateValue(TLSerializationService.Current.Serialize(peer), item?.Id ?? -1);
-            //    }
-            //}
-
-            base.OnNavigatingFrom(e);
-        }
+        //private void DialogPage_LosingFocus(UIElement sender, LosingFocusEventArgs args)
+        //{
+        //    if (args.NewFocusedElement is DialogListViewItem && args.OldFocusedElement is BubbleTextBox)
+        //    {
+        //        args.Cancel = true;
+        //        args.Handled = true;
+        //    }
+        //}
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals("Reply"))
             {
                 CheckMessageBoxEmpty();
+            }
+            else if (e.PropertyName.Equals("Search"))
+            {
+                SearchToolBar.Update(ViewModel.Search);
+                SearchBar.Update(ViewModel.Search);
             }
         }
 
@@ -243,7 +315,7 @@ namespace Unigram.Views
                 ManagePanel.Visibility = Visibility.Collapsed;
                 InfoPanel.Visibility = Visibility.Visible;
 
-                ViewModel.SelectedItems = new List<TLMessageCommonBase>();
+                ViewModel.SelectedItems = new List<MessageViewModel>();
             }
             else
             {
@@ -264,64 +336,33 @@ namespace Unigram.Views
             }
         }
 
-        private async void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            Bindings.StopTracking();
+            Bindings.Update();
+
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
-            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+            Window.Current.Activated += Window_Activated;
+            Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
-            _panel = (ItemsStackPanel)Messages.ItemsPanelRoot;
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+
+            var panel = (ItemsStackPanel)Messages.ItemsPanelRoot;
+            if (panel != null)
+            {
+                _panel = panel;
+                _panel.SizeChanged -= OnViewSizeChanged;
+                _panel.SizeChanged += OnViewSizeChanged;
+            }
+
+            Messages.ScrollingHost.ViewChanged -= OnViewChanged;
             Messages.ScrollingHost.ViewChanged += OnViewChanged;
 
+
+
             TextField.FocusMaybe(FocusState.Keyboard);
-
-            if (App.DataPackage != null)
-            {
-                var package = App.DataPackage;
-                App.DataPackage = null;
-                await HandlePackageAsync(package);
-            }
-        }
-
-        private void Headers_ViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
-        {
-            var container = Messages.ContainerFromIndex(_panel.LastVisibleIndex) as BubbleListViewItem;
-            if (container == null)
-            {
-                return;
-            }
-
-            var root = container.ContentTemplateRoot as Grid;
-            if (root == null)
-            {
-                return;
-            }
-
-            var photo = root.FindName("PhotoBubble") as ProfilePicture;
-            if (photo == null)
-            {
-                return;
-            }
-
-            var transform = photo.TransformToVisual(Messages);
-            var point = transform.TransformPoint(new Point());
-
-            var inner = VisualTreeHelper.GetChild(photo, 0) as UIElement;
-            var visual = ElementCompositionPreview.GetElementVisual(inner);
-
-            var diff = Messages.ActualHeight - (point.Y + photo.ActualHeight);
-            if (diff < 0)
-            {
-                visual.Offset = new Vector3(0, (float)diff, 0);
-            }
-            else
-            {
-                visual.Offset = new Vector3();
-            }
-
-
-            Debug.WriteLine(diff);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -342,7 +383,26 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
 
-            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+            Window.Current.Activated -= Window_Activated;
+            Window.Current.VisibilityChanged -= Window_VisibilityChanged;
+
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+
+
+
+            //try
+            //{
+            //    if (_panel != null)
+            //    {
+            //        _panel.SizeChanged -= OnViewSizeChanged;
+            //    }
+
+            //    if (Messages.ScrollingHost != null)
+            //    {
+            //        Messages.ScrollingHost.ViewChanged -= OnViewChanged;
+            //    }
+            //}
+            //catch { }
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -365,53 +425,41 @@ namespace Unigram.Views
             KeyboardPlaceholder.Height = new GridLength(1, GridUnitType.Auto);
         }
 
+        private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+            {
+                ViewVisibleMessages(false);
+                TextField.FocusMaybe(FocusState.Keyboard);
+            }
+        }
+
+        private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
+        {
+            if (e.Visible)
+            {
+                TextField.FocusMaybe(FocusState.Keyboard);
+            }
+        }
+
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
+            if (args.EventType != CoreAcceleratorKeyEventType.KeyDown && args.EventType != CoreAcceleratorKeyEventType.SystemKeyDown)
             {
-                if (ViewModel.Search != null)
-                {
-                    ViewModel.Search = null;
-                    args.Handled = true;
-                }
+                return;
+            }
 
-                if (StickersPanel.Visibility == Visibility.Visible)
-                {
-                    if (StickersPanel.ToggleActiveView())
-                    {
+            var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
 
-                    }
-                    else
-                    {
-                        Collapse_Click(null, null);
-                    }
-
-                    args.Handled = true;
-                }
-
-                if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
-                {
-                    CollapseMarkup(false);
-                    args.Handled = true;
-                }
-
-                if (ViewModel.SelectionMode != ListViewSelectionMode.None)
-                {
-                    ViewModel.SelectionMode = ListViewSelectionMode.None;
-                    args.Handled = true;
-                }
-
-                if (ViewModel.EditedMessage != null)
-                {
-                    ViewModel.ClearReplyCommand.Execute(null);
-                    args.Handled = true;
-                }
-
-                if (args.Handled)
-                {
-                    Focus(FocusState.Programmatic);
-                    TextField.FocusMaybe(FocusState.Keyboard);
-                }
+            if (args.VirtualKey == Windows.System.VirtualKey.Search || (args.VirtualKey == Windows.System.VirtualKey.F && ctrl))
+            {
+                ViewModel.SearchCommand.Execute();
+                args.Handled = true;
+            }
+            else if (args.VirtualKey == Windows.System.VirtualKey.Delete && ViewModel.SelectionMode != ListViewSelectionMode.None && ViewModel.SelectedItems != null && ViewModel.SelectedItems.Count > 0)
+            {
+                ViewModel.MessagesDeleteCommand.Execute();
+                args.Handled = true;
             }
         }
 
@@ -449,7 +497,7 @@ namespace Unigram.Views
                 args.Handled = true;
             }
 
-            if (ViewModel.EditedMessage != null)
+            if (ViewModel.EmbedData != null && ViewModel.EmbedData.EditingMessage != null)
             {
                 ViewModel.ClearReplyCommand.Execute(null);
                 args.Handled = true;
@@ -467,13 +515,17 @@ namespace Unigram.Views
 
         private void CheckMessageBoxEmpty()
         {
-            var forwarding = false;
-            if (ViewModel.Reply is TLMessagesContainter container)
+            if (StickersPanel.Visibility == Visibility.Visible)
             {
-                forwarding = container.FwdMessages != null && container.FwdMessages.Count > 0;
+                Collapse_Click(StickersPanel, null);
             }
 
-            if (ViewModel != null && TextField.IsEmpty && !forwarding)
+            if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
+            {
+                CollapseMarkup(false);
+            }
+
+            if (ViewModel != null && TextField.IsEmpty)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnCommands.Visibility = Visibility.Visible;
@@ -490,14 +542,66 @@ namespace Unigram.Views
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
             }
 
-            if (StickersPanel.Visibility == Visibility.Visible)
-            {
-                Collapse_Click(StickersPanel, null);
-            }
+            var text = ViewModel.GetText();
+            var embedded = ViewModel.EmbedData;
 
-            if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
+            var response = ViewModel.ProtoService.Execute(new GetTextEntities(text));
+            if (response is TextEntities entities)
             {
-                CollapseMarkup(false);
+                var entity = entities.Entities.FirstOrDefault(x => x.Type is TextEntityTypeUrl);
+                if (entity != null)
+                {
+                    var address = text.Substring(entity.Offset, entity.Length);
+                    if (address.Equals(embedded?.WebPageUrl, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return;
+                    }
+
+                    ViewModel.ProtoService.Send(new GetWebPagePreview(address), result =>
+                    {
+                        this.BeginOnUIThread(() =>
+                        {
+                            if (!string.Equals(text, ViewModel.GetText()))
+                            {
+                                return;
+                            }
+
+                            if (result is WebPage webPage)
+                            {
+                                if (embedded == null)
+                                {
+                                    ViewModel.EmbedData = new MessageEmbedData { WebPagePreview = webPage, WebPageUrl = address };
+                                }
+                                else
+                                {
+                                    ViewModel.EmbedData = new MessageEmbedData { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = webPage, WebPageUrl = address };
+                                }
+                            }
+                            else if (embedded != null)
+                            {
+                                if (embedded.IsEmpty)
+                                {
+                                    ViewModel.EmbedData = null;
+                                }
+                                else if (embedded.WebPagePreview != null)
+                                {
+                                    ViewModel.EmbedData = new MessageEmbedData { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
+                                }
+                            }
+                        });
+                    });
+                }
+                else if (embedded != null)
+                {
+                    if (embedded.IsEmpty)
+                    {
+                        ViewModel.EmbedData = null;
+                    }
+                    else if (embedded.WebPagePreview != null)
+                    {
+                        ViewModel.EmbedData = new MessageEmbedData { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
+                    }
+                }
             }
         }
 
@@ -518,40 +622,33 @@ namespace Unigram.Views
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.With is TLUser user)
+            var chat = ViewModel.Chat;
+            if (chat == null)
             {
-                if (user.IsSelf)
-                {
-                    ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage), ViewModel.Peer);
-                }
-                else
-                {
-                    ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), ViewModel.Peer.ToPeer());
-                }
+                return;
             }
-            else if (ViewModel.With is TLChannel)
+
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.ProtoService.GetMyId())
             {
-                ViewModel.NavigationService.Navigate(typeof(ChannelDetailsPage), ViewModel.Peer.ToPeer());
+                ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage), chat.Id);
             }
-            else if (ViewModel.With is TLChat)
+            else
             {
-                ViewModel.NavigationService.Navigate(typeof(ChatDetailsPage), ViewModel.Peer.ToPeer());
+                ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
             }
         }
 
         private async void Attach_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendMedia)
+            var chat = ViewModel.Chat;
+            if (chat == null)
             {
-                if (channel.BannedRights.IsForever())
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Android.AttachMediaRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
-                }
-                else
-                {
-                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
-                }
+                return;
+            }
 
+            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Android.AttachMediaRestrictedForever, Strings.Android.AttachMediaRestricted);
+            if (restricted)
+            {
                 return;
             }
 
@@ -606,7 +703,19 @@ namespace Unigram.Views
 
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.SendBotInlineResult((TLBotInlineResultBase)e.ClickedItem);
+            var collection = ViewModel.InlineBotResults;
+            if (collection == null)
+            {
+                return;
+            }
+
+            var result = e.ClickedItem as InlineQueryResult;
+            if (result == null)
+            {
+                return;
+            }
+
+            ViewModel.SendBotInlineResult(result, collection.GetQueryId(result));
         }
 
         #region Drag & Drop
@@ -722,32 +831,32 @@ namespace Unigram.Views
         private async void Reply_Click(object sender, RoutedEventArgs e)
         {
             var reference = sender as MessageReference;
-            var message = reference.Message;
+            var message = reference.MessageId;
 
-            if (message != null)
+            if (message != 0)
             {
-                if (message is ReplyInfo replyInfo)
-                {
-                    message = replyInfo.Reply;
-                }
-
-                if (message is TLMessagesContainter container)
-                {
-                    if (container.EditMessage != null)
-                    {
-                        message = container.EditMessage;
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-
-                if (message is TLMessageCommonBase messageCommon)
-                {
-                    await ViewModel.LoadMessageSliceAsync(null, messageCommon.Id);
-                }
+                await ViewModel.LoadMessageSliceAsync(null, message);
             }
+
+            //if (message != null)
+            //{
+            //    if (message is TLMessagesContainter container)
+            //    {
+            //        if (container.EditMessage != null)
+            //        {
+            //            message = container.EditMessage;
+            //        }
+            //        else
+            //        {
+            //            return;
+            //        }
+            //    }
+
+            //    if (message is TLMessageCommonBase messageCommon)
+            //    {
+            //        await ViewModel.LoadMessageSliceAsync(null, messageCommon.Id);
+            //    }
+            //}
         }
 
         private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
@@ -755,24 +864,21 @@ namespace Unigram.Views
             var panel = sender as ReplyMarkupPanel;
             if (panel != null)
             {
-                ViewModel.KeyboardButtonExecute(e.Button, panel.DataContext as TLMessage);
+                ViewModel.KeyboardButtonExecute(panel.DataContext as MessageViewModel, e.Button);
             }
         }
 
         private async void Stickers_Click(object sender, RoutedEventArgs e)
         {
-            var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && (channel.BannedRights.IsSendStickers || channel.BannedRights.IsSendGifs))
+            var chat = ViewModel.Chat;
+            if (chat == null)
             {
-                if (channel.BannedRights.IsForever())
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
-                }
-                else
-                {
-                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
-                }
+                return;
+            }
 
+            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Android.AttachStickersRestrictedForever, Strings.Android.AttachStickersRestricted);
+            if (restricted)
+            {
                 return;
             }
 
@@ -863,52 +969,62 @@ namespace Unigram.Views
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
-            var message = control.DataContext as TLMessage;
 
-            if (message != null && message.IsSaved())
+            var message = control.Tag as MessageViewModel;
+            if (message == null)
             {
-                if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasFromId)
+                return;
+            }
+
+            if (message.IsSaved())
+            {
+                if (message.ForwardInfo is MessageForwardedFromUser fromUser)
                 {
-                    ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFrom.FromId.Value });
+                    ViewModel.OpenUser(fromUser.SenderUserId);
                 }
-                else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasChannelId)
+                else if (message.ForwardInfo is MessageForwardedPost post)
                 {
-                    ViewModel.NavigationService.NavigateToDialog(message.FwdFromChannel);
+                    // TODO: verify if this is sufficient
+                    ViewModel.OpenChat(post.ChatId);
                 }
             }
-            else if (message != null && message.HasFromId)
+            else if (message.IsChannelPost)
             {
-                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FromId.Value });
+                ViewModel.OpenChat(message.ChatId);
+            }
+            else
+            {
+                ViewModel.OpenUser(message.SenderUserId);
             }
         }
 
         private void View_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-            var message = button.DataContext as TLMessage;
+            //var button = sender as Button;
+            //var message = button.DataContext as TLMessage;
 
-            if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasSavedFromPeer && message.FwdFrom.SavedFromPeer != null && message.FwdFrom.HasSavedFromMsgId && message.FwdFrom.SavedFromMsgId != null)
-            {
-                ITLDialogWith with = null;
-                if (message.FwdFrom.SavedFromPeer is TLPeerUser user)
-                    with = InMemoryCacheService.Current.GetUser(user.UserId);
-                else if (message.FwdFrom.SavedFromPeer is TLPeerChat chat)
-                    with = InMemoryCacheService.Current.GetChat(chat.ChatId);
-                else if (message.FwdFrom.SavedFromPeer is TLPeerChannel channel)
-                    with = InMemoryCacheService.Current.GetChat(channel.ChannelId);
+            //if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasSavedFromPeer && message.FwdFrom.SavedFromPeer != null && message.FwdFrom.HasSavedFromMsgId && message.FwdFrom.SavedFromMsgId != null)
+            //{
+            //    ITLDialogWith with = null;
+            //    if (message.FwdFrom.SavedFromPeer is TLPeerUser user)
+            //        with = InMemoryCacheService.Current.GetUser(user.UserId);
+            //    else if (message.FwdFrom.SavedFromPeer is TLPeerChat chat)
+            //        with = InMemoryCacheService.Current.GetChat(chat.ChatId);
+            //    else if (message.FwdFrom.SavedFromPeer is TLPeerChannel channel)
+            //        with = InMemoryCacheService.Current.GetChat(channel.ChannelId);
 
-                if (with != null)
-                {
-                    ViewModel.NavigationService.NavigateToDialog(with, message: message.FwdFrom.SavedFromMsgId);
-                }
-            }
+            //    if (with != null)
+            //    {
+            //        ViewModel.NavigationService.NavigateToDialog(with, message: message.FwdFrom.SavedFromMsgId);
+            //    }
+            //}
         }
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
             {
-                ViewModel.ExpandSelection(Messages.SelectedItems.Cast<TLMessageCommonBase>());
+                ViewModel.ExpandSelection(Messages.SelectedItems.Cast<MessageViewModel>());
             }
         }
 
@@ -918,17 +1034,24 @@ namespace Unigram.Views
         {
             var flyout = new MenuFlyout();
 
-            var currentUser = ViewModel.With as TLUser;
-            var currentChat = ViewModel.With as TLChat;
-            var currentChannel = ViewModel.With as TLChannel;
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var user = chat.Type is ChatTypePrivate privata ? ViewModel.ProtoService.GetUser(privata.UserId) : null;
+            var secret = chat.Type is ChatTypeSecret;
+            var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ProtoService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
+            var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId) : null;
 
             CreateFlyoutItem(ref flyout, ViewModel.SearchCommand, Strings.Android.Search);
 
-            if (currentChannel != null && !currentChannel.IsCreator && (!currentChannel.IsMegaGroup || (currentChannel.Username != null && currentChannel.Username.Length > 0)))
+            if (supergroup != null && !(supergroup.Status is ChatMemberStatusCreator) && (supergroup.IsChannel || !string.IsNullOrEmpty(supergroup.Username)))
             {
                 CreateFlyoutItem(ref flyout, ViewModel.ReportCommand, Strings.Android.ReportChat);
             }
-            if (currentUser != null)
+            if (user != null)
             {
                 if (ViewModel.IsShareContactAvailable)
                 {
@@ -939,38 +1062,25 @@ namespace Unigram.Views
                     CreateFlyoutItem(ref flyout, ViewModel.AddContactCommand, Strings.Android.AddToContacts);
                 }
             }
-            //if (this.currentEncryptedChat != null)
-            //{
-            //    this.timeItem2 = this.headerItem.addSubItem(13, LocaleController.getString("SetTimer", R.string.SetTimer));
-            //}
-            if (currentUser != null || currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup && string.IsNullOrEmpty(currentChannel.Username)))
+            if (secret)
+            {
+                CreateFlyoutItem(ref flyout, ViewModel.SetTimerCommand, Strings.Android.SetTimer);
+            }
+            if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && string.IsNullOrEmpty(supergroup.Username)))
             {
                 CreateFlyoutItem(ref flyout, ViewModel.DialogClearCommand, Strings.Android.ClearHistory);
             }
-            if (currentUser != null)
+            if (user != null)
             {
                 CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Android.DeleteChatUser);
             }
-            if (currentChat != null)
+            if (basicGroup != null)
             {
                 CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Android.DeleteAndExit);
             }
-            if (currentUser != null || currentChat != null || (currentChannel != null && currentChannel.IsMegaGroup))
+            if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
-                TLPeerNotifySettings notifySettings = null;
-                if (ViewModel.Full is TLUserFull userFull)
-                {
-                    notifySettings = userFull.NotifySettings as TLPeerNotifySettings;
-                }
-                else if (ViewModel.Full is TLChatFullBase chatFull)
-                {
-                    notifySettings = chatFull.NotifySettings as TLPeerNotifySettings;
-                }
-
-                if (notifySettings != null)
-                {
-                    CreateFlyoutItem(ref flyout, ViewModel.ToggleMuteCommand, notifySettings.IsMuted ? Strings.Android.UnmuteNotifications : Strings.Android.MuteNotifications);
-                }
+                CreateFlyoutItem(ref flyout, chat.NotificationSettings.MuteFor == 0 ? ViewModel.MuteCommand : ViewModel.UnmuteCommand, chat.NotificationSettings.MuteFor == 0 ? Strings.Android.MuteNotifications : Strings.Android.UnmuteNotifications);
             }
 
             //if (currentUser == null || !currentUser.IsSelf)
@@ -981,16 +1091,20 @@ namespace Unigram.Views
             //{
             //    CreateFlyoutItem(ref flyout, null, Strings.Android.AddShortcut);
             //}
-            if (currentUser != null && currentUser.IsBot && ViewModel.Full is TLUserFull botFull && botFull.HasBotInfo)
+            if (user != null && user.Type is UserTypeBot)
             {
-                if (botFull.BotInfo.Commands.Any(x => x.Command.Equals("settings")))
+                var fullInfo = ViewModel.ProtoService.GetUserFull(user.Id);
+                if (fullInfo != null)
                 {
-                    CreateFlyoutItem(ref flyout, null, Strings.Android.BotSettings);
-                }
+                    if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("settings")))
+                    {
+                        CreateFlyoutItem(ref flyout, null, Strings.Android.BotSettings);
+                    }
 
-                if (botFull.BotInfo.Commands.Any(x => x.Command.Equals("help")))
-                {
-                    CreateFlyoutItem(ref flyout, null, Strings.Android.BotHelp);
+                    if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("help")))
+                    {
+                        CreateFlyoutItem(ref flyout, null, Strings.Android.BotHelp);
+                    }
                 }
             }
 
@@ -1005,34 +1119,43 @@ namespace Unigram.Views
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var messageCommon = element.DataContext as TLMessageCommonBase;
-            var channel = messageCommon.Parent as TLChannel;
-
-            if (messageCommon is TLMessageService serviceMessage && (serviceMessage.Action is TLMessageActionDate || serviceMessage.Action is TLMessageActionUnreadMessages))
+            var message = element.Tag as MessageViewModel;
+            if (message == null || message.Id == 0)
             {
                 return;
             }
 
+            var chat = message.GetChat();
+            if (chat == null)
+            {
+                return;
+            }
+
+            //if (messageCommon is TLMessageService serviceMessage && (serviceMessage.Action is TLMessageActionDate || serviceMessage.Action is TLMessageActionUnreadMessages))
+            //{
+            //    return;
+            //}
+
             // Generic
-            CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, Strings.Android.Reply);
-            CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? Strings.Android.UnpinMessage : Strings.Android.PinMessage);
-            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, Strings.Android.Edit);
-            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Android.Forward);
-            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Android.Delete);
-            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.Select);
-            CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, Strings.Android.Copy);
-            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, messageCommon, Strings.Resources.CopyImage);
-            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, Strings.Android.CopyLink);
+            CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Android.Reply);
+            CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, message, ViewModel.PinnedMessage?.Id == message.Id ? Strings.Android.UnpinMessage : Strings.Android.PinMessage);
+            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Android.Edit);
+            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Android.Forward);
+            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Android.Delete);
+            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Resources.Select);
+            CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Android.Copy);
+            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.Resources.CopyImage);
+            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, message, Strings.Android.CopyLink);
 
             // Stickers
-            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), messageCommon, Strings.Android.AddToStickers);
-            CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, Strings.Android.AddToFavorites);
-            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, Strings.Android.DeleteFromFavorites);
+            //CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), message, Strings.Android.AddToStickers);
+            CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.Android.AddToFavorites);
+            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.Android.DeleteFromFavorites);
 
-            CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, Strings.Android.SaveToGIFs);
-            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, Strings.Resources.SaveAs);
+            CreateFlyoutItem(ref flyout, MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.Android.SaveToGIFs);
+            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, message, Strings.Resources.SaveAs);
 
-            CreateFlyoutItem(ref flyout, MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, messageCommon, Strings.Android.AddContactTitle);
+            CreateFlyoutItem(ref flyout, MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.Android.AddContactTitle);
             //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Android.SaveToDownloads);
 
             //sender.ContextFlyout = menu;
@@ -1048,9 +1171,9 @@ namespace Unigram.Views
             }
         }
 
-        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<TLMessageCommonBase, Visibility> visibility, ICommand command, object parameter, string text)
+        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<MessageViewModel, Visibility> visibility, ICommand command, object parameter, string text)
         {
-            var value = visibility(parameter as TLMessageCommonBase);
+            var value = visibility(parameter as MessageViewModel);
             if (value == Visibility.Visible)
             {
                 var flyoutItem = new MenuFlyoutItem();
@@ -1073,7 +1196,7 @@ namespace Unigram.Views
             flyout.Items.Add(flyoutItem);
         }
 
-        private Visibility MessageReply_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessageReply_Loaded(MessageViewModel message)
         {
             //var channel = ViewModel.With as TLChannel;
             //if (channel != null && channel.MigratedFromChatId != null)
@@ -1084,294 +1207,235 @@ namespace Unigram.Views
             //    }
             //}
 
-            if (messageCommon.Parent is TLChannel channel)
+            var chat = message.GetChat();
+            if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
             {
-                if (channel.IsBroadcast)
+                var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
+                if (supergroup.IsChannel)
                 {
-                    return channel.IsCreator || channel.HasAdminRights ? Visibility.Visible : Visibility.Collapsed;
+                    return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
+                }
+                else if (supergroup.Status is ChatMemberStatusRestricted restricted)
+                {
+                    return restricted.CanSendMessages ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
 
             return Visibility.Visible;
         }
 
-        private Visibility MessagePin_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessagePin_Loaded(MessageViewModel message)
         {
-            if (messageCommon is TLMessage message && message.Parent is TLChannel channel && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages)))
+            var chat = message.GetChat();
+            if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
             {
-                if (message.ToId is TLPeerChannel)
-                {
-                    //element.Text = ViewModel.PinnedMessage != null && ViewModel.PinnedMessage.Id == messageCommon.Id ? "Unpin message" : "Pin message";
-                    return Visibility.Visible;
-                }
+                var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
+
+                return supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && admin.CanPinMessages) ? Visibility.Visible : Visibility.Collapsed;
             }
 
             return Visibility.Collapsed;
         }
 
-        private Visibility MessageEdit_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessageEdit_Loaded(MessageViewModel message)
         {
-            if (messageCommon is TLMessage message)
+            return message.CanBeEdited ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private Visibility MessageDelete_Loaded(MessageViewModel message)
+        {
+            return message.CanBeDeletedOnlyForSelf || message.CanBeDeletedForAllUsers ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private Visibility MessageForward_Loaded(MessageViewModel message)
+        {
+            return message.CanBeForwarded ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private Visibility MessageCopy_Loaded(MessageViewModel message)
+        {
+            if (message.Content is MessageText text)
             {
-                if (message.IsRoundVideo() || message.IsSticker())
-                {
-                    return Visibility.Collapsed;
-                }
+                return string.IsNullOrEmpty(text.Text.Text) ? Visibility.Collapsed : Visibility.Visible;
+            }
 
-                var channel = message.Parent as TLChannel;
-                if (message.IsOut && message.ToId is TLPeerUser userPeer && userPeer.Id == SettingsHelper.UserId)
-                {
-                    return Visibility.Visible;
-                }
-                else if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsEditMessages)))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
-                {
-                    var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
-                    var config = ViewModel.CacheService.GetConfig();
-                    if (config != null && message.Date + config.EditTimeLimit < date)
-                    {
-                        return Visibility.Collapsed;
-                    }
+            return message.Content.HasCaption() ? Visibility.Visible : Visibility.Collapsed;
+        }
 
-                    return Visibility.Visible;
-                }
+        private Visibility MessageCopyMedia_Loaded(MessageViewModel message)
+        {
+            if (message.Ttl > 0)
+            {
+                return Visibility.Collapsed;
+            }
+
+            if (message.Content is MessagePhoto)
+            {
+                return Visibility.Visible;
+            }
+            else if (message.Content is MessageInvoice invoice)
+            {
+                return invoice.Photo != null ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else if (message.Content is MessageText text)
+            {
+                return text.WebPage != null && text.WebPage.IsPhoto() ? Visibility.Visible : Visibility.Collapsed;
             }
 
             return Visibility.Collapsed;
         }
 
-        private Visibility MessageDelete_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessageCopyLink_Loaded(MessageViewModel message)
         {
-            if (messageCommon.Parent is TLChannel channel)
+            var chat = message.GetChat();
+            if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
             {
-                if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
-                {
-                    return Visibility.Collapsed;
-                }
+                var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
+                return string.IsNullOrEmpty(supergroup.Username) ? Visibility.Collapsed : Visibility.Visible;
+            }
 
-                if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
-                {
-                    return Visibility.Collapsed;
-                }
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageSelect_Loaded(MessageViewModel message)
+        {
+            if (_myPeople || message.IsService())
+            {
+                return Visibility.Collapsed;
             }
 
             return Visibility.Visible;
         }
 
-        private Visibility MessageForward_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessageAddSticker_Loaded(MessageViewModel message)
         {
-            if (messageCommon is TLMessage message)
+            if (message.Content is MessageSticker sticker)
             {
-                if (message.Media is TLMessageMediaPhoto photoMedia)
-                {
-                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                }
-                else if (message.Media is TLMessageMediaDocument documentMedia)
-                {
-                    return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                }
+                // TODO: ...
+            }
 
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageSaveSticker_Loaded(MessageViewModel message)
+        {
+            if (message.Content is MessageSticker sticker)
+            {
+                // TODO: ...
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageFaveSticker_Loaded(MessageViewModel message)
+        {
+            if (message.Content is MessageSticker sticker && sticker.Sticker.SetId != 0)
+            {
+                return ViewModel.ProtoService.IsStickerFavorite(sticker.Sticker.StickerData.Id) ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageUnfaveSticker_Loaded(MessageViewModel message)
+        {
+            if (message.Content is MessageSticker sticker && sticker.Sticker.SetId != 0)
+            {
+                return ViewModel.ProtoService.IsStickerFavorite(sticker.Sticker.StickerData.Id) ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageSaveMedia_Loaded(MessageViewModel message)
+        {
+            var file = message.Get().GetFileAndName(true);
+            if (file.File != null && file.File.Local.IsDownloadingCompleted)
+            {
+                return Visibility.Visible;
+            }
+
+            //if (messageCommon is TLMessage message)
+            //{
+            //    if (message.Media is TLMessageMediaPhoto photoMedia)
+            //    {
+            //        return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+            //    }
+            //    else if (message.Media is TLMessageMediaDocument documentMedia)
+            //    {
+            //        return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+            //    }
+            //    else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+            //    {
+            //        return webPage.HasDocument || webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
+            //    }
+            //}
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageSaveDownload_Loaded(MessageViewModel messageCommon)
+        {
+            //if (messageCommon is TLMessage message)
+            //{
+            //    if (message.Media is TLMessageMediaPhoto photoMedia)
+            //    {
+            //        return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+            //    }
+            //    else if (message.Media is TLMessageMediaDocument documentMedia)
+            //    {
+            //        return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+            //    }
+            //    else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+            //    {
+            //        return webPage.HasDocument || webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
+            //    }
+            //}
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageSaveAnimation_Loaded(MessageViewModel message)
+        {
+            if (message.Content is MessageText text)
+            {
+                return text.WebPage != null && text.WebPage.Animation != null ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else if (message.Content is MessageAnimation)
+            {
                 return Visibility.Visible;
             }
 
             return Visibility.Collapsed;
         }
 
-        private Visibility MessageCopy_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessageCallAgain_Loaded(MessageViewModel message)
         {
-            if (messageCommon is TLMessage message)
+            if (message.Content is MessageCall)
             {
-                if (!string.IsNullOrEmpty(message.Message))
-                {
-                    return Visibility.Visible;
-                }
-
-                if (message.Media is ITLMessageMediaCaption mediaCaption && !string.IsNullOrEmpty(mediaCaption.Caption))
-                {
-                    return Visibility.Visible;
-                }
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageCopyMedia_Loaded(TLMessageCommonBase messageCommon)
-        {
-            if (messageCommon is TLMessage message)
-            {
-                if (message.Media is TLMessageMediaPhoto photoMedia)
-                {
-                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                }
-                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
-                {
-                    return webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
-                }
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageCopyLink_Loaded(TLMessageCommonBase messageCommon)
-        {
-            if (messageCommon.Parent is TLChannel channel && channel.HasUsername)
-            {
-                //element.Text = channel.IsBroadcast ? "Copy post link" : "Copy message link";
                 return Visibility.Visible;
             }
 
             return Visibility.Collapsed;
         }
 
-        private Visibility MessageSelect_Loaded(TLMessageCommonBase messageCommon)
+        private Visibility MessageAddContact_Loaded(MessageViewModel message)
         {
-            if (messageCommon is TLMessage message)
+            if (message.Content is MessageContact contact)
             {
-                if (message.Media is TLMessageMediaPhoto photoMedia)
+                var user = ViewModel.ProtoService.GetUser(contact.Contact.UserId);
+                if (user == null)
                 {
-                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                }
-                else if (message.Media is TLMessageMediaDocument documentMedia)
-                {
-                    return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                    return Visibility.Collapsed;
                 }
 
-                return ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageAddSticker_Loaded(TLMessageCommonBase messageCommon)
-        {
-            if (messageCommon is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-            {
-                if (document.StickerSet is TLInputStickerSetID setId)
+                if (user.OutgoingLink is LinkStateIsContact)
                 {
-                    return ViewModel.Stickers.StickersService.IsStickerPackInstalled(setId.Id) ? Visibility.Collapsed : Visibility.Visible;
+                    return Visibility.Collapsed;
                 }
                 else
                 {
-                    return Visibility.Collapsed;
-                }
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageSaveSticker_Loaded(TLMessageCommonBase messageCommon)
-        {
-            if (messageCommon is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
-            {
-                return Visibility.Visible;
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageFaveSticker_Loaded(TLMessageCommonBase messageCommon)
-        {
-            if (messageCommon is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
-            {
-                return ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Collapsed : Visibility.Visible;
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageUnfaveSticker_Loaded(TLMessageCommonBase messageCommon)
-        {
-            if (messageCommon is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
-            {
-                return ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Visible : Visibility.Collapsed;
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageSaveMedia_Loaded(TLMessageCommonBase messageCommon)
-        {
-            if (messageCommon is TLMessage message)
-            {
-                if (message.Media is TLMessageMediaPhoto photoMedia)
-                {
-                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                }
-                else if (message.Media is TLMessageMediaDocument documentMedia)
-                {
-                    return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                }
-                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
-                {
-                    return webPage.HasDocument || webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
-                }
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageSaveDownload_Loaded(TLMessageCommonBase messageCommon)
-        {
-            if (messageCommon is TLMessage message)
-            {
-                if (message.Media is TLMessageMediaPhoto photoMedia)
-                {
-                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                }
-                else if (message.Media is TLMessageMediaDocument documentMedia)
-                {
-                    return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                }
-                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
-                {
-                    return webPage.HasDocument || webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
-                }
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageSaveGIF_Loaded(TLMessageCommonBase messageCommon)
-        {
-            if (messageCommon is TLMessage message)
-            {
-                if (message.IsGif())
-                {
                     return Visibility.Visible;
-                }
-                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
-                {
-                    if (TLMessage.IsGif(webPage.Document))
-                    {
-                        return Visibility.Visible;
-                    }
-                }
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageCallAgain_Loaded(TLMessageCommonBase messageCommon)
-        {
-            var message = messageCommon as TLMessageService;
-            if (message != null)
-            {
-                if (message.Action is TLMessageActionPhoneCall)
-                {
-                    return Visibility.Visible;
-                }
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageAddContact_Loaded(TLMessageCommonBase messageCommon)
-        {
-            var message = messageCommon as TLMessage;
-            if (message != null)
-            {
-                if (message.Media is TLMessageMediaContact contactMedia && contactMedia.User is TLUser user && user.Id > 0)
-                {
-                    return user.IsContact ? Visibility.Collapsed : Visibility.Visible;
                 }
             }
 
@@ -1380,33 +1444,17 @@ namespace Unigram.Views
 
         #endregion
 
-        private void Media_Click(object sender, RoutedEventArgs e)
+        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
-            Media.Download_Click(sender as FrameworkElement, null);
-        }
-
-        private void Download_Click(object sender, TransferCompletedEventArgs e)
-        {
-            Media.Download_Click(sender as FrameworkElement, e);
-        }
-
-        public async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendStickers)
+            if (e.ClickedItem is Sticker sticker)
             {
-                if (channel.BannedRights.IsForever())
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
-                }
-                else
-                {
-                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
-                }
-
-                return;
+                Stickers_ItemClick(sticker);
             }
+        }
 
-            ViewModel.SendStickerCommand.Execute(e.ClickedItem);
+        public void Stickers_ItemClick(Sticker sticker)
+        {
+            ViewModel.SendStickerCommand.Execute(sticker);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
@@ -1414,50 +1462,14 @@ namespace Unigram.Views
             TextField.FocusMaybe(FocusState.Keyboard);
         }
 
-        public async void Gifs_ItemClick(object sender, ItemClickEventArgs e)
+        public void Animations_ItemClick(Animation animation)
         {
-            if (ViewModel.With is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendGifs)
-            {
-                if (channel.BannedRights.IsForever())
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Android.AttachStickersRestrictedForever, Strings.Android.AppName, Strings.Android.OK);
-                }
-                else
-                {
-                    await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AttachStickersRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Android.AppName, Strings.Android.OK);
-                }
-
-                return;
-            }
-
-            // I'd like to move this to StickersView
-            var document = e.ClickedItem as TLDocument;
-            if (document == null && e.ClickedItem is MosaicMediaPosition position)
-            {
-                document = position.Item as TLDocument;
-            }
-
-            ViewModel.SendGifCommand.Execute(document);
+            ViewModel.SendAnimationCommand.Execute(animation);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
 
             TextField.FocusMaybe(FocusState.Keyboard);
-        }
-
-        private async void Sticker_Click(object sender, RoutedEventArgs e)
-        {
-            var element = sender as FrameworkElement;
-            var message = element.DataContext as TLMessage;
-
-            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-            {
-                var stickerAttribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
-                if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
-                {
-                    await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet, Stickers_ItemClick);
-                }
-            }
         }
 
         private async void DatePickerFlyout_DatePicked(DatePickerFlyout sender, DatePickedEventArgs args)
@@ -1535,7 +1547,7 @@ namespace Unigram.Views
             };
             batch.End();
 
-            ViewModel.OutputTypingManager.SetTyping(btnVoiceMessage.IsChecked.Value ? (TLSendMessageActionBase)new TLSendMessageRecordRoundAction() : new TLSendMessageRecordAudioAction());
+            ViewModel.OutputTypingManager.SetTyping(btnVoiceMessage.IsChecked.Value ? (ChatAction)new ChatActionRecordingVideoNote() : new ChatActionRecordingVoiceNote());
         }
 
         private void VoiceButton_RecordingStopped(object sender, EventArgs e)
@@ -1593,6 +1605,12 @@ namespace Unigram.Views
             point.X = Math.Min(0, cumulative);
 
             _slideVisual.Offset = point;
+
+            if (point.X < -72)
+            {
+                e.Complete();
+                btnVoiceMessage.CancelRecording();
+            }
         }
 
         private void AttachExpression()
@@ -1659,22 +1677,28 @@ namespace Unigram.Views
 
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             TextField.Document.GetText(TextGetOptions.None, out string hidden);
             TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
 
-            if (e.ClickedItem is TLUser user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string username))
+            if (e.ClickedItem is User user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string username, out int index))
             {
                 var insert = string.Empty;
                 var adjust = 0;
 
-                if (user.HasUsername)
+                if (string.IsNullOrEmpty(user.Username))
                 {
-                    insert = user.Username;
+                    insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
+                    adjust = 1;
                 }
                 else
                 {
-                    insert = user.HasFirstName ? user.FirstName : user.LastName;
-                    adjust = 1;
+                    insert = user.Username;
                 }
 
                 var format = TextField.Document.GetDefaultCharacterFormat();
@@ -1682,7 +1706,7 @@ namespace Unigram.Views
                 var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - username.Length - adjust, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
-                if (user.HasUsername == false)
+                if (string.IsNullOrEmpty(user.Username))
                 {
                     //range.CharacterFormat.Underline = UnderlineType.Dash;
                     range.CharacterFormat.ForegroundColor = Colors.Red;
@@ -1695,13 +1719,22 @@ namespace Unigram.Views
                 TextField.Document.SetDefaultCharacterFormat(format);
 
                 ViewModel.Autocomplete = null;
+
+                if (index == 0 && user.Type is UserTypeBot bot && bot.IsInline)
+                {
+                    ViewModel.ResolveInlineBot(user.Username);
+                }
             }
-            else if (e.ClickedItem is TLUserCommand command)
+            else if (e.ClickedItem is UserCommand command)
             {
                 var insert = $"/{command.Item.Command}";
-                if (command.User.HasUsername && (ViewModel.With is TLChannel || ViewModel.With is TLChat))
+                if (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup)
                 {
-                    insert += $"@{command.User.Username}";
+                    var bot = ViewModel.ProtoService.GetUser(command.UserId);
+                    if (bot != null && bot.Username.Length > 0)
+                    {
+                        insert += $"@{bot.Username}";
+                    }
                 }
 
                 TextField.SetText(null, null);
@@ -1726,10 +1759,10 @@ namespace Unigram.Views
 
         #region Binding
 
-        public Visibility ConvertBotInfo(TLBotInfo info, bool last)
-        {
-            return info != null && !string.IsNullOrEmpty(info.Description) && last ? Visibility.Visible : Visibility.Collapsed;
-        }
+        //public Visibility ConvertBotInfo(TLBotInfo info, bool last)
+        //{
+        //    return info != null && !string.IsNullOrEmpty(info.Description) && last ? Visibility.Visible : Visibility.Collapsed;
+        //}
 
         public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)
         {
@@ -1759,26 +1792,6 @@ namespace Unigram.Views
             }
         }
 
-        private string ConvertPlaceholder(ITLDialogWith with)
-        {
-            if (with is TLChannel channel && channel.IsBroadcast)
-            {
-                return Strings.Android.ChannelBroadcast;
-            }
-
-            return Strings.Android.TypeMessage;
-        }
-
-        private string ConvertReportSpam(ITLDialogWith with)
-        {
-            if (with is TLUser)
-            {
-                return Strings.Android.ReportSpam;
-            }
-
-            return Strings.Android.ReportSpamAndLeave;
-        }
-
         #endregion
 
         private void Share_Click(object sender, RoutedEventArgs e)
@@ -1792,20 +1805,20 @@ namespace Unigram.Views
 
         private async void Date_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as FrameworkElement;
-            if (button.DataContext is TLMessageCommonBase message)
-            {
-                var dialog = new Controls.Views.CalendarView();
-                dialog.MaxDate = DateTimeOffset.Now.Date;
-                dialog.SelectedDates.Add(BindConvert.Current.DateTime(message.Date));
+            //var button = sender as FrameworkElement;
+            //if (button.DataContext is TLMessageCommonBase message)
+            //{
+            //    var dialog = new Controls.Views.CalendarView();
+            //    dialog.MaxDate = DateTimeOffset.Now.Date;
+            //    dialog.SelectedDates.Add(BindConvert.Current.DateTime(message.Date));
 
-                var confirm = await dialog.ShowQueuedAsync();
-                if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
-                {
-                    var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, dialog.SelectedDates.FirstOrDefault().Date);
-                    await ViewModel.LoadDateSliceAsync(offset);
-                }
-            }
+            //    var confirm = await dialog.ShowQueuedAsync();
+            //    if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
+            //    {
+            //        var offset = TLUtils.DateToUniversalTimeTLInt(dialog.SelectedDates.FirstOrDefault().Date);
+            //        await ViewModel.LoadDateSliceAsync(offset);
+            //    }
+            //}
         }
 
         private void Expand_Click(object sender, RoutedEventArgs e)
@@ -1891,7 +1904,7 @@ namespace Unigram.Views
         private void MaskTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+            var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
             var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
             var overlayBrush = new SolidColorBrush(Color.FromArgb(0x99, 0x00, 0x00, 0x00));
 
@@ -1917,7 +1930,7 @@ namespace Unigram.Views
         private void UnmaskTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+            var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
             var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
 
             titlebar.BackgroundColor = backgroundBrush.Color;
@@ -2001,8 +2014,8 @@ namespace Unigram.Views
 
         private void ServiceMessage_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-            var message = button.DataContext as TLMessageService;
+            var button = sender as FrameworkElement;
+            var message = button.DataContext as MessageViewModel;
 
             if (message == null)
             {
@@ -2011,26 +2024,629 @@ namespace Unigram.Views
 
             ViewModel.MessageServiceCommand.Execute(message);
         }
-    }
 
-    public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
-    {
-        public StorageFileQueryResult Query { get; private set; }
-        public uint StartIndex { get; private set; }
-
-        public MediaLibraryCollection()
+        private void Message_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            var button = sender as FrameworkElement;
+            var message = button.DataContext as TLMessageBase;
+
+            if (message == null)
             {
                 return;
             }
 
-            var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
-            queryOptions.FolderDepth = FolderDepth.Deep;
+            ViewModel.MessageReplyCommand.Execute(message);
+        }
 
-            Query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
-            Query.ContentsChanged += OnContentsChanged;
-            StartIndex = 0;
+        private void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
+            if (args.Item is UserCommand userCommand)
+            {
+                var photo = content.Children[0] as ProfilePicture;
+                var title = content.Children[1] as TextBlock;
+
+                var command = title.Inlines[0] as Run;
+                var description = title.Inlines[1] as Run;
+
+                command.Text = $"/{userCommand.Item.Command} ";
+                description.Text = userCommand.Item.Description;
+
+                var user = ViewModel.ProtoService.GetUser(userCommand.UserId);
+                if (user == null)
+                {
+                    return;
+                }
+
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+            }
+            else if (args.Item is User user)
+            {
+                var photo = content.Children[0] as ProfilePicture;
+                var title = content.Children[1] as TextBlock;
+
+                var name = title.Inlines[0] as Run;
+                var username = title.Inlines[1] as Run;
+
+                name.Text = user.GetFullName();
+                username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
+
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+            }
+        }
+
+        private async void StickerPack_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            var content = args.ItemContainer.ContentTemplateRoot as Image;
+
+            if (args.InRecycleQueue)
+            {
+                content.Source = null;
+                return;
+            }
+
+            var sticker = args.Item as Sticker;
+
+            if (sticker == null || sticker.Thumbnail == null)
+            {
+                content.Source = null;
+                return;
+            }
+
+            //if (args.Phase < 2)
+            //{
+            //    content.Source = null;
+            //    args.RegisterUpdateCallback(Stickers_ContainerContentChanging);
+            //}
+            //else
+            if (args.Phase == 0)
+            {
+                var file = sticker.Thumbnail.Photo;
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    var buffer = await FileIO.ReadBufferAsync(temp);
+
+                    content.Source = WebPImage.DecodeFromBuffer(buffer);
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    //DownloadFile(file.Id, sticker);
+                }
+            }
+            else
+            {
+                throw new System.Exception("We should be in phase 0, but we are not.");
+            }
+
+            args.Handled = true;
+        }
+
+        private void ShowAction(string content, bool enabled)
+        {
+            ActionLabel.Text = content;
+            Action.IsEnabled = enabled;
+            Action.Visibility = Visibility.Visible;
+            TextArea.Visibility = Visibility.Collapsed;
+        }
+
+        private void ShowArea()
+        {
+            Action.IsEnabled = false;
+            Action.Visibility = Visibility.Collapsed;
+            TextArea.Visibility = Visibility.Visible;
+
+            TextField.FocusMaybe(FocusState.Keyboard);
+        }
+
+        private bool StillValid(Chat chat)
+        {
+            return chat?.Id == ViewModel?.Chat?.Id;
+        }
+
+        #region UI delegate
+
+        public void UpdateChat(Chat chat)
+        {
+            UpdateChatTitle(chat);
+            UpdateChatPhoto(chat);
+
+            UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
+
+            ReportSpam.Text = chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret ? Strings.Android.ReportSpam : Strings.Android.ReportSpamAndLeave;
+        }
+
+        public void UpdateChatTitle(Chat chat)
+        {
+            Title.Text = ViewModel.ProtoService.GetTitle(chat);
+        }
+
+        public void UpdateChatPhoto(Chat chat)
+        {
+            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36, 36);
+        }
+
+
+
+        public void UpdateNotificationSettings(Chat chat)
+        {
+            if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
+            {
+                var group = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
+                if (group == null)
+                {
+                    return;
+                }
+
+                if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages)
+                {
+                }
+                else if (group.Status is ChatMemberStatusLeft)
+                {
+                }
+                else
+                {
+                    ShowAction(chat.NotificationSettings.MuteFor == 0 ? Strings.Android.ChannelMute : Strings.Android.ChannelUnmute, true);
+                }
+            }
+        }
+
+
+
+        public void UpdateChatUnreadMentionCount(Chat chat, int count)
+        {
+            if (count > 0)
+            {
+                MentionsPanel.Visibility = Visibility.Visible;
+                Mentions.Text = count.ToString();
+            }
+            else
+            {
+                MentionsPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        public void UpdateChatReplyMarkup(Chat chat, MessageViewModel message)
+        {
+            var updated = ReplyMarkup.Update(message, message?.ReplyMarkup, false);
+            if (updated)
+            {
+                ButtonMarkup.Visibility = Visibility.Visible;
+                ShowMarkup();
+            }
+            else
+            {
+                ButtonMarkup.Visibility = Visibility.Collapsed;
+                CollapseMarkup(false);
+            }
+        }
+
+
+
+        public void UpdatePinnedMessage(Chat chat, MessageViewModel message, bool loading)
+        {
+            if (message == null && !loading)
+            {
+                PinnedMessagePanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                PinnedMessagePanel.Visibility = Visibility.Visible;
+                PinnedMessage.UpdateMessage(message, loading, Strings.Android.PinnedMessage);
+            }
+        }
+
+
+
+        public void UpdateUser(Chat chat, TdWindows.User user, bool secret)
+        {
+            ShowArea();
+
+            ViewModel.ShowPinnedMessage(chat, null);
+
+            HeaderPanel.Visibility = user.Id == ViewModel.ProtoService.GetMyId() ? Visibility.Collapsed : Visibility.Visible;
+            SavedMessages.Visibility = user.Id == ViewModel.ProtoService.GetMyId() ? Visibility.Visible : Visibility.Collapsed;
+
+            TextField.PlaceholderText = Strings.Android.TypeMessage;
+            ViewModel.LastSeen = LastSeenConverter.GetLabel(user, true);
+        }
+
+        public void UpdateUserFullInfo(Chat chat, TdWindows.User user, UserFullInfo fullInfo, bool secret)
+        {
+            if (fullInfo.IsBlocked)
+            {
+                ShowAction(Strings.Android.Unblock, true);
+            }
+            else if (!secret)
+            {
+                ShowArea();
+            }
+
+            if (fullInfo.BotInfo != null)
+            {
+                ViewModel.BotCommands = fullInfo.BotInfo.Commands.Select(x => new UserCommand(user.Id, x)).ToList();
+                ViewModel.HasBotCommands = fullInfo.BotInfo.Commands.Count > 0;
+            }
+        }
+
+        public void UpdateUserStatus(Chat chat, User user)
+        {
+            ViewModel.LastSeen = LastSeenConverter.GetLabel(user, true);
+        }
+
+
+
+        public void UpdateSecretChat(Chat chat, SecretChat secretChat)
+        {
+            if (secretChat.State is SecretChatStateReady)
+            {
+                ShowArea();
+            }
+            else if (secretChat.State is SecretChatStatePending)
+            {
+                ShowAction(string.Format(Strings.Android.AwaitingEncryption, ViewModel.ProtoService.GetTitle(chat)), false);
+            }
+            else if (secretChat.State is SecretChatStateClosed)
+            {
+                ShowAction(Strings.Android.EncryptionRejected, false);
+            }
+        }
+
+
+
+        public void UpdateBasicGroup(Chat chat, BasicGroup group)
+        {
+            ViewModel.ShowPinnedMessage(chat, null);
+
+            ShowArea();
+
+            HeaderPanel.Visibility = Visibility.Visible;
+            SavedMessages.Visibility = Visibility.Collapsed;
+
+            TextField.PlaceholderText = Strings.Android.TypeMessage;
+            ViewModel.LastSeen = Locale.Declension("Members", group.MemberCount);
+        }
+
+        public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
+        {
+            var count = 0;
+            var commands = new List<UserCommand>();
+
+            foreach (var member in fullInfo.Members)
+            {
+                var user = ViewModel.ProtoService.GetUser(member.UserId);
+                if (user != null && user.Status is UserStatusOnline)
+                {
+                    count++;
+                }
+
+                if (member.BotInfo != null)
+                {
+                    commands.AddRange(member.BotInfo.Commands.Select(x => new UserCommand(member.UserId, x)).ToList());
+                }
+            }
+
+            if (count > 1)
+            {
+                ViewModel.LastSeen = string.Format("{0}, {1}", Locale.Declension("Members", fullInfo.Members.Count), Locale.Declension("OnlineCount", count));
+            }
+            else
+            {
+                ViewModel.LastSeen = Locale.Declension("Members", group.MemberCount);
+            }
+
+            ViewModel.BotCommands = commands;
+            ViewModel.HasBotCommands = commands.Count > 0;
+        }
+
+
+
+        public async void UpdateSupergroup(Chat chat, Supergroup group)
+        {
+            ViewModel.ShowPinnedMessage(chat, null);
+
+            if (group.IsChannel)
+            {
+                if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages)
+                {
+                    ShowArea();
+                }
+                else if (group.Status is ChatMemberStatusLeft)
+                {
+                    ShowAction(Strings.Android.ChannelJoin, true);
+                }
+                else
+                {
+                    ShowAction(chat.NotificationSettings.MuteFor == 0 ? Strings.Android.ChannelMute : Strings.Android.ChannelUnmute, true);
+                }
+            }
+            else
+            {
+                if (group.Status is ChatMemberStatusLeft)
+                {
+                    ShowAction(Strings.Android.ChannelJoin, true);
+                }
+                else if (group.Status is ChatMemberStatusRestricted restricted && !restricted.CanSendMessages)
+                {
+                    if (restricted.IsForever())
+                    {
+                        ShowAction(Strings.Android.SendMessageRestrictedForever, false);
+                    }
+                    else
+                    {
+                        ShowAction(string.Format(Strings.Android.SendMessageRestricted, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate)), false);
+                    }
+                }
+                else if (group.Status is ChatMemberStatusBanned)
+                {
+                    ShowAction(Strings.Android.DeleteChat, true);
+                }
+                else
+                {
+                    ShowArea();
+                }
+            }
+
+            HeaderPanel.Visibility = Visibility.Visible;
+            SavedMessages.Visibility = Visibility.Collapsed;
+
+            TextField.PlaceholderText = group.IsChannel ? Strings.Android.ChannelBroadcast : Strings.Android.TypeMessage;
+            ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
+
+            var response = await ViewModel.ProtoService.SendAsync(new GetSupergroupMembers(group.Id, new SupergroupMembersFilterBots(), 0, 200));
+            if (response is ChatMembers members)
+            {
+                var commands = new List<UserCommand>();
+
+                foreach (var member in members.Members)
+                {
+                    if (member.BotInfo != null)
+                    {
+                        commands.AddRange(member.BotInfo.Commands.Select(x => new UserCommand(member.UserId, x)).ToList());
+                    }
+                }
+
+                if (StillValid(chat))
+                {
+                    ViewModel.BotCommands = commands;
+                    ViewModel.HasBotCommands = commands.Count > 0;
+                }
+            }
+        }
+
+        public async void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
+        {
+            ViewModel.ShowPinnedMessage(chat, fullInfo);
+
+            if (group.IsChannel || fullInfo.MemberCount > 200)
+            {
+                ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
+            }
+            else
+            {
+                var response = await ViewModel.ProtoService.SendAsync(new GetSupergroupMembers(group.Id, new SupergroupMembersFilterRecent(), 0, 200));
+                if (response is ChatMembers members && StillValid(chat))
+                {
+                    var count = 0;
+                    foreach (var member in members.Members)
+                    {
+                        var user = ViewModel.ProtoService.GetUser(member.UserId);
+                        if (user != null && user.Status is UserStatusOnline)
+                        {
+                            count++;
+                        }
+                    }
+
+                    if (count > 1)
+                    {
+                        ViewModel.LastSeen = string.Format("{0}, {1}", Locale.Declension("Members", fullInfo.MemberCount), Locale.Declension("OnlineCount", count));
+                    }
+                    else
+                    {
+                        ViewModel.LastSeen = Locale.Declension("Members", fullInfo.MemberCount);
+                    }
+                }
+                else if (StillValid(chat))
+                {
+                    ViewModel.LastSeen = Locale.Declension("Members", fullInfo.MemberCount);
+                }
+            }
+        }
+
+
+
+        public void UpdateFile(TdWindows.File file)
+        {
+            //for (int i = 0; i < Messages.Items.Count; i++)
+            //{
+            //    var message = Messages.Items[i] as MessageViewModel;
+            //    if (message.UpdateFile(file))
+            //    {
+            //        var container = Messages.ContainerFromItem(message) as ListViewItem;
+            //        if (container == null)
+            //        {
+            //            continue;
+            //        }
+
+            //        var content = container.ContentTemplateRoot as FrameworkElement;
+            //        if (content is Grid grid)
+            //        {
+            //            content = grid.FindName("Bubble") as FrameworkElement;
+            //        }
+
+            //        if (content is MessageBubble bubble)
+            //        {
+            //            bubble.UpdateFile(message, file);
+            //        }
+            //    }
+            //}
+
+            if (_viewModel.TryGetMessagesForFileId(file.Id, out IList<MessageViewModel> messages))
+            {
+                foreach (var message in messages)
+                {
+                    message.UpdateFile(file);
+
+                    var container = Messages.ContainerFromItem(message) as ListViewItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var content = container.ContentTemplateRoot as FrameworkElement;
+                    if (content is Grid grid)
+                    {
+                        content = grid.FindName("Bubble") as FrameworkElement;
+                    }
+
+                    if (content is MessageBubble bubble)
+                    {
+                        bubble.UpdateFile(message, file);
+                    }
+                }
+
+                if (file.Local.IsDownloadingCompleted && file.Remote.IsUploadingCompleted)
+                {
+                    messages.Clear();
+                }
+            }
+
+            if (file.Local.IsDownloadingCompleted && _viewModel.TryGetMessagesForPhotoId(file.Id, out IList<MessageViewModel> photos))
+            {
+                foreach (var message in photos)
+                {
+                    var container = Messages.ContainerFromItem(message) as ListViewItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var content = container.ContentTemplateRoot as FrameworkElement;
+                    if (content is Grid grid)
+                    {
+                        var photo = grid.FindName("Photo") as ProfilePicture;
+                        if (photo != null)
+                        {
+                            if (message.IsSaved())
+                            {
+                                if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                                {
+                                    var user = message.ProtoService.GetUser(fromUser.SenderUserId);
+                                    if (user != null)
+                                    {
+                                        photo.Source = PlaceholderHelper.GetUser(null, user, 32, 32);
+                                    }
+                                }
+                                else if (message.ForwardInfo is MessageForwardedPost post)
+                                {
+                                    var fromChat = message.ProtoService.GetChat(post.ForwardedFromChatId);
+                                    if (fromChat != null)
+                                    {
+                                        photo.Source = PlaceholderHelper.GetChat(null, fromChat, 32, 32);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var user = message.GetSenderUser();
+                                if (user != null)
+                                {
+                                    photo.Source = PlaceholderHelper.GetUser(null, user, 32, 32);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                photos.Clear();
+            }
+
+            var chat = ViewModel.Chat;
+            if (chat != null && chat.UpdateFile(file))
+            {
+                Photo.Source = PlaceholderHelper.GetChat(null, chat, 36, 36);
+            }
+
+            InlinePanel.UpdateFile(file);
+            StickersPanel.UpdateFile(file);
+
+            foreach (var item in ListAutocomplete.Items)
+            {
+                if (item is UserCommand command)
+                {
+                    var user = ViewModel.ProtoService.GetUser(command.UserId);
+                    if (user.UpdateFile(file))
+                    {
+                        var container = ListAutocomplete.ContainerFromItem(command) as ListViewItem;
+                        if (container == null)
+                        {
+                            continue;
+                        }
+
+                        var content = container.ContentTemplateRoot as Grid;
+                        if (content == null)
+                        {
+                            continue;
+                        }
+
+                        var photo = content.Children[0] as ProfilePicture;
+                        photo.Source = PlaceholderHelper.GetUser(null, user, 36, 36);
+                    }
+                }
+                else if (item is User user)
+                {
+                    if (user.UpdateFile(file))
+                    {
+                        var container = ListAutocomplete.ContainerFromItem(user) as ListViewItem;
+                        if (container == null)
+                        {
+                            continue;
+                        }
+
+                        var content = container.ContentTemplateRoot as Grid;
+                        if (content == null)
+                        {
+                            continue;
+                        }
+
+                        var photo = content.Children[0] as ProfilePicture;
+                        photo.Source = PlaceholderHelper.GetUser(null, user, 36, 36);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        private double _baseScroll;
+
+        private void DebugScrollSet_Click(object sender, RoutedEventArgs e)
+        {
+            _baseScroll = Messages.ScrollingHost.VerticalOffset;
+        }
+    
+        private void DebugScroll_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            Messages.ScrollingHost.ChangeView(null, _baseScroll + e.NewValue, null, true);
+        }
+    }
+
+    public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
+    {
+        private readonly DisposableMutex _loadMoreLock;
+
+        private StorageFileQueryResult _query;
+        private uint _startIndex;
+
+        public MediaLibraryCollection()
+        {
+            _loadMoreLock = new DisposableMutex();
         }
 
         private int _selectedCount;
@@ -2046,32 +2662,50 @@ namespace Unigram.Views
         {
             Execute.BeginOnUIThread(() =>
             {
-                StartIndex = 0;
+                _startIndex = 0;
                 Clear();
                 UpdateCount();
             });
         }
 
-        public override async Task<IList<StorageMedia>> LoadDataAsync()
+        public override Task<IList<StorageMedia>> LoadDataAsync()
         {
-            var items = new List<StorageMedia>();
-            uint resultCount = 0;
-            var result = await Query.GetFilesAsync(StartIndex, 10);
-            StartIndex += (uint)result.Count;
-
-            resultCount = (uint)result.Count;
-
-            foreach (var file in result)
+            return Task.Run<IList<StorageMedia>>(async () =>
             {
-                var storage = await StorageMedia.CreateAsync(file, false);
-                if (storage != null)
+                using (await _loadMoreLock.WaitAsync())
                 {
-                    items.Add(storage);
-                    storage.PropertyChanged += OnPropertyChanged;
-                }
-            }
+                    if (_query == null)
+                    {
+                        await KnownFolders.PicturesLibrary.TryGetItemAsync("yolo");
 
-            return items;
+                        var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
+                        queryOptions.FolderDepth = FolderDepth.Deep;
+
+                        _query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
+                        _query.ContentsChanged += OnContentsChanged;
+                        _startIndex = 0;
+                    }
+
+                    var items = new List<StorageMedia>();
+                    uint resultCount = 0;
+                    var result = await _query.GetFilesAsync(_startIndex, 10);
+                    _startIndex += (uint)result.Count;
+
+                    resultCount = (uint)result.Count;
+
+                    foreach (var file in result)
+                    {
+                        var storage = await StorageMedia.CreateAsync(file, false);
+                        if (storage != null)
+                        {
+                            items.Add(storage);
+                            storage.PropertyChanged += OnPropertyChanged;
+                        }
+                    }
+
+                    return items;
+                }
+            });
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

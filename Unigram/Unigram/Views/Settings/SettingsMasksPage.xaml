@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Settings.SettingsMasksPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -20,8 +20,9 @@
                   ItemTemplate="{StaticResource StickerSetItemTemplate}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
-                  CanReorderItems="True"
+                  ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
+                  CanReorderItems="True"
                   AllowDrop="True"
                   Grid.Row="1">
             <ListView.Header>

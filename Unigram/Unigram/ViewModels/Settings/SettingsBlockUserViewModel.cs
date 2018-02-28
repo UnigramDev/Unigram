@@ -3,34 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
+using TdWindows;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsBlockUserViewModel : UsersSelectionViewModel
     {
-        public SettingsBlockUserViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public SettingsBlockUserViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
         }
 
-        public override int Maximum { get  { return int.MaxValue; } }
+        public override int Maximum => 1;
 
-        protected override async void SendExecute()
+        protected override void SendExecute(User user)
         {
-            foreach (var item in SelectedItems)
+            if (user != null)
             {
-                if (item.HasAccessHash)
-                {
-                    var result = await ProtoService.BlockAsync(item.ToInputUser());
-                    if (result.IsSucceeded)
-                    {
-                        //Aggregator.Publish(new TLUpdateUserBlocked { UserId = item.Id, Blocked = true });
-                    }
-                }
+                ProtoService.Send(new BlockUser(user.Id));
             }
 
             NavigationService.GoBack();

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Extensions;
+using TdWindows;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Common;
@@ -48,13 +47,19 @@ namespace Unigram.ViewModels
             {
                 return _inputTypingManager = _inputTypingManager ?? new InputTypingManager(users =>
                 {
-                    TypingSubtitle = GetTypingSubtitle(users);
-                    IsTyping = true;
+                    BeginOnUIThread(() =>
+                    {
+                        TypingSubtitle = GetTypingSubtitle(users);
+                        IsTyping = true;
+                    });
                 }, 
 				() =>
                 {
-                    TypingSubtitle = null;
-                    IsTyping = false;
+                    BeginOnUIThread(() =>
+                    {
+                        TypingSubtitle = null;
+                        IsTyping = false;
+                    });
                 });
             }
         }
@@ -64,50 +69,50 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return _outputTypingManager = _outputTypingManager ?? new OutputTypingManager(ProtoService, Peer);
+                return _outputTypingManager = _outputTypingManager ?? new OutputTypingManager(ProtoService, _chat);
             }
         }
 
-        public void Handle(TLUpdateUserTyping userTyping)
-        {
-            var user = this.With as TLUser;
-            if (user != null && !user.IsSelf && user.Id == userTyping.UserId)
-            {
-                var action = userTyping.Action;
-                if (action is TLSendMessageCancelAction)
-                {
-                    InputTypingManager.RemoveTypingUser(userTyping.UserId);
-                    return;
-                }
+        //public void Handle(TLUpdateUserTyping userTyping)
+        //{
+        //    var user = this.With as TLUser;
+        //    if (user != null && !user.IsSelf && user.Id == userTyping.UserId)
+        //    {
+        //        var action = userTyping.Action;
+        //        if (action is TLSendMessageCancelAction)
+        //        {
+        //            InputTypingManager.RemoveTypingUser(userTyping.UserId);
+        //            return;
+        //        }
 
-                InputTypingManager.AddTypingUser(userTyping.UserId, action);
-            }
+        //        InputTypingManager.AddTypingUser(userTyping.UserId, action);
+        //    }
+        //}
+
+        //public void Handle(TLUpdateChatUserTyping chatUserTyping)
+        //{
+        //    var chatBase = With as TLChatBase;
+        //    if (chatBase != null && chatBase.Id == chatUserTyping.ChatId)
+        //    {
+        //        var action = chatUserTyping.Action;
+        //        if (action is TLSendMessageCancelAction)
+        //        {
+        //            InputTypingManager.RemoveTypingUser(chatUserTyping.UserId);
+        //            return;
+        //        }
+
+        //        InputTypingManager.AddTypingUser(chatUserTyping.UserId, action);
+        //    }
+        //}
+
+        private string GetTypingSubtitle(IList<Tuple<int, ChatAction>> typingUsers)
+        {
+            return GetTypingString(Chat, typingUsers, ProtoService.GetUser);
         }
 
-        public void Handle(TLUpdateChatUserTyping chatUserTyping)
+        public static string GetTypingString(Chat chat, IList<Tuple<int, ChatAction>> typingUsers, Func<int, User> getUser)
         {
-            var chatBase = With as TLChatBase;
-            if (chatBase != null && chatBase.Id == chatUserTyping.ChatId)
-            {
-                var action = chatUserTyping.Action;
-                if (action is TLSendMessageCancelAction)
-                {
-                    InputTypingManager.RemoveTypingUser(chatUserTyping.UserId);
-                    return;
-                }
-
-                InputTypingManager.AddTypingUser(chatUserTyping.UserId, action);
-            }
-        }
-
-        private string GetTypingSubtitle(IList<Tuple<int, TLSendMessageActionBase>> typingUsers)
-        {
-            return GetTypingString(Peer.ToPeer(), typingUsers, CacheService.GetUser, null);
-        }
-
-        public static string GetTypingString(TLPeerBase peer, IList<Tuple<int, TLSendMessageActionBase>> typingUsers, Func<int?, TLUserBase> getUser, Action<TLPeerBase> getFullInfoAction)
-        {
-            if (peer is TLPeerUser)
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
                 var tuple = typingUsers.FirstOrDefault();
                 if (tuple != null)
@@ -117,25 +122,25 @@ namespace Unigram.ViewModels
                     {
                         //case TLSendMessageChooseContactAction chooseContact:
                         //    return "";
-                        case TLSendMessageGamePlayAction gamePlay:
+                        case ChatActionStartPlayingGame gamePlay:
                             return Strings.Android.SendingGame;
                         //case TLSendMessageGeoLocationAction geoLocation:
                         //    return "";
-                        case TLSendMessageRecordAudioAction recordAudio:
+                        case ChatActionRecordingVoiceNote recordAudio:
                             return Strings.Android.RecordingAudio;
-                        case TLSendMessageRecordRoundAction recordRound:
-                        case TLSendMessageUploadRoundAction uploadRound:
+                        case ChatActionRecordingVideoNote recordRound:
+                        case ChatActionUploadingVideoNote uploadRound:
                             return Strings.Android.RecordingRound;
                         //case TLSendMessageTypingAction typing:
                         //    return Strings.Android.Typing;
-                        case TLSendMessageUploadAudioAction uploadAudio:
+                        case ChatActionUploadingVoiceNote uploadAudio:
                             return Strings.Android.SendingAudio;
-                        case TLSendMessageUploadDocumentAction uploadDocument:
+                        case ChatActionUploadingDocument uploadDocument:
                             return Strings.Android.SendingFile;
-                        case TLSendMessageUploadPhotoAction uploadPhoto:
+                        case ChatActionUploadingPhoto uploadPhoto:
                             return Strings.Android.SendingPhoto;
-                        case TLSendMessageRecordVideoAction recordVideo:
-                        case TLSendMessageUploadVideoAction uploadVideo:
+                        case ChatActionRecordingVideo recordVideo:
+                        case ChatActionUploadingVideo uploadVideo:
                             return Strings.Android.SendingVideoStatus;
                     }
                 }
@@ -145,10 +150,9 @@ namespace Unigram.ViewModels
 
             if (typingUsers.Count == 1)
             {
-                var user = getUser.Invoke(typingUsers[0].Item1) as TLUser;
+                var user = getUser.Invoke(typingUsers[0].Item1);
                 if (user == null)
                 {
-                    getFullInfoAction?.Invoke(peer);
                     return null;
                 }
 
@@ -162,25 +166,25 @@ namespace Unigram.ViewModels
                     {
                         //case TLSendMessageChooseContactAction chooseContact:
                         //    return "";
-                        case TLSendMessageGamePlayAction gamePlay:
+                        case ChatActionStartPlayingGame gamePlay:
                             return string.Format(Strings.Android.IsSendingGame, userName);
                         //case TLSendMessageGeoLocationAction geoLocation:
                         //    return "";
-                        case TLSendMessageRecordAudioAction recordAudio:
+                        case ChatActionRecordingVoiceNote recordAudio:
                             return string.Format(Strings.Android.IsRecordingAudio, userName);
-                        case TLSendMessageRecordRoundAction recordRound:
-                        case TLSendMessageUploadRoundAction uploadRound:
+                        case ChatActionRecordingVideoNote recordRound:
+                        case ChatActionUploadingVideoNote uploadRound:
                             return string.Format(Strings.Android.IsSendingVideo, userName);
                         //case TLSendMessageTypingAction typing:
                         //    return string.Format(Strings.Android.IsTyping, userName);
-                        case TLSendMessageUploadAudioAction uploadAudio:
+                        case ChatActionUploadingVoiceNote uploadAudio:
                             return string.Format(Strings.Android.IsSendingAudio, userName);
-                        case TLSendMessageUploadDocumentAction uploadDocument:
+                        case ChatActionUploadingDocument uploadDocument:
                             return string.Format(Strings.Android.IsSendingFile, userName);
-                        case TLSendMessageUploadPhotoAction uploadPhoto:
+                        case ChatActionUploadingPhoto uploadPhoto:
                             return string.Format(Strings.Android.IsSendingPhoto, userName);
-                        case TLSendMessageRecordVideoAction recordVideo:
-                        case TLSendMessageUploadVideoAction uploadVideo:
+                        case ChatActionRecordingVideo recordVideo:
+                        case ChatActionUploadingVideo uploadVideo:
                             return string.Format(Strings.Android.IsSendingVideo, userName);
                     }
                 }
@@ -194,10 +198,10 @@ namespace Unigram.ViewModels
                 var label = string.Empty;
                 foreach (var pu in typingUsers)
                 {
-                    var user = getUser.Invoke(pu.Item1) as TLUser;
+                    var user = getUser.Invoke(pu.Item1);
                     if (user == null)
                     {
-                        getFullInfoAction?.Invoke(peer);
+
                     }
 
                     if (user != null)
@@ -225,7 +229,7 @@ namespace Unigram.ViewModels
                     {
                         if (typingUsers.Count > 2)
                         {
-                            return string.Format("{0} {1}", label, LocaleHelper.Declension("AndMoreTyping", typingUsers.Count - 2));
+                            return string.Format("{0} {1}", label, Locale.Declension("AndMoreTyping", typingUsers.Count - 2));
                         }
                         else
                         {

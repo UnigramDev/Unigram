@@ -1,65 +1,13 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="using:Unigram.Common"
                     xmlns:controls="using:Unigram.Controls">
-
-    <Style x:Key="ServiceButtonStyle" TargetType="controls:SimpleButton">
-        <Setter Property="Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
-        <Setter Property="BorderBrush" Value="Transparent"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="12,5,12,7"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-        <Setter Property="UseSystemFocusVisuals" Value="True"/>
-        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-        <Setter Property="CornerRadius" Value="{ThemeResource MessageServiceCornerRadius}"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="controls:SimpleButton">
-                    <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="CheckedStates">
-                                <VisualState x:Name="Unchecked"/>
-                                <VisualState x:Name="Checked">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Indicator">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
         <Setter Property="Padding" Value="12,8,12,12"/>
         <Setter Property="BorderThickness" Value="0,0,0,1"/>
         <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
     </Style>
 
     <Style x:Key="ModernContentDialogStyle" TargetType="ContentDialog">
@@ -95,84 +43,84 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Border x:Name="BackgroundElement"
-                                        Background="{TemplateBinding Background}"
-                                        FlowDirection="{TemplateBinding FlowDirection}"
-                                        BorderThickness="{ThemeResource ContentDialogBorderWidth}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        MaxWidth="{TemplateBinding MaxWidth}"
-                                        MaxHeight="{TemplateBinding MaxHeight}"
-                                        MinWidth="{TemplateBinding MinWidth}"
-                                        MinHeight="{TemplateBinding MinHeight}">
+                                    Background="{TemplateBinding Background}"
+                                    FlowDirection="{TemplateBinding FlowDirection}"
+                                    BorderThickness="{ThemeResource ContentDialogBorderWidth}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    MaxWidth="{TemplateBinding MaxWidth}"
+                                    MaxHeight="{TemplateBinding MaxHeight}"
+                                    MinWidth="{TemplateBinding MinWidth}"
+                                    MinHeight="{TemplateBinding MinHeight}">
                                 <Grid x:Name="DialogSpace" VerticalAlignment="Stretch" Padding="0,0,0,12">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <ScrollViewer x:Name="ContentScrollViewer"
-                                                      HorizontalScrollBarVisibility="Disabled"
-                                                      VerticalScrollBarVisibility="Disabled"
-                                                      ZoomMode="Disabled"
-                                                      Margin="{ThemeResource ContentDialogContentScrollViewerMargin}"
-                                                      IsTabStop="False">
+                                                  HorizontalScrollBarVisibility="Disabled"
+                                                  VerticalScrollBarVisibility="Disabled"
+                                                  ZoomMode="Disabled"
+                                                  Margin="{ThemeResource ContentDialogContentScrollViewerMargin}"
+                                                  IsTabStop="False">
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="*" />
                                             </Grid.RowDefinitions>
                                             <ContentControl x:Name="Title"
-                                                                Margin="{ThemeResource ContentDialogTitleMargin}"
-                                                                Content="{TemplateBinding Title}"
-                                                                ContentTemplate="{TemplateBinding TitleTemplate}"
-                                                                FontSize="20"
-                                                                FontFamily="XamlAutoFontFamily"
-                                                                FontWeight="Normal"
-                                                                Foreground="{TemplateBinding Foreground}"
-                                                                HorizontalContentAlignment="Stretch"
-                                                                HorizontalAlignment="Stretch"
-                                                                VerticalAlignment="Top"
-                                                                IsTabStop="False">
+                                                            Margin="{ThemeResource ContentDialogTitleMargin}"
+                                                            Content="{TemplateBinding Title}"
+                                                            ContentTemplate="{TemplateBinding TitleTemplate}"
+                                                            FontSize="20"
+                                                            FontFamily="XamlAutoFontFamily"
+                                                            FontWeight="Normal"
+                                                            Foreground="{TemplateBinding Foreground}"
+                                                            HorizontalContentAlignment="Stretch"
+                                                            HorizontalAlignment="Stretch"
+                                                            VerticalAlignment="Top"
+                                                            IsTabStop="False">
                                                 <ContentControl.Template>
                                                     <ControlTemplate TargetType="ContentControl">
                                                         <ContentPresenter Content="{TemplateBinding Content}"
-                                                                              MaxLines="2"
-                                                                              TextWrapping="Wrap"
-                                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                              Margin="{TemplateBinding Padding}"
-                                                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                                          MaxLines="2"
+                                                                          TextWrapping="Wrap"
+                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                          Margin="{TemplateBinding Padding}"
+                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                                                     </ControlTemplate>
                                                 </ContentControl.Template>
                                             </ContentControl>
                                             <ContentPresenter x:Name="Content"
-                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                  Content="{TemplateBinding Content}"
-                                                                  FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                                                  FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                                                  Margin="{ThemeResource ContentDialogContentMargin}"
-                                                                  Foreground="{TemplateBinding Foreground}"
-                                                                  Grid.Row="1"
-                                                                  TextWrapping="Wrap" />
+                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                              Content="{TemplateBinding Content}"
+                                                              FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                                              FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                                              Margin="{ThemeResource ContentDialogContentMargin}"
+                                                              Foreground="{TemplateBinding Foreground}"
+                                                              Grid.Row="1"
+                                                              TextWrapping="Wrap" />
                                         </Grid>
                                     </ScrollViewer>
                                     <Grid x:Name="CommandSpace"
-                                              Grid.Row="1"
-                                              Margin="12,0"
-                                              HorizontalAlignment="Stretch"
-                                              VerticalAlignment="Bottom">
+                                          Grid.Row="1"
+                                          Margin="12,0"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Bottom">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
                                         <Border x:Name="Button1Host"
-                                                    Margin="{ThemeResource ContentDialogButton1HostMargin}"
-                                                    MinWidth="{ThemeResource ContentDialogButtonMinWidth}"
-                                                    MinHeight="{ThemeResource ContentDialogButtonMinHeight}" />
+                                                Margin="{ThemeResource ContentDialogButton1HostMargin}"
+                                                MinWidth="{ThemeResource ContentDialogButtonMinWidth}"
+                                                MinHeight="{ThemeResource ContentDialogButtonMinHeight}" />
                                         <Border x:Name="Button2Host"
-                                                    Margin="{ThemeResource ContentDialogButton2HostMargin}"
-                                                    MinWidth="{ThemeResource ContentDialogButtonMinWidth}"
-                                                    MinHeight="{ThemeResource ContentDialogButtonMinHeight}"
-                                                    Grid.Column="1" />
+                                                Margin="{ThemeResource ContentDialogButton2HostMargin}"
+                                                MinWidth="{ThemeResource ContentDialogButtonMinWidth}"
+                                                MinHeight="{ThemeResource ContentDialogButtonMinHeight}"
+                                                Grid.Column="1" />
                                     </Grid>
                                 </Grid>
                             </Border>
@@ -182,7 +130,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-
+    
     <Style x:Key="IndicatorListViewItemStyle" TargetType="ListViewItem">
         <Setter Property="Width" Value="20"/>
         <Setter Property="Height" Value="20"/>
@@ -506,10 +454,10 @@
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
                     <Grid x:Name="RootGrid"
-                              Background="Transparent"
-                              BorderBrush="{TemplateBinding BorderBrush}"
-                              BorderThickness="{TemplateBinding BorderThickness}"
-                              Padding="{TemplateBinding Padding}">
+                          Background="Transparent"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          Padding="{TemplateBinding Padding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CombinedStates">
                                 <VisualState x:Name="UncheckedNormal" >
@@ -568,9 +516,9 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation Storyboard.TargetName="NormalRectangle"
-                                                             Storyboard.TargetProperty="StrokeThickness"
-                                                             To="{ThemeResource CheckBoxCheckedStrokeThickness}"
-                                                             Duration="0" />
+                                                         Storyboard.TargetProperty="StrokeThickness"
+                                                         To="{ThemeResource CheckBoxCheckedStrokeThickness}"
+                                                         Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="UncheckedDisabled">
@@ -610,13 +558,13 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundChecked}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation Storyboard.TargetName="NormalRectangle"
-                                                             Storyboard.TargetProperty="StrokeThickness"
-                                                             To="{ThemeResource CheckBoxCheckedStrokeThickness}"
-                                                             Duration="0" />
+                                                         Storyboard.TargetProperty="StrokeThickness"
+                                                         To="{ThemeResource CheckBoxCheckedStrokeThickness}"
+                                                         Duration="0" />
                                         <DoubleAnimation Storyboard.TargetName="CheckGlyph"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="1"
-                                                             Duration="0" />
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedPointerOver">
@@ -637,9 +585,9 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundCheckedPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation Storyboard.TargetName="CheckGlyph"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="1"
-                                                             Duration="0" />
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedPressed">
@@ -660,13 +608,13 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundCheckedPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation Storyboard.TargetName="NormalRectangle"
-                                                             Storyboard.TargetProperty="StrokeThickness"
-                                                             To="{ThemeResource CheckBoxCheckedStrokeThickness}"
-                                                             Duration="0" />
+                                                         Storyboard.TargetProperty="StrokeThickness"
+                                                         To="{ThemeResource CheckBoxCheckedStrokeThickness}"
+                                                         Duration="0" />
                                         <DoubleAnimation Storyboard.TargetName="CheckGlyph"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="1"
-                                                             Duration="0" />
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedDisabled">
@@ -687,9 +635,9 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundCheckedDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation Storyboard.TargetName="CheckGlyph"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="1"
-                                                             Duration="0" />
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="IndeterminateNormal">
@@ -713,9 +661,9 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE73C;" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation Storyboard.TargetName="CheckGlyph"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="1"
-                                                             Duration="0" />
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="IndeterminatePointerOver">
@@ -739,9 +687,9 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE73C;" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation Storyboard.TargetName="CheckGlyph"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="1"
-                                                             Duration="0" />
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="IndeterminatePressed">
@@ -765,9 +713,9 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE73C;" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation Storyboard.TargetName="CheckGlyph"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="1"
-                                                             Duration="0" />
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="IndeterminateDisabled">
@@ -791,9 +739,9 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE73C;" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation Storyboard.TargetName="CheckGlyph"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="1"
-                                                             Duration="0" />
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -802,18 +750,18 @@
                                    Height="16"
                                    Width="16"/>
                         <Rectangle x:Name="NormalRectangle"
-                                           Fill="{ThemeResource CheckBoxCheckBackgroundFillUnchecked}"
-                                           Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                           StrokeThickness="{ThemeResource CheckBoxBorderThemeThickness}"
-                                           UseLayoutRounding="False"
-                                           Height="20"
-                                           Width="20" />
+                                   Fill="{ThemeResource CheckBoxCheckBackgroundFillUnchecked}"
+                                   Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
+                                   StrokeThickness="{ThemeResource CheckBoxBorderThemeThickness}"
+                                   UseLayoutRounding="False"
+                                   Height="20"
+                                   Width="20" />
                         <FontIcon x:Name="CheckGlyph"
-                                          FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                          Glyph="&#xE001;"
-                                          FontSize="20"
-                                          Foreground="{ThemeResource CheckBoxCheckGlyphForegroundUnchecked}"
-                                          Opacity="0" />
+                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                  Glyph="&#xE001;"
+                                  FontSize="20"
+                                  Foreground="{ThemeResource CheckBoxCheckGlyphForegroundUnchecked}"
+                                  Opacity="0" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -1318,7 +1266,7 @@
     <Style x:Key="HyperButtonStyle" TargetType="controls:HyperButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="12,0,0,0"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -1369,7 +1317,7 @@
     <Style x:Key="BadgeButtonStyle" TargetType="controls:BadgeButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="12,0,0,0"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -1435,7 +1383,7 @@
     <Style x:Key="HyperDetailButtonStyle" TargetType="controls:HyperButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="12,0,0,0"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -1489,7 +1437,7 @@
     <Style x:Key="HyperDetailAccentButtonStyle" TargetType="controls:HyperButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="12,0,0,0"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -1547,7 +1495,7 @@
         <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}" />
         <Setter Property="Margin" Value="0,8,0,0" />
         <Setter Property="Padding" Value="8,4,8,4" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="RequestedTheme" Value="{ThemeResource MessageTextBlockTheme}" />
@@ -1559,7 +1507,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
@@ -1572,7 +1520,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBackgroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
@@ -1586,7 +1534,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MessageHeaderForegroundBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MessageHeaderForegroundBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
@@ -1600,7 +1548,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBackgroundDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
@@ -1610,11 +1558,16 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <TextBlock x:Name="ContentPresenter" HorizontalAlignment="Center" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                            <Run Text="&#xE611;" FontFamily="{StaticResource TelegramThemeFontFamily}" />
-                            <Run Text="  INSTANT VIEW  " />
-                            <Run Text="&#xE611;" Foreground="{x:Null}" FontFamily="{StaticResource TelegramThemeFontFamily}" />
-                        </TextBlock>
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          AutomationProperties.AccessibilityView="Raw" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -1624,7 +1577,7 @@
     <Style x:Key="SubtitleButtonStyle" TargetType="controls:HyperButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="12,0,0,0"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -1674,7 +1627,7 @@
     </Style>
 
     <Style x:Key="CheckButtonStyle" TargetType="ToggleSwitch">
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource ToggleSwitchContentForeground}" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -3470,6 +3423,57 @@
         </Setter>
     </Style>
 
+    <Style x:Key="GridViewButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+        <Setter Property="UseSystemFocusVisuals" Value="True"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckedStates">
+                                <VisualState x:Name="Unchecked"/>
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Indicator">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="ReplyInlineMarkupButtonStyle" TargetType="controls:GlyphButton">
         <Setter Property="Background" Value="{ThemeResource MessageServiceBackgroundBrush}" />
         <Setter Property="Foreground" Value="#FFFFFFFF" />
@@ -3565,7 +3569,7 @@
     </Style>
 
     <Style x:Key="ReplyKeyboardMarkupButtonStyle" TargetType="controls:GlyphButton">
-        <!--<Setter Property="Background" Value="{ThemeResource TelegramBackgroundTitlebarBrush}" />
+        <!--<Setter Property="Background" Value="{ThemeResource TelegramTitleBarBackgroundBrush}" />
              <Setter Property="Foreground" Value="#FFFFFFFF" />
              <Setter Property="BorderBrush" Value="{ThemeResource ButtonBorderBrush}" />
              <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}" />
@@ -4706,13 +4710,13 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="SearchTextBoxStyle" TargetType="controls:SearchTextBox">
         <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
         <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}" />
         <Setter Property="SelectionHighlightColor" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
         <Setter Property="BorderThickness" Value="0,0,0,1" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />

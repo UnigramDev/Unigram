@@ -27,6 +27,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -38,6 +39,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
@@ -49,6 +51,7 @@
     <PlatformTarget>ARM</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
@@ -60,6 +63,7 @@
     <PlatformTarget>ARM</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -71,6 +75,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -82,6 +87,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
@@ -90,22 +96,14 @@
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\ApplicationSettings.cs" />
     <Compile Include="Common\Extensions.cs" />
-    <Compile Include="Common\FunctionalComparer.cs" />
     <Compile Include="Common\KeyedList.cs" />
     <Compile Include="Common\MvxObservableCollection.cs" />
-    <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Dependency\UnigramContainerBuilder.cs" />
     <Compile Include="EncryptionKeyEmojifier.cs" />
     <Compile Include="Helpers\ColorsHelper.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Managers\BackgroundTaskManager.cs" />
-    <Compile Include="Managers\ResourcesManager.cs" />
-    <Compile Include="Media\JSExtractor.cs" />
-    <Compile Include="Media\VideoPlayerTask.cs" />
-    <Compile Include="Media\VimeoVideoPlayerTask.cs" />
-    <Compile Include="Media\YouTubeVideoPlayerTask.cs" />
     <Compile Include="Models\FoursquareRootObject.cs" />
-    <Compile Include="Notifications\LiveTile.cs" />
     <Compile Include="Notifications\Toast.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rtf\RtfLex.cs" />
@@ -130,20 +128,13 @@
     <Compile Include="Rtf\Write\RtfUtility.cs" />
     <Compile Include="Schedulers\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Schedulers\OrderedTaskScheduler.cs" />
-    <Compile Include="Services\AppUpdateService.cs" />
-    <Compile Include="Services\ContactsService.cs" />
-    <Compile Include="Services\DialogsService.cs" />
     <Compile Include="Services\HardwareService.cs" />
-    <Compile Include="Services\JumpListService.cs" />
-    <Compile Include="Services\KeyboardService.cs" />
+    <Compile Include="Services\HockeyAppUpdateService.cs" />
     <Compile Include="Services\LiveLocationService.cs" />
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
-    <Compile Include="Services\StatsService.cs" />
-    <Compile Include="Services\StickersService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
     <Compile Include="Services\VibrationService.cs" />
-    <Compile Include="Services\VoIPService.cs" />
     <Compile Include="Stripe\Card.cs" />
     <Compile Include="Stripe\CardUtils.cs" />
     <Compile Include="Stripe\DateUtils.cs" />
@@ -158,19 +149,13 @@
       <Version>4.6.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.5</Version>
+      <Version>6.0.7</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>10.0.3</Version>
+      <Version>11.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
       <Version>4.4.0</Version>
-    </PackageReference>
-    <PackageReference Include="Template10">
-      <Version>1.1.12</Version>
-    </PackageReference>
-    <PackageReference Include="Universal.WinSQLite">
-      <Version>3.12.2.3</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -178,9 +163,9 @@
       <Project>{88803693-7606-484b-9d2f-4bb789d57c29}</Project>
       <Name>libtgvoip</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Telegram.Api.Native\Telegram.Api.Native.vcxproj">
-      <Project>{6a7d27d0-36e8-4364-ac69-740b75ee653c}</Project>
-      <Name>Telegram.Api.Native</Name>
+    <ProjectReference Include="..\Libraries\Template10-version_1.1.12_vs2017\Template10 %28Library%29\Template10 %28Library%29.csproj">
+      <Project>{ac3e4f10-6615-4e16-bb0f-104760c92b95}</Project>
+      <Name>Template10 %28Library%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\Unigram.Api\Telegram.Api.csproj">
       <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
@@ -188,6 +173,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <SDKReference Include="TDLib.UWP, Version=1.0">
+      <Name>TDLib for Universal Windows Platfrom</Name>
+    </SDKReference>
     <SDKReference Include="WindowsDesktop, Version=10.0.16299.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>

@@ -1,21 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
-using Telegram.Api.Helpers;
+using TdWindows;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Account;
-using Telegram.Api.TL.Contacts;
 using Template10.Common;
 using Unigram.Common;
-using Unigram.Core.Services;
-using Unigram.Strings;
+using Unigram.Services;
+using Unigram.ViewModels.Settings.Privacy;
 using Unigram.Views.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -27,18 +19,18 @@ namespace Unigram.ViewModels.Settings
     {
         private readonly IContactsService _contactsService;
 
-        private readonly SettingsPrivacyStatusTimestampViewModel _statusTimestampRules;
-        private readonly SettingsPrivacyPhoneCallViewModel _phoneCallRules;
-        private readonly SettingsPrivacyChatInviteViewModel _chatInviteRules;
+        private readonly SettingsPrivacyShowStatusViewModel _showStatusRules;
+        private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
+        private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
 
-        public SettingsPrivacyAndSecurityViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IContactsService contactsService, SettingsPrivacyStatusTimestampViewModel statusTimestamp, SettingsPrivacyPhoneCallViewModel phoneCall, SettingsPrivacyChatInviteViewModel chatInvite)
-            : base(protoService, cacheService, aggregator)
+        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, IMTProtoService legacyService, ICacheService cacheService, IEventAggregator aggregator, IContactsService contactsService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
+            : base(protoService, legacyService, cacheService, aggregator)
         {
             _contactsService = contactsService;
 
-            _statusTimestampRules = statusTimestamp;
-            _phoneCallRules = phoneCall;
-            _chatInviteRules = chatInvite;
+            _showStatusRules = statusTimestamp;
+            _allowCallsRules = phoneCall;
+            _allowChatInvitesRules = chatInvite;
 
             PasswordCommand = new RelayCommand(PasswordExecute);
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
@@ -48,19 +40,30 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            ProtoService.GetAccountTTLAsync(result =>
+            ProtoService.Send(new GetAccountTtl(), result =>
             {
-                BeginOnUIThread(() => AccountTTL = result.Days);
+                if (result is AccountTtl ttl)
+                {
+                    BeginOnUIThread(() => AccountTTL = ttl.Days);
+                }
             });
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            ProtoService.Send(new GetBlockedUsers(0, 1), result =>
+            {
+                if (result is TdWindows.Users users)
+                {
+                    BeginOnUIThread(() => BlockedUsers = users.TotalCount);
+                }
+            });
+
+            return Task.CompletedTask;
         }
 
         #region Properties
 
-        public SettingsPrivacyStatusTimestampViewModel StatusTimestampRules => _statusTimestampRules;
-        public SettingsPrivacyPhoneCallViewModel PhoneCallRules => _phoneCallRules;
-        public SettingsPrivacyChatInviteViewModel ChatInviteRules => _chatInviteRules;
+        public SettingsPrivacyShowStatusViewModel ShowStatusRules => _showStatusRules;
+        public SettingsPrivacyAllowCallsViewModel AllowCallsRules => _allowCallsRules;
+        public SettingsPrivacyAllowChatInvitesViewModel AllowChatInvitesRules => _allowChatInvitesRules;
 
         private int _accountTTL;
         public int AccountTTL
@@ -72,6 +75,19 @@ namespace Unigram.ViewModels.Settings
             set
             {
                 Set(ref _accountTTL, value);
+            }
+        }
+
+        private int _blockedUsers;
+        public int BlockedUsers
+        {
+            get
+            {
+                return _blockedUsers;
+            }
+            set
+            {
+                Set(ref _blockedUsers, value);
             }
         }
 
@@ -106,22 +122,22 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand PasswordCommand { get; }
         private async void PasswordExecute()
         {
-            var response = await ProtoService.GetPasswordAsync();
-            if (response.IsSucceeded)
-            {
-                if (response.Result is TLAccountPassword)
-                {
-                    NavigationService.Navigate(typeof(SettingsSecurityEnterPasswordPage), response.Result);
-                }
-                else
-                {
+            //var response = await LegacyService.GetPasswordAsync();
+            //if (response.IsSucceeded)
+            //{
+            //    if (response.Result is TLAccountPassword)
+            //    {
+            //        NavigationService.Navigate(typeof(SettingsSecurityEnterPasswordPage), response.Result);
+            //    }
+            //    else
+            //    {
 
-                }
-            }
-            else
-            {
-                // TODO
-            }
+            //    }
+            //}
+            //else
+            //{
+            //    // TODO
+            //}
         }
 
         public RelayCommand ClearPaymentsCommand { get; }
@@ -156,14 +172,15 @@ namespace Unigram.ViewModels.Settings
             {
                 var info = checkShipping.IsChecked == true;
                 var credential = checkPayment.IsChecked == true;
-                var response = await ProtoService.ClearSavedInfoAsync(info, credential);
-                if (response.IsSucceeded)
-                {
 
+                if (info)
+                {
+                    ProtoService.Send(new DeleteSavedOrderInfo());
                 }
-                else
-                {
 
+                if (credential)
+                {
+                    ProtoService.Send(new DeleteSavedCredentials());
                 }
             }
         }
@@ -174,10 +191,10 @@ namespace Unigram.ViewModels.Settings
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 30, Content = LocaleHelper.Declension("Months", 1) });
-            stack.Children.Add(new RadioButton { Tag = 90, Content = LocaleHelper.Declension("Months", 3) });
-            stack.Children.Add(new RadioButton { Tag = 180, Content = LocaleHelper.Declension("Months", 6) });
-            stack.Children.Add(new RadioButton { Tag = 365, Content = LocaleHelper.Declension("Years", 1) });
+            stack.Children.Add(new RadioButton { Tag = 30, Content = Locale.Declension("Months", 1) });
+            stack.Children.Add(new RadioButton { Tag = 90, Content = Locale.Declension("Months", 3) });
+            stack.Children.Add(new RadioButton { Tag = 180, Content = Locale.Declension("Months", 6) });
+            stack.Children.Add(new RadioButton { Tag = 365, Content = Locale.Declension("Years", 1) });
 
             RadioButton GetSelectedPeriod(UIElementCollection periods, RadioButton defaultPeriod)
             {
@@ -227,14 +244,10 @@ namespace Unigram.ViewModels.Settings
                     }
                 }
 
-                var response = await ProtoService.SetAccountTTLAsync(new TLAccountDaysTTL { Days = days });
-                if (response.IsSucceeded)
+                var response = await ProtoService.SendAsync(new SetAccountTtl(new AccountTtl(days)));
+                if (response is Ok)
                 {
                     AccountTTL = days;
-                }
-                else
-                {
-
                 }
             }
         }
@@ -279,10 +292,10 @@ namespace Unigram.ViewModels.Settings
             {
                 if (IsContactsSyncEnabled)
                 {
-                    var contacts = CacheService.GetContacts();
-                    var response = new TLContactsContacts { Users = new TLVector<TLUserBase>(contacts) };
+                    //var contacts = CacheService.GetContacts();
+                    //var response = new TLContactsContacts { Users = new TLVector<TLUserBase>(contacts) };
 
-                    await _contactsService.ExportAsync(response);
+                    //await _contactsService.ExportAsync(response);
                 }
                 else
                 {

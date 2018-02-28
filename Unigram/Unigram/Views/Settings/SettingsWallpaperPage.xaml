@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Settings.SettingsWallPaperPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,6 +7,7 @@
     xmlns:common="using:Unigram.Common"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:tl="using:Telegram.Api.TL"
+    xmlns:td="using:TdWindows"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -45,15 +46,15 @@
                         </DataTemplate>
                     </selectors:WallPaperTemplateSelector.DefaultTemplate>
                     <selectors:WallPaperTemplateSelector.ItemTemplate>
-                        <DataTemplate x:DataType="tl:TLWallPaper">
-                            <Image Source="{x:Bind Full, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
+                        <DataTemplate>
+                            <Image Stretch="UniformToFill"/>
                         </DataTemplate>
                     </selectors:WallPaperTemplateSelector.ItemTemplate>
                     <selectors:WallPaperTemplateSelector.SolidTemplate>
-                        <DataTemplate x:DataType="tl:TLWallPaperSolid">
+                        <DataTemplate>
                             <Rectangle>
                                 <Rectangle.Fill>
-                                    <SolidColorBrush Color="{x:Bind BackgroundColor}"/>
+                                    <SolidColorBrush/>
                                 </Rectangle.Fill>
                             </Rectangle>
                         </DataTemplate>
@@ -68,6 +69,7 @@
                   SelectionMode="Single"
                   Style="{StaticResource HorizontalListViewStyle}"
                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  ContainerContentChanging="OnContainerContentChanging"
                   VerticalAlignment="Bottom"
                   Padding="8,4,8,8"
                   Grid.Row="1">
@@ -87,17 +89,13 @@
                         </DataTemplate>
                     </selectors:WallPaperTemplateSelector.DefaultTemplate>
                     <selectors:WallPaperTemplateSelector.ItemTemplate>
-                        <DataTemplate x:DataType="tl:TLWallPaper">
-                            <Image Source="{x:Bind Thumb, Converter={StaticResource DefaultPhotoConverter}}" Width="64" Height="64" Stretch="UniformToFill"/>
+                        <DataTemplate>
+                            <Image Width="64" Height="64" Stretch="UniformToFill"/>
                         </DataTemplate>
                     </selectors:WallPaperTemplateSelector.ItemTemplate>
                     <selectors:WallPaperTemplateSelector.SolidTemplate>
-                        <DataTemplate x:DataType="tl:TLWallPaperSolid">
-                            <Rectangle Width="64" Height="64">
-                                <Rectangle.Fill>
-                                    <SolidColorBrush Color="{x:Bind BackgroundColor}"/>
-                                </Rectangle.Fill>
-                            </Rectangle>
+                        <DataTemplate>
+                            <Rectangle Width="64" Height="64"/>
                         </DataTemplate>
                     </selectors:WallPaperTemplateSelector.SolidTemplate>
                 </selectors:WallPaperTemplateSelector>

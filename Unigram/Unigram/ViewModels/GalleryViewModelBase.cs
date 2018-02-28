@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
+using TdWindows;
 using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
 using Template10.Common;
 using Template10.Mvvm;
 using Unigram.Common;
@@ -17,6 +13,7 @@ using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Common;
 using Unigram.Helpers;
+using Unigram.Services;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Users;
 using Windows.Storage;
@@ -25,16 +22,32 @@ using Windows.System;
 
 namespace Unigram.ViewModels
 {
-    public abstract class GalleryViewModelBase : UnigramViewModelBase
+    public abstract class GalleryViewModelBase : UnigramViewModelBase, IHandle<UpdateFile>
     {
-        public GalleryViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public IFileDelegate Delegate { get; set; }
+
+        public GalleryViewModelBase(IProtoService protoService, IEventAggregator aggregator)
+            : base(protoService, null, aggregator)
         {
             StickersCommand = new RelayCommand(StickersExecute);
             ViewCommand = new RelayCommand(ViewExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
             SaveCommand = new RelayCommand(SaveExecute);
             OpenWithCommand = new RelayCommand(OpenWithExecute);
+
+            //Aggregator.Subscribe(this);
+        }
+
+        public void Handle(UpdateFile update)
+        {
+            BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
+        }
+
+        protected override void BeginOnUIThread(Action action)
+        {
+            // This is somehow needed because this viewmodel requires a Dispatcher
+            // in some situations where base one might be null.
+            Execute.BeginOnUIThread(action);
         }
 
         public virtual int Position
@@ -165,20 +178,22 @@ namespace Unigram.ViewModels
         {
             if (_selectedItem != null && _selectedItem.HasStickers)
             {
-                var inputStickered = _selectedItem.ToInputStickeredMedia();
-                if (inputStickered != null)
+                var file = _selectedItem.GetFile();
+                if (file == null)
                 {
-                    var response = await ProtoService.GetAttachedStickersAsync(inputStickered);
-                    if (response.IsSucceeded)
+                    return;
+                }
+
+                var response = await ProtoService.SendAsync(new GetAttachedStickerSets(file.Id));
+                if (response is StickerSets sets)
+                {
+                    if (sets.Sets.Count > 1)
                     {
-                        if (response.Result.Count > 1)
-                        {
-                            await AttachedStickersView.Current.ShowAsync(response.Result);
-                        }
-                        else if (response.Result.Count > 0)
-                        {
-                            await StickerSetView.Current.ShowAsync(response.Result[0]);
-                        }
+                        await AttachedStickersView.GetForCurrentView().ShowAsync(sets.Sets);
+                    }
+                    else if (sets.Sets.Count > 0)
+                    {
+                        await StickerSetView.GetForCurrentView().ShowAsync(sets.Sets[0].Id);
                     }
                 }
             }
@@ -187,27 +202,18 @@ namespace Unigram.ViewModels
         public RelayCommand ViewCommand { get; }
         protected virtual void ViewExecute()
         {
-            TLMessageCommonBase messageCommon = null;
-            if (_selectedItem is GalleryMessageItem messageItem)
-            {
-                messageCommon = messageItem.Message;
-            }
-            else if (_selectedItem is GalleryMessageServiceItem serviceItem)
-            {
-                messageCommon = serviceItem.Message;
-            }
+            NavigationService.GoBack();
 
-            if (messageCommon == null)
+            var message = _selectedItem as GalleryMessageItem;
+            if (message == null)
             {
                 return;
             }
 
-            NavigationService.GoBack();
-
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
             if (service != null)
             {
-                service.NavigateToDialog(messageCommon.Parent, messageCommon.Id);
+                service.NavigateToChat(message.ChatId, message: message.Id);
             }
         }
 
@@ -219,116 +225,114 @@ namespace Unigram.ViewModels
         public RelayCommand SaveCommand { get; }
         protected virtual async void SaveExecute()
         {
-            var value = GetTLObjectFromSelectedGalleryItem();
-
-            if (value is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
+            var item = _selectedItem;
+            if (item == null)
             {
-                await TLFileHelper.SavePhotoAsync(photoSize, photo.Date, false);
+                return;
             }
-            else if (value is TLDocument document)
+
+            var result = item.GetFileAndName();
+
+            var file = result.File;
+            if (file == null || !file.Local.IsDownloadingCompleted)
             {
-                await TLFileHelper.SaveDocumentAsync(document, document.Date, false);
+                return;
+            }
+
+            var fileName = result.FileName;
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = System.IO.Path.GetFileName(file.Local.Path);
+            }
+
+            var extension = System.IO.Path.GetExtension(fileName);
+            if (string.IsNullOrEmpty(extension))
+            {
+                extension = ".dat";
+            }
+
+            var picker = new FileSavePicker();
+            picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
+            picker.SuggestedStartLocation = PickerLocationId.Downloads;
+            picker.SuggestedFileName = fileName;
+
+            var picked = await picker.PickSaveFileAsync();
+            if (picked != null)
+            {
+                try
+                {
+                    var cached = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    await cached.CopyAndReplaceAsync(picked);
+                }
+                catch { }
             }
         }
 
         public RelayCommand OpenWithCommand { get; }
         protected virtual async void OpenWithExecute()
         {
-            var value = GetTLObjectFromSelectedGalleryItem();
-
-            if (value is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
+            var item = _selectedItem;
+            if (item == null)
             {
-                var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
-                var file = await FileUtils.TryGetTempItemAsync(fileName);
-                if (file != null)
+                return;
+            }
+
+            var file = item.GetFile();
+            if (file != null && file.Local.IsDownloadingCompleted)
+            {
+                try
                 {
+                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+
                     var options = new LauncherOptions();
                     options.DisplayApplicationPicker = true;
 
-                    await Launcher.LaunchFileAsync(file as StorageFile, options);
+                    await Launcher.LaunchFileAsync(temp, options);
+
                 }
+                catch { }
             }
-            else if (value is TLDocument document)
-            {
-                var fileName = document.GetFileName();
-                var file = await FileUtils.TryGetTempItemAsync(fileName);
-                if (file != null)
-                {
-                    var options = new LauncherOptions();
-                    options.DisplayApplicationPicker = true;
-
-                    await Launcher.LaunchFileAsync(file as StorageFile, options);
-                }
-            }
-
-            // Get the source 
-            //var something = (TLPhoto)DefaultPhotoConverter.Convert(_selectedItem.Source);
-            //var sizeBase = something.Full;
-            //var photoSize = sizeBase as TLPhotoSize;
-            //var fileLocation = photoSize.Location as TLFileLocation;
-            //fileLocation.   // Find a way to get the IStorageFile of that darn picture
-
-            // Open that file
-            //await Windows.System.Launcher.LaunchFileAsync(*INSERT FILE HERE*);
         }
 
-        private object GetTLObjectFromSelectedGalleryItem()
+        public void OpenMessage(GalleryItem galleryItem)
         {
-            if (SelectedItem is GalleryMessageItem messageItem)
+            var message = galleryItem as GalleryMessageItem;
+            if (message == null)
             {
-                if (messageItem.Message.Media is TLMessageMediaPhoto photoMedia)
-                {
-                    return photoMedia.Photo;
-                }
-
-                if (messageItem.Message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-                {
-                    return document;
-                }
+                return;
             }
 
-            if (SelectedItem is GalleryMessageServiceItem serviceItem && serviceItem.Message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction)
-            {
-                return chatEditPhotoAction.Photo;
-            }
-
-            if (SelectedItem is GalleryPhotoItem photoItem)
-            {
-                return photoItem.Photo;
-            }
-
-            if (SelectedItem is GalleryDocumentItem documentItem)
-            {
-                return documentItem.Document;
-            }
-
-            return null;
+            ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
         }
     }
 
-    public class GalleryItem : BindableBase
+    public abstract class GalleryItem : BindableBase
     {
-        public GalleryItem()
-        {
+        protected readonly IProtoService _protoService;
 
+        public GalleryItem(IProtoService protoService)
+        {
+            _protoService = protoService;
         }
 
-        public GalleryItem(ITLTransferable source, string caption, ITLDialogWith from, int date, bool stickers)
-        {
-            Source = source;
-            Caption = caption;
-            From = from;
-            Date = date;
-            HasStickers = stickers;
-        }
+        public IProtoService ProtoService => _protoService;
 
-        public virtual ITLTransferable Source { get; private set; }
+        public abstract File GetFile();
+        public abstract File GetThumbnail();
 
-        public virtual ITLDialogWith From { get; private set; }
+        public abstract (File File, string FileName) GetFileAndName();
+
+        public abstract bool UpdateFile(File file);
+
+        public virtual object Constraint { get; private set; }
+
+        public virtual object From { get; private set; }
 
         public virtual string Caption { get; private set; }
 
         public virtual int Date { get; private set; }
+
+        public bool IsPhoto => !IsVideo;
 
         public virtual bool IsVideo { get; private set; }
         public virtual bool IsLoop { get; private set; }
@@ -338,340 +342,337 @@ namespace Unigram.ViewModels
 
         public virtual bool CanView { get; private set; }
 
-        public virtual TLInputStickeredMediaBase ToInputStickeredMedia()
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Uri GetVideoSource()
-        {
-            throw new NotImplementedException();
-        }
-
         public virtual void Share()
         {
             throw new NotImplementedException();
         }
     }
 
-
     public class GalleryMessageItem : GalleryItem
     {
-        protected readonly TLMessage _message;
+        protected readonly Message _message;
 
-        public GalleryMessageItem(TLMessage message)
+        public GalleryMessageItem(IProtoService protoService, Message message)
+            : base(protoService)
         {
             _message = message;
         }
 
-        public TLMessage Message => _message;
+        public long ChatId => _message.ChatId;
+        public long Id => _message.Id;
 
-        public override ITLTransferable Source
+        public override File GetFile()
+        {
+            var file = _message.GetFile();
+            if (file == null)
+            {
+                var photo = _message.GetPhoto();
+                if (photo != null)
+                {
+                    file = photo.GetBig()?.Photo;
+                }
+            }
+
+            return file;
+        }
+
+        public override File GetThumbnail()
+        {
+            var file = _message.GetThumbnail();
+            if (file == null)
+            {
+                var photo = _message.GetPhoto();
+                if (photo != null)
+                {
+                    file = photo.GetSmall()?.Photo;
+                }
+            }
+
+            return file;
+        }
+
+        public override (File File, string FileName) GetFileAndName()
+        {
+            return _message.GetFileAndName(true);
+        }
+
+        public override bool UpdateFile(File file)
+        {
+            return _message.UpdateFile(file);
+        }
+
+        public override object Constraint => _message.Content;
+
+        public override object From
         {
             get
             {
-                if (_message.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
+                if (_message.ForwardInfo != null)
                 {
-                    return photo;
-                }
-                else if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-                {
-                    return document;
+                    // TODO: ...
                 }
 
-                return null;
+                if (_message.IsChannelPost)
+                {
+                    return _protoService.GetChat(_message.ChatId);
+                }
+
+                return _protoService.GetUser(_message.SenderUserId);
             }
         }
 
-        public override string Caption
-        {
-            get
-            {
-                if (_message.Media is ITLMessageMediaCaption captionMedia)
-                {
-                    return captionMedia.Caption;
-                }
-
-                return null;
-            }
-        }
-
-        //public override ITLDialogWith From => _message.IsPost ? _message.Parent : _message.From;
-
-        public override ITLDialogWith From
-        {
-            get
-            {
-                if (_message.HasFwdFrom)
-                {
-                    return (ITLDialogWith)_message.FwdFrom.Channel ?? _message.FwdFrom.User;
-                }
-
-                return _message.IsPost ? _message.Parent : _message.From;
-            }
-        }
-
+        public override string Caption => _message.GetCaption()?.Text;
         public override int Date => _message.Date;
 
-        public override bool IsVideo => _message.IsVideo() || _message.IsGif() || _message.IsRoundVideo();
+        public override bool IsVideo
+        {
+            get
+            {
+                if (_message.Content is MessageVideo)
+                {
+                    return true;
+                }
+                else if (_message.Content is MessageText text)
+                {
+                    return text.WebPage?.Video != null;
+                }
 
-        public override bool IsLoop => _message.IsGif() || _message.IsRoundVideo();
-
-        public override bool IsShareEnabled => _message.Parent != null;
+                return false;
+            }
+        }
 
         public override bool HasStickers
         {
             get
             {
-                if (_message.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
+                if (_message.Content is MessagePhoto photo)
                 {
-                    return photo.IsHasStickers;
+                    return photo.Photo.HasStickers;
                 }
-                else if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                else if (_message.Content is MessageVideo video)
                 {
-                    return document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
+                    return video.Video.HasStickers;
                 }
 
                 return false;
             }
         }
+
+
 
         public override bool CanView => true;
+    }
 
-        public override TLInputStickeredMediaBase ToInputStickeredMedia()
+    public class GalleryProfilePhotoItem : GalleryItem
+    {
+        private readonly ProfilePhoto _photo;
+        private readonly string _caption;
+
+        public GalleryProfilePhotoItem(IProtoService protoService, ProfilePhoto photo)
+            : base(protoService)
         {
-            if (_message.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
-            {
-                return new TLInputStickeredMediaPhoto { Id = photo.ToInputPhoto() };
-            }
-            else if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-            {
-                return new TLInputStickeredMediaDocument { Id = document.ToInputDocument() };
-            }
-
-            return null;
+            _photo = photo;
         }
 
-        public override Uri GetVideoSource()
+        public GalleryProfilePhotoItem(IProtoService protoService, ProfilePhoto photo, string caption)
+            : base(protoService)
         {
-            if (_message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-            {
-                return FileUtils.GetTempFileUri(document.GetFileName());
-            }
-
-            return null;
+            _photo = photo;
+            _caption = caption;
         }
 
-        public override async void Share()
+        public long Id => _photo.Id;
+
+        public override File GetFile()
         {
-            if (ShouldShare(_message, true))
-            {
-                await ShareView.Current.ShowAsync(_message);
-            }
-            else
-            {
-                await ShareView.Current.ShowAsync(_message.Media.ToInputMedia());
-            }
+            return _photo.Big;
         }
 
-        private bool ShouldShare(TLMessage message, bool allowOut)
+        public override File GetThumbnail()
         {
-            if (message.IsSticker())
+            return _photo.Small;
+        }
+
+        public override (File File, string FileName) GetFileAndName()
+        {
+            var big = _photo.Big;
+            if (big != null)
             {
-                return false;
+                return (big, null);
             }
-            else if (message.HasFwdFrom && message.FwdFrom.HasChannelId && (!message.IsOut || allowOut))
+
+            return (null, null);
+        }
+
+        public override bool UpdateFile(File file)
+        {
+            if (_photo.Big.Id == file.Id)
             {
+                _photo.Big = file;
                 return true;
             }
-            else if (message.HasFromId && !message.IsPost)
+
+            if (_photo.Small.Id == file.Id)
             {
-                if (message.Media is TLMessageMediaEmpty || message.Media == null || message.Media is TLMessageMediaWebPage webpageMedia && !(webpageMedia.WebPage is TLWebPage))
-                {
-                    return false;
-                }
-
-                var user = message.From;
-                if (user != null && user.IsBot)
-                {
-                    return true;
-                }
-
-                if (!message.IsOut || allowOut)
-                {
-                    if (message.Media is TLMessageMediaGame || message.Media is TLMessageMediaInvoice)
-                    {
-                        return true;
-                    }
-
-                    var parent = message.Parent as TLChannel;
-                    if (parent != null && parent.IsMegaGroup)
-                    {
-                        //TLRPC.Chat chat = MessagesController.getInstance().getChat(messageObject.messageOwner.to_id.channel_id);
-                        //return chat != null && chat.username != null && chat.username.length() > 0 && !(messageObject.messageOwner.media instanceof TLRPC.TL_messageMediaContact) && !(messageObject.messageOwner.media instanceof TLRPC.TL_messageMediaGeo);
-
-                        return parent.HasUsername && !(message.Media is TLMessageMediaContact) && !(message.Media is TLMessageMediaGeo);
-                    }
-                }
-            }
-            //else if (messageObject.messageOwner.from_id < 0 || messageObject.messageOwner.post)
-            else if (message.IsPost)
-            {
-                //if (messageObject.messageOwner.to_id.channel_id != 0 && (messageObject.messageOwner.via_bot_id == 0 && messageObject.messageOwner.reply_to_msg_id == 0 || messageObject.type != 13))
-                //{
-                //    return Visibility.Visible;
-                //}
-
-                if (message.ToId is TLPeerChannel && (!message.HasViaBotId && !message.HasReplyToMsgId))
-                {
-                    return true;
-                }
+                _photo.Small = file;
+                return true;
             }
 
             return false;
         }
-    }
 
-    public class GalleryMessageServiceItem : GalleryItem
-    {
-        private readonly TLMessageService _message;
+        public override object Constraint => new PhotoSize(string.Empty, null, 600, 600);
 
-        public GalleryMessageServiceItem(TLMessageService message)
-        {
-            _message = message;
-        }
-
-        public TLMessageService Message => _message;
-
-        public override ITLTransferable Source
-        {
-            get
-            {
-                if (_message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction && chatEditPhotoAction.Photo is TLPhoto photo)
-                {
-                    return photo;
-                }
-
-                return null;
-            }
-        }
-
-        //public override ITLDialogWith From => _message.IsPost ? _message.Parent : _message.From;
-
-        public override ITLDialogWith From
-        {
-            get
-            {
-                return _message.IsPost ? _message.Parent : _message.From;
-            }
-        }
-
-        public override int Date => _message.Date;
-
-        public override bool HasStickers
-        {
-            get
-            {
-                if (_message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction && chatEditPhotoAction.Photo is TLPhoto photo)
-                {
-                    return photo.IsHasStickers;
-                }
-
-                return false;
-            }
-        }
-
-        public override bool CanView => true;
-
-        public override TLInputStickeredMediaBase ToInputStickeredMedia()
-        {
-            if (_message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction && chatEditPhotoAction.Photo is TLPhoto photo)
-            {
-                return new TLInputStickeredMediaPhoto { Id = photo.ToInputPhoto() };
-            }
-
-            return null;
-        }
+        public override string Caption => _caption;
     }
 
     public class GalleryPhotoItem : GalleryItem
     {
-        private readonly TLPhoto _photo;
-        private readonly ITLDialogWith _from;
+        private readonly Photo _photo;
         private readonly string _caption;
 
-        public GalleryPhotoItem(TLPhoto photo, ITLDialogWith from)
+        public GalleryPhotoItem(IProtoService protoService, Photo photo)
+            : base(protoService)
         {
             _photo = photo;
-            _from = from;
         }
 
-        public GalleryPhotoItem(TLPhoto photo, string caption)
+        public GalleryPhotoItem(IProtoService protoService, Photo photo, string caption)
+            : base(protoService)
         {
             _photo = photo;
             _caption = caption;
         }
 
-        public TLPhoto Photo => _photo;
+        public long Id => _photo.Id;
 
-        public override ITLTransferable Source => _photo;
+        public override File GetFile()
+        {
+            return _photo.GetBig()?.Photo;
+        }
+
+        public override File GetThumbnail()
+        {
+            return _photo?.GetSmall().Photo;
+        }
+
+        public override (File File, string FileName) GetFileAndName()
+        {
+            var big = _photo.GetBig();
+            if (big != null)
+            {
+                return (big.Photo, null);
+            }
+
+            return (null, null);
+        }
+
+        public override bool UpdateFile(File file)
+        {
+            return _photo.UpdateFile(file);
+        }
+
+        public override object Constraint => _photo;
 
         public override string Caption => _caption;
 
-        public override ITLDialogWith From => _from;
-
-        public override int Date => _photo.Date;
-
-        public override bool HasStickers => _photo.IsHasStickers;
-
-        public override TLInputStickeredMediaBase ToInputStickeredMedia()
-        {
-            return new TLInputStickeredMediaPhoto { Id = _photo.ToInputPhoto() };
-        }
+        public override bool HasStickers => _photo.HasStickers;
     }
 
-    public class GalleryDocumentItem : GalleryItem
+    public class GalleryVideoItem : GalleryItem
     {
-        private readonly TLDocument _document;
-        private readonly ITLDialogWith _from;
+        private readonly Video _video;
         private readonly string _caption;
 
-        public GalleryDocumentItem(TLDocument document, ITLDialogWith from)
+        public GalleryVideoItem(IProtoService protoService, Video video)
+            : base(protoService)
         {
-            _document = document;
-            _from = from;
+            _video = video;
         }
 
-        public GalleryDocumentItem(TLDocument document, string caption)
+        public GalleryVideoItem(IProtoService protoService, Video video, string caption)
+            : base(protoService)
         {
-            _document = document;
+            _video = video;
             _caption = caption;
         }
 
-        public TLDocument Document => _document;
+        //public long Id => _video.Id;
 
-        public override ITLTransferable Source => _document;
+        public override File GetFile()
+        {
+            return _video.VideoData;
+        }
+
+        public override File GetThumbnail()
+        {
+            return _video.Thumbnail?.Photo;
+        }
+
+        public override (File File, string FileName) GetFileAndName()
+        {
+            return (_video.VideoData, _video.FileName);
+        }
+
+        public override bool UpdateFile(File file)
+        {
+            return _video.UpdateFile(file);
+        }
+
+        public override object Constraint => _video;
 
         public override string Caption => _caption;
 
-        public override ITLDialogWith From => _from;
+        public override bool HasStickers => _video.HasStickers;
+    }
 
-        public override int Date => _document.Date;
+    public class GalleryAnimationItem : GalleryItem
+    {
+        private readonly Animation _animation;
+        private readonly string _caption;
 
-        public override bool IsVideo => TLMessage.IsVideo(_document) || TLMessage.IsGif(_document) || TLMessage.IsRoundVideo(_document);
-
-        public override bool IsLoop => TLMessage.IsGif(_document) || TLMessage.IsRoundVideo(_document);
-
-        public override bool HasStickers => _document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
-
-        public override TLInputStickeredMediaBase ToInputStickeredMedia()
+        public GalleryAnimationItem(IProtoService protoService, Animation animation)
+            : base(protoService)
         {
-            return new TLInputStickeredMediaDocument { Id = _document.ToInputDocument() };
+            _animation = animation;
         }
 
-        public override Uri GetVideoSource()
+        public GalleryAnimationItem(IProtoService protoService, Animation animation, string caption)
+            : base(protoService)
         {
-            return FileUtils.GetTempFileUri(_document.GetFileName());
+            _animation = animation;
+            _caption = caption;
         }
+
+        //public long Id => _animation.Id;
+
+        public override File GetFile()
+        {
+            return _animation.AnimationData;
+        }
+
+        public override File GetThumbnail()
+        {
+            return _animation.Thumbnail?.Photo;
+        }
+
+        public override (File File, string FileName) GetFileAndName()
+        {
+            return (_animation.AnimationData, _animation.FileName);
+        }
+
+        public override bool UpdateFile(File file)
+        {
+            return _animation.UpdateFile(file);
+        }
+
+        public override object Constraint => _animation;
+
+        public override string Caption => _caption;
+    }
+
+    public interface IGalleryDelegate
+    {
+        void OpenFile(GalleryItem item, File file);
     }
 }

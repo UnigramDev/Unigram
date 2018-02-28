@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using TdWindows;
 
 namespace Unigram.Views.Payments
 {
@@ -36,7 +37,7 @@ namespace Unigram.Views.Payments
             return (test ? "Test " : string.Empty) + Strings.Android.PaymentReceipt;
         }
 
-        private string ConvertAddress(TLPostAddress address)
+        private string ConvertAddress(ShippingAddress address)
         {
             if (address == null)
             {
@@ -60,13 +61,13 @@ namespace Unigram.Views.Payments
             {
                 result += address.State + ", ";
             }
-            if (!string.IsNullOrEmpty(address.CountryIso2))
+            if (!string.IsNullOrEmpty(address.CountryCode))
             {
-                result += address.CountryIso2 + ", ";
+                result += address.CountryCode + ", ";
             }
-            if (!string.IsNullOrEmpty(address.PostCode))
+            if (!string.IsNullOrEmpty(address.PostalCode))
             {
-                result += address.PostCode + ", ";
+                result += address.PostalCode + ", ";
             }
 
             return result.Trim(',', ' ');
@@ -95,8 +96,8 @@ namespace Unigram.Views.Payments
             }
         }
 
-        private TLVector<TLLabeledPrice> _prices;
-        public TLVector<TLLabeledPrice> Prices
+        private IList<LabeledPricePart> _prices;
+        public IList<LabeledPricePart> Prices
         {
             get
             {
@@ -140,6 +141,18 @@ namespace Unigram.Views.Payments
                     RowDefinitions.Add(new RowDefinition { Height = new GridLength(0, GridUnitType.Auto) });
                 }
             }
+        }
+    }
+
+    public class ReceiptNavigation
+    {
+        public long ChatId { get; private set; }
+        public long ReceiptMessageId { get; private set; }
+
+        public ReceiptNavigation(long chatId, long receiptMessageId)
+        {
+            ChatId = chatId;
+            ReceiptMessageId = receiptMessageId;
         }
     }
 }

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
@@ -20,21 +19,23 @@ namespace Unigram.ViewModels.Chats
 {
     public class ChatInviteViewModel : UsersSelectionViewModel
     {
-        public ChatInviteViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public IChatDelegate Delegate { get; }
+
+        public ChatInviteViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
 
-        private TLChatBase _item;
-        public TLChatBase Item
+        private Chat _chat;
+        public Chat Chat
         {
             get
             {
-                return _item;
+                return _chat;
             }
             set
             {
-                Set(ref _item, value);
+                Set(ref _chat, value);
             }
         }
 
@@ -42,7 +43,8 @@ namespace Unigram.ViewModels.Chats
         {
             get
             {
-                return _item != null && ((_item is TLChannel channel && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsInviteLink))) || (_item is TLChat chat && chat.IsCreator));
+                return false;
+                //return _item != null && ((_item is TLChannel channel && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsInviteLink))) || (_item is TLChat chat && chat.IsCreator));
             }
         }
 
@@ -50,7 +52,8 @@ namespace Unigram.ViewModels.Chats
         {
             get
             {
-                return _item != null && ((_item is TLChannel channel && channel.IsMegaGroup) || (_item is TLChat chat));
+                return false;
+                //return _item != null && ((_item is TLChannel channel && channel.IsMegaGroup) || (_item is TLChat chat));
             }
         }
 
@@ -60,83 +63,68 @@ namespace Unigram.ViewModels.Chats
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            Item = null;
+            //Item = null;
 
-            var chat = parameter as TLChatBase;
-            var peer = parameter as TLPeerBase;
-            if (peer != null)
+            //var chat = parameter as TLChatBase;
+            //var peer = parameter as TLPeerBase;
+            //if (peer != null)
+            //{
+            //    chat = CacheService.GetChat(peer.Id);
+            //}
+
+            //if (chat != null)
+            //{
+            //    Item = chat;
+            //    RaisePropertyChanged(() => IsCreator);
+            //    RaisePropertyChanged(() => IsGroup);
+            //}
+
+            var chatId = (long)parameter;
+
+            Chat = ProtoService.GetChat(chatId);
+
+            var chat = _chat;
+            if (chat == null)
             {
-                chat = CacheService.GetChat(peer.Id);
+                return Task.CompletedTask;
             }
 
-            if (chat != null)
+            if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                Item = chat;
-                RaisePropertyChanged(() => IsCreator);
-                RaisePropertyChanged(() => IsGroup);
+                var item = ProtoService.GetSupergroup(supergroup.SupergroupId);
+
+                //Delegate?.UpdateSupergroup(chat, item);
+
+                //Members = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, _filter ?? _find(string.Empty));
             }
 
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        protected override async void SendExecute()
+        protected override async void SendExecute(User user)
         {
-            var user = SelectedItems.FirstOrDefault();
+            var count = ProtoService.GetOption<OptionValueInteger>("forwarded_messages_count_max");
+
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             if (user == null)
             {
                 return;
             }
 
-            TLType type = 0;
-            Task<MTProtoResponse<TLUpdatesBase>> task = null;
-            if (_item is TLChannel channel)
-            {
-                type = TLType.ChannelsInviteToChannel;
-                task = ProtoService.InviteToChannelAsync(channel.ToInputChannel(), new TLVector<TLInputUserBase> { user.ToInputUser() });
-            }
-            else if (_item is TLChat chat)
-            {
-                var count = 100;
-                var config = CacheService.GetConfig();
-                if (config != null)
-                {
-                    count = config.ForwardedCountMax;
-                }
-
-                type = TLType.MessagesAddChatUser;
-                task = ProtoService.AddChatUserAsync(chat.Id, user.ToInputUser(), count);
-            }
-
-            if (task == null)
+            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Android.AddToTheGroup, user.GetFullName()), Strings.Android.AppName, Strings.Android.OK, Strings.Android.Cancel);
+            if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var response = await task;
-            if (response.IsSucceeded)
-            {
-                NavigationService.GoBack();
+            ProtoService.Send(new AddChatMember(chat.Id, user.Id, count?.Value ?? 0));
 
-                if (response.Result is TLUpdates updates)
-                {
-                    var newMessage = updates.Updates.FirstOrDefault(x => x is TLUpdateNewMessage) as TLUpdateNewMessage;
-                    if (newMessage != null)
-                    {
-                        Aggregator.Publish(newMessage.Message);
-                    }
-
-                    var newChannelMessage = updates.Updates.FirstOrDefault(x => x is TLUpdateNewChannelMessage) as TLUpdateNewChannelMessage;
-                    if (newChannelMessage != null)
-                    {
-                        Aggregator.Publish(newChannelMessage.Message);
-                    }
-
-                }
-            }
-            else
-            {
-                AlertsService.ProcessError(response.Error, type, _item is TLChannel inner && inner.IsBroadcast);
-            }
+            NavigationService.GoBack();
         }
     }
 }

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Common;
 using Template10.Services.NavigationService;
@@ -14,25 +12,21 @@ using Unigram.Common;
 using Unigram.Views;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage;
-using ChatCreateStep2Tuple = Telegram.Api.TL.TLTuple<string, Telegram.Api.TL.TLInputFileBase>;
-using Telegram.Api.Native.TL;
+using ChatCreateStep2Tuple = Telegram.Api.TL.TLTuple<string, object>;
 using System.Runtime.InteropServices.WindowsRuntime;
+using TdWindows;
+using Unigram.Services;
 
 namespace Unigram.ViewModels.Chats
 {
     public class ChatCreateStep2ViewModel : UsersSelectionViewModel
     {
         private string _title;
-        private TLInputFileBase _photo;
 
-        public ChatCreateStep2ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
+        public ChatCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            var config = CacheService.GetConfig();
-            if (config != null)
-            {
-                _maximum = config.MegaGroupSizeMax;
-            }
+            _maximum = ProtoService.GetOption<OptionValueInteger>("supergroup_size_max").Value;
         }
 
         public override string Title => _title;
@@ -50,13 +44,13 @@ namespace Unigram.ViewModels.Chats
                 return Task.CompletedTask;
             }
 
-            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
-            {
-                var tuple = new ChatCreateStep2Tuple(from);
+            //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            //{
+            //    var tuple = new ChatCreateStep2Tuple(from);
 
-                _title = tuple.Item1;
-                _photo = tuple.Item2;
-            }
+            //    _title = tuple.Item1;
+            //    _photo = tuple.Item2;
+            //}
 
             RaisePropertyChanged(() => Title);
             return base.OnNavigatedToAsync(parameter, mode, state);
@@ -64,46 +58,20 @@ namespace Unigram.ViewModels.Chats
 
         protected override async void SendExecute()
         {
-            var config = CacheService.GetConfig();
-            if (config == null) return;
+            var maxSize = ProtoService.GetOption<OptionValueInteger>("basic_group_size_max");
 
-            var peers = new TLVector<TLInputUserBase>(SelectedItems.Select(x => x.ToInputUser()));
-            if (peers.Count <= config.ChatSizeMax)
+            var peers = SelectedItems.Select(x => x.Id).ToList();
+            if (peers.Count <= maxSize.Value)
             {
                 // Classic chat
-                var response = await ProtoService.CreateChatAsync(peers, _title);
-                if (response.IsSucceeded)
+                var response = await ProtoService.SendAsync(new CreateNewBasicGroupChat(peers, _title));
+                if (response is Chat chat)
                 {
-                    var updates = response.Result as TLUpdates;
-                    if (updates != null)
-                    {
-                        CacheService.SyncUsersAndChats(updates.Users, updates.Chats, tuple => { });
+                    // TODO: photo
 
-                        var chat = updates.Chats.FirstOrDefault() as TLChat;
-                        if (chat != null)
-                        {
-                            if (_photo != null)
-                            {
-                                var edit = await ProtoService.EditChatPhotoAsync(chat.Id, new TLInputChatUploadedPhoto { File = _photo });
-                                if (edit.IsSucceeded)
-                                {
-
-                                }
-                                else
-                                {
-
-                                }
-                            }
-
-                            NavigationService.NavigateToDialog(chat);
-                            NavigationService.RemoveLast();
-                            NavigationService.RemoveLast();
-                        }
-                    }
-                }
-                else
-                {
-                    Execute.ShowDebugMessage("messages.createChat error " + response.Error);
+                    NavigationService.NavigateToChat(chat);
+                    NavigationService.RemoveLast();
+                    NavigationService.RemoveLast();
                 }
             }
             else

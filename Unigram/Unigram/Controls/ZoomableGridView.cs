@@ -47,17 +47,17 @@ namespace Unigram.Controls
 
         internal void OnItemHolding(object sender, object item)
         {
-            if (item is TLBotInlineMediaResult inlineMediaResult)
-            {
-                if (inlineMediaResult.HasDocument)
-                {
-                    item = inlineMediaResult.Document;
-                }
-                else
-                {
-                    return;
-                }
-            }
+            //if (item is TLBotInlineMediaResult inlineMediaResult)
+            //{
+            //    if (inlineMediaResult.HasDocument)
+            //    {
+            //        item = inlineMediaResult.Document;
+            //    }
+            //    else
+            //    {
+            //        return;
+            //    }
+            //}
 
             var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
             if (bounds != Window.Current.Bounds)
@@ -95,27 +95,27 @@ namespace Unigram.Controls
             if (_popupHost.IsOpen && e.OriginalSource is FrameworkElement element)
             {
                 var item = element.DataContext;
-                if (item is TLBotInlineMediaResult inlineMediaResult)
-                {
-                    if (inlineMediaResult.HasDocument)
-                    {
-                        item = inlineMediaResult.Document;
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
+                //if (item is TLBotInlineMediaResult inlineMediaResult)
+                //{
+                //    if (inlineMediaResult.HasDocument)
+                //    {
+                //        item = inlineMediaResult.Document;
+                //    }
+                //    else
+                //    {
+                //        return;
+                //    }
+                //}
 
-                if (item is TLDocument content && _popupContent.Content != content)
-                {
-                    //if (content.StickerSet != null)
-                    //{
-                    //    Debug.WriteLine(string.Join(" ", UnigramContainer.Current.ResolveType<IStickersService>().GetEmojiForSticker(content.Id)));
-                    //}
+                //if (item is TLDocument content && _popupContent.Content != content)
+                //{
+                //    //if (content.StickerSet != null)
+                //    //{
+                //    //    Debug.WriteLine(string.Join(" ", UnigramContainer.Current.ResolveType<IStickersService>().GetEmojiForSticker(content.Id)));
+                //    //}
 
-                    _popupContent.Content = content;
-                }
+                //    _popupContent.Content = content;
+                //}
             }
         }
 

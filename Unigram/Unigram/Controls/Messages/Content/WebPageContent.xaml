@@ -1,0 +1,33 @@
+<local:WebPageContentBase
+    x:Class="Unigram.Controls.Messages.Content.WebPageContent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Messages.Content"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    Margin="0,8,0,6">
+
+    <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
+        <RichTextBlock x:Name="Label" Margin="0,0,0,8" MaxLines="6" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionRichTextBlockStyle}">
+            <Paragraph>
+                <Run x:Name="TitleLabel" Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold"/>
+                <Run x:Name="SubtitleLabel" FontWeight="SemiBold"/>
+                <Run x:Name="ContentLabel"/>
+            </Paragraph>
+        </RichTextBlock>
+
+        <ContentControl x:Name="Media"/>
+    </StackPanel>
+
+    <Button x:Name="Button" Click="Button_Click" Style="{StaticResource InstantViewButtonStyle}">
+        <TextBlock FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
+            <Run x:Name="Run1" FontFamily="{StaticResource TelegramThemeFontFamily}" />
+            <Run x:Name="Run2" />
+            <Run x:Name="Run3" Foreground="{x:Null}" FontFamily="{StaticResource TelegramThemeFontFamily}" />
+        </TextBlock>
+    </Button>
+</local:WebPageContentBase>

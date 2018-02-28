@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Settings.SettingsAppearancePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -238,8 +238,8 @@
                 <Grid x:Name="Preview">
                     <controls:DialogBackgroundPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                     <StackPanel Padding="12,12,12,10">
-                        <messages:MessageBubble x:Name="Message1" DataContext="{x:Bind ViewModel.Message1}"/>
-                        <messages:MessageBubble x:Name="Message2" DataContext="{x:Bind ViewModel.Message2}">
+                        <messages:MessageBubble x:Name="Message1"/>
+                        <messages:MessageBubble x:Name="Message2">
                             <FrameworkElement.Resources>
                                 <ResourceDictionary>
                                     <ResourceDictionary.MergedDictionaries>

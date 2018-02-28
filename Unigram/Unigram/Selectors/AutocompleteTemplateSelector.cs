@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TdWindows;
 using Telegram.Api.TL;
 using Unigram.Native;
 using Unigram.ViewModels;
@@ -20,11 +21,11 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is TLUser)
+            if (item is User)
             {
                 return MentionTemplate;
             }
-            else if (item is TLUserCommand)
+            else if (item is UserCommand)
             {
                 return CommandTemplate;
             }

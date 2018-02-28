@@ -43,5 +43,18 @@ namespace Unigram.Views.Settings
         {
             ViewModel.CopyCommand.Execute();
         }
+
+        #region Binding
+
+        public string UsernameHelpLink
+        {
+            get
+            {
+                return string.Format(Strings.Android.UsernameHelpLink, string.Empty).TrimEnd();
+            }
+        }
+
+        #endregion
+
     }
 }

@@ -1,8 +1,8 @@
-﻿<UserControl
+<UserControl
     x:Class="Unigram.Controls.Views.InlineBotResultsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Controls.Inline"
+    xmlns:local="using:Unigram.Controls"
     xmlns:controls="using:Unigram.Controls"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:tl="using:Telegram.Api.TL"
@@ -11,226 +11,50 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
+    DataContextChanged="OnDataContextChanged"
     Unloaded="OnUnloaded">
 
     <UserControl.Resources>
 
         <DataTemplate x:Key="ResultTemplate">
-            <Grid Margin="8,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                      Visibility="{Binding ThumbUrl, Converter={StaticResource NullToVisibilityConverter}}"
-                      Width="48" Height="48"
-                      VerticalAlignment="Top"
-                      Margin="0,0,12,0"
-                      Grid.RowSpan="2">
-                    <Image Source="{Binding ThumbUrl}" Stretch="UniformToFill"/>
+            <Button Click="Result_Click" Style="{StaticResource EmptyButtonStyle}">
+                <Grid Margin="8,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                          Width="48" Height="48"
+                          VerticalAlignment="Top"
+                          Margin="0,0,12,0"
+                          Grid.RowSpan="2">
+                        <Image Stretch="UniformToFill"/>
+                    </Grid>
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+                    <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
                 </Grid>
-                <TextBlock Text="{Binding Title}" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                <TextBlock Text="{Binding Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
-            </Grid>
+            </Button>
         </DataTemplate>
 
-        <DataTemplate x:Key="GameMediaTemplate" x:DataType="tl:TLBotInlineMediaResult">
-            <Grid Margin="8,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="48" Height="48" VerticalAlignment="Top" Margin="0,0,12,0" Grid.RowSpan="2">
-                    <Image Source="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
-                </Grid>
-                <TextBlock Text="{x:Bind Title}" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                <TextBlock Text="{x:Bind Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
-            </Grid>
+        <DataTemplate x:Key="PhotoMediaTemplate">
+            <controls:AspectView Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="8,4">
+                <Image/>
+            </controls:AspectView>
         </DataTemplate>
 
-        <DataTemplate x:Key="PhotoMediaTemplate" x:DataType="tl:TLBotInlineMediaResult">
-            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{x:Bind Photo}"
-                                    IsHitTestVisible="False"
-                                    Height="96"/>
-                <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="PhotoTemplate" x:DataType="tl:TLBotInlineResult">
-            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{Binding ThumbUrl}"
-                                    Constraint="{Binding}"
-                                    IsHitTestVisible="False"
-                                    Height="96"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="GifTemplate" x:DataType="tl:TLBotInlineResult">
-            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{Binding ThumbUrl}"
-                                    Constraint="{Binding}"
-                                    IsHitTestVisible="False"
-                                    Height="96"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="GifMediaTemplate" x:DataType="tl:TLBotInlineMediaResult">
-            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{x:Bind Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{x:Bind Document}"
-                                    IsHitTestVisible="False"
-                                    Height="96"/>
-
-                <controls:TransferButton Transferable="{Binding Document}"
-                                         IsTransferring="{Binding Document.IsTransferring}"
-                                         Progress="{Binding Document.Progress}"
-                                         IsHitTestVisible="False"
-                                         Style="{StaticResource MediaTransferButtonStyle}"/>
-
-                <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="StickerResultTemplate" x:DataType="tl:TLBotInlineMediaResult">
-            <Grid Background="Transparent" Height="96" Margin="4,8">
-                <controls:ImageView Source="{x:Bind Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{x:Bind Document}"
-                                    IsHitTestVisible="False"
-                                    Height="96"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="ContactResultTemplate" x:DataType="tl:TLBotInlineResult">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePicture Source="{Binding Media.User, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                <TextBlock Text="{Binding Media.FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
-                <TextBlock Text="{Binding Media.PhoneNumber, Converter={StaticResource PhoneNumberFormatConverter}}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="GeoResultTemplate">
-            <Grid Margin="8,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                      Width="48" Height="48"
-                      VerticalAlignment="Top"
-                      Margin="0,0,12,0"
-                      Grid.RowSpan="2">
-                    <Image Source="{Binding SendMessage.Geo, Converter={StaticResource VenueToStaticImageConverter}, ConverterParameter='96,96'}" Stretch="UniformToFill"/>
-                </Grid>
-                <TextBlock Text="{Binding Title}" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                <TextBlock Text="{Binding Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="VenueResultTemplate">
-            <Grid Margin="8,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                      Width="48" Height="48"
-                      VerticalAlignment="Top"
-                      Margin="0,0,12,0"
-                      Grid.RowSpan="2">
-                    <Image Source="{Binding SendMessage.Geo, Converter={StaticResource VenueToStaticImageConverter}, ConverterParameter='96,96'}" Stretch="UniformToFill"/>
-                </Grid>
-                <TextBlock Text="{Binding Title}" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                <TextBlock Text="{Binding Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="AudioTemplate" x:DataType="tl:TLBotInlineResult">
-            <Grid Margin="8,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
-                    <!--<controls:TransferButton Transferable="{x:Bind Document}" IsTransferring="{x:Bind Document.IsTransferring, Mode=OneWay}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
-                         <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{x:Bind Document.Progress, Mode=OneWay}" IsHitTestVisible="False"/>-->
-                </Grid>
-                <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-                    <TextBlock Text="{x:Bind Title}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind Description}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
-                </StackPanel>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="AudioMediaTemplate" x:DataType="tl:TLBotInlineMediaResult">
-            <Grid Margin="8,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
-                    <controls:TransferButton Transferable="{x:Bind Document}" IsTransferring="{x:Bind Document.IsTransferring, Mode=OneWay}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
-                    <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{x:Bind Document.Progress, Mode=OneWay}" IsHitTestVisible="False"/>
-                </Grid>
-                <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-                    <TextBlock Text="{x:Bind Title}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind Description}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
-                </StackPanel>
-            </Grid>
+        <DataTemplate x:Key="PhotoTemplate">
+            <controls:MosaicRow HorizontalAlignment="Stretch" Margin="2,0"/>
         </DataTemplate>
 
         <selectors:InlineBotResultTemplateSelector
             x:Key="InlineBotResultTemplateSelector"
-            AudioTemplate="{StaticResource AudioTemplate}"
-            AudioMediaTemplate="{StaticResource AudioMediaTemplate}"
             ResultTemplate="{StaticResource ResultTemplate}"
-            GameMediaTemplate="{StaticResource GameMediaTemplate}"
             PhotoTemplate="{StaticResource PhotoTemplate}"
-            PhotoMediaTemplate="{StaticResource PhotoMediaTemplate}"
-            GeoResultTemplate="{StaticResource GeoResultTemplate}"
-            GifTemplate="{StaticResource GifTemplate}"
-            GifMediaTemplate="{StaticResource GifMediaTemplate}"
-            StickerMediaTemplate="{StaticResource StickerResultTemplate}"
-            VenueResultTemplate="{StaticResource VenueResultTemplate}"/>
-
-        <!--<selectors:InlineBotResultTemplateSelector
-             x:Key="InlineBotResultTemplateSelector"
-             ResultTemplate="{StaticResource ResultTemplate}"
-             PhotoTemplate="{StaticResource PhotoTemplate}"
-             PhotoResultTemplate="{StaticResource PhotoResultTemplate}"
-             GifTemplate="{StaticResource GifTemplate}"
-             GifResultTemplate="{StaticResource GifResultTemplate}"
-             GeoResultTemplate="{StaticResource GeoResultTemplate}"
-             VenueResultTemplate="{StaticResource VenueResultTemplate}"
-             ContactResultTemplate="{StaticResource ContactResultTemplate}"
-             StickerResultTemplate="{StaticResource StickerResultTemplate}"
-             AudioResultTemplate="{StaticResource AudioResultTemplate}"/>-->
+            PhotoMediaTemplate="{StaticResource PhotoMediaTemplate}"/>
     </UserControl.Resources>
 
     <Grid>
@@ -251,6 +75,10 @@
                         <Setter Target="Hide.Width" Value="*"/>
                         <Setter Target="BackgroundElement.BorderThickness" Value="1"/>
                         <Setter Target="BackgroundElement.Margin" Value="8"/>
+
+                        <Setter Target="ShowRow.Height" Value="736*"/>
+                        <Setter Target="ShowRow.MaxHeight" Value="736"/>
+                        <Setter Target="HideRow.Height" Value="*"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -259,12 +87,17 @@
             <ColumnDefinition x:Name="Show"/>
             <ColumnDefinition x:Name="Hide" Width="0"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="HideRow" Height="0"/>
+            <RowDefinition x:Name="ShowRow"/>
+        </Grid.RowDefinitions>
         <Grid x:Name="BackgroundElement"
               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
               BorderThickness="0,1,0,0"
-              Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}">
+              Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}"
+              Grid.Row="1">
             <!--Visibility="{Binding InlineBotResults.Results.Count, Converter={StaticResource BooleanToVisibilityConverter}}"-->
             <!--<Grid.Visibility>
                  <Binding Path="InlineBotResults.Results.Count" Converter="{StaticResource BooleanToVisibilityConverter}">
@@ -276,22 +109,23 @@
                  </Binding.FallbackValue>
                  </Binding>
                  </Grid.Visibility>-->
-            <Grid Visibility="{x:Bind ConvertBannedRights(ViewModel.With, x:True), Mode=OneWay}">
+            <Grid Visibility="{x:Bind ConvertBannedRights(ViewModel.Chat, x:True), Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Button Command="{x:Bind ViewModel.SwitchCommand}"
-                        CommandParameter="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay}"
-                        Content="{x:Bind ViewModel.InlineBotResults.SwitchPM.Text, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                        CommandParameter="{x:Bind ViewModel.InlineBotResults.SwitchPmParameter, Mode=OneWay}"
+                        Content="{x:Bind ViewModel.InlineBotResults.SwitchPmText, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPmText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                         HorizontalAlignment="Stretch"/>
                 <controls:OrientableListView x:Name="Items"
                                              ItemsSource="{x:Bind ViewModel.InlineBotResults, Mode=OneWay}"
                                              IsHorizontal="{x:Bind ViewModel.InlineBotResults.IsGallery, Mode=OneWay}"
                                              ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
+                                             ContainerContentChanging="OnContainerContentChanging"
                                              ItemClick="ListView_ItemClick"
-                                             IsItemClickEnabled="True"
+                                             IsItemClickEnabled="False"
                                              SelectionMode="None"
                                              Grid.Row="1">
                     <GridView.ItemsPanel>
@@ -309,17 +143,20 @@
                             <Setter Property="MinHeight" Value="0"/>
                         </Style>
                     </GridView.ItemContainerStyle>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection/>
+                    </GridView.ItemContainerTransitions>
                     <GridView.Header>
-                        <Border Width="4" Height="4"/>
+                        <Border Width="4" Height="2"/>
                     </GridView.Header>
                     <GridView.Footer>
-                        <Border Width="4" Height="4"/>
+                        <Border Width="4" Height="2"/>
                     </GridView.Footer>
                 </controls:OrientableListView>
             </Grid>
 
-            <Border Visibility="{x:Bind ConvertBannedRights(ViewModel.With, x:False), Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <TextBlock Text="{x:Bind ConvertBannedRights(ViewModel.With), Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
+            <Border Visibility="{x:Bind ConvertBannedRights(ViewModel.Chat, x:False), Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <TextBlock Text="{x:Bind ConvertBannedRights(ViewModel.Chat), Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
             </Border>
         </Grid>
     </Grid>

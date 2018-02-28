@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.Services.Locale;
 using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Common;
@@ -39,20 +38,12 @@ namespace Unigram.Views.Settings
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var lang = e.ClickedItem as TLLangPackLanguage;
-            if (lang == null)
-            {
-                return;
-            }
+            //ApplicationLanguages.PrimaryLanguageOverride = lang.LangCode;
+            //ResourceContext.GetForCurrentView().Reset();
+            //ResourceContext.GetForViewIndependentUse().Reset();
 
-            ApplicationLanguages.PrimaryLanguageOverride = lang.LangCode;
-            ResourceContext.GetForCurrentView().Reset();
-            ResourceContext.GetForViewIndependentUse().Reset();
-
-            WindowWrapper.Current().NavigationServices.Remove(ViewModel.NavigationService);
-            BootStrapper.Current.NavigationService.Reset();
-
-            //new LocaleService(ViewModel.ProtoService).applyRemoteLanguage(e.ClickedItem as TLLangPackLanguage, true);
+            //WindowWrapper.Current().NavigationServices.Remove(ViewModel.NavigationService);
+            //BootStrapper.Current.NavigationService.Reset();
         }
     }
 }

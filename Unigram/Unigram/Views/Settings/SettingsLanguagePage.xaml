@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Unigram.Views.Settings.SettingsLanguagePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -21,18 +21,18 @@
                   IsItemClickEnabled="True"
                   SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                   Grid.Row="1">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="tl:TLLangPackLanguage">
-                    <Grid Margin="0,6" Background="Transparent">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="{x:Bind NativeName}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Text="{x:Bind Name}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Row="1"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+            <!--<ListView.ItemTemplate>
+                 <DataTemplate x:DataType="tl:TLLangPackLanguage">
+                 <Grid Margin="0,6" Background="Transparent">
+                 <Grid.RowDefinitions>
+                 <RowDefinition Height="Auto"/>
+                 <RowDefinition Height="Auto"/>
+                 </Grid.RowDefinitions>
+                 <TextBlock Text="{x:Bind NativeName}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                 <TextBlock Text="{x:Bind Name}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Row="1"/>
+                 </Grid>
+                 </DataTemplate>
+                 </ListView.ItemTemplate>-->
         </ListView>
     </Grid>
 </Page>

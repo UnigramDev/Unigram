@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
 using Unigram.Views;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -29,6 +28,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Windows.System;
 using Windows.UI.Core;
+using TdWindows;
 
 namespace Unigram.Controls.Views
 {
@@ -110,19 +110,22 @@ namespace Unigram.Controls.Views
 
         #region Show
 
-        private static ShareView _current;
-        public static ShareView Current
+        private static Dictionary<int, WeakReference<ShareView>> _windowContext = new Dictionary<int, WeakReference<ShareView>>();
+        public static ShareView GetForCurrentView()
         {
-            get
+            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+            if (_windowContext.TryGetValue(id, out WeakReference<ShareView> reference) && reference.TryGetTarget(out ShareView value))
             {
-                if (_current == null)
-                    _current = new ShareView();
-
-                return _current;
+                return value;
             }
+
+            var context = new ShareView();
+            _windowContext[id] = new WeakReference<ShareView>(context);
+
+            return context;
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessage message, bool withMyScore = false)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(Message message, bool withMyScore = false)
         {
             ViewModel.Comment = null;
             ViewModel.ShareLink = null;
@@ -131,12 +134,12 @@ namespace Unigram.Controls.Views
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = withMyScore;
 
-            var channel = message.Parent as TLChannel;
-            if (channel != null && channel.IsBroadcast && channel.HasUsername)
+            var chat = ViewModel.ProtoService.GetChat(message.ChatId);
+            if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel && ViewModel.ProtoService.GetSupergroup(super.SupergroupId) is Supergroup supergroup && supergroup.Username.Length > 0)
             {
-                var link = $"{channel.Username}/{message.Id}";
+                var link = $"{supergroup.Username}/{message.Id}";
 
-                if (message.IsRoundVideo())
+                if (message.Content is MessageVideoNote)
                 {
                     link = $"https://telesco.pe/{link}";
                 }
@@ -145,34 +148,29 @@ namespace Unigram.Controls.Views
                     link = MeUrlPrefixConverter.Convert(link);
                 }
 
-                string title = null;
-
-                var media = message.Media as ITLMessageMediaCaption;
-                if (media != null && !string.IsNullOrWhiteSpace(media.Caption))
+                var title = message.Content.GetCaption()?.Text;
+                if (message.Content is MessageText text)
                 {
-                    title = media.Caption;
-                }
-                else if (!string.IsNullOrWhiteSpace(message.Message))
-                {
-                    title = message.Message;
+                    title = text.Text.Text;
                 }
 
                 ViewModel.ShareLink = new Uri(link);
-                ViewModel.ShareTitle = title ?? channel.DisplayName;
+                ViewModel.ShareTitle = title ?? ViewModel.ProtoService.GetTitle(chat);
             }
-            else if (message.Media is TLMessageMediaGame gameMedia)
+            else if (message.Content is MessageGame game)
             {
-                if (message.ViaBot != null && message.ViaBot.Username != null)
+                var viaBot = ViewModel.ProtoService.GetUser(message.ViaBotUserId);
+                if (viaBot != null && viaBot.Username.Length > 0)
                 {
-                    ViewModel.ShareLink = new Uri(MeUrlPrefixConverter.Convert($"{message.From.Username}?game={gameMedia.Game.ShortName}"));
-                    ViewModel.ShareTitle = gameMedia.Game.Title;
+                    ViewModel.ShareLink = new Uri(MeUrlPrefixConverter.Convert($"{viaBot.Username}?game={game.Game.ShortName}"));
+                    ViewModel.ShareTitle = game.Game.Title;
                 }
             }
 
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(IEnumerable<TLMessage> messages, bool withMyScore = false)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(IList<Message> messages, bool withMyScore = false)
         {
             ViewModel.Comment = null;
             ViewModel.ShareLink = null;
@@ -196,7 +194,7 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputMediaBase inputMedia)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(InputMessageContent inputMedia)
         {
             ViewModel.Comment = null;
             ViewModel.ShareLink = null;
@@ -205,10 +203,10 @@ namespace Unigram.Controls.Views
             ViewModel.InputMedia = inputMedia;
             ViewModel.IsWithMyScore = false;
 
-            if (inputMedia is TLInputMediaGame gameMedia && gameMedia.Id is TLInputGameShortName shortName)
-            {
-                // TODO: maybe?
-            }
+            //if (inputMedia is TLInputMediaGame gameMedia && gameMedia.Id is TLInputGameShortName shortName)
+            //{
+            //    // TODO: maybe?
+            //}
 
             return ShowAsync();
         }
@@ -442,10 +440,10 @@ namespace Unigram.Controls.Views
             {
                 foreach (var item in ViewModel.SelectedItems)
                 {
-                    if (item is ITLDialogWith with && List.Items.Contains(with) && !List.SelectedItems.Contains(with))
+                    if (item is Chat chat && List.Items.Contains(chat) && !List.SelectedItems.Contains(chat))
                     {
-                        Debug.WriteLine("Adding \"{0}\" to ListView", (object)with.DisplayName);
-                        List.SelectedItems.Add(with);
+                        Debug.WriteLine("Adding \"{0}\" to ListView", (object)chat.Title);
+                        List.SelectedItems.Add(chat);
                     }
                 }
 
@@ -461,10 +459,10 @@ namespace Unigram.Controls.Views
             {
                 foreach (var item in e.AddedItems)
                 {
-                    if (item is ITLDialogWith with && !ViewModel.SelectedItems.Contains(with))
+                    if (item is Chat chat && !ViewModel.SelectedItems.Contains(chat))
                     {
-                        Debug.WriteLine("Adding \"{0}\" to ViewModel", (object)with.DisplayName);
-                        ViewModel.SelectedItems.Add(with);
+                        Debug.WriteLine("Adding \"{0}\" to ViewModel", (object)chat.Title);
+                        ViewModel.SelectedItems.Add(chat);
                         ViewModel.SendCommand.RaiseCanExecuteChanged();
                     }
                 }
@@ -474,10 +472,10 @@ namespace Unigram.Controls.Views
             {
                 foreach (var item in e.RemovedItems)
                 {
-                    if (item is ITLDialogWith with && ViewModel.SelectedItems.Contains(with))
+                    if (item is Chat chat && ViewModel.SelectedItems.Contains(chat))
                     {
-                        Debug.WriteLine("Removing \"{0}\" from ViewModel", (object)with.DisplayName);
-                        ViewModel.SelectedItems.Remove(with);
+                        Debug.WriteLine("Removing \"{0}\" from ViewModel", (object)chat.Title);
+                        ViewModel.SelectedItems.Remove(chat);
                         ViewModel.SendCommand.RaiseCanExecuteChanged();
                     }
                 }
@@ -487,6 +485,31 @@ namespace Unigram.Controls.Views
         private void Query_Changed(object sender, TextChangedEventArgs e)
         {
             ViewModel.Search(((TextBox)sender).Text);
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as StackPanel;
+            var chat = args.Item as Chat;
+
+            var photo = content.Children[0] as ProfilePicture;
+            var title = content.Children[1] as TextBlock;
+
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.ProtoService.GetMyId())
+            {
+                photo.Source = PlaceholderHelper.GetChat(null, chat, 48, 48);
+                title.Text = Strings.Android.SavedMessages;
+            }
+            else
+            {
+                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48, 48);
+                title.Text = ViewModel.ProtoService.GetTitle(chat);
+            }
         }
     }
 }

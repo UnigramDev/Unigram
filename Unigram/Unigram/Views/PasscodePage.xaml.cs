@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Helpers;
-using Telegram.Api.Services.Cache;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Converters;
@@ -46,12 +45,12 @@ namespace Unigram.Views
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
             OnVisibleBoundsChanged(_applicationView, null);
 
-            var user = InMemoryCacheService.Current.GetUser(SettingsHelper.UserId);
-            if (user != null)
-            {
-                Photo.Source = DefaultPhotoConverter.Convert(user, false) as ImageSource;
-                FullName.Text = user.FullName;
-            }
+            //var user = InMemoryCacheService.Current.GetUser(SettingsHelper.UserId);
+            //if (user != null)
+            //{
+            //    Photo.Source = DefaultPhotoConverter.Convert(user, false) as ImageSource;
+            //    FullName.Text = user.FullName;
+            //}
         }
 
         #region Bounds

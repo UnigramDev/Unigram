@@ -4,92 +4,89 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api;
-using Telegram.Api.Aggregator;
+using TdWindows;
 using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Common;
+using Unigram.Services;
 using Unigram.Views.Channels;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
-    public class ChannelCreateStep2ViewModel : ChannelDetailsViewModel
+    public class ChannelCreateStep2ViewModel : UnigramViewModelBase
     {
-        public ChannelCreateStep2ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public ChannelCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
-            AdminedPublicChannels = new MvxObservableCollection<TLChannel>();
+            AdminedPublicChannels = new MvxObservableCollection<Chat>();
 
-            RevokeLinkCommand = new RelayCommand<TLChannel>(RevokeLinkExecute);
+            RevokeLinkCommand = new RelayCommand<Chat>(RevokeLinkExecute);
             SendCommand = new RelayCommand(SendExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
-        {
-            Item = null;
-            Full = null;
+        //public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        //{
+        //    Item = null;
+        //    Full = null;
 
-            var channel = parameter as TLChannel;
-            var peer = parameter as TLPeerChannel;
-            if (peer != null)
-            {
-                channel = CacheService.GetChat(peer.ChannelId) as TLChannel;
-            }
+        //    var channel = parameter as TLChannel;
+        //    var peer = parameter as TLPeerChannel;
+        //    if (peer != null)
+        //    {
+        //        channel = CacheService.GetChat(peer.ChannelId) as TLChannel;
+        //    }
 
-            if (channel != null)
-            {
-                Item = channel;
-                Username = _item.Username;
-                IsPublic = _item.HasUsername;
+        //    if (channel != null)
+        //    {
+        //        Item = channel;
+        //        Username = _item.Username;
+        //        IsPublic = _item.HasUsername;
 
-                var full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
-                if (full == null)
-                {
-                    var response = await ProtoService.GetFullChannelAsync(channel.ToInputChannel());
-                    if (response.IsSucceeded)
-                    {
-                        full = response.Result.FullChat as TLChannelFull;
-                    }
-                }
+        //        var full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
+        //        if (full == null)
+        //        {
+        //            var response = await LegacyService.GetFullChannelAsync(channel.ToInputChannel());
+        //            if (response.IsSucceeded)
+        //            {
+        //                full = response.Result.FullChat as TLChannelFull;
+        //            }
+        //        }
 
-                if (full != null)
-                {
-                    Full = full;
+        //        if (full != null)
+        //        {
+        //            Full = full;
 
-                    if (full.ExportedInvite is TLChatInviteExported exported)
-                    {
-                        InviteLink = exported.Link;
-                    }
-                    else
-                    {
-                        ExportInvite();
-                    }
+        //            if (full.ExportedInvite is TLChatInviteExported exported)
+        //            {
+        //                InviteLink = exported.Link;
+        //            }
+        //            else
+        //            {
+        //                ExportInvite();
+        //            }
 
-                    if (full.IsCanSetUsername)
-                    {
-                        var username = await ProtoService.CheckUsernameAsync(_item.ToInputChannel(), "username");
-                        if (username.IsSucceeded)
-                        {
-                            HasTooMuchUsernames = false;
-                        }
-                        else
-                        {
-                            if (username.Error.TypeEquals(TLErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
-                            {
-                                HasTooMuchUsernames = true;
-                                LoadAdminedPublicChannels();
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //            if (full.IsCanSetUsername)
+        //            {
+        //                var username = await LegacyService.CheckUsernameAsync(_item.ToInputChannel(), "username");
+        //                if (username.IsSucceeded)
+        //                {
+        //                    HasTooMuchUsernames = false;
+        //                }
+        //                else
+        //                {
+        //                    if (username.Error.TypeEquals(TLErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
+        //                    {
+        //                        HasTooMuchUsernames = true;
+        //                        LoadAdminedPublicChannels();
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         private bool _isPublic = true;
         public bool IsPublic
@@ -143,52 +140,54 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public MvxObservableCollection<TLChannel> AdminedPublicChannels { get; private set; }
+        public MvxObservableCollection<Chat> AdminedPublicChannels { get; private set; }
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var username = _isPublic ? _username?.Trim() : null;
+            //var username = _isPublic ? _username?.Trim() : null;
 
-            if (_item != null && !string.Equals(username, _item.Username))
-            {
-                var response = await ProtoService.UpdateUsernameAsync(_item.ToInputChannel(), username);
-                if (response.IsSucceeded)
-                {
-                    _item.Username = username;
-                    _item.HasUsername = username != null;
-                    _item.RaisePropertyChanged(() => _item.Username);
-                    _item.RaisePropertyChanged(() => _item.HasUsername);
-                }
-            }
+            //if (_item != null && !string.Equals(username, _item.Username))
+            //{
+            //    var response = await LegacyService.UpdateUsernameAsync(_item.ToInputChannel(), username);
+            //    if (response.IsSucceeded)
+            //    {
+            //        _item.Username = username;
+            //        _item.HasUsername = username != null;
+            //        _item.RaisePropertyChanged(() => _item.Username);
+            //        _item.RaisePropertyChanged(() => _item.HasUsername);
+            //    }
+            //}
 
             NavigationService.Navigate(typeof(ChannelCreateStep3Page));
         }
 
-        public RelayCommand<TLChannel> RevokeLinkCommand { get; }
-        private async void RevokeLinkExecute(TLChannel channel)
+        public RelayCommand<Chat> RevokeLinkCommand { get; }
+        private async void RevokeLinkExecute(Chat chat)
         {
-            var dialog = new TLMessageDialog();
-            dialog.Title = Strings.Android.AppName;
-            dialog.Message = string.Format(Strings.Android.RevokeLinkAlert, channel.Username, channel.DisplayName);
-            dialog.PrimaryButtonText = Strings.Android.RevokeButton;
-            dialog.SecondaryButtonText = Strings.Android.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
+            if (chat.Type is ChatTypeSupergroup super)
             {
-                var response = await ProtoService.UpdateUsernameAsync(channel.ToInputChannel(), string.Empty);
-                if (response.IsSucceeded)
+                var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                if (supergroup == null)
                 {
-                    channel.HasUsername = false;
-                    channel.Username = null;
-                    channel.RaisePropertyChanged(() => channel.HasUsername);
-                    channel.RaisePropertyChanged(() => channel.Username);
+                    return;
+                }
 
-                    HasTooMuchUsernames = false;
-                    AdminedPublicChannels.Clear();
+                var dialog = new TLMessageDialog();
+                dialog.Title = Strings.Android.AppName;
+                dialog.Message = string.Format(Strings.Android.RevokeLinkAlert, supergroup.Username, chat.Title);
+                dialog.PrimaryButtonText = Strings.Android.RevokeButton;
+                dialog.SecondaryButtonText = Strings.Android.Cancel;
 
-
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var response = await ProtoService.SendAsync(new SetSupergroupUsername(supergroup.Id, string.Empty));
+                    if (response is Ok)
+                    {
+                        HasTooMuchUsernames = false;
+                        AdminedPublicChannels.Clear();
+                    }
                 }
             }
         }
@@ -200,39 +199,50 @@ namespace Unigram.ViewModels.Channels
                 return;
             }
 
-            var response = await ProtoService.GetAdminedPublicChannelsAsync();
-            if (response.IsSucceeded)
+            var response = await ProtoService.SendAsync(new GetCreatedPublicChats());
+            if (response is TdWindows.Chats chats)
             {
-                AdminedPublicChannels.ReplaceWith(response.Result.Chats.OfType<TLChannel>());
+                var result = new List<Chat>();
+
+                foreach (var id in chats.ChatIds)
+                {
+                    var chat = ProtoService.GetChat(id);
+                    if (chat != null)
+                    {
+                        result.Add(chat);
+                    }
+                }
+
+                AdminedPublicChannels.ReplaceWith(result);
             }
-            else
+            else if (response is Error error)
             {
-                Execute.ShowDebugMessage("channels.getAdminedPublicChannels error " + response.Error);
+                Execute.ShowDebugMessage("channels.getAdminedPublicChannels error " + error);
             }
         }
 
         private async void ExportInvite()
         {
-            if (_item == null || _inviteLink != null)
-            {
-                return;
-            }
+            //if (_item == null || _inviteLink != null)
+            //{
+            //    return;
+            //}
 
-            var response = await ProtoService.ExportInviteAsync(_item.ToInputChannel());
-            if (response.IsSucceeded && response.Result is TLChatInviteExported invite)
-            {
-                if (_full != null)
-                {
-                    _full.ExportedInvite = response.Result;
-                    _full.RaisePropertyChanged(() => _full.ExportedInvite);
-                }
+            //var response = await LegacyService.ExportInviteAsync(_item.ToInputChannel());
+            //if (response.IsSucceeded && response.Result is TLChatInviteExported invite)
+            //{
+            //    if (_full != null)
+            //    {
+            //        _full.ExportedInvite = response.Result;
+            //        _full.RaisePropertyChanged(() => _full.ExportedInvite);
+            //    }
 
-                InviteLink = invite.Link;
-            }
-            else
-            {
-                Execute.ShowDebugMessage("channels.exportInvite error " + response.Error);
-            }
+            //    InviteLink = invite.Link;
+            //}
+            //else
+            //{
+            //    Execute.ShowDebugMessage("channels.ExportInvite error " + response.Error);
+            //}
         }
 
         #region Username
@@ -278,51 +288,51 @@ namespace Unigram.ViewModels.Channels
 
         public async void CheckAvailability(string text)
         {
-            if (string.Equals(text, _item?.Username))
-            {
-                IsLoading = false;
-                IsAvailable = false;
-                ErrorMessage = null;
+            //if (string.Equals(text, _item?.Username))
+            //{
+            //    IsLoading = false;
+            //    IsAvailable = false;
+            //    ErrorMessage = null;
 
-                return;
-            }
+            //    return;
+            //}
 
-            var response = await ProtoService.CheckUsernameAsync(_item.ToInputChannel(), text);
-            if (response.IsSucceeded)
-            {
-                if (response.Result)
-                {
-                    IsLoading = false;
-                    IsAvailable = true;
-                    ErrorMessage = null;
-                }
-                else
-                {
-                    IsLoading = false;
-                    IsAvailable = false;
-                    ErrorMessage = Strings.Android.UsernameInUse;
-                }
-            }
-            else
-            {
-                if (response.Error.TypeEquals(TLErrorType.USERNAME_INVALID))
-                {
-                    IsLoading = false;
-                    IsAvailable = false;
-                    ErrorMessage = Strings.Android.UsernameInvalid;
-                }
-                else if (response.Error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
-                {
-                    IsLoading = false;
-                    IsAvailable = false;
-                    ErrorMessage = Strings.Android.UsernameInUse;
-                }
-                else if (response.Error.TypeEquals(TLErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
-                {
-                    HasTooMuchUsernames = true;
-                    LoadAdminedPublicChannels();
-                }
-            }
+            //var response = await LegacyService.CheckUsernameAsync(_item.ToInputChannel(), text);
+            //if (response.IsSucceeded)
+            //{
+            //    if (response.Result)
+            //    {
+            //        IsLoading = false;
+            //        IsAvailable = true;
+            //        ErrorMessage = null;
+            //    }
+            //    else
+            //    {
+            //        IsLoading = false;
+            //        IsAvailable = false;
+            //        ErrorMessage = Strings.Android.UsernameInUse;
+            //    }
+            //}
+            //else
+            //{
+            //    if (response.Error.TypeEquals(TLErrorType.USERNAME_INVALID))
+            //    {
+            //        IsLoading = false;
+            //        IsAvailable = false;
+            //        ErrorMessage = Strings.Android.UsernameInvalid;
+            //    }
+            //    else if (response.Error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
+            //    {
+            //        IsLoading = false;
+            //        IsAvailable = false;
+            //        ErrorMessage = Strings.Android.UsernameInUse;
+            //    }
+            //    else if (response.Error.TypeEquals(TLErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
+            //    {
+            //        HasTooMuchUsernames = true;
+            //        LoadAdminedPublicChannels();
+            //    }
+            //}
         }
 
         public bool UpdateIsValid(string username)

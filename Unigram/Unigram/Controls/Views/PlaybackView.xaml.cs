@@ -12,6 +12,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.Media.Playback;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -44,16 +45,19 @@ namespace Unigram.Controls.Views
             Bindings.Update();
         }
 
-        private static PlaybackView _current;
-        public static PlaybackView Current
+        private static Dictionary<int, WeakReference<PlaybackView>> _windowContext = new Dictionary<int, WeakReference<PlaybackView>>();
+        public static PlaybackView GetForCurrentView()
         {
-            get
+            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+            if (_windowContext.TryGetValue(id, out WeakReference<PlaybackView> reference) && reference.TryGetTarget(out PlaybackView value))
             {
-                if (_current == null)
-                    _current = new PlaybackView();
-
-                return _current;
+                return value;
             }
+
+            var context = new PlaybackView();
+            _windowContext[id] = new WeakReference<PlaybackView>(context);
+
+            return context;
         }
 
         public new IAsyncOperation<ContentDialogBaseResult> ShowAsync()
@@ -226,37 +230,37 @@ namespace Unigram.Controls.Views
 
         private void UpdateDuration()
         {
-            if (ViewModel.Playback.CurrentItem is TLMessage message && message.Media is TLMessageMediaDocument mediaDocument && mediaDocument.Document is TLDocument document)
-            {
-                var audio = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
-                if (audio == null)
-                {
-                    return;
-                }
+            //if (ViewModel.Playback.CurrentItem is TLMessage message && message.Media is TLMessageMediaDocument mediaDocument && mediaDocument.Document is TLDocument document)
+            //{
+            //    var audio = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+            //    if (audio == null)
+            //    {
+            //        return;
+            //    }
 
-                if (audio.HasPerformer && audio.HasTitle)
-                {
-                    TitleLabel.Text = audio.Title;
-                    SubtitleLabel.Text = audio.Performer;
-                }
-                else if (audio.HasPerformer && !audio.HasTitle)
-                {
-                    TitleLabel.Text = Strings.Android.AudioUnknownTitle;
-                    SubtitleLabel.Text = audio.Performer;
-                }
-                else if (audio.HasTitle && !audio.HasPerformer)
-                {
-                    TitleLabel.Text = audio.Title;
-                    SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
-                }
-                else
-                {
-                    TitleLabel.Text = Strings.Android.AudioUnknownTitle;
-                    SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
-                }
+            //    if (audio.HasPerformer && audio.HasTitle)
+            //    {
+            //        TitleLabel.Text = audio.Title;
+            //        SubtitleLabel.Text = audio.Performer;
+            //    }
+            //    else if (audio.HasPerformer && !audio.HasTitle)
+            //    {
+            //        TitleLabel.Text = Strings.Android.AudioUnknownTitle;
+            //        SubtitleLabel.Text = audio.Performer;
+            //    }
+            //    else if (audio.HasTitle && !audio.HasPerformer)
+            //    {
+            //        TitleLabel.Text = audio.Title;
+            //        SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
+            //    }
+            //    else
+            //    {
+            //        TitleLabel.Text = Strings.Android.AudioUnknownTitle;
+            //        SubtitleLabel.Text = Strings.Android.AudioUnknownArtist;
+            //    }
 
-                //DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
-            }
+            //    //DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
+            //}
         }
 
         private void UpdateGlyph()

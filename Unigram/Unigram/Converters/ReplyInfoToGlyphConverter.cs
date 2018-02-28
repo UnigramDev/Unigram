@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
-using Telegram.Api.TL;
+using Unigram.ViewModels;
 
 namespace Unigram.Converters
 {
@@ -32,44 +32,37 @@ namespace Unigram.Converters
 
             if (parameter != null)
             {
-                var replyInfo = value as ReplyInfo;
+                var replyInfo = value as MessageEmbedData;
                 if (replyInfo != null)
                 {
-                    var container = replyInfo.Reply as TLMessagesContainter;
-                    if (container != null)
-                    {
-                        return container.EditMessage != null ? ConfirmGlyph : SendGlyph;
-                    }
+                    return replyInfo.EditingMessage != null ? ConfirmGlyph : SendGlyph;
                 }
 
                 return SendGlyph;
             }
             else
             {
-                var replyInfo = value as ReplyInfo;
+                var replyInfo = value as MessageEmbedData;
                 if (replyInfo == null)
                 {
                     return ReplyGlyph;
                 }
                 else
                 {
-                    if (replyInfo.Reply == null)
+                    if (replyInfo.WebPagePreview != null)
                     {
-                        return LoadingGlyph;
+                        return GlobeGlyph;
                     }
-
-                    var container = replyInfo.Reply as TLMessagesContainter;
-                    if (container != null)
+                    else if (replyInfo.EditingMessage != null)
                     {
-                        return GetMessagesContainerTemplate(container, parameter);
+                        return EditGlyph;
                     }
-
-                    if (replyInfo.ReplyToMsgId == null || replyInfo.ReplyToMsgId.Value == 0)
+                    else if (replyInfo.ReplyToMessage != null)
                     {
                         return ReplyGlyph;
                     }
 
-                    return ReplyGlyph;
+                    return LoadingGlyph;
                 }
             }
         }
@@ -77,30 +70,6 @@ namespace Unigram.Converters
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
-        }
-
-        private string GetMessagesContainerTemplate(TLMessagesContainter container, object parameter)
-        {
-            if (container.WebPageMedia != null)
-            {
-                var webpageMedia = container.WebPageMedia as TLMessageMediaWebPage;
-                if (webpageMedia != null)
-                {
-                    return GlobeGlyph;
-                }
-            }
-
-            if (container.FwdMessages != null)
-            {
-                return ForwardGlyph;
-            }
-
-            if (container.EditMessage != null)
-            {
-                return EditGlyph;
-            }
-
-            return ReplyGlyph;
         }
     }
 }

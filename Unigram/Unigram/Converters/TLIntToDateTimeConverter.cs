@@ -85,9 +85,7 @@ namespace Unigram.Converters
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var clientDelta = MTProtoService.Current.ClientTicksDelta;
-            var utc0SecsInt = (int)value - clientDelta / 4294967296.0;
-            var dateTime = Telegram.Api.Helpers.Utils.UnixTimestampToDateTime(utc0SecsInt);
+            var dateTime = Telegram.Api.Helpers.Utils.UnixTimestampToDateTime((int)value);
 
             var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
             var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);

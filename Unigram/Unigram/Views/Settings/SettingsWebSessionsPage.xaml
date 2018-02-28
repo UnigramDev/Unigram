@@ -1,0 +1,66 @@
+<Page
+    x:Class="Unigram.Views.Settings.SettingsWebSessionsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:cells="using:Unigram.Controls.Cells"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:PageHeader Text="{CustomResource WebSessionsTitle}"/>
+
+        <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                  IsItemClickEnabled="True"
+                  SelectionMode="None"
+                  ItemClick="ListView_ItemClick"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  Grid.Row="1">
+            <ListView.Header>
+                <StackPanel>
+                    <StackPanel Margin="0,0,0,24">
+                        <controls:BadgeButton
+                            Content="{CustomResource TerminateAllWebSessions}"
+                            Foreground="Red"
+                            Click="TerminateOthers_Click"
+                            Style="{StaticResource BadgeButtonStyle}"/>
+                        <TextBlock 
+                            Text="{CustomResource ClearOtherWebSessionsHelp}"
+                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Margin="12,8,12,0"/>
+                    </StackPanel>
+
+                    <TextBlock Text="{CustomResource OtherWebSessions}"
+                               Foreground="{ThemeResource TelegramForegroundAccentBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               FontWeight="SemiBold"
+                               Margin="12,0,12,0"/>
+                </StackPanel>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <cells:WebSessionCell/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.Footer>
+                <TextBlock
+                    Text="{CustomResource TerminateWebSessionInfo}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="12"/>
+            </ListView.Footer>
+        </ListView>
+    </Grid>
+</Page>

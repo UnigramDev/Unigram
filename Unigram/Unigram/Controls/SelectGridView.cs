@@ -18,11 +18,6 @@ namespace Unigram.Controls
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            args.RegisterUpdateCallback(OnUpdateCallback);
-        }
-
-        private void OnUpdateCallback(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
             var content = args.ItemContainer.ContentTemplateRoot;
             if (content != null)
             {

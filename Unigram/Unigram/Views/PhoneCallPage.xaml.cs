@@ -8,7 +8,6 @@ using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
-using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Common;
@@ -219,21 +218,21 @@ namespace Unigram.Views
                 }
             }
 
-            if (tuple.Item2 is TLPhoneCallRequested call)
-            {
-            }
+            //if (tuple.Item2 is TLPhoneCallRequested call)
+            //{
+            //}
 
             if (tuple.Item3 is TLUser user)
             {
-                if (user.HasPhoto && user.Photo is TLUserProfilePhoto)
-                {
-                    Image.Source = DefaultPhotoConverter.Convert(user.Photo, true) as ImageSource;
-                    GrabPanel.Background = new SolidColorBrush(Colors.Transparent);
-                }
-                else
+                //if (user.HasPhoto && user.Photo is TLUserProfilePhoto)
+                //{
+                //    Image.Source = DefaultPhotoConverter.Convert(user, true) as ImageSource;
+                //    GrabPanel.Background = new SolidColorBrush(Colors.Transparent);
+                //}
+                //else
                 {
                     Image.Source = null;
-                    GrabPanel.Background = BindConvert.Current.Bubble(user.Id);
+                    GrabPanel.Background = PlaceholderHelper.GetBrush(user.Id);
                 }
 
                 FromLabel.Text = user.FullName;
@@ -356,7 +355,7 @@ namespace Unigram.Views
         private async void Hangup_Click(object sender, RoutedEventArgs e)
         {
             var duration = _state == TLPhoneCallState.Established ? DateTime.Now - _started : TimeSpan.Zero;
-            await VoIPConnection.Current.SendRequestAsync("phone.discardCall", TLTuple.Create(duration.TotalSeconds));
+            await VoIPConnection.Current.SendRequestAsync("phone.DiscardCall", TLTuple.Create(duration.TotalSeconds));
         }
 
         private void LargeEmojiLabel_Tapped(object sender, TappedRoutedEventArgs e)
