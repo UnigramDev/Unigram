@@ -203,6 +203,7 @@ namespace Unigram.Models
         public virtual void Reset()
         {
             IsSelected = false;
+            IsForceFile = false;
             Caption = null;
             CropRectangle = null;
 

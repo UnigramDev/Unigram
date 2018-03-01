@@ -685,7 +685,7 @@
                                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                 FontSize="18"/>
                 </Border>
-                <Border Background="#99000000" CornerRadius="18">
+                <Border Visibility="{x:Bind SelectedItem.IsPhoto, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#99000000" CornerRadius="18">
                     <controls:GlyphToggleButton UncheckedGlyph="&#xE160;"
                                                 CheckedGlyph="&#xE160;"
                                                 IsChecked="{Binding SelectedItem.IsForceFile, Mode=TwoWay}"
