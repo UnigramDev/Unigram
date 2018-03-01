@@ -220,9 +220,13 @@ namespace Unigram.Common
                         else
                         {
                             var remote = first.RemoteId;
-                            if (long.TryParse(remote.Substring(1), out long chatId))
+                            if (int.TryParse(remote.Substring(1), out int userId))
                             {
-                                service.NavigateToChat(chatId);
+                                var response = await _protoService.SendAsync(new CreatePrivateChat(userId, false));
+                                if (response is Chat chat)
+                                {
+                                    service.NavigateToChat(chat);
+                                }
                             }
                             else
                             {

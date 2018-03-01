@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Composition;
 using System.Numerics;
 using System.Collections.Generic;
+using Unigram.Common;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 

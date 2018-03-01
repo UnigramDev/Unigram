@@ -511,23 +511,6 @@ namespace Unigram.Services
             if (update is UpdateAuthorizationState updateAuthorizationState)
             {
                 _authorizationState = updateAuthorizationState.AuthorizationState;
-
-                switch (updateAuthorizationState.AuthorizationState)
-                {
-                    case AuthorizationStateReady ready:
-                        //_client.Send(new GetChats(long.MaxValue, 0, 20));
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => App.Current.NavigationService.Navigate(typeof(Views.MainPage)));
-                        break;
-                    case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => App.Current.NavigationService.Navigate(typeof(Views.IntroPage)));
-                        break;
-                    case AuthorizationStateWaitCode waitCode:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => App.Current.NavigationService.Navigate(typeof(Views.SignIn.SignInSentCodePage)));
-                        break;
-                    case AuthorizationStateWaitPassword waitPassword:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => App.Current.NavigationService.Navigate(typeof(Views.SignIn.SignInPasswordPage)));
-                        break;
-                }
             }
             else if (update is UpdateBasicGroup updateBasicGroup)
             {
@@ -624,25 +607,6 @@ namespace Unigram.Services
             else if (update is UpdateConnectionState updateConnectionState)
             {
                 _connectionState = updateConnectionState.State;
-
-                switch (updateConnectionState.State)
-                {
-                    case ConnectionStateWaitingForNetwork waitingForNetwork:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.WaitingForNetwork);
-                        break;
-                    case ConnectionStateConnecting connecting:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.Connecting);
-                        break;
-                    case ConnectionStateConnectingToProxy connectingToProxy:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.ConnectingToProxy);
-                        break;
-                    case ConnectionStateUpdating updating:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.Updating);
-                        break;
-                    case ConnectionStateReady ready:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = string.Empty);
-                        return;
-                }
             }
             else if (update is UpdateDeleteMessages updateDeleteMessages)
             {
