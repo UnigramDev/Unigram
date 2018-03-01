@@ -912,26 +912,17 @@ namespace Unigram.ViewModels
 
         public async Task LoadDateSliceAsync(int dateOffset)
         {
-            var offset = -1;
-            var limit = 1;
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
 
-            //var obj = new TLMessagesGetHistory { Peer = Peer, OffsetId = 0, OffsetDate = dateOffset - 1, AddOffset = offset, Limit = limit, MaxId = 0, MinId = 0 };
-            //LegacyService.SendRequestAsync<TLMessagesMessagesBase>("messages.getHistory", obj, result =>
-            //{
-            //    if (result is ITLMessages messages && messages.Messages.Count > 0)
-            //    {
-            //        BeginOnUIThread(async () =>
-            //        {
-            //            await LoadMessageSliceAsync(null, messages.Messages[0].Id);
-            //        });
-            //    }
-            //});
-
-            //var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, dateOffset, 0, limit);
-            //if (result.IsSucceeded)
-            //{
-            //    await LoadMessageSliceAsync(null, result.Result.Messages[0].Id);
-            //}
+            var response = await ProtoService.SendAsync(new GetChatMessageByDate(chat.Id, dateOffset));
+            if (response is Message message)
+            {
+                await LoadMessageSliceAsync(null, message.Id);
+            }
         }
 
         public void ScrollToBottom(object item)
@@ -2485,7 +2476,8 @@ namespace Unigram.ViewModels
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
             {
-                var offset = TLUtils.DateToUniversalTimeTLInt(dialog.SelectedDates.FirstOrDefault().Date);
+                var first = dialog.SelectedDates.FirstOrDefault();
+                var offset = TLUtils.DateToUniversalTimeTLInt(first.Date);
                 await LoadDateSliceAsync(offset);
             }
         }

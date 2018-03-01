@@ -1163,7 +1163,26 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageServiceCommand { get; }
         private async void MessageServiceExecute(MessageViewModel message)
         {
+            if (message.Content is MessageHeaderDate)
+            {
+                var date = BindConvert.Current.DateTime(message.Date);
 
+                var dialog = new Controls.Views.CalendarView();
+                dialog.MaxDate = DateTimeOffset.Now.Date;
+                dialog.SelectedDates.Add(date);
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
+                {
+                    var first = dialog.SelectedDates.FirstOrDefault();
+                    var offset = TLUtils.DateToUniversalTimeTLInt(first.Date);
+                    await LoadDateSliceAsync(offset);
+                }
+            }
+            else if (message.Content is MessagePinMessage pinMessage && pinMessage.MessageId != 0)
+            {
+                await LoadMessageSliceAsync(null, pinMessage.MessageId);
+            }
         }
 
         #endregion
