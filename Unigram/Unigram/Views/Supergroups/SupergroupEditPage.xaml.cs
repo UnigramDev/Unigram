@@ -139,6 +139,10 @@ namespace Unigram.Views.Supergroups
             ViewModel.InviteLink = fullInfo.InviteLink;
             ViewModel.IsAllHistoryAvailable = fullInfo.IsAllHistoryAvailable;
 
+            if (string.IsNullOrEmpty(fullInfo.InviteLink) && string.IsNullOrEmpty(group.Username))
+            {
+                ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+            }
 
             if (fullInfo.StickerSetId == 0 || !fullInfo.CanSetStickerSet)
             {
