@@ -162,7 +162,7 @@ namespace Unigram.Services
         {
             Debug.WriteLine("PlaybackService: OnMediaEnded");
 
-            Execute.BeginOnUIThread(() => CurrentItem = null);
+            //Execute.BeginOnUIThread(() => CurrentItem = null);
             Dispose();
         }
 
@@ -215,7 +215,7 @@ namespace Unigram.Services
 
         public void Clear()
         {
-            Execute.BeginOnUIThread(() => CurrentItem = null);
+            //Execute.BeginOnUIThread(() => CurrentItem = null);
             Dispose();
         }
 

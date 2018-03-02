@@ -39,8 +39,6 @@ namespace Unigram.ViewModels
             AskCommand = new RelayCommand(AskExecute);
             LogoutCommand = new RelayCommand(LogoutExecute);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
-
-            Aggregator.Subscribe(this);
         }
 
         private Chat _chat;
@@ -62,6 +60,8 @@ namespace Unigram.ViewModels
             if (response is Chat chat)
             {
                 Chat = chat;
+
+                Aggregator.Subscribe(this);
                 Delegate?.UpdateChat(chat);
 
                 if (chat.Type is ChatTypePrivate privata)
@@ -169,13 +169,6 @@ namespace Unigram.ViewModels
             {
                 App.Current.Exit();
             }
-        }
-
-        protected override void BeginOnUIThread(Action action)
-        {
-            // This is somehow needed because this viewmodel requires a Dispatcher
-            // in some situations where base one might be null.
-            Execute.BeginOnUIThread(action);
         }
     }
 }

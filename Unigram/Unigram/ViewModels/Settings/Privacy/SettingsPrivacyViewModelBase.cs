@@ -29,7 +29,6 @@ namespace Unigram.ViewModels.Settings
             NeverCommand = new RelayCommand(NeverExecute);
             SendCommand = new RelayCommand(SendExecute);
 
-            UpdatePrivacyAsync();
             Aggregator.Subscribe(this);
         }
 
@@ -271,13 +270,6 @@ namespace Unigram.ViewModels.Settings
             {
 
             }
-        }
-
-        protected override void BeginOnUIThread(Action action)
-        {
-            // This is somehow needed because this viewmodel requires a Dispatcher
-            // in some situations where base one might be null.
-            Execute.BeginOnUIThread(action);
         }
     }
 

@@ -22,7 +22,7 @@ using Windows.System;
 
 namespace Unigram.ViewModels
 {
-    public abstract class GalleryViewModelBase : UnigramViewModelBase, IHandle<UpdateFile>
+    public abstract class GalleryViewModelBase : UnigramViewModelBase/*, IHandle<UpdateFile>*/
     {
         public IFileDelegate Delegate { get; set; }
 
@@ -38,17 +38,17 @@ namespace Unigram.ViewModels
             //Aggregator.Subscribe(this);
         }
 
-        public void Handle(UpdateFile update)
-        {
-            BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
-        }
+        //public void Handle(UpdateFile update)
+        //{
+        //    BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
+        //}
 
-        protected override void BeginOnUIThread(Action action)
-        {
-            // This is somehow needed because this viewmodel requires a Dispatcher
-            // in some situations where base one might be null.
-            Execute.BeginOnUIThread(action);
-        }
+        //protected override void BeginOnUIThread(Action action)
+        //{
+        //    // This is somehow needed because this viewmodel requires a Dispatcher
+        //    // in some situations where base one might be null.
+        //    Execute.BeginOnUIThread(action);
+        //}
 
         public virtual int Position
         {

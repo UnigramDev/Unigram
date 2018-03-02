@@ -60,6 +60,9 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
 
+            SettingsView.DataContext = ViewModel.Settings;
+            ViewModel.Settings.Delegate = SettingsView;
+
             NavigationCacheMode = NavigationCacheMode.Enabled;
 
             #region Localizations
@@ -374,13 +377,13 @@ namespace Unigram.Views
             ViewModel.Chats.NavigationService = MasterDetail.NavigationService;
             ViewModel.Contacts.NavigationService = MasterDetail.NavigationService;
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
-            SettingsView.ViewModel.NavigationService = MasterDetail.NavigationService;
+            ViewModel.Settings.NavigationService = MasterDetail.NavigationService;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             Initialize();
-            await SettingsView.ViewModel.OnNavigatedToAsync(null, e.NavigationMode, null);
+            //await SettingsView.ViewModel.OnNavigatedToAsync(null, e.NavigationMode, null);
         }
 
         public async void Activate(string parameter)

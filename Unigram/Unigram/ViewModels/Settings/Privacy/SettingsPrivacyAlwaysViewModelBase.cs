@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.Services;
 
@@ -70,13 +71,6 @@ namespace Unigram.ViewModels.Settings.Privacy
             }
 
             NavigationService.GoBack();
-        }
-
-        protected override void BeginOnUIThread(Action action)
-        {
-            // This is somehow needed because this viewmodel requires a Dispatcher
-            // in some situations where base one might be null.
-            Execute.BeginOnUIThread(action);
         }
     }
 }

@@ -382,9 +382,17 @@ namespace Unigram.Common
             {
                 service.Frame.Navigated -= handler;
 
-                if (args.Content is Page page && page.DataContext is INavigableWithResult<T> withResult)
+                if (args.Content is Page page)
                 {
-                    withResult.SetAwaiter(tsc, parameter);
+                    if (page.DataContext is INavigable navigable)
+                    {
+                        navigable.Dispatcher = service.Dispatcher;
+                    }
+
+                    if (page.DataContext is INavigableWithResult<T> withResult)
+                    {
+                        withResult.SetAwaiter(tsc, parameter);
+                    }
                 }
             };
 

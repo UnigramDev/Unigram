@@ -44,6 +44,7 @@ namespace Unigram.ViewModels
             Chats = new ChatsViewModel(protoService, cacheService, aggregator);
             Contacts = new ContactsViewModel(protoService, cacheService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, aggregator);
+            Settings = new SettingsViewModel(protoService, cacheService, aggregator, pushService, contactsService);
 
             aggregator.Subscribe(this);
 
@@ -60,6 +61,7 @@ namespace Unigram.ViewModels
                 Chats.Dispatcher = value;
                 Contacts.Dispatcher = value;
                 Calls.Dispatcher = value;
+                Settings.Dispatcher = value;
             }
         }
 
@@ -182,6 +184,7 @@ namespace Unigram.ViewModels
             }
 
             BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
+            BeginOnUIThread(() => Settings.OnNavigatedToAsync(parameter, mode, state));
             //Dispatch(() => Dialogs.LoadFirstSlice());
             //Dispatch(() => Contacts.getTLContacts());
             //Dispatch(() => Contacts.GetSelfAsync());
@@ -192,6 +195,7 @@ namespace Unigram.ViewModels
         public ChatsViewModel Chats { get; private set; }
         public ContactsViewModel Contacts { get; private set; }
         public CallsViewModel Calls { get; private set; }
+        public SettingsViewModel Settings { get; private set; }
     }
 
     public class YoloTimer

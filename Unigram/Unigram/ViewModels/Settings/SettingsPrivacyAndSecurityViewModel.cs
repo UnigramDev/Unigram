@@ -55,7 +55,23 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
+            BeginOnUIThread(() => _showStatusRules.OnNavigatedToAsync(parameter, mode, state));
+            BeginOnUIThread(() => _allowCallsRules.OnNavigatedToAsync(parameter, mode, state));
+            BeginOnUIThread(() => _allowChatInvitesRules.OnNavigatedToAsync(parameter, mode, state));
+
             return Task.CompletedTask;
+        }
+
+        public override IDispatcherWrapper Dispatcher
+        {
+            get => base.Dispatcher;
+            set
+            {
+                base.Dispatcher = value;
+                _showStatusRules.Dispatcher = value;
+                _allowCallsRules.Dispatcher = value;
+                _allowChatInvitesRules.Dispatcher = value;
+            }
         }
 
         #region Properties
