@@ -16,7 +16,7 @@ namespace Unigram.Services
 {
     public interface IContactsService
     {
-        Task ImportAsync();
+        Task<TdWindows.BaseObject> ImportAsync();
         Task ExportAsync(TdWindows.Users result);
 
         Task RemoveAsync();
@@ -41,7 +41,7 @@ namespace Unigram.Services
 
         #region Import
 
-        public async Task ImportAsync()
+        public async Task<TdWindows.BaseObject> ImportAsync()
         {
             using (await _syncLock.WaitAsync())
             {
@@ -50,14 +50,16 @@ namespace Unigram.Services
                 var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
                 if (store != null)
                 {
-                    await ImportAsync(store);
+                    return await ImportAsync(store);
                 }
 
                 Debug.WriteLine("» Importing contacts completed");
             }
+
+            return null;
         }
 
-        private async Task ImportAsync(ContactStore store)
+        private async Task<TdWindows.BaseObject> ImportAsync(ContactStore store)
         {
             var contacts = await store.FindContactsAsync();
             var importedPhones = new Dictionary<string, Contact>();
@@ -108,19 +110,7 @@ namespace Unigram.Services
                 }
             }
 
-            if (importingContacts.IsEmpty())
-            {
-                return;
-            }
-
-            _protoService.Send(new TdWindows.ImportContacts(importingContacts), result =>
-            {
-                if (result is TdWindows.ImportedContacts)
-                {
-                    //_aggregator.Publish(new TLUpdateContactsReset());
-                    SaveImportedPhones(importedPhonesCache, importingPhones);
-                }
-            });
+            return await _protoService.SendAsync(new TdWindows.ChangeImportedContacts(importingContacts));
         }
 
         private void SaveImportedPhones(Dictionary<string, string> importedPhonesCache, List<string> importingPhones)
@@ -160,7 +150,7 @@ namespace Unigram.Services
 
         private Dictionary<string, string> GetImportedPhones()
         {
-            var vector = TLUtils.OpenObjectFromMTProtoFile<TLVector<string>>(_importedPhonesRoot, "importedPhones.dat") ?? new TLVector<string>();
+            var vector = new TLVector<string>();
             return vector.ToDictionary(x => x, y => y);
         }
 
