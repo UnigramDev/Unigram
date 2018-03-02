@@ -50,7 +50,7 @@ namespace Unigram.Services
 
         public void Handle(UpdateNewMessage update)
         {
-            if (update.DisableNotification)
+            if (update.DisableNotification || !ApplicationSettings.Current.InAppPreview)
             {
                 return;
             }
