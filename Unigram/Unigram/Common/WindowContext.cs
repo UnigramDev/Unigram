@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
 using Telegram.Api.Helpers;
 using Template10.Services.NavigationService;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.ApplicationModel;
@@ -17,6 +19,8 @@ using Windows.Media.SpeechRecognition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Common
@@ -99,7 +103,7 @@ namespace Unigram.Common
             UseActivatedArgs(args, service, _protoService.GetAuthorizationState());
         }
 
-        private void UseActivatedArgs(IActivatedEventArgs args, INavigationService service, AuthorizationState state)
+        private async void UseActivatedArgs(IActivatedEventArgs args, INavigationService service, AuthorizationState state)
         {
             try
             {
@@ -114,9 +118,14 @@ namespace Unigram.Common
                         service.Navigate(typeof(Views.IntroPage));
                         break;
                     case AuthorizationStateWaitCode waitCode:
-                        service.Navigate(typeof(Views.SignIn.SignInSentCodePage));
+                        service.Navigate(waitCode.IsRegistered ? typeof(Views.SignIn.SignInSentCodePage) : typeof(Views.SignIn.SignUpPage));
                         break;
                     case AuthorizationStateWaitPassword waitPassword:
+                        if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
+                        {
+                            await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
+                        }
+
                         service.Navigate(typeof(Views.SignIn.SignInPasswordPage));
                         break;
                 }
@@ -203,35 +212,63 @@ namespace Unigram.Common
                 var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
                 if (store != null && annotationStore != null)
                 {
-                    var full = await store.GetContactAsync(contact.Contact.Id);
-                    if (full == null)
+                    try
                     {
-                        service.NavigateToMain(null);
-                    }
-                    else
-                    {
-                        var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
-
-                        var first = annotations.FirstOrDefault();
-                        if (first == null)
+                        var full = await store.GetContactAsync(contact.Contact.Id);
+                        if (full == null)
                         {
                             service.NavigateToMain(null);
                         }
                         else
                         {
-                            var remote = first.RemoteId;
-                            if (int.TryParse(remote.Substring(1), out int userId))
-                            {
-                                var response = await _protoService.SendAsync(new CreatePrivateChat(userId, false));
-                                if (response is Chat chat)
-                                {
-                                    service.NavigateToChat(chat);
-                                }
-                            }
-                            else
+                            var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
+
+                            var first = annotations.FirstOrDefault();
+                            if (first == null)
                             {
                                 service.NavigateToMain(null);
                             }
+                            else
+                            {
+                                var remote = first.RemoteId;
+                                if (int.TryParse(remote.Substring(1), out int userId))
+                                {
+                                    var response = await _protoService.SendAsync(new CreatePrivateChat(userId, false));
+                                    if (response is Chat chat)
+                                    {
+                                        service.NavigateToChat(chat);
+                                    }
+                                }
+                                else
+                                {
+                                    service.NavigateToMain(null);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if ((uint)ex.HResult == 0x80004004)
+                        {
+                            var hyper = new Hyperlink();
+                            hyper.NavigateUri = new Uri("ms-settings:privacy-contacts");
+                            hyper.Inlines.Add(new Run { Text = "Settings" });
+
+                            var text = new TextBlock();
+                            text.Padding = new Thickness(12);
+                            text.VerticalAlignment = VerticalAlignment.Center;
+                            text.TextWrapping = TextWrapping.Wrap;
+                            text.TextAlignment = TextAlignment.Center;
+                            text.Inlines.Add(new Run { Text = "This app is not able to access your contacts. Go to " });
+                            text.Inlines.Add(hyper);
+                            text.Inlines.Add(new Run { Text = " to check the contacts privacy settings." });
+
+                            var page = new ContentControl();
+                            page.VerticalAlignment = VerticalAlignment.Center;
+                            page.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                            page.Content = text;
+
+                            service.Frame.Content = page;
                         }
                     }
                 }
