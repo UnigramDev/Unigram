@@ -61,12 +61,16 @@ namespace Unigram.Views.Supergroups
             }
         }
 
-        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            //if (e.ClickedItem is TLChannelParticipantBase participant && participant.User != null)
-            //{
-            //    ViewModel.NavigationService.Navigate(typeof(ProfilePage), participant.User.ToPeer());
-            //}
+            if (e.ClickedItem is ChatMember member)
+            {
+                var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(member.UserId, false));
+                if (response is Chat chat)
+                {
+                    ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                }
+            }
         }
 
         #region Context menu
