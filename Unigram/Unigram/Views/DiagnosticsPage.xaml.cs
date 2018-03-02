@@ -21,13 +21,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class DiagnosticsPage : Page
     {
         public DiagnosticsPage()
@@ -41,14 +36,14 @@ namespace Unigram.Views
 
             try
             {
-                var log = new FileInfo(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"));
+                var log = new FileInfo(Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log"));
                 Log.Badge = FileSizeConverter.Convert(log.Length);
             }
             catch { }
 
             try
             {
-                var logold = new FileInfo(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old"));
+                var logold = new FileInfo(Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old"));
                 LogOld.Badge = FileSizeConverter.Convert(logold.Length);
             }
             catch { }
@@ -105,12 +100,12 @@ namespace Unigram.Views
 
         private async void Log_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log")), null, null));
+            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log")), null, null));
         }
 
         private async void LogOld_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old")), null, null));
+            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old")), null, null));
         }
     }
 }
