@@ -592,7 +592,7 @@ namespace Unigram.Views
             await TextField.SendAsync();
         }
 
-        private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
+        private void Profile_Click(object sender, RoutedEventArgs e)
         {
             var chat = ViewModel.Chat;
             if (chat == null)
@@ -1025,11 +1025,11 @@ namespace Unigram.Views
             }
             if (user != null)
             {
-                if (ViewModel.IsShareContactAvailable)
+                if (user.OutgoingLink is LinkStateIsContact)
                 {
                     CreateFlyoutItem(ref flyout, ViewModel.ShareContactCommand, Strings.Resources.ShareMyContactInfo);
                 }
-                else if (ViewModel.IsAddContactAvailable)
+                else if (user.OutgoingLink is LinkStateKnowsPhoneNumber)
                 {
                     CreateFlyoutItem(ref flyout, ViewModel.AddContactCommand, Strings.Resources.AddToContacts);
                 }

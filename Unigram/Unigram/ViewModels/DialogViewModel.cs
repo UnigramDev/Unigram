@@ -358,32 +358,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        private bool _isShareContactAvailable;
-        public bool IsShareContactAvailable
-        {
-            get
-            {
-                return _isShareContactAvailable;
-            }
-            set
-            {
-                Set(ref _isShareContactAvailable, value);
-            }
-        }
-
-        private bool _isAddContactAvailable;
-        public bool IsAddContactAvailable
-        {
-            get
-            {
-                return _isAddContactAvailable;
-            }
-            set
-            {
-                Set(ref _isAddContactAvailable, value);
-            }
-        }
-
         private bool _canPinChat;
         public bool CanPinChat
         {

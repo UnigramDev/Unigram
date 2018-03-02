@@ -389,8 +389,8 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Button x:Name="btnDialogInfo"
-                            Click="btnDialogInfo_Click"
+                    <Button x:Name="Profile"
+                            Click="Profile_Click"
                             Style="{StaticResource EmptyButtonStyle}"
                             Padding="0,0,48,0"
                             Grid.ColumnSpan="3">

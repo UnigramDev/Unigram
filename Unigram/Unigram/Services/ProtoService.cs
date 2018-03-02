@@ -9,6 +9,7 @@ using TdWindows;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.DeviceInfo;
 using Telegram.Api.TL;
+using Telegram.Helpers;
 using Unigram.Common;
 using Windows.ApplicationModel;
 using Windows.Storage;
@@ -357,6 +358,10 @@ namespace Unigram.Services
                 else if (user.Id == GetMyId())
                 {
                     return Strings.Resources.SavedMessages;
+                }
+                else if (user.OutgoingLink is LinkStateKnowsPhoneNumber)
+                {
+                    return PhoneNumber.Format(user.PhoneNumber);
                 }
             }
 

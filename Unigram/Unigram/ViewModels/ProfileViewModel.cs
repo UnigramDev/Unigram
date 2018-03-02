@@ -671,56 +671,28 @@ namespace Unigram.ViewModels
         public RelayCommand AddCommand { get; }
         private async void AddExecute()
         {
-            //var user = _item as TLUser;
-            //if (user == null)
-            //{
-            //    return;
-            //}
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
 
-            //var confirm = await EditUserNameView.Current.ShowAsync(user.FirstName, user.LastName);
-            //if (confirm == ContentDialogResult.Primary)
-            //{
-            //    var contact = new TLInputPhoneContact
-            //    {
-            //        ClientId = _item.Id,
-            //        FirstName = EditUserNameView.Current.FirstName,
-            //        LastName = EditUserNameView.Current.LastName,
-            //        Phone = _item.Phone
-            //    };
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            {
+                var user = ProtoService.GetUser(chat);
+                if (user == null)
+                {
+                    return;
+                }
 
-            //    var response = await LegacyService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact });
-            //    if (response.IsSucceeded)
-            //    {
-            //        if (response.Result.Users.Count > 0)
-            //        {
-            //            Aggregator.Publish(new TLUpdateContactLink
-            //            {
-            //                UserId = response.Result.Users[0].Id,
-            //                MyLink = new TLContactLinkContact(),
-            //                ForeignLink = new TLContactLinkUnknown()
-            //            });
-            //        }
+                var dialog = new EditUserNameView(user.FirstName, user.LastName);
 
-            //        user.RaisePropertyChanged(() => user.HasFirstName);
-            //        user.RaisePropertyChanged(() => user.HasLastName);
-            //        user.RaisePropertyChanged(() => user.FirstName);
-            //        user.RaisePropertyChanged(() => user.LastName);
-            //        user.RaisePropertyChanged(() => user.FullName);
-            //        user.RaisePropertyChanged(() => user.DisplayName);
-
-            //        user.RaisePropertyChanged(() => user.HasPhone);
-            //        user.RaisePropertyChanged(() => user.Phone);
-
-            //        RaisePropertyChanged(() => IsEditEnabled);
-            //        RaisePropertyChanged(() => IsAddEnabled);
-
-            //        var dialog = CacheService.GetDialog(_item.ToPeer());
-            //        if (dialog != null)
-            //        {
-            //            dialog.RaisePropertyChanged(() => dialog.With);
-            //        }
-            //    }
-            //}
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    ProtoService.Send(new ImportContacts(new[] { new TdWindows.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, user.Id) }));
+                }
+            }
         }
 
         public RelayCommand EditCommand { get; }
