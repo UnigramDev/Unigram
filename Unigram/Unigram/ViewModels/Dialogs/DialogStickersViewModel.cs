@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core;
 using Unigram.Services;
@@ -424,13 +423,13 @@ namespace Unigram.ViewModels.Dialogs
         //}
     }
 
-    public class TLChannelStickerSet : TLObject
+    public class TLChannelStickerSet : System.Object
     {
         //public TLChannel With { get; set; }
         //public TLChannelFull Full { get; set; }
     }
 
-    public class TLFeaturedStickerSet : TLObject
+    public class TLFeaturedStickerSet : System.Object
     {
         //public TLStickerSet Set { get; set; }
 

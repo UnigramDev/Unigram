@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

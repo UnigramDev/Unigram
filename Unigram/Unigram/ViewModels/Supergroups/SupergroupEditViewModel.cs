@@ -5,13 +5,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Common;
+using Unigram.Entities;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Channels;
@@ -340,7 +337,7 @@ namespace Unigram.ViewModels.Supergroups
                     var response = await ProtoService.SendAsync(new SetSupergroupUsername(item.Id, username));
                     if (response is Error error)
                     {
-                        if (error.TypeEquals(TLErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
+                        if (error.TypeEquals(ErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
                         {
                             HasTooMuchUsernames = true;
                             LoadAdminedPublicChannels();
@@ -569,25 +566,25 @@ namespace Unigram.ViewModels.Supergroups
                 }
                 else if (response is Error error)
                 {
-                    if (error.TypeEquals(TLErrorType.USERNAME_INVALID))
+                    if (error.TypeEquals(ErrorType.USERNAME_INVALID))
                     {
                         IsLoading = false;
                         IsAvailable = false;
                         ErrorMessage = Strings.Resources.UsernameInvalid;
                     }
-                    else if (error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
+                    else if (error.TypeEquals(ErrorType.USERNAME_OCCUPIED))
                     {
                         IsLoading = false;
                         IsAvailable = false;
                         ErrorMessage = Strings.Resources.UsernameInUse;
                     }
-                    else if (error.TypeEquals(TLErrorType.USERNAME_NOT_OCCUPIED))
+                    else if (error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
                     {
                         IsLoading = false;
                         IsAvailable = true;
                         ErrorMessage = null;
                     }
-                    else if (error.TypeEquals(TLErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
+                    else if (error.TypeEquals(ErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
                     {
                         HasTooMuchUsernames = true;
                         LoadAdminedPublicChannels();

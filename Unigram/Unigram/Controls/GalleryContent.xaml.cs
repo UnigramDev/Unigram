@@ -71,7 +71,7 @@ namespace Unigram.Controls
                 UpdateThumbnail(item, file);
                 return;
             }
-            else if (data.Id != file.Id)
+            else if (data == null || data.Id != file.Id)
             {
                 return;
             }

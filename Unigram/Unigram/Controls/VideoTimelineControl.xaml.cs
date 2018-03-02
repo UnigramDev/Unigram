@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Windows;
-using Telegram.Api.Helpers;
+using Unigram.Common;
 using Windows.Graphics.Imaging;
 using Windows.Media.Editing;
 using Windows.Storage;

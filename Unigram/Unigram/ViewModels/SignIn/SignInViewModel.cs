@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
-using Unigram.Models;
+using Unigram.Entities;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.SignIn;
@@ -40,26 +37,26 @@ namespace Unigram.ViewModels.SignIn
             return Task.CompletedTask;
         }
 
-        private void GotUserCountry(object sender, CountryEventArgs e)
-        {
-            Country country = null;
-            foreach (var local in Country.Countries)
-            {
-                if (string.Equals(local.Code, e.Country, StringComparison.OrdinalIgnoreCase))
-                {
-                    country = local;
-                    break;
-                }
-            }
+        //private void GotUserCountry(object sender, CountryEventArgs e)
+        //{
+        //    Country country = null;
+        //    foreach (var local in Country.Countries)
+        //    {
+        //        if (string.Equals(local.Code, e.Country, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            country = local;
+        //            break;
+        //        }
+        //    }
 
-            if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
-            {
-                BeginOnUIThread(() =>
-                {
-                    SelectedCountry = country;
-                });
-            }
-        }
+        //    if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
+        //    {
+        //        BeginOnUIThread(() =>
+        //        {
+        //            SelectedCountry = country;
+        //        });
+        //    }
+        //}
 
         private Country _selectedCountry;
         public Country SelectedCountry
@@ -156,11 +153,11 @@ namespace Unigram.ViewModels.SignIn
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(TLErrorType.PHONE_NUMBER_INVALID))
+                if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
                     //needShowInvalidAlert(req.phone_number, false);
                 }
-                else if (error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
+                else if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Resources.PhoneNumberFlood, Strings.Resources.AppName, Strings.Resources.OK);
                 }
@@ -168,11 +165,11 @@ namespace Unigram.ViewModels.SignIn
                 //{
                 //    needShowInvalidAlert(req.phone_number, true);
                 //}
-                else if (error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
                 }
-                else if (error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
                 }
@@ -190,25 +187,27 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand ProxyCommand { get; }
         private async void ProxyExecute()
         {
-            var dialog = new ProxyView(false);
-            dialog.Server = SettingsHelper.ProxyServer;
-            dialog.Port = SettingsHelper.ProxyPort.ToString();
-            dialog.Username = SettingsHelper.ProxyUsername;
-            dialog.Password = SettingsHelper.ProxyPassword;
-            dialog.IsProxyEnabled = SettingsHelper.IsProxyEnabled;
-            dialog.IsCallsProxyEnabled = SettingsHelper.IsCallsProxyEnabled;
+            var proxy = ApplicationSettings.Current.Proxy;
 
-            var enabled = SettingsHelper.IsProxyEnabled == true;
+            var dialog = new ProxyView(false);
+            dialog.Server = ApplicationSettings.Current.Proxy.Server;
+            dialog.Port = proxy.Port.ToString();
+            dialog.Username = proxy.Username;
+            dialog.Password = proxy.Password;
+            dialog.IsProxyEnabled = proxy.IsEnabled;
+            dialog.IsCallsProxyEnabled = proxy.IsCallsEnabled;
+
+            var enabled = proxy.IsEnabled == true;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                var server = SettingsHelper.ProxyServer = dialog.Server ?? string.Empty;
-                var port = SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
-                var username = SettingsHelper.ProxyUsername = dialog.Username ?? string.Empty;
-                var password = SettingsHelper.ProxyPassword = dialog.Password ?? string.Empty;
-                var newValue = SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
-                SettingsHelper.IsCallsProxyEnabled = dialog.IsCallsProxyEnabled;
+                var server = proxy.Server = dialog.Server ?? string.Empty;
+                var port = proxy.Port = Extensions.TryParseOrDefault(dialog.Port, 1080);
+                var username = proxy.Username = dialog.Username ?? string.Empty;
+                var password = proxy.Password = dialog.Password ?? string.Empty;
+                var newValue = proxy.IsEnabled = dialog.IsProxyEnabled;
+                proxy.IsCallsEnabled = dialog.IsCallsProxyEnabled;
 
                 if (newValue || newValue != enabled)
                 {

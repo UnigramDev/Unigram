@@ -16,7 +16,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using LinqToVisualTree;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Unigram.Controls;
 using Template10.Common;
 using System.ComponentModel;

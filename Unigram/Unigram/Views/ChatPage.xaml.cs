@@ -1,37 +1,33 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
+using System.Windows.Input;
+using TdWindows;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
-using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.Views;
-using Unigram.Core.Models;
-using Unigram.Core.Services;
+using Unigram.Core.Helpers;
+using Unigram.Entities;
+using Unigram.Native;
 using Unigram.ViewModels;
-using Unigram.Views.Chats;
-using Unigram.Views.Users;
+using Unigram.ViewModels.Delegates;
+using Unigram.Views.Dialogs;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
-using Windows.Storage.FileProperties;
-using Windows.Storage.Pickers;
 using Windows.Storage.Search;
 using Windows.Storage.Streams;
-using Windows.System.Profile;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
@@ -40,31 +36,11 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI;
-using Unigram.Views.Channels;
-using Unigram.Themes;
-using Windows.UI.Xaml.Media.Animation;
-using Template10.Common;
-using Template10.Services.NavigationService;
-using Unigram.Core.Helpers;
-using Unigram.Native;
-using LinqToVisualTree;
-using Unigram.Models;
-using System.Windows.Input;
-using Unigram.Views.Dialogs;
-using Unigram.Controls.Items;
-using TdWindows;
-using Unigram.Selectors;
-using Unigram.ViewModels.Users;
-using Newtonsoft.Json;
-using Windows.UI.Xaml.Documents;
-using Windows.ApplicationModel;
-using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views
 {
@@ -1772,7 +1748,7 @@ namespace Unigram.Views
         private void Share_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as FrameworkElement;
-            if (button.DataContext is TLMessage message)
+            if (button.Tag is MessageViewModel message)
             {
                 ViewModel.MessageShareCommand.Execute(message);
             }

@@ -4,8 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
+using TdWindows;
 using Template10.Services.SerializationService;
 using Unigram.Common;
 using Unigram.Controls.Views;
@@ -25,7 +24,7 @@ namespace Unigram.Views
 {
     public sealed partial class GamePage : Page
     {
-        private TLMessage _shareMessage;
+        private Message _shareMessage;
 
         public GamePage()
         {

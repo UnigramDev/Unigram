@@ -8,7 +8,6 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Views;
 using Unigram.Core.Models;
@@ -34,7 +33,7 @@ using Windows.UI.Xaml.Automation.Provider;
 using Unigram.Native;
 using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Automation;
-using Unigram.Models;
+using Unigram.Entities;
 using TdWindows;
 using Unigram.Services;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -1149,7 +1148,7 @@ namespace Unigram.Controls
         {
             if (entities != null && entities.Count > 0)
             {
-                entities = new TLVector<TextEntity>(entities);
+                entities = new List<TextEntity>(entities);
 
                 var builder = new StringBuilder(text);
                 var addToOffset = 0;

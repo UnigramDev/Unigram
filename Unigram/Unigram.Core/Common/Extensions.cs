@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Windows.Devices.Geolocation;
 using Windows.Storage.FileProperties;
 

@@ -6,11 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services.DeviceInfo;
-using Telegram.Api.TL;
 using Telegram.Helpers;
 using Unigram.Common;
+using Unigram.Entities;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI.ViewManagement;
@@ -110,8 +108,8 @@ namespace Unigram.Services
                 DatabaseDirectory = Path.Combine(ApplicationData.Current.LocalFolder.Path, "0"),
                 UseSecretChats = true,
                 UseMessageDatabase = true,
-                ApiId = Telegram.Api.Constants.ApiId,
-                ApiHash = Telegram.Api.Constants.ApiHash,
+                ApiId = Constants.ApiId,
+                ApiHash = Constants.ApiHash,
                 SystemLanguageCode = "en",
                 DeviceModel = _deviceInfoService.DeviceModel,
                 SystemVersion = _deviceInfoService.SystemVersion,
@@ -879,22 +877,22 @@ namespace Unigram.Services
 
 
 
-        public static bool CodeEquals(this Error error, TLErrorCode code)
+        public static bool CodeEquals(this Error error, ErrorCode code)
         {
             if (error == null)
             {
                 return false;
             }
 
-            if (Enum.IsDefined(typeof(TLErrorCode), error.Code))
+            if (Enum.IsDefined(typeof(ErrorCode), error.Code))
             {
-                return (TLErrorCode)error.Code == code;
+                return (ErrorCode)error.Code == code;
             }
 
             return false;
         }
 
-        public static bool TypeEquals(this Error error, TLErrorType type)
+        public static bool TypeEquals(this Error error, ErrorType type)
         {
             if (error == null || error.Message == null)
             {
@@ -903,9 +901,9 @@ namespace Unigram.Services
 
             var strings = error.Message.Split(':');
             var typeString = strings[0];
-            if (Enum.IsDefined(typeof(TLErrorType), typeString))
+            if (Enum.IsDefined(typeof(ErrorType), typeString))
             {
-                var value = (TLErrorType)Enum.Parse(typeof(TLErrorType), typeString, true);
+                var value = (ErrorType)Enum.Parse(typeof(ErrorType), typeString, true);
 
                 return value == type;
             }

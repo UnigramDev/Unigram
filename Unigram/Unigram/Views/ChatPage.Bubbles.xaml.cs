@@ -8,8 +8,6 @@ using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
 using Unigram.Converters;
 using Unigram.Views;
 using Unigram.ViewModels;
@@ -38,7 +36,6 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 using Unigram.Controls;
-using Telegram.Api;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Unigram.Common;
@@ -562,7 +559,7 @@ namespace Unigram.Views
 
     public interface IGifPlayback
     {
-        void Play(TLMessage message);
-        void Play(IEnumerable<TLMessage> items, bool auto);
+        void Play(MessageViewModel message);
+        void Play(IEnumerable<MessageViewModel> items, bool auto);
     }
 }

@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Entities;
 using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Navigation;
@@ -114,19 +113,19 @@ namespace Unigram.ViewModels.Settings
             }
             else if (response is Error error)
             {
-                if (error.TypeEquals(TLErrorType.USERNAME_INVALID))
+                if (error.TypeEquals(ErrorType.USERNAME_INVALID))
                 {
                     IsLoading = false;
                     IsAvailable = false;
                     ErrorMessage = Strings.Resources.UsernameInvalid;
                 }
-                else if (error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
+                else if (error.TypeEquals(ErrorType.USERNAME_OCCUPIED))
                 {
                     IsLoading = false;
                     IsAvailable = false;
                     ErrorMessage = Strings.Resources.UsernameInUse;
                 }
-                else if (error.TypeEquals(TLErrorType.USERNAME_NOT_OCCUPIED))
+                else if (error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
                 {
                     IsLoading = false;
                     IsAvailable = true;
@@ -207,7 +206,7 @@ namespace Unigram.ViewModels.Settings
             }
             else if (response is Error error)
             {
-                if (error.CodeEquals(TLErrorCode.FLOOD))
+                if (error.CodeEquals(ErrorCode.FLOOD))
                 {
                     //this.HasError = true;
                     //this.Error = Strings.Additional.FloodWaitString;
@@ -216,7 +215,7 @@ namespace Unigram.ViewModels.Settings
                     //    MessageBox.Show(Strings.Additional.FloodWaitString, Strings.Additional.Error, 0);
                     //});
                 }
-                else if (error.CodeEquals(TLErrorCode.INTERNAL))
+                else if (error.CodeEquals(ErrorCode.INTERNAL))
                 {
                     //StringBuilder messageBuilder = new StringBuilder();
                     //messageBuilder.AppendLine(Strings.Additional.ServerErrorMessage);
@@ -230,9 +229,9 @@ namespace Unigram.ViewModels.Settings
                     //    MessageBox.Show(messageBuilder.ToString(), Strings.Additional.ServerError, 0);
                     //});
                 }
-                else if (error.CodeEquals(TLErrorCode.BAD_REQUEST))
+                else if (error.CodeEquals(ErrorCode.BAD_REQUEST))
                 {
-                    if (error.TypeEquals(TLErrorType.USERNAME_INVALID))
+                    if (error.TypeEquals(ErrorType.USERNAME_INVALID))
                     {
                         //this.HasError = true;
                         //this.Error = Strings.Additional.UsernameInvalid;
@@ -241,7 +240,7 @@ namespace Unigram.ViewModels.Settings
                         //    MessageBox.Show(Strings.Additional.UsernameInvalid, Strings.Additional.Error, 0);
                         //});
                     }
-                    else if (error.TypeEquals(TLErrorType.USERNAME_OCCUPIED))
+                    else if (error.TypeEquals(ErrorType.USERNAME_OCCUPIED))
                     {
                         //this.HasError = true;
                         //this.Error = Strings.Additional.UsernameOccupied;
@@ -250,7 +249,7 @@ namespace Unigram.ViewModels.Settings
                         //    MessageBox.Show(Strings.Additional.UsernameOccupied, Strings.Additional.Error, 0);
                         //});
                     }
-                    else if (error.TypeEquals(TLErrorType.USERNAME_NOT_MODIFIED))
+                    else if (error.TypeEquals(ErrorType.USERNAME_NOT_MODIFIED))
                     {
                         NavigationService.GoBack();
                     }

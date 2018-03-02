@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Helpers;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls.Messages;
@@ -67,7 +66,7 @@ namespace Unigram.Services
                 var caption = _protoService.GetTitle(chat);
                 var content = UpdateFromLabel(chat, update.Message) + GetBriefLabel(update.Message);
                 var sound = "";
-                var launch = "GetLaunch(commonMessage)";
+                var launch = GetLaunch(chat);
                 var tag = update.Message.Id.ToString();
                 var group = GetGroup(update.Message, chat);
                 var picture = string.Empty;
@@ -117,6 +116,29 @@ namespace Unigram.Services
             return group;
         }
 
+        public string GetLaunch(Chat chat)
+        {
+            var launch = string.Empty;
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "from_id={0}", privata.UserId);
+            }
+            else if (chat.Type is ChatTypeSecret secret)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "secret_id={0}", secret.SecretChatId);
+            }
+            else if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "channel_id={0}", supergroup.SupergroupId);
+            }
+            else if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", basicGroup.BasicGroupId);
+            }
+
+            return launch;
+        }
+
         public async Task RegisterAsync()
         {
             using (await _registrationLock.WaitAsync())
@@ -126,19 +148,19 @@ namespace Unigram.Services
 
                 try
                 {
-                    var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                    if (channel.Uri != SettingsHelper.ChannelUri)
-                    {
-                        var oldUri = SettingsHelper.ChannelUri;
+                    var oldUri = ApplicationSettings.Current.NotificationsToken;
 
+                    var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+                    if (channel.Uri != oldUri)
+                    {
                         var result = await _protoService.SendAsync(new RegisterDevice(new DeviceTokenWindowsPush(channel.Uri), new int[0]));
                         if (result is Ok)
                         {
-                            SettingsHelper.ChannelUri = channel.Uri;
+                            ApplicationSettings.Current.NotificationsToken = channel.Uri;
                         }
                         else
                         {
-                            SettingsHelper.ChannelUri = null;
+                            ApplicationSettings.Current.NotificationsToken = null;
                         }
                     }
 
@@ -147,7 +169,7 @@ namespace Unigram.Services
                 catch (Exception ex)
                 {
                     _alreadyRegistered = false;
-                    SettingsHelper.ChannelUri = null;
+                    ApplicationSettings.Current.NotificationsToken = null;
 
                     Debugger.Break();
                 }
@@ -186,13 +208,13 @@ namespace Unigram.Services
 
         public async Task UnregisterAsync()
         {
-            var channel = SettingsHelper.ChannelUri;
+            var channel = ApplicationSettings.Current.NotificationsToken;
             //var response = await _protoService.UnregisterDeviceAsync(8, channel);
             //if (response.IsSucceeded)
             //{
             //}
 
-            SettingsHelper.ChannelUri = null;
+            ApplicationSettings.Current.NotificationsToken = null;
         }
 
 

@@ -1,64 +1,38 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Brushes;
-using Microsoft.Graphics.Canvas.UI;
-using Microsoft.Graphics.Canvas.UI.Xaml;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
-using Template10.Services.SerializationService;
+using System.Windows.Input;
+using TdWindows;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.Converters;
-using Unigram.Views;
 using Unigram.Core.Notifications;
+using Unigram.Services;
 using Unigram.ViewModels;
-using Unigram.Views.Settings;
+using Unigram.ViewModels.Supergroups;
+using Unigram.Views.Channels;
+using Unigram.Views.Chats;
+using Unigram.Views.SecretChats;
+using Unigram.Views.Users;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
+using Windows.Foundation.Metadata;
+using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.ViewManagement;
-using Unigram.Views.Channels;
-using Unigram.ViewModels.Chats;
-using Unigram.Views.Chats;
-using Windows.System.Profile;
-using Windows.ApplicationModel.Core;
-using Unigram.Core.Services;
-using Template10.Common;
-using Windows.Foundation.Metadata;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Composition;
-using Unigram.Views.Users;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
-using Windows.UI;
-using System.Windows.Input;
-using Unigram.Strings;
-using TdWindows;
-using Unigram.Controls.Items;
-using Windows.UI.Xaml.Media.Imaging;
-using LinqToVisualTree;
-using Unigram.Views.SecretChats;
-using Windows.UI.Xaml.Documents;
-using Unigram.Controls.Cells;
-using Template10.Services.KeyboardService;
-using Unigram.ViewModels.Supergroups;
-using Unigram.Services;
 
 namespace Unigram.Views
 {
@@ -1039,7 +1013,7 @@ namespace Unigram.Views
 
         #region Binding
 
-        private string ConvertGeoLive(int count, IList<TLMessage> items)
+        private string ConvertGeoLive(int count, IList<Message> items)
         {
             //if (count > 1)
             //{

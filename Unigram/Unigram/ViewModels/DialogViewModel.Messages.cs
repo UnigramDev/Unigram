@@ -8,7 +8,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.TL;
 using Telegram.Helpers;
 using Unigram.Common;
 using Unigram.Controls;
@@ -744,9 +743,9 @@ namespace Unigram.ViewModels
 
         #region Keyboard button
 
-        private TLMessage _replyMarkupMessage;
+        private Message _replyMarkupMessage;
 
-        public TLMessage EditedMessage
+        public Message EditedMessage
         {
             get
             {
@@ -1175,7 +1174,7 @@ namespace Unigram.ViewModels
                 if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
                 {
                     var first = dialog.SelectedDates.FirstOrDefault();
-                    var offset = TLUtils.DateToUniversalTimeTLInt(first.Date);
+                    var offset = first.Date.ToTimestamp();
                     await LoadDateSliceAsync(offset);
                 }
             }

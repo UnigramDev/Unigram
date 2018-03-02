@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Helpers;
 using Template10.Services.NavigationService;
 using Unigram.Controls;
 using Unigram.Services;

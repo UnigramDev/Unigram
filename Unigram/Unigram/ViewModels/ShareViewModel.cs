@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Services;
@@ -265,7 +264,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task<KeyedList<string, TLObject>> SearchLocalAsync(string query1)
+        private async Task<KeyedList<string, System.Object>> SearchLocalAsync(string query1)
         {
             //if (string.IsNullOrWhiteSpace(query1))
             //{

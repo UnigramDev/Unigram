@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Services;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Services;
@@ -23,8 +22,8 @@ namespace Unigram.ViewModels.Settings
         private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
         private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
 
-        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, IMTProtoService legacyService, ICacheService cacheService, IEventAggregator aggregator, IContactsService contactsService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
-            : base(protoService, legacyService, cacheService, aggregator)
+        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IContactsService contactsService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
+            : base(protoService, cacheService, aggregator)
         {
             _contactsService = contactsService;
 

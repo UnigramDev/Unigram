@@ -13,7 +13,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Core.Common;
 using Unigram.Core.Models;
-using Unigram.Models;
+using Unigram.Entities;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Foundation;

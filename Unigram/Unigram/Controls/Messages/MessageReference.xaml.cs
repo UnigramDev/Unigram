@@ -649,7 +649,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Resources.AttachAudio;
+            ServiceLabel.Text = Strings.Resources.AttachMusic;
             MessageLabel.Text = string.Empty;
 
             //var document = documentMedia.Document as TLDocument;

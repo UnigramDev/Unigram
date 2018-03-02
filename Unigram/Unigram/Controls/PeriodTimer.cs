@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Unigram.Converters;
+using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -56,18 +56,18 @@ namespace Unigram.Controls
 
         #region Value
 
-        public TLMessage Value
+        public MessageViewModel Value
         {
-            get { return (TLMessage)GetValue(ValueProperty); }
+            get { return (MessageViewModel)GetValue(ValueProperty); }
             set { SetValue(ValueProperty, value); }
         }
 
         public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value", typeof(TLMessage), typeof(PeriodTimer), new PropertyMetadata(null, OnValueChanged));
+            DependencyProperty.Register("Value", typeof(MessageViewModel), typeof(PeriodTimer), new PropertyMetadata(null, OnValueChanged));
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((PeriodTimer)d).OnValueChanged(e.NewValue as TLMessage);
+            ((PeriodTimer)d).OnValueChanged(e.NewValue as MessageViewModel);
         }
 
         #endregion
@@ -90,7 +90,7 @@ namespace Unigram.Controls
 
         #endregion
 
-        private void OnValueChanged(TLMessage newValue)
+        private void OnValueChanged(MessageViewModel newValue)
         {
             if (Indicator == null)
             {

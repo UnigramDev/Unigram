@@ -8,7 +8,6 @@
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:controls="using:Unigram.Controls"
     xmlns:viewModels="using:Unigram.ViewModels"
-    xmlns:tl="using:Telegram.Api.TL"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

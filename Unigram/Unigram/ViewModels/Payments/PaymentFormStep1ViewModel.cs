@@ -5,14 +5,12 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Payments;
 using Unigram.Common;
-using Unigram.Models;
+using Unigram.Entities;
 using Unigram.Views.Payments;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
+using TdWindows;
 
 namespace Unigram.ViewModels.Payments
 {
@@ -53,8 +51,8 @@ namespace Unigram.ViewModels.Payments
             return Task.CompletedTask;
         }
 
-        private TLPaymentRequestedInfo _info = new TLPaymentRequestedInfo { ShippingAddress = new TLPostAddress() };
-        public TLPaymentRequestedInfo Info
+        private OrderInfo _info = new OrderInfo { ShippingAddress = new ShippingAddress() };
+        public OrderInfo Info
         {
             get
             {
@@ -85,7 +83,7 @@ namespace Unigram.ViewModels.Payments
         {
             get
             {
-                return _paymentForm != null && (_paymentForm.Invoice.IsEmailRequested || _paymentForm.Invoice.IsNameRequested || _paymentForm.Invoice.IsPhoneRequested);
+                return _paymentForm != null && (_paymentForm.Invoice.NeedEmailAddress || _paymentForm.Invoice.NeedName || _paymentForm.Invoice.NeedPhoneNumber);
             }
         }
 
@@ -108,40 +106,40 @@ namespace Unigram.ViewModels.Payments
             IsLoading = true;
 
             var save = _isSave ?? false;
-            var info = new TLPaymentRequestedInfo();
-            if (_paymentForm.Invoice.IsNameRequested)
+            var info = new OrderInfo();
+            if (_paymentForm.Invoice.NeedName)
             {
                 info.Name = _info.Name;
             }
-            if (_paymentForm.Invoice.IsEmailRequested)
+            if (_paymentForm.Invoice.NeedEmailAddress)
             {
-                info.Email = _info.Email;
+                info.EmailAddress = _info.EmailAddress;
             }
-            if (_paymentForm.Invoice.IsPhoneRequested)
+            if (_paymentForm.Invoice.NeedPhoneNumber)
             {
-                info.Phone = _info.Phone;
+                info.PhoneNumber = _info.PhoneNumber;
             }
-            if (_paymentForm.Invoice.IsShippingAddressRequested)
+            if (_paymentForm.Invoice.NeedShippingAddress)
             {
                 info.ShippingAddress = _info.ShippingAddress;
-                info.ShippingAddress.CountryIso2 = _selectedCountry?.Code?.ToUpper();
+                info.ShippingAddress.CountryCode = _selectedCountry?.Code?.ToUpper();
             }
 
-            var response = await LegacyService.ValidateRequestedInfoAsync(_message.Id, info, save);
-            if (response.IsSucceeded)
+            var response = await ProtoService.SendAsync(new ValidateOrderInfo(0, 0, info, save));
+            if (response is ValidatedOrderInfo validated)
             {
                 IsLoading = false;
 
-                if (_paymentForm.HasSavedInfo && !save)
+                if (_paymentForm.SavedOrderInfo != null && !save)
                 {
-                    LegacyService.ClearSavedInfoAsync(true, false, null, null);
+                    ProtoService.Send(new DeleteSavedOrderInfo());
                 }
 
                 if (_paymentForm.Invoice.IsFlexible)
                 {
                     //NavigationService.NavigateToPaymentFormStep2(_message, _paymentForm, info, response.Result);
                 }
-                else if (_paymentForm.HasSavedCredentials)
+                else if (_paymentForm.SavedCredentials != null)
                 {
                     //if (ApplicationSettings.Current.TmpPassword != null)
                     //{
@@ -165,11 +163,11 @@ namespace Unigram.ViewModels.Payments
                     //NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, info, response.Result, null);
                 }
             }
-            else if (response.Error != null)
+            else if (response is Error error)
             {
                 IsLoading = false;
 
-                switch (response.Error.ErrorMessage)
+                switch (error.Message)
                 {
                     case "REQ_INFO_NAME_INVALID":
                     case "REQ_INFO_PHONE_INVALID":
@@ -180,7 +178,7 @@ namespace Unigram.ViewModels.Payments
                     case "ADDRESS_STATE_INVALID":
                     case "ADDRESS_STREET_LINE1_INVALID":
                     case "ADDRESS_STREET_LINE2_INVALID":
-                        RaisePropertyChanged(response.Error.ErrorMessage);
+                        RaisePropertyChanged(error.Message);
                         break;
                     default:
                         //AlertsCreator.processError(error, PaymentFormActivity.this, req);

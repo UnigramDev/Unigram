@@ -97,14 +97,14 @@
                     <StackPanel Grid.Column="1">
                         <TextBlock Text="{x:Bind ViewModel.Invoice.Title, FallbackValue=Empty}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
                         <TextBlock Text="{x:Bind ViewModel.Invoice.Description, FallbackValue=Empty}" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind ViewModel.Bot.FullName, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Bot.FirstName, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                     </StackPanel>
                 </Grid>
 
-                <!--<local:LabeledPricesPanel Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
-                     Prices="{x:Bind ViewModel.PaymentForm.Invoice.Prices}"/>
-                     <local:LabeledPricesPanel Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
-                     Prices="{x:Bind ViewModel.Shipping.Prices}"/>-->
+                <local:LabeledPricesPanel Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
+                                          Prices="{x:Bind ViewModel.PaymentForm.Invoice.PriceParts}"/>
+                <local:LabeledPricesPanel Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
+                                          Prices="{x:Bind ViewModel.Shipping.PriceParts}"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -120,27 +120,27 @@
                 </StackPanel>
 
                 <StackPanel Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.Bot.FullName, FallbackValue=Empty}"/>
+                    <TextBlock Text="{x:Bind ViewModel.Bot.FirstName, FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentCheckoutProvider}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Info.HasShippingAddress, FallbackValue=Collapsed}" Padding="12,8">
+                <StackPanel Visibility="{x:Bind ViewModel.Info.ShippingAddress, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
                     <TextBlock Text="{x:Bind ConvertAddress(ViewModel.Info.ShippingAddress), FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentShippingAddress}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Info.HasName, FallbackValue=Collapsed}" Padding="12,8">
+                <StackPanel Visibility="{x:Bind ViewModel.Info.Name, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
                     <TextBlock Text="{x:Bind ViewModel.Info.Name, FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentCheckoutName}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Info.HasPhone, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind Convert.PhoneNumber(ViewModel.Info.Phone), FallbackValue=Empty}"/>
+                <StackPanel Visibility="{x:Bind ViewModel.Info.PhoneNumber, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind Convert.PhoneNumber(ViewModel.Info.PhoneNumber), FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentCheckoutPhoneNumber}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.Info.HasEmail, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.Info.Email, FallbackValue=Empty}"/>
+                <StackPanel Visibility="{x:Bind ViewModel.Info.EmailAddress, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
+                    <TextBlock Text="{x:Bind ViewModel.Info.EmailAddress, FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentCheckoutEmail}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 

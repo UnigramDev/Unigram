@@ -1,12 +1,9 @@
 using System.Collections.Generic;
-using Telegram.Api.Services;
 using Unigram.Views.SignIn;
 using Unigram.Common;
-using Unigram.Models;
+using Unigram.Entities;
 using System;
 using Windows.UI.Popups;
-using Telegram.Api.TL;
-using Telegram.Api;
 using Windows.UI.Xaml;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -28,42 +25,40 @@ namespace Unigram.ViewModels.Settings
         public SettingsPhoneViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            LegacyService.GotUserCountry += GotUserCountry;
-
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (!string.IsNullOrEmpty(LegacyService.Country))
-            {
-                GotUserCountry(this, new CountryEventArgs { Country = LegacyService.Country });
-            }
+            //if (!string.IsNullOrEmpty(LegacyService.Country))
+            //{
+            //    GotUserCountry(this, new CountryEventArgs { Country = LegacyService.Country });
+            //}
 
             IsLoading = false;
             return Task.CompletedTask;
         }
 
-        private void GotUserCountry(object sender, CountryEventArgs e)
-        {
-            Country country = null;
-            foreach (var local in Country.Countries)
-            {
-                if (string.Equals(local.Code, e.Country, StringComparison.OrdinalIgnoreCase))
-                {
-                    country = local;
-                    break;
-                }
-            }
+        //private void GotUserCountry(object sender, CountryEventArgs e)
+        //{
+        //    Country country = null;
+        //    foreach (var local in Country.Countries)
+        //    {
+        //        if (string.Equals(local.Code, e.Country, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            country = local;
+        //            break;
+        //        }
+        //    }
 
-            if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
-            {
-                BeginOnUIThread(() =>
-                {
-                    SelectedCountry = country;
-                });
-            }
-        }
+        //    if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
+        //    {
+        //        BeginOnUIThread(() =>
+        //        {
+        //            SelectedCountry = country;
+        //        });
+        //    }
+        //}
 
         private Country _selectedCountry;
         public Country SelectedCountry
@@ -165,7 +160,7 @@ namespace Unigram.ViewModels.Settings
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
+                if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
                     await TLMessageDialog.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
                 }

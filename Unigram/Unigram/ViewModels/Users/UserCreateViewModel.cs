@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Services;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Models;
+using Unigram.Entities;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
@@ -32,26 +31,26 @@ namespace Unigram.ViewModels.Users
             return Task.CompletedTask;
         }
 
-        private void GotUserCountry(object sender, CountryEventArgs e)
-        {
-            Country country = null;
-            foreach (var local in Country.Countries)
-            {
-                if (string.Equals(local.Code, e.Country, StringComparison.OrdinalIgnoreCase))
-                {
-                    country = local;
-                    break;
-                }
-            }
+        //private void GotUserCountry(object sender, CountryEventArgs e)
+        //{
+        //    Country country = null;
+        //    foreach (var local in Country.Countries)
+        //    {
+        //        if (string.Equals(local.Code, e.Country, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            country = local;
+        //            break;
+        //        }
+        //    }
 
-            if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
-            {
-                BeginOnUIThread(() =>
-                {
-                    SelectedCountry = country;
-                });
-            }
-        }
+        //    if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
+        //    {
+        //        BeginOnUIThread(() =>
+        //        {
+        //            SelectedCountry = country;
+        //        });
+        //    }
+        //}
 
         private Country _selectedCountry;
         public Country SelectedCountry

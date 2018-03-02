@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.TL;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
@@ -43,8 +42,8 @@ namespace Unigram.ViewModels
 
                     if (ApplicationSettings.Current.IsContactsSyncEnabled)
                     {
-                        await _contactsService.ImportAsync();
                         await _contactsService.ExportAsync(users);
+                        await _contactsService.ImportAsync();
                     }
                 }
             });
@@ -123,19 +122,6 @@ namespace Unigram.ViewModels
         #endregion
 
         public SortedObservableCollection<User> Items { get; private set; }
-
-        private TLUser _self;
-        public TLUser Self
-        {
-            get
-            {
-                return _self;
-            }
-            set
-            {
-                Set(ref _self, value);
-            }
-        }
     }
 
     public class UserComparer : IComparer<User>

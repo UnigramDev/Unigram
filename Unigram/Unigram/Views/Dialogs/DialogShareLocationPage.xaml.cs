@@ -27,7 +27,6 @@ using Unigram.Views;
 using Unigram.ViewModels;
 using Windows.Services.Maps;
 using Unigram.Controls;
-using Telegram.Api.TL;
 using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Unigram.Common;

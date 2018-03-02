@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Helpers;
 using Unigram.Selectors;
 using Unigram.Services;
 using Unigram.ViewModels.Settings;
@@ -424,12 +423,12 @@ namespace Unigram.Common
 
         public static bool IsForever(this ChatMemberStatusRestricted restricted)
         {
-            return Math.Abs(restricted.RestrictedUntilDate - Utils.CurrentTimestamp / 1000) > 5 * 365 * 24 * 60 * 60;
+            return Math.Abs(restricted.RestrictedUntilDate - DateTime.Now.ToTimestamp() / 1000) > 5 * 365 * 24 * 60 * 60;
         }
 
         public static bool IsForever(this ChatMemberStatusBanned banned)
         {
-            return Math.Abs(banned.BannedUntilDate - Utils.CurrentTimestamp / 1000) > 5 * 365 * 24 * 60 * 60;
+            return Math.Abs(banned.BannedUntilDate - DateTime.Now.ToTimestamp() / 1000) > 5 * 365 * 24 * 60 * 60;
         }
 
 

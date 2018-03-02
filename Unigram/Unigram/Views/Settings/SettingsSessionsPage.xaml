@@ -4,8 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
-    xmlns:tl="using:Telegram.Api.TL"
-    xmlns:td="using:TdWindows"
+    xmlns:cells="using:Unigram.Controls.Cells"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -20,6 +19,7 @@
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
+                  ContainerContentChanging="OnContainerContentChanging"
                   ItemClick="ListView_ItemClick"
                   Grid.Row="1">
             <ListView.Header>
@@ -78,34 +78,8 @@
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="td:Session">
-                    <Grid Margin="0,8,0,12">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}">
-                            <Run Text="{x:Bind ApplicationName}"/>
-                            <Run Text="{x:Bind ApplicationVersion}"/>
-                        </TextBlock>
-                        <TextBlock TextTrimming="CharacterEllipsis" Grid.ColumnSpan="2" Grid.Row="1">
-                            <Run Text="{x:Bind DeviceModel}"/><Run Text=","/>
-                            <Run Text="{x:Bind Platform}"/>
-                            <Run Text="{x:Bind SystemVersion}"/>
-                        </TextBlock>
-                        <TextBlock TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Grid.ColumnSpan="2" Grid.Row="2">
-                            <Run Text="{x:Bind Ip}"/>
-                            <Run Text="—"/>
-                            <Run Text="{x:Bind Country}"/>
-                        </TextBlock>
-
-                        <TextBlock Text="{x:Bind LastActiveDate, Converter={StaticResource DialogDateTimeConverter}}" Margin="12,0,0,0" VerticalAlignment="Bottom" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
-                    </Grid>
+                <DataTemplate>
+                    <cells:SessionCell/>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>

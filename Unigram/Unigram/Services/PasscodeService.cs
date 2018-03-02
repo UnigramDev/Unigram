@@ -6,11 +6,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
+using Template10.Mvvm;
+using Unigram.Common;
 using Windows.Security.Cryptography;
-using TLPasscodeTuple = Telegram.Api.TL.TLTuple<byte[], byte[], bool, int, int, bool, bool, bool>;
+using TLPasscodeTuple = System.Tuple<byte[], byte[], bool, int, int, bool, bool, bool>;
 
 namespace Unigram.Services
 {
@@ -34,7 +33,7 @@ namespace Unigram.Services
         void Reset();
     }
 
-    public class PasscodeService : ServiceBase, IPasscodeService
+    public class PasscodeService : BindableBase, IPasscodeService
     {
         private readonly object _passcodeParamsFileSyncRoot = new object();
         private TLPasscodeParams _cachedParams;
@@ -50,7 +49,7 @@ namespace Unigram.Services
             if (!_readOnce)
             {
                 _readOnce = true;
-                _cachedParams = new TLPasscodeParams(TLUtils.OpenObjectFromMTProtoFile<TLPasscodeTuple>(_passcodeParamsFileSyncRoot, "passcode_params.dat"));
+                _cachedParams = new TLPasscodeParams(Utils.OpenObjectFromMTProtoFile<TLPasscodeTuple>(_passcodeParamsFileSyncRoot, "passcode_params.dat"));
             }
 
             return _cachedParams;
@@ -128,7 +127,7 @@ namespace Unigram.Services
                 var data = GetParams();
                 if (data != null)
                 {
-                    return TLUtils.ToDateTime(data.CloseTime);
+                    return Utils.ToDateTime(data.CloseTime);
                 }
 
                 return DateTime.Now.AddYears(1);
@@ -138,7 +137,7 @@ namespace Unigram.Services
                 var data = GetParams();
                 if (data != null)
                 {
-                    data.CloseTime = TLUtils.ToTLInt(value);
+                    data.CloseTime = value.ToTimestamp();
                     Save();
                 }
             }
@@ -219,14 +218,14 @@ namespace Unigram.Services
         {
             if (_cachedParams != null && _cachedParams.Hash != null && _cachedParams.Salt != null)
             {
-                TLUtils.SaveObjectToMTProtoFile(_passcodeParamsFileSyncRoot, "passcode_params.dat", _cachedParams.ToTuple());
+                Utils.SaveObjectToMTProtoFile(_passcodeParamsFileSyncRoot, "passcode_params.dat", _cachedParams.ToTuple());
             }
         }
 
         public void Set(string passcode, bool simple, int timeout)
         {
             var salt = CryptographicBuffer.GenerateRandom(256).ToArray();
-            var data = Utils.ComputeSHA1(TLUtils.Combine(salt, Encoding.UTF8.GetBytes(passcode), salt));
+            var data = Utils.ComputeSHA1(Utils.Combine(salt, Encoding.UTF8.GetBytes(passcode), salt));
 
             var cachedParams = new TLPasscodeParams
             {
@@ -267,10 +266,10 @@ namespace Unigram.Services
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public byte[] ComputeHash(byte[] salt, byte[] passcode)
         {
-            var array = TLUtils.Combine(salt, passcode, salt);
+            var array = Utils.Combine(salt, passcode, salt);
             for (int i = 0; i < 1000; i++)
             {
-                var data = TLUtils.Combine(BitConverter.GetBytes(i), array);
+                var data = Utils.Combine(BitConverter.GetBytes(i), array);
                 Utils.ComputeSHA1(data);
             }
             return Utils.ComputeSHA1(array);
@@ -281,7 +280,7 @@ namespace Unigram.Services
             var cached = GetParams();
             if (cached != null)
             {
-                return TLUtils.ByteArraysEqual(ComputeHash(cached.Salt, Encoding.UTF8.GetBytes(passcode)), cached.Hash);
+                return Utils.ByteArraysEqual(ComputeHash(cached.Salt, Encoding.UTF8.GetBytes(passcode)), cached.Hash);
             }
 
             return true;
@@ -317,7 +316,7 @@ namespace Unigram.Services
                 AutolockTimeout = tuple.Item5;
                 IsLocked = tuple.Item6;
                 IsHelloEnabled = tuple.Item7;
-                IsScreenshotEnabled = tuple.Item8;
+                IsScreenshotEnabled = tuple.Rest;
             }
 
             public TLPasscodeTuple ToTuple()

@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services.DeviceInfo;
-using Telegram.Api.TL;
 using Unigram.Core.Notifications;
+using Unigram.Core.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Background;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.System.Profile;
+using Unigram.Services;
 
 namespace Unigram.Tasks
 {

@@ -68,7 +68,7 @@ namespace Unigram.ViewModels
             DeleteCommand = new RelayCommand(DeleteExecute);
             ShareCommand = new RelayCommand(ShareExecute);
             SecretChatCommand = new RelayCommand(SecretChatExecute);
-            KeyHashCommand = new RelayCommand(KeyHashExecute);
+            IdenticonCommand = new RelayCommand(IdenticonExecute);
             MigrateCommand = new RelayCommand(MigrateExecute);
             InviteCommand = new RelayCommand(InviteExecute);
             ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
@@ -575,8 +575,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand KeyHashCommand { get; }
-        private void KeyHashExecute()
+        public RelayCommand IdenticonCommand { get; }
+        private void IdenticonExecute()
         {
             var chat = _chat;
             if (chat == null)

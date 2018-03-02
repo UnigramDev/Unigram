@@ -5,14 +5,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Payments;
 using Unigram.Common;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Entities;
 using Unigram.Services;
 using TdWindows;
 
@@ -20,9 +17,9 @@ namespace Unigram.ViewModels.Payments
 {
     public class PaymentFormStep4ViewModel : PaymentFormViewModelBase
     {
-        private TLPaymentRequestedInfo _info;
-        private TLPaymentsValidatedRequestedInfo _requestedInfo;
-        private TLShippingOption _shipping;
+        private OrderInfo _info;
+        private ValidatedOrderInfo _requestedInfo;
+        private ShippingOption _shipping;
 
         public PaymentFormStep4ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
@@ -116,7 +113,7 @@ namespace Unigram.ViewModels.Payments
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
+                if (error.TypeEquals(ErrorType.PASSWORD_HASH_INVALID))
                 {
                     Password = string.Empty;
                     RaisePropertyChanged(error.Message);

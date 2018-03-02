@@ -7,7 +7,6 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Template10.Services.SerializationService;
 using System.Reflection;
 using TdWindows;

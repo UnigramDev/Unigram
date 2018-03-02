@@ -8,7 +8,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
 using Unigram.Core.Common;
 using Windows.ApplicationModel;
 using Windows.System;

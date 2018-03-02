@@ -5,22 +5,18 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Payments;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Windows.System;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
+using TdWindows;
 
 namespace Unigram.ViewModels.Payments
 {
     public class PaymentFormStep5ViewModel : PaymentFormViewModelBase
     {
-        private TLPaymentsValidatedRequestedInfo _requestedInfo;
+        private ValidatedOrderInfo _requestedInfo;
         private string _credentials;
         private bool _save;
 
@@ -80,8 +76,8 @@ namespace Unigram.ViewModels.Payments
             return Task.CompletedTask;
         }
 
-        private TLUser _bot;
-        public TLUser Bot
+        private User _bot;
+        public User Bot
         {
             get
             {
@@ -93,8 +89,8 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        private TLUser _provider;
-        public TLUser Provider
+        private User _provider;
+        public User Provider
         {
             get
             {
@@ -132,8 +128,8 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        private TLPaymentRequestedInfo _info;
-        public TLPaymentRequestedInfo Info
+        private OrderInfo _info;
+        public OrderInfo Info
         {
             get
             {
@@ -145,8 +141,8 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        public TLShippingOption _shipping;
-        public TLShippingOption Shipping
+        public ShippingOption _shipping;
+        public ShippingOption Shipping
         {
             get
             {
@@ -161,9 +157,9 @@ namespace Unigram.ViewModels.Payments
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var disclaimer = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, _bot.FullName, _provider.FullName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
+            var disclaimer = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, _bot.FirstName, _provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
 
-            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(_totalAmount, _paymentForm.Invoice.Currency), _bot.FullName, _invoice.Title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(_totalAmount, _paymentForm.Invoice.Currency), _bot.FirstName, _invoice.Title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
                 return;

@@ -7,7 +7,6 @@
     xmlns:common="using:Unigram.Common"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:messages="using:Unigram.Controls.Messages"
-    xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Loaded="OnLoaded"

@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Views;
@@ -15,6 +12,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
 using TdWindows;
+using Unigram.Entities;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -137,23 +135,23 @@ namespace Unigram.ViewModels.Settings
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(TLErrorType.PHONE_NUMBER_OCCUPIED))
+                if (error.TypeEquals(ErrorType.PHONE_NUMBER_OCCUPIED))
                 {
                     //await new MessageDialog(Resources.PhoneCodeInvalidString, Resources.Error).ShowAsync();
                 }
-                else if (error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
                     //await new MessageDialog(Resources.PhoneCodeInvalidString, Resources.Error).ShowAsync();
                 }
-                else if (error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY))
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY))
                 {
                     //await new MessageDialog(Resources.PhoneCodeEmpty, Resources.Error).ShowAsync();
                 }
-                else if (error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
                     //await new MessageDialog(Resources.PhoneCodeExpiredString, Resources.Error).ShowAsync();
                 }
-                else if (error.TypeEquals(TLErrorType.SESSION_PASSWORD_NEEDED))
+                else if (error.TypeEquals(ErrorType.SESSION_PASSWORD_NEEDED))
                 {
                     ////this.IsWorking = true;
                     //var password = await LegacyService.GetPasswordAsync();
@@ -174,7 +172,7 @@ namespace Unigram.ViewModels.Settings
                     //    Execute.ShowDebugMessage("account.getPassword error " + password.Error);
                     //}
                 }
-                else if (error.CodeEquals(TLErrorCode.FLOOD))
+                else if (error.CodeEquals(ErrorCode.FLOOD))
                 {
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({error.Message})", Resources.Error).ShowAsync();
                 }

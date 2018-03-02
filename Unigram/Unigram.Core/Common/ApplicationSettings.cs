@@ -1,21 +1,14 @@
 using System;
-using System.IO.IsolatedStorage;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.Threading;
 using Windows.Storage;
-using Telegram.Api.TL;
-using Unigram.Core.Services;
-using Telegram.Api.Services;
 using Windows.UI.Xaml;
 
 namespace Unigram.Common
 {
-    public class ApplicationSettings
+    public class ApplicationSettingsBase
     {
-        private readonly ApplicationDataContainer isolatedStore;
+        protected readonly ApplicationDataContainer isolatedStore;
 
-        public ApplicationSettings(ApplicationDataContainer container = null)
+        public ApplicationSettingsBase(ApplicationDataContainer container = null)
         {
             isolatedStore = container ?? ApplicationData.Current.LocalSettings;
         }
@@ -61,7 +54,10 @@ namespace Unigram.Common
         {
             isolatedStore.Values.Clear();
         }
+    }
 
+    public class ApplicationSettings : ApplicationSettingsBase
+    {
         private static ApplicationSettings _current;
         public static ApplicationSettings Current
         {
@@ -152,6 +148,15 @@ namespace Unigram.Common
         }
 
         #endregion
+
+        private ProxySettings _proxy;
+        public ProxySettings Proxy
+        {
+            get
+            {
+                return _proxy = _proxy ?? new ProxySettings();
+            }
+        }
 
         private ElementTheme? _currentTheme;
         public ElementTheme CurrentTheme
@@ -327,6 +332,40 @@ namespace Unigram.Common
             }
         }
 
+        private int? _selectedAccount;
+        public int SelectedAccount
+        {
+            get
+            {
+                if (_selectedAccount == null)
+                    _selectedAccount = GetValueOrDefault("SelectedAccount", 0);
+
+                return _selectedAccount ?? 0;
+            }
+            set
+            {
+                _selectedAccount = value;
+                AddOrUpdateValue("SelectedAccount", value);
+            }
+        }
+
+        private string _notificationsToken;
+        public string NotificationsToken
+        {
+            get
+            {
+                if (_notificationsToken == null)
+                    _notificationsToken = GetValueOrDefault<string>("ChannelUri", null);
+
+                return _notificationsToken;
+            }
+            set
+            {
+                _notificationsToken = value;
+                AddOrUpdateValue("ChannelUri", value);
+            }
+        }
+
         private int? _selectedBackground;
         public int SelectedBackground
         {
@@ -401,5 +440,121 @@ namespace Unigram.Common
             _peerToPeerMode = null;
             _useLessData = null;
         }
+    }
+
+    public class ProxySettings : ApplicationSettingsBase
+    {
+        public void CleanUp()
+        {
+            _isEnabled = null;
+            _isCallsEnabled = null;
+            _server = null;
+            _port = null;
+            _username = null;
+            _password = null;
+        }
+
+        private bool? _isEnabled;
+        public bool IsEnabled
+        {
+            get
+            {
+                if (_isEnabled == null)
+                    _isEnabled = GetValueOrDefault("ProxyEnabled", false);
+
+                return _isEnabled ?? false;
+            }
+            set
+            {
+                _isEnabled = value;
+                AddOrUpdateValue("ProxyEnabled", value);
+            }
+        }
+
+        private bool? _isCallsEnabled;
+        public bool IsCallsEnabled
+        {
+            get
+            {
+                if (_isCallsEnabled == null)
+                    _isCallsEnabled = GetValueOrDefault("CallsProxyEnabled", false);
+
+                return _isCallsEnabled ?? false;
+            }
+            set
+            {
+                _isCallsEnabled = value;
+                AddOrUpdateValue("CallsProxyEnabled", value);
+            }
+        }
+
+        private string _server;
+        public string Server
+        {
+            get
+            {
+                if (_server == null)
+                    _server = GetValueOrDefault<string>("ProxyServer", null);
+
+                return _server;
+            }
+            set
+            {
+                _server = value;
+                AddOrUpdateValue("ProxyServer", value);
+            }
+        }
+
+        private int? _port;
+        public int Port
+        {
+            get
+            {
+                if (_port == null)
+                    _port = GetValueOrDefault("ProxyPort", 1080);
+
+                return _port ?? 1080;
+            }
+            set
+            {
+                _port = value;
+                AddOrUpdateValue("ProxyPort", value);
+            }
+        }
+
+        private string _username;
+        public string Username
+        {
+            get
+            {
+                if (_username == null)
+                    _username = GetValueOrDefault<string>("ProxyUsername", null);
+
+                return _username;
+            }
+            set
+            {
+                _username = value;
+                AddOrUpdateValue("ProxyUsername", value);
+            }
+        }
+
+        private string _password;
+        public string Password
+        {
+            get
+            {
+                if (_password == null)
+                    _password = GetValueOrDefault<string>("ProxyPassword", null);
+
+                return _password;
+            }
+            set
+            {
+                _password = value;
+                AddOrUpdateValue("ProxyPassword", value);
+            }
+        }
+
     }
 }

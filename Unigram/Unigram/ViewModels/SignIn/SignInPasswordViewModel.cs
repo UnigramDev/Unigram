@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Entities;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.SignIn;
@@ -95,11 +93,11 @@ namespace Unigram.ViewModels.SignIn
             var response = await ProtoService.SendAsync(new CheckAuthenticationPassword(_password));
             if (response is Error error)
             {
-                if (error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
+                if (error.TypeEquals(ErrorType.PASSWORD_HASH_INVALID))
                 {
                     //await new MessageDialog(Resources.PasswordInvalidString, Resources.Error).ShowAsync();
                 }
-                else if (error.CodeEquals(TLErrorCode.FLOOD))
+                else if (error.CodeEquals(ErrorCode.FLOOD))
                 {
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
                 }

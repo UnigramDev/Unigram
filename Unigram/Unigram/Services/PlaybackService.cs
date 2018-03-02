@@ -6,8 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
+using Template10.Mvvm;
 using Unigram.Common;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Sensors;
@@ -39,7 +38,7 @@ namespace Unigram.Services
         void Enqueue(Message message);
     }
 
-    public class PlaybackService : ServiceBase, IPlaybackService, IHandle<UpdateFile>
+    public class PlaybackService : BindableBase, IPlaybackService, IHandle<UpdateFile>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;

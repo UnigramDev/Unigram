@@ -8,9 +8,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Common;
@@ -20,6 +17,7 @@ using Unigram.Converters;
 using Unigram.Core.Common;
 using Unigram.Core.Services;
 using Unigram.Native.Tasks;
+using Unigram.Entities;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Dialogs;
@@ -88,7 +86,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private readonly ConcurrentDictionary<long, TLMessage> _groupedMessages = new ConcurrentDictionary<long, TLMessage>();
+        private readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
 
         private static readonly Dictionary<long, long> _scrollingIndex = new Dictionary<long, long>();
         private static readonly Dictionary<long, double> _scrollingPixel = new Dictionary<long, double>();
@@ -106,8 +104,8 @@ namespace Unigram.ViewModels
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IProtoService protoService, IMTProtoService legacyService, ICacheService cacheService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService)
-            : base(protoService, legacyService, cacheService, aggregator)
+        public DialogViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService)
+            : base(protoService, cacheService, aggregator)
         {
             _locationService = locationService;
             _liveLocationService = liveLocationService;
@@ -299,8 +297,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private TLMessageBase _pinnedMessage;
-        public TLMessageBase PinnedMessage
+        private Message _pinnedMessage;
+        public Message PinnedMessage
         {
             get
             {
@@ -314,8 +312,8 @@ namespace Unigram.ViewModels
 
         private DispatcherTimer _informativeTimer;
 
-        private TLMessageBase _informativeMessage;
-        public TLMessageBase InformativeMessage
+        private Message _informativeMessage;
+        public Message InformativeMessage
         {
             get
             {
@@ -1841,7 +1839,7 @@ namespace Unigram.ViewModels
                 }
                 else if (response is Error error)
                 {
-                    if (error.TypeEquals(TLErrorType.MESSAGE_NOT_MODIFIED))
+                    if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
                     {
                         EmbedData = null;
                     }
@@ -2452,7 +2450,7 @@ namespace Unigram.ViewModels
             if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
             {
                 var first = dialog.SelectedDates.FirstOrDefault();
-                var offset = TLUtils.DateToUniversalTimeTLInt(first.Date);
+                var offset = first.Date.ToTimestamp();
                 await LoadDateSliceAsync(offset);
             }
         }
@@ -2667,16 +2665,16 @@ namespace Unigram.ViewModels
         }
     }
 
-    public class TLMessageMediaGroup : TLMessageMediaBase
-    {
-        public TLMessageMediaGroup()
-        {
-            Layout = new GroupedMessages();
-        }
+    //public class TLMessageMediaGroup : TLMessageMediaBase
+    //{
+    //    public TLMessageMediaGroup()
+    //    {
+    //        Layout = new GroupedMessages();
+    //    }
 
-        public String Caption { get; set; }
-        public GroupedMessages Layout { get; private set; }
-    }
+    //    public String Caption { get; set; }
+    //    public GroupedMessages Layout { get; private set; }
+    //}
 
     public class UserCommand
     {
@@ -2740,7 +2738,7 @@ namespace Unigram.ViewModels
                 var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
                 if (previousDate.Date != itemDate.Date)
                 {
-                    var timestamp = (int)Utils.DateTimeToUnixTimestamp(previousDate.Date);
+                    var timestamp = previousDate.ToTimestamp();
                     var service = new MessageViewModel(previous.ProtoService, previous.Delegate, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null));
 
                     //base.InsertItem(index + 1, service);

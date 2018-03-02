@@ -130,11 +130,6 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage));
         }
 
-        private void Accounts_Click(object sender, RoutedEventArgs e)
-        {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsAccountsPage));
-        }
-
         private void Appearance_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsAppearancePage));

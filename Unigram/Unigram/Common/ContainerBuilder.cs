@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
+using Unigram.Common;
 using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views
@@ -45,7 +45,7 @@ namespace Unigram.Views
         {
             if (account == int.MaxValue)
             {
-                account = SettingsHelper.SelectedAccount;
+                account = ApplicationSettings.Current.SelectedAccount;
             }
 
             var result = default(TService);
@@ -64,7 +64,7 @@ namespace Unigram.Views
         {
             if (account == int.MaxValue)
             {
-                account = SettingsHelper.SelectedAccount;
+                account = ApplicationSettings.Current.SelectedAccount;
             }
 
             var result = default(TService);
@@ -86,7 +86,7 @@ namespace Unigram.Views
         {
             if (account == int.MaxValue)
             {
-                account = SettingsHelper.SelectedAccount;
+                account = ApplicationSettings.Current.SelectedAccount;
             }
 
             //if (_containers.TryGetValue(account, out IContainer container))

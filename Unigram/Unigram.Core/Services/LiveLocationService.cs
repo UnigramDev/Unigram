@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
+using TdWindows;
 using Unigram.Core.Common;
 using Windows.Devices.Geolocation;
 
@@ -13,7 +11,7 @@ namespace Unigram.Core.Services
 {
     public interface ILiveLocationService
     {
-        Task TrackAsync(TLMessage message);
+        Task TrackAsync(Message message);
 
         //void Update(TLInputGeoPointBase geoPoint);
 
@@ -21,27 +19,27 @@ namespace Unigram.Core.Services
         //void StopTracking(TLPeerBase peer);
         void StopTracking();
 
-        MvxObservableCollection<TLMessage> Items { get; }
+        MvxObservableCollection<Message> Items { get; }
     }
 
     public class LiveLocationService : ILiveLocationService
     {
-        private readonly IMTProtoService _protoService;
+        //private readonly IProtoService _protoService;
         private readonly ILocationService _locationService;
 
         //private readonly IEventAggregator _aggregator;
 
         private Geolocator _locator;
 
-        public LiveLocationService(IMTProtoService protoService, ILocationService locationService/*, IEventAggregator aggregator*/)
+        public LiveLocationService(/*IProtoService protoService,*/ ILocationService locationService/*, IEventAggregator aggregator*/)
         {
-            _protoService = protoService;
+            //_protoService = protoService;
             _locationService = locationService;
             //_aggregator = aggregator;
 
             //_aggregator.Subscribe(this);
 
-            Items = new MvxObservableCollection<TLMessage>();
+            Items = new MvxObservableCollection<Message>();
         }
 
         public void Handle(object MessagesRemovedEventArgs)
@@ -65,7 +63,7 @@ namespace Unigram.Core.Services
             //}
         }
 
-        public MvxObservableCollection<TLMessage> Items { get; private set; }
+        public MvxObservableCollection<Message> Items { get; private set; }
 
         //public bool IsTracking(TLPeerBase peer)
         //{
@@ -91,7 +89,7 @@ namespace Unigram.Core.Services
             }
         }
 
-        public async Task TrackAsync(TLMessage message)
+        public async Task TrackAsync(Message message)
         {
             Items.Add(message);
 
@@ -154,9 +152,9 @@ namespace Unigram.Core.Services
         //    }
         //}
 
-        private DateTime ConvertDate(int value)
-        {
-            return Utils.UnixTimestampToDateTime(value);
-        }
+        //private DateTime ConvertDate(int value)
+        //{
+        //    return Utils.UnixTimestampToDateTime(value);
+        //}
     }
 }

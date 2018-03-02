@@ -6,8 +6,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Services;
@@ -95,8 +93,8 @@ namespace Unigram.ViewModels.Dialogs
             }
         }
 
-        private TLUser _from;
-        public TLUser From
+        private User _from;
+        public User From
         {
             get
             {

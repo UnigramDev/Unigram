@@ -5,9 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Common;
@@ -405,7 +402,7 @@ namespace Unigram
 
         public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
-            Telegram.Logs.Log.Write("OnResuming");
+            Logs.Log.Write("OnResuming");
 
             //#if DEBUG
             await VoIPConnection.Current.ConnectAsync();
@@ -416,7 +413,7 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            Telegram.Logs.Log.Write("OnSuspendingAsync");
+            Logs.Log.Write("OnSuspendingAsync");
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }

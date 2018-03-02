@@ -6,7 +6,6 @@ using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using TdWindows;
-using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;

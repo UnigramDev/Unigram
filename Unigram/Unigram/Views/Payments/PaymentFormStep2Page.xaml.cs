@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
+using TdWindows;
 using Unigram.Converters;
 using Unigram.ViewModels.Payments;
 using Windows.Foundation;
@@ -45,8 +45,8 @@ namespace Unigram.Views.Payments
             }
         }
 
-        private TLVector<TLShippingOption> _options;
-        public TLVector<TLShippingOption> Options
+        private IList<ShippingOption> _options;
+        public IList<ShippingOption> Options
         {
             get
             {
@@ -61,14 +61,14 @@ namespace Unigram.Views.Payments
 
 
 
-        public TLShippingOption Shipping
+        public ShippingOption Shipping
         {
-            get { return (TLShippingOption)GetValue(ShippingProperty); }
+            get { return (ShippingOption)GetValue(ShippingProperty); }
             set { SetValue(ShippingProperty, value); }
         }
 
         public static readonly DependencyProperty ShippingProperty =
-            DependencyProperty.Register("Shipping", typeof(TLShippingOption), typeof(ShippingOptionsPanel), new PropertyMetadata(null));
+            DependencyProperty.Register("Shipping", typeof(ShippingOption), typeof(ShippingOptionsPanel), new PropertyMetadata(null));
 
 
 
@@ -92,7 +92,7 @@ namespace Unigram.Views.Payments
                     radio.DataContext = option;
                     radio.Checked += (s, args) =>
                     {
-                        Shipping = radio.DataContext as TLShippingOption;
+                        Shipping = radio.DataContext as ShippingOption;
                     };
 
                     Grid.SetRow(radio, i);

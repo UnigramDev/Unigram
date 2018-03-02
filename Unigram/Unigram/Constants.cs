@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace Unigram
 {
-    public static class Constants
+    public static partial class Constants
     {
+        public static readonly int ApiId;
+        public static readonly string ApiHash;
+
+
+
         public const int TypingTimeout = 300;
 
         public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4" };

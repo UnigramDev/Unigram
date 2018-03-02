@@ -4,19 +4,17 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Payments;
 using Unigram.Common;
 using Unigram.Views.Payments;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
+using TdWindows;
 
 namespace Unigram.ViewModels.Payments
 {
     public class PaymentFormStep2ViewModel : PaymentFormViewModelBase
     {
-        private TLPaymentRequestedInfo _info;
+        private OrderInfo _info;
 
         public PaymentFormStep2ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
@@ -47,8 +45,8 @@ namespace Unigram.ViewModels.Payments
             return Task.CompletedTask;
         }
 
-        private TLPaymentsValidatedRequestedInfo _requestedInfo;
-        public TLPaymentsValidatedRequestedInfo RequestedInfo
+        private ValidatedOrderInfo _requestedInfo;
+        public ValidatedOrderInfo RequestedInfo
         {
             get
             {
@@ -60,8 +58,8 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        private TLShippingOption _shipping;
-        public TLShippingOption Shipping
+        private ShippingOption _shipping;
+        public ShippingOption Shipping
         {
             get
             {
@@ -78,29 +76,29 @@ namespace Unigram.ViewModels.Payments
         {
             if (_shipping != null)
             {
-                //if (_paymentForm.HasSavedCredentials)
-                //{
-                //    if (ApplicationSettings.Current.TmpPassword != null)
-                //    {
-                //        if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
-                //        {
-                //            ApplicationSettings.Current.TmpPassword = null;
-                //        }
-                //    }
+                if (_paymentForm.SavedCredentials != null)
+                {
+                    //if (ApplicationSettings.Current.TmpPassword != null)
+                    //{
+                    //    if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
+                    //    {
+                    //        ApplicationSettings.Current.TmpPassword = null;
+                    //    }
+                    //}
 
-                //    if (ApplicationSettings.Current.TmpPassword != null)
-                //    {
-                //        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
-                //    }
-                //    else
-                //    {
-                //        NavigationService.NavigateToPaymentFormStep4(_message, _paymentForm, _info, _requestedInfo, _shipping);
-                //    }
-                //}
-                //else
-                //{
-                //    NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, _info, _requestedInfo, _shipping);
-                //}
+                    //if (ApplicationSettings.Current.TmpPassword != null)
+                    //{
+                    //    NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
+                    //}
+                    //else
+                    //{
+                    //    NavigationService.NavigateToPaymentFormStep4(_message, _paymentForm, _info, _requestedInfo, _shipping);
+                    //}
+                }
+                else
+                {
+                    //NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, _info, _requestedInfo, _shipping);
+                }
             }
         }
     }

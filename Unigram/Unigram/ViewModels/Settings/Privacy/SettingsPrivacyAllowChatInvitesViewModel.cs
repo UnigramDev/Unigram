@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Unigram.Services;
 
 namespace Unigram.ViewModels.Settings.Privacy

@@ -9,8 +9,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Core.Common;
@@ -34,7 +32,32 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static int ToTimestamp(this DateTime dateTime)
+        {
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            DateTime.SpecifyKind(dtDateTime, DateTimeKind.Utc);
 
+            return (int)(dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
+        }
+
+        /// <summary>
+        /// Applies the action to each element in the list.
+        /// </summary>
+        /// <typeparam name="T">The enumerable item's type.</typeparam>
+        /// <param name="enumerable">The elements to enumerate.</param>
+        /// <param name="action">The action to apply to each item in the list.</param>
+        public static void Apply<T>(this IEnumerable<T> enumerable, Action<T> action)
+        {
+            foreach (var item in enumerable)
+            {
+                action(item);
+            }
+        }
+
+        public static string Substr(this string source, int startIndex, int endIndex)
+        {
+            return source.Substring(startIndex, endIndex - startIndex);
+        }
 
         /// <summary>
         /// Creates a relative path from one file or folder to another.

@@ -4,13 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
 using Windows.Foundation.Metadata;
+using Windows.Storage;
 
 namespace Unigram.Services
 {
@@ -72,86 +71,40 @@ namespace Unigram.Services
                 }
             }
 
-            var importedPhonesCache = GetImportedPhones();
-
             var importingContacts = new List<TdWindows.Contact>();
             var importingPhones = new List<string>();
 
             foreach (var phone in importedPhones.Keys.Take(1300).ToList())
             {
-                if (!importedPhonesCache.ContainsKey(phone))
+                var contact = importedPhones[phone];
+                var firstName = contact.FirstName ?? string.Empty;
+                var lastName = contact.LastName ?? string.Empty;
+
+                if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
                 {
-                    var contact = importedPhones[phone];
-                    var firstName = contact.FirstName ?? string.Empty;
-                    var lastName = contact.LastName ?? string.Empty;
-
-                    if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
+                    if (string.IsNullOrEmpty(contact.DisplayName))
                     {
-                        if (string.IsNullOrEmpty(contact.DisplayName))
-                        {
-                            continue;
-                        }
-
-                        firstName = contact.DisplayName;
+                        continue;
                     }
 
-                    if (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
-                    {
-                        var item = new TdWindows.Contact
-                        {
-                            PhoneNumber = phone,
-                            FirstName = firstName,
-                            LastName = lastName
-                        };
+                    firstName = contact.DisplayName;
+                }
 
-                        importingContacts.Add(item);
-                        importingPhones.Add(phone);
-                    }
+                if (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
+                {
+                    var item = new TdWindows.Contact
+                    {
+                        PhoneNumber = phone,
+                        FirstName = firstName,
+                        LastName = lastName
+                    };
+
+                    importingContacts.Add(item);
+                    importingPhones.Add(phone);
                 }
             }
 
             return await _protoService.SendAsync(new TdWindows.ChangeImportedContacts(importingContacts));
-        }
-
-        private void SaveImportedPhones(Dictionary<string, string> importedPhonesCache, List<string> importingPhones)
-        {
-            foreach (var current in importingPhones)
-            {
-                importedPhonesCache[current] = current;
-            }
-
-            var vector = new TLVector<string>(importedPhonesCache.Keys);
-
-            lock (_importedPhonesRoot)
-            {
-                try
-                {
-                    var fileName = "importedPhones.dat";
-                    var text = fileName + ".temp";
-                    using (var file = File.Open(FileUtils.GetFileName(text), FileMode.Create))
-                    {
-                        using (var to = new BinaryWriter(file))
-                        {
-                            to.Write(vector.Count);
-
-                            foreach (var line in vector)
-                            {
-                                to.Write(line);
-                            }
-                        }
-
-                    }
-
-                    File.Copy(FileUtils.GetFileName(text), FileUtils.GetFileName(fileName), true);
-                }
-                catch { }
-            }
-        }
-
-        private Dictionary<string, string> GetImportedPhones()
-        {
-            var vector = new TLVector<string>();
-            return vector.ToDictionary(x => x, y => y);
         }
 
         #endregion
@@ -197,6 +150,11 @@ namespace Unigram.Services
                 if (contact == null)
                 {
                     contact = new Contact();
+                }
+
+                if (user.ProfilePhoto != null && user.ProfilePhoto.Small.Local.IsDownloadingCompleted)
+                {
+                    contact.SourceDisplayPicture = await StorageFile.GetFileFromPathAsync(user.ProfilePhoto.Small.Local.Path);
                 }
 
                 contact.FirstName = user.FirstName ?? string.Empty;

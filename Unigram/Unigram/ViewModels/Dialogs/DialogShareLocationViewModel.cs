@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
-using Telegram.Api.TL;
 using Template10.Utils;
 using Unigram.Core.Common;
 using Unigram.Core.Models;

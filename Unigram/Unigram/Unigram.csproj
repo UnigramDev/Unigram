@@ -104,6 +104,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common\ContainerBuilder.cs" />
+    <Compile Include="Common\Execute.cs" />
+    <Compile Include="Common\FileUtils.cs" />
     <Compile Include="Common\Fluent.cs" />
     <Compile Include="Common\AutoDownloadPreferences.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
@@ -117,6 +119,7 @@
     <Compile Include="Common\ImageLoader\ImageLoader.cs" />
     <Compile Include="Common\ImageLoader\ManagedSurface.cs" />
     <Compile Include="Common\MessageDialogExtensions.cs" />
+    <Compile Include="Common\PhoneNumber.cs" />
     <Compile Include="Common\PlaceholderHelper.cs" />
     <Compile Include="Common\RatioControl.cs" />
     <Compile Include="Common\TdExtensions.cs" />
@@ -124,13 +127,18 @@
     <Compile Include="Common\Theme.cs" />
     <Compile Include="Common\UnigramNavigationService.cs" />
     <Compile Include="Common\UniqueList.cs" />
+    <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
     <Compile Include="Common\WindowContext.cs" />
     <Compile Include="Common\XamlResourceLoader.cs" />
+    <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\ChatCell.xaml.cs">
       <DependentUpon>ChatCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\SessionCell.xaml.cs">
+      <DependentUpon>SessionCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\WebSessionCell.xaml.cs">
       <DependentUpon>WebSessionCell.xaml</DependentUpon>
@@ -362,12 +370,20 @@
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\StringPluralConverter.cs" />
+    <Compile Include="Entities\Country.cs" />
+    <Compile Include="Entities\ErrorCode.cs" />
+    <Compile Include="Entities\ErrorType.cs" />
+    <Compile Include="Entities\PhoneCallState.cs" />
+    <Compile Include="Entities\StorageDocument.cs" />
+    <Compile Include="Entities\StorageMedia.cs" />
+    <Compile Include="Entities\StoragePhoto.cs" />
+    <Compile Include="Entities\StorageVideo.cs" />
     <Compile Include="Helpers\UserActivityHelper.cs" />
-    <Compile Include="Models\Country.cs" />
-    <Compile Include="Models\StorageDocument.cs" />
-    <Compile Include="Models\StorageMedia.cs" />
-    <Compile Include="Models\StoragePhoto.cs" />
-    <Compile Include="Models\StorageVideo.cs" />
+    <Compile Include="Logs\ILogListener.cs" />
+    <Compile Include="Logs\Log.cs" />
+    <Compile Include="Logs\Logger.cs" />
+    <Compile Include="Logs\LogHelper.cs" />
+    <Compile Include="Logs\LogLevel.cs" />
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
     <Compile Include="Selectors\ParticipantTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
@@ -467,7 +483,6 @@
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsMasksArchivedViewModel.cs" />
@@ -640,9 +655,6 @@
     </Compile>
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsAccountsPage.xaml.cs">
-      <DependentUpon>SettingsAccountsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsBlockedUsersPage.xaml.cs">
       <DependentUpon>SettingsBlockedUsersPage.xaml</DependentUpon>
@@ -1122,7 +1134,6 @@
     <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\ReplyInfoToGlyphConverter.cs" />
-    <Compile Include="Converters\TLIntToDateTimeConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Selectors\MessageGroupTemplateSelector.cs" />
     <Compile Include="Selectors\MessageStyleSelector.cs" />
@@ -1373,6 +1384,10 @@
     <Page Include="Controls\Cells\ChatCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\SessionCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\WebSessionCell.xaml">
       <SubType>Designer</SubType>
@@ -1887,10 +1902,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\SettingsAccountsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Settings\SettingsBlockedUsersPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2042,10 +2053,6 @@
     <ProjectReference Include="..\Telegram.Intro\Telegram.Intro.vcxproj">
       <Project>{1cfa1bfa-98d3-4316-8e3b-ac3ea8b3510e}</Project>
       <Name>Telegram.Intro</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Unigram.Api\Telegram.Api.csproj">
-      <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
-      <Name>Telegram.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\Unigram.Core\Unigram.Core.csproj">
       <Project>{580d2885-8129-499e-9ffd-39ff1b586f18}</Project>
