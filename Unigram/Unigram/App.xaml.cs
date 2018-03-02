@@ -95,7 +95,6 @@ namespace Unigram
             InitializeComponent();
 
             _uiSettings = new UISettings();
-            _uiSettings.ColorValuesChanged += ColorValuesChanged;
 
             m_mediaExtensionManager = new MediaExtensionManager();
             m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
@@ -272,7 +271,7 @@ namespace Unigram
                 Window.Current.VisibilityChanged -= Window_VisibilityChanged;
                 Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
-                UpdateBars();
+                WindowContext.GetForCurrentView().UpdateTitleBar();
                 ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
@@ -299,13 +298,13 @@ namespace Unigram
             //var response = await service.SendAsync(new GetAuthorizationState());
             //if (response is AuthorizationStateReady)
             WindowContext.GetForCurrentView().SetActivatedArgs(args, NavigationService);
+            WindowContext.GetForCurrentView().UpdateTitleBar();
 
             Window.Current.Activated -= Window_Activated;
             Window.Current.Activated += Window_Activated;
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
-            UpdateBars();
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
@@ -418,69 +417,6 @@ namespace Unigram
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }
 
-        private void ColorValuesChanged(UISettings sender, object args)
-        {
-            Execute.BeginOnUIThread(() => UpdateBars());
-        }
-
-        /// <summary>
-        /// Update the Title and Status Bars colors.
-        /// </summary>
-        private void UpdateBars()
-        {
-            Color background;
-            Color foreground;
-            Color buttonHover;
-            Color buttonPressed;
-
-            var current = _uiSettings.GetColorValue(UIColorType.Background);
-
-            // Apply buttons feedback based on Light or Dark theme
-            if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark || (ApplicationSettings.Current.CurrentTheme == ElementTheme.Default && current == Colors.Black))
-            {
-                background = Color.FromArgb(255, 31, 31, 31);
-                foreground = Colors.White;
-                buttonHover = Color.FromArgb(255, 53, 53, 53);
-                buttonPressed = Color.FromArgb(255, 76, 76, 76);
-            }
-            else if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Light || (ApplicationSettings.Current.CurrentTheme == ElementTheme.Default && current == Colors.White))
-            {
-                background = Color.FromArgb(255, 230, 230, 230);
-                foreground = Colors.Black;
-                buttonHover = Color.FromArgb(255, 207, 207, 207);
-                buttonPressed = Color.FromArgb(255, 184, 184, 184);
-            }
-
-            // Desktop Title Bar
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
-
-            // Background
-            titleBar.BackgroundColor = background;
-            titleBar.InactiveBackgroundColor = background;
-
-            // Foreground
-            titleBar.ForegroundColor = foreground;
-            titleBar.ButtonForegroundColor = foreground;
-            titleBar.ButtonHoverForegroundColor = foreground;
-
-            // Buttons
-            titleBar.ButtonBackgroundColor = background;
-            titleBar.ButtonInactiveBackgroundColor = background;
-
-            // Buttons feedback
-            titleBar.ButtonPressedBackgroundColor = buttonPressed;
-            titleBar.ButtonHoverBackgroundColor = buttonHover;
-
-            // Mobile Status Bar
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = background;
-                statusBar.ForegroundColor = foreground;
-                statusBar.BackgroundOpacity = 1;
-            }
-        }
 
         //private void Window_Activated(object sender, WindowActivatedEventArgs e)
         //{

@@ -12,9 +12,12 @@ using Unigram.Views;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Contacts;
+using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.Media.SpeechRecognition;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -42,15 +45,99 @@ namespace Unigram.Common
             _window.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
             _window.Activated += OnActivated;
 
+            var app = App.Current as App;
+            app.UISettings.ColorValuesChanged += UISettings_ColorValuesChanged;
+
             _window.CoreWindow.Closed += (s, e) =>
             {
+                try
+                {
+                    app.UISettings.ColorValuesChanged -= UISettings_ColorValuesChanged;
+                }
+                catch { }
+
                 _aggregator.Unsubscribe(this);
             };
             _window.Closed += (s, e) =>
             {
+                try
+                {
+                    app.UISettings.ColorValuesChanged -= UISettings_ColorValuesChanged;
+                }
+                catch { }
+
                 _aggregator.Unsubscribe(this);
             };
         }
+
+        #region UI
+
+        private async void UISettings_ColorValuesChanged(UISettings sender, object args)
+        {
+            await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateTitleBar);
+        }
+
+        /// <summary>
+        /// Update the Title and Status Bars colors.
+        /// </summary>
+        public void UpdateTitleBar()
+        {
+            Color background;
+            Color foreground;
+            Color buttonHover;
+            Color buttonPressed;
+
+            var app = App.Current as App;
+            var current = app.UISettings.GetColorValue(UIColorType.Background);
+
+            // Apply buttons feedback based on Light or Dark theme
+            if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark || (ApplicationSettings.Current.CurrentTheme == ElementTheme.Default && current == Colors.Black))
+            {
+                background = Color.FromArgb(255, 31, 31, 31);
+                foreground = Colors.White;
+                buttonHover = Color.FromArgb(255, 53, 53, 53);
+                buttonPressed = Color.FromArgb(255, 76, 76, 76);
+            }
+            else if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Light || (ApplicationSettings.Current.CurrentTheme == ElementTheme.Default && current == Colors.White))
+            {
+                background = Color.FromArgb(255, 230, 230, 230);
+                foreground = Colors.Black;
+                buttonHover = Color.FromArgb(255, 207, 207, 207);
+                buttonPressed = Color.FromArgb(255, 184, 184, 184);
+            }
+
+            // Desktop Title Bar
+            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+
+            // Background
+            titleBar.BackgroundColor = background;
+            titleBar.InactiveBackgroundColor = background;
+
+            // Foreground
+            titleBar.ForegroundColor = foreground;
+            titleBar.ButtonForegroundColor = foreground;
+            titleBar.ButtonHoverForegroundColor = foreground;
+
+            // Buttons
+            titleBar.ButtonBackgroundColor = background;
+            titleBar.ButtonInactiveBackgroundColor = background;
+
+            // Buttons feedback
+            titleBar.ButtonPressedBackgroundColor = buttonPressed;
+            titleBar.ButtonHoverBackgroundColor = buttonHover;
+
+            // Mobile Status Bar
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = background;
+                statusBar.ForegroundColor = foreground;
+                statusBar.BackgroundOpacity = 1;
+            }
+        }
+
+        #endregion
 
         public CoreWindowActivationState ActivationState { get; private set; }
 

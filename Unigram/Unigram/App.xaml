@@ -129,9 +129,6 @@
 
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
 
-            <local:ViewModelLocator x:Key="Locator"/>
-            <views:MediaLibraryCollection x:Key="MediaLibrary"/>
-
             <x:Double x:Key="TelegramLightMediaMaxWidth">200</x:Double>
             <x:Double x:Key="TelegramLightMediaMaxHeight">200</x:Double>
 
