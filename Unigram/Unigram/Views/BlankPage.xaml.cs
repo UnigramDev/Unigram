@@ -19,7 +19,8 @@ namespace Unigram.Views
     {
         public BlankPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+            DataContext = new object();
         }
     }
 }
