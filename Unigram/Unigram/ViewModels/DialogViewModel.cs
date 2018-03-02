@@ -82,7 +82,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return App.Current.Resources["MediaLibrary"] as MediaLibraryCollection;
+                return MediaLibraryCollection.GetForCurrentView();
             }
         }
 

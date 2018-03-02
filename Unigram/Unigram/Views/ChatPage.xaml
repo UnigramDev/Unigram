@@ -1119,14 +1119,5 @@
             x:Name="SearchBar"
             Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
             Grid.Row="3"/>
-
-        <Grid Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Visibility="Collapsed">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Button Click="DebugScrollSet_Click" Content="Set"/>
-            <Slider ValueChanged="DebugScroll_ValueChanged" Minimum="-100" Maximum="100" Grid.Column="1"/>
-        </Grid>
     </Grid>
 </Page>

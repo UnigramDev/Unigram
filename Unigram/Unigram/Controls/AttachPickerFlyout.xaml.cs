@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Core.Models;
 using Unigram.Entities;
+using Unigram.ViewModels;
+using Unigram.Views;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -18,18 +20,17 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls
 {
     public sealed partial class AttachPickerFlyout : UserControl
     {
+        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+
         public AttachPickerFlyout()
         {
             InitializeComponent();
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Library.ItemsSource = MediaLibraryCollection.GetForCurrentView();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
