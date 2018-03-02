@@ -90,6 +90,7 @@ namespace Unigram.Views.Supergroups
             EditMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             DeleteMessages.Header = group.IsChannel ? Strings.Resources.EditAdminDeleteMessages : Strings.Resources.EditAdminGroupDeleteMessages;
             BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+            PinMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
             AddUsers.Header = group.AnyoneCanInvite ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
         }
     }

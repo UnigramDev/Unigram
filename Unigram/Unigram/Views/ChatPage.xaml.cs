@@ -1201,8 +1201,12 @@ namespace Unigram.Views
             if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
             {
                 var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
+                if (supergroup == null)
+                {
+                    return Visibility.Collapsed;
+                }
 
-                return supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && admin.CanPinMessages) ? Visibility.Visible : Visibility.Collapsed;
+                return supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.CanPinMessages || supergroup.IsChannel && admin.CanEditMessages)) ? Visibility.Visible : Visibility.Collapsed;
             }
 
             return Visibility.Collapsed;

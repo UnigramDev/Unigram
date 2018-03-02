@@ -284,7 +284,7 @@ namespace Unigram.ViewModels.Supergroups
                 CanDeleteMessages = _canDeleteMessages,
                 CanEditMessages = supergroup.IsChannel ? _canEditMessages : false,
                 CanInviteUsers = _canInviteUsers,
-                CanPinMessages = _canPinMessages,
+                CanPinMessages = supergroup.IsChannel ? false : _canPinMessages,
                 CanPostMessages = supergroup.IsChannel ? _canPostMessages : false,
                 CanPromoteMembers = _canPromoteMembers,
                 CanRestrictMembers = supergroup.IsChannel ? false : _canRestrictMembers,
