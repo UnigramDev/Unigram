@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views
 {
@@ -52,6 +53,30 @@ namespace Unigram.Views
             var container = _containers[account];
             {
                 result = container.Resolve<TService>();
+            }
+
+            return result;
+        }
+
+        public TService ResolveType<TService, TDelegate>(TDelegate delegato, int account = int.MaxValue)
+            where TService : IDelegable<TDelegate>
+            where TDelegate : IViewModelDelegate
+        {
+            if (account == int.MaxValue)
+            {
+                account = SettingsHelper.SelectedAccount;
+            }
+
+            var result = default(TService);
+            //if (_containers.TryGetValue(account, out IContainer container))
+            var container = _containers[account];
+            {
+                result = container.Resolve<TService>();
+            }
+
+            if (result != null)
+            {
+                result.Delegate = delegato;
             }
 
             return result;

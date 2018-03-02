@@ -7,6 +7,7 @@ using TdWindows;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -14,6 +15,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.BasicGroups
 {
     public class BasicGroupEditViewModel : UnigramViewModelBase,
+        IDelegable<IBasicGroupDelegate>,
         IHandle<UpdateBasicGroup>,
         IHandle<UpdateBasicGroupFullInfo>,
         IHandle<UpdateChatTitle>,

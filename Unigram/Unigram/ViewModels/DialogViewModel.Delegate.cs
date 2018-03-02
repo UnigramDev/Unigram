@@ -15,6 +15,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels
 {

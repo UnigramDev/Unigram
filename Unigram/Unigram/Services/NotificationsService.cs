@@ -83,7 +83,7 @@ namespace Unigram.Services
                         return;
                     }
 
-                    if (WindowContext.GetForCurrentView().ActivationState != Windows.UI.Core.CoreWindowActivationState.Deactivated && service.CurrentPageType == typeof(DialogPage) && (long)service.CurrentPageParam == chat.Id)
+                    if (WindowContext.GetForCurrentView().ActivationState != Windows.UI.Core.CoreWindowActivationState.Deactivated && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
                     {
                         return;
                     }

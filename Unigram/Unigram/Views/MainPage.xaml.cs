@@ -368,7 +368,7 @@ namespace Unigram.Views
             {
                 ChatsList.SelectedIndex = index;
                 Navigate(ChatsList.SelectedItem);
-                MasterDetail.NavigationService.RemoveLastIf(typeof(DialogPage));
+                MasterDetail.NavigationService.RemoveLastIf(typeof(ChatPage));
             }
         }
 
@@ -597,7 +597,7 @@ namespace Unigram.Views
             //    Separator.Visibility = Visibility.Visible;
             //}
 
-            if (e.SourcePageType == typeof(DialogPage))
+            if (e.SourcePageType == typeof(ChatPage))
             {
                 var parameter = MasterDetail.NavigationService.SerializationService.Deserialize((string)e.Parameter);
                 UpdateListViewsSelectedItem((long)parameter);

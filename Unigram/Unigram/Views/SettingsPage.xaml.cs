@@ -16,14 +16,13 @@ using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Media.Animation;
-using Telegram.Api.TL;
 using Unigram.ViewModels.Users;
 using Windows.UI.Xaml.Markup;
 using System.Linq;
 using Windows.UI.Xaml.Media;
-using Telegram.Api.Helpers;
 using TdWindows;
 using Windows.Media.Capture;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views
 {
@@ -34,22 +33,11 @@ namespace Unigram.Views
         public SettingsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<SettingsViewModel, IUserDelegate>(this);
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
             Diagnostics.Text = $"Unigram X {AboutViewModel.GetVersion()}";
-
-//#if DEBUG
-//            var optionAccounts = new HyperButton();
-//            optionAccounts.Style = App.Current.Resources["HyperButtonStyle"] as Style;
-//            optionAccounts.Click += Accounts_Click;
-//            optionAccounts.Content = "Accounts management";
-
-//            OptionsGroup3.Children.Clear();
-//            OptionsGroup3.Children.Add(optionAccounts);
-//#endif
         }
 
         public MasterDetailView MasterDetail { get; set; }

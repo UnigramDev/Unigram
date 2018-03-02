@@ -12,6 +12,7 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.Views.Channels;
 using Unigram.Views.Users;
@@ -35,8 +36,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupAdministratorsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupAdministratorsViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<SupergroupAdministratorsViewModel, ISupergroupDelegate>(this);
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

@@ -10,6 +10,7 @@ using Unigram.Controls.Views;
 using Unigram.ViewModels;
 using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
@@ -30,8 +31,7 @@ namespace Unigram.Views.BasicGroups
         public BasicGroupEditPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<BasicGroupEditViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<BasicGroupEditViewModel, IBasicGroupDelegate>(this);
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)

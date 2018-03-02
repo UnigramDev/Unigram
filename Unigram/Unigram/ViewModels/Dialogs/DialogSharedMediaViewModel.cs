@@ -16,10 +16,11 @@ using Windows.Storage.Pickers;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using System.Linq;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels.Dialogs
 {
-    public class DialogSharedMediaViewModel : UnigramViewModelBase, IMessageDelegate, IHandle<UpdateFile>
+    public class DialogSharedMediaViewModel : UnigramViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>
     {
         public IFileDelegate Delegate { get; set; }
 

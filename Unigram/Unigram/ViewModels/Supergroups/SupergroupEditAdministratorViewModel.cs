@@ -11,6 +11,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Unigram.Views;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
@@ -18,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupEditAdministratorViewModel : UnigramViewModelBase
+    public class SupergroupEditAdministratorViewModel : UnigramViewModelBase, IDelegable<IMemberDelegate>
     {
         public IMemberDelegate Delegate { get; set; }
 
@@ -329,10 +330,5 @@ namespace Unigram.ViewModels.Supergroups
                 // TODO: ...
             }
         }
-    }
-
-    public interface IMemberDelegate : IUserDelegate
-    {
-        void UpdateMember(Chat chat, Supergroup group, User user, ChatMember member);
     }
 }

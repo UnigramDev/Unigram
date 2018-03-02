@@ -8,6 +8,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Strings;
+using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 

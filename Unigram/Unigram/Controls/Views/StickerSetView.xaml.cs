@@ -28,6 +28,7 @@ using Windows.Storage;
 using Unigram.Native;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Controls.Views
 {

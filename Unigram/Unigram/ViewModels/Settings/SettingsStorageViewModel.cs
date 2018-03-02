@@ -134,6 +134,11 @@ namespace Unigram.ViewModels.Settings
 
         public async void Clear(StorageStatisticsByChat byChat)
         {
+            if (byChat == null)
+            {
+                return;
+            }
+
             var dialog = new ContentDialogBase();
             var page = new SettingsStorageOptimizationPage(ProtoService, dialog, byChat);
             dialog.Content = page;

@@ -9,12 +9,13 @@ using TdWindows;
 using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Unigram.Views;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupEditRestrictedViewModel : UnigramViewModelBase
+    public class SupergroupEditRestrictedViewModel : UnigramViewModelBase, IDelegable<IMemberDelegate>
     {
         public IMemberDelegate Delegate { get; set; }
 

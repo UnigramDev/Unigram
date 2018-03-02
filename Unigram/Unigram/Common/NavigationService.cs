@@ -322,7 +322,7 @@ namespace Unigram.Common
 
         public static bool IsPeerActive(this INavigationService service, long chat)
         {
-            if (service.CurrentPageType == typeof(DialogPage))
+            if (service.CurrentPageType == typeof(ChatPage))
             {
                 if (TryGetPeerFromParameter(service, service.CurrentPageParam, out long chatId))
                 {
@@ -335,7 +335,7 @@ namespace Unigram.Common
 
         public static long GetPeerFromBackStack(this INavigationService service)
         {
-            if (service.CurrentPageType == typeof(DialogPage))
+            if (service.CurrentPageType == typeof(ChatPage))
             {
                 if (TryGetPeerFromParameter(service, service.CurrentPageParam, out long chatId))
                 {
@@ -346,7 +346,7 @@ namespace Unigram.Common
             for (int i = service.Frame.BackStackDepth - 1; i >= 0; i--)
             {
                 var entry = service.Frame.BackStack[i];
-                if (entry.SourcePageType == typeof(DialogPage))
+                if (entry.SourcePageType == typeof(ChatPage))
                 {
                     if (TryGetPeerFromParameter(service, entry.Parameter, out long chatId))
                     {

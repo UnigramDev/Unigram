@@ -28,8 +28,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI;
 using System.Numerics;
 using Unigram.Services;
-
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Controls.Views
 {

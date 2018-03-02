@@ -9,6 +9,7 @@ using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
 using Windows.Foundation;
@@ -30,8 +31,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditAdministratorPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupEditAdministratorViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<SupergroupEditAdministratorViewModel, IMemberDelegate>(this);
         }
 
         public void UpdateChat(Chat chat)

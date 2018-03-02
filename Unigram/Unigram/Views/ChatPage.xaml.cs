@@ -64,10 +64,11 @@ using Unigram.ViewModels.Users;
 using Newtonsoft.Json;
 using Windows.UI.Xaml.Documents;
 using Windows.ApplicationModel;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views
 {
-    public sealed partial class DialogPage : Page, IMasterDetailPage, IDialogDelegate
+    public sealed partial class ChatPage : Page, IMasterDetailPage, IDialogDelegate
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -95,15 +96,14 @@ namespace Unigram.Views
 
         private Compositor _compositor;
 
-        public DialogPage()
+        public ChatPage()
         {
             InitializeComponent();
             DataContextChanged += (s, args) =>
              {
                  _viewModel = ViewModel;
              };
-            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel, IDialogDelegate>(this);
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
             NavigationCacheMode = NavigationCacheMode.Required;
@@ -254,9 +254,8 @@ namespace Unigram.Views
                 //Bindings.StopTracking();
             }
 
-            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel, IDialogDelegate>(this);
 
-            ViewModel.Delegate = this;
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
             ViewModel.Sticker_Click = Stickers_ItemClick;

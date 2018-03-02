@@ -7,6 +7,7 @@ using TdWindows;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;

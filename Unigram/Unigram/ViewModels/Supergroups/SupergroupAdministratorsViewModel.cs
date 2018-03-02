@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TdWindows;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Unigram.Views.Supergroups;
 
 namespace Unigram.ViewModels.Supergroups

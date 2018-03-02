@@ -48,7 +48,7 @@ using TdWindows;
 
 namespace Unigram.Views
 {
-    public partial class DialogPage : Page
+    public partial class ChatPage : Page
     {
         private ItemsStackPanel _panel;
 

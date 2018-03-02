@@ -15,6 +15,7 @@ using Unigram.Core.Common;
 using Unigram.Helpers;
 using Unigram.Services;
 using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
 using Windows.Storage;
 using Windows.Storage.Pickers;

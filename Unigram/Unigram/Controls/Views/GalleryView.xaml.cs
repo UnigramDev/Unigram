@@ -39,6 +39,7 @@ using TdWindows;
 using System.Windows.Input;
 using Windows.Storage.Streams;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Controls.Views
 {
@@ -831,7 +832,7 @@ namespace Unigram.Controls.Views
                 ViewModel.OpenMessage(ViewModel.Items[index]);
             }
 
-            _selecting = false;
+            //_selecting = false;
         }
 
         private GalleryContent GetContainer(int direction)

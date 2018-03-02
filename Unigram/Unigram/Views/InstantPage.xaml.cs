@@ -4,9 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -40,6 +37,7 @@ using Unigram.Controls.Messages.Content;
 using Unigram.Controls.Messages;
 using Unigram.Services;
 using Unigram.ViewModels.Dialogs;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views
 {

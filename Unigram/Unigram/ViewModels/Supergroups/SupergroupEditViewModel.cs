@@ -13,6 +13,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Common;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Unigram.Views.Channels;
 using Unigram.Views.Supergroups;
 using Windows.Storage;
@@ -22,6 +23,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditViewModel : UnigramViewModelBase,
+        IDelegable<ISupergroupDelegate>,
         IHandle<UpdateSupergroup>,
         IHandle<UpdateSupergroupFullInfo>,
         IHandle<UpdateChatTitle>,

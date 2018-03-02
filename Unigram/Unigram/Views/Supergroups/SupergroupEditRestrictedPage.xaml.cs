@@ -9,6 +9,7 @@ using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
 using Windows.Foundation;
@@ -21,13 +22,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views.Supergroups
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class SupergroupEditRestrictedPage : Page, IMemberDelegate
     {
         public SupergroupEditRestrictedViewModel ViewModel => DataContext as SupergroupEditRestrictedViewModel;
@@ -35,8 +31,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditRestrictedPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupEditRestrictedViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<SupergroupEditRestrictedViewModel, IMemberDelegate>(this);
         }
 
         public void UpdateChat(Chat chat)

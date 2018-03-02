@@ -22,7 +22,7 @@
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
-    <!--<BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>-->
+    <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -103,6 +103,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Common\ContainerBuilder.cs" />
     <Compile Include="Common\Fluent.cs" />
     <Compile Include="Common\AutoDownloadPreferences.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="Common\UniqueList.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
+    <Compile Include="Common\WindowContext.cs" />
     <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\ChatCell.xaml.cs">
@@ -406,6 +408,7 @@
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IDelegable.cs" />
     <Compile Include="ViewModels\Dialogs\DialogGalleryViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogSearchViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogSharedMediaViewModel.cs" />
@@ -413,7 +416,16 @@
     <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Delegate.cs" />
     <Compile Include="ViewModels\DialogViewModel.Media.cs" />
+    <Compile Include="ViewModels\Delegates\IBasicGroupDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IChatDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IDialogDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IFileDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IMessageDelegate.cs" />
     <Compile Include="ViewModels\InstantGalleryViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IProfileDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\ISupergroupDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IUserDelegate.cs" />
+    <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep2ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep3ViewModel.cs" />
@@ -467,6 +479,7 @@
     <Compile Include="ViewModels\Settings\SettingsStickersViewModelBase.cs" />
     <Compile Include="ViewModels\SingleGalleryViewModel.cs" />
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IMemberDelegate.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAddAdministratorViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAddRestrictedViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAdministratorsViewModel.cs" />
@@ -494,6 +507,12 @@
     </Compile>
     <Compile Include="Views\Channels\ChannelCreateStep3Page.xaml.cs">
       <DependentUpon>ChannelCreateStep3Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatPage.Bubbles.xaml.cs">
+      <DependentUpon>ChatPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatPage.xaml.cs">
+      <DependentUpon>ChatPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatCreateStep1Page.xaml.cs">
       <DependentUpon>ChatCreateStep1Page.xaml</DependentUpon>
@@ -664,7 +683,9 @@
     <Compile Include="Views\Supergroups\SupergroupEditStickerSetPage.xaml.cs">
       <DependentUpon>SupergroupEditStickerSetPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Supergroups\SupergroupEventLogPage.Bubbles.cs" />
+    <Compile Include="Views\Supergroups\SupergroupEventLogPage.Bubbles.cs">
+      <DependentUpon>SupergroupEventLogPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Supergroups\SupergroupEventLogPage.xaml.cs">
       <DependentUpon>SupergroupEventLogPage.xaml</DependentUpon>
     </Compile>
@@ -1134,12 +1155,6 @@
     <Compile Include="Views\BlankPage.xaml.cs">
       <DependentUpon>BlankPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DialogPage.Bubbles.xaml.cs">
-      <DependentUpon>DialogPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DialogPage.xaml.cs">
-      <DependentUpon>DialogPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
     </Compile>
@@ -1225,6 +1240,7 @@
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Resources.cs</LastGenOutput>
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </PRIResource>
     <PRIResource Include="Strings\es\Resources.resw" />
     <PRIResource Include="Strings\fa\Resources.resw" />
@@ -1663,6 +1679,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\ChatPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Chats\ChatCreateStep1Page.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1696,10 +1716,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\BlankPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\DialogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

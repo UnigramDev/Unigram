@@ -13,6 +13,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Common;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Unigram.Views.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
@@ -21,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsBlockedUsersViewModel : UnigramViewModelBase, IHandle<UpdateUserFullInfo>, IHandle<UpdateFile>
+    public class SettingsBlockedUsersViewModel : UnigramViewModelBase, IDelegable<IFileDelegate>, IHandle<UpdateUserFullInfo>, IHandle<UpdateFile>
     {
         public IFileDelegate Delegate { get; set; }
 

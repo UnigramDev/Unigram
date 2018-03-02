@@ -13,6 +13,7 @@ using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
@@ -35,8 +36,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupEditViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<SupergroupEditViewModel, ISupergroupDelegate>(this);
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>

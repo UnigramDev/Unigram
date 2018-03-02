@@ -30,10 +30,12 @@ using Unigram.ViewModels.Chats;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Chats;
 using Unigram.Core.Services;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels
 {
     public class ProfileViewModel : UnigramViewModelBase,
+        IDelegable<IProfileDelegate>,
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>,
         IHandle<UpdateBasicGroup>,
@@ -1062,43 +1064,6 @@ namespace Unigram.ViewModels
         {
             return _hasMore;
         }
-    }
-
-    public interface IProfileDelegate : IChatDelegate, IUserDelegate, ISupergroupDelegate, IBasicGroupDelegate, IFileDelegate
-    {
-        void UpdateSecretChat(Chat chat, SecretChat secretChat);
-    }
-
-    public interface IUserDelegate : IChatDelegate
-    {
-        void UpdateUser(Chat chat, User user, bool secret);
-        void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret);
-
-        void UpdateUserStatus(Chat chat, User user);
-    }
-
-    public interface ISupergroupDelegate : IChatDelegate
-    {
-        void UpdateSupergroup(Chat chat, Supergroup group);
-        void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo);
-    }
-
-    public interface IBasicGroupDelegate : IChatDelegate
-    {
-        void UpdateBasicGroup(Chat chat, BasicGroup group);
-        void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo);
-    }
-
-    public interface IChatDelegate
-    {
-        void UpdateChat(Chat chat);
-        void UpdateChatTitle(Chat chat);
-        void UpdateChatPhoto(Chat chat);
-    }
-
-    public interface IFileDelegate
-    {
-        void UpdateFile(File file);
     }
 
     public class ChatMemberComparer : IComparer<ChatMember>

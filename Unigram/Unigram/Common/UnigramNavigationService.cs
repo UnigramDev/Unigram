@@ -48,7 +48,7 @@ namespace Unigram.Common
                 }
             }
 
-            if (Frame.Content is DialogPage page && chat.Id.Equals((long)CurrentPageParam))
+            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam))
             {
                 if (message != null)
                 {
@@ -82,7 +82,7 @@ namespace Unigram.Common
                 }
 
 
-                Navigate(typeof(DialogPage), chat.Id);
+                Navigate(typeof(ChatPage), chat.Id);
             }
         }
 

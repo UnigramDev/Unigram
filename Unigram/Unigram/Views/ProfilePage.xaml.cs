@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
@@ -23,7 +22,6 @@ using Windows.UI.Xaml.Navigation;
 using Unigram.Common;
 using System.Windows.Input;
 using TdWindows;
-using Telegram.Api.Helpers;
 using Telegram.Helpers;
 using Unigram.Converters;
 using Unigram.Collections;
@@ -31,6 +29,7 @@ using Unigram.ViewModels.Chats;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Text;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views
 {
@@ -41,8 +40,7 @@ namespace Unigram.Views
         public ProfilePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ProfileViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<ProfileViewModel, IProfileDelegate>(this);
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)

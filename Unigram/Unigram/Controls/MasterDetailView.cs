@@ -307,7 +307,7 @@ namespace Unigram.Controls
 
                     }
                     // When the new page is a chat
-                    else if (e.SourcePageType == typeof(DialogPage))
+                    else if (e.SourcePageType == typeof(ChatPage))
                     {
                         // The user opened first a chat, then the userinfo. Remove them from backstack.
                         if (DetailFrame.BackStackDepth == 3)

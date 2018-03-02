@@ -17,10 +17,12 @@ using Windows.UI.Xaml.Navigation;
 using TdWindows;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation.Metadata;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels
 {
    public class SettingsViewModel : UnigramViewModelBase,
+        IDelegable<IUserDelegate>,
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>
     {
@@ -154,7 +156,11 @@ namespace Unigram.ViewModels
             await _pushService.UnregisterAsync();
             await _contactsService.RemoveAsync();
 
-            await ProtoService.SendAsync(new LogOut());
+            var response = await ProtoService.SendAsync(new LogOut());
+            if (response is Error error)
+            {
+                // TODO:
+            }
 
             if (ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "RequestRestartAsync"))
             {

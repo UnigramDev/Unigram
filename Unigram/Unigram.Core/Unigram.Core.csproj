@@ -98,7 +98,6 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\KeyedList.cs" />
     <Compile Include="Common\MvxObservableCollection.cs" />
-    <Compile Include="Dependency\UnigramContainerBuilder.cs" />
     <Compile Include="EncryptionKeyEmojifier.cs" />
     <Compile Include="Helpers\ColorsHelper.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />

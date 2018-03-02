@@ -20,6 +20,7 @@ using Telegram.Helpers;
 using Unigram.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views.Settings
 {
@@ -30,8 +31,7 @@ namespace Unigram.Views.Settings
         public SettingsBlockedUsersPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsBlockedUsersViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<SettingsBlockedUsersViewModel, IFileDelegate>(this);
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)

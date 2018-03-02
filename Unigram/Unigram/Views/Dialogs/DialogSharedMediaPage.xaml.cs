@@ -29,6 +29,7 @@ using Unigram.ViewModels.Dialogs;
 using TdWindows;
 using Unigram.Controls.Items;
 using Unigram.Controls.Views;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views.Dialogs
 {
@@ -39,8 +40,7 @@ namespace Unigram.Views.Dialogs
         public DialogSharedMediaPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<DialogSharedMediaViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<DialogSharedMediaViewModel, IFileDelegate>(this);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
@@ -320,6 +320,11 @@ namespace Unigram.Views.Dialogs
 
                     var document = message.Content as MessageDocument;
                     var content = container.ContentTemplateRoot as SharedFileListViewItem;
+
+                    if (document == null || document.Document == null || document.Document.DocumentData == null)
+                    {
+                        continue;
+                    }
 
                     if (file.Id == document.Document.DocumentData.Id)
                     {

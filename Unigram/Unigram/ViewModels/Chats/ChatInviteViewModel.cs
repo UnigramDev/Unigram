@@ -12,6 +12,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Strings;
+using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
