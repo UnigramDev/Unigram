@@ -129,6 +129,22 @@ namespace Unigram.Views
             }
         }
 
+        private void UnloadVisibleMessages()
+        {
+            foreach (var item in _old.Values)
+            {
+                var presenter = item.Presenter;
+                if (presenter != null && presenter.MediaPlayer != null)
+                {
+                    presenter.MediaPlayer.Source = null;
+                    presenter.MediaPlayer.Dispose();
+                    presenter.MediaPlayer = null;
+                }
+            }
+
+            _old.Clear();
+        }
+
         private void UpdateHeaderDate()
         {
             if (_panel == null || _panel.FirstVisibleIndex < 0)

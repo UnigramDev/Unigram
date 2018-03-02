@@ -353,12 +353,7 @@ namespace Unigram.Views
             if (panel != null)
             {
                 _panel = panel;
-                _panel.SizeChanged -= OnViewSizeChanged;
-                _panel.SizeChanged += OnViewSizeChanged;
             }
-
-            Messages.ScrollingHost.ViewChanged -= OnViewChanged;
-            Messages.ScrollingHost.ViewChanged += OnViewChanged;
 
             ViewVisibleMessages(false);
 
@@ -371,16 +366,7 @@ namespace Unigram.Views
         {
             Bindings.StopTracking();
 
-            foreach (var item in _old.Values)
-            {
-                var presenter = item.Presenter;
-                if (presenter != null && presenter.MediaPlayer != null)
-                {
-                    presenter.MediaPlayer.Source = null;
-                    presenter.MediaPlayer.Dispose();
-                    presenter.MediaPlayer = null;
-                }
-            }
+            UnloadVisibleMessages();
 
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
@@ -389,22 +375,6 @@ namespace Unigram.Views
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
 
             WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
-
-
-
-            //try
-            //{
-            //    if (_panel != null)
-            //    {
-            //        _panel.SizeChanged -= OnViewSizeChanged;
-            //    }
-
-            //    if (Messages.ScrollingHost != null)
-            //    {
-            //        Messages.ScrollingHost.ViewChanged -= OnViewChanged;
-            //    }
-            //}
-            //catch { }
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
