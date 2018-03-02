@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 using Telegram.Api;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Account;
 using Telegram.Api.TL.Payments;
 using Unigram.Common;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
+using TdWindows;
 
 namespace Unigram.ViewModels.Payments
 {
@@ -106,48 +106,25 @@ namespace Unigram.ViewModels.Payments
         {
             IsLoading = true;
 
-            var passwordResponse = await LegacyService.GetPasswordAsync();
-            if (passwordResponse.IsSucceeded)
+            var response = await ProtoService.SendAsync(new CreateTemporaryPassword(_password, 60 * 30));
+            if (response is TemporaryPasswordState)
             {
-                if (passwordResponse.Result is TLAccountPassword password)
+                //ApplicationSettings.Current.TmpPassword = response.Result;
+                //NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
+            }
+            else if (response is Error error)
+            {
+                IsLoading = false;
+
+                if (error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
                 {
-                    var currentSalt = password.CurrentSalt;
-                    var hash = TLUtils.Combine(currentSalt, Encoding.UTF8.GetBytes(_password), currentSalt);
-
-                    var input = CryptographicBuffer.CreateFromByteArray(hash);
-                    var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-                    var hashed = hasher.HashData(input);
-                    CryptographicBuffer.CopyToByteArray(hashed, out byte[] data);
-
-                    var response = await LegacyService.GetTmpPasswordAsync(data, 60 * 30);
-                    if (response.IsSucceeded)
-                    {
-                        ApplicationSettings.Current.TmpPassword = response.Result;
-                        //NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
-                    }
-                    else if (response.Error != null)
-                    {
-                        IsLoading = false;
-
-                        if (response.Error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
-                        {
-                            Password = string.Empty;
-                            RaisePropertyChanged(response.Error.ErrorMessage);
-                        }
-                        else
-                        {
-
-                        }
-                    }
+                    Password = string.Empty;
+                    RaisePropertyChanged(error.Message);
                 }
                 else
                 {
 
                 }
-            }
-            else if (passwordResponse.Error != null)
-            {
-                IsLoading = false;
             }
         }
 

@@ -218,8 +218,8 @@ namespace Unigram.ViewModels.Payments
                 _paymentForm.HasSavedCredentials = false;
                 _paymentForm.SavedCredentials = null;
 
-                ApplicationSettings.Current.TmpPassword = null;
-                LegacyService.ClearSavedInfoAsync(false, true, null, null);
+                //ApplicationSettings.Current.TmpPassword = null;
+                //LegacyService.ClearSavedInfoAsync(false, true, null, null);
             }
 
             var month = 0;

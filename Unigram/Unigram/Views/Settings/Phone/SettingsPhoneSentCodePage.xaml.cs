@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
 using Unigram.Views;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
@@ -15,8 +14,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Telegram.Api.TL.Auth;
 using Unigram.Common;
+using TdWindows;
+using Telegram.Helpers;
 
 namespace Unigram.Views.Settings
 {
@@ -49,25 +49,24 @@ namespace Unigram.Views.Settings
 
         #region Binding
 
-        private string ConvertType(TLAuthSentCodeTypeBase type, string number)
+        private string ConvertType(AuthenticationCodeInfo codeInfo, string number)
         {
-            switch (type)
+            if (codeInfo == null)
             {
-                case TLAuthSentCodeTypeApp appType:
+                return null;
+            }
+
+            switch (codeInfo.Type)
+            {
+                case AuthenticationCodeTypeTelegramMessage appType:
                     return Strings.Resources.SentAppCode;
-                case TLAuthSentCodeTypeSms smsType:
-                    return string.Format(Strings.Resources.SentSmsCode, number);
+                case AuthenticationCodeTypeSms smsType:
+                    return string.Format(Strings.Resources.SentSmsCode, PhoneNumber.Format(number));
             }
 
             return null;
         }
 
         #endregion
-
-        public class NavigationParameters
-        {
-            public string PhoneNumber { get; set; }
-            public TLAuthSentCode Result { get; set; }
-        }
     }
 }

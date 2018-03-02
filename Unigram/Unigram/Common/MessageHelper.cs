@@ -333,36 +333,36 @@ namespace Unigram.Common
             }
         }
 
-        public static async void NavigateToConfirmPhone(IMTProtoService protoService, string phone, string hash)
+        public static async void NavigateToConfirmPhone(IProtoService protoService, string phone, string hash)
         {
-            var response = await protoService.SendConfirmPhoneCodeAsync(hash, false);
-            if (response.IsSucceeded)
-            {
-                var state = new SignInSentCodePage.NavigationParameters
-                {
-                    PhoneNumber = phone,
-                    //Result = response.Result,
-                };
+            //var response = await protoService.SendConfirmPhoneCodeAsync(hash, false);
+            //if (response.IsSucceeded)
+            //{
+            //    var state = new SignInSentCodePage.NavigationParameters
+            //    {
+            //        PhoneNumber = phone,
+            //        //Result = response.Result,
+            //    };
 
-                App.Current.NavigationService.Navigate(typeof(SignInSentCodePage), state);
+            //    App.Current.NavigationService.Navigate(typeof(SignInSentCodePage), state);
 
-                //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
-                //{
-                //    if (frame != null)
-                //    {
-                //        frame.CloseBlockingProgress();
-                //    }
-                //    TelegramViewBase.NavigateToConfirmPhone(result);
-                //});
-            }
-            else
-            {
-                //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
-                //{
-                //    return;
-                //}
-                //Telegram.Api.Helpers.Execute.ShowDebugMessage(string.Format("account.sendConfirmPhoneCode error {0}", error));
-            };
+            //    //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+            //    //{
+            //    //    if (frame != null)
+            //    //    {
+            //    //        frame.CloseBlockingProgress();
+            //    //    }
+            //    //    TelegramViewBase.NavigateToConfirmPhone(result);
+            //    //});
+            //}
+            //else
+            //{
+            //    //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
+            //    //{
+            //    //    return;
+            //    //}
+            //    //Telegram.Api.Helpers.Execute.ShowDebugMessage(string.Format("account.sendConfirmPhoneCode error {0}", error));
+            //};
         }
 
         public static async void NavigateToStickerSet(string text)

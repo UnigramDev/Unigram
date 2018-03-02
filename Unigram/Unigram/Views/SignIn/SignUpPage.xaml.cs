@@ -15,7 +15,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Telegram.Api.TL.Auth;
 using Unigram.Common;
 using TdWindows;
 
@@ -46,13 +45,6 @@ namespace Unigram.Views.SignIn
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             PrimaryInput.Focus(FocusState.Keyboard);
-        }
-
-        public class NavigationParameters
-        {
-            public string PhoneNumber { get; set; }
-            public string PhoneCode { get; set; }
-            public AuthorizationStateWaitPassword Result { get; set; }
         }
     }
 }

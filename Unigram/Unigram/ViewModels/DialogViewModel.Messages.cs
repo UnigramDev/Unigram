@@ -791,22 +791,22 @@ namespace Unigram.ViewModels
                             }
                             else if (form.SavedCredentials != null)
                             {
-                                if (ApplicationSettings.Current.TmpPassword != null)
-                                {
-                                    if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
-                                    {
-                                        ApplicationSettings.Current.TmpPassword = null;
-                                    }
-                                }
+                                //if (ApplicationSettings.Current.TmpPassword != null)
+                                //{
+                                //    if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
+                                //    {
+                                //        ApplicationSettings.Current.TmpPassword = null;
+                                //    }
+                                //}
 
-                                if (ApplicationSettings.Current.TmpPassword != null)
-                                {
-                                    NavigationService.NavigateToPaymentFormStep5(message, form, null, null, null, null, null, true);
-                                }
-                                else
-                                {
-                                    NavigationService.NavigateToPaymentFormStep4(message, form, null, null, null);
-                                }
+                                //if (ApplicationSettings.Current.TmpPassword != null)
+                                //{
+                                //    NavigationService.NavigateToPaymentFormStep5(message, form, null, null, null, null, null, true);
+                                //}
+                                //else
+                                //{
+                                //    NavigationService.NavigateToPaymentFormStep4(message, form, null, null, null);
+                                //}
                             }
                             else
                             {

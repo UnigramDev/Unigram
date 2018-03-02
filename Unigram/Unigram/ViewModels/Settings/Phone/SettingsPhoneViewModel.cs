@@ -4,7 +4,6 @@ using Unigram.Views.SignIn;
 using Unigram.Common;
 using Unigram.Models;
 using System;
-using Telegram.Api.Helpers;
 using Windows.UI.Popups;
 using Telegram.Api.TL;
 using Telegram.Api;
@@ -20,6 +19,7 @@ using Unigram.Views;
 using Unigram.Views.Settings;
 using System.Linq;
 using Unigram.Services;
+using TdWindows;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -151,28 +151,27 @@ namespace Unigram.ViewModels.Settings
 
             IsLoading = true;
 
-            var response = await LegacyService.SendChangePhoneCodeAsync(_phoneCode + _phoneNumber, /* TODO: Verify */ null);
-            if (response.IsSucceeded)
-            {
-                var state = new SettingsPhoneSentCodePage.NavigationParameters
-                {
-                    PhoneNumber = PhoneCode.TrimStart('+') + PhoneNumber,
-                    Result = response.Result,
-                };
+            var phoneNumber = (_phoneCode + _phoneNumber).Replace(" ", string.Empty);
 
-                NavigationService.Navigate(typeof(SettingsPhoneSentCodePage), state);
+            await ProtoService.SendAsync(new SetOption("x_phonenumber", new OptionValueString(phoneNumber)));
+
+            var response = await ProtoService.SendAsync(new ChangePhoneNumber(phoneNumber, false, false));
+            if (response is AuthenticationCodeInfo info)
+            {
+                App.Current.SessionState["x_codeinfo"] = info;
+                NavigationService.Navigate(typeof(SettingsPhoneSentCodePage));
             }
-            else if (response.Error != null)
+            else if (response is Error error)
             {
                 IsLoading = false;
 
-                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
+                if (error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
                 {
                     await TLMessageDialog.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
                 }
                 else
                 {
-                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await new TLMessageDialog(error.Message ?? "Error message", error.Code.ToString()).ShowQueuedAsync();
                 }
             }
         }

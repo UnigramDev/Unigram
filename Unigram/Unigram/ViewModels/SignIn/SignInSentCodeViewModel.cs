@@ -8,8 +8,6 @@ using Telegram.Api;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Account;
-using Telegram.Api.TL.Auth;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
@@ -37,24 +35,24 @@ namespace Unigram.ViewModels.SignIn
             if (authState is AuthorizationStateWaitCode waitCode)
             {
                 _phoneNumber = ProtoService.GetOption<OptionValueString>("x_phonenumber").Value;
-                _sentCode = waitCode;
+                _codeInfo = waitCode.CodeInfo;
 
-                RaisePropertyChanged(() => SentCode);
+                RaisePropertyChanged(() => CodeInfo);
             }
 
             return Task.CompletedTask;
         }
 
-        private AuthorizationStateWaitCode _sentCode;
-        public AuthorizationStateWaitCode SentCode
+        private AuthenticationCodeInfo _codeInfo;
+        public AuthenticationCodeInfo CodeInfo
         {
             get
             {
-                return _sentCode;
+                return _codeInfo;
             }
             set
             {
-                Set(ref _sentCode, value);
+                Set(ref _codeInfo, value);
             }
         }
 
@@ -71,11 +69,11 @@ namespace Unigram.ViewModels.SignIn
 
                 var length = 5;
 
-                if (_sentCode != null && _sentCode.CodeInfo.Type is AuthenticationCodeTypeTelegramMessage appType)
+                if (_codeInfo != null && _codeInfo.Type is AuthenticationCodeTypeTelegramMessage appType)
                 {
                     length = appType.Length;
                 }
-                else if (_sentCode != null && _sentCode.CodeInfo.Type is AuthenticationCodeTypeSms smsType)
+                else if (_codeInfo != null && _codeInfo.Type is AuthenticationCodeTypeSms smsType)
                 {
                     length = smsType.Length;
                 }
@@ -98,7 +96,7 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (_sentCode == null)
+            if (_codeInfo == null)
             {
                 //...
                 return;
@@ -112,7 +110,20 @@ namespace Unigram.ViewModels.SignIn
 
             IsLoading = true;
 
-            var response = await ProtoService.SendAsync(new CheckAuthenticationCode(_phoneCode, "Yolo", string.Empty));
+            var firstName = string.Empty;
+            var lastName = string.Empty;
+
+            if (ProtoService.TryGetOption("x_firstname", out OptionValueString firstValue))
+            {
+                firstName = firstValue.Value;
+            }
+            
+            if (ProtoService.TryGetOption("x_lastname", out OptionValueString lastValue))
+            {
+                lastName = lastValue.Value;
+            }
+
+            var response = await ProtoService.SendAsync(new CheckAuthenticationCode(_phoneCode, firstName, lastName));
             if (response is Error error)
             {
                 IsLoading = false;
@@ -190,13 +201,13 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand ResendCommand { get; }
         private async void ResendExecute()
         {
-            if (_sentCode == null)
+            if (_codeInfo == null)
             {
                 //...
                 return;
             }
 
-            if (_sentCode.CodeInfo.NextType == null)
+            if (_codeInfo.NextType == null)
             {
                 return;
             }

@@ -78,29 +78,29 @@ namespace Unigram.ViewModels.Payments
         {
             if (_shipping != null)
             {
-                if (_paymentForm.HasSavedCredentials)
-                {
-                    if (ApplicationSettings.Current.TmpPassword != null)
-                    {
-                        if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
-                        {
-                            ApplicationSettings.Current.TmpPassword = null;
-                        }
-                    }
+                //if (_paymentForm.HasSavedCredentials)
+                //{
+                //    if (ApplicationSettings.Current.TmpPassword != null)
+                //    {
+                //        if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
+                //        {
+                //            ApplicationSettings.Current.TmpPassword = null;
+                //        }
+                //    }
 
-                    if (ApplicationSettings.Current.TmpPassword != null)
-                    {
-                        //NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
-                    }
-                    else
-                    {
-                        //NavigationService.NavigateToPaymentFormStep4(_message, _paymentForm, _info, _requestedInfo, _shipping);
-                    }
-                }
-                else
-                {
-                    //NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, _info, _requestedInfo, _shipping);
-                }
+                //    if (ApplicationSettings.Current.TmpPassword != null)
+                //    {
+                //        NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, null, null, true);
+                //    }
+                //    else
+                //    {
+                //        NavigationService.NavigateToPaymentFormStep4(_message, _paymentForm, _info, _requestedInfo, _shipping);
+                //    }
+                //}
+                //else
+                //{
+                //    NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, _info, _requestedInfo, _shipping);
+                //}
             }
         }
     }

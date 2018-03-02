@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
 using Unigram.Views;
 using Unigram.ViewModels.SignIn;
 using Windows.Foundation;
@@ -15,7 +14,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Telegram.Api.TL.Auth;
 using Unigram.Common;
 using TdWindows;
 using Telegram.Helpers;
@@ -51,14 +49,14 @@ namespace Unigram.Views.SignIn
 
         #region Binding
 
-        private string ConvertType(AuthorizationStateWaitCode waitCode, string number)
+        private string ConvertType(AuthenticationCodeInfo codeInfo, string number)
         {
-            if (waitCode == null)
+            if (codeInfo == null)
             {
                 return null;
             }
 
-            switch (waitCode.CodeInfo.Type)
+            switch (codeInfo.Type)
             {
                 case AuthenticationCodeTypeTelegramMessage appType:
                     return Strings.Resources.SentAppCode;
@@ -70,11 +68,5 @@ namespace Unigram.Views.SignIn
         }
 
         #endregion
-
-        public class NavigationParameters
-        {
-            public string PhoneNumber { get; set; }
-            public AuthorizationStateWaitCode Result { get; set; }
-        }
     }
 }

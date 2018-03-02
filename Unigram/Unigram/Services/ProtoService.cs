@@ -30,6 +30,7 @@ namespace Unigram.Services
     {
         int GetMyId();
         T GetOption<T>(string key) where T : OptionValue;
+        bool TryGetOption<T>(string key, out T value) where T : OptionValue;
 
         AuthorizationState GetAuthorizationState();
         ConnectionState GetConnectionState();
@@ -319,6 +320,24 @@ namespace Unigram.Services
             }
 
             return default(T);
+        }
+
+        public bool TryGetOption<T>(string key, out T result) where T : OptionValue
+        {
+            if (_options.TryGetValue(key, out object value))
+            {
+                if (value is OptionValueEmpty)
+                {
+                    result = default(T);
+                    return false;
+                }
+
+                result = (T)value;
+                return true;
+            }
+
+            result = default(T);
+            return false;
         }
 
         public string GetTitle(Chat chat)

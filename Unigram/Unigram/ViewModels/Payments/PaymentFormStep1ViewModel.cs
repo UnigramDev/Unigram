@@ -143,22 +143,22 @@ namespace Unigram.ViewModels.Payments
                 }
                 else if (_paymentForm.HasSavedCredentials)
                 {
-                    if (ApplicationSettings.Current.TmpPassword != null)
-                    {
-                        if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
-                        {
-                            ApplicationSettings.Current.TmpPassword = null;
-                        }
-                    }
+                    //if (ApplicationSettings.Current.TmpPassword != null)
+                    //{
+                    //    if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
+                    //    {
+                    //        ApplicationSettings.Current.TmpPassword = null;
+                    //    }
+                    //}
 
-                    if (ApplicationSettings.Current.TmpPassword != null)
-                    {
-                        //NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, info, response.Result, null, null, null, true);
-                    }
-                    else
-                    {
-                        //NavigationService.NavigateToPaymentFormStep4(_message, _paymentForm, info, response.Result, null);
-                    }
+                    //if (ApplicationSettings.Current.TmpPassword != null)
+                    //{
+                    //    NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, info, response.Result, null, null, null, true);
+                    //}
+                    //else
+                    //{
+                    //    NavigationService.NavigateToPaymentFormStep4(_message, _paymentForm, info, response.Result, null);
+                    //}
                 }
                 else
                 {

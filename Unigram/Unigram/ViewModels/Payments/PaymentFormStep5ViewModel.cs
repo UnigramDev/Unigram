@@ -171,33 +171,33 @@ namespace Unigram.ViewModels.Payments
 
             IsLoading = true;
 
-            TLInputPaymentCredentialsBase credentials;
-            if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
-            {
-                credentials = new TLInputPaymentCredentialsSaved { Id = savedCard.Id, TmpPassword = ApplicationSettings.Current.TmpPassword.TmpPassword };
-            }
-            else
-            {
-                credentials = new TLInputPaymentCredentials { Data = new TLDataJSON { Data = _credentials }, IsSave = _save };
-            }
+            //TLInputPaymentCredentialsBase credentials;
+            //if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
+            //{
+            //    credentials = new TLInputPaymentCredentialsSaved { Id = savedCard.Id, TmpPassword = ApplicationSettings.Current.TmpPassword.TmpPassword };
+            //}
+            //else
+            //{
+            //    credentials = new TLInputPaymentCredentials { Data = new TLDataJSON { Data = _credentials }, IsSave = _save };
+            //}
 
-            var response = await LegacyService.SendPaymentFormAsync(_message.Id, _requestedInfo?.Id, _shipping?.Id, credentials);
-            if (response.IsSucceeded)
-            {
-                if (response.Result is TLPaymentsPaymentVerficationNeeded verificationNeeded)
-                {
-                    if (Uri.TryCreate(verificationNeeded.Url, UriKind.Absolute, out Uri uri))
-                    {
-                        await Launcher.LaunchUriAsync(uri);
-                    }
-                }
+            //var response = await LegacyService.SendPaymentFormAsync(_message.Id, _requestedInfo?.Id, _shipping?.Id, credentials);
+            //if (response.IsSucceeded)
+            //{
+            //    if (response.Result is TLPaymentsPaymentVerficationNeeded verificationNeeded)
+            //    {
+            //        if (Uri.TryCreate(verificationNeeded.Url, UriKind.Absolute, out Uri uri))
+            //        {
+            //            await Launcher.LaunchUriAsync(uri);
+            //        }
+            //    }
 
-                NavigationService.GoBackAt(1);
-            }
-            else if (response.Error != null)
-            {
+            //    NavigationService.GoBackAt(1);
+            //}
+            //else if (response.Error != null)
+            //{
 
-            }
+            //}
         }
 
         public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
