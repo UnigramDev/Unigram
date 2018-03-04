@@ -712,8 +712,23 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 
 	auto notification = ref new ToastNotification(document);
 
-	if (tag != nullptr) notification->Tag = tag;
-	if (group != nullptr) notification->Group = group;
+	if (tag != nullptr)
+	{
+		notification->Tag = tag;
+		notification->RemoteId = tag;
+	}
+
+	if (group != nullptr)
+	{
+		notification->Group = group;
+
+		if (tag != nullptr) 
+		{
+			notification->RemoteId += "_";
+		}
+
+		notification->RemoteId += group;
+	}
 
 	notifier->Show(notification);
 }

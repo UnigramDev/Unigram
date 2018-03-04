@@ -67,7 +67,7 @@ namespace Unigram.Services
                 var content = UpdateFromLabel(chat, update.Message) + GetBriefLabel(update.Message);
                 var sound = "";
                 var launch = GetLaunch(chat);
-                var tag = update.Message.Id.ToString();
+                var tag = GetTag(update.Message);
                 var group = GetGroup(update.Message, chat);
                 var picture = string.Empty;
                 var date = BindConvert.Current.DateTime(update.Message.Date).ToString("o");
@@ -91,6 +91,11 @@ namespace Unigram.Services
                     NotificationTask.UpdatePrimaryTile(caption, content, picture);
                 });
             }, TimeSpan.FromSeconds(2));
+        }
+
+        private string GetTag(Message message)
+        {
+            return (message.Id << 20).ToString();
         }
 
         private string GetGroup(Message message, Chat chat)
