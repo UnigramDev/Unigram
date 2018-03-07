@@ -321,10 +321,10 @@ namespace Unigram.Common
             if (confirm == ContentDialogResult.Primary)
             {
                 var proxy = ApplicationSettings.Current.Proxy;
-                proxy.Server = server ?? string.Empty;
+                proxy.Server = server = server ?? string.Empty;
                 proxy.Port = port;
-                proxy.Username = username ?? string.Empty;
-                proxy.Password = password ?? string.Empty;
+                proxy.Username = username = username ?? string.Empty;
+                proxy.Password = password = password ?? string.Empty;
                 proxy.IsEnabled = true;
 
                 protoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
