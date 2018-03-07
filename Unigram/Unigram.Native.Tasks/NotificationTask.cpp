@@ -283,7 +283,7 @@ String^ NotificationTask::GetTag(JsonObject^ custom)
 {
 	if (custom)
 	{
-		return custom->GetNamedString("msg_id");
+		return custom->GetNamedString("msg_id", nullptr);
 	}
 
 	return nullptr;
