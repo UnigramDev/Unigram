@@ -126,6 +126,13 @@ namespace Unigram
 #endif
         }
 
+        protected override void OnWindowCreated(WindowCreatedEventArgs args)
+        {
+            CustomXamlResourceLoader.Current = new XamlResourceLoader();
+            WindowContext.GetForCurrentView();
+            base.OnWindowCreated(args);
+        }
+
         private void Inactivity_Detected(object sender, EventArgs e)
         {
             Execute.BeginOnUIThread(() =>
