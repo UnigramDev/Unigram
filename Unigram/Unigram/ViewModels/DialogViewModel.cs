@@ -52,6 +52,7 @@ namespace Unigram.ViewModels
                 MessagesForwardCommand.RaiseCanExecuteChanged();
                 MessagesDeleteCommand.RaiseCanExecuteChanged();
                 MessagesCopyCommand.RaiseCanExecuteChanged();
+                MessagesReportCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -157,6 +158,7 @@ namespace Unigram.ViewModels
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
             MessagesCopyCommand = new RelayCommand(MessagesCopyExecute, MessagesCopyCanExecute);
+            MessagesReportCommand = new RelayCommand(MessagesReportExecute, MessagesReportCanExecute);
 
             MessageReplyLastCommand = new RelayCommand(MessageReplyLastExecute);
             MessageReplyCommand = new RelayCommand<MessageViewModel>(MessageReplyExecute);
@@ -170,6 +172,7 @@ namespace Unigram.ViewModels
             MessageEditLastCommand = new RelayCommand(MessageEditLastExecute);
             MessageEditCommand = new RelayCommand<MessageViewModel>(MessageEditExecute);
             MessagePinCommand = new RelayCommand<MessageViewModel>(MessagePinExecute);
+            MessageReportCommand = new RelayCommand<MessageViewModel>(MessageReportExecute);
             MessageStickerPackInfoCommand = new RelayCommand<MessageViewModel>(MessageStickerPackInfoExecute);
             MessageFaveStickerCommand = new RelayCommand<MessageViewModel>(MessageFaveStickerExecute);
             MessageUnfaveStickerCommand = new RelayCommand<MessageViewModel>(MessageUnfaveStickerExecute);

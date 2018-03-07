@@ -450,13 +450,15 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <controls:GlyphButton Glyph="&#xE16F;" Command="{x:Bind ViewModel.MessagesCopyCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                    <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
-                    <controls:GlyphButton Glyph="&#xE111;" Command="{x:Bind ViewModel.MessagesForwardCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="2"/>
+                    <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" ToolTipService.ToolTip="{CustomResource Delete}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    <controls:GlyphButton Glyph="&#xE730;" Command="{x:Bind ViewModel.MessagesReportCommand}" ToolTipService.ToolTip="{CustomResource ReportChat}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
+                    <controls:GlyphButton Glyph="&#xE16F;" Command="{x:Bind ViewModel.MessagesCopyCommand}" ToolTipService.ToolTip="{CustomResource Copy}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="2"/>
+                    <controls:GlyphButton Glyph="&#xE111;" Command="{x:Bind ViewModel.MessagesForwardCommand}" ToolTipService.ToolTip="{CustomResource Forward}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="3"/>
 
                     <ContentControl
                         Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
@@ -465,7 +467,7 @@
                         FontWeight="SemiBold"
                         Padding="12,0"
                         Height="48"
-                        Grid.Column="4">
+                        Grid.Column="5">
                         <ContentControl.ContentTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition/>
@@ -476,7 +478,7 @@
                         </ContentControl.Clip>
                     </ContentControl>
 
-                    <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Grid.Column="5"/>
+                    <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Grid.Column="6"/>
                 </Grid>
             </Grid>
         </controls:ContentPageHeader>

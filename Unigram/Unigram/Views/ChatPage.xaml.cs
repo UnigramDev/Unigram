@@ -1086,6 +1086,7 @@ namespace Unigram.Views
             CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, message, ViewModel.PinnedMessage?.Id == message.Id ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage);
             CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit);
             CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward);
+            CreateFlyoutItem(ref flyout, MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat);
             CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete);
             CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select);
             CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy);
@@ -1199,6 +1200,18 @@ namespace Unigram.Views
         private Visibility MessageForward_Loaded(MessageViewModel message)
         {
             return message.CanBeForwarded ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private Visibility MessageReport_Loaded(MessageViewModel message)
+        {
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return Visibility.Collapsed;
+            }
+
+            var myId = ViewModel.ProtoService.GetMyId();
+            return message.SenderUserId != myId ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private Visibility MessageCopy_Loaded(MessageViewModel message)

@@ -28,6 +28,8 @@ using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml;
+using Template10.Common;
 
 namespace Unigram.ViewModels
 {
@@ -523,6 +525,95 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Multiple Report
+
+        public RelayCommand MessagesReportCommand { get; }
+        private async void MessagesReportExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var myId = ProtoService.GetMyId();
+            var messages = SelectedItems.Where(x => x.SenderUserId != myId).OrderBy(x => x.Id).Select(x => x.Id).ToList();
+            if (messages.Count < 1)
+            {
+                return;
+            }
+
+            var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
+            var stack = new StackPanel();
+            stack.Children.Add(opt1);
+            stack.Children.Add(opt2);
+            stack.Children.Add(opt3);
+            stack.Children.Add(opt4);
+            stack.Margin = new Thickness(12, 16, 12, 0);
+
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            dialog.Content = stack;
+            dialog.Title = Strings.Resources.ReportChat;
+            dialog.IsPrimaryButtonEnabled = true;
+            dialog.IsSecondaryButtonEnabled = true;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var reason = opt1.IsChecked == true
+                ? new ChatReportReasonSpam()
+                : (opt2.IsChecked == true
+                    ? new ChatReportReasonViolence()
+                    : (opt3.IsChecked == true
+                        ? new ChatReportReasonPornography()
+                        : (ChatReportReason)new ChatReportReasonCustom()));
+
+            if (reason is ChatReportReasonCustom other)
+            {
+                var input = new InputDialog();
+                input.Title = Strings.Resources.ReportChat;
+                input.PlaceholderText = Strings.Resources.ReportChatDescription;
+                input.IsPrimaryButtonEnabled = true;
+                input.IsSecondaryButtonEnabled = true;
+                input.PrimaryButtonText = Strings.Resources.OK;
+                input.SecondaryButtonText = Strings.Resources.Cancel;
+
+                var inputResult = await input.ShowQueuedAsync();
+                if (inputResult == ContentDialogResult.Primary)
+                {
+                    other.Text = input.Text;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            ProtoService.Send(new ReportChat(chat.Id, reason, messages));
+        }
+
+        private bool MessagesReportCanExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return false;
+            }
+
+            var myId = ProtoService.GetMyId();
+            return chat.CanBeReported && SelectedItems.Count > 0 && SelectedItems.All(x => x.SenderUserId != myId);
+        }
+
+        #endregion
+
         #region Select
 
         public RelayCommand<MessageViewModel> MessageSelectCommand { get; }
@@ -737,6 +828,76 @@ namespace Unigram.ViewModels
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Report
+
+        public RelayCommand<MessageViewModel> MessageReportCommand { get; }
+        private async void MessageReportExecute(MessageViewModel message)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
+            var stack = new StackPanel();
+            stack.Children.Add(opt1);
+            stack.Children.Add(opt2);
+            stack.Children.Add(opt3);
+            stack.Children.Add(opt4);
+            stack.Margin = new Thickness(12, 16, 12, 0);
+
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            dialog.Content = stack;
+            dialog.Title = Strings.Resources.ReportChat;
+            dialog.IsPrimaryButtonEnabled = true;
+            dialog.IsSecondaryButtonEnabled = true;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var reason = opt1.IsChecked == true
+                ? new ChatReportReasonSpam()
+                : (opt2.IsChecked == true
+                    ? new ChatReportReasonViolence()
+                    : (opt3.IsChecked == true
+                        ? new ChatReportReasonPornography()
+                        : (ChatReportReason)new ChatReportReasonCustom()));
+
+            if (reason is ChatReportReasonCustom other)
+            {
+                var input = new InputDialog();
+                input.Title = Strings.Resources.ReportChat;
+                input.PlaceholderText = Strings.Resources.ReportChatDescription;
+                input.IsPrimaryButtonEnabled = true;
+                input.IsSecondaryButtonEnabled = true;
+                input.PrimaryButtonText = Strings.Resources.OK;
+                input.SecondaryButtonText = Strings.Resources.Cancel;
+
+                var inputResult = await input.ShowQueuedAsync();
+                if (inputResult == ContentDialogResult.Primary)
+                {
+                    other.Text = input.Text;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            ProtoService.Send(new ReportChat(chat.Id, reason, new[] { message.Id }));
         }
 
         #endregion
