@@ -57,14 +57,14 @@ namespace Unigram.ViewModels.SignIn
             //    return;
             //}
 
-            if (_firstName == null)
+            if (string.IsNullOrEmpty(_firstName))
             {
                 RaisePropertyChanged("FIRSTNAME_INVALID");
                 return;
             }
 
-            await ProtoService.SendAsync(new SetOption("x_firstname", new OptionValueString(_firstName)));
-            await ProtoService.SendAsync(new SetOption("x_lastname", new OptionValueString(_lastName)));
+            await ProtoService.SendAsync(new SetOption("x_firstname", new OptionValueString(_firstName ?? string.Empty)));
+            await ProtoService.SendAsync(new SetOption("x_lastname", new OptionValueString(_lastName ?? string.Empty)));
 
             NavigationService.Navigate(typeof(SignInSentCodePage));
 
