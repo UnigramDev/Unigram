@@ -93,6 +93,28 @@
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
                 </StackPanel>
 
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource Events}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        IsEnabled="False"
+                        IsOn="True"
+                        Header="{CustomResource ContactJoined}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        IsEnabled="False"
+                        IsOn="True"
+                        Header="{CustomResource PinnedMessages}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource NotificationsOther}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IncludeMutedChats, Mode=TwoWay}"
+                        Header="Include muted chats"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+                </StackPanel>
+
                 <StackPanel Margin="0,24,0,0">
                     <controls:BadgeButton
                         Content="{CustomResource ResetAllNotifications}"

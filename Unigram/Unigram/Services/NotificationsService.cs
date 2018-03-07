@@ -27,7 +27,7 @@ namespace Unigram.Services
         Task UnregisterAsync();
     }
 
-    public class NotificationsService : INotificationsService, IHandle<UpdateNewMessage>
+    public class NotificationsService : INotificationsService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateNewMessage>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -47,9 +47,21 @@ namespace Unigram.Services
             _aggregator.Subscribe(this);
         }
 
+        public void Handle(UpdateUnreadMessageCount update)
+        {
+            if (ApplicationSettings.Current.Notifications.IncludeMutedChats)
+            {
+                NotificationTask.UpdatePrimaryBadge(update.UnreadCount);
+            }
+            else
+            {
+                NotificationTask.UpdatePrimaryBadge(update.UnreadUnmutedCount);
+            }
+        }
+
         public void Handle(UpdateNewMessage update)
         {
-            if (update.DisableNotification || !ApplicationSettings.Current.InAppPreview)
+            if (update.DisableNotification || !ApplicationSettings.Current.Notifications.InAppPreview)
             {
                 return;
             }

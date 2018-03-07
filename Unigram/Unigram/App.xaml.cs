@@ -367,7 +367,6 @@ namespace Unigram
 
             await Toast.RegisterBackgroundTasks();
 
-            BadgeUpdateManager.CreateBadgeUpdaterForApplication("App").Clear();
             TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
             ToastNotificationManager.History.Clear("App");
 

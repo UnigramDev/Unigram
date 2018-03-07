@@ -70,61 +70,6 @@ namespace Unigram.Common
             }
         }
 
-        #region InApp
-
-        private bool? _inAppPreview;
-        public bool InAppPreview
-        {
-            get
-            {
-                if (_inAppPreview == null)
-                    _inAppPreview = GetValueOrDefault("InAppPreview", true);
-
-                return _inAppPreview ?? true;
-            }
-            set
-            {
-                _inAppPreview = value;
-                AddOrUpdateValue("InAppPreview", value);
-            }
-        }
-
-        private bool? _inAppVibrate;
-        public bool InAppVibrate
-        {
-            get
-            {
-                if (_inAppVibrate == null)
-                    _inAppVibrate = GetValueOrDefault("InAppVibrate", true);
-
-                return _inAppVibrate ?? true;
-            }
-            set
-            {
-                _inAppVibrate = value;
-                AddOrUpdateValue("InAppVibrate", value);
-            }
-        }
-
-        private bool? _inAppSounds;
-        public bool InAppSounds
-        {
-            get
-            {
-                if (_inAppSounds == null)
-                    _inAppSounds = GetValueOrDefault("InAppSounds", true);
-
-                return _inAppSounds ?? true;
-            }
-            set
-            {
-                _inAppSounds = value;
-                AddOrUpdateValue("InAppSounds", value);
-            }
-        }
-
-        #endregion
-
         #region App version
 
         public const int CurrentVersion = 1014530;
@@ -155,6 +100,15 @@ namespace Unigram.Common
             get
             {
                 return _proxy = _proxy ?? new ProxySettings();
+            }
+        }
+
+        private NotificationsSettings _notifications;
+        public NotificationsSettings Notifications
+        {
+            get
+            {
+                return _notifications = _notifications ?? new NotificationsSettings();
             }
         }
 
@@ -439,6 +393,77 @@ namespace Unigram.Common
             // Here should be cleaned up all the settings that are shared with background tasks.
             _peerToPeerMode = null;
             _useLessData = null;
+        }
+    }
+
+    public class NotificationsSettings : ApplicationSettingsBase
+    {
+        private bool? _inAppPreview;
+        public bool InAppPreview
+        {
+            get
+            {
+                if (_inAppPreview == null)
+                    _inAppPreview = GetValueOrDefault("InAppPreview", true);
+
+                return _inAppPreview ?? true;
+            }
+            set
+            {
+                _inAppPreview = value;
+                AddOrUpdateValue("InAppPreview", value);
+            }
+        }
+
+        private bool? _inAppVibrate;
+        public bool InAppVibrate
+        {
+            get
+            {
+                if (_inAppVibrate == null)
+                    _inAppVibrate = GetValueOrDefault("InAppVibrate", true);
+
+                return _inAppVibrate ?? true;
+            }
+            set
+            {
+                _inAppVibrate = value;
+                AddOrUpdateValue("InAppVibrate", value);
+            }
+        }
+
+        private bool? _inAppSounds;
+        public bool InAppSounds
+        {
+            get
+            {
+                if (_inAppSounds == null)
+                    _inAppSounds = GetValueOrDefault("InAppSounds", true);
+
+                return _inAppSounds ?? true;
+            }
+            set
+            {
+                _inAppSounds = value;
+                AddOrUpdateValue("InAppSounds", value);
+            }
+        }
+
+        private bool? _includeMutedChats;
+        public bool IncludeMutedChats
+        {
+            get
+            {
+                if (_includeMutedChats == null)
+                    _includeMutedChats = GetValueOrDefault("IncludeMutedChats", false);
+
+                return _includeMutedChats ?? false;
+            }
+            set
+            {
+                _includeMutedChats = value;
+                AddOrUpdateValue("IncludeMutedChats", value);
+            }
         }
     }
 
