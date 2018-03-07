@@ -34,7 +34,7 @@ using Unigram.Native;
 using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Automation;
 using Unigram.Entities;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Services;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Core.Common;
@@ -594,7 +594,7 @@ namespace Unigram.Controls
                         //{
                         //    if (result is Stickers stickers)
                         //    {
-                        //        this.BeginOnUIThread(() => ViewModel.StickerPack = stickers.StickersData.ToList());
+                        //        this.BeginOnUIThread(() => ViewModel.StickerPack = stickers.StickersValue.ToList());
                         //    }
                         //});
                         ViewModel.StickerPack = new StickerCollection(ViewModel.ProtoService, text.Trim());
@@ -655,7 +655,7 @@ namespace Unigram.Controls
             return null;
         }
 
-        public class StickerCollection : MvxObservableCollection<TdWindows.Sticker>, ISupportIncrementalLoading
+        public class StickerCollection : MvxObservableCollection<Telegram.Td.Api.Sticker>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private readonly string _query;
@@ -678,7 +678,7 @@ namespace Unigram.Controls
                     var response = await _protoService.SendAsync(new GetStickers(_query, 20));
                     if (response is Stickers stickers)
                     {
-                        foreach (var sticker in stickers.StickersData)
+                        foreach (var sticker in stickers.StickersValue)
                         {
                             Add(sticker);
                             count++;
@@ -692,7 +692,7 @@ namespace Unigram.Controls
             public bool HasMoreItems => _hasMore;
         }
 
-        public class UsernameCollection : MvxObservableCollection<TdWindows.User>, ISupportIncrementalLoading
+        public class UsernameCollection : MvxObservableCollection<Telegram.Td.Api.User>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private readonly long _chatId;

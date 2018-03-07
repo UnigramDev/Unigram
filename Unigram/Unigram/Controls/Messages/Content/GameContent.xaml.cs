@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
@@ -156,7 +156,7 @@ namespace Unigram.Controls.Messages.Content
         {
             var game = _message.Content as MessageGame;
 
-            var file = game.Game.Animation?.AnimationData ?? game.Game.Photo?.GetBig()?.Photo;
+            var file = game.Game.Animation?.AnimationValue ?? game.Game.Photo?.GetBig()?.Photo;
             if (file.Local.IsDownloadingActive)
             {
                 _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));

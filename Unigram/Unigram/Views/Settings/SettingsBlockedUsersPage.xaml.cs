@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Telegram.Helpers;
 using Unigram.Controls;
@@ -97,7 +97,7 @@ namespace Unigram.Views.Settings
             }
         }
 
-        public void UpdateFile(TdWindows.File file)
+        public void UpdateFile(Telegram.Td.Api.File file)
         {
             foreach (User user in ScrollingHost.Items)
             {

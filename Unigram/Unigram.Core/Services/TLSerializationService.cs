@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Services.SerializationService;
 using System.Reflection;
-using TdWindows;
+using Telegram.Td.Api;
 using Newtonsoft.Json.Linq;
 
 namespace Unigram.Core.Services
@@ -119,7 +119,7 @@ namespace Unigram.Core.Services
     {
         public override bool CanConvert(Type objectType)
         {
-            return objectType.Namespace.StartsWith("TdWindows");
+            return objectType.Namespace.StartsWith("Telegram.Td.Api");
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

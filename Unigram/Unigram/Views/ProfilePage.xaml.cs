@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Common;
 using System.Windows.Input;
-using TdWindows;
+using Telegram.Td.Api;
 using Telegram.Helpers;
 using Unigram.Converters;
 using Unigram.Collections;

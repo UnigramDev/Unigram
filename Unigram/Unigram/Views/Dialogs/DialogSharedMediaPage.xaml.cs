@@ -25,7 +25,7 @@ using Windows.System;
 using System.Windows.Input;
 using Unigram.Strings;
 using Unigram.ViewModels.Dialogs;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Controls.Items;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Delegates;
@@ -268,7 +268,7 @@ namespace Unigram.Views.Dialogs
             element.Tag = message;
         }
 
-        public void UpdateFile(TdWindows.File file)
+        public void UpdateFile(Telegram.Td.Api.File file)
         {
             foreach (Message message in ScrollingMedia.Items)
             {
@@ -320,12 +320,12 @@ namespace Unigram.Views.Dialogs
                     var document = message.Content as MessageDocument;
                     var content = container.ContentTemplateRoot as SharedFileListViewItem;
 
-                    if (document == null || document.Document == null || document.Document.DocumentData == null)
+                    if (document == null || document.Document == null || document.Document.DocumentValue == null)
                     {
                         continue;
                     }
 
-                    if (file.Id == document.Document.DocumentData.Id)
+                    if (file.Id == document.Document.DocumentValue.Id)
                     {
                         content.UpdateFile(message, file);
                     }

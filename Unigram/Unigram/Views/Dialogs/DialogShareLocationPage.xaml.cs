@@ -33,7 +33,7 @@ using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Dialogs;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.Views.Dialogs
 {

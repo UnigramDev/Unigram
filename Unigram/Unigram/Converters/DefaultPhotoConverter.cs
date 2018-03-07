@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml;
 using Windows.UI.ViewManagement;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.Converters
 {

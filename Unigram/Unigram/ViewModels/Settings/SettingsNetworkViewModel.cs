@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -144,7 +144,7 @@ namespace Unigram.ViewModels.Settings
     //            new SettingsStatsData(statsService, Strings.Resources.LocalAudioCache, type, DataType.Audios),
     //            new SettingsStatsData(statsService, Strings.Resources.FilesDataUsage, type, DataType.Files),
     //            new SettingsStatsCallData(statsService, Strings.Resources.CallsDataUsage, type, DataType.Calls),
-    //            new SettingsStatsDataBase(statsService, Strings.Resources.MessagesDataUsage, type, DataType.Messages),
+    //            new SettingsStatsDataBase(statsService, Strings.Resources.MessagesValueUsage, type, DataType.Messages),
     //            new SettingsStatsDataBase(statsService, Strings.Resources.TotalDataUsage, type, DataType.Total)
     //        };
 

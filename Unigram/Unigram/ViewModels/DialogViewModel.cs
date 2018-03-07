@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Common;
@@ -581,14 +581,14 @@ namespace Unigram.ViewModels
                 //return;
 
                 var response = await ProtoService.SendAsync(new GetChatHistory(_chat.Id, maxId, 0, limit, false));
-                if (response is TdWindows.Messages messages)
+                if (response is Telegram.Td.Api.Messages messages)
                 {
-                    if (messages.MessagesData.Count > 0)
+                    if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
                     }
 
-                    var replied = messages.MessagesData.OrderByDescending(x => x.Id).Select(x => GetMessage(x)).ToList();
+                    var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => GetMessage(x)).ToList();
                     ProcessFiles(_chat, replied);
                     ProcessReplies(replied);
 
@@ -643,9 +643,9 @@ namespace Unigram.ViewModels
                 //}
 
                 var response = await ProtoService.SendAsync(new GetChatHistory(_chat.Id, maxId, -49, limit, false));
-                if (response is TdWindows.Messages messages)
+                if (response is Telegram.Td.Api.Messages messages)
                 {
-                    if (messages.MessagesData.Any(x => !Items.ContainsKey(x.Id)))
+                    if (messages.MessagesValue.Any(x => !Items.ContainsKey(x.Id)))
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                     }
@@ -656,7 +656,7 @@ namespace Unigram.ViewModels
 
                     var added = false;
 
-                    var replied = messages.MessagesData.OrderBy(x => x.Id).Select(x => GetMessage(x)).ToList();
+                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => GetMessage(x)).ToList();
                     ProcessFiles(_chat, replied);
                     ProcessReplies(replied);
 
@@ -724,7 +724,7 @@ namespace Unigram.ViewModels
                 if (response is Messages messages)
                 {
                     var stack = new List<long>();
-                    foreach (var message in messages.MessagesData)
+                    foreach (var message in messages.MessagesValue)
                     {
                         stack.Add(message.Id);
                     }
@@ -854,16 +854,16 @@ namespace Unigram.ViewModels
                 var limit = 50;
 
                 var response = await ProtoService.SendAsync(new GetChatHistory(_chat.Id, maxId, offset, limit, false));
-                if (response is TdWindows.Messages messages)
+                if (response is Telegram.Td.Api.Messages messages)
                 {
-                    if (messages.MessagesData.Count > 0)
+                    if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                     }
 
                     var lastRead = false;
 
-                    var replied = messages.MessagesData.OrderBy(x => x.Id).Select(x => GetMessage(x)).ToList();
+                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => GetMessage(x)).ToList();
                     ProcessFiles(_chat, replied);
                     ProcessReplies(replied);
 
@@ -1020,7 +1020,7 @@ namespace Unigram.ViewModels
                         _filesMap[animation.Thumbnail.Photo.Id].Add(message);
                     }
 
-                    _filesMap[animation.AnimationData.Id].Add(message);
+                    _filesMap[animation.AnimationValue.Id].Add(message);
                 }
                 else if (content is Audio audio)
                 {
@@ -1029,7 +1029,7 @@ namespace Unigram.ViewModels
                         _filesMap[audio.AlbumCoverThumbnail.Photo.Id].Add(message);
                     }
 
-                    _filesMap[audio.AudioData.Id].Add(message);
+                    _filesMap[audio.AudioValue.Id].Add(message);
                 }
                 else if (content is Document document)
                 {
@@ -1038,7 +1038,7 @@ namespace Unigram.ViewModels
                         _filesMap[document.Thumbnail.Photo.Id].Add(message);
                     }
 
-                    _filesMap[document.DocumentData.Id].Add(message);
+                    _filesMap[document.DocumentValue.Id].Add(message);
                 }
                 else if (content is Photo photo)
                 {
@@ -1054,7 +1054,7 @@ namespace Unigram.ViewModels
                         _filesMap[sticker.Thumbnail.Photo.Id].Add(message);
                     }
 
-                    _filesMap[sticker.StickerData.Id].Add(message);
+                    _filesMap[sticker.StickerValue.Id].Add(message);
                 }
                 else if (content is Video video)
                 {
@@ -1063,7 +1063,7 @@ namespace Unigram.ViewModels
                         _filesMap[video.Thumbnail.Photo.Id].Add(message);
                     }
 
-                    _filesMap[video.VideoData.Id].Add(message);
+                    _filesMap[video.VideoValue.Id].Add(message);
                 }
                 else if (content is VideoNote videoNote)
                 {
@@ -1148,11 +1148,11 @@ namespace Unigram.ViewModels
             }
 
             var response = await ProtoService.SendAsync(new GetMessages(chat.Id, replies));
-            if (response is TdWindows.Messages messages)
+            if (response is Telegram.Td.Api.Messages messages)
             {
                 foreach (var message in replied)
                 {
-                    foreach (var result in messages.MessagesData)
+                    foreach (var result in messages.MessagesValue)
                     {
                         if (result == null)
                         {
@@ -2567,7 +2567,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var response = await ProtoService.SendAsync(new ReportChat(chat.Id, reason));
+            var response = await ProtoService.SendAsync(new ReportChat(chat.Id, reason, new long[0]));
         }
 
         #endregion

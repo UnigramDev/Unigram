@@ -13,7 +13,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {

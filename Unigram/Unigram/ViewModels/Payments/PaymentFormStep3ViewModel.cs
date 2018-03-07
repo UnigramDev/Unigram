@@ -13,7 +13,7 @@ using Unigram.Views.Payments;
 using Windows.Data.Json;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Payments
 {

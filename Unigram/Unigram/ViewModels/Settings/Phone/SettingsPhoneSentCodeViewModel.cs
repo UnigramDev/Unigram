@@ -11,7 +11,7 @@ using Unigram.Views.SignIn;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Entities;
 
 namespace Unigram.ViewModels.Settings

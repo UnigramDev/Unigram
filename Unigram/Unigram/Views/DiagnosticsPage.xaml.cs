@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls.Views;
@@ -91,7 +91,7 @@ namespace Unigram.Views
                 }
 
                 ApplicationSettings.Current.VerbosityLevel = newLevel;
-                TdWindows.Log.SetVerbosityLevel(newLevel);
+                Telegram.Td.Log.SetVerbosityLevel(newLevel);
 
                 Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)ApplicationSettings.Current.VerbosityLevel);
             }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 
@@ -52,11 +52,11 @@ namespace Unigram.Collections
             try
             {
                 var response = await _protoService.SendAsync(new SearchChatMessages(_chatId, _query, 0, _lastMaxId, 0, 50, _filter));
-                if (response is TdWindows.Messages messages)
+                if (response is Messages messages)
                 {
-                    if (messages.MessagesData.Count > 0)
+                    if (messages.MessagesValue.Count > 0)
                     {
-                        _lastMaxId = messages.MessagesData.Min(x => x.Id);
+                        _lastMaxId = messages.MessagesValue.Min(x => x.Id);
                         _hasMore = true;
                     }
                     else
@@ -64,7 +64,7 @@ namespace Unigram.Collections
                         _hasMore = false;
                     }
 
-                    return messages.MessagesData.GroupBy(x =>
+                    return messages.MessagesValue.GroupBy(x =>
                     {
                         var dateTime = Utils.UnixTimestampToDateTime(x.Date);
                         return new DateTime(dateTime.Year, dateTime.Month, 1);

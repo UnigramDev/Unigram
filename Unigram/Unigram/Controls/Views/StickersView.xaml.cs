@@ -17,7 +17,7 @@ using LinqToVisualTree;
 using Unigram.Common;
 using System.Threading.Tasks;
 using Unigram.Views.Settings;
-using TdWindows;
+using Telegram.Td.Api;
 using System.Diagnostics;
 using Windows.Storage;
 using Unigram.Native;
@@ -222,7 +222,7 @@ namespace Unigram.Controls.Views
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is ViewModels.Dialogs.StickerViewModel sticker && sticker.StickerData != null)
+            if (e.ClickedItem is ViewModels.Dialogs.StickerViewModel sticker && sticker.StickerValue != null)
             {
                 StickerClick?.Invoke(sticker.Get());
             }
@@ -370,7 +370,7 @@ namespace Unigram.Controls.Views
             //else
             if (args.Phase == 0)
             {
-                Debug.WriteLine("Loading sticker " + sticker.StickerData.Id + " for sticker set id " + sticker.SetId);
+                Debug.WriteLine("Loading sticker " + sticker.StickerValue.Id + " for sticker set id " + sticker.SetId);
 
                 var file = sticker.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
@@ -505,7 +505,7 @@ namespace Unigram.Controls.Views
 
         private void DownloadFile(int id, Animation animation)
         {
-            _animations[id][animation.AnimationData.Id] = animation;
+            _animations[id][animation.AnimationValue.Id] = animation;
             ViewModel.ProtoService.Send(new DownloadFile(id, 1));
         }
 

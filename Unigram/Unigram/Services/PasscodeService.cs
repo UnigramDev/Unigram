@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,6 +10,8 @@ using System.Threading.Tasks;
 using Template10.Mvvm;
 using Unigram.Common;
 using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.DataProtection;
+using Windows.Storage;
 using TLPasscodeTuple = System.Tuple<byte[], byte[], bool, int, int, bool, bool, bool>;
 
 namespace Unigram.Services
@@ -49,7 +52,7 @@ namespace Unigram.Services
             if (!_readOnce)
             {
                 _readOnce = true;
-                _cachedParams = new TLPasscodeParams(Utils.OpenObjectFromMTProtoFile<TLPasscodeTuple>(_passcodeParamsFileSyncRoot, "passcode_params.dat"));
+                _cachedParams = new TLPasscodeParams();// new TLPasscodeParams(Utils.OpenObjectFromMTProtoFile<TLPasscodeTuple>(_passcodeParamsFileSyncRoot, "passcode_params.dat"));
             }
 
             return _cachedParams;
@@ -214,11 +217,22 @@ namespace Unigram.Services
             }
         }
 
-        private void Save()
+        private async void Save()
         {
-            if (_cachedParams != null && _cachedParams.Hash != null && _cachedParams.Salt != null)
+            var cached = _cachedParams;
+            if (cached != null && cached.Hash != null && cached.Salt != null)
             {
-                Utils.SaveObjectToMTProtoFile(_passcodeParamsFileSyncRoot, "passcode_params.dat", _cachedParams.ToTuple());
+                //try
+                //{
+                //    var provider = new DataProtectionProvider("LOCAL=user");
+                //    var encoding = BinaryStringEncoding.Utf8;
+                //    var message = CryptographicBuffer.ConvertStringToBinary(JsonConvert.SerializeObject(cached), encoding);
+                //    var protec = await provider.ProtectAsync(message);
+
+                //    var file = await FileUtils.CreateFileAsync("passcode.dat");
+                //    await FileIO.WriteBufferAsync(file, protec);
+                //}
+                //catch { }
             }
         }
 
@@ -296,33 +310,6 @@ namespace Unigram.Services
             public bool IsLocked { get; set; }
             public bool IsHelloEnabled { get; set; }
             public bool IsScreenshotEnabled { get; set; }
-
-            public TLPasscodeParams()
-            {
-
-            }
-
-            public TLPasscodeParams(TLPasscodeTuple tuple)
-            {
-                if (tuple == null)
-                {
-                    return;
-                }
-
-                Hash = tuple.Item1;
-                Salt = tuple.Item2;
-                IsSimple = tuple.Item3;
-                CloseTime = tuple.Item4;
-                AutolockTimeout = tuple.Item5;
-                IsLocked = tuple.Item6;
-                IsHelloEnabled = tuple.Item7;
-                IsScreenshotEnabled = tuple.Rest;
-            }
-
-            public TLPasscodeTuple ToTuple()
-            {
-                return new TLPasscodeTuple(Hash, Salt, IsSimple, CloseTime, AutolockTimeout, IsLocked, IsHelloEnabled, IsScreenshotEnabled);
-            }
         }
     }
 }

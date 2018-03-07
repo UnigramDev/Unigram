@@ -22,7 +22,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI;
 using Template10.Utils;
 using Unigram.Converters;
-using TdWindows;
+using Telegram.Td.Api;
 using Windows.Storage;
 using Unigram.Native;
 using Unigram.Common;

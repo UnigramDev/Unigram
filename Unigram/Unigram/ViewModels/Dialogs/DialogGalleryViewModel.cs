@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Services;
@@ -48,11 +48,11 @@ namespace Unigram.ViewModels.Dialogs
                 var offset = -limit / 2;
 
                 var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterPhotoAndVideo()));
-                if (response is TdWindows.Messages messages)
+                if (response is Telegram.Td.Api.Messages messages)
                 {
                     TotalItems = messages.TotalCount;
 
-                    foreach (var message in messages.MessagesData.Where(x => x.Id < fromMessageId))
+                    foreach (var message in messages.MessagesValue.Where(x => x.Id < fromMessageId))
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
@@ -64,7 +64,7 @@ namespace Unigram.ViewModels.Dialogs
                         }
                     }
 
-                    foreach (var message in messages.MessagesData.Where(x => x.Id > fromMessageId).OrderBy(x => x.Id))
+                    foreach (var message in messages.MessagesValue.Where(x => x.Id > fromMessageId).OrderBy(x => x.Id))
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
@@ -97,11 +97,11 @@ namespace Unigram.ViewModels.Dialogs
                 var offset = -limit / 2;
 
                 var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterPhotoAndVideo()));
-                if (response is TdWindows.Messages messages)
+                if (response is Telegram.Td.Api.Messages messages)
                 {
                     TotalItems = messages.TotalCount;
 
-                    foreach (var message in messages.MessagesData.Where(x => x.Id < fromMessageId))
+                    foreach (var message in messages.MessagesValue.Where(x => x.Id < fromMessageId))
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
@@ -167,11 +167,11 @@ namespace Unigram.ViewModels.Dialogs
                 var offset = -limit / 2;
 
                 var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterPhotoAndVideo()));
-                if (response is TdWindows.Messages messages)
+                if (response is Telegram.Td.Api.Messages messages)
                 {
                     TotalItems = messages.TotalCount;
 
-                    foreach (var message in messages.MessagesData.Where(x => x.Id > fromMessageId).OrderBy(x => x.Id))
+                    foreach (var message in messages.MessagesValue.Where(x => x.Id > fromMessageId).OrderBy(x => x.Id))
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {

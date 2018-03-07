@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
@@ -46,7 +46,7 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, audio.AlbumCoverThumbnail.Photo);
             }
 
-            UpdateFile(message, audio.AudioData);
+            UpdateFile(message, audio.AudioValue);
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)
@@ -71,7 +71,7 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, file);
                 return;
             }
-            else if (audio.AudioData.Id != file.Id)
+            else if (audio.AudioValue.Id != file.Id)
             {
                 return;
             }
@@ -163,7 +163,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            var file = audio.AudioData;
+            var file = audio.AudioValue;
             if (file.Local.IsDownloadingActive)
             {
                 _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));

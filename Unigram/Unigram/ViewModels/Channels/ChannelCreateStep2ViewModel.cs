@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Common;
@@ -199,7 +199,7 @@ namespace Unigram.ViewModels.Channels
             }
 
             var response = await ProtoService.SendAsync(new GetCreatedPublicChats());
-            if (response is TdWindows.Chats chats)
+            if (response is Telegram.Td.Api.Chats chats)
             {
                 var result = new List<Chat>();
 

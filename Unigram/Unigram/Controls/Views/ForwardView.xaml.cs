@@ -24,7 +24,7 @@ using Windows.UI;
 using Template10.Utils;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.Controls.Views
 {

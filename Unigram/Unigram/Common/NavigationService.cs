@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.LoggingService;
 using Template10.Services.NavigationService;

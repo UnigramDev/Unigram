@@ -41,7 +41,7 @@ using Windows.Media.Playback;
 using Unigram.Common;
 using Unigram.Controls.Messages;
 using LinqToVisualTree;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.Views
 {

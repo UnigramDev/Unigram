@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
 using Unigram.Views.Payments;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Payments
 {

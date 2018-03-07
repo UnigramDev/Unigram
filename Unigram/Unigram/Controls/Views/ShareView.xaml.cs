@@ -28,7 +28,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Windows.System;
 using Windows.UI.Core;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.Controls.Views
 {

@@ -16,7 +16,7 @@ using System.ComponentModel;
 using System.Collections.Specialized;
 using Windows.Storage;
 using System.Runtime.CompilerServices;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Dialogs
 {
@@ -303,7 +303,7 @@ namespace Unigram.ViewModels.Dialogs
                                 for (int j = 0; j < _recentSet.Stickers.Count; j++)
                                 {
                                     var recSticker = _recentSet.Stickers[j];
-                                    if (recSticker.StickerData.Id == favSticker.StickerData.Id)
+                                    if (recSticker.StickerValue.Id == favSticker.StickerValue.Id)
                                     {
                                         _recentSet.Stickers.Remove(recSticker);
                                         break;
@@ -313,11 +313,11 @@ namespace Unigram.ViewModels.Dialogs
 
 
                             var stickers = new List<StickerSetViewModel>();
-                            if (favorite.StickersData.Count > 0)
+                            if (favorite.StickersValue.Count > 0)
                             {
                                 stickers.Add(_favoriteSet);
                             }
-                            if (recent.StickersData.Count > 0)
+                            if (recent.StickersValue.Count > 0)
                             {
                                 stickers.Add(_recentSet);
                             }
@@ -350,7 +350,7 @@ namespace Unigram.ViewModels.Dialogs
             {
                 if (result is Animations animation)
                 {
-                    BeginOnUIThread(() => SavedGifs.ReplaceWith(MosaicMedia.Calculate(animation.AnimationsData.ToList())));
+                    BeginOnUIThread(() => SavedGifs.ReplaceWith(MosaicMedia.Calculate(animation.AnimationsValue.ToList())));
                 }
             });
 
@@ -525,11 +525,11 @@ namespace Unigram.ViewModels.Dialogs
         {
             if (raise)
             {
-                Stickers.ReplaceWith(stickers.StickersData.Select(x => new StickerViewModel(x)));
+                Stickers.ReplaceWith(stickers.StickersValue.Select(x => new StickerViewModel(x)));
             }
             else
             {
-                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.StickersData.Select(x => new StickerViewModel(x)));
+                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.StickersValue.Select(x => new StickerViewModel(x)));
             }
         }
 
@@ -586,7 +586,7 @@ namespace Unigram.ViewModels.Dialogs
             return _sticker;
         }
 
-        public File StickerData => _sticker?.StickerData;
+        public File StickerValue => _sticker?.StickerValue;
         public PhotoSize Thumbnail => _sticker?.Thumbnail;
         public MaskPosition MaskPosition => _sticker?.MaskPosition;
         public bool IsMask => _sticker?.IsMask ?? false;

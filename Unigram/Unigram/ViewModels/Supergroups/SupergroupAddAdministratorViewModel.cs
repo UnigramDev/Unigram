@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Windows.Foundation;
@@ -66,7 +66,7 @@ namespace Unigram.ViewModels.Supergroups
                 if (phase == 0)
                 {
                     var response = await _protoService.SendAsync(new SearchContacts(_query, 100));
-                    if (response is TdWindows.Users users)
+                    if (response is Telegram.Td.Api.Users users)
                     {
                         foreach (var id in users.UserIds)
                         {
@@ -82,7 +82,7 @@ namespace Unigram.ViewModels.Supergroups
                 else if (phase == 1)
                 {
                     var response = await _protoService.SendAsync(new SearchChatsOnServer(_query, 100));
-                    if (response is TdWindows.Chats chats && _local != null)
+                    if (response is Telegram.Td.Api.Chats chats && _local != null)
                     {
                         foreach (var id in chats.ChatIds)
                         {
@@ -102,7 +102,7 @@ namespace Unigram.ViewModels.Supergroups
                 else if (phase == 2)
                 {
                     var response = await _protoService.SendAsync(new SearchPublicChats(_query));
-                    if (response is TdWindows.Chats chats)
+                    if (response is Telegram.Td.Api.Chats chats)
                     {
                         foreach (var id in chats.ChatIds)
                         {

@@ -32,7 +32,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Unigram.Controls.Views;
 using LinqToVisualTree;
 using Unigram.ViewModels.Users;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Controls.Messages.Content;
 using Unigram.Controls.Messages;
 using Unigram.Services;
@@ -582,7 +582,7 @@ namespace Unigram.Views
             var galleryItem = new GalleryPhotoItem(ViewModel.ProtoService, block.Photo, block.Caption?.ToString());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessagePhoto(block.Photo, null));
+            var message = GetMessage(new MessagePhoto(block.Photo, null, false));
             var element = new StackPanel { Tag = message, Style = Resources["BlockPhotoStyle"] as Style };
 
             foreach (var size in block.Photo.Sizes)
@@ -612,7 +612,7 @@ namespace Unigram.Views
             var galleryItem = new GalleryVideoItem(ViewModel.ProtoService, block.Video, block.Caption?.ToString());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessageVideo(block.Video, null));
+            var message = GetMessage(new MessageVideo(block.Video, null, false));
             var element = new StackPanel { Tag = message, Style = Resources["BlockVideoStyle"] as Style };
 
             if (block.Video.Thumbnail != null)
@@ -620,7 +620,7 @@ namespace Unigram.Views
                 _filesMap[block.Video.Thumbnail.Photo.Id].Add(element);
             }
 
-            _filesMap[block.Video.VideoData.Id].Add(element);
+            _filesMap[block.Video.VideoValue.Id].Add(element);
 
             var content = new VideoContent(message);
             content.HorizontalAlignment = HorizontalAlignment.Center;
@@ -644,7 +644,7 @@ namespace Unigram.Views
             var galleryItem = new GalleryAnimationItem(ViewModel.ProtoService, block.Animation, block.Caption?.ToString());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessageAnimation(block.Animation, null));
+            var message = GetMessage(new MessageAnimation(block.Animation, null, false));
             var element = new StackPanel { Tag = message, Style = Resources["BlockVideoStyle"] as Style };
 
             if (block.Animation.Thumbnail != null)
@@ -652,7 +652,7 @@ namespace Unigram.Views
                 _filesMap[block.Animation.Thumbnail.Photo.Id].Add(element);
             }
 
-            _filesMap[block.Animation.AnimationData.Id].Add(element);
+            _filesMap[block.Animation.AnimationValue.Id].Add(element);
 
             var content = new AnimationContent(message);
             content.HorizontalAlignment = HorizontalAlignment.Center;

@@ -23,7 +23,7 @@ using Unigram.Converters;
 using System.Runtime.CompilerServices;
 using Unigram.Views.Dialogs;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Views.Channels;
 using Unigram.Collections;
 using Unigram.ViewModels.Chats;
@@ -467,7 +467,7 @@ namespace Unigram.ViewModels
                 var user = ProtoService.GetUser(chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0);
                 if (user != null)
                 {
-                    await ShareView.GetForCurrentView().ShowAsync(new InputMessageContact(new TdWindows.Contact(user.PhoneNumber, user.FirstName, user.LastName, user.Id)));
+                    await ShareView.GetForCurrentView().ShowAsync(new InputMessageContact(new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, user.Id)));
                 }
             }
         }
@@ -692,7 +692,7 @@ namespace Unigram.ViewModels
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ProtoService.Send(new ImportContacts(new[] { new TdWindows.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, user.Id) }));
+                    ProtoService.Send(new ImportContacts(new[] { new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, user.Id) }));
                 }
             }
         }
@@ -723,7 +723,7 @@ namespace Unigram.ViewModels
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ProtoService.Send(new ImportContacts(new[] { new TdWindows.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, user.Id) }));
+                    ProtoService.Send(new ImportContacts(new[] { new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, user.Id) }));
                 }
             }
         }

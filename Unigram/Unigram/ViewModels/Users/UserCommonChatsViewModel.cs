@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Core.Common;
 using Unigram.Services;
 using Windows.Foundation;
@@ -64,7 +64,7 @@ namespace Unigram.ViewModels.Users
                     }
 
                     var response = await _protoService.SendAsync(new GetGroupsInCommon(_userId, offset, 20));
-                    if (response is TdWindows.Chats chats)
+                    if (response is Telegram.Td.Api.Chats chats)
                     {
                         foreach (var id in chats.ChatIds)
                         {

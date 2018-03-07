@@ -1,5 +1,5 @@
 ﻿using System;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Services;
 
 namespace Unigram.Common.Dialogs

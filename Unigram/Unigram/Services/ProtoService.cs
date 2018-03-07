@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
 using Telegram.Helpers;
+using Telegram.Td;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
-using Windows.ApplicationModel;
 using Windows.Storage;
-using Windows.UI.ViewManagement;
 
 namespace Unigram.Services
 {
@@ -122,12 +119,12 @@ namespace Unigram.Services
 #if MOCKUP
             ProfilePhoto ProfilePhoto(string name)
             {
-                return new ProfilePhoto(0, new TdWindows.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0), null), null);
+                return new ProfilePhoto(0, new Telegram.Td.Api.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0), null), null);
             }
 
             ChatPhoto ChatPhoto(string name)
             {
-                return new ChatPhoto(new TdWindows.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0), null), null);
+                return new ChatPhoto(new Telegram.Td.Api.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0), null), null);
             }
 
             _users[ 0] = new User( 0, "Jane",                   string.Empty, string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);

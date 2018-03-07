@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.Storage;
 using ChatCreateStep2Tuple = System.Tuple<string, object>;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Services;
 
 namespace Unigram.ViewModels.Chats

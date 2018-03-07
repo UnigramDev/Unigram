@@ -11,7 +11,7 @@ using Windows.Security.Cryptography.Core;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Entities;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Payments
 {

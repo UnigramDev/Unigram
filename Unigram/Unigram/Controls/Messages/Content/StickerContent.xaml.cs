@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -46,12 +46,12 @@ namespace Unigram.Controls.Messages.Content
             Texture.Source = null;
             Texture.Constraint = message;
 
-            if (sticker.Thumbnail != null && !sticker.StickerData.Local.IsDownloadingCompleted)
+            if (sticker.Thumbnail != null && !sticker.StickerValue.Local.IsDownloadingCompleted)
             {
                 UpdateThumbnail(message, sticker.Thumbnail.Photo);
             }
 
-            UpdateFile(message, sticker.StickerData);
+            UpdateFile(message, sticker.StickerValue);
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message) { }
@@ -69,7 +69,7 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, file);
                 return;
             }
-            else if (sticker.StickerData.Id != file.Id)
+            else if (sticker.StickerValue.Id != file.Id)
             {
                 return;
             }

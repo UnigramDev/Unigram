@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Mvvm;
 using Unigram.Common;
@@ -613,7 +613,7 @@ namespace Unigram.ViewModels
 
         public override File GetFile()
         {
-            return _video.VideoData;
+            return _video.VideoValue;
         }
 
         public override File GetThumbnail()
@@ -623,7 +623,7 @@ namespace Unigram.ViewModels
 
         public override (File File, string FileName) GetFileAndName()
         {
-            return (_video.VideoData, _video.FileName);
+            return (_video.VideoValue, _video.FileName);
         }
 
         public override bool UpdateFile(File file)
@@ -660,7 +660,7 @@ namespace Unigram.ViewModels
 
         public override File GetFile()
         {
-            return _animation.AnimationData;
+            return _animation.AnimationValue;
         }
 
         public override File GetThumbnail()
@@ -670,7 +670,7 @@ namespace Unigram.ViewModels
 
         public override (File File, string FileName) GetFileAndName()
         {
-            return (_animation.AnimationData, _animation.FileName);
+            return (_animation.AnimationValue, _animation.FileName);
         }
 
         public override bool UpdateFile(File file)

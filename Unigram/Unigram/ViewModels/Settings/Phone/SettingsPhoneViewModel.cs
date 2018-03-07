@@ -16,7 +16,7 @@ using Unigram.Views;
 using Unigram.Views.Settings;
 using System.Linq;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {

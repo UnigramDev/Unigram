@@ -11,7 +11,7 @@
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
     xmlns:behaviors="using:Unigram.Behaviors"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:td="using:TdWindows"
+    xmlns:td="using:Telegram.Td.Api"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"

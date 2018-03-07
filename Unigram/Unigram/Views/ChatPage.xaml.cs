@@ -8,7 +8,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using TdWindows;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
@@ -502,7 +502,7 @@ namespace Unigram.Views
                         return;
                     }
 
-                    ViewModel.ProtoService.Send(new GetWebPagePreview(address), result =>
+                    ViewModel.ProtoService.Send(new GetWebPagePreview(new FormattedText(address, new TextEntity[0])), result =>
                     {
                         this.BeginOnUIThread(() =>
                         {
@@ -1280,7 +1280,7 @@ namespace Unigram.Views
         {
             if (message.Content is MessageSticker sticker && sticker.Sticker.SetId != 0)
             {
-                return ViewModel.ProtoService.IsStickerFavorite(sticker.Sticker.StickerData.Id) ? Visibility.Collapsed : Visibility.Visible;
+                return ViewModel.ProtoService.IsStickerFavorite(sticker.Sticker.StickerValue.Id) ? Visibility.Collapsed : Visibility.Visible;
             }
 
             return Visibility.Collapsed;
@@ -1290,7 +1290,7 @@ namespace Unigram.Views
         {
             if (message.Content is MessageSticker sticker && sticker.Sticker.SetId != 0)
             {
-                return ViewModel.ProtoService.IsStickerFavorite(sticker.Sticker.StickerData.Id) ? Visibility.Visible : Visibility.Collapsed;
+                return ViewModel.ProtoService.IsStickerFavorite(sticker.Sticker.StickerValue.Id) ? Visibility.Visible : Visibility.Collapsed;
             }
 
             return Visibility.Collapsed;
@@ -2194,7 +2194,7 @@ namespace Unigram.Views
 
 
 
-        public void UpdateUser(Chat chat, TdWindows.User user, bool secret)
+        public void UpdateUser(Chat chat, Telegram.Td.Api.User user, bool secret)
         {
             ShowArea();
 
@@ -2207,7 +2207,7 @@ namespace Unigram.Views
             ViewModel.LastSeen = LastSeenConverter.GetLabel(user, true);
         }
 
-        public void UpdateUserFullInfo(Chat chat, TdWindows.User user, UserFullInfo fullInfo, bool secret)
+        public void UpdateUserFullInfo(Chat chat, Telegram.Td.Api.User user, UserFullInfo fullInfo, bool secret)
         {
             if (fullInfo.IsBlocked)
             {
@@ -2411,7 +2411,7 @@ namespace Unigram.Views
 
 
 
-        public async void UpdateFile(TdWindows.File file)
+        public async void UpdateFile(Telegram.Td.Api.File file)
         {
             //for (int i = 0; i < Messages.Items.Count; i++)
             //{

@@ -10,7 +10,7 @@ using Unigram.Views;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Core.Common;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {

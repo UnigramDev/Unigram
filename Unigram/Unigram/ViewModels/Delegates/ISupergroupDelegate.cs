@@ -1,4 +1,4 @@
-﻿using TdWindows;
+﻿using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Delegates
 {

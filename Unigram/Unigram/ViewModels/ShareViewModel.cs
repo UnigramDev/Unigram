@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Services;
@@ -34,7 +34,7 @@ namespace Unigram.ViewModels
             //}
 
             var response = await ProtoService.SendAsync(new GetChats(long.MaxValue, 0, 200));
-            if (response is TdWindows.Chats chats)
+            if (response is Telegram.Td.Api.Chats chats)
             {
                 var list = ProtoService.GetChats(chats.ChatIds);
 
@@ -168,9 +168,9 @@ namespace Unigram.ViewModels
                 foreach (var chat in chats)
                 {
                     var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, false));
-                    //if (response is TdWindows.Messages messages)
+                    //if (response is Telegram.Td.Api.Messages messages)
                     //{
-                    //    foreach (var message in messages.MessagesData)
+                    //    foreach (var message in messages.MessagesValue)
                     //    {
                     //        Aggregator.Publish(new UpdateNewMessage(message, true, false));
                     //    }

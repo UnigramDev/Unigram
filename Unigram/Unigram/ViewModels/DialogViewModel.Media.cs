@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
@@ -51,7 +51,7 @@ namespace Unigram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageSticker(new InputFileId(sticker.StickerData.Id), null, 0, 0);
+            var input = new InputMessageSticker(new InputFileId(sticker.StickerValue.Id), null, 0, 0);
 
             await SendMessageAsync(reply, input);
         }
@@ -72,7 +72,7 @@ namespace Unigram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageSticker(new InputFileId(animation.AnimationData.Id), null, 0, 0);
+            var input = new InputMessageSticker(new InputFileId(animation.AnimationValue.Id), null, 0, 0);
 
             await SendMessageAsync(reply, input);
         }
@@ -460,7 +460,7 @@ namespace Unigram.ViewModels
             var picked = await picker.PickContactAsync();
             if (picked != null)
             {
-                TdWindows.Contact contact = null;
+                Telegram.Td.Api.Contact contact = null;
 
                 var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
                 var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
@@ -480,7 +480,7 @@ namespace Unigram.ViewModels
                                 var user = ProtoService.GetUser(userId);
                                 if (user != null)
                                 {
-                                    contact = new TdWindows.Contact(user.PhoneNumber, user.FirstName, user.LanguageCode, user.Id);
+                                    contact = new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LanguageCode, user.Id);
                                 }
                             }
                         }
@@ -497,7 +497,7 @@ namespace Unigram.ViewModels
                         return;
                     }
 
-                    contact = new TdWindows.Contact(phone.Number, picked.FirstName, picked.LastName, 0);
+                    contact = new Telegram.Td.Api.Contact(phone.Number, picked.FirstName, picked.LastName, 0);
                 }
 
                 if (contact != null)
@@ -507,7 +507,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public Task<BaseObject> SendContactAsync(TdWindows.Contact contact)
+        public Task<BaseObject> SendContactAsync(Telegram.Td.Api.Contact contact)
         {
             return SendMessageAsync(0, new InputMessageContact(contact));
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Strings;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Views.Settings.Privacy;
 using Unigram.Controls;
 using Windows.UI.Xaml.Controls;

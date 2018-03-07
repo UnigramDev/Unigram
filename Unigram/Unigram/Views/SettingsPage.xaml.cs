@@ -20,7 +20,7 @@ using Unigram.ViewModels.Users;
 using Windows.UI.Xaml.Markup;
 using System.Linq;
 using Windows.UI.Xaml.Media;
-using TdWindows;
+using Telegram.Td.Api;
 using Windows.Media.Capture;
 using Unigram.ViewModels.Delegates;
 

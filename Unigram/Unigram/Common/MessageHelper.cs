@@ -30,7 +30,7 @@ using Windows.UI.Xaml.Input;
 using Unigram.ViewModels.Dialogs;
 using Unigram.Services;
 using Template10.Services.NavigationService;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Entities;
 
 namespace Unigram.Common

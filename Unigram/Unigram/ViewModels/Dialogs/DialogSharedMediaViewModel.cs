@@ -11,7 +11,7 @@ using Unigram.Helpers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 using Windows.Storage.Pickers;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -434,7 +434,7 @@ namespace Unigram.ViewModels.Dialogs
             return true;
         }
 
-        public void DownloadFile(MessageViewModel message, TdWindows.File file)
+        public void DownloadFile(MessageViewModel message, Telegram.Td.Api.File file)
         {
         }
 

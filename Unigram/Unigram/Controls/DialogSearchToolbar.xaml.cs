@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Dialogs;
 using Windows.UI.Xaml;

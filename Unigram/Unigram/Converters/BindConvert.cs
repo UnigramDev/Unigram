@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.System.UserProfile;
 using Windows.Globalization;
 using Unigram.Common;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.Converters
 {

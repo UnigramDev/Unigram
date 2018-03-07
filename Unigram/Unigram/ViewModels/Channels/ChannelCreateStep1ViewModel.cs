@@ -9,7 +9,7 @@ using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Channels
 {

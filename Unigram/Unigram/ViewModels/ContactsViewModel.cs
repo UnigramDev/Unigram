@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
@@ -26,7 +26,7 @@ namespace Unigram.ViewModels
         {
             ProtoService.Send(new SearchContacts(string.Empty, int.MaxValue), async result =>
             {
-                if (result is TdWindows.Users users)
+                if (result is Telegram.Td.Api.Users users)
                 {
                     BeginOnUIThread(() =>
                     {

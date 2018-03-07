@@ -33,7 +33,7 @@ using Windows.UI.ViewManagement;
 using Windows.System.Display;
 using Unigram.Common;
 using Windows.Graphics.Display;
-using TdWindows;
+using Telegram.Td.Api;
 using System.Windows.Input;
 using Windows.Storage.Streams;
 using Unigram.Services;

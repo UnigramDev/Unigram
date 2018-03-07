@@ -15,8 +15,8 @@ namespace Unigram.Services
 {
     public interface IContactsService
     {
-        Task<TdWindows.BaseObject> ImportAsync();
-        Task ExportAsync(TdWindows.Users result);
+        Task<Telegram.Td.Api.BaseObject> ImportAsync();
+        Task ExportAsync(Telegram.Td.Api.Users result);
 
         Task RemoveAsync();
     }
@@ -40,7 +40,7 @@ namespace Unigram.Services
 
         #region Import
 
-        public async Task<TdWindows.BaseObject> ImportAsync()
+        public async Task<Telegram.Td.Api.BaseObject> ImportAsync()
         {
             using (await _syncLock.WaitAsync())
             {
@@ -58,7 +58,7 @@ namespace Unigram.Services
             return null;
         }
 
-        private async Task<TdWindows.BaseObject> ImportAsync(ContactStore store)
+        private async Task<Telegram.Td.Api.BaseObject> ImportAsync(ContactStore store)
         {
             var contacts = await store.FindContactsAsync();
             var importedPhones = new Dictionary<string, Contact>();
@@ -71,8 +71,7 @@ namespace Unigram.Services
                 }
             }
 
-            var importingContacts = new List<TdWindows.Contact>();
-            var importingPhones = new List<string>();
+            var importingContacts = new List<Telegram.Td.Api.Contact>();
 
             foreach (var phone in importedPhones.Keys.Take(1300).ToList())
             {
@@ -92,7 +91,7 @@ namespace Unigram.Services
 
                 if (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
                 {
-                    var item = new TdWindows.Contact
+                    var item = new Telegram.Td.Api.Contact
                     {
                         PhoneNumber = phone,
                         FirstName = firstName,
@@ -100,18 +99,17 @@ namespace Unigram.Services
                     };
 
                     importingContacts.Add(item);
-                    importingPhones.Add(phone);
                 }
             }
 
-            return await _protoService.SendAsync(new TdWindows.ChangeImportedContacts(importingContacts));
+            return await _protoService.SendAsync(new Telegram.Td.Api.ChangeImportedContacts(importingContacts));
         }
 
         #endregion
 
         #region Export
 
-        public async Task ExportAsync(TdWindows.Users result)
+        public async Task ExportAsync(Telegram.Td.Api.Users result)
         {
             using (await _syncLock.WaitAsync())
             {
@@ -135,7 +133,7 @@ namespace Unigram.Services
             }
         }
 
-        private async Task ExportAsync(ContactList contactList, ContactAnnotationList annotationList, TdWindows.Users result)
+        private async Task ExportAsync(ContactList contactList, ContactAnnotationList annotationList, Telegram.Td.Api.Users result)
         {
             if (result == null)
             {

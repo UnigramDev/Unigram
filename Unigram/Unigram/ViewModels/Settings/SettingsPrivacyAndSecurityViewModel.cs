@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Services;
@@ -49,7 +49,7 @@ namespace Unigram.ViewModels.Settings
 
             ProtoService.Send(new GetBlockedUsers(0, 1), result =>
             {
-                if (result is TdWindows.Users users)
+                if (result is Telegram.Td.Api.Users users)
                 {
                     BeginOnUIThread(() => BlockedUsers = users.TotalCount);
                 }

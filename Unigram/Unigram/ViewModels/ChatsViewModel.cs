@@ -7,7 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
@@ -294,7 +294,7 @@ namespace Unigram.ViewModels
                     _protoService.Send(new GetChats(order, offset, 20));
 
                     //var response = await _protoService.SendAsync(new GetChats(order, offset, 20));
-                    //if (response is TdWindows.Chats chats)
+                    //if (response is Telegram.Td.Api.Chats chats)
                     //{
                     //    foreach (var id in chats.ChatIds)
                     //    {
@@ -351,7 +351,7 @@ namespace Unigram.ViewModels
                     if (phase == 0)
                     {
                         var response = await _protoService.SendAsync(new SearchChats(_query, 100));
-                        if (response is TdWindows.Chats chats)
+                        if (response is Telegram.Td.Api.Chats chats)
                         {
                             foreach (var id in chats.ChatIds)
                             {
@@ -372,7 +372,7 @@ namespace Unigram.ViewModels
                     else if (phase == 1)
                     {
                         var response = await _protoService.SendAsync(new SearchContacts(_query, 100));
-                        if (response is TdWindows.Users users)
+                        if (response is Telegram.Td.Api.Users users)
                         {
                             foreach (var id in users.UserIds)
                             {
@@ -393,7 +393,7 @@ namespace Unigram.ViewModels
                     else if (phase == 2)
                     {
                         var response = await _protoService.SendAsync(new SearchChatsOnServer(_query, 100));
-                        if (response is TdWindows.Chats chats && _local != null)
+                        if (response is Telegram.Td.Api.Chats chats && _local != null)
                         {
                             foreach (var id in chats.ChatIds)
                             {
@@ -418,7 +418,7 @@ namespace Unigram.ViewModels
                     else if (phase == 3)
                     {
                         var response = await _protoService.SendAsync(new SearchPublicChats(_query));
-                        if (response is TdWindows.Chats chats)
+                        if (response is Telegram.Td.Api.Chats chats)
                         {
                             foreach (var id in chats.ChatIds)
                             {
@@ -433,9 +433,9 @@ namespace Unigram.ViewModels
                     else if (phase == 4)
                     {
                         var response = await _protoService.SendAsync(new SearchMessages(_query, int.MaxValue, 0, 0, 100));
-                        if (response is TdWindows.Messages messages)
+                        if (response is Telegram.Td.Api.Messages messages)
                         {
-                            foreach (var message in messages.MessagesData)
+                            foreach (var message in messages.MessagesValue)
                             {
                                 _messages.Add(message);
                             }

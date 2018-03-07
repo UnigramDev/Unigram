@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Template10.Services.NavigationService;
 using Template10.Utils;
 using Unigram.Collections;
@@ -137,7 +137,7 @@ namespace Unigram.ViewModels.Settings
                 return AsyncInfo.Run(async task =>
                 {
                     var response = await _protoService.SendAsync(new GetBlockedUsers(Count, 20));
-                    if (response is TdWindows.Users users)
+                    if (response is Telegram.Td.Api.Users users)
                     {
                         foreach (var id in users.UserIds)
                         {

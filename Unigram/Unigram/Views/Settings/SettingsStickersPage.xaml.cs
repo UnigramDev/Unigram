@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Diagnostics;
-using TdWindows;
+using Telegram.Td.Api;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Common;
 using Unigram.Native;

@@ -13,7 +13,7 @@ using Unigram.Views;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using TdWindows;
+using Telegram.Td.Api;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation.Metadata;
 using Unigram.ViewModels.Delegates;

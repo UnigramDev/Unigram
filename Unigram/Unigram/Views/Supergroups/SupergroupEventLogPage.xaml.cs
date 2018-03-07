@@ -22,7 +22,7 @@ using LinqToVisualTree;
 using Unigram.Common;
 using Unigram.ViewModels.Supergroups;
 using System.Diagnostics;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.ViewModels;
 using Unigram.Controls.Messages;
 

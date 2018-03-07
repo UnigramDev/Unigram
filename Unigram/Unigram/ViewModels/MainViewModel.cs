@@ -13,7 +13,7 @@ using Unigram.Services;
 using Unigram.Views;
 using Windows.Media.Playback;
 using Windows.UI.Xaml.Navigation;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels
 {

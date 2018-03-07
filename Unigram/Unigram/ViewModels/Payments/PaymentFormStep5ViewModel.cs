@@ -10,7 +10,7 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Payments
 {

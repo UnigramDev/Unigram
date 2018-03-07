@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Telegram.Helpers;
 using Unigram.Common;
 using Unigram.Controls;
@@ -949,7 +949,7 @@ namespace Unigram.ViewModels
                 if (keyboardButton.Type is KeyboardButtonTypeRequestPhoneNumber requestPhoneNumber)
                 {
                     var response = await ProtoService.SendAsync(new GetMe());
-                    if (response is TdWindows.User cached)
+                    if (response is Telegram.Td.Api.User cached)
                     {
                         var chat = Chat;
                         if (chat == null)
@@ -1016,7 +1016,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new AddFavoriteSticker(new InputFileId(sticker.Sticker.StickerData.Id)));
+            ProtoService.Send(new AddFavoriteSticker(new InputFileId(sticker.Sticker.StickerValue.Id)));
         }
 
         #endregion
@@ -1032,7 +1032,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.Sticker.StickerData.Id)));
+            ProtoService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.Sticker.StickerValue.Id)));
         }
 
         #endregion
@@ -1114,11 +1114,11 @@ namespace Unigram.ViewModels
         {
             if (message.Content is MessageAnimation animation)
             {
-                ProtoService.Send(new AddSavedAnimation(new InputFileId(animation.Animation.AnimationData.Id)));
+                ProtoService.Send(new AddSavedAnimation(new InputFileId(animation.Animation.AnimationValue.Id)));
             }
             else if (message.Content is MessageText text && text.WebPage != null && text.WebPage.Animation != null)
             {
-                ProtoService.Send(new AddSavedAnimation(new InputFileId(text.WebPage.Animation.AnimationData.Id)));
+                ProtoService.Send(new AddSavedAnimation(new InputFileId(text.WebPage.Animation.AnimationValue.Id)));
             }
         }
 
