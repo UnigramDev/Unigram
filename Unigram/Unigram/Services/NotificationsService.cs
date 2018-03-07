@@ -90,7 +90,7 @@ namespace Unigram.Services
                     NotificationTask.UpdateToast(caption, content, sound, launch, tag, group, picture, date, loc_key);
                     NotificationTask.UpdatePrimaryTile(caption, content, picture);
                 });
-            }, TimeSpan.FromSeconds(2));
+            }, TimeSpan.FromSeconds(3));
         }
 
         private string GetTag(Message message)
@@ -185,7 +185,7 @@ namespace Unigram.Services
         {
             if (args.NotificationType == PushNotificationType.Raw)
             {
-                args.Cancel = true;
+                //args.Cancel = true;
                 return;
 
                 if (JsonValue.TryParse(args.RawNotification.Content, out JsonValue node))
