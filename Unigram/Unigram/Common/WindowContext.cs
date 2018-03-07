@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
+using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Controls;
 using Unigram.Services;
@@ -184,7 +185,7 @@ namespace Unigram.Common
         public void SetActivatedArgs(IActivatedEventArgs args, INavigationService service)
         {
             _args = args;
-            _service = service;
+            _service = service = WindowWrapper.Current().NavigationServices.FirstOrDefault();
 
             UseActivatedArgs(args, service, _protoService.GetAuthorizationState());
         }
@@ -221,6 +222,16 @@ namespace Unigram.Common
 
         private async void UseActivatedArgs(IActivatedEventArgs args, INavigationService service)
         {
+            if (service == null)
+            {
+                service = WindowWrapper.Current().NavigationServices.FirstOrDefault();
+            }
+
+            if (service == null || args == null)
+            {
+                return;
+            }
+
             if (args is ShareTargetActivatedEventArgs share)
             {
                 var package = new DataPackage();
@@ -303,7 +314,7 @@ namespace Unigram.Common
                         var full = await store.GetContactAsync(contact.Contact.Id);
                         if (full == null)
                         {
-                            service.NavigateToMain(null);
+                            ContactPanelFallback(service);
                         }
                         else
                         {
@@ -312,7 +323,7 @@ namespace Unigram.Common
                             var first = annotations.FirstOrDefault();
                             if (first == null)
                             {
-                                service.NavigateToMain(null);
+                                ContactPanelFallback(service);
                             }
                             else
                             {
@@ -327,7 +338,7 @@ namespace Unigram.Common
                                 }
                                 else
                                 {
-                                    service.NavigateToMain(null);
+                                    ContactPanelFallback(service);
                                 }
                             }
                         }
@@ -336,31 +347,13 @@ namespace Unigram.Common
                     {
                         if ((uint)ex.HResult == 0x80004004)
                         {
-                            var hyper = new Hyperlink();
-                            hyper.NavigateUri = new Uri("ms-settings:privacy-contacts");
-                            hyper.Inlines.Add(new Run { Text = "Settings" });
-
-                            var text = new TextBlock();
-                            text.Padding = new Thickness(12);
-                            text.VerticalAlignment = VerticalAlignment.Center;
-                            text.TextWrapping = TextWrapping.Wrap;
-                            text.TextAlignment = TextAlignment.Center;
-                            text.Inlines.Add(new Run { Text = "This app is not able to access your contacts. Go to " });
-                            text.Inlines.Add(hyper);
-                            text.Inlines.Add(new Run { Text = " to check the contacts privacy settings." });
-
-                            var page = new ContentControl();
-                            page.VerticalAlignment = VerticalAlignment.Center;
-                            page.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-                            page.Content = text;
-
-                            service.Frame.Content = page;
+                            ContactPanelFallback(service);
                         }
                     }
                 }
                 else
                 {
-                    service.NavigateToMain(null);
+                    ContactPanelFallback(service);
                 }
             }
             else if (args is ProtocolActivatedEventArgs protocol)
@@ -405,6 +398,34 @@ namespace Unigram.Common
             }
         }
 
+        private void ContactPanelFallback(INavigationService service)
+        {
+            if (service == null)
+            {
+                return;
+            }
+
+            var hyper = new Hyperlink();
+            hyper.NavigateUri = new Uri("ms-settings:privacy-contacts");
+            hyper.Inlines.Add(new Run { Text = "Settings" });
+
+            var text = new TextBlock();
+            text.Padding = new Thickness(12);
+            text.VerticalAlignment = VerticalAlignment.Center;
+            text.TextWrapping = TextWrapping.Wrap;
+            text.TextAlignment = TextAlignment.Center;
+            text.Inlines.Add(new Run { Text = "This app is not able to access your contacts. Go to " });
+            text.Inlines.Add(hyper);
+            text.Inlines.Add(new Run { Text = " to check the contacts privacy settings." });
+
+            var page = new ContentControl();
+            page.VerticalAlignment = VerticalAlignment.Center;
+            page.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            page.Content = text;
+
+            service.Frame.Content = page;
+        }
+
         public async void Handle(UpdateAuthorizationState update)
         {
             await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -420,22 +441,44 @@ namespace Unigram.Common
                 switch (update.State)
                 {
                     case ConnectionStateWaitingForNetwork waitingForNetwork:
-                        ApplicationView.GetForCurrentView().Title = Strings.Resources.WaitingForNetwork;
+                        ShowStatus(Strings.Resources.WaitingForNetwork);
                         break;
                     case ConnectionStateConnecting connecting:
-                        ApplicationView.GetForCurrentView().Title = Strings.Resources.Connecting;
+                        ShowStatus(Strings.Resources.Connecting);
                         break;
                     case ConnectionStateConnectingToProxy connectingToProxy:
-                        ApplicationView.GetForCurrentView().Title = Strings.Resources.ConnectingToProxy;
+                        ShowStatus(Strings.Resources.ConnectingToProxy);
                         break;
                     case ConnectionStateUpdating updating:
-                        ApplicationView.GetForCurrentView().Title = Strings.Resources.Updating;
+                        ShowStatus(Strings.Resources.Updating);
                         break;
                     case ConnectionStateReady ready:
-                        ApplicationView.GetForCurrentView().Title = string.Empty;
+                        HideStatus();
                         return;
                 }
             });
+        }
+
+        private async void ShowStatus(string text)
+        {
+            ApplicationView.GetForCurrentView().Title = text;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                StatusBar.GetForCurrentView().ProgressIndicator.Text = text;
+                await StatusBar.GetForCurrentView().ProgressIndicator.ShowAsync();
+            }
+        }
+
+        private async void HideStatus()
+        {
+            ApplicationView.GetForCurrentView().Title = string.Empty;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                StatusBar.GetForCurrentView().ProgressIndicator.Text = string.Empty;
+                await StatusBar.GetForCurrentView().ProgressIndicator.HideAsync();
+            }
         }
 
 
