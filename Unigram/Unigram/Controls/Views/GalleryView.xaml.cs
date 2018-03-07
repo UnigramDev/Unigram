@@ -880,20 +880,6 @@ namespace Unigram.Controls.Views
 
         private void ImageView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            /*<MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanView, Mode=OneWay}"
-                                            Text="{CustomResource ShowInChat}"/>
-                            <MenuFlyoutItem x:Name="FlyoutSaveAs"
-                                            Command="{x:Bind ViewModel.SaveCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
-                                            Text="Save as..." />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"
-                                            Text="{CustomResource OpenInExternalApp}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
-                                            Text="{CustomResource Delete}"/>*/
-
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;

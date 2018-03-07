@@ -161,6 +161,11 @@ namespace Unigram.ViewModels
         {
             get
             {
+                if (SelectedItem is GalleryMessageItem message && message.IsHot)
+                {
+                    return false;
+                }
+
                 return true;
             }
         }
@@ -169,6 +174,11 @@ namespace Unigram.ViewModels
         {
             get
             {
+                if (SelectedItem is GalleryMessageItem message && message.IsHot)
+                {
+                    return false;
+                }
+
                 return true;
             }
         }
@@ -360,6 +370,8 @@ namespace Unigram.ViewModels
 
         public long ChatId => _message.ChatId;
         public long Id => _message.Id;
+
+        public bool IsHot => _message.IsHot();
 
         public override File GetFile()
         {
