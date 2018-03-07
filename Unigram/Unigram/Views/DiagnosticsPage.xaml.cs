@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using TdWindows;
@@ -36,14 +35,14 @@ namespace Unigram.Views
 
             try
             {
-                var log = new FileInfo(Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log"));
+                var log = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log"));
                 Log.Badge = FileSizeConverter.Convert(log.Length);
             }
             catch { }
 
             try
             {
-                var logold = new FileInfo(Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old"));
+                var logold = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old"));
                 LogOld.Badge = FileSizeConverter.Convert(logold.Length);
             }
             catch { }
@@ -100,12 +99,16 @@ namespace Unigram.Views
 
         private async void Log_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log")), null, null));
+            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log")), null, null));
         }
 
         private async void LogOld_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old")), null, null));
+            if (System.IO.File.Exists(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old")))
+            {
+                System.IO.File.Copy(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old"), System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old"), true);
+                await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old")), null, null));
+            }
         }
     }
 }
