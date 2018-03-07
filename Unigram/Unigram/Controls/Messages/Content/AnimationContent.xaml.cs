@@ -113,10 +113,21 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                Button.Glyph = "\uE906";
-                Button.Progress = 1;
+                if (message.IsSecret())
+                {
+                    Button.Glyph = "\uE60D";
+                    Button.Progress = 1;
 
-                Overlay.Opacity = 0;
+                    Subtitle.Text = Locale.FormatTTLString(Math.Max(message.Ttl, animation.Duration), true);
+                    Overlay.Opacity = 1;
+                }
+                else
+                {
+                    Button.Glyph = "\uE906";
+                    Button.Progress = 1;
+
+                    Overlay.Opacity = 0;
+                }
             }
         }
 

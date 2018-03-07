@@ -98,16 +98,8 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (message.IsBlurred())
-                {
-                    Button.Glyph = "\uE60D";
-                    Button.Progress = 1;
-                }
-                else
-                {
-                    Button.Glyph = "\uE102";
-                    Button.Progress = 1;
-                }
+                Button.Glyph = "\uE102";
+                Button.Progress = 1;
             }
         }
 

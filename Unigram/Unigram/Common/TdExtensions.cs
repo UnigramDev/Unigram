@@ -315,9 +315,21 @@ namespace Unigram.Common
             return false;
         }
 
-        public static bool IsHot(this Message message)
+        public static bool IsSecret(this Message message)
         {
-            return message.Ttl > 0 && message.Ttl <= 60;
+            switch (message.Content)
+            {
+                case MessageAnimation animation:
+                    return animation.IsSecret;
+                case MessagePhoto photo:
+                    return photo.IsSecret;
+                case MessageVideo video:
+                    return video.IsSecret;
+                case MessageVideoNote videoNote:
+                    return videoNote.IsSecret;
+                default:
+                    return false;
+            }
         }
 
         public static bool IsService(this Message message)

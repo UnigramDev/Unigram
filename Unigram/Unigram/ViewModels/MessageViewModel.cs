@@ -62,9 +62,9 @@ namespace Unigram.ViewModels
         public File GetAnimation() => _message.GetAnimation();
         public File GetFile() => _message.GetFile();
 
-        public bool IsBlurred() => _message.IsHot();
         public bool IsService() => _message.IsService();
         public bool IsSaved() => _message.IsSaved();
+        public bool IsSecret() => _message.IsSecret();
 
         public MessageViewModel ReplyToMessage { get; set; }
         public ReplyToMessageState ReplyToMessageState { get; set; } = ReplyToMessageState.None;

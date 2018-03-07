@@ -414,7 +414,7 @@ namespace Unigram.ViewModels
             else
             {
                 GalleryViewModelBase viewModel;
-                if ((message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsBlurred())
+                if ((message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
                 {
                     viewModel = new DialogGalleryViewModel(ProtoService, Aggregator, message.ChatId, message.Get());
                 }

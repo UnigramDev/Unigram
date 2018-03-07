@@ -113,7 +113,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (message.IsBlurred())
+                if (message.IsSecret())
                 {
                     Button.Glyph = "\uE60D";
                     Button.Progress = 1;

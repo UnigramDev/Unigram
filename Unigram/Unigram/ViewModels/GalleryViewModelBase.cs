@@ -371,7 +371,7 @@ namespace Unigram.ViewModels
         public long ChatId => _message.ChatId;
         public long Id => _message.Id;
 
-        public bool IsHot => _message.IsHot();
+        public bool IsHot => _message.IsSecret();
 
         public override File GetFile()
         {
