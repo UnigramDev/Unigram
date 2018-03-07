@@ -272,7 +272,7 @@ namespace Unigram.ViewModels.Settings
         private async void CopyExecute()
         {
             var dataPackage = new DataPackage();
-            dataPackage.SetText(MeUrlPrefixConverter.Convert(_username));
+            dataPackage.SetText(MeUrlPrefixConverter.Convert(ProtoService, _username));
             ClipboardEx.TrySetContent(dataPackage);
 
             await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);

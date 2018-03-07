@@ -352,7 +352,7 @@ namespace Unigram.Controls.Views
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
             var title = ViewModel.StickerSet.Title;
-            var link = new Uri(MeUrlPrefixConverter.Convert($"addstickers/{ViewModel.StickerSet.Name}"));
+            var link = new Uri(MeUrlPrefixConverter.Convert(ViewModel.ProtoService, $"addstickers/{ViewModel.StickerSet.Name}"));
 
             await ShareView.GetForCurrentView().ShowAsync(link, title);
         }

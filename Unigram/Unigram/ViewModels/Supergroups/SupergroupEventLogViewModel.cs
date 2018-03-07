@@ -217,10 +217,10 @@ namespace Unigram.ViewModels.Supergroups
                 }
                 else if (item.Action is ChatEventUsernameChanged usernameChanged)
                 {
-                    var link = string.IsNullOrEmpty(usernameChanged.NewUsername) ? string.Empty : MeUrlPrefixConverter.Convert(usernameChanged.NewUsername);
+                    var link = string.IsNullOrEmpty(usernameChanged.NewUsername) ? string.Empty : MeUrlPrefixConverter.Convert(_protoService, usernameChanged.NewUsername);
 
                     var text = new FormattedText(link, new[] { new TextEntity(0, link.Length, new TextEntityTypeUrl()) });
-                    var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousLink, Description = MeUrlPrefixConverter.Convert(usernameChanged.OldUsername) };
+                    var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousLink, Description = MeUrlPrefixConverter.Convert(_protoService, usernameChanged.OldUsername) };
 
                     return new MessageText(text, webPage);
                 }

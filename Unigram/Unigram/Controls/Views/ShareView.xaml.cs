@@ -145,7 +145,7 @@ namespace Unigram.Controls.Views
                 }
                 else
                 {
-                    link = MeUrlPrefixConverter.Convert(link);
+                    link = MeUrlPrefixConverter.Convert(ViewModel.ProtoService, link);
                 }
 
                 var title = message.Content.GetCaption()?.Text;
@@ -162,7 +162,7 @@ namespace Unigram.Controls.Views
                 var viaBot = ViewModel.ProtoService.GetUser(message.ViaBotUserId);
                 if (viaBot != null && viaBot.Username.Length > 0)
                 {
-                    ViewModel.ShareLink = new Uri(MeUrlPrefixConverter.Convert($"{viaBot.Username}?game={game.Game.ShortName}"));
+                    ViewModel.ShareLink = new Uri(MeUrlPrefixConverter.Convert(ViewModel.ProtoService, $"{viaBot.Username}?game={game.Game.ShortName}"));
                     ViewModel.ShareTitle = game.Game.Title;
                 }
             }
