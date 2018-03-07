@@ -5,8 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using TdWindows;
 using Template10.Services.NavigationService;
+using Template10.Services.ViewService;
 using Unigram.Services;
 using Unigram.Views;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -16,10 +19,28 @@ namespace Unigram.Common
     {
         private readonly IProtoService _protoService;
 
+        private ViewLifetimeControl _instantLifetime;
+
         public UnigramNavigationService(IProtoService protoService, Frame frame)
             : base(frame)
         {
             _protoService = protoService;
+        }
+
+        public async void NavigateToInstant(string url)
+        {
+            if (_instantLifetime == null)
+            {
+                _instantLifetime = await OpenAsync(typeof(InstantPage), url);
+            }
+            else
+            {
+                await _instantLifetime.CoreDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    _instantLifetime.NavigationService.Navigate(typeof(InstantPage), url);
+                });
+                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(_instantLifetime.Id, ViewSizePreference.Default, ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), ViewSizePreference.UseHalf);
+            }
         }
 
         public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null)
