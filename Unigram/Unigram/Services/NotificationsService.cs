@@ -66,6 +66,12 @@ namespace Unigram.Services
                 return;
             }
 
+            var difference = DateTime.Now.ToTimestamp() - update.Message.Date;
+            if (difference > 180)
+            {
+                return;
+            }
+
             // Adding some delay to be 110% the message hasn't been read already
             ThreadPoolTimer.CreateTimer(timer =>
             {
@@ -83,8 +89,7 @@ namespace Unigram.Services
                 var group = GetGroup(update.Message, chat);
                 var picture = string.Empty;
                 var date = BindConvert.Current.DateTime(update.Message.Date).ToString("o");
-                var loc_key = "CHANNEL";
-                //var loc_key = commonMessage.Parent is TLChannel channel && channel.IsBroadcast ? "CHANNEL" : string.Empty;
+                var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
 
                 Execute.BeginOnUIThread(() =>
                 {
@@ -197,7 +202,7 @@ namespace Unigram.Services
         {
             if (args.NotificationType == PushNotificationType.Raw)
             {
-                //args.Cancel = true;
+                args.Cancel = true;
                 return;
 
                 if (JsonValue.TryParse(args.RawNotification.Content, out JsonValue node))
