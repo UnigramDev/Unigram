@@ -82,6 +82,8 @@ namespace Unigram.Controls.Messages
                     return UpdateScreenshotTaken(message, screenshotTaken, active);
                 case MessageSupergroupChatCreate supergroupChatCreate:
                     return UpdateSupergroupChatCreate(message, supergroupChatCreate, active);
+                case MessageWebsiteConnected websiteConnected:
+                    return UpdateWebsiteConnected(message, websiteConnected, active);
                 case MessageExpiredPhoto expiredPhoto:
                     return UpdateExpiredPhoto(message, expiredPhoto, active);
                 case MessageExpiredVideo expiredVideo:
@@ -774,6 +776,22 @@ namespace Unigram.Controls.Messages
             return (content, null);
         }
 
+        private static (string Text, IList<TextEntity> Entities) UpdateWebsiteConnected(MessageViewModel message, MessageWebsiteConnected websiteConnected, bool active)
+        {
+            var content = Strings.Resources.ActionBotAllowed;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var start = content.IndexOf("{0}");
+            content = string.Format(content, websiteConnected.DomainName);
+
+            if (start >= 0 && active)
+            {
+                entities.Add(new TextEntity(start, websiteConnected.DomainName.Length, new TextEntityTypeUrl()));
+            }
+
+            return (content, entities);
+        }
+
         private static (string, IList<TextEntity>) UpdateExpiredPhoto(MessageViewModel message, MessageExpiredPhoto expiredPhoto, bool active)
         {
             return (Strings.Resources.AttachPhotoExpired, null);
@@ -916,9 +934,12 @@ namespace Unigram.Controls.Messages
                     var data = text.Substring(entity.Offset, entity.Length);
 
                     var hyperlink = new Hyperlink();
-                    //hyperlink.Click += (s, args) => Hyperlink_Navigate(type, data, message);
+                    hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
                     hyperlink.Inlines.Add(new Run { Text = data });
                     //hyperlink.Foreground = foreground;
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = new SolidColorBrush(Colors.White);
+                    hyperlink.FontWeight = FontWeights.SemiBold;
                     span.Inlines.Add(hyperlink);
 
                     //if (entity is TLMessageEntityUrl)

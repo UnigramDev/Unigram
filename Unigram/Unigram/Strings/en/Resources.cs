@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 02/28/2018 15:04:30
+// 	Generated: 03/07/2018 13:14:54
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -20256,6 +20256,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessagesOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You allowed this bot to message you when you logged in on {0}."
+        /// </summary>
+        public static string ActionBotAllowed
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotAllowed");
             }
         }
     }

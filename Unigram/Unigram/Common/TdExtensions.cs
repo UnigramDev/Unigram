@@ -341,6 +341,7 @@ namespace Unigram.Common
                 case MessagePinMessage pinMessage:
                 case MessageScreenshotTaken screenshotTaken:
                 case MessageSupergroupChatCreate supergroupChatCreate:
+                case MessageWebsiteConnected websiteConnected:
                     return true;
                 case MessageExpiredPhoto expiredPhoto:
                 case MessageExpiredVideo expiredVideo:
