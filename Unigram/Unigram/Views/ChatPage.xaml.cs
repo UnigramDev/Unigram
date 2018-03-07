@@ -996,9 +996,9 @@ namespace Unigram.Views
             {
                 CreateFlyoutItem(ref flyout, ViewModel.ReportCommand, Strings.Resources.ReportChat);
             }
-            if (user != null)
+            if (user != null && user.Id != ViewModel.ProtoService.GetMyId())
             {
-                if (user.OutgoingLink is LinkStateIsContact)
+                if (user.OutgoingLink is LinkStateNone)
                 {
                     CreateFlyoutItem(ref flyout, ViewModel.ShareContactCommand, Strings.Resources.ShareMyContactInfo);
                 }
@@ -1023,7 +1023,7 @@ namespace Unigram.Views
             {
                 CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Resources.DeleteAndExit);
             }
-            if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
+            if ((user != null && user.Id != ViewModel.ProtoService.GetMyId()) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
                 CreateFlyoutItem(ref flyout, chat.NotificationSettings.MuteFor == 0 ? ViewModel.MuteCommand : ViewModel.UnmuteCommand, chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.MuteNotifications : Strings.Resources.UnmuteNotifications);
             }
