@@ -47,11 +47,13 @@ namespace Unigram.Views
         IHandle<UpdateChatPhoto>,
         IHandle<UpdateMessageMentionRead>,
         //IHandle<UpdateMessageContent>,
+        IHandle<UpdateUser>,
         IHandle<UpdateSecretChat>,
         IHandle<UpdateNotificationSettings>,
         IHandle<UpdateFile>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
+        private readonly ICacheService _cacheService;
 
         private object _lastSelected;
 
@@ -59,6 +61,8 @@ namespace Unigram.Views
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
+
+            _cacheService = ViewModel.CacheService;
 
             SettingsView.DataContext = ViewModel.Settings;
             ViewModel.Settings.Delegate = SettingsView;
@@ -153,9 +157,20 @@ namespace Unigram.Views
             Handle(update.ChatId, update.MessageId, chat => chat.LastMessage.Content = update.NewContent, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
         }
 
+        public void Handle(UpdateUser update)
+        {
+            if (_cacheService.TryGetChatFromUser(update.User.Id, out Chat result))
+            {
+                Handle(result.Id, (chatView, chat) => chatView.UpdateChatTitle(chat));
+            }
+        }
+
         public void Handle(UpdateSecretChat update)
         {
-
+            if (_cacheService.TryGetChatFromSecret(update.SecretChat.Id, out Chat result))
+            {
+                Handle(result.Id, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
+            }
         }
 
         public void Handle(UpdateNotificationSettings update)

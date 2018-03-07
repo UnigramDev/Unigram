@@ -39,6 +39,9 @@ namespace Unigram.Services
         IList<Chat> GetChats(IList<long> ids);
         IList<Chat> GetChats(int count);
 
+        bool TryGetChatFromUser(int userId, out Chat chat);
+        bool TryGetChatFromSecret(int secretId, out Chat chat);
+
         SecretChat GetSecretChat(int id);
         SecretChat GetSecretChatForUser(int id);
 
@@ -375,6 +378,19 @@ namespace Unigram.Services
 
             return null;
         }
+
+        public bool TryGetChatFromUser(int userId, out Chat chat)
+        {
+            chat = _chats.Values.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == userId);
+            return chat != null;
+        }
+
+        public bool TryGetChatFromSecret(int secretId, out Chat chat)
+        {
+            chat = _chats.Values.FirstOrDefault(x => x.Type is ChatTypeSecret secret && secret.SecretChatId == secretId);
+            return chat != null;
+        }
+
 
         public IList<Chat> GetChats(IList<long> ids)
         {
