@@ -161,7 +161,16 @@ namespace Unigram.Views
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret)
         {
-            GetEntities(fullInfo.Bio);
+            if (user.Type is UserTypeBot)
+            {
+                GetEntities(fullInfo.Bio);
+            }
+            else
+            {
+                DescriptionSpan.Inlines.Clear();
+                DescriptionSpan.Inlines.Add(new Run { Text = fullInfo.Bio });
+            }
+
             DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Bio) ? Visibility.Collapsed : Visibility.Visible;
 
             UserCommonChats.Badge = fullInfo.GroupInCommonCount;
