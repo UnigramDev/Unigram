@@ -20,19 +20,12 @@ namespace Unigram.ViewModels.SignIn
         public SignInViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            //LegacyService.GotUserCountry += GotUserCountry;
-
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ProxyCommand = new RelayCommand(ProxyExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            //if (!string.IsNullOrEmpty(LegacyService.Country))
-            //{
-            //    GotUserCountry(this, new CountryEventArgs { Country = LegacyService.Country });
-            //}
-
             ProtoService.Send(new GetCountryCode(), result =>
             {
                 if (result is Text text)

@@ -30,35 +30,38 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            //if (!string.IsNullOrEmpty(LegacyService.Country))
-            //{
-            //    GotUserCountry(this, new CountryEventArgs { Country = LegacyService.Country });
-            //}
+            ProtoService.Send(new GetCountryCode(), result =>
+            {
+                if (result is Text text)
+                {
+                    BeginOnUIThread(() => GotUserCountry(text.TextValue));
+                }
+            });
 
             IsLoading = false;
             return Task.CompletedTask;
         }
 
-        //private void GotUserCountry(object sender, CountryEventArgs e)
-        //{
-        //    Country country = null;
-        //    foreach (var local in Country.Countries)
-        //    {
-        //        if (string.Equals(local.Code, e.Country, StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            country = local;
-        //            break;
-        //        }
-        //    }
+        private void GotUserCountry(string code)
+        {
+            Country country = null;
+            foreach (var local in Country.Countries)
+            {
+                if (string.Equals(local.Code, code, StringComparison.OrdinalIgnoreCase))
+                {
+                    country = local;
+                    break;
+                }
+            }
 
-        //    if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
-        //    {
-        //        BeginOnUIThread(() =>
-        //        {
-        //            SelectedCountry = country;
-        //        });
-        //    }
-        //}
+            if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
+            {
+                BeginOnUIThread(() =>
+                {
+                    SelectedCountry = country;
+                });
+            }
+        }
 
         private Country _selectedCountry;
         public Country SelectedCountry
