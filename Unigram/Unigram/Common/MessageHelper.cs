@@ -434,9 +434,9 @@ namespace Unigram.Common
                     if (confirm == ContentDialogBaseResult.OK)
                     {
                         var import = await protoService.SendAsync(new JoinChatByInviteLink(link));
-                        if (import is Ok)
+                        if (import is Chat chat)
                         {
-                            await TLMessageDialog.ShowAsync("Joined", Strings.Resources.AppName, Strings.Resources.OK);
+                            navigation.NavigateToChat(chat);
                         }
                         else if (import is Error error)
                         {
