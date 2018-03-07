@@ -423,12 +423,12 @@ namespace Unigram.Common
 
         public static bool IsForever(this ChatMemberStatusRestricted restricted)
         {
-            return Math.Abs(restricted.RestrictedUntilDate - DateTime.Now.ToTimestamp() / 1000) > 5 * 365 * 24 * 60 * 60;
+            return restricted.RestrictedUntilDate == 0 || Math.Abs(restricted.RestrictedUntilDate - DateTime.Now.ToTimestamp() / 1000) > 5 * 365 * 24 * 60 * 60;
         }
 
         public static bool IsForever(this ChatMemberStatusBanned banned)
         {
-            return Math.Abs(banned.BannedUntilDate - DateTime.Now.ToTimestamp() / 1000) > 5 * 365 * 24 * 60 * 60;
+            return banned.BannedUntilDate == 0 || Math.Abs(banned.BannedUntilDate - DateTime.Now.ToTimestamp() / 1000) > 5 * 365 * 24 * 60 * 60;
         }
 
 
