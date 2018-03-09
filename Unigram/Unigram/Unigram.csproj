@@ -20,9 +20,9 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
-    <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
+    <!--<BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>-->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -1354,9 +1354,6 @@
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-400.png" />
-    <None Include="Package.StoreAssociation.xml">
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="Assets\Mockup\a0.png" />
     <Content Include="Assets\Noise.jpg" />
     <Content Include="Assets\Sounds\Default.wav" />
@@ -1367,6 +1364,7 @@
     <Content Include="Assets\Sounds\Sound5.wav" />
     <Content Include="Assets\Sounds\Sound6.wav" />
     <Content Include="Assets\Webviews\injected.js" />
+    <None Include="Package.xml" />
     <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
