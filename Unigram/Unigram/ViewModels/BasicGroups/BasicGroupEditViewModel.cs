@@ -151,8 +151,8 @@ namespace Unigram.ViewModels.BasicGroups
 
             if (chat.Type is ChatTypeBasicGroup basic)
             {
-                var item = ProtoService.GetSupergroup(basic.BasicGroupId);
-                var cache = ProtoService.GetSupergroupFull(basic.BasicGroupId);
+                var item = ProtoService.GetBasicGroup(basic.BasicGroupId);
+                var cache = ProtoService.GetBasicGroupFull(basic.BasicGroupId);
 
                 if (item == null || cache == null)
                 {

@@ -79,6 +79,8 @@ namespace Unigram.Views.BasicGroups
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
             DeletePanel.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
+
+            ViewModel.Title = chat.Title;
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)

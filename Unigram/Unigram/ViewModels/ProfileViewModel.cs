@@ -31,6 +31,7 @@ using Unigram.Views.Supergroups;
 using Unigram.Views.Chats;
 using Unigram.Core.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.BasicGroups;
 
 namespace Unigram.ViewModels
 {
@@ -709,6 +710,10 @@ namespace Unigram.ViewModels
             if (chat.Type is ChatTypeSupergroup)
             {
                 NavigationService.Navigate(typeof(SupergroupEditPage), chat.Id);
+            }
+            else if (chat.Type is ChatTypeBasicGroup)
+            {
+                NavigationService.Navigate(typeof(BasicGroupEditPage), chat.Id);
             }
             else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
