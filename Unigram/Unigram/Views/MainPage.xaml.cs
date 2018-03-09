@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Telegram.Td.Api;
 using Template10.Common;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
@@ -802,7 +803,7 @@ namespace Unigram.Views
                 {
                     DialogsPanel.Visibility = Visibility.Collapsed;
 
-                    var items = ViewModel.Chats.Search = new ChatsViewModel.SearchChatsCollection(ViewModel.ProtoService, SearchField.Text);
+                    var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text);
                     await items.LoadMoreItemsAsync(0);
                     await items.LoadMoreItemsAsync(1);
                 }

@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
 using Windows.Foundation;

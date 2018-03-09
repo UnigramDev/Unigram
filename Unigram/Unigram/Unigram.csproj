@@ -103,6 +103,8 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Collections\SearchChatsCollection.cs" />
+    <Compile Include="Collections\SearchUsersCollection.cs" />
     <Compile Include="Common\ContainerBuilder.cs" />
     <Compile Include="Common\Execute.cs" />
     <Compile Include="Common\FileUtils.cs" />
