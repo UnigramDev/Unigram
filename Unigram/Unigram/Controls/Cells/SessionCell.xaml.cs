@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
+using Unigram.Converters;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -36,6 +37,8 @@ namespace Unigram.Controls.Cells
 
             Title.Text = string.Format("{0}, {1} {2}", session.DeviceModel, session.Platform, session.SystemVersion);
             Subtitle.Text = string.Format("{0} — {1}", session.Ip, session.Country);
+
+            LastActiveDate.Text = BindConvert.Current.DateExtended(session.LastActiveDate);
         }
     }
 }
