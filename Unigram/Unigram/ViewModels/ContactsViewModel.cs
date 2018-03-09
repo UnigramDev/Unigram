@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
@@ -27,7 +26,7 @@ namespace Unigram.ViewModels
         {
             ProtoService.Send(new SearchContacts(string.Empty, int.MaxValue), async result =>
             {
-                if (result is TdWindows.Users users)
+                if (result is Telegram.Td.Api.Users users)
                 {
                     BeginOnUIThread(() =>
                     {
@@ -41,7 +40,11 @@ namespace Unigram.ViewModels
                         }
                     });
 
-                    await _contactsService.ExportAsync(users);
+                    if (ApplicationSettings.Current.IsContactsSyncEnabled)
+                    {
+                        await _contactsService.ExportAsync(users);
+                        await _contactsService.ImportAsync();
+                    }
                 }
             });
         }
@@ -119,19 +122,6 @@ namespace Unigram.ViewModels
         #endregion
 
         public SortedObservableCollection<User> Items { get; private set; }
-
-        private TLUser _self;
-        public TLUser Self
-        {
-            get
-            {
-                return _self;
-            }
-            set
-            {
-                Set(ref _self, value);
-            }
-        }
     }
 
     public class UserComparer : IComparer<User>

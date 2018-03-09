@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Services;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Models;
+using Unigram.Entities;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
@@ -23,21 +22,24 @@ namespace Unigram.ViewModels.Users
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            //if (!string.IsNullOrEmpty(LegacyService.Country))
-            //{
-            //    GotUserCountry(this, new CountryEventArgs { Country = LegacyService.Country });
-            //}
+            ProtoService.Send(new GetCountryCode(), result =>
+            {
+                if (result is Text text)
+                {
+                    BeginOnUIThread(() => GotUserCountry(text.TextValue));
+                }
+            });
 
             IsLoading = false;
             return Task.CompletedTask;
         }
 
-        private void GotUserCountry(object sender, CountryEventArgs e)
+        private void GotUserCountry(string code)
         {
             Country country = null;
             foreach (var local in Country.Countries)
             {
-                if (string.Equals(local.Code, e.Country, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(local.Code, code, StringComparison.OrdinalIgnoreCase))
                 {
                     country = local;
                     break;

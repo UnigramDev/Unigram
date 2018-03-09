@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Strings;
@@ -21,10 +20,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using LinqToVisualTree;
 using Unigram.Common;
-using Telegram.Api.Helpers;
 using Unigram.ViewModels.Supergroups;
 using System.Diagnostics;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.ViewModels;
 using Unigram.Controls.Messages;
 
@@ -66,11 +64,11 @@ namespace Unigram.Views.Supergroups
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
-            var message = control.DataContext as TLMessage;
-            if (message != null && message.HasFromId)
-            {
-                //ViewModel.NavigationService.Navigate(typeof(ProfilePage), new TLPeerUser { UserId = message.FromId.Value });
-            }
+            var message = control.DataContext as Message;
+            //if (message != null && message.HasFromId)
+            //{
+            //    //ViewModel.NavigationService.Navigate(typeof(ProfilePage), new TLPeerUser { UserId = message.FromId.Value });
+            //}
         }
 
         private async void Help_Click(object sender, RoutedEventArgs e)

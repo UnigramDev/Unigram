@@ -16,7 +16,7 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="{x:Bind ViewModel.Self.Phone}"/>
+        <controls:PageHeader Text="{x:Bind ViewModel.Self.PhoneNumber}"/>
 
         <Viewbox Width="240" Margin="0,24,0,48" Grid.Row="1">
             <Canvas x:Name="Layer_1" Width="150" Height="64">

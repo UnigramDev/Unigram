@@ -103,6 +103,11 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Collections\SearchChatsCollection.cs" />
+    <Compile Include="Collections\SearchUsersCollection.cs" />
+    <Compile Include="Common\ContainerBuilder.cs" />
+    <Compile Include="Common\Execute.cs" />
+    <Compile Include="Common\FileUtils.cs" />
     <Compile Include="Common\Fluent.cs" />
     <Compile Include="Common\AutoDownloadPreferences.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
@@ -116,6 +121,7 @@
     <Compile Include="Common\ImageLoader\ImageLoader.cs" />
     <Compile Include="Common\ImageLoader\ManagedSurface.cs" />
     <Compile Include="Common\MessageDialogExtensions.cs" />
+    <Compile Include="Common\PhoneNumber.cs" />
     <Compile Include="Common\PlaceholderHelper.cs" />
     <Compile Include="Common\RatioControl.cs" />
     <Compile Include="Common\TdExtensions.cs" />
@@ -123,12 +129,18 @@
     <Compile Include="Common\Theme.cs" />
     <Compile Include="Common\UnigramNavigationService.cs" />
     <Compile Include="Common\UniqueList.cs" />
+    <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
+    <Compile Include="Common\WindowContext.cs" />
     <Compile Include="Common\XamlResourceLoader.cs" />
+    <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\ChatCell.xaml.cs">
       <DependentUpon>ChatCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\SessionCell.xaml.cs">
+      <DependentUpon>SessionCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\WebSessionCell.xaml.cs">
       <DependentUpon>WebSessionCell.xaml</DependentUpon>
@@ -360,12 +372,20 @@
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\StringPluralConverter.cs" />
+    <Compile Include="Entities\Country.cs" />
+    <Compile Include="Entities\ErrorCode.cs" />
+    <Compile Include="Entities\ErrorType.cs" />
+    <Compile Include="Entities\PhoneCallState.cs" />
+    <Compile Include="Entities\StorageDocument.cs" />
+    <Compile Include="Entities\StorageMedia.cs" />
+    <Compile Include="Entities\StoragePhoto.cs" />
+    <Compile Include="Entities\StorageVideo.cs" />
     <Compile Include="Helpers\UserActivityHelper.cs" />
-    <Compile Include="Models\Country.cs" />
-    <Compile Include="Models\StorageDocument.cs" />
-    <Compile Include="Models\StorageMedia.cs" />
-    <Compile Include="Models\StoragePhoto.cs" />
-    <Compile Include="Models\StorageVideo.cs" />
+    <Compile Include="Logs\ILogListener.cs" />
+    <Compile Include="Logs\Log.cs" />
+    <Compile Include="Logs\Logger.cs" />
+    <Compile Include="Logs\LogHelper.cs" />
+    <Compile Include="Logs\LogLevel.cs" />
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
     <Compile Include="Selectors\ParticipantTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
@@ -406,6 +426,7 @@
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IDelegable.cs" />
     <Compile Include="ViewModels\Dialogs\DialogGalleryViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogSearchViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogSharedMediaViewModel.cs" />
@@ -413,7 +434,16 @@
     <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Delegate.cs" />
     <Compile Include="ViewModels\DialogViewModel.Media.cs" />
+    <Compile Include="ViewModels\Delegates\IBasicGroupDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IChatDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IDialogDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IFileDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IMessageDelegate.cs" />
     <Compile Include="ViewModels\InstantGalleryViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IProfileDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\ISupergroupDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IUserDelegate.cs" />
+    <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep2ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep3ViewModel.cs" />
@@ -455,7 +485,6 @@
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsMasksArchivedViewModel.cs" />
@@ -467,6 +496,7 @@
     <Compile Include="ViewModels\Settings\SettingsStickersViewModelBase.cs" />
     <Compile Include="ViewModels\SingleGalleryViewModel.cs" />
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IMemberDelegate.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAddAdministratorViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAddRestrictedViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAdministratorsViewModel.cs" />
@@ -495,6 +525,12 @@
     <Compile Include="Views\Channels\ChannelCreateStep3Page.xaml.cs">
       <DependentUpon>ChannelCreateStep3Page.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChatPage.Bubbles.xaml.cs">
+      <DependentUpon>ChatPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatPage.xaml.cs">
+      <DependentUpon>ChatPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Chats\ChatCreateStep1Page.xaml.cs">
       <DependentUpon>ChatCreateStep1Page.xaml</DependentUpon>
     </Compile>
@@ -519,6 +555,7 @@
     <Compile Include="Views\InvitePage.xaml.cs">
       <DependentUpon>InvitePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Collections\MediaLibraryCollection.cs" />
     <Compile Include="Views\PasscodePage.xaml.cs">
       <DependentUpon>PasscodePage.xaml</DependentUpon>
     </Compile>
@@ -622,9 +659,6 @@
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsAccountsPage.xaml.cs">
-      <DependentUpon>SettingsAccountsPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\SettingsBlockedUsersPage.xaml.cs">
       <DependentUpon>SettingsBlockedUsersPage.xaml</DependentUpon>
     </Compile>
@@ -664,7 +698,9 @@
     <Compile Include="Views\Supergroups\SupergroupEditStickerSetPage.xaml.cs">
       <DependentUpon>SupergroupEditStickerSetPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Supergroups\SupergroupEventLogPage.Bubbles.cs" />
+    <Compile Include="Views\Supergroups\SupergroupEventLogPage.Bubbles.cs">
+      <DependentUpon>SupergroupEventLogPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Supergroups\SupergroupEventLogPage.xaml.cs">
       <DependentUpon>SupergroupEventLogPage.xaml</DependentUpon>
     </Compile>
@@ -1101,7 +1137,6 @@
     <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\ReplyInfoToGlyphConverter.cs" />
-    <Compile Include="Converters\TLIntToDateTimeConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Selectors\MessageGroupTemplateSelector.cs" />
     <Compile Include="Selectors\MessageStyleSelector.cs" />
@@ -1133,12 +1168,6 @@
     </Compile>
     <Compile Include="Views\BlankPage.xaml.cs">
       <DependentUpon>BlankPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DialogPage.Bubbles.xaml.cs">
-      <DependentUpon>DialogPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DialogPage.xaml.cs">
-      <DependentUpon>DialogPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
@@ -1225,6 +1254,7 @@
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Resources.cs</LastGenOutput>
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </PRIResource>
     <PRIResource Include="Strings\es\Resources.resw" />
     <PRIResource Include="Strings\fa\Resources.resw" />
@@ -1324,9 +1354,6 @@
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-400.png" />
-    <None Include="Package.StoreAssociation.xml">
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="Assets\Mockup\a0.png" />
     <Content Include="Assets\Noise.jpg" />
     <Content Include="Assets\Sounds\Default.wav" />
@@ -1337,6 +1364,7 @@
     <Content Include="Assets\Sounds\Sound5.wav" />
     <Content Include="Assets\Sounds\Sound6.wav" />
     <Content Include="Assets\Webviews\injected.js" />
+    <None Include="Package.xml" />
     <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
@@ -1357,6 +1385,10 @@
     <Page Include="Controls\Cells\ChatCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\SessionCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\WebSessionCell.xaml">
       <SubType>Designer</SubType>
@@ -1663,6 +1695,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\ChatPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Chats\ChatCreateStep1Page.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1696,10 +1732,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\BlankPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\DialogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1871,10 +1903,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\SettingsAccountsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Settings\SettingsBlockedUsersPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2026,10 +2054,6 @@
     <ProjectReference Include="..\Telegram.Intro\Telegram.Intro.vcxproj">
       <Project>{1cfa1bfa-98d3-4316-8e3b-ac3ea8b3510e}</Project>
       <Name>Telegram.Intro</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Unigram.Api\Telegram.Api.csproj">
-      <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
-      <Name>Telegram.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\Unigram.Core\Unigram.Core.csproj">
       <Project>{580d2885-8129-499e-9ffd-39ff1b586f18}</Project>

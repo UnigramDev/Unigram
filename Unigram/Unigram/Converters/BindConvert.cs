@@ -5,9 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Helpers;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Unigram.Strings;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.Globalization.NumberFormatting;
@@ -17,6 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.System.UserProfile;
 using Windows.Globalization;
 using Unigram.Common;
+using Telegram.Td.Api;
 
 namespace Unigram.Converters
 {
@@ -128,10 +126,10 @@ namespace Unigram.Converters
             return Locale.FormatCurrency(amount, currency);
         }
 
-        public string ShippingOption(TLShippingOption option, string currency)
+        public string ShippingOption(ShippingOption option, string currency)
         {
             var amount = 0L;
-            foreach (var price in option.Prices)
+            foreach (var price in option.PriceParts)
             {
                 amount += price.Amount;
             }

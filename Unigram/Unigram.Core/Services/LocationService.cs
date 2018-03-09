@@ -7,8 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.Core.Models;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Devices.Geolocation;
@@ -22,7 +21,7 @@ namespace Unigram.Core.Services
 
         Task<Geocoordinate> GetPositionAsync();
 
-        Task<List<TdWindows.Venue>> GetVenuesAsync(double latitude, double longitute, string query = null);
+        Task<List<Telegram.Td.Api.Venue>> GetVenuesAsync(double latitude, double longitute, string query = null);
     }
 
     public class LocationService : ILocationService
@@ -95,7 +94,7 @@ namespace Unigram.Core.Services
             return null;
         }
 
-        public async Task<List<TdWindows.Venue>> GetVenuesAsync(double latitude, double longitute, string query = null)
+        public async Task<List<Telegram.Td.Api.Venue>> GetVenuesAsync(double latitude, double longitute, string query = null)
         {
             var builder = new StringBuilder("https://api.foursquare.com/v2/venues/search/?");
             if (string.IsNullOrEmpty(query) == false)
@@ -122,15 +121,15 @@ namespace Unigram.Core.Services
 
                     if (json?.response?.venues != null)
                     {
-                        var result = new List<TdWindows.Venue>();
+                        var result = new List<Telegram.Td.Api.Venue>();
                         foreach (var item in json.response.venues)
                         {
-                            var venue = new TdWindows.Venue();
+                            var venue = new Telegram.Td.Api.Venue();
                             venue.Id = item.id;
                             venue.Title = item.name;
                             venue.Address = item.location.address ?? item.location.city ?? item.location.country;
                             venue.Provider = "foursquare";
-                            venue.Location = new TdWindows.Location(item.location.lat, item.location.lng);
+                            venue.Location = new Telegram.Td.Api.Location(item.location.lat, item.location.lng);
 
                             //if (item.categories != null && item.categories.Count > 0)
                             //{
@@ -151,7 +150,7 @@ namespace Unigram.Core.Services
             }
             catch { }
 
-            return new List<TdWindows.Venue>();
+            return new List<Telegram.Td.Api.Venue>();
         }
     }
 }

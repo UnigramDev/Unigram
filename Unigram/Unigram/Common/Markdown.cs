@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Services;
 
 namespace Unigram.Common

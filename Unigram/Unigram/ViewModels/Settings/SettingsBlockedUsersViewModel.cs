@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Template10.Services.NavigationService;
 using Template10.Utils;
 using Unigram.Collections;
@@ -13,6 +13,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Common;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Unigram.Views.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
@@ -21,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsBlockedUsersViewModel : UnigramViewModelBase, IHandle<UpdateUserFullInfo>, IHandle<UpdateFile>
+    public class SettingsBlockedUsersViewModel : UnigramViewModelBase, IDelegable<IFileDelegate>, IHandle<UpdateUserFullInfo>, IHandle<UpdateFile>
     {
         public IFileDelegate Delegate { get; set; }
 
@@ -136,7 +137,7 @@ namespace Unigram.ViewModels.Settings
                 return AsyncInfo.Run(async task =>
                 {
                     var response = await _protoService.SendAsync(new GetBlockedUsers(Count, 20));
-                    if (response is TdWindows.Users users)
+                    if (response is Telegram.Td.Api.Users users)
                     {
                         foreach (var id in users.UserIds)
                         {

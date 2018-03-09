@@ -8,7 +8,6 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Views;
 using Unigram.Core.Models;
@@ -34,8 +33,8 @@ using Windows.UI.Xaml.Automation.Provider;
 using Unigram.Native;
 using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Automation;
-using Unigram.Models;
-using TdWindows;
+using Unigram.Entities;
+using Telegram.Td.Api;
 using Unigram.Services;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Core.Common;
@@ -264,7 +263,7 @@ namespace Unigram.Controls
                 var media = new ObservableCollection<StorageMedia>();
                 var files = new List<StorageFile>(items.Count);
 
-                foreach (var file in items.OfType<StorageFile>())
+                foreach (StorageFile file in items)
                 {
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
@@ -595,7 +594,7 @@ namespace Unigram.Controls
                         //{
                         //    if (result is Stickers stickers)
                         //    {
-                        //        this.BeginOnUIThread(() => ViewModel.StickerPack = stickers.StickersData.ToList());
+                        //        this.BeginOnUIThread(() => ViewModel.StickerPack = stickers.StickersValue.ToList());
                         //    }
                         //});
                         ViewModel.StickerPack = new StickerCollection(ViewModel.ProtoService, text.Trim());
@@ -656,7 +655,7 @@ namespace Unigram.Controls
             return null;
         }
 
-        public class StickerCollection : MvxObservableCollection<TdWindows.Sticker>, ISupportIncrementalLoading
+        public class StickerCollection : MvxObservableCollection<Telegram.Td.Api.Sticker>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private readonly string _query;
@@ -679,7 +678,7 @@ namespace Unigram.Controls
                     var response = await _protoService.SendAsync(new GetStickers(_query, 20));
                     if (response is Stickers stickers)
                     {
-                        foreach (var sticker in stickers.StickersData)
+                        foreach (var sticker in stickers.StickersValue)
                         {
                             Add(sticker);
                             count++;
@@ -693,7 +692,7 @@ namespace Unigram.Controls
             public bool HasMoreItems => _hasMore;
         }
 
-        public class UsernameCollection : MvxObservableCollection<TdWindows.User>, ISupportIncrementalLoading
+        public class UsernameCollection : MvxObservableCollection<Telegram.Td.Api.User>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private readonly long _chatId;
@@ -1149,7 +1148,7 @@ namespace Unigram.Controls
         {
             if (entities != null && entities.Count > 0)
             {
-                entities = new TLVector<TextEntity>(entities);
+                entities = new List<TextEntity>(entities);
 
                 var builder = new StringBuilder(text);
                 var addToOffset = 0;

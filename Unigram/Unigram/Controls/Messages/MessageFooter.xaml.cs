@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;

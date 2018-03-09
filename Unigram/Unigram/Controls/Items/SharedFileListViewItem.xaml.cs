@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -45,7 +46,7 @@ namespace Unigram.Controls.Items
             Ellipse.Background = UpdateEllipseBrush(document.Document);
             Title.Text = document.Document.FileName;
 
-            UpdateFile(message, document.Document.DocumentData);
+            UpdateFile(message, document.Document.DocumentValue);
         }
 
         public void UpdateFile(Message message, File file)
@@ -56,7 +57,7 @@ namespace Unigram.Controls.Items
                 return;
             }
 
-            if (document.Document.DocumentData.Id != file.Id)
+            if (document.Document.DocumentValue.Id != file.Id)
             {
                 return;
             }
@@ -161,7 +162,7 @@ namespace Unigram.Controls.Items
                 return;
             }
 
-            var file = document.Document.DocumentData;
+            var file = document.Document.DocumentValue;
             if (file.Local.IsDownloadingActive)
             {
                 _protoService.Send(new CancelDownloadFile(file.Id, false));

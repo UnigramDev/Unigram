@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -102,14 +101,18 @@ namespace Unigram.Common
 
             if (valueChanged)
             {
-                if (this.ContainsKey(key))
+                try
                 {
-                    this[key] = new SolidColorBrush(value);
+                    if (this.ContainsKey(key))
+                    {
+                        this[key] = new SolidColorBrush(value);
+                    }
+                    else
+                    {
+                        this.Add(key, new SolidColorBrush(value));
+                    }
                 }
-                else
-                {
-                    this.Add(key, new SolidColorBrush(value));
-                }
+                catch { }
             }
 
             return valueChanged;
@@ -135,14 +138,18 @@ namespace Unigram.Common
 
             if (valueChanged)
             {
-                if (this.ContainsKey(key))
+                try
                 {
-                    this[key] = value;
+                    if (this.ContainsKey(key))
+                    {
+                        this[key] = value;
+                    }
+                    else
+                    {
+                        this.Add(key, value);
+                    }
                 }
-                else
-                {
-                    this.Add(key, value);
-                }
+                catch { }
             }
 
             return valueChanged;

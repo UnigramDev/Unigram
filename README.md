@@ -23,9 +23,9 @@
 1. First, check that you have the [necessary tools](#requirements) installed.
 2. Go to <https://my.telegram.org/apps> and register a new app.
 3. Clone the repository __*recursively*__ `git clone --recursive https://github.com/UnigramDev/Unigram.git`.
-4. Create a new file inside `Unigram/Unigram/Unigram.Api` and name it `Constants.Secret.cs`: 
+4. Create a new file inside `Unigram/Unigram/Unigram` and name it `Constants.Secret.cs`: 
 ```csharp
-namespace Telegram.Api
+namespace Unigram
 {
     public static partial class Constants
     {
@@ -84,19 +84,8 @@ Get updates on Unigram's development and chat with the project maintainers and c
 * Join the official group [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ).
 * Join the official channel [Unigram News](https://t.me/unigram).
 
-## Special thanks
-We want to especially thank these people for their help and knowledge while building Unigram
-
-**Telegram Desktop**
-
-- <https://twitter.com/telegramdesktop>
-
-**Gregory Klyushnikov**
-
-- <https://github.com/grishka>
-
 ## License
-Copyright © 2016-2017 [Unigram Authors](https://github.com/UnigramDev/Unigram/graphs/contributors).
+Copyright © 2016-2018 [Unigram Authors](https://github.com/UnigramDev/Unigram/graphs/contributors).
 
 Unigram is free software: you can redistribute it and / or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

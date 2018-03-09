@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Strings;
+using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 

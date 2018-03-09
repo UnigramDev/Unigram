@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Helpers;
+using Telegram.Td.Api;
 using Unigram.Selectors;
 using Unigram.Services;
 using Unigram.ViewModels.Settings;
@@ -35,15 +34,15 @@ namespace Unigram.Common
             switch (message.Content)
             {
                 case MessageAnimation animation:
-                    return (animation.Animation.AnimationData, animation.Animation.FileName);
+                    return (animation.Animation.AnimationValue, animation.Animation.FileName);
                 case MessageAudio audio:
-                    return (audio.Audio.AudioData, audio.Audio.FileName);
+                    return (audio.Audio.AudioValue, audio.Audio.FileName);
                 case MessageDocument document:
-                    return (document.Document.DocumentData, document.Document.FileName);
+                    return (document.Document.DocumentValue, document.Document.FileName);
                 case MessageGame game:
                     if (game.Game.Animation != null)
                     {
-                        return (game.Game.Animation.AnimationData, game.Game.Animation.FileName);
+                        return (game.Game.Animation.AnimationValue, game.Game.Animation.FileName);
                     }
                     else if (game.Game.Photo != null && allowPhoto)
                     {
@@ -65,27 +64,27 @@ namespace Unigram.Common
                     }
                     break;
                 case MessageSticker sticker:
-                    return (sticker.Sticker.StickerData, null);
+                    return (sticker.Sticker.StickerValue, null);
                 case MessageText text:
                     if (text.WebPage != null && text.WebPage.Animation != null)
                     {
-                        return (text.WebPage.Animation.AnimationData, text.WebPage.Animation.FileName);
+                        return (text.WebPage.Animation.AnimationValue, text.WebPage.Animation.FileName);
                     }
                     else if (text.WebPage != null && text.WebPage.Audio != null)
                     {
-                        return (text.WebPage.Audio.AudioData, text.WebPage.Audio.FileName);
+                        return (text.WebPage.Audio.AudioValue, text.WebPage.Audio.FileName);
                     }
                     else if (text.WebPage != null && text.WebPage.Document != null)
                     {
-                        return (text.WebPage.Document.DocumentData, text.WebPage.Document.FileName);
+                        return (text.WebPage.Document.DocumentValue, text.WebPage.Document.FileName);
                     }
                     else if (text.WebPage != null && text.WebPage.Sticker != null)
                     {
-                        return (text.WebPage.Sticker.StickerData, null);
+                        return (text.WebPage.Sticker.StickerValue, null);
                     }
                     else if (text.WebPage != null && text.WebPage.Video != null)
                     {
-                        return (text.WebPage.Video.VideoData, text.WebPage.Video.FileName);
+                        return (text.WebPage.Video.VideoValue, text.WebPage.Video.FileName);
                     }
                     else if (text.WebPage != null && text.WebPage.VideoNote != null)
                     {
@@ -105,7 +104,7 @@ namespace Unigram.Common
                     }
                     break;
                 case MessageVideo video:
-                    return (video.Video.VideoData, video.Video.FileName);
+                    return (video.Video.VideoValue, video.Video.FileName);
                 case MessageVideoNote videoNote:
                     return (videoNote.VideoNote.Video, null);
                 case MessageVoiceNote voiceNote:
@@ -120,35 +119,35 @@ namespace Unigram.Common
             switch (message.Content)
             {
                 case MessageAnimation animation:
-                    return animation.Animation.AnimationData;
+                    return animation.Animation.AnimationValue;
                 case MessageAudio audio:
-                    return audio.Audio.AudioData;
+                    return audio.Audio.AudioValue;
                 case MessageDocument document:
-                    return document.Document.DocumentData;
+                    return document.Document.DocumentValue;
                 case MessageGame game:
-                    return game.Game.Animation?.AnimationData;
+                    return game.Game.Animation?.AnimationValue;
                 case MessageSticker sticker:
-                    return sticker.Sticker.StickerData;
+                    return sticker.Sticker.StickerValue;
                 case MessageText text:
                     if (text.WebPage != null && text.WebPage.Animation != null)
                     {
-                        return text.WebPage.Animation.AnimationData;
+                        return text.WebPage.Animation.AnimationValue;
                     }
                     else if (text.WebPage != null && text.WebPage.Audio != null)
                     {
-                        return text.WebPage.Audio.AudioData;
+                        return text.WebPage.Audio.AudioValue;
                     }
                     else if (text.WebPage != null && text.WebPage.Document != null)
                     {
-                        return text.WebPage.Document.DocumentData;
+                        return text.WebPage.Document.DocumentValue;
                     }
                     else if (text.WebPage != null && text.WebPage.Sticker != null)
                     {
-                        return text.WebPage.Sticker.StickerData;
+                        return text.WebPage.Sticker.StickerValue;
                     }
                     else if (text.WebPage != null && text.WebPage.Video != null)
                     {
-                        return text.WebPage.Video.VideoData;
+                        return text.WebPage.Video.VideoValue;
                     }
                     else if (text.WebPage != null && text.WebPage.VideoNote != null)
                     {
@@ -160,7 +159,7 @@ namespace Unigram.Common
                     }
                     break;
                 case MessageVideo video:
-                    return video.Video.VideoData;
+                    return video.Video.VideoValue;
                 case MessageVideoNote videoNote:
                     return videoNote.VideoNote.Video;
                 case MessageVoiceNote voiceNote:
@@ -175,11 +174,11 @@ namespace Unigram.Common
             switch (message.Content)
             {
                 case MessageAnimation animation:
-                    return animation.Animation.AnimationData;
+                    return animation.Animation.AnimationValue;
                 case MessageGame game:
-                    return game.Game.Animation?.AnimationData;
+                    return game.Game.Animation?.AnimationValue;
                 case MessageText text:
-                    return text.WebPage?.Animation?.AnimationData;
+                    return text.WebPage?.Animation?.AnimationValue;
 
                 case MessageVideoNote videoNote:
                     return videoNote.VideoNote.Video;
@@ -195,7 +194,7 @@ namespace Unigram.Common
                 case MessageAnimation animation:
                     return animation.Animation.Thumbnail?.Photo;
                 case MessageAudio audio:
-                    return audio.Audio.AudioData;
+                    return audio.Audio.AudioValue;
                 case MessageDocument document:
                     return document.Document.Thumbnail?.Photo;
                 case MessageGame game:
@@ -316,9 +315,21 @@ namespace Unigram.Common
             return false;
         }
 
-        public static bool IsHot(this Message message)
+        public static bool IsSecret(this Message message)
         {
-            return message.Ttl > 0 && message.Ttl <= 60;
+            switch (message.Content)
+            {
+                case MessageAnimation animation:
+                    return animation.IsSecret;
+                case MessagePhoto photo:
+                    return photo.IsSecret;
+                case MessageVideo video:
+                    return video.IsSecret;
+                case MessageVideoNote videoNote:
+                    return videoNote.IsSecret;
+                default:
+                    return false;
+            }
         }
 
         public static bool IsService(this Message message)
@@ -342,6 +353,7 @@ namespace Unigram.Common
                 case MessagePinMessage pinMessage:
                 case MessageScreenshotTaken screenshotTaken:
                 case MessageSupergroupChatCreate supergroupChatCreate:
+                case MessageWebsiteConnected websiteConnected:
                     return true;
                 case MessageExpiredPhoto expiredPhoto:
                 case MessageExpiredVideo expiredVideo:
@@ -424,12 +436,12 @@ namespace Unigram.Common
 
         public static bool IsForever(this ChatMemberStatusRestricted restricted)
         {
-            return Math.Abs(restricted.RestrictedUntilDate - Utils.CurrentTimestamp / 1000) > 5 * 365 * 24 * 60 * 60;
+            return restricted.RestrictedUntilDate == 0 || Math.Abs(restricted.RestrictedUntilDate - DateTime.Now.ToTimestamp() / 1000) > 5 * 365 * 24 * 60 * 60;
         }
 
         public static bool IsForever(this ChatMemberStatusBanned banned)
         {
-            return Math.Abs(banned.BannedUntilDate - Utils.CurrentTimestamp / 1000) > 5 * 365 * 24 * 60 * 60;
+            return banned.BannedUntilDate == 0 || Math.Abs(banned.BannedUntilDate - DateTime.Now.ToTimestamp() / 1000) > 5 * 365 * 24 * 60 * 60;
         }
 
 
@@ -922,9 +934,9 @@ namespace Unigram.Common
                 any = true;
             }
 
-            if (animation.AnimationData.Id == file.Id)
+            if (animation.AnimationValue.Id == file.Id)
             {
-                animation.AnimationData = file;
+                animation.AnimationValue = file;
                 any = true;
             }
 
@@ -947,9 +959,9 @@ namespace Unigram.Common
                 any = true;
             }
 
-            if (audio.AudioData.Id == file.Id)
+            if (audio.AudioValue.Id == file.Id)
             {
-                audio.AudioData = file;
+                audio.AudioValue = file;
                 any = true;
             }
 
@@ -972,9 +984,9 @@ namespace Unigram.Common
                 any = true;
             }
 
-            if (document.DocumentData.Id == file.Id)
+            if (document.DocumentValue.Id == file.Id)
             {
-                document.DocumentData = file;
+                document.DocumentValue = file;
                 any = true;
             }
 
@@ -1052,9 +1064,9 @@ namespace Unigram.Common
                 sticker.Thumbnail.Photo = file;
                 return true;
             }
-            if (sticker.StickerData.Id == file.Id)
+            if (sticker.StickerValue.Id == file.Id)
             {
-                sticker.StickerData = file;
+                sticker.StickerValue = file;
                 return true;
             }
 
@@ -1135,9 +1147,9 @@ namespace Unigram.Common
                 any = true;
             }
 
-            if (video.VideoData.Id == file.Id)
+            if (video.VideoValue.Id == file.Id)
             {
-                video.VideoData = file;
+                video.VideoValue = file;
                 any = true;
             }
 
@@ -1189,7 +1201,7 @@ namespace Unigram.Common
     }
 }
 
-namespace TdWindows
+namespace Telegram.Td.Api
 {
     public class MessageChatEvent : MessageContent
     {

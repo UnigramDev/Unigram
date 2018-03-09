@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Payments;
 using Template10.Services.NavigationService;
 using Unigram.Views.Payments;
 using Unigram.Services;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Payments
 {
@@ -19,8 +17,8 @@ namespace Unigram.ViewModels.Payments
         {
         }
 
-        protected TLMessage _message;
-        public TLMessage Message
+        protected Message _message;
+        public Message Message
         {
             get
             {
@@ -32,8 +30,8 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        protected TLMessageMediaInvoice _invoice = new TLMessageMediaInvoice();
-        public TLMessageMediaInvoice Invoice
+        protected MessageInvoice _invoice;
+        public MessageInvoice Invoice
         {
             get
             {
@@ -45,8 +43,8 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        protected TLPaymentsPaymentForm _paymentForm;
-        public TLPaymentsPaymentForm PaymentForm
+        protected PaymentForm _paymentForm;
+        public PaymentForm PaymentForm
         {
             get
             {

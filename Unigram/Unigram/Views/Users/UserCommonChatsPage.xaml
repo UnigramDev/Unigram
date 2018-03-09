@@ -5,7 +5,7 @@
     xmlns:local="using:Unigram.Views.Users"
     xmlns:controls="using:Unigram.Controls"
     xmlns:selectors="using:Unigram.Selectors"
-    xmlns:td="using:TdWindows"
+    xmlns:td="using:Telegram.Td.Api"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">

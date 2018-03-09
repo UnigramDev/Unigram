@@ -3,12 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Account;
-using Telegram.Api.TL.Auth;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Views;
@@ -17,6 +11,8 @@ using Unigram.Views.SignIn;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
+using Telegram.Td.Api;
+using Unigram.Entities;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -33,28 +29,39 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var param = parameter as SettingsPhoneSentCodePage.NavigationParameters;
-            if (param != null)
+            var authState = GetAuthorizationState();
+            if (authState is AuthenticationCodeInfo codeInfo)
             {
-                _phoneNumber = param.PhoneNumber;
-                _sentCode = param.Result;
+                _phoneNumber = ProtoService.GetOption<OptionValueString>("x_phonenumber").Value;
+                _codeInfo = codeInfo;
 
-                RaisePropertyChanged(() => SentCode);
+                RaisePropertyChanged(() => CodeInfo);
             }
 
             return Task.CompletedTask;
         }
 
-        private TLAuthSentCode _sentCode;
-        public TLAuthSentCode SentCode
+        private AuthenticationCodeInfo GetAuthorizationState()
+        {
+            if (SessionState.TryGet("x_codeinfo", out AuthenticationCodeInfo codeInfo))
+            {
+                SessionState.Remove("x_codeinfo");
+                return codeInfo;
+            }
+
+            return null;
+        }
+
+        private AuthenticationCodeInfo _codeInfo;
+        public AuthenticationCodeInfo CodeInfo
         {
             get
             {
-                return _sentCode;
+                return _codeInfo;
             }
             set
             {
-                Set(ref _sentCode, value);
+                Set(ref _codeInfo, value);
             }
         }
 
@@ -71,11 +78,11 @@ namespace Unigram.ViewModels.Settings
 
                 var length = 5;
 
-                if (_sentCode != null && _sentCode.Type is TLAuthSentCodeTypeApp appType)
+                if (_codeInfo != null && _codeInfo.Type is AuthenticationCodeTypeTelegramMessage appType)
                 {
                     length = appType.Length;
                 }
-                else if (_sentCode != null && _sentCode.Type is TLAuthSentCodeTypeSms smsType)
+                else if (_codeInfo != null && _codeInfo.Type is AuthenticationCodeTypeSms smsType)
                 {
                     length = smsType.Length;
                 }
@@ -98,7 +105,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (_sentCode == null)
+            if (_codeInfo == null)
             {
                 //...
                 return;
@@ -110,13 +117,12 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var phoneNumber = _phoneNumber;
-            var phoneCodeHash = _sentCode.PhoneCodeHash;
-
             IsLoading = true;
 
-            var response = await LegacyService.ChangePhoneAsync(phoneNumber, phoneCodeHash, _phoneCode);
-            if (response.IsSucceeded)
+
+            //CheckChangePhoneNumberCode
+            var response = await ProtoService.SendAsync(new CheckChangePhoneNumberCode(_phoneCode));
+            if (response is Ok)
             {
                 while (NavigationService.Frame.BackStackDepth > 1)
                 {
@@ -125,100 +131,84 @@ namespace Unigram.ViewModels.Settings
 
                 NavigationService.GoBack();
             }
-            else
+            else if (response is Error error)
             {
                 IsLoading = false;
 
-                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_UNOCCUPIED))
-                {
-                    //var signup = await ProtoService.SignUpAsync(phoneNumber, phoneCodeHash, PhoneCode, "Paolo", "Veneziani");
-                    //if (signup.IsSucceeded)
-                    //{
-                    //    ProtoService.SetInitState();
-                    //    ProtoService.CurrentUserId = signup.Value.User.Id;
-                    //    SettingsHelper.IsAuthorized = true;
-                    //    SettingsHelper.UserId = signup.Value.User.Id;
-                    //}
-
-                    //this._callTimer.Stop();
-                    //this.StateService.ClearNavigationStack = true;
-                    //this.NavigationService.UriFor<SignUpViewModel>().Navigate();
-                    var state = new SignUpPage.NavigationParameters
-                    {
-                        PhoneNumber = _phoneNumber,
-                        PhoneCode = _phoneCode,
-                        //Result = _sentCode,
-                    };
-
-                    NavigationService.Navigate(typeof(SignUpPage), state);
-                }
-                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
+                if (error.TypeEquals(ErrorType.PHONE_NUMBER_OCCUPIED))
                 {
                     //await new MessageDialog(Resources.PhoneCodeInvalidString, Resources.Error).ShowAsync();
                 }
-                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY))
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
+                {
+                    //await new MessageDialog(Resources.PhoneCodeInvalidString, Resources.Error).ShowAsync();
+                }
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY))
                 {
                     //await new MessageDialog(Resources.PhoneCodeEmpty, Resources.Error).ShowAsync();
                 }
-                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
                     //await new MessageDialog(Resources.PhoneCodeExpiredString, Resources.Error).ShowAsync();
                 }
-                else if (response.Error.TypeEquals(TLErrorType.SESSION_PASSWORD_NEEDED))
+                else if (error.TypeEquals(ErrorType.SESSION_PASSWORD_NEEDED))
                 {
-                    //this.IsWorking = true;
-                    var password = await LegacyService.GetPasswordAsync();
-                    if (password.IsSucceeded && password.Result is TLAccountPassword)
-                    {
-                        var state = new SignInPasswordPage.NavigationParameters
-                        {
-                            PhoneNumber = _phoneNumber,
-                            PhoneCode = _phoneCode,
-                            //Result = _sentCode,
-                            //Password = password.Result as TLAccountPassword
-                        };
+                    ////this.IsWorking = true;
+                    //var password = await LegacyService.GetPasswordAsync();
+                    //if (password.IsSucceeded && password.Result is TLAccountPassword)
+                    //{
+                    //    var state = new SignInPasswordPage.NavigationParameters
+                    //    {
+                    //        PhoneNumber = _phoneNumber,
+                    //        PhoneCode = _phoneCode,
+                    //        //Result = _sentCode,
+                    //        //Password = password.Result as TLAccountPassword
+                    //    };
 
-                        NavigationService.Navigate(typeof(SignInPasswordPage), state);
-                    }
-                    else
-                    {
-                        Execute.ShowDebugMessage("account.getPassword error " + password.Error);
-                    }
+                    //    NavigationService.Navigate(typeof(SignInPasswordPage), state);
+                    //}
+                    //else
+                    //{
+                    //    Execute.ShowDebugMessage("account.getPassword error " + password.Error);
+                    //}
                 }
-                else if (response.Error.CodeEquals(TLErrorCode.FLOOD))
+                else if (error.CodeEquals(ErrorCode.FLOOD))
                 {
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({error.Message})", Resources.Error).ShowAsync();
                 }
 
-                Execute.ShowDebugMessage("account.signIn error " + response.Error);
+                Execute.ShowDebugMessage("account.signIn error " + error);
             }
         }
 
         public RelayCommand ResendCommand { get; }
         private async void ResendExecute()
         {
-            if (_sentCode == null)
+            if (_codeInfo == null)
             {
                 //...
                 return;
             }
 
-            if (_sentCode.HasNextType)
+            if (_codeInfo.NextType == null)
             {
-                IsLoading = true;
+                return;
+            }
 
-                var response = await LegacyService.ResendCodeAsync(_phoneNumber, _sentCode.PhoneCodeHash);
-                if (response.IsSucceeded)
-                {
-                    if (response.Result.Type is TLAuthSentCodeTypeSms || response.Result.Type is TLAuthSentCodeTypeApp)
-                    {
-                        NavigationService.Navigate(typeof(SignInSentCodePage), new SignInSentCodePage.NavigationParameters
-                        {
-                            PhoneNumber = _phoneNumber,
-                            //Result = response.Result
-                        });
-                    }
-                }
+            IsLoading = true;
+
+            var function = new ResendChangePhoneNumberCode();
+
+            var response = await ProtoService.SendAsync(function);
+            if (response is AuthenticationCodeInfo info)
+            {
+                App.Current.SessionState["x_codeinfo"] = info;
+                NavigationService.Navigate(typeof(SettingsPhoneSentCodePage));
+                NavigationService.Refresh();
+            }
+            else if (response is Error error)
+            {
+
             }
         }
     }

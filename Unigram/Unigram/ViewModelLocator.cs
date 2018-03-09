@@ -1,30 +1,20 @@
 ﻿using Autofac;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.Services.DeviceInfo;
-using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Dialogs;
 using Unigram.ViewModels.Payments;
+using Unigram.ViewModels.SecretChats;
 using Unigram.ViewModels.Settings;
+using Unigram.ViewModels.Settings.Privacy;
 using Unigram.ViewModels.SignIn;
+using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
 using Unigram.Views;
-using Unigram.Views.SignIn;
 using Windows.Foundation.Metadata;
-using Windows.UI.ViewManagement;
-using Unigram.ViewModels.Dialogs;
-using Unigram.ViewModels.Supergroups;
-using Unigram.ViewModels.BasicGroups;
-using Unigram.ViewModels.SecretChats;
-using Unigram.ViewModels.Settings.Privacy;
 
 namespace Unigram
 {
@@ -46,7 +36,7 @@ namespace Unigram
                 builder.RegisterType<ProtoService>().As<IProtoService, ICacheService>().SingleInstance();
                 builder.RegisterType<GenerationService>().As<IGenerationService>().SingleInstance();
 
-                builder.RegisterType<MTProtoService>().WithParameter("account", account).As<IMTProtoService>().SingleInstance();
+                //builder.RegisterType<MTProtoService>().WithParameter("account", account).As<IMTProtoService>().SingleInstance();
                 builder.RegisterType<DeviceInfoService>().As<IDeviceInfoService>().SingleInstance();
                 builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance();
 
@@ -115,7 +105,7 @@ namespace Unigram
                 builder.RegisterType<ChatCreateStep1ViewModel>(); //.SingleInstance();
                 builder.RegisterType<ChatCreateStep2ViewModel>(); //.SingleInstance();
                 builder.RegisterType<SecretChatCreateViewModel>();
-                builder.RegisterType<InstantViewModel>().SingleInstance();
+                builder.RegisterType<InstantViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsViewModel>().SingleInstance();
                 builder.RegisterType<SettingsGeneralViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPhoneIntroViewModel>().SingleInstance();
@@ -143,7 +133,6 @@ namespace Unigram
                 builder.RegisterType<SettingsPrivacyAlwaysShowStatusViewModel>();
                 builder.RegisterType<SettingsSecurityChangePasswordViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsSecurityPasscodeViewModel>().SingleInstance();
-                builder.RegisterType<SettingsAccountsViewModel>().SingleInstance();
                 builder.RegisterType<SettingsStickersViewModel>().SingleInstance();
                 builder.RegisterType<SettingsStickersTrendingViewModel>().SingleInstance();
                 builder.RegisterType<SettingsStickersArchivedViewModel>().SingleInstance();

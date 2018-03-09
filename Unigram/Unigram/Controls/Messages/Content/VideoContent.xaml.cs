@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
-using Telegram.Api.Helpers;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Native;
@@ -52,7 +51,7 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, video.Thumbnail.Photo);
             }
 
-            UpdateFile(message, video.VideoData);
+            UpdateFile(message, video.VideoValue);
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)
@@ -77,7 +76,7 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, file);
                 return;
             }
-            else if (video.VideoData.Id != file.Id)
+            else if (video.VideoValue.Id != file.Id)
             {
                 return;
             }
@@ -90,7 +89,7 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
 
                 Button.Glyph = "\uE10A";
@@ -112,7 +111,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (message.IsBlurred())
+                if (message.IsSecret())
                 {
                     Button.Glyph = "\uE60D";
                     Button.Progress = 1;
@@ -178,12 +177,12 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            var file = video.VideoData;
+            var file = video.VideoValue;
             if (file.Local.IsDownloadingActive)
             {
                 _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Helpers;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Windows.UI.Xaml.Data;
 
@@ -92,7 +91,7 @@ namespace Unigram.Converters
             }
             else if (user.Status is UserStatusOnline online)
             {
-                if (online.Expires > Utils.CurrentTimestamp / 1000)
+                if (online.Expires > DateTime.Now.ToTimestamp() / 1000)
                 {
                     return Strings.Resources.Online;
                 }
@@ -139,7 +138,7 @@ namespace Unigram.Converters
                 {
                     return string.Format("{0} {1} {2}", Strings.Resources.LastSeen, Strings.Resources.YesterdayAt, BindConvert.Current.ShortTime.Format(online));
                 }
-                else if (Math.Abs(Utils.CurrentTimestamp / 1000 - date) < 31536000000L)
+                else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
                 {
                     string format = string.Format(Strings.Resources.FormatDateAtTime, online.ToString(Strings.Resources.FormatterMonth), BindConvert.Current.ShortTime.Format(online));
                     return string.Format("{0} {1}", Strings.Resources.LastSeenDate, format);

@@ -1,22 +1,14 @@
 using System;
-using System.IO.IsolatedStorage;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.Threading;
 using Windows.Storage;
-using Telegram.Api.TL;
-using Unigram.Core.Services;
-using Telegram.Api.Services;
-using Telegram.Api.TL.Account;
 using Windows.UI.Xaml;
 
 namespace Unigram.Common
 {
-    public class ApplicationSettings
+    public class ApplicationSettingsBase
     {
-        private readonly ApplicationDataContainer isolatedStore;
+        protected readonly ApplicationDataContainer isolatedStore;
 
-        public ApplicationSettings(ApplicationDataContainer container = null)
+        public ApplicationSettingsBase(ApplicationDataContainer container = null)
         {
             isolatedStore = container ?? ApplicationData.Current.LocalSettings;
         }
@@ -62,7 +54,10 @@ namespace Unigram.Common
         {
             isolatedStore.Values.Clear();
         }
+    }
 
+    public class ApplicationSettings : ApplicationSettingsBase
+    {
         private static ApplicationSettings _current;
         public static ApplicationSettings Current
         {
@@ -74,61 +69,6 @@ namespace Unigram.Common
                 return _current;
             }
         }
-
-        #region InApp
-
-        private bool? _inAppPreview;
-        public bool InAppPreview
-        {
-            get
-            {
-                if (_inAppPreview == null)
-                    _inAppPreview = GetValueOrDefault("InAppPreview", true);
-
-                return _inAppPreview ?? true;
-            }
-            set
-            {
-                _inAppPreview = value;
-                AddOrUpdateValue("InAppPreview", value);
-            }
-        }
-
-        private bool? _inAppVibrate;
-        public bool InAppVibrate
-        {
-            get
-            {
-                if (_inAppVibrate == null)
-                    _inAppVibrate = GetValueOrDefault("InAppVibrate", true);
-
-                return _inAppVibrate ?? true;
-            }
-            set
-            {
-                _inAppVibrate = value;
-                AddOrUpdateValue("InAppVibrate", value);
-            }
-        }
-
-        private bool? _inAppSounds;
-        public bool InAppSounds
-        {
-            get
-            {
-                if (_inAppSounds == null)
-                    _inAppSounds = GetValueOrDefault("InAppSounds", true);
-
-                return _inAppSounds ?? true;
-            }
-            set
-            {
-                _inAppSounds = value;
-                AddOrUpdateValue("InAppSounds", value);
-            }
-        }
-
-        #endregion
 
         #region App version
 
@@ -153,6 +93,24 @@ namespace Unigram.Common
         }
 
         #endregion
+
+        private ProxySettings _proxy;
+        public ProxySettings Proxy
+        {
+            get
+            {
+                return _proxy = _proxy ?? new ProxySettings();
+            }
+        }
+
+        private NotificationsSettings _notifications;
+        public NotificationsSettings Notifications
+        {
+            get
+            {
+                return _notifications = _notifications ?? new NotificationsSettings();
+            }
+        }
 
         private ElementTheme? _currentTheme;
         public ElementTheme CurrentTheme
@@ -328,6 +286,40 @@ namespace Unigram.Common
             }
         }
 
+        private int? _selectedAccount;
+        public int SelectedAccount
+        {
+            get
+            {
+                if (_selectedAccount == null)
+                    _selectedAccount = GetValueOrDefault("SelectedAccount", 0);
+
+                return _selectedAccount ?? 0;
+            }
+            set
+            {
+                _selectedAccount = value;
+                AddOrUpdateValue("SelectedAccount", value);
+            }
+        }
+
+        private string _notificationsToken;
+        public string NotificationsToken
+        {
+            get
+            {
+                if (_notificationsToken == null)
+                    _notificationsToken = GetValueOrDefault<string>("ChannelUri", null);
+
+                return _notificationsToken;
+            }
+            set
+            {
+                _notificationsToken = value;
+                AddOrUpdateValue("ChannelUri", value);
+            }
+        }
+
         private int? _selectedBackground;
         public int SelectedBackground
         {
@@ -396,35 +388,198 @@ namespace Unigram.Common
             }
         }
 
-        private TLAccountTmpPassword _tmpPassword;
-        public TLAccountTmpPassword TmpPassword
-        {
-            get
-            {
-                if (_tmpPassword == null)
-                {
-                    var payload = GetValueOrDefault<string>("TmpPassword", null);
-                    var data = TLSerializationService.Current.Deserialize<TLAccountTmpPassword>(payload);
-
-                    _tmpPassword = data;
-                }
-
-                return _tmpPassword;
-            }
-            set
-            {
-                var payload = value != null ? TLSerializationService.Current.Serialize(value) : null;
-                var data = AddOrUpdateValue("TmpPassword", payload);
-
-                _tmpPassword = value;
-            }
-        }
-
         public void CleanUp()
         {
             // Here should be cleaned up all the settings that are shared with background tasks.
             _peerToPeerMode = null;
             _useLessData = null;
         }
+    }
+
+    public class NotificationsSettings : ApplicationSettingsBase
+    {
+        private bool? _inAppPreview;
+        public bool InAppPreview
+        {
+            get
+            {
+                if (_inAppPreview == null)
+                    _inAppPreview = GetValueOrDefault("InAppPreview", true);
+
+                return _inAppPreview ?? true;
+            }
+            set
+            {
+                _inAppPreview = value;
+                AddOrUpdateValue("InAppPreview", value);
+            }
+        }
+
+        private bool? _inAppVibrate;
+        public bool InAppVibrate
+        {
+            get
+            {
+                if (_inAppVibrate == null)
+                    _inAppVibrate = GetValueOrDefault("InAppVibrate", true);
+
+                return _inAppVibrate ?? true;
+            }
+            set
+            {
+                _inAppVibrate = value;
+                AddOrUpdateValue("InAppVibrate", value);
+            }
+        }
+
+        private bool? _inAppSounds;
+        public bool InAppSounds
+        {
+            get
+            {
+                if (_inAppSounds == null)
+                    _inAppSounds = GetValueOrDefault("InAppSounds", true);
+
+                return _inAppSounds ?? true;
+            }
+            set
+            {
+                _inAppSounds = value;
+                AddOrUpdateValue("InAppSounds", value);
+            }
+        }
+
+        private bool? _includeMutedChats;
+        public bool IncludeMutedChats
+        {
+            get
+            {
+                if (_includeMutedChats == null)
+                    _includeMutedChats = GetValueOrDefault("IncludeMutedChats", false);
+
+                return _includeMutedChats ?? false;
+            }
+            set
+            {
+                _includeMutedChats = value;
+                AddOrUpdateValue("IncludeMutedChats", value);
+            }
+        }
+    }
+
+    public class ProxySettings : ApplicationSettingsBase
+    {
+        public void CleanUp()
+        {
+            _isEnabled = null;
+            _isCallsEnabled = null;
+            _server = null;
+            _port = null;
+            _username = null;
+            _password = null;
+        }
+
+        private bool? _isEnabled;
+        public bool IsEnabled
+        {
+            get
+            {
+                if (_isEnabled == null)
+                    _isEnabled = GetValueOrDefault("ProxyEnabled", false);
+
+                return _isEnabled ?? false;
+            }
+            set
+            {
+                _isEnabled = value;
+                AddOrUpdateValue("ProxyEnabled", value);
+            }
+        }
+
+        private bool? _isCallsEnabled;
+        public bool IsCallsEnabled
+        {
+            get
+            {
+                if (_isCallsEnabled == null)
+                    _isCallsEnabled = GetValueOrDefault("CallsProxyEnabled", false);
+
+                return _isCallsEnabled ?? false;
+            }
+            set
+            {
+                _isCallsEnabled = value;
+                AddOrUpdateValue("CallsProxyEnabled", value);
+            }
+        }
+
+        private string _server;
+        public string Server
+        {
+            get
+            {
+                if (_server == null)
+                    _server = GetValueOrDefault<string>("ProxyServer", null);
+
+                return _server;
+            }
+            set
+            {
+                _server = value;
+                AddOrUpdateValue("ProxyServer", value);
+            }
+        }
+
+        private int? _port;
+        public int Port
+        {
+            get
+            {
+                if (_port == null)
+                    _port = GetValueOrDefault("ProxyPort", 1080);
+
+                return _port ?? 1080;
+            }
+            set
+            {
+                _port = value;
+                AddOrUpdateValue("ProxyPort", value);
+            }
+        }
+
+        private string _username;
+        public string Username
+        {
+            get
+            {
+                if (_username == null)
+                    _username = GetValueOrDefault<string>("ProxyUsername", null);
+
+                return _username;
+            }
+            set
+            {
+                _username = value;
+                AddOrUpdateValue("ProxyUsername", value);
+            }
+        }
+
+        private string _password;
+        public string Password
+        {
+            get
+            {
+                if (_password == null)
+                    _password = GetValueOrDefault<string>("ProxyPassword", null);
+
+                return _password;
+            }
+            set
+            {
+                _password = value;
+                AddOrUpdateValue("ProxyPassword", value);
+            }
+        }
+
     }
 }

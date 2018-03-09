@@ -6,24 +6,22 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Payments;
 using Unigram.Common;
-using Unigram.Models;
+using Unigram.Entities;
 using Unigram.Core.Stripe;
 using Unigram.Views.Payments;
 using Windows.Data.Json;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Payments
 {
     public class PaymentFormStep3ViewModel : PaymentFormViewModelBase
     {
-        private TLPaymentRequestedInfo _info;
-        private TLPaymentsValidatedRequestedInfo _requestedInfo;
-        private TLShippingOption _shipping;
+        private OrderInfo _info;
+        private ValidatedOrderInfo _requestedInfo;
+        private ShippingOption _shipping;
 
         private string _publishableKey;
 
@@ -213,13 +211,12 @@ namespace Unigram.ViewModels.Payments
         private async void SendExecute()
         {
             var save = _isSave ?? false;
-            if (_paymentForm.HasSavedCredentials && !save && _paymentForm.IsCanSaveCredentials)
+            if (_paymentForm.SavedCredentials != null && !save && _paymentForm.CanSaveCredentials)
             {
-                _paymentForm.HasSavedCredentials = false;
+                //_paymentForm.HasSavedCredentials = false;
                 _paymentForm.SavedCredentials = null;
 
-                ApplicationSettings.Current.TmpPassword = null;
-                LegacyService.ClearSavedInfoAsync(false, true, null, null);
+                ProtoService.Send(new DeleteSavedCredentials());
             }
 
             var month = 0;

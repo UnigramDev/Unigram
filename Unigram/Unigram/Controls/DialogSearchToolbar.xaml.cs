@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Dialogs;
 using Windows.UI.Xaml;
@@ -39,7 +39,7 @@ namespace Unigram.Controls
 
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is TLUser user)
+            if (e.ClickedItem is User user)
             {
                 CaptionInput.IsFiltering = false;
                 CaptionInput.Text = string.Empty;

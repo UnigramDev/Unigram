@@ -5,9 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Services;
@@ -95,8 +93,8 @@ namespace Unigram.ViewModels.Dialogs
             }
         }
 
-        private TLUser _from;
-        public TLUser From
+        private User _from;
+        public User From
         {
             get
             {
@@ -333,9 +331,9 @@ namespace Unigram.ViewModels.Dialogs
                 if (response is Messages messages)
                 {
                     TotalCount = messages.TotalCount;
-                    AddRange(messages.MessagesData);
+                    AddRange(messages.MessagesValue);
 
-                    return new LoadMoreItemsResult { Count = (uint)messages.MessagesData.Count };
+                    return new LoadMoreItemsResult { Count = (uint)messages.MessagesValue.Count };
                 }
 
                 return new LoadMoreItemsResult { Count = 0 };

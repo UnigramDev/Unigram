@@ -5,8 +5,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
-using TdWindows;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
@@ -14,6 +13,7 @@ using Unigram.Converters;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.Views.Users;
 using Windows.Foundation;
@@ -35,8 +35,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupBannedPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupBannedViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<SupergroupBannedViewModel, ISupergroupDelegate>(this);
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>

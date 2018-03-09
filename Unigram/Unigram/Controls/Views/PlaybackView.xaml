@@ -9,7 +9,6 @@
     xmlns:media="using:Unigram.Controls.Media"
     xmlns:controls="using:Unigram.Controls"
     xmlns:viewModels="using:Unigram.ViewModels"
-    xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     VerticalAlignment="Stretch"

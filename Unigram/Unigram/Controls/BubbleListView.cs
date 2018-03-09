@@ -7,8 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
 using Unigram.Converters;
 using Unigram.Views;
 using Unigram.ViewModels.Payments;
@@ -16,7 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.Views.Payments
 {

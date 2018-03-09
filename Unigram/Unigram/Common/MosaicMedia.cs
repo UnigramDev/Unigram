@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Windows.Foundation;
 
 namespace Unigram.Common

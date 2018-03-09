@@ -8,9 +8,7 @@
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:viewmodels="using:Unigram.ViewModels"
     xmlns:native="using:Unigram.Native"
-    xmlns:messages="using:Telegram.Api.TL.Messages"
-    xmlns:tl="using:Telegram.Api.TL"
-    xmlns:td="using:TdWindows"
+    xmlns:td="using:Telegram.Td.Api"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">

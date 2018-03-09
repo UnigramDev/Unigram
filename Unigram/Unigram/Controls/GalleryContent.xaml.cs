@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -71,7 +71,7 @@ namespace Unigram.Controls
                 UpdateThumbnail(item, file);
                 return;
             }
-            else if (data.Id != file.Id)
+            else if (data == null || data.Id != file.Id)
             {
                 return;
             }

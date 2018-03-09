@@ -16,7 +16,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using LinqToVisualTree;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Unigram.Controls;
 using Template10.Common;
 using System.ComponentModel;
@@ -26,9 +25,10 @@ using Windows.System;
 using System.Windows.Input;
 using Unigram.Strings;
 using Unigram.ViewModels.Dialogs;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Controls.Items;
 using Unigram.Controls.Views;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views.Dialogs
 {
@@ -39,8 +39,7 @@ namespace Unigram.Views.Dialogs
         public DialogSharedMediaPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<DialogSharedMediaViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<DialogSharedMediaViewModel, IFileDelegate>(this);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
@@ -269,7 +268,7 @@ namespace Unigram.Views.Dialogs
             element.Tag = message;
         }
 
-        public void UpdateFile(TdWindows.File file)
+        public void UpdateFile(Telegram.Td.Api.File file)
         {
             foreach (Message message in ScrollingMedia.Items)
             {
@@ -321,7 +320,12 @@ namespace Unigram.Views.Dialogs
                     var document = message.Content as MessageDocument;
                     var content = container.ContentTemplateRoot as SharedFileListViewItem;
 
-                    if (file.Id == document.Document.DocumentData.Id)
+                    if (document == null || document.Document == null || document.Document.DocumentValue == null)
+                    {
+                        continue;
+                    }
+
+                    if (file.Id == document.Document.DocumentValue.Id)
                     {
                         content.UpdateFile(message, file);
                     }

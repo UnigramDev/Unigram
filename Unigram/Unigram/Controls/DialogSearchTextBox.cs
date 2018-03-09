@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Dialogs;
-using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using VirtualKey = Windows.System.VirtualKey;
 
 namespace Unigram.Controls
 {
@@ -157,18 +156,18 @@ namespace Unigram.Controls
 
         #region From
 
-        public TLUser From
+        public User From
         {
-            get { return (TLUser)GetValue(FromProperty); }
+            get { return (User)GetValue(FromProperty); }
             set { SetValue(FromProperty, value); }
         }
 
         public static readonly DependencyProperty FromProperty =
-            DependencyProperty.Register("From", typeof(TLUser), typeof(DialogSearchTextBox), new PropertyMetadata(null, OnFromChanged));
+            DependencyProperty.Register("From", typeof(User), typeof(DialogSearchTextBox), new PropertyMetadata(null, OnFromChanged));
 
         private static void OnFromChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((DialogSearchTextBox)d).UpdateState((TLUser)e.NewValue, ((DialogSearchTextBox)d).IsFiltering);
+            ((DialogSearchTextBox)d).UpdateState((User)e.NewValue, ((DialogSearchTextBox)d).IsFiltering);
         }
 
         #endregion
@@ -192,7 +191,7 @@ namespace Unigram.Controls
 
         #endregion
 
-        private void UpdateState(TLUser from, bool filtering)
+        private void UpdateState(User from, bool filtering)
         {
             VisualStateManager.GoToState(this, from != null || filtering ? "FromState" : "BaseState", false);
 

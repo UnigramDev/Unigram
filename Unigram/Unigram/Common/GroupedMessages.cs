@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Unigram.Core.Common;
+using Unigram.ViewModels;
 
 namespace Unigram.Common
 {
@@ -55,8 +55,8 @@ namespace Unigram.Common
         public float Height { get; private set; }
         public int Width { get; private set; }
 
-        public UniqueList<long, TLMessage> Messages { get; } = new UniqueList<long, TLMessage>(x => x.RandomId ?? x.Id);
-        public Dictionary<TLMessage, GroupedMessagePosition> Positions { get; } = new Dictionary<TLMessage, GroupedMessagePosition>();
+        public UniqueList<long, MessageViewModel> Messages { get; } = new UniqueList<long, MessageViewModel>(x => x.Id);
+        public Dictionary<MessageViewModel, GroupedMessagePosition> Positions { get; } = new Dictionary<MessageViewModel, GroupedMessagePosition>();
 
         private class MessageGroupedLayoutAttempt
         {
@@ -116,7 +116,7 @@ namespace Unigram.Common
 
             for (int a = 0; a < count; a++)
             {
-                TLMessage messageObject = Messages[a];
+                MessageViewModel messageObject = Messages[a];
                 //TLVector<TLPhotoSizeBase> photoThumbs = null;
                 if (a == 0)
                 {

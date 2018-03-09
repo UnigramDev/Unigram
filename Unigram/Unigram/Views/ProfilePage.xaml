@@ -150,7 +150,7 @@
                         <controls:BadgeButton x:Name="SecretHashKey"
                                               Visibility="Collapsed"
                                               Content="{CustomResource EncryptionKey}"
-                                              Command="{x:Bind ViewModel.KeyHashCommand}"
+                                              Command="{x:Bind ViewModel.IdenticonCommand}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
 
                         <controls:BadgeButton x:Name="UserCommonChats"

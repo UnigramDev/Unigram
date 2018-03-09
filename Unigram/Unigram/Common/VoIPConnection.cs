@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Unigram.Core.Services;
 using Unigram.Tasks;
 using Unigram.Views;
@@ -87,7 +86,7 @@ namespace Unigram.Common
             }
         }
 
-        public IAsyncOperation<AppServiceResponse> SendRequestAsync(string caption, TLObject request)
+        public IAsyncOperation<AppServiceResponse> SendRequestAsync(string caption, Object request)
         {
             try
             {

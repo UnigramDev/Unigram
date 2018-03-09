@@ -4,8 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -71,7 +70,7 @@ namespace Unigram.ViewModels.Users
 
         public override MvxObservableCollection<GalleryItem> Group => this.Items;
 
-        public override bool CanDelete => _user != null && _user.IsSelf;
+        public override bool CanDelete => _user != null && _user.Id == ProtoService.GetMyId();
 
         protected override async void DeleteExecute()
         {
@@ -97,8 +96,8 @@ namespace Unigram.ViewModels.Users
             //}
         }
 
-        private TLUser _user;
-        public TLUser User
+        private User _user;
+        public User User
         {
             get
             {

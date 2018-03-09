@@ -62,7 +62,7 @@
                 <StackPanel x:Name="UsernamePanel"
                             BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
                             BorderThickness="0,0,0,1"
-                            Margin="12,24,0,0">
+                            Margin="12,18,0,0">
                     <StackPanel BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
                                 BorderThickness="0,0,0,1"
                                 Padding="0,12,12,12">

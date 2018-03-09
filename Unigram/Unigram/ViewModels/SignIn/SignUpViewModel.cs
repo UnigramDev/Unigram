@@ -3,12 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Auth;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Views;
@@ -21,27 +16,10 @@ namespace Unigram.ViewModels.SignIn
 {
     public class SignUpViewModel : UnigramViewModelBase
     {
-        private string _phoneNumber;
-        private string _phoneCode;
-        private TLAuthSentCode _sentCode;
-
         public SignUpViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
-        }
-
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
-        {
-            var param = parameter as SignUpPage.NavigationParameters;
-            if (param != null)
-            {
-                _phoneNumber = param.PhoneNumber;
-                _phoneCode = param.PhoneCode;
-                //_sentCode = param.Result;
-            }
-
-            return Task.CompletedTask;
         }
 
         private string _firstName;
@@ -73,59 +51,64 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (_sentCode == null)
-            {
-                //...
-                return;
-            }
+            //if (_sentCode == null)
+            //{
+            //    //...
+            //    return;
+            //}
 
-            if (_firstName == null)
+            if (string.IsNullOrEmpty(_firstName))
             {
                 RaisePropertyChanged("FIRSTNAME_INVALID");
                 return;
             }
 
-            var phoneNumber = _phoneNumber;
-            var phoneCodeHash = _sentCode.PhoneCodeHash;
+            await ProtoService.SendAsync(new SetOption("x_firstname", new OptionValueString(_firstName ?? string.Empty)));
+            await ProtoService.SendAsync(new SetOption("x_lastname", new OptionValueString(_lastName ?? string.Empty)));
 
-            IsLoading = true;
+            NavigationService.Navigate(typeof(SignInSentCodePage));
 
-            var response = await LegacyService.SignUpAsync(phoneNumber, phoneCodeHash, _phoneCode, _firstName, _lastName);
-            if (response.IsSucceeded)
-            {
-                // TODO: maybe ask about notifications?
+            //var phoneNumber = _phoneNumber;
+            //var phoneCodeHash = _sentCode.PhoneCodeHash;
 
-                NavigationService.Navigate(typeof(MainPage));
-            }
-            else if (response.Error != null)
-            {
-                IsLoading = false;
+            //IsLoading = true;
 
-                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_INVALID))
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
-                }
-                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || response.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
-                }
-                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
-                }
-                else if (response.Error.TypeEquals(TLErrorType.FIRSTNAME_INVALID))
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidFirstName, Strings.Resources.AppName, Strings.Resources.OK);
-                }
-                else if (response.Error.TypeEquals(TLErrorType.LASTNAME_INVALID))
-                {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidLastName, Strings.Resources.AppName, Strings.Resources.OK);
-                }
-                else
-                {
-                    await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Resources.AppName, Strings.Resources.OK);
-                }
-            }
+            //var response = await LegacyService.SignUpAsync(phoneNumber, phoneCodeHash, _phoneCode, _firstName, _lastName);
+            //if (response.IsSucceeded)
+            //{
+            //    // TODO: maybe ask about notifications?
+
+            //    NavigationService.Navigate(typeof(MainPage));
+            //}
+            //else if (response.Error != null)
+            //{
+            //    IsLoading = false;
+
+            //    if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_INVALID))
+            //    {
+            //        await TLMessageDialog.ShowAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
+            //    }
+            //    else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY) || response.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
+            //    {
+            //        await TLMessageDialog.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
+            //    }
+            //    else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
+            //    {
+            //        await TLMessageDialog.ShowAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
+            //    }
+            //    else if (response.Error.TypeEquals(TLErrorType.FIRSTNAME_INVALID))
+            //    {
+            //        await TLMessageDialog.ShowAsync(Strings.Resources.InvalidFirstName, Strings.Resources.AppName, Strings.Resources.OK);
+            //    }
+            //    else if (response.Error.TypeEquals(TLErrorType.LASTNAME_INVALID))
+            //    {
+            //        await TLMessageDialog.ShowAsync(Strings.Resources.InvalidLastName, Strings.Resources.AppName, Strings.Resources.OK);
+            //    }
+            //    else
+            //    {
+            //        await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Resources.AppName, Strings.Resources.OK);
+            //    }
+            //}
         }
     }
 }

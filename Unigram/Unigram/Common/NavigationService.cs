@@ -4,10 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Payments;
+using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.LoggingService;
 using Template10.Services.NavigationService;
@@ -265,27 +262,27 @@ namespace Unigram.Common
 
         public static void NavigateToPaymentFormStep1(this INavigationService service, MessageViewModel message, PaymentForm paymentForm)
         {
-            service.Navigate(typeof(PaymentFormStep1Page), TLTuple.Create(message, paymentForm));
+            service.Navigate(typeof(PaymentFormStep1Page), Tuple.Create(message, paymentForm));
         }
 
-        public static void NavigateToPaymentFormStep2(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, TLPaymentRequestedInfo info, TLPaymentsValidatedRequestedInfo validatedInfo)
+        public static void NavigateToPaymentFormStep2(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, OrderInfo info, ValidatedOrderInfo validatedInfo)
         {
-            service.Navigate(typeof(PaymentFormStep2Page), TLTuple.Create(message, paymentForm, info, validatedInfo));
+            service.Navigate(typeof(PaymentFormStep2Page), Tuple.Create(message, paymentForm, info, validatedInfo));
         }
 
-        public static void NavigateToPaymentFormStep3(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, TLPaymentRequestedInfo info, TLPaymentsValidatedRequestedInfo validatedInfo, TLShippingOption shipping)
+        public static void NavigateToPaymentFormStep3(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, OrderInfo info, ValidatedOrderInfo validatedInfo, ShippingOption shipping)
         {
-            service.Navigate(typeof(PaymentFormStep3Page), TLTuple.Create(message, paymentForm, info, validatedInfo, shipping));
+            service.Navigate(typeof(PaymentFormStep3Page), Tuple.Create(message, paymentForm, info, validatedInfo, shipping));
         }
 
-        public static void NavigateToPaymentFormStep4(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, TLPaymentRequestedInfo info, TLPaymentsValidatedRequestedInfo validatedInfo, TLShippingOption shipping)
+        public static void NavigateToPaymentFormStep4(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, OrderInfo info, ValidatedOrderInfo validatedInfo, ShippingOption shipping)
         {
-            service.Navigate(typeof(PaymentFormStep4Page), TLTuple.Create(message, paymentForm, info, validatedInfo, shipping));
+            service.Navigate(typeof(PaymentFormStep4Page), Tuple.Create(message, paymentForm, info, validatedInfo, shipping));
         }
 
-        public static void NavigateToPaymentFormStep5(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, TLPaymentRequestedInfo info, TLPaymentsValidatedRequestedInfo validatedInfo, TLShippingOption shipping, string title, string credentials, bool save)
+        public static void NavigateToPaymentFormStep5(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, OrderInfo info, ValidatedOrderInfo validatedInfo, ShippingOption shipping, string title, string credentials, bool save)
         {
-            service.Navigate(typeof(PaymentFormStep5Page), TLTuple.Create(message, paymentForm, info, validatedInfo, shipping, title ?? string.Empty, credentials ?? string.Empty, save));
+            service.Navigate(typeof(PaymentFormStep5Page), Tuple.Create(message, paymentForm, info, validatedInfo, shipping, title ?? string.Empty, credentials ?? string.Empty, save));
         }
 
         #endregion
@@ -322,7 +319,7 @@ namespace Unigram.Common
 
         public static bool IsPeerActive(this INavigationService service, long chat)
         {
-            if (service.CurrentPageType == typeof(DialogPage))
+            if (service.CurrentPageType == typeof(ChatPage))
             {
                 if (TryGetPeerFromParameter(service, service.CurrentPageParam, out long chatId))
                 {
@@ -335,7 +332,7 @@ namespace Unigram.Common
 
         public static long GetPeerFromBackStack(this INavigationService service)
         {
-            if (service.CurrentPageType == typeof(DialogPage))
+            if (service.CurrentPageType == typeof(ChatPage))
             {
                 if (TryGetPeerFromParameter(service, service.CurrentPageParam, out long chatId))
                 {
@@ -346,7 +343,7 @@ namespace Unigram.Common
             for (int i = service.Frame.BackStackDepth - 1; i >= 0; i--)
             {
                 var entry = service.Frame.BackStack[i];
-                if (entry.SourcePageType == typeof(DialogPage))
+                if (entry.SourcePageType == typeof(ChatPage))
                 {
                     if (TryGetPeerFromParameter(service, entry.Parameter, out long chatId))
                     {
@@ -385,9 +382,17 @@ namespace Unigram.Common
             {
                 service.Frame.Navigated -= handler;
 
-                if (args.Content is Page page && page.DataContext is INavigableWithResult<T> withResult)
+                if (args.Content is Page page)
                 {
-                    withResult.SetAwaiter(tsc, parameter);
+                    if (page.DataContext is INavigable navigable)
+                    {
+                        navigable.Dispatcher = service.Dispatcher;
+                    }
+
+                    if (page.DataContext is INavigableWithResult<T> withResult)
+                    {
+                        withResult.SetAwaiter(tsc, parameter);
+                    }
                 }
             };
 

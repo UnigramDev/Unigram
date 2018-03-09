@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -14,6 +15,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.BasicGroups
 {
     public class BasicGroupEditViewModel : UnigramViewModelBase,
+        IDelegable<IBasicGroupDelegate>,
         IHandle<UpdateBasicGroup>,
         IHandle<UpdateBasicGroupFullInfo>,
         IHandle<UpdateChatTitle>,
@@ -149,8 +151,8 @@ namespace Unigram.ViewModels.BasicGroups
 
             if (chat.Type is ChatTypeBasicGroup basic)
             {
-                var item = ProtoService.GetSupergroup(basic.BasicGroupId);
-                var cache = ProtoService.GetSupergroupFull(basic.BasicGroupId);
+                var item = ProtoService.GetBasicGroup(basic.BasicGroupId);
+                var cache = ProtoService.GetBasicGroupFull(basic.BasicGroupId);
 
                 if (item == null || cache == null)
                 {

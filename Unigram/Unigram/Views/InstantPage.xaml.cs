@@ -4,9 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -35,11 +32,12 @@ using Windows.UI.Xaml.Media.Animation;
 using Unigram.Controls.Views;
 using LinqToVisualTree;
 using Unigram.ViewModels.Users;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Controls.Messages.Content;
 using Unigram.Controls.Messages;
 using Unigram.Services;
 using Unigram.ViewModels.Dialogs;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views
 {
@@ -581,10 +579,10 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessPhoto(PageBlockPhoto block)
         {
-            var galleryItem = new GalleryPhotoItem(ViewModel.ProtoService, block.Photo, block.Caption?.ToString());
+            var galleryItem = new GalleryPhotoItem(ViewModel.ProtoService, block.Photo, GetPlainText(block.Caption));
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessagePhoto(block.Photo, null));
+            var message = GetMessage(new MessagePhoto(block.Photo, null, false));
             var element = new StackPanel { Tag = message, Style = Resources["BlockPhotoStyle"] as Style };
 
             foreach (var size in block.Photo.Sizes)
@@ -611,10 +609,10 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessVideo(PageBlockVideo block)
         {
-            var galleryItem = new GalleryVideoItem(ViewModel.ProtoService, block.Video, block.Caption?.ToString());
+            var galleryItem = new GalleryVideoItem(ViewModel.ProtoService, block.Video, GetPlainText(block.Caption));
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessageVideo(block.Video, null));
+            var message = GetMessage(new MessageVideo(block.Video, null, false));
             var element = new StackPanel { Tag = message, Style = Resources["BlockVideoStyle"] as Style };
 
             if (block.Video.Thumbnail != null)
@@ -622,7 +620,7 @@ namespace Unigram.Views
                 _filesMap[block.Video.Thumbnail.Photo.Id].Add(element);
             }
 
-            _filesMap[block.Video.VideoData.Id].Add(element);
+            _filesMap[block.Video.VideoValue.Id].Add(element);
 
             var content = new VideoContent(message);
             content.HorizontalAlignment = HorizontalAlignment.Center;
@@ -643,10 +641,10 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessAnimation(PageBlockAnimation block)
         {
-            var galleryItem = new GalleryAnimationItem(ViewModel.ProtoService, block.Animation, block.Caption?.ToString());
+            var galleryItem = new GalleryAnimationItem(ViewModel.ProtoService, block.Animation, GetPlainText(block.Caption));
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessageAnimation(block.Animation, null));
+            var message = GetMessage(new MessageAnimation(block.Animation, null, false));
             var element = new StackPanel { Tag = message, Style = Resources["BlockVideoStyle"] as Style };
 
             if (block.Animation.Thumbnail != null)
@@ -654,7 +652,7 @@ namespace Unigram.Views
                 _filesMap[block.Animation.Thumbnail.Photo.Id].Add(element);
             }
 
-            _filesMap[block.Animation.AnimationData.Id].Add(element);
+            _filesMap[block.Animation.AnimationValue.Id].Add(element);
 
             var content = new AnimationContent(message);
             content.HorizontalAlignment = HorizontalAlignment.Center;
@@ -676,6 +674,38 @@ namespace Unigram.Views
         private MessageViewModel GetMessage(MessageContent content)
         {
             return new MessageViewModel(ViewModel.ProtoService, this, new Message { Content = content });
+        }
+
+        private string GetPlainText(RichText text)
+        {
+            switch (text)
+            {
+                case RichTextPlain plainText:
+                    return plainText.Text;
+                case RichTexts concatText:
+                    var builder = new StringBuilder();
+                    foreach (var concat in concatText.Texts)
+                    {
+                        builder.Append(GetPlainText(concat));
+                    }
+                    return builder.ToString();
+                case RichTextBold boldText:
+                    return GetPlainText(boldText.Text);
+                case RichTextEmailAddress emailText:
+                    return GetPlainText(emailText.Text);
+                case RichTextFixed fixedText:
+                    return GetPlainText(fixedText.Text);
+                case RichTextItalic italicText:
+                    return GetPlainText(italicText.Text);
+                case RichTextStrikethrough strikeText:
+                    return GetPlainText(strikeText.Text);
+                case RichTextUnderline underlineText:
+                    return GetPlainText(underlineText.Text);
+                case RichTextUrl urlText:
+                    return GetPlainText(urlText.Text);
+                default:
+                    return null;
+            }
         }
 
         private FrameworkElement ProcessEmbed(PageBlockEmbedded block)

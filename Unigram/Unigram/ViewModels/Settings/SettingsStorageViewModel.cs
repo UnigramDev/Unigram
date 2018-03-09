@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
@@ -134,6 +134,11 @@ namespace Unigram.ViewModels.Settings
 
         public async void Clear(StorageStatisticsByChat byChat)
         {
+            if (byChat == null)
+            {
+                return;
+            }
+
             var dialog = new ContentDialogBase();
             var page = new SettingsStorageOptimizationPage(ProtoService, dialog, byChat);
             dialog.Content = page;

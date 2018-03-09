@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Services;
@@ -189,11 +189,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.InAppSounds;
+                return ApplicationSettings.Current.Notifications.InAppSounds;
             }
             set
             {
-                ApplicationSettings.Current.InAppSounds = value;
+                ApplicationSettings.Current.Notifications.InAppSounds = value;
                 RaisePropertyChanged();
             }
         }
@@ -202,11 +202,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.InAppVibrate;
+                return ApplicationSettings.Current.Notifications.InAppVibrate;
             }
             set
             {
-                ApplicationSettings.Current.InAppVibrate = value;
+                ApplicationSettings.Current.Notifications.InAppVibrate = value;
                 RaisePropertyChanged();
             }
         }
@@ -215,16 +215,29 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.InAppPreview;
+                return ApplicationSettings.Current.Notifications.InAppPreview;
             }
             set
             {
-                ApplicationSettings.Current.InAppPreview = value;
+                ApplicationSettings.Current.Notifications.InAppPreview = value;
                 RaisePropertyChanged();
             }
         }
 
         #endregion
+
+        public bool IncludeMutedChats
+        {
+            get
+            {
+                return ApplicationSettings.Current.Notifications.IncludeMutedChats;
+            }
+            set
+            {
+                ApplicationSettings.Current.Notifications.IncludeMutedChats = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public void Handle(UpdateNotificationSettings update)
         {

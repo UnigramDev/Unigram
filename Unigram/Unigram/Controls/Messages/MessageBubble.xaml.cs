@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
 using Unigram.Selectors;

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Services;

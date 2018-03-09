@@ -14,8 +14,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
 using Unigram.Views.Settings;
-using Telegram.Api.Helpers;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -143,25 +142,27 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ProxyCommand { get; }
         private async void ProxyExecute()
         {
-            var dialog = new ProxyView(true);
-            dialog.Server = SettingsHelper.ProxyServer;
-            dialog.Port = SettingsHelper.ProxyPort.ToString();
-            dialog.Username = SettingsHelper.ProxyUsername;
-            dialog.Password = SettingsHelper.ProxyPassword;
-            dialog.IsProxyEnabled = SettingsHelper.IsProxyEnabled;
-            dialog.IsCallsProxyEnabled = SettingsHelper.IsCallsProxyEnabled;
+            var proxy = ApplicationSettings.Current.Proxy;
 
-            var enabled = SettingsHelper.IsProxyEnabled == true;
+            var dialog = new ProxyView(true);
+            dialog.Server = proxy.Server;
+            dialog.Port = proxy.Port.ToString();
+            dialog.Username = proxy.Username;
+            dialog.Password = proxy.Password;
+            dialog.IsProxyEnabled = proxy.IsEnabled;
+            dialog.IsCallsProxyEnabled = proxy.IsCallsEnabled;
+
+            var enabled = proxy.IsEnabled == true;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                var server = SettingsHelper.ProxyServer = dialog.Server ?? string.Empty;
-                var port = SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
-                var username = SettingsHelper.ProxyUsername = dialog.Username ?? string.Empty;
-                var password = SettingsHelper.ProxyPassword = dialog.Password ?? string.Empty;
-                var newValue = SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
-                SettingsHelper.IsCallsProxyEnabled = dialog.IsCallsProxyEnabled;
+                var server = proxy.Server = dialog.Server ?? string.Empty;
+                var port = proxy.Port = Extensions.TryParseOrDefault(dialog.Port, 1080);
+                var username = proxy.Username = dialog.Username ?? string.Empty;
+                var password = proxy.Password = dialog.Password ?? string.Empty;
+                var newValue = proxy.IsEnabled = dialog.IsProxyEnabled;
+                proxy.IsCallsEnabled = dialog.IsCallsProxyEnabled;
 
                 if (newValue || newValue != enabled)
                 {

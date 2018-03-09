@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
 using Windows.Foundation;
@@ -30,8 +30,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditAdministratorPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupEditAdministratorViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<SupergroupEditAdministratorViewModel, IMemberDelegate>(this);
         }
 
         public void UpdateChat(Chat chat)
@@ -90,6 +89,7 @@ namespace Unigram.Views.Supergroups
             EditMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             DeleteMessages.Header = group.IsChannel ? Strings.Resources.EditAdminDeleteMessages : Strings.Resources.EditAdminGroupDeleteMessages;
             BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+            PinMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
             AddUsers.Header = group.AnyoneCanInvite ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
         }
     }

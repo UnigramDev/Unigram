@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
 using Unigram.Views;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -23,11 +22,12 @@ using Windows.Foundation.Metadata;
 using Windows.UI;
 using Template10.Utils;
 using Unigram.Converters;
-using TdWindows;
+using Telegram.Td.Api;
 using Windows.Storage;
 using Unigram.Native;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Controls.Views
 {
@@ -352,7 +352,7 @@ namespace Unigram.Controls.Views
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
             var title = ViewModel.StickerSet.Title;
-            var link = new Uri(MeUrlPrefixConverter.Convert($"addstickers/{ViewModel.StickerSet.Name}"));
+            var link = new Uri(MeUrlPrefixConverter.Convert(ViewModel.ProtoService, $"addstickers/{ViewModel.StickerSet.Name}"));
 
             await ShareView.GetForCurrentView().ShowAsync(link, title);
         }

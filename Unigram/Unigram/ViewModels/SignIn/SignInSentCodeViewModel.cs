@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Account;
-using Telegram.Api.TL.Auth;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Entities;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.SignIn;
@@ -37,24 +32,24 @@ namespace Unigram.ViewModels.SignIn
             if (authState is AuthorizationStateWaitCode waitCode)
             {
                 _phoneNumber = ProtoService.GetOption<OptionValueString>("x_phonenumber").Value;
-                _sentCode = waitCode;
+                _codeInfo = waitCode.CodeInfo;
 
-                RaisePropertyChanged(() => SentCode);
+                RaisePropertyChanged(() => CodeInfo);
             }
 
             return Task.CompletedTask;
         }
 
-        private AuthorizationStateWaitCode _sentCode;
-        public AuthorizationStateWaitCode SentCode
+        private AuthenticationCodeInfo _codeInfo;
+        public AuthenticationCodeInfo CodeInfo
         {
             get
             {
-                return _sentCode;
+                return _codeInfo;
             }
             set
             {
-                Set(ref _sentCode, value);
+                Set(ref _codeInfo, value);
             }
         }
 
@@ -71,11 +66,11 @@ namespace Unigram.ViewModels.SignIn
 
                 var length = 5;
 
-                if (_sentCode != null && _sentCode.CodeInfo.Type is AuthenticationCodeTypeTelegramMessage appType)
+                if (_codeInfo != null && _codeInfo.Type is AuthenticationCodeTypeTelegramMessage appType)
                 {
                     length = appType.Length;
                 }
-                else if (_sentCode != null && _sentCode.CodeInfo.Type is AuthenticationCodeTypeSms smsType)
+                else if (_codeInfo != null && _codeInfo.Type is AuthenticationCodeTypeSms smsType)
                 {
                     length = smsType.Length;
                 }
@@ -98,7 +93,7 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (_sentCode == null)
+            if (_codeInfo == null)
             {
                 //...
                 return;
@@ -112,12 +107,25 @@ namespace Unigram.ViewModels.SignIn
 
             IsLoading = true;
 
-            var response = await ProtoService.SendAsync(new CheckAuthenticationCode(_phoneCode, "Yolo", string.Empty));
+            var firstName = string.Empty;
+            var lastName = string.Empty;
+
+            if (ProtoService.TryGetOption("x_firstname", out OptionValueString firstValue))
+            {
+                firstName = firstValue.Value;
+            }
+            
+            if (ProtoService.TryGetOption("x_lastname", out OptionValueString lastValue))
+            {
+                lastName = lastValue.Value;
+            }
+
+            var response = await ProtoService.SendAsync(new CheckAuthenticationCode(_phoneCode, firstName, lastName));
             if (response is Error error)
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(TLErrorType.PHONE_NUMBER_UNOCCUPIED))
+                if (error.TypeEquals(ErrorType.PHONE_NUMBER_UNOCCUPIED))
                 {
                     //var signup = await ProtoService.SignUpAsync(phoneNumber, phoneCodeHash, PhoneCode, "Paolo", "Veneziani");
                     //if (signup.IsSucceeded)
@@ -145,19 +153,19 @@ namespace Unigram.ViewModels.SignIn
                     //    Result = _sentCode,
                     //});
                 }
-                else if (error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
                     //await new MessageDialog(Resources.PhoneCodeInvalidString, Resources.Error).ShowAsync();
                 }
-                else if (error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY))
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY))
                 {
                     //await new MessageDialog(Resources.PhoneCodeEmpty, Resources.Error).ShowAsync();
                 }
-                else if (error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
                     //await new MessageDialog(Resources.PhoneCodeExpiredString, Resources.Error).ShowAsync();
                 }
-                else if (error.TypeEquals(TLErrorType.SESSION_PASSWORD_NEEDED))
+                else if (error.TypeEquals(ErrorType.SESSION_PASSWORD_NEEDED))
                 {
                     //this.IsWorking = true;
                     //var password = await LegacyService.GetPasswordAsync();
@@ -178,7 +186,7 @@ namespace Unigram.ViewModels.SignIn
                     //    Execute.ShowDebugMessage("account.getPassword error " + password.Error);
                     //}
                 }
-                else if (error.CodeEquals(TLErrorCode.FLOOD))
+                else if (error.CodeEquals(ErrorCode.FLOOD))
                 {
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({error.Message})", Resources.Error).ShowAsync();
                 }
@@ -190,13 +198,13 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand ResendCommand { get; }
         private async void ResendExecute()
         {
-            if (_sentCode == null)
+            if (_codeInfo == null)
             {
                 //...
                 return;
             }
 
-            if (_sentCode.CodeInfo.NextType == null)
+            if (_codeInfo.NextType == null)
             {
                 return;
             }

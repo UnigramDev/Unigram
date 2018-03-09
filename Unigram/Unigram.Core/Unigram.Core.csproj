@@ -98,7 +98,6 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\KeyedList.cs" />
     <Compile Include="Common\MvxObservableCollection.cs" />
-    <Compile Include="Dependency\UnigramContainerBuilder.cs" />
     <Compile Include="EncryptionKeyEmojifier.cs" />
     <Compile Include="Helpers\ColorsHelper.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
@@ -166,10 +165,6 @@
     <ProjectReference Include="..\Libraries\Template10-version_1.1.12_vs2017\Template10 %28Library%29\Template10 %28Library%29.csproj">
       <Project>{ac3e4f10-6615-4e16-bb0f-104760c92b95}</Project>
       <Name>Template10 %28Library%29</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Unigram.Api\Telegram.Api.csproj">
-      <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
-      <Name>Telegram.Api</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

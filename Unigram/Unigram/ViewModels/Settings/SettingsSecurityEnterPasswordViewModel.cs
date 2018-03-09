@@ -3,11 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Account;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Views;
@@ -18,12 +13,13 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsSecurityEnterPasswordViewModel : UnigramViewModelBase
     {
-        private TLAccountPassword _passwordBase;
+        //private TLAccountPassword _passwordBase;
 
         public SettingsSecurityEnterPasswordViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
@@ -34,11 +30,11 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (parameter is TLAccountPassword password)
-            {
-                _passwordBase = password;
-                PasswordHint = password.Hint;
-            }
+            //if (parameter is TLAccountPassword password)
+            //{
+            //    _passwordBase = password;
+            //    PasswordHint = password.Hint;
+            //}
 
             return Task.CompletedTask;
         }
@@ -73,77 +69,69 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (_passwordBase == null)
-            {
-                // TODO: ...
-                return;
-            }
+            //if (_passwordBase == null)
+            //{
+            //    // TODO: ...
+            //    return;
+            //}
 
-            if (_password == null)
-            {
-                await TLMessageDialog.ShowAsync("Please enter your password.");
-                return;
-            }
+            //if (_password == null)
+            //{
+            //    await TLMessageDialog.ShowAsync("Please enter your password.");
+            //    return;
+            //}
 
-            var currentSalt = _passwordBase.CurrentSalt;
-            var hash = TLUtils.Combine(currentSalt, Encoding.UTF8.GetBytes(_password), currentSalt);
+            //var response = await LegacyService.CheckPasswordAsync(data);
+            //if (response.IsSucceeded)
+            //{
+            //    // TODO: maybe ask about notifications?
 
-            var input = CryptographicBuffer.CreateFromByteArray(hash);
-            var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-            var hashed = hasher.HashData(input);
-            CryptographicBuffer.CopyToByteArray(hashed, out byte[] data);
+            //    NavigationService.Navigate(typeof(MainPage));
+            //}
+            //else
+            //{
+            //    if (response.Error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
+            //    {
+            //        //await new MessageDialog(Resources.PasswordInvalidString, Resources.Error).ShowAsync();
+            //    }
+            //    else if (response.Error.CodeEquals(TLErrorCode.FLOOD))
+            //    {
+            //        //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
+            //    }
 
-            var response = await LegacyService.CheckPasswordAsync(data);
-            if (response.IsSucceeded)
-            {
-                // TODO: maybe ask about notifications?
-
-                NavigationService.Navigate(typeof(MainPage));
-            }
-            else
-            {
-                if (response.Error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
-                {
-                    //await new MessageDialog(Resources.PasswordInvalidString, Resources.Error).ShowAsync();
-                }
-                else if (response.Error.CodeEquals(TLErrorCode.FLOOD))
-                {
-                    //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
-                }
-
-                Execute.ShowDebugMessage("account.checkPassword error " + response.Error);
-            }
+            //    Execute.ShowDebugMessage("account.checkPassword error " + response.Error);
+            //}
         }
 
         public RelayCommand ForgotCommand { get; }
         private async void ForgotExecute()
         {
-            if (_passwordBase == null)
-            {
-                // TODO: ...
-                return;
-            }
+            //if (_passwordBase == null)
+            //{
+            //    // TODO: ...
+            //    return;
+            //}
 
-            if (_passwordBase.HasRecovery)
-            {
-                IsLoading = true;
+            //if (_passwordBase.HasRecovery)
+            //{
+            //    IsLoading = true;
 
-                var response = await LegacyService.RequestPasswordRecoveryAsync();
-                if (response.IsSucceeded)
-                {
-                    await TLMessageDialog.ShowAsync(string.Format("We have sent a recovery code to the e-mail you provided:\n\n{0}", response.Result.EmailPattern), "Telegram", "OK");
-                }
-                else if (response.Error != null)
-                {
-                    IsLoading = false;
-                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
-                }
-            }
-            else
-            {
-                await TLMessageDialog.ShowAsync("Since you haven't provided a recovery e-mail when setting up your password, your remaining options are either to remember your password or to reset your account.", "Sorry", "OK");
-                //IsResettable = true;
-            }
+            //    var response = await ProtoService.SendAsync(new RequestPasswordRecovery());
+            //    if (response is PasswordRecoveryInfo info)
+            //    {
+            //        await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, info.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
+            //    }
+            //    else if (response is Error error)
+            //    {
+            //        IsLoading = false;
+            //        await new TLMessageDialog(error.Message ?? "Error message", error.Code.ToString()).ShowQueuedAsync();
+            //    }
+            //}
+            //else
+            //{
+            //    await TLMessageDialog.ShowAsync(Strings.Resources.RestorePasswordNoEmailText, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+            //    //IsResettable = true;
+            //}
         }
     }
 }

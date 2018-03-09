@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Template10.Services.NavigationService;
+using Template10.Services.ViewService;
 using Unigram.Services;
 using Unigram.Views;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -16,10 +19,28 @@ namespace Unigram.Common
     {
         private readonly IProtoService _protoService;
 
+        private ViewLifetimeControl _instantLifetime;
+
         public UnigramNavigationService(IProtoService protoService, Frame frame)
             : base(frame)
         {
             _protoService = protoService;
+        }
+
+        public async void NavigateToInstant(string url)
+        {
+            if (_instantLifetime == null)
+            {
+                _instantLifetime = await OpenAsync(typeof(InstantPage), url);
+            }
+            else
+            {
+                await _instantLifetime.CoreDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    _instantLifetime.NavigationService.Navigate(typeof(InstantPage), url);
+                });
+                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(_instantLifetime.Id, ViewSizePreference.Default, ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), ViewSizePreference.UseHalf);
+            }
         }
 
         public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null)
@@ -48,7 +69,7 @@ namespace Unigram.Common
                 }
             }
 
-            if (Frame.Content is DialogPage page && chat.Id.Equals((long)CurrentPageParam))
+            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam))
             {
                 if (message != null)
                 {
@@ -82,13 +103,22 @@ namespace Unigram.Common
                 }
 
 
-                Navigate(typeof(DialogPage), chat.Id);
+                Navigate(typeof(ChatPage), chat.Id);
             }
         }
 
-        public void NavigateToChat(long chatId, long? message = null, string accessToken = null)
+        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null)
         {
             var chat = _protoService.GetChat(chatId);
+            if (chat == null)
+            {
+                var response = await _protoService.SendAsync(new GetChat(chatId));
+                if (response is Chat result)
+                {
+                    chat = result;
+                }
+            }
+
             if (chat == null)
             {
                 return;

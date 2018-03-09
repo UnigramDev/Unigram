@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core;
 using Unigram.Services;
@@ -17,7 +16,10 @@ using System.ComponentModel;
 using System.Collections.Specialized;
 using Windows.Storage;
 using System.Runtime.CompilerServices;
-using TdWindows;
+using Telegram.Td.Api;
+using Windows.UI.Xaml.Data;
+using Windows.Foundation;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Unigram.ViewModels.Dialogs
 {
@@ -226,6 +228,19 @@ namespace Unigram.ViewModels.Dialogs
 
         public StickerSetCollection SavedStickers { get; private set; }
 
+        private SearchStickerSetsCollection _search;
+        public SearchStickerSetsCollection Search
+        {
+            get
+            {
+                return _search;
+            }
+            set
+            {
+                Set(ref _search, value);
+            }
+        }
+
         //public void SyncGroup(TLChannelFull channelFull)
         //{
         //    SavedStickers.Remove(_groupSet);
@@ -304,7 +319,7 @@ namespace Unigram.ViewModels.Dialogs
                                 for (int j = 0; j < _recentSet.Stickers.Count; j++)
                                 {
                                     var recSticker = _recentSet.Stickers[j];
-                                    if (recSticker.StickerData.Id == favSticker.StickerData.Id)
+                                    if (recSticker.StickerValue.Id == favSticker.StickerValue.Id)
                                     {
                                         _recentSet.Stickers.Remove(recSticker);
                                         break;
@@ -314,11 +329,11 @@ namespace Unigram.ViewModels.Dialogs
 
 
                             var stickers = new List<StickerSetViewModel>();
-                            if (favorite.StickersData.Count > 0)
+                            if (favorite.StickersValue.Count > 0)
                             {
                                 stickers.Add(_favoriteSet);
                             }
-                            if (recent.StickersData.Count > 0)
+                            if (recent.StickersValue.Count > 0)
                             {
                                 stickers.Add(_recentSet);
                             }
@@ -351,7 +366,7 @@ namespace Unigram.ViewModels.Dialogs
             {
                 if (result is Animations animation)
                 {
-                    BeginOnUIThread(() => SavedGifs.ReplaceWith(MosaicMedia.Calculate(animation.AnimationsData.ToList())));
+                    BeginOnUIThread(() => SavedGifs.ReplaceWith(MosaicMedia.Calculate(animation.AnimationsValue.ToList())));
                 }
             });
 
@@ -424,13 +439,13 @@ namespace Unigram.ViewModels.Dialogs
         //}
     }
 
-    public class TLChannelStickerSet : TLObject
+    public class TLChannelStickerSet : System.Object
     {
         //public TLChannel With { get; set; }
         //public TLChannelFull Full { get; set; }
     }
 
-    public class TLFeaturedStickerSet : TLObject
+    public class TLFeaturedStickerSet : System.Object
     {
         //public TLStickerSet Set { get; set; }
 
@@ -526,11 +541,11 @@ namespace Unigram.ViewModels.Dialogs
         {
             if (raise)
             {
-                Stickers.ReplaceWith(stickers.StickersData.Select(x => new StickerViewModel(x)));
+                Stickers.ReplaceWith(stickers.StickersValue.Select(x => new StickerViewModel(x)));
             }
             else
             {
-                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.StickersData.Select(x => new StickerViewModel(x)));
+                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.StickersValue.Select(x => new StickerViewModel(x)));
             }
         }
 
@@ -587,7 +602,7 @@ namespace Unigram.ViewModels.Dialogs
             return _sticker;
         }
 
-        public File StickerData => _sticker?.StickerData;
+        public File StickerValue => _sticker?.StickerValue;
         public PhotoSize Thumbnail => _sticker?.Thumbnail;
         public MaskPosition MaskPosition => _sticker?.MaskPosition;
         public bool IsMask => _sticker?.IsMask ?? false;
@@ -648,4 +663,53 @@ namespace Unigram.ViewModels.Dialogs
             }
         }
     }
+
+    public class SearchStickerSetsCollection : MvxObservableCollection<StickerSetViewModel>, ISupportIncrementalLoading
+    {
+        private readonly IProtoService _protoService;
+        private readonly bool _masks;
+        private readonly string _query;
+
+        private readonly List<int> _users = new List<int>();
+
+        private KeyedList<string, object> _local;
+        private KeyedList<string, object> _remote;
+
+        public SearchStickerSetsCollection(IProtoService protoService, bool masks, string query)
+        {
+            _protoService = protoService;
+            _masks = masks;
+            _query = query;
+        }
+
+        public string Query => _query;
+
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint phase)
+        {
+            return AsyncInfo.Run(async token =>
+            {
+                if (phase == 0)
+                {
+                    var response = await _protoService.SendAsync(new SearchInstalledStickerSets(_masks, _query, 100));
+                    if (response is StickerSets sets)
+                    {
+                        AddRange(sets.Sets.Select(x => new StickerSetViewModel(x)));
+                    }
+                }
+                else if (phase == 1)
+                {
+                    var response = await _protoService.SendAsync(new SearchStickerSets(_query));
+                    if (response is StickerSets sets)
+                    {
+                        AddRange(sets.Sets.Select(x => new StickerSetViewModel(x)));
+                    }
+                }
+
+                return new LoadMoreItemsResult();
+            });
+        }
+
+        public bool HasMoreItems => false;
+    }
+
 }

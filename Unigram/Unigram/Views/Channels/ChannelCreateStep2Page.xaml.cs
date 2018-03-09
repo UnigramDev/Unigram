@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.Controls;
 using Unigram.Common;
@@ -59,7 +59,7 @@ namespace Unigram.Views.Channels
                     if (supergroup != null)
                     {
                         var subtitle = content.Children[2] as TextBlock;
-                        subtitle.Text = MeUrlPrefixConverter.Convert(supergroup.Username, true);
+                        subtitle.Text = MeUrlPrefixConverter.Convert(ViewModel.CacheService, supergroup.Username, true);
                     }
                 }
             }

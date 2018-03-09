@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Composition;
 using System.Numerics;
 using System.Collections.Generic;
+using Unigram.Common;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -306,7 +307,7 @@ namespace Unigram.Controls
 
                     }
                     // When the new page is a chat
-                    else if (e.SourcePageType == typeof(DialogPage))
+                    else if (e.SourcePageType == typeof(ChatPage))
                     {
                         // The user opened first a chat, then the userinfo. Remove them from backstack.
                         if (DetailFrame.BackStackDepth == 3)

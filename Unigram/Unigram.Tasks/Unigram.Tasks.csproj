@@ -102,7 +102,6 @@
     <PRIResource Include="Strings\en\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClearCacheTask.cs" />
     <Compile Include="NotificationTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InteractiveTask.cs" />
@@ -125,10 +124,6 @@
     <ProjectReference Include="..\Libraries\libtgvoip\libtgvoip.UWP.vcxproj">
       <Project>{88803693-7606-484b-9d2f-4bb789d57c29}</Project>
       <Name>libtgvoip</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Unigram.Api\Telegram.Api.csproj">
-      <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
-      <Name>Telegram.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\Unigram.Core\Unigram.Core.csproj">
       <Project>{580d2885-8129-499e-9ffd-39ff1b586f18}</Project>

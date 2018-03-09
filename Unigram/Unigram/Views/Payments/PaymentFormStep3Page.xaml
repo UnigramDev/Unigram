@@ -86,7 +86,7 @@
                              InputScope="Number"/>
                 </StackPanel>
 
-                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.IsCanSaveCredentials, FallbackValue=Collapsed}" Padding="12,12,12,24">
+                <StackPanel Visibility="{x:Bind (Visibility)ViewModel.PaymentForm.CanSaveCredentials, FallbackValue=Collapsed}" Padding="12,12,12,24">
                     <CheckBox IsChecked="{x:Bind ViewModel.IsSave, Mode=TwoWay}"
                               Content="{CustomResource PaymentCardSavePaymentInformation}"/>
                     <TextBlock Text="{CustomResource PaymentCardSavePaymentInformationInfoLine1}"

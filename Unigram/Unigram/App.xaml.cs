@@ -4,10 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Common;
@@ -98,7 +95,6 @@ namespace Unigram
             InitializeComponent();
 
             _uiSettings = new UISettings();
-            _uiSettings.ColorValuesChanged += ColorValuesChanged;
 
             m_mediaExtensionManager = new MediaExtensionManager();
             m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
@@ -128,6 +124,13 @@ namespace Unigram
                 });
 
 #endif
+        }
+
+        protected override void OnWindowCreated(WindowCreatedEventArgs args)
+        {
+            CustomXamlResourceLoader.Current = new XamlResourceLoader();
+            WindowContext.GetForCurrentView();
+            base.OnWindowCreated(args);
         }
 
         private void Inactivity_Detected(object sender, EventArgs e)
@@ -275,7 +278,7 @@ namespace Unigram
                 Window.Current.VisibilityChanged -= Window_VisibilityChanged;
                 Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
-                UpdateBars();
+                WindowContext.GetForCurrentView().UpdateTitleBar();
                 ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
@@ -301,172 +304,14 @@ namespace Unigram
             //var service = UnigramContainer.Current.ResolveType<IProtoService>();
             //var response = await service.SendAsync(new GetAuthorizationState());
             //if (response is AuthorizationStateReady)
-            if (state is AuthorizationStateReady)
-            {
-                if (args is ShareTargetActivatedEventArgs share)
-                {
-                    var package = new DataPackage();
-                    var operation = share.ShareOperation.Data;
-                    if (operation.Contains(StandardDataFormats.ApplicationLink))
-                    {
-                        package.SetApplicationLink(await operation.GetApplicationLinkAsync());
-                    }
-                    if (operation.Contains(StandardDataFormats.Bitmap))
-                    {
-                        package.SetBitmap(await operation.GetBitmapAsync());
-                    }
-                    //if (operation.Contains(StandardDataFormats.Html))
-                    //{
-                    //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
-                    //}
-                    //if (operation.Contains(StandardDataFormats.Rtf))
-                    //{
-                    //    package.SetRtf(await operation.GetRtfAsync());
-                    //}
-                    if (operation.Contains(StandardDataFormats.StorageItems))
-                    {
-                        package.SetStorageItems(await operation.GetStorageItemsAsync());
-                    }
-                    if (operation.Contains(StandardDataFormats.Text))
-                    {
-                        package.SetText(await operation.GetTextAsync());
-                    }
-                    //if (operation.Contains(StandardDataFormats.Uri))
-                    //{
-                    //    package.SetUri(await operation.GetUriAsync());
-                    //}
-                    if (operation.Contains(StandardDataFormats.WebLink))
-                    {
-                        package.SetWebLink(await operation.GetWebLinkAsync());
-                    }
-
-                    ShareOperation = share.ShareOperation;
-                    DataPackage = package.GetView();
-
-                    var options = new Windows.System.LauncherOptions();
-                    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
-
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri("tg://"), options);
-                }
-                else if (args is VoiceCommandActivatedEventArgs voice)
-                {
-                    Execute.Initialize();
-
-                    SpeechRecognitionResult speechResult = voice.Result;
-                    string command = speechResult.RulePath[0];
-
-                    if (command == "ShowAllDialogs")
-                    {
-                        NavigationService.NavigateToMain(null);
-                    }
-                    if (command == "ShowSpecificDialog")
-                    {
-                        //#TODO: Fix that this'll open a specific dialog
-                        NavigationService.NavigateToMain(null);
-                    }
-                    else
-                    {
-                        NavigationService.NavigateToMain(null);
-                    }
-                }
-                else if (args is ContactPanelActivatedEventArgs contact)
-                {
-                    WindowContext.GetForCurrentView().SetContactPanel(contact.ContactPanel);
-
-                    var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
-                    contact.ContactPanel.HeaderColor = backgroundBrush.Color;
-
-                    var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
-                    var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
-                    if (store != null && annotationStore != null)
-                    {
-                        var full = await store.GetContactAsync(contact.Contact.Id);
-                        if (full == null)
-                        {
-                            NavigationService.NavigateToMain(null);
-                        }
-                        else
-                        {
-                            var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
-
-                            var first = annotations.FirstOrDefault();
-                            if (first == null)
-                            {
-                                NavigationService.NavigateToMain(null);
-                            }
-                            else
-                            {
-                                var remote = first.RemoteId;
-                                if (long.TryParse(remote.Substring(1), out long chatId))
-                                {
-                                    NavigationService.NavigateToChat(chatId);
-                                }
-                                else
-                                {
-                                    NavigationService.NavigateToMain(null);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        NavigationService.NavigateToMain(null);
-                    }
-                }
-                else if (args is ProtocolActivatedEventArgs protocol)
-                {
-                    Execute.Initialize();
-
-                    if (ShareOperation != null)
-                    {
-                        ShareOperation.ReportCompleted();
-                        ShareOperation = null;
-                    }
-
-                    if (NavigationService?.Frame?.Content is MainPage page)
-                    {
-                        page.Activate(protocol.Uri);
-                    }
-                    else
-                    {
-                        NavigationService.NavigateToMain(protocol.Uri.ToString());
-                    }
-                }
-                //else if (args is CommandLineActivatedEventArgs commandLine && TryParseCommandLine(commandLine, out int id, out bool test))
-                //{
-
-                //}
-                else
-                {
-                    Execute.Initialize();
-
-                    var activate = args as ToastNotificationActivatedEventArgs;
-                    var launched = args as LaunchActivatedEventArgs;
-                    var launch = activate?.Argument ?? launched?.Arguments;
-
-                    if (NavigationService?.Frame?.Content is MainPage page)
-                    {
-                        page.Activate(launch);
-                    }
-                    else
-                    {
-                        NavigationService.NavigateToMain(launch);
-                    }
-                }
-            }
-            else if (state is AuthorizationStateWaitPhoneNumber)
-            {
-                Execute.Initialize();
-
-                NavigationService.Navigate(typeof(IntroPage));
-            }
+            WindowContext.GetForCurrentView().SetActivatedArgs(args, NavigationService);
+            WindowContext.GetForCurrentView().UpdateTitleBar();
 
             Window.Current.Activated -= Window_Activated;
             Window.Current.Activated += Window_Activated;
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
-            UpdateBars();
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
@@ -522,7 +367,6 @@ namespace Unigram
 
             await Toast.RegisterBackgroundTasks();
 
-            BadgeUpdateManager.CreateBadgeUpdaterForApplication("App").Clear();
             TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
             ToastNotificationManager.History.Clear("App");
 
@@ -563,7 +407,7 @@ namespace Unigram
 
         public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
-            Telegram.Logs.Log.Write("OnResuming");
+            Logs.Log.Write("OnResuming");
 
             //#if DEBUG
             await VoIPConnection.Current.ConnectAsync();
@@ -574,74 +418,11 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            Telegram.Logs.Log.Write("OnSuspendingAsync");
+            Logs.Log.Write("OnSuspendingAsync");
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }
 
-        private void ColorValuesChanged(UISettings sender, object args)
-        {
-            Execute.BeginOnUIThread(() => UpdateBars());
-        }
-
-        /// <summary>
-        /// Update the Title and Status Bars colors.
-        /// </summary>
-        private void UpdateBars()
-        {
-            Color background;
-            Color foreground;
-            Color buttonHover;
-            Color buttonPressed;
-
-            var current = _uiSettings.GetColorValue(UIColorType.Background);
-
-            // Apply buttons feedback based on Light or Dark theme
-            if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark || (ApplicationSettings.Current.CurrentTheme == ElementTheme.Default && current == Colors.Black))
-            {
-                background = Color.FromArgb(255, 31, 31, 31);
-                foreground = Colors.White;
-                buttonHover = Color.FromArgb(255, 53, 53, 53);
-                buttonPressed = Color.FromArgb(255, 76, 76, 76);
-            }
-            else if (ApplicationSettings.Current.CurrentTheme == ElementTheme.Light || (ApplicationSettings.Current.CurrentTheme == ElementTheme.Default && current == Colors.White))
-            {
-                background = Color.FromArgb(255, 230, 230, 230);
-                foreground = Colors.Black;
-                buttonHover = Color.FromArgb(255, 207, 207, 207);
-                buttonPressed = Color.FromArgb(255, 184, 184, 184);
-            }
-
-            // Desktop Title Bar
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
-
-            // Background
-            titleBar.BackgroundColor = background;
-            titleBar.InactiveBackgroundColor = background;
-
-            // Foreground
-            titleBar.ForegroundColor = foreground;
-            titleBar.ButtonForegroundColor = foreground;
-            titleBar.ButtonHoverForegroundColor = foreground;
-
-            // Buttons
-            titleBar.ButtonBackgroundColor = background;
-            titleBar.ButtonInactiveBackgroundColor = background;
-
-            // Buttons feedback
-            titleBar.ButtonPressedBackgroundColor = buttonPressed;
-            titleBar.ButtonHoverBackgroundColor = buttonHover;
-
-            // Mobile Status Bar
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = background;
-                statusBar.ForegroundColor = foreground;
-                statusBar.BackgroundOpacity = 1;
-            }
-        }
 
         //private void Window_Activated(object sender, WindowActivatedEventArgs e)
         //{
@@ -679,70 +460,5 @@ namespace Unigram
 
         public int? NavigateToMessage { get; set; }
         public string NavigateToAccessToken { get; set; }
-    }
-
-    public class WindowContext
-    {
-        public WindowContext()
-        {
-            Window.Current.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
-            Window.Current.Activated += OnActivated;
-        }
-
-        public CoreWindowActivationState ActivationState { get; private set; }
-
-        public ContactPanel ContactPanel { get; private set; }
-
-        public void SetContactPanel(ContactPanel panel)
-        {
-            ContactPanel = panel;
-        }
-
-        public bool IsContactPanel()
-        {
-            return ContactPanel != null;
-        }
-
-        public event TypedEventHandler<CoreDispatcher, AcceleratorKeyEventArgs> AcceleratorKeyActivated;
-
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
-        {
-            if (AcceleratorKeyActivated is MulticastDelegate multicast)
-            {
-                var list = multicast.GetInvocationList();
-                for (int i = list.Length - 1; i >= 0; i--)
-                {
-                    var result = list[i].DynamicInvoke(sender, args);
-                    if (args.Handled)
-                    {
-                        return;
-                    }
-                }
-            }
-        }
-
-        private void OnActivated(object sender, WindowActivatedEventArgs e)
-        {
-            ActivationState = e.WindowActivationState;
-        }
-
-
-
-
-
-        private static Dictionary<int, WindowContext> _windowContext = new Dictionary<int, WindowContext>();
-        public static WindowContext GetForCurrentView()
-        {
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out WindowContext value))
-            {
-                return value;
-            }
-
-            var context = new WindowContext();
-            _windowContext[id] = context;
-
-            return context;
-        }
     }
 }

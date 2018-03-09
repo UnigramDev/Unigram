@@ -5,12 +5,11 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using TdWindows;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Unigram.Views;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
@@ -18,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupEditAdministratorViewModel : UnigramViewModelBase
+    public class SupergroupEditAdministratorViewModel : UnigramViewModelBase, IDelegable<IMemberDelegate>
     {
         public IMemberDelegate Delegate { get; set; }
 
@@ -283,7 +282,7 @@ namespace Unigram.ViewModels.Supergroups
                 CanDeleteMessages = _canDeleteMessages,
                 CanEditMessages = supergroup.IsChannel ? _canEditMessages : false,
                 CanInviteUsers = _canInviteUsers,
-                CanPinMessages = _canPinMessages,
+                CanPinMessages = supergroup.IsChannel ? false : _canPinMessages,
                 CanPostMessages = supergroup.IsChannel ? _canPostMessages : false,
                 CanPromoteMembers = _canPromoteMembers,
                 CanRestrictMembers = supergroup.IsChannel ? false : _canRestrictMembers,
@@ -329,10 +328,5 @@ namespace Unigram.ViewModels.Supergroups
                 // TODO: ...
             }
         }
-    }
-
-    public interface IMemberDelegate : IUserDelegate
-    {
-        void UpdateMember(Chat chat, Supergroup group, User user, ChatMember member);
     }
 }

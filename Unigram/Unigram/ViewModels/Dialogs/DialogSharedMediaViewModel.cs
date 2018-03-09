@@ -11,15 +11,16 @@ using Unigram.Helpers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 using Windows.Storage.Pickers;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using System.Linq;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels.Dialogs
 {
-    public class DialogSharedMediaViewModel : UnigramViewModelBase, IMessageDelegate, IHandle<UpdateFile>
+    public class DialogSharedMediaViewModel : UnigramViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>
     {
         public IFileDelegate Delegate { get; set; }
 
@@ -433,7 +434,7 @@ namespace Unigram.ViewModels.Dialogs
             return true;
         }
 
-        public void DownloadFile(MessageViewModel message, TdWindows.File file)
+        public void DownloadFile(MessageViewModel message, Telegram.Td.Api.File file)
         {
         }
 

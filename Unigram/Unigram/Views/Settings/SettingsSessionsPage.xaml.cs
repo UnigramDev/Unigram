@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Controls.Cells;
+using Telegram.Td.Api;
 
 namespace Unigram.Views.Settings
 {
@@ -35,6 +37,19 @@ namespace Unigram.Views.Settings
         private void TerminateOthers_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.TerminateOthersCommand.Execute(null);
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            if (args.ItemContainer.ContentTemplateRoot is SessionCell cell)
+            {
+                cell.UpdateSession(args.Item as Session);
+            }
         }
     }
 }

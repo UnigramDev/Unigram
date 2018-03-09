@@ -5,8 +5,6 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
@@ -35,10 +33,11 @@ using Windows.UI.ViewManagement;
 using Windows.System.Display;
 using Unigram.Common;
 using Windows.Graphics.Display;
-using TdWindows;
+using Telegram.Td.Api;
 using System.Windows.Input;
 using Windows.Storage.Streams;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Controls.Views
 {
@@ -831,7 +830,7 @@ namespace Unigram.Controls.Views
                 ViewModel.OpenMessage(ViewModel.Items[index]);
             }
 
-            _selecting = false;
+            //_selecting = false;
         }
 
         private GalleryContent GetContainer(int direction)
@@ -881,20 +880,6 @@ namespace Unigram.Controls.Views
 
         private void ImageView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            /*<MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanView, Mode=OneWay}"
-                                            Text="{CustomResource ShowInChat}"/>
-                            <MenuFlyoutItem x:Name="FlyoutSaveAs"
-                                            Command="{x:Bind ViewModel.SaveCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
-                                            Text="Save as..." />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"
-                                            Text="{CustomResource OpenInExternalApp}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
-                                            Text="{CustomResource Delete}"/>*/
-
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -45,7 +45,7 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, document.Thumbnail.Photo);
             }
 
-            UpdateFile(message, document.DocumentData);
+            UpdateFile(message, document.DocumentValue);
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)
@@ -70,7 +70,7 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, file);
                 return;
             }
-            else if (document.DocumentData.Id != file.Id)
+            else if (document.DocumentValue.Id != file.Id)
             {
                 return;
             }
@@ -83,7 +83,7 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
 
                 Button.Glyph = "\uE10A";
@@ -163,12 +163,12 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            var file = document.DocumentData;
+            var file = document.DocumentValue;
             if (file.Local.IsDownloadingActive)
             {
                 _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }

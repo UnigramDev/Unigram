@@ -1,13 +1,9 @@
 using System.Collections.Generic;
-using Telegram.Api.Services;
 using Unigram.Views.SignIn;
 using Unigram.Common;
-using Unigram.Models;
+using Unigram.Entities;
 using System;
-using Telegram.Api.Helpers;
 using Windows.UI.Popups;
-using Telegram.Api.TL;
-using Telegram.Api;
 using Windows.UI.Xaml;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -20,6 +16,7 @@ using Unigram.Views;
 using Unigram.Views.Settings;
 using System.Linq;
 using Unigram.Services;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -28,28 +25,29 @@ namespace Unigram.ViewModels.Settings
         public SettingsPhoneViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            LegacyService.GotUserCountry += GotUserCountry;
-
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (!string.IsNullOrEmpty(LegacyService.Country))
+            ProtoService.Send(new GetCountryCode(), result =>
             {
-                GotUserCountry(this, new CountryEventArgs { Country = LegacyService.Country });
-            }
+                if (result is Text text)
+                {
+                    BeginOnUIThread(() => GotUserCountry(text.TextValue));
+                }
+            });
 
             IsLoading = false;
             return Task.CompletedTask;
         }
 
-        private void GotUserCountry(object sender, CountryEventArgs e)
+        private void GotUserCountry(string code)
         {
             Country country = null;
             foreach (var local in Country.Countries)
             {
-                if (string.Equals(local.Code, e.Country, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(local.Code, code, StringComparison.OrdinalIgnoreCase))
                 {
                     country = local;
                     break;
@@ -151,28 +149,27 @@ namespace Unigram.ViewModels.Settings
 
             IsLoading = true;
 
-            var response = await LegacyService.SendChangePhoneCodeAsync(_phoneCode + _phoneNumber, /* TODO: Verify */ null);
-            if (response.IsSucceeded)
-            {
-                var state = new SettingsPhoneSentCodePage.NavigationParameters
-                {
-                    PhoneNumber = PhoneCode.TrimStart('+') + PhoneNumber,
-                    Result = response.Result,
-                };
+            var phoneNumber = (_phoneCode + _phoneNumber).Replace(" ", string.Empty);
 
-                NavigationService.Navigate(typeof(SettingsPhoneSentCodePage), state);
+            await ProtoService.SendAsync(new SetOption("x_phonenumber", new OptionValueString(phoneNumber)));
+
+            var response = await ProtoService.SendAsync(new ChangePhoneNumber(phoneNumber, false, false));
+            if (response is AuthenticationCodeInfo info)
+            {
+                App.Current.SessionState["x_codeinfo"] = info;
+                NavigationService.Navigate(typeof(SettingsPhoneSentCodePage));
             }
-            else if (response.Error != null)
+            else if (response is Error error)
             {
                 IsLoading = false;
 
-                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_FLOOD))
+                if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
                     await TLMessageDialog.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
                 }
                 else
                 {
-                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await new TLMessageDialog(error.Message ?? "Error message", error.Code.ToString()).ShowQueuedAsync();
                 }
             }
         }

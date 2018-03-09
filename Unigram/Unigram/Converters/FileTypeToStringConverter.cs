@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
@@ -20,8 +20,6 @@ namespace Unigram.Converters
                     return Strings.Resources.LocalMusicCache;
                 case FileTypeDocument document:
                     return Strings.Resources.FilesDataUsage;
-                case FileTypeNone none:
-                    return Strings.Resources.TotalDataUsage;
                 case FileTypePhoto photo:
                     return Strings.Resources.LocalPhotoCache;
                 case FileTypeVideo video:
@@ -30,6 +28,8 @@ namespace Unigram.Converters
                     return Strings.Resources.VideoMessagesAutodownload;
                 case FileTypeVoiceNote voiceNote:
                     return Strings.Resources.AudioAutodownload;
+                case FileTypeNone none:
+                    return "Other";
                 case FileTypeProfilePhoto profilePhoto:
                     return "Profile photos";
                 case FileTypeSticker sticker:

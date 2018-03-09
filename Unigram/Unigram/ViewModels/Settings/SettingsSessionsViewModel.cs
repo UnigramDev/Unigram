@@ -4,14 +4,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -48,7 +47,7 @@ namespace Unigram.ViewModels.Settings
                     BeginOnUIThread(() =>
                     {
                         var results = new List<Session>();
-                        foreach (var item in sessions.SessionsData)
+                        foreach (var item in sessions.SessionsValue)
                         {
                             if (item.IsCurrent)
                             {

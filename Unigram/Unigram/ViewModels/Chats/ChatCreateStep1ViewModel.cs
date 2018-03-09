@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views.Chats;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
-using ChatCreateStep2Tuple = Telegram.Api.TL.TLTuple<string, object>;
+using ChatCreateStep2Tuple = System.Tuple<string, object>;
 
 namespace Unigram.ViewModels.Chats
 {

@@ -4,15 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
@@ -35,8 +34,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupEditViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<SupergroupEditViewModel, ISupergroupDelegate>(this);
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
@@ -139,6 +137,10 @@ namespace Unigram.Views.Supergroups
             ViewModel.InviteLink = fullInfo.InviteLink;
             ViewModel.IsAllHistoryAvailable = fullInfo.IsAllHistoryAvailable;
 
+            if (string.IsNullOrEmpty(fullInfo.InviteLink) && string.IsNullOrEmpty(group.Username))
+            {
+                ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+            }
 
             if (fullInfo.StickerSetId == 0 || !fullInfo.CanSetStickerSet)
             {
@@ -182,7 +184,7 @@ namespace Unigram.Views.Supergroups
                     if (supergroup != null)
                     {
                         var subtitle = content.Children[2] as TextBlock;
-                        subtitle.Text = MeUrlPrefixConverter.Convert(supergroup.Username, true);
+                        subtitle.Text = MeUrlPrefixConverter.Convert(ViewModel.CacheService, supergroup.Username, true);
                     }
                 }
             }

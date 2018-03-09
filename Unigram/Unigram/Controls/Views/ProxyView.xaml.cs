@@ -7,7 +7,9 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Services;
 using Unigram.Strings;
+using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -151,7 +153,7 @@ namespace Unigram.Controls.Views
             }
 
             var title = Strings.Resources.ProxySettings;
-            var link = new Uri(MeUrlPrefixConverter.Convert($"socks?{string.Join("&", builder)}"));
+            var link = new Uri(MeUrlPrefixConverter.Convert(UnigramContainer.Current.ResolveType<IProtoService>(), $"socks?{string.Join("&", builder)}"));
 
             await ShareView.GetForCurrentView().ShowAsync(link, title);
         }

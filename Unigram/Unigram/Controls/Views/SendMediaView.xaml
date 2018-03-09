@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Views"
     xmlns:controls="using:Unigram.Controls"
-    xmlns:models="using:Unigram.Models"
+    xmlns:models="using:Unigram.Entities"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -685,7 +685,7 @@
                                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                 FontSize="18"/>
                 </Border>
-                <Border Background="#99000000" CornerRadius="18">
+                <Border Visibility="{x:Bind SelectedItem.IsPhoto, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#99000000" CornerRadius="18">
                     <controls:GlyphToggleButton UncheckedGlyph="&#xE160;"
                                                 CheckedGlyph="&#xE160;"
                                                 IsChecked="{Binding SelectedItem.IsForceFile, Mode=TwoWay}"

@@ -27,14 +27,13 @@ using Unigram.Views;
 using Unigram.ViewModels;
 using Windows.Services.Maps;
 using Unigram.Controls;
-using Telegram.Api.TL;
 using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Dialogs;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.Views.Dialogs
 {

@@ -4,7 +4,6 @@
       xmlns:local="using:Unigram.Controls.Views"
       xmlns:controls="using:Unigram.Controls"
       xmlns:behaviors="using:Unigram.Behaviors"
-      xmlns:tl="using:Telegram.Api.TL"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
@@ -141,7 +140,7 @@
                   ContainerContentChanging="OnContainerContentChanging"
                   Grid.Row="2">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="tl:TLUser">
+                <DataTemplate>
                     <Grid Margin="0,6">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>

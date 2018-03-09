@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Services;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Services;
@@ -23,8 +22,8 @@ namespace Unigram.ViewModels.Settings
         private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
         private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
 
-        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, IMTProtoService legacyService, ICacheService cacheService, IEventAggregator aggregator, IContactsService contactsService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
-            : base(protoService, legacyService, cacheService, aggregator)
+        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IContactsService contactsService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
+            : base(protoService, cacheService, aggregator)
         {
             _contactsService = contactsService;
 
@@ -50,13 +49,29 @@ namespace Unigram.ViewModels.Settings
 
             ProtoService.Send(new GetBlockedUsers(0, 1), result =>
             {
-                if (result is TdWindows.Users users)
+                if (result is Telegram.Td.Api.Users users)
                 {
                     BeginOnUIThread(() => BlockedUsers = users.TotalCount);
                 }
             });
 
+            BeginOnUIThread(() => _showStatusRules.OnNavigatedToAsync(parameter, mode, state));
+            BeginOnUIThread(() => _allowCallsRules.OnNavigatedToAsync(parameter, mode, state));
+            BeginOnUIThread(() => _allowChatInvitesRules.OnNavigatedToAsync(parameter, mode, state));
+
             return Task.CompletedTask;
+        }
+
+        public override IDispatcherWrapper Dispatcher
+        {
+            get => base.Dispatcher;
+            set
+            {
+                base.Dispatcher = value;
+                _showStatusRules.Dispatcher = value;
+                _allowCallsRules.Dispatcher = value;
+                _allowChatInvitesRules.Dispatcher = value;
+            }
         }
 
         #region Properties

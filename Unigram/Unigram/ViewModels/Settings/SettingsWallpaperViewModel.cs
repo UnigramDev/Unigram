@@ -4,8 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Helpers;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Core.Helpers;
@@ -31,7 +30,7 @@ namespace Unigram.ViewModels.Settings
             {
                 if (result is Wallpapers wallpapers)
                 {
-                    var items = wallpapers.WallpapersData.ToList();
+                    var items = wallpapers.WallpapersValue.ToList();
 
                     var predefined = items.FirstOrDefault(x => x.Id == 1000001);
                     if (predefined != null)

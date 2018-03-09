@@ -5,9 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core;
 using Unigram.Core.Services;
@@ -116,15 +113,15 @@ namespace Unigram.Tasks
         //private readonly Queue<TLUpdatePhoneCall> _queue = new Queue<TLUpdatePhoneCall>();
 
         private AppServiceConnection _connection;
-        private MTProtoService _protoService;
+        //private MTProtoService _protoService;
 
         private VoIPControllerWrapper _controller;
 
         private VoipPhoneCall _systemCall;
-        private TLPhoneCallBase _phoneCall;
-        private TLInputPhoneCall _peer;
-        private TLPhoneCallState _state;
-        private TLUserBase _user;
+        //private TLPhoneCallBase _phoneCall;
+        //private TLInputPhoneCall _peer;
+        //private TLPhoneCallState _state;
+        //private TLUserBase _user;
         private string[] _emojis;
         private bool _outgoing;
 
@@ -133,7 +130,7 @@ namespace Unigram.Tasks
 
         public VoIPCallMediator()
         {
-            var user = new TLUser();
+            //var user = new TLUser();
             VoIPCallTask.Log("Mediator constructed", "Mediator constructed");
         }
 
@@ -158,13 +155,13 @@ namespace Unigram.Tasks
                 }
             }
 
-            if (_protoService != null && _connection != null)
-            {
-                VoIPCallTask.Log("Mediator initialized", "Disposing proto service");
-                //_transportService.Close();
-            }
+            //if (_protoService != null && _connection != null)
+            //{
+            //    VoIPCallTask.Log("Mediator initialized", "Disposing proto service");
+            //    //_transportService.Close();
+            //}
 
-            if (_phoneCall != null && _connection != null)
+            //if (_phoneCall != null && _connection != null)
             {
                 await UpdateCallAsync();
             }
@@ -172,25 +169,25 @@ namespace Unigram.Tasks
 
         public void Initialize(BackgroundTaskDeferral deferral)
         {
-            if (_connection == null & _protoService == null)
-            {
-                VoIPCallTask.Log("Mediator initialized", "Creating proto service");
+            //if (_connection == null & _protoService == null)
+            //{
+            //    VoIPCallTask.Log("Mediator initialized", "Creating proto service");
 
-                var protoService = new MTProtoService(0);
+            //    //var protoService = new MTProtoService(0);
 
-                //protoService.Initialized += (s, args) =>
-                //{
-                //    VoIPCallTask.Log("ProtoService initialized", "waiting for updates");
-                //};
+            //    //protoService.Initialized += (s, args) =>
+            //    //{
+            //    //    VoIPCallTask.Log("ProtoService initialized", "waiting for updates");
+            //    //};
 
-                //protoService.Initialize();
-                //_protoService = protoService;
-                //_transportService = transportService;
-            }
-            else
-            {
-                VoIPCallTask.Log("Mediator initialized", "_connection is null: " + (_connection == null));
-            }
+            //    //protoService.Initialize();
+            //    //_protoService = protoService;
+            //    //_transportService = transportService;
+            //}
+            //else
+            //{
+            //    VoIPCallTask.Log("Mediator initialized", "_connection is null: " + (_connection == null));
+            //}
 
             _deferral = deferral;
             _initialized = true;
@@ -376,10 +373,10 @@ namespace Unigram.Tasks
 
             //            if (SettingsHelper.IsCallsProxyEnabled)
             //            {
-            //                var server = SettingsHelper.ProxyServer ?? string.Empty;
-            //                var port = SettingsHelper.ProxyPort;
-            //                var user = SettingsHelper.ProxyUsername ?? string.Empty;
-            //                var pass = SettingsHelper.ProxyPassword ?? string.Empty;
+            //                var server = ApplicationSettings.Current.Proxy.ProxyServer ?? string.Empty;
+            //                var port = ApplicationSettings.Current.Proxy.ProxyPort;
+            //                var user = ApplicationSettings.Current.Proxy.ProxyUsername ?? string.Empty;
+            //                var pass = ApplicationSettings.Current.Proxy.ProxyPassword ?? string.Empty;
 
             //                _controller.SetProxy(ProxyProtocol.SOCKS5, server, (ushort)port, user, pass);
             //            }
@@ -442,7 +439,7 @@ namespace Unigram.Tasks
                 var error = _controller.GetLastError();
             }
 
-            await UpdateStateAsync((TLPhoneCallState)newState);
+            //await UpdateStateAsync((TLPhoneCallState)newState);
         }
 
         public async void OnSignalBarsChanged(VoIPControllerWrapper sender, int count)
@@ -451,7 +448,7 @@ namespace Unigram.Tasks
             {
                 VoIPCallTask.Log("Mediator initialized", "Informing foreground about signal bars");
 
-                var data = TLTuple.Create(count);
+                var data = Tuple.Create(count);
                 await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.signalBars" }, { "request", TLSerializationService.Current.Serialize(data) } });
             }
         }
@@ -462,23 +459,23 @@ namespace Unigram.Tasks
             {
                 VoIPCallTask.Log("Mediator initialized", "Informing foreground about current call");
 
-                var data = TLTuple.Create((int)_state, _phoneCall, _user, _emojis != null ? string.Join(" ", _emojis) : string.Empty);
-                await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.callInfo" }, { "request", TLSerializationService.Current.Serialize(data) } });
+                //var data = TLTuple.Create((int)_state, _phoneCall, _user, _emojis != null ? string.Join(" ", _emojis) : string.Empty);
+                //await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.callInfo" }, { "request", TLSerializationService.Current.Serialize(data) } });
             }
         }
 
-        private Task UpdateStateAsync(TLPhoneCallState state)
-        {
-            if (_state != state)
-            {
-                Debug.WriteLine("[{0:HH:mm:ss.fff}] State changed in task: " + state, DateTime.Now);
+        //private Task UpdateStateAsync(TLPhoneCallState state)
+        //{
+        //    if (_state != state)
+        //    {
+        //        Debug.WriteLine("[{0:HH:mm:ss.fff}] State changed in task: " + state, DateTime.Now);
 
-                _state = state;
-                return UpdateCallAsync();
-            }
+        //        _state = state;
+        //        return UpdateCallAsync();
+        //    }
 
-            return Task.CompletedTask;
-        }
+        //    return Task.CompletedTask;
+        //}
 
         private byte[] auth_key;
         private byte[] secretP;
@@ -487,9 +484,9 @@ namespace Unigram.Tasks
 
         private async void OnAnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
         {
-            if (_phoneCall != null)
+            //if (_phoneCall != null)
             {
-                await UpdateStateAsync(TLPhoneCallState.ExchangingKeys);
+                //await UpdateStateAsync(TLPhoneCallState.ExchangingKeys);
 
                 //var reqConfig = new TLMessagesGetDHConfig { Version = 0, RandomLength = 256 };
 
@@ -617,43 +614,43 @@ namespace Unigram.Tasks
             //}
         }
 
-        private async Task<MTProtoResponse<T>> SendRequestAsync<T>(string caption, TLObject request)
-        {
-            if (_protoService != null)
-            {
-                VoIPCallTask.Log("Sending request", "Via MTProtoService");
+        //private async Task<MTProtoResponse<T>> SendRequestAsync<T>(string caption, TLObject request)
+        //{
+        //    if (_protoService != null)
+        //    {
+        //        VoIPCallTask.Log("Sending request", "Via MTProtoService");
 
-                //return await _protoService.SendRequestAsync<T>(caption, request);
-                return null;
-            }
-            else
-            {
-                VoIPCallTask.Log("Sending request", "Via AppServiceConnection");
+        //        //return await _protoService.SendRequestAsync<T>(caption, request);
+        //        return null;
+        //    }
+        //    else
+        //    {
+        //        VoIPCallTask.Log("Sending request", "Via AppServiceConnection");
 
-                if (_connection == null)
-                {
-                    _connection = VoIPServiceTask.Connection;
-                    _connection.RequestReceived += OnRequestReceived;
-                }
+        //        if (_connection == null)
+        //        {
+        //            _connection = VoIPServiceTask.Connection;
+        //            _connection.RequestReceived += OnRequestReceived;
+        //        }
 
-                var response = await _connection.SendMessageAsync(new ValueSet { { nameof(caption), caption }, { nameof(request), TLSerializationService.Current.Serialize(request) } });
-                if (response.Status == AppServiceResponseStatus.Success)
-                {
-                    if (response.Message.ContainsKey("result"))
-                    {
-                        return new MTProtoResponse<T>(TLSerializationService.Current.Deserialize(response.Message["result"] as string));
-                    }
-                    else if (response.Message.ContainsKey("error"))
-                    {
-                        return new MTProtoResponse<T>(TLSerializationService.Current.Deserialize<TLRPCError>(response.Message["error"] as string));
-                    }
-                }
+        //        var response = await _connection.SendMessageAsync(new ValueSet { { nameof(caption), caption }, { nameof(request), TLSerializationService.Current.Serialize(request) } });
+        //        if (response.Status == AppServiceResponseStatus.Success)
+        //        {
+        //            if (response.Message.ContainsKey("result"))
+        //            {
+        //                return new MTProtoResponse<T>(TLSerializationService.Current.Deserialize(response.Message["result"] as string));
+        //            }
+        //            else if (response.Message.ContainsKey("error"))
+        //            {
+        //                return new MTProtoResponse<T>(TLSerializationService.Current.Deserialize<TLRPCError>(response.Message["error"] as string));
+        //            }
+        //        }
 
-                VoIPCallTask.Log("Request failed", "Via AppServiceConnection");
+        //        VoIPCallTask.Log("Request failed", "Via AppServiceConnection");
 
-                return new MTProtoResponse<T>(new TLRPCError((int)response.Status, "UNKNOWN"));
-            }
-        }
+        //        return new MTProtoResponse<T>(new TLRPCError((int)response.Status, "UNKNOWN"));
+        //    }
+        //}
 
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
@@ -785,23 +782,23 @@ namespace Unigram.Tasks
         {
             VoIPCallTask.Log("Releasing background task", "Disposing mediator");
 
-            if (_protoService != null)
-            {
-                //_transportService.Close();
-            }
+            //if (_protoService != null)
+            //{
+            //    //_transportService.Close();
+            //}
         }
 
         internal async void OutgoingCall(int userId, long accessHash)
         {
-            await UpdateStateAsync(TLPhoneCallState.Requesting);
+            //await UpdateStateAsync(TLPhoneCallState.Requesting);
 
-            var coordinator = VoipCallCoordinator.GetDefault();
-            var call = coordinator.RequestNewOutgoingCall("Unigram", _user.FullName, "Unigram", VoipPhoneCallMedia.Audio);
+            //var coordinator = VoipCallCoordinator.GetDefault();
+            //var call = coordinator.RequestNewOutgoingCall("Unigram", _user.FullName, "Unigram", VoipPhoneCallMedia.Audio);
 
-            _outgoing = true;
-            _systemCall = call;
-            _systemCall.AnswerRequested += OnAnswerRequested;
-            _systemCall.RejectRequested += OnRejectRequested;
+            //_outgoing = true;
+            //_systemCall = call;
+            //_systemCall.AnswerRequested += OnAnswerRequested;
+            //_systemCall.RejectRequested += OnRejectRequested;
 
             //var reqConfig = new TLMessagesGetDHConfig { Version = 0, RandomLength = 256 };
 

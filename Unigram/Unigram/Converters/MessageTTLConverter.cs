@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Windows.UI.Xaml.Data;
-using Telegram.Api.Helpers;
 
 namespace Unigram.Converters
 {

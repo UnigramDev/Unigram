@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -44,9 +44,9 @@ namespace Unigram.ViewModels
                 var response = await _protoService.SendAsync(new SearchCallMessages(_lastMaxId, 50, false)); //(new TLInputPeerEmpty(), null, null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
                 if (response is Messages messages)
                 {
-                    if (messages.MessagesData.Count > 0)
+                    if (messages.MessagesValue.Count > 0)
                     {
-                        _lastMaxId = messages.MessagesData.Min(x => x.Id);
+                        _lastMaxId = messages.MessagesValue.Min(x => x.Id);
                     }
 
                     List<TLCallGroup> groups = new List<TLCallGroup>();
@@ -55,7 +55,7 @@ namespace Unigram.ViewModels
                     bool currentFailed = false;
                     DateTime? currentTime = null;
 
-                    foreach (var message in messages.MessagesData)
+                    foreach (var message in messages.MessagesValue)
                     {
                         var chat = _protoService.GetChat(message.ChatId);
                         if (chat == null)

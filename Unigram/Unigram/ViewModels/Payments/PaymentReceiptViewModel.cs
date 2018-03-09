@@ -4,13 +4,10 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Payments;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
 using Unigram.Views.Payments;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Payments
 {

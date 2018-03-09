@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
-using TdWindows;
+using Telegram.Td.Api;
 
 namespace Unigram.Controls
 {

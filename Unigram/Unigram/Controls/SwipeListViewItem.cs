@@ -10,13 +10,13 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.Foundation;
-using Telegram.Api.TL;
+using Unigram.ViewModels;
 
 namespace Unigram.Controls
 {
     public class SwipeListViewItem : ContentControl
     {
-        public TLMessage ViewModel => DataContext as TLMessage;
+        public MessageViewModel ViewModel => DataContext as MessageViewModel;
 
         private TranslateTransform ContentDragTransform;
         private TranslateTransform RightTransform;

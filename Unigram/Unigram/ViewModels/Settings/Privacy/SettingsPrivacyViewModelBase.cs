@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Account;
 using Unigram.Common;
 using Unigram.Strings;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Views.Settings.Privacy;
 using Unigram.Controls;
 using Windows.UI.Xaml.Controls;
@@ -33,7 +29,6 @@ namespace Unigram.ViewModels.Settings
             NeverCommand = new RelayCommand(NeverExecute);
             SendCommand = new RelayCommand(SendExecute);
 
-            UpdatePrivacyAsync();
             Aggregator.Subscribe(this);
         }
 
@@ -275,13 +270,6 @@ namespace Unigram.ViewModels.Settings
             {
 
             }
-        }
-
-        protected override void BeginOnUIThread(Action action)
-        {
-            // This is somehow needed because this viewmodel requires a Dispatcher
-            // in some situations where base one might be null.
-            Execute.BeginOnUIThread(action);
         }
     }
 

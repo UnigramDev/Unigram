@@ -23,17 +23,20 @@ using Unigram.Converters;
 using System.Runtime.CompilerServices;
 using Unigram.Views.Dialogs;
 using Unigram.Services;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Views.Channels;
 using Unigram.Collections;
 using Unigram.ViewModels.Chats;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Chats;
 using Unigram.Core.Services;
+using Unigram.ViewModels.Delegates;
+using Unigram.Views.BasicGroups;
 
 namespace Unigram.ViewModels
 {
     public class ProfileViewModel : UnigramViewModelBase,
+        IDelegable<IProfileDelegate>,
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>,
         IHandle<UpdateBasicGroup>,
@@ -66,7 +69,7 @@ namespace Unigram.ViewModels
             DeleteCommand = new RelayCommand(DeleteExecute);
             ShareCommand = new RelayCommand(ShareExecute);
             SecretChatCommand = new RelayCommand(SecretChatExecute);
-            KeyHashCommand = new RelayCommand(KeyHashExecute);
+            IdenticonCommand = new RelayCommand(IdenticonExecute);
             MigrateCommand = new RelayCommand(MigrateExecute);
             InviteCommand = new RelayCommand(InviteExecute);
             ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
@@ -465,7 +468,7 @@ namespace Unigram.ViewModels
                 var user = ProtoService.GetUser(chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0);
                 if (user != null)
                 {
-                    await ShareView.GetForCurrentView().ShowAsync(new InputMessageContact(new TdWindows.Contact(user.PhoneNumber, user.FirstName, user.LastName, user.Id)));
+                    await ShareView.GetForCurrentView().ShowAsync(new InputMessageContact(new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, user.Id)));
                 }
             }
         }
@@ -573,8 +576,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand KeyHashCommand { get; }
-        private void KeyHashExecute()
+        public RelayCommand IdenticonCommand { get; }
+        private void IdenticonExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -671,56 +674,28 @@ namespace Unigram.ViewModels
         public RelayCommand AddCommand { get; }
         private async void AddExecute()
         {
-            //var user = _item as TLUser;
-            //if (user == null)
-            //{
-            //    return;
-            //}
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
 
-            //var confirm = await EditUserNameView.Current.ShowAsync(user.FirstName, user.LastName);
-            //if (confirm == ContentDialogResult.Primary)
-            //{
-            //    var contact = new TLInputPhoneContact
-            //    {
-            //        ClientId = _item.Id,
-            //        FirstName = EditUserNameView.Current.FirstName,
-            //        LastName = EditUserNameView.Current.LastName,
-            //        Phone = _item.Phone
-            //    };
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            {
+                var user = ProtoService.GetUser(chat);
+                if (user == null)
+                {
+                    return;
+                }
 
-            //    var response = await LegacyService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact });
-            //    if (response.IsSucceeded)
-            //    {
-            //        if (response.Result.Users.Count > 0)
-            //        {
-            //            Aggregator.Publish(new TLUpdateContactLink
-            //            {
-            //                UserId = response.Result.Users[0].Id,
-            //                MyLink = new TLContactLinkContact(),
-            //                ForeignLink = new TLContactLinkUnknown()
-            //            });
-            //        }
+                var dialog = new EditUserNameView(user.FirstName, user.LastName);
 
-            //        user.RaisePropertyChanged(() => user.HasFirstName);
-            //        user.RaisePropertyChanged(() => user.HasLastName);
-            //        user.RaisePropertyChanged(() => user.FirstName);
-            //        user.RaisePropertyChanged(() => user.LastName);
-            //        user.RaisePropertyChanged(() => user.FullName);
-            //        user.RaisePropertyChanged(() => user.DisplayName);
-
-            //        user.RaisePropertyChanged(() => user.HasPhone);
-            //        user.RaisePropertyChanged(() => user.Phone);
-
-            //        RaisePropertyChanged(() => IsEditEnabled);
-            //        RaisePropertyChanged(() => IsAddEnabled);
-
-            //        var dialog = CacheService.GetDialog(_item.ToPeer());
-            //        if (dialog != null)
-            //        {
-            //            dialog.RaisePropertyChanged(() => dialog.With);
-            //        }
-            //    }
-            //}
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    ProtoService.Send(new ImportContacts(new[] { new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, user.Id) }));
+                }
+            }
         }
 
         public RelayCommand EditCommand { get; }
@@ -736,6 +711,10 @@ namespace Unigram.ViewModels
             {
                 NavigationService.Navigate(typeof(SupergroupEditPage), chat.Id);
             }
+            else if (chat.Type is ChatTypeBasicGroup)
+            {
+                NavigationService.Navigate(typeof(BasicGroupEditPage), chat.Id);
+            }
             else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
                 var user = ProtoService.GetUser(chat);
@@ -749,7 +728,7 @@ namespace Unigram.ViewModels
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ProtoService.Send(new ImportContacts(new[] { new TdWindows.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, user.Id) }));
+                    ProtoService.Send(new ImportContacts(new[] { new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, user.Id) }));
                 }
             }
         }
@@ -1090,43 +1069,6 @@ namespace Unigram.ViewModels
         {
             return _hasMore;
         }
-    }
-
-    public interface IProfileDelegate : IChatDelegate, IUserDelegate, ISupergroupDelegate, IBasicGroupDelegate, IFileDelegate
-    {
-        void UpdateSecretChat(Chat chat, SecretChat secretChat);
-    }
-
-    public interface IUserDelegate : IChatDelegate
-    {
-        void UpdateUser(Chat chat, User user, bool secret);
-        void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret);
-
-        void UpdateUserStatus(Chat chat, User user);
-    }
-
-    public interface ISupergroupDelegate : IChatDelegate
-    {
-        void UpdateSupergroup(Chat chat, Supergroup group);
-        void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo);
-    }
-
-    public interface IBasicGroupDelegate : IChatDelegate
-    {
-        void UpdateBasicGroup(Chat chat, BasicGroup group);
-        void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo);
-    }
-
-    public interface IChatDelegate
-    {
-        void UpdateChat(Chat chat);
-        void UpdateChatTitle(Chat chat);
-        void UpdateChatPhoto(Chat chat);
-    }
-
-    public interface IFileDelegate
-    {
-        void UpdateFile(File file);
     }
 
     public class ChatMemberComparer : IComparer<ChatMember>

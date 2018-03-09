@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
@@ -207,7 +207,7 @@ namespace Unigram.Controls.Cells
                 switch (chat.DraftMessage.InputMessageText)
                 {
                     case InputMessageText text:
-                        return text.Text.Text;
+                        return text.Text.Text.Replace('\n', ' ');
                 }
             }
 
@@ -229,20 +229,20 @@ namespace Unigram.Controls.Cells
             switch (value.Content)
             {
                 case MessageAnimation animation:
-                    return animation.Caption.Text;
+                    return animation.Caption.Text.Replace('\n', ' ');
                 case MessageAudio audio:
-                    return audio.Caption.Text;
+                    return audio.Caption.Text.Replace('\n', ' ');
                 case MessageDocument document:
-                    return document.Caption.Text;
+                    return document.Caption.Text.Replace('\n', ' ');
                 case MessagePhoto photo:
-                    return photo.Caption.Text;
+                    return photo.Caption.Text.Replace('\n', ' ');
                 case MessageVideo video:
-                    return video.Caption.Text;
+                    return video.Caption.Text.Replace('\n', ' ');
                 case MessageVoiceNote voiceNote:
-                    return voiceNote.Caption.Text;
+                    return voiceNote.Caption.Text.Replace('\n', ' ');
 
                 case MessageText text:
-                    return text.Text.Text;
+                    return text.Text.Text.Replace('\n', ' ');
             }
 
             return string.Empty;

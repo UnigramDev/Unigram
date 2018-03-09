@@ -8,9 +8,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Core.Common;
@@ -34,7 +32,52 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static int ToTimestamp(this DateTime dateTime)
+        {
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            DateTime.SpecifyKind(dtDateTime, DateTimeKind.Utc);
 
+            return (int)(dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
+        }
+
+        public static string Enqueue(this StorageItemAccessList list, IStorageItem item)
+        {
+            if (list.MaximumItemsAllowed - 10 >= list.Entries.Count)
+            {
+                var first = list.Entries.FirstOrDefault();
+                var token = first.Token;
+
+                list.Remove(token);
+            }
+
+            try
+            {
+                return list.Add(item);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Applies the action to each element in the list.
+        /// </summary>
+        /// <typeparam name="T">The enumerable item's type.</typeparam>
+        /// <param name="enumerable">The elements to enumerate.</param>
+        /// <param name="action">The action to apply to each item in the list.</param>
+        public static void Apply<T>(this IEnumerable<T> enumerable, Action<T> action)
+        {
+            foreach (var item in enumerable)
+            {
+                action(item);
+            }
+        }
+
+        public static string Substr(this string source, int startIndex, int endIndex)
+        {
+            return source.Substring(startIndex, endIndex - startIndex);
+        }
 
         /// <summary>
         /// Creates a relative path from one file or folder to another.
@@ -68,7 +111,7 @@ namespace Unigram.Common
 
         public static async Task<InputFileGenerated> ToGeneratedAsync(this StorageFile file, string conversion = "copy")
         {
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
             var props = await file.GetBasicPropertiesAsync();
 
             return new InputFileGenerated(file.Path, conversion + "#" + props.DateModified.ToString("s"), (int)props.Size);
@@ -191,7 +234,7 @@ namespace Unigram.Common
                     // ensure that the last character doesn't inherit directionality from the outside context.
                     var appTextDirection = 1; // checks the <html> element's "dir" attribute.
                     var dataTextDirection = NativeUtils.GetDirectionality(data); // Run through the string until a non-neutral character is encountered,
-                                                                         // which determines the text direction.
+                                                                                 // which determines the text direction.
 
                     if (appTextDirection != dataTextDirection)
                     {

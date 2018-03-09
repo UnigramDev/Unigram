@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -80,7 +80,7 @@ namespace Unigram.Controls.Messages.Content
                 Button.Glyph = "\uE10A";
                 Button.Progress = (double)file.Local.DownloadedSize / size;
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
 
                 Button.Glyph = "\uE10A";
@@ -98,16 +98,8 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (message.IsBlurred())
-                {
-                    Button.Glyph = "\uE60D";
-                    Button.Progress = 1;
-                }
-                else
-                {
-                    Button.Glyph = "\uE102";
-                    Button.Progress = 1;
-                }
+                Button.Glyph = "\uE102";
+                Button.Progress = 1;
             }
         }
 
@@ -152,7 +144,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }

@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services.DeviceInfo;
-using Telegram.Api.TL;
+using Telegram.Helpers;
+using Telegram.Td;
+using Telegram.Td.Api;
 using Unigram.Common;
-using Windows.ApplicationModel;
+using Unigram.Entities;
 using Windows.Storage;
-using Windows.UI.ViewManagement;
 
 namespace Unigram.Services
 {
@@ -30,6 +26,7 @@ namespace Unigram.Services
     {
         int GetMyId();
         T GetOption<T>(string key) where T : OptionValue;
+        bool TryGetOption<T>(string key, out T value) where T : OptionValue;
 
         AuthorizationState GetAuthorizationState();
         ConnectionState GetConnectionState();
@@ -38,6 +35,9 @@ namespace Unigram.Services
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
         IList<Chat> GetChats(int count);
+
+        bool TryGetChatFromUser(int userId, out Chat chat);
+        bool TryGetChatFromSecret(int secretId, out Chat chat);
 
         SecretChat GetSecretChat(int id);
         SecretChat GetSecretChatForUser(int id);
@@ -108,8 +108,8 @@ namespace Unigram.Services
                 DatabaseDirectory = Path.Combine(ApplicationData.Current.LocalFolder.Path, "0"),
                 UseSecretChats = true,
                 UseMessageDatabase = true,
-                ApiId = Telegram.Api.Constants.ApiId,
-                ApiHash = Telegram.Api.Constants.ApiHash,
+                ApiId = Constants.ApiId,
+                ApiHash = Constants.ApiHash,
                 SystemLanguageCode = "en",
                 DeviceModel = _deviceInfoService.DeviceModel,
                 SystemVersion = _deviceInfoService.SystemVersion,
@@ -119,12 +119,12 @@ namespace Unigram.Services
 #if MOCKUP
             ProfilePhoto ProfilePhoto(string name)
             {
-                return new ProfilePhoto(0, new TdWindows.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0), null), null);
+                return new ProfilePhoto(0, new Telegram.Td.Api.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0), null), null);
             }
 
             ChatPhoto ChatPhoto(string name)
             {
-                return new ChatPhoto(new TdWindows.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0), null), null);
+                return new ChatPhoto(new Telegram.Td.Api.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0), null), null);
             }
 
             _users[ 0] = new User( 0, "Jane",                   string.Empty, string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
@@ -321,6 +321,24 @@ namespace Unigram.Services
             return default(T);
         }
 
+        public bool TryGetOption<T>(string key, out T result) where T : OptionValue
+        {
+            if (_options.TryGetValue(key, out object value))
+            {
+                if (value is OptionValueEmpty)
+                {
+                    result = default(T);
+                    return false;
+                }
+
+                result = (T)value;
+                return true;
+            }
+
+            result = default(T);
+            return false;
+        }
+
         public string GetTitle(Chat chat)
         {
             if (chat == null)
@@ -339,6 +357,10 @@ namespace Unigram.Services
                 {
                     return Strings.Resources.SavedMessages;
                 }
+                else if (user.OutgoingLink is LinkStateKnowsPhoneNumber)
+                {
+                    return PhoneNumber.Format(user.PhoneNumber);
+                }
             }
 
             return chat.Title;
@@ -353,6 +375,19 @@ namespace Unigram.Services
 
             return null;
         }
+
+        public bool TryGetChatFromUser(int userId, out Chat chat)
+        {
+            chat = _chats.Values.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == userId);
+            return chat != null;
+        }
+
+        public bool TryGetChatFromSecret(int secretId, out Chat chat)
+        {
+            chat = _chats.Values.FirstOrDefault(x => x.Type is ChatTypeSecret secret && secret.SecretChatId == secretId);
+            return chat != null;
+        }
+
 
         public IList<Chat> GetChats(IList<long> ids)
         {
@@ -511,23 +546,6 @@ namespace Unigram.Services
             if (update is UpdateAuthorizationState updateAuthorizationState)
             {
                 _authorizationState = updateAuthorizationState.AuthorizationState;
-
-                switch (updateAuthorizationState.AuthorizationState)
-                {
-                    case AuthorizationStateReady ready:
-                        //_client.Send(new GetChats(long.MaxValue, 0, 20));
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => App.Current.NavigationService.Navigate(typeof(Views.MainPage)));
-                        break;
-                    case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => App.Current.NavigationService.Navigate(typeof(Views.IntroPage)));
-                        break;
-                    case AuthorizationStateWaitCode waitCode:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => App.Current.NavigationService.Navigate(typeof(Views.SignIn.SignInSentCodePage)));
-                        break;
-                    case AuthorizationStateWaitPassword waitPassword:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => App.Current.NavigationService.Navigate(typeof(Views.SignIn.SignInPasswordPage)));
-                        break;
-                }
             }
             else if (update is UpdateBasicGroup updateBasicGroup)
             {
@@ -624,25 +642,6 @@ namespace Unigram.Services
             else if (update is UpdateConnectionState updateConnectionState)
             {
                 _connectionState = updateConnectionState.State;
-
-                switch (updateConnectionState.State)
-                {
-                    case ConnectionStateWaitingForNetwork waitingForNetwork:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.WaitingForNetwork);
-                        break;
-                    case ConnectionStateConnecting connecting:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.Connecting);
-                        break;
-                    case ConnectionStateConnectingToProxy connectingToProxy:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.ConnectingToProxy);
-                        break;
-                    case ConnectionStateUpdating updating:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = Strings.Resources.Updating);
-                        break;
-                    case ConnectionStateReady ready:
-                        Telegram.Api.Helpers.Execute.BeginOnUIThread(() => ApplicationView.GetForCurrentView().Title = string.Empty);
-                        return;
-                }
             }
             else if (update is UpdateDeleteMessages updateDeleteMessages)
             {
@@ -891,22 +890,22 @@ namespace Unigram.Services
 
 
 
-        public static bool CodeEquals(this Error error, TLErrorCode code)
+        public static bool CodeEquals(this Error error, ErrorCode code)
         {
             if (error == null)
             {
                 return false;
             }
 
-            if (Enum.IsDefined(typeof(TLErrorCode), error.Code))
+            if (Enum.IsDefined(typeof(ErrorCode), error.Code))
             {
-                return (TLErrorCode)error.Code == code;
+                return (ErrorCode)error.Code == code;
             }
 
             return false;
         }
 
-        public static bool TypeEquals(this Error error, TLErrorType type)
+        public static bool TypeEquals(this Error error, ErrorType type)
         {
             if (error == null || error.Message == null)
             {
@@ -915,9 +914,9 @@ namespace Unigram.Services
 
             var strings = error.Message.Split(':');
             var typeString = strings[0];
-            if (Enum.IsDefined(typeof(TLErrorType), typeString))
+            if (Enum.IsDefined(typeof(ErrorType), typeString))
             {
-                var value = (TLErrorType)Enum.Parse(typeof(TLErrorType), typeString, true);
+                var value = (ErrorType)Enum.Parse(typeof(ErrorType), typeString, true);
 
                 return value == type;
             }

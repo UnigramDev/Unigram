@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -24,7 +24,7 @@ namespace Unigram.Controls.Media
 {
     public sealed partial class MusicPlaybackItem : UserControl
     {
-        public TLMessage ViewModel => DataContext as TLMessage;
+        public MessageViewModel ViewModel => DataContext as MessageViewModel;
         public IPlaybackService Playback { get; } = UnigramContainer.Current.ResolveType<IPlaybackService>();
 
         public MusicPlaybackItem()

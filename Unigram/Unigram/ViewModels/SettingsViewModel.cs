@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -14,13 +13,15 @@ using Unigram.Views;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using TdWindows;
+using Telegram.Td.Api;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation.Metadata;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels
 {
    public class SettingsViewModel : UnigramViewModelBase,
+        IDelegable<IUserDelegate>,
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>
     {
@@ -38,8 +39,6 @@ namespace Unigram.ViewModels
             AskCommand = new RelayCommand(AskExecute);
             LogoutCommand = new RelayCommand(LogoutExecute);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
-
-            Aggregator.Subscribe(this);
         }
 
         private Chat _chat;
@@ -61,6 +60,8 @@ namespace Unigram.ViewModels
             if (response is Chat chat)
             {
                 Chat = chat;
+
+                Aggregator.Subscribe(this);
                 Delegate?.UpdateChat(chat);
 
                 if (chat.Type is ChatTypePrivate privata)
@@ -154,7 +155,11 @@ namespace Unigram.ViewModels
             await _pushService.UnregisterAsync();
             await _contactsService.RemoveAsync();
 
-            await ProtoService.SendAsync(new LogOut());
+            var response = await ProtoService.SendAsync(new LogOut());
+            if (response is Error error)
+            {
+                // TODO:
+            }
 
             if (ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "RequestRestartAsync"))
             {
@@ -164,13 +169,6 @@ namespace Unigram.ViewModels
             {
                 App.Current.Exit();
             }
-        }
-
-        protected override void BeginOnUIThread(Action action)
-        {
-            // This is somehow needed because this viewmodel requires a Dispatcher
-            // in some situations where base one might be null.
-            Execute.BeginOnUIThread(action);
         }
     }
 }

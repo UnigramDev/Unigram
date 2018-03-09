@@ -4,14 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.ViewModels;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Views.Supergroups
 {
@@ -27,16 +27,16 @@ namespace Unigram.Views.Supergroups
 
             if (_panel.FirstVisibleIndex > -1 && _panel.LastVisibleIndex > -1 && !e.IsIntermediate)
             {
-                var messages = new List<TLMessage>(_panel.LastVisibleIndex - _panel.FirstVisibleIndex);
+                var messages = new List<MessageViewModel>(_panel.LastVisibleIndex - _panel.FirstVisibleIndex);
                 var auto = ApplicationSettings.Current.IsAutoPlayEnabled;
                 var news = new Dictionary<string, MediaPlayerItem>();
 
                 for (int i = index0; i <= index1; i++)
                 {
-                    var container = Messages.ContainerFromIndex(i) as ListViewItem;
+                    var container = Messages.ContainerFromIndex(i) as SelectorItem;
                     if (container != null)
                     {
-                        var message = Messages.ItemFromContainer(container) as TLMessage;
+                        var message = Messages.ItemFromContainer(container) as MessageViewModel;
                         if (message == null)
                         {
                             continue;
@@ -57,11 +57,11 @@ namespace Unigram.Views.Supergroups
             public bool Watermark { get; set; }
         }
 
-        public void Play(TLMessage message)
+        public void Play(MessageViewModel message)
         {
         }
 
-        public void Play(IEnumerable<TLMessage> items, bool auto)
+        public void Play(IEnumerable<MessageViewModel> items, bool auto)
         {
         }
     }

@@ -5,9 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
+using Telegram.Td.Api;
+using Template10.Mvvm;
 using Unigram.Common;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Sensors;
@@ -39,7 +38,7 @@ namespace Unigram.Services
         void Enqueue(Message message);
     }
 
-    public class PlaybackService : ServiceBase, IPlaybackService, IHandle<UpdateFile>
+    public class PlaybackService : BindableBase, IPlaybackService, IHandle<UpdateFile>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -117,7 +116,7 @@ namespace Unigram.Services
                     {
                         if (result is Messages messages)
                         {
-                            foreach (var add in message.Content is MessageAudio ? messages.MessagesData.OrderByDescending(x => x.Id) : messages.MessagesData.OrderBy(x => x.Id))
+                            foreach (var add in message.Content is MessageAudio ? messages.MessagesValue.OrderByDescending(x => x.Id) : messages.MessagesValue.OrderBy(x => x.Id))
                             {
                                 if (add.Id < message.Id && message.Content is MessageAudio)
                                 {
@@ -163,7 +162,7 @@ namespace Unigram.Services
         {
             Debug.WriteLine("PlaybackService: OnMediaEnded");
 
-            Execute.BeginOnUIThread(() => CurrentItem = null);
+            //Execute.BeginOnUIThread(() => CurrentItem = null);
             Dispose();
         }
 
@@ -216,7 +215,7 @@ namespace Unigram.Services
 
         public void Clear()
         {
-            Execute.BeginOnUIThread(() => CurrentItem = null);
+            //Execute.BeginOnUIThread(() => CurrentItem = null);
             Dispose();
         }
 
@@ -351,7 +350,7 @@ namespace Unigram.Services
         {
             if (message.Content is MessageAudio audio)
             {
-                return audio.Audio.AudioData;
+                return audio.Audio.AudioValue;
             }
             else if (message.Content is MessageVoiceNote voiceNote)
             {

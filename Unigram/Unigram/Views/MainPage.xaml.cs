@@ -1,64 +1,39 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Brushes;
-using Microsoft.Graphics.Canvas.UI;
-using Microsoft.Graphics.Canvas.UI.Xaml;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
-using Template10.Services.SerializationService;
+using System.Windows.Input;
+using Telegram.Td.Api;
+using Template10.Common;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.Converters;
-using Unigram.Views;
 using Unigram.Core.Notifications;
+using Unigram.Services;
 using Unigram.ViewModels;
-using Unigram.Views.Settings;
+using Unigram.ViewModels.Supergroups;
+using Unigram.Views.Channels;
+using Unigram.Views.Chats;
+using Unigram.Views.SecretChats;
+using Unigram.Views.Users;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
+using Windows.Foundation.Metadata;
+using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.ViewManagement;
-using Unigram.Views.Channels;
-using Unigram.ViewModels.Chats;
-using Unigram.Views.Chats;
-using Windows.System.Profile;
-using Windows.ApplicationModel.Core;
-using Unigram.Core.Services;
-using Template10.Common;
-using Windows.Foundation.Metadata;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Composition;
-using Unigram.Views.Users;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
-using Windows.UI;
-using System.Windows.Input;
-using Unigram.Strings;
-using TdWindows;
-using Unigram.Controls.Items;
-using Windows.UI.Xaml.Media.Imaging;
-using LinqToVisualTree;
-using Unigram.Views.SecretChats;
-using Windows.UI.Xaml.Documents;
-using Unigram.Controls.Cells;
-using Template10.Services.KeyboardService;
-using Unigram.ViewModels.Supergroups;
-using Unigram.Services;
 
 namespace Unigram.Views
 {
@@ -73,10 +48,13 @@ namespace Unigram.Views
         IHandle<UpdateChatPhoto>,
         IHandle<UpdateMessageMentionRead>,
         //IHandle<UpdateMessageContent>,
+        IHandle<UpdateUser>,
+        IHandle<UpdateSecretChat>,
         IHandle<UpdateNotificationSettings>,
         IHandle<UpdateFile>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
+        private readonly ICacheService _cacheService;
 
         private object _lastSelected;
 
@@ -84,6 +62,11 @@ namespace Unigram.Views
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
+
+            _cacheService = ViewModel.CacheService;
+
+            SettingsView.DataContext = ViewModel.Settings;
+            ViewModel.Settings.Delegate = SettingsView;
 
             NavigationCacheMode = NavigationCacheMode.Enabled;
 
@@ -173,6 +156,22 @@ namespace Unigram.Views
         public void Handle(UpdateMessageContent update)
         {
             Handle(update.ChatId, update.MessageId, chat => chat.LastMessage.Content = update.NewContent, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
+        }
+
+        public void Handle(UpdateUser update)
+        {
+            if (_cacheService.TryGetChatFromUser(update.User.Id, out Chat result))
+            {
+                Handle(result.Id, (chatView, chat) => chatView.UpdateChatTitle(chat));
+            }
+        }
+
+        public void Handle(UpdateSecretChat update)
+        {
+            if (_cacheService.TryGetChatFromSecret(update.SecretChat.Id, out Chat result))
+            {
+                Handle(result.Id, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
+            }
         }
 
         public void Handle(UpdateNotificationSettings update)
@@ -331,7 +330,7 @@ namespace Unigram.Views
                 Scroll(false);
                 args.Handled = true;
             }
-            else if ((args.VirtualKey == Windows.System.VirtualKey.F && ctrl)  || args.VirtualKey == Windows.System.VirtualKey.Search)
+            else if ((args.VirtualKey == Windows.System.VirtualKey.F && ctrl) || args.VirtualKey == Windows.System.VirtualKey.Search)
             {
                 MainHeader.Visibility = Visibility.Collapsed;
                 SearchField.Visibility = Visibility.Visible;
@@ -362,7 +361,7 @@ namespace Unigram.Views
             {
                 ChatsList.SelectedIndex = index;
                 Navigate(ChatsList.SelectedItem);
-                MasterDetail.NavigationService.RemoveLastIf(typeof(DialogPage));
+                MasterDetail.NavigationService.RemoveLastIf(typeof(ChatPage));
             }
         }
 
@@ -394,13 +393,13 @@ namespace Unigram.Views
             ViewModel.Chats.NavigationService = MasterDetail.NavigationService;
             ViewModel.Contacts.NavigationService = MasterDetail.NavigationService;
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
-            SettingsView.ViewModel.NavigationService = MasterDetail.NavigationService;
+            ViewModel.Settings.NavigationService = MasterDetail.NavigationService;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             Initialize();
-            await SettingsView.ViewModel.OnNavigatedToAsync(null, e.NavigationMode, null);
+            //await SettingsView.ViewModel.OnNavigatedToAsync(null, e.NavigationMode, null);
         }
 
         public async void Activate(string parameter)
@@ -553,7 +552,7 @@ namespace Unigram.Views
 
                 if (phone != null || phoneHash != null)
                 {
-                    MessageHelper.NavigateToConfirmPhone(ViewModel.LegacyService, phone, phoneHash);
+                    MessageHelper.NavigateToConfirmPhone(ViewModel.ProtoService, phone, phoneHash);
                 }
                 if (server != null && int.TryParse(port, out int portCode))
                 {
@@ -591,7 +590,7 @@ namespace Unigram.Views
             //    Separator.Visibility = Visibility.Visible;
             //}
 
-            if (e.SourcePageType == typeof(DialogPage))
+            if (e.SourcePageType == typeof(ChatPage))
             {
                 var parameter = MasterDetail.NavigationService.SerializationService.Deserialize((string)e.Parameter);
                 UpdateListViewsSelectedItem((long)parameter);
@@ -687,7 +686,7 @@ namespace Unigram.Views
             }
             else if (item is SearchResult result)
             {
-                item = result.Chat;
+                item = result.Chat ?? (object)result.User;
             }
 
             //if (item is TLMessageCommonBase message)
@@ -804,7 +803,7 @@ namespace Unigram.Views
                 {
                     DialogsPanel.Visibility = Visibility.Collapsed;
 
-                    var items = ViewModel.Chats.Search = new ChatsViewModel.SearchChatsCollection(ViewModel.ProtoService, SearchField.Text);
+                    var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text);
                     await items.LoadMoreItemsAsync(0);
                     await items.LoadMoreItemsAsync(1);
                 }
@@ -856,7 +855,7 @@ namespace Unigram.Views
             }
         }
 
-#region Context menu
+        #region Context menu
 
         private void Dialog_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
@@ -870,7 +869,6 @@ namespace Unigram.Views
             CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Chats.DialogClearCommand, chat, Strings.Resources.ClearHistory);
             CreateFlyoutItem(ref flyout, DialogDelete_Loaded, ViewModel.Chats.DialogDeleteCommand, chat, DialogDelete_Text(chat));
             CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Chats.DialogDeleteAndStopCommand, chat, Strings.Resources.DeleteAndStop);
-            CreateFlyoutItem(ref flyout, DialogDeleteAndExit_Loaded, ViewModel.Chats.DialogDeleteCommand, chat, Strings.Resources.DeleteAndExit);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -976,6 +974,10 @@ namespace Unigram.Views
             {
                 return super.IsChannel ? Strings.Resources.LeaveChannelMenu : Strings.Resources.LeaveMegaMenu;
             }
+            else if (chat.Type is ChatTypeBasicGroup)
+            {
+                return Strings.Resources.DeleteAndExit;
+            }
 
             return Strings.Resources.Delete;
         }
@@ -1019,11 +1021,6 @@ namespace Unigram.Views
             return Visibility.Collapsed;
         }
 
-        private Visibility DialogDeleteAndExit_Loaded(Chat chat)
-        {
-            return chat.Type is ChatTypeBasicGroup ? Visibility.Visible : Visibility.Collapsed;
-        }
-
 
 
         private Visibility CallDelete_Loaded(TLCallGroup group)
@@ -1031,11 +1028,11 @@ namespace Unigram.Views
             return Visibility.Visible;
         }
 
-#endregion
+        #endregion
 
-#region Binding
+        #region Binding
 
-        private string ConvertGeoLive(int count, IList<TLMessage> items)
+        private string ConvertGeoLive(int count, IList<Message> items)
         {
             //if (count > 1)
             //{
@@ -1049,7 +1046,7 @@ namespace Unigram.Views
             return null;
         }
 
-#endregion
+        #endregion
 
         private void NewContact_Click(object sender, RoutedEventArgs e)
         {

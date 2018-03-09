@@ -7,9 +7,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.Foundation;
-using Telegram.Api.TL;
 using Windows.UI.Xaml.Media.Imaging;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.ViewModels;
 
 namespace Unigram.Controls

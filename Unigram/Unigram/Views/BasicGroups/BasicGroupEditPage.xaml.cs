@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.ViewModels;
 using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
@@ -30,8 +31,7 @@ namespace Unigram.Views.BasicGroups
         public BasicGroupEditPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<BasicGroupEditViewModel>();
-            ViewModel.Delegate = this;
+            DataContext = UnigramContainer.Current.ResolveType<BasicGroupEditViewModel, IBasicGroupDelegate>(this);
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
@@ -79,6 +79,8 @@ namespace Unigram.Views.BasicGroups
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
             DeletePanel.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
+
+            ViewModel.Title = chat.Title;
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)

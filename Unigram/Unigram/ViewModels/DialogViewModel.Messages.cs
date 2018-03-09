@@ -7,8 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Telegram.Helpers;
 using Unigram.Common;
 using Unigram.Controls;
@@ -29,6 +28,8 @@ using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml;
+using Template10.Common;
 
 namespace Unigram.ViewModels
 {
@@ -524,6 +525,95 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Multiple Report
+
+        public RelayCommand MessagesReportCommand { get; }
+        private async void MessagesReportExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var myId = ProtoService.GetMyId();
+            var messages = SelectedItems.Where(x => x.SenderUserId != myId).OrderBy(x => x.Id).Select(x => x.Id).ToList();
+            if (messages.Count < 1)
+            {
+                return;
+            }
+
+            var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
+            var stack = new StackPanel();
+            stack.Children.Add(opt1);
+            stack.Children.Add(opt2);
+            stack.Children.Add(opt3);
+            stack.Children.Add(opt4);
+            stack.Margin = new Thickness(12, 16, 12, 0);
+
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            dialog.Content = stack;
+            dialog.Title = Strings.Resources.ReportChat;
+            dialog.IsPrimaryButtonEnabled = true;
+            dialog.IsSecondaryButtonEnabled = true;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var reason = opt1.IsChecked == true
+                ? new ChatReportReasonSpam()
+                : (opt2.IsChecked == true
+                    ? new ChatReportReasonViolence()
+                    : (opt3.IsChecked == true
+                        ? new ChatReportReasonPornography()
+                        : (ChatReportReason)new ChatReportReasonCustom()));
+
+            if (reason is ChatReportReasonCustom other)
+            {
+                var input = new InputDialog();
+                input.Title = Strings.Resources.ReportChat;
+                input.PlaceholderText = Strings.Resources.ReportChatDescription;
+                input.IsPrimaryButtonEnabled = true;
+                input.IsSecondaryButtonEnabled = true;
+                input.PrimaryButtonText = Strings.Resources.OK;
+                input.SecondaryButtonText = Strings.Resources.Cancel;
+
+                var inputResult = await input.ShowQueuedAsync();
+                if (inputResult == ContentDialogResult.Primary)
+                {
+                    other.Text = input.Text;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            ProtoService.Send(new ReportChat(chat.Id, reason, messages));
+        }
+
+        private bool MessagesReportCanExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return false;
+            }
+
+            var myId = ProtoService.GetMyId();
+            return chat.CanBeReported && SelectedItems.Count > 0 && SelectedItems.All(x => x.SenderUserId != myId);
+        }
+
+        #endregion
+
         #region Select
 
         public RelayCommand<MessageViewModel> MessageSelectCommand { get; }
@@ -742,11 +832,81 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Report
+
+        public RelayCommand<MessageViewModel> MessageReportCommand { get; }
+        private async void MessageReportExecute(MessageViewModel message)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
+            var stack = new StackPanel();
+            stack.Children.Add(opt1);
+            stack.Children.Add(opt2);
+            stack.Children.Add(opt3);
+            stack.Children.Add(opt4);
+            stack.Margin = new Thickness(12, 16, 12, 0);
+
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            dialog.Content = stack;
+            dialog.Title = Strings.Resources.ReportChat;
+            dialog.IsPrimaryButtonEnabled = true;
+            dialog.IsSecondaryButtonEnabled = true;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var reason = opt1.IsChecked == true
+                ? new ChatReportReasonSpam()
+                : (opt2.IsChecked == true
+                    ? new ChatReportReasonViolence()
+                    : (opt3.IsChecked == true
+                        ? new ChatReportReasonPornography()
+                        : (ChatReportReason)new ChatReportReasonCustom()));
+
+            if (reason is ChatReportReasonCustom other)
+            {
+                var input = new InputDialog();
+                input.Title = Strings.Resources.ReportChat;
+                input.PlaceholderText = Strings.Resources.ReportChatDescription;
+                input.IsPrimaryButtonEnabled = true;
+                input.IsSecondaryButtonEnabled = true;
+                input.PrimaryButtonText = Strings.Resources.OK;
+                input.SecondaryButtonText = Strings.Resources.Cancel;
+
+                var inputResult = await input.ShowQueuedAsync();
+                if (inputResult == ContentDialogResult.Primary)
+                {
+                    other.Text = input.Text;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            ProtoService.Send(new ReportChat(chat.Id, reason, new[] { message.Id }));
+        }
+
+        #endregion
+
         #region Keyboard button
 
-        private TLMessage _replyMarkupMessage;
+        private Message _replyMarkupMessage;
 
-        public TLMessage EditedMessage
+        public Message EditedMessage
         {
             get
             {
@@ -791,22 +951,22 @@ namespace Unigram.ViewModels
                             }
                             else if (form.SavedCredentials != null)
                             {
-                                if (ApplicationSettings.Current.TmpPassword != null)
-                                {
-                                    if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
-                                    {
-                                        ApplicationSettings.Current.TmpPassword = null;
-                                    }
-                                }
+                                //if (ApplicationSettings.Current.TmpPassword != null)
+                                //{
+                                //    if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
+                                //    {
+                                //        ApplicationSettings.Current.TmpPassword = null;
+                                //    }
+                                //}
 
-                                if (ApplicationSettings.Current.TmpPassword != null)
-                                {
-                                    NavigationService.NavigateToPaymentFormStep5(message, form, null, null, null, null, null, true);
-                                }
-                                else
-                                {
-                                    NavigationService.NavigateToPaymentFormStep4(message, form, null, null, null);
-                                }
+                                //if (ApplicationSettings.Current.TmpPassword != null)
+                                //{
+                                //    NavigationService.NavigateToPaymentFormStep5(message, form, null, null, null, null, null, true);
+                                //}
+                                //else
+                                //{
+                                //    NavigationService.NavigateToPaymentFormStep4(message, form, null, null, null);
+                                //}
                             }
                             else
                             {
@@ -950,7 +1110,7 @@ namespace Unigram.ViewModels
                 if (keyboardButton.Type is KeyboardButtonTypeRequestPhoneNumber requestPhoneNumber)
                 {
                     var response = await ProtoService.SendAsync(new GetMe());
-                    if (response is TdWindows.User cached)
+                    if (response is Telegram.Td.Api.User cached)
                     {
                         var chat = Chat;
                         if (chat == null)
@@ -1017,7 +1177,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new AddFavoriteSticker(new InputFileId(sticker.Sticker.StickerData.Id)));
+            ProtoService.Send(new AddFavoriteSticker(new InputFileId(sticker.Sticker.StickerValue.Id)));
         }
 
         #endregion
@@ -1033,7 +1193,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.Sticker.StickerData.Id)));
+            ProtoService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.Sticker.StickerValue.Id)));
         }
 
         #endregion
@@ -1115,11 +1275,11 @@ namespace Unigram.ViewModels
         {
             if (message.Content is MessageAnimation animation)
             {
-                ProtoService.Send(new AddSavedAnimation(new InputFileId(animation.Animation.AnimationData.Id)));
+                ProtoService.Send(new AddSavedAnimation(new InputFileId(animation.Animation.AnimationValue.Id)));
             }
             else if (message.Content is MessageText text && text.WebPage != null && text.WebPage.Animation != null)
             {
-                ProtoService.Send(new AddSavedAnimation(new InputFileId(text.WebPage.Animation.AnimationData.Id)));
+                ProtoService.Send(new AddSavedAnimation(new InputFileId(text.WebPage.Animation.AnimationValue.Id)));
             }
         }
 
@@ -1163,7 +1323,26 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageServiceCommand { get; }
         private async void MessageServiceExecute(MessageViewModel message)
         {
+            if (message.Content is MessageHeaderDate)
+            {
+                var date = BindConvert.Current.DateTime(message.Date);
 
+                var dialog = new Controls.Views.CalendarView();
+                dialog.MaxDate = DateTimeOffset.Now.Date;
+                dialog.SelectedDates.Add(date);
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
+                {
+                    var first = dialog.SelectedDates.FirstOrDefault();
+                    var offset = first.Date.ToTimestamp();
+                    await LoadDateSliceAsync(offset);
+                }
+            }
+            else if (message.Content is MessagePinMessage pinMessage && pinMessage.MessageId != 0)
+            {
+                await LoadMessageSliceAsync(null, pinMessage.MessageId);
+            }
         }
 
         #endregion

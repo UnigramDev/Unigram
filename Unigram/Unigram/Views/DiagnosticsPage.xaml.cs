@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls.Views;
@@ -21,13 +20,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class DiagnosticsPage : Page
     {
         public DiagnosticsPage()
@@ -41,14 +35,14 @@ namespace Unigram.Views
 
             try
             {
-                var log = new FileInfo(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"));
+                var log = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log"));
                 Log.Badge = FileSizeConverter.Convert(log.Length);
             }
             catch { }
 
             try
             {
-                var logold = new FileInfo(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old"));
+                var logold = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old"));
                 LogOld.Badge = FileSizeConverter.Convert(logold.Length);
             }
             catch { }
@@ -97,7 +91,7 @@ namespace Unigram.Views
                 }
 
                 ApplicationSettings.Current.VerbosityLevel = newLevel;
-                TdWindows.Log.SetVerbosityLevel(newLevel);
+                Telegram.Td.Log.SetVerbosityLevel(newLevel);
 
                 Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)ApplicationSettings.Current.VerbosityLevel);
             }
@@ -105,12 +99,16 @@ namespace Unigram.Views
 
         private async void Log_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log")), null, null));
+            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log")), null, null));
         }
 
         private async void LogOld_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old")), null, null));
+            if (System.IO.File.Exists(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old")))
+            {
+                System.IO.File.Copy(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old"), System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old"), true);
+                await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old")), null, null));
+            }
         }
     }
 }

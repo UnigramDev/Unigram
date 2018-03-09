@@ -4,8 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api.Helpers;
+using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Mvvm;
 using Unigram.Common;
@@ -15,6 +14,7 @@ using Unigram.Core.Common;
 using Unigram.Helpers;
 using Unigram.Services;
 using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -22,7 +22,7 @@ using Windows.System;
 
 namespace Unigram.ViewModels
 {
-    public abstract class GalleryViewModelBase : UnigramViewModelBase, IHandle<UpdateFile>
+    public abstract class GalleryViewModelBase : UnigramViewModelBase/*, IHandle<UpdateFile>*/
     {
         public IFileDelegate Delegate { get; set; }
 
@@ -38,17 +38,17 @@ namespace Unigram.ViewModels
             //Aggregator.Subscribe(this);
         }
 
-        public void Handle(UpdateFile update)
-        {
-            BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
-        }
+        //public void Handle(UpdateFile update)
+        //{
+        //    BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
+        //}
 
-        protected override void BeginOnUIThread(Action action)
-        {
-            // This is somehow needed because this viewmodel requires a Dispatcher
-            // in some situations where base one might be null.
-            Execute.BeginOnUIThread(action);
-        }
+        //protected override void BeginOnUIThread(Action action)
+        //{
+        //    // This is somehow needed because this viewmodel requires a Dispatcher
+        //    // in some situations where base one might be null.
+        //    Execute.BeginOnUIThread(action);
+        //}
 
         public virtual int Position
         {
@@ -161,6 +161,11 @@ namespace Unigram.ViewModels
         {
             get
             {
+                if (SelectedItem is GalleryMessageItem message && message.IsHot)
+                {
+                    return false;
+                }
+
                 return true;
             }
         }
@@ -169,6 +174,11 @@ namespace Unigram.ViewModels
         {
             get
             {
+                if (SelectedItem is GalleryMessageItem message && message.IsHot)
+                {
+                    return false;
+                }
+
                 return true;
             }
         }
@@ -360,6 +370,8 @@ namespace Unigram.ViewModels
 
         public long ChatId => _message.ChatId;
         public long Id => _message.Id;
+
+        public bool IsHot => _message.IsSecret();
 
         public override File GetFile()
         {
@@ -601,7 +613,7 @@ namespace Unigram.ViewModels
 
         public override File GetFile()
         {
-            return _video.VideoData;
+            return _video.VideoValue;
         }
 
         public override File GetThumbnail()
@@ -611,7 +623,7 @@ namespace Unigram.ViewModels
 
         public override (File File, string FileName) GetFileAndName()
         {
-            return (_video.VideoData, _video.FileName);
+            return (_video.VideoValue, _video.FileName);
         }
 
         public override bool UpdateFile(File file)
@@ -648,7 +660,7 @@ namespace Unigram.ViewModels
 
         public override File GetFile()
         {
-            return _animation.AnimationData;
+            return _animation.AnimationValue;
         }
 
         public override File GetThumbnail()
@@ -658,7 +670,7 @@ namespace Unigram.ViewModels
 
         public override (File File, string FileName) GetFileAndName()
         {
-            return (_animation.AnimationData, _animation.FileName);
+            return (_animation.AnimationValue, _animation.FileName);
         }
 
         public override bool UpdateFile(File file)

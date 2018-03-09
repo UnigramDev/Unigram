@@ -4,20 +4,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
 using Windows.Foundation.Metadata;
+using Windows.Storage;
 
 namespace Unigram.Services
 {
     public interface IContactsService
     {
-        Task ImportAsync();
-        Task ExportAsync(TdWindows.Users result);
+        Task<Telegram.Td.Api.BaseObject> ImportAsync();
+        Task ExportAsync(Telegram.Td.Api.Users result);
 
         Task RemoveAsync();
     }
@@ -41,7 +40,7 @@ namespace Unigram.Services
 
         #region Import
 
-        public async Task ImportAsync()
+        public async Task<Telegram.Td.Api.BaseObject> ImportAsync()
         {
             using (await _syncLock.WaitAsync())
             {
@@ -50,14 +49,16 @@ namespace Unigram.Services
                 var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
                 if (store != null)
                 {
-                    await ImportAsync(store);
+                    return await ImportAsync(store);
                 }
 
                 Debug.WriteLine("» Importing contacts completed");
             }
+
+            return null;
         }
 
-        private async Task ImportAsync(ContactStore store)
+        private async Task<Telegram.Td.Api.BaseObject> ImportAsync(ContactStore store)
         {
             var contacts = await store.FindContactsAsync();
             var importedPhones = new Dictionary<string, Contact>();
@@ -70,105 +71,45 @@ namespace Unigram.Services
                 }
             }
 
-            var importedPhonesCache = GetImportedPhones();
-
-            var importingContacts = new List<TdWindows.Contact>();
-            var importingPhones = new List<string>();
+            var importingContacts = new List<Telegram.Td.Api.Contact>();
 
             foreach (var phone in importedPhones.Keys.Take(1300).ToList())
             {
-                if (!importedPhonesCache.ContainsKey(phone))
+                var contact = importedPhones[phone];
+                var firstName = contact.FirstName ?? string.Empty;
+                var lastName = contact.LastName ?? string.Empty;
+
+                if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
                 {
-                    var contact = importedPhones[phone];
-                    var firstName = contact.FirstName ?? string.Empty;
-                    var lastName = contact.LastName ?? string.Empty;
-
-                    if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
+                    if (string.IsNullOrEmpty(contact.DisplayName))
                     {
-                        if (string.IsNullOrEmpty(contact.DisplayName))
-                        {
-                            continue;
-                        }
-
-                        firstName = contact.DisplayName;
+                        continue;
                     }
 
-                    if (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
-                    {
-                        var item = new TdWindows.Contact
-                        {
-                            PhoneNumber = phone,
-                            FirstName = firstName,
-                            LastName = lastName
-                        };
+                    firstName = contact.DisplayName;
+                }
 
-                        importingContacts.Add(item);
-                        importingPhones.Add(phone);
-                    }
+                if (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
+                {
+                    var item = new Telegram.Td.Api.Contact
+                    {
+                        PhoneNumber = phone,
+                        FirstName = firstName,
+                        LastName = lastName
+                    };
+
+                    importingContacts.Add(item);
                 }
             }
 
-            if (importingContacts.IsEmpty())
-            {
-                return;
-            }
-
-            _protoService.Send(new TdWindows.ImportContacts(importingContacts), result =>
-            {
-                if (result is TdWindows.ImportedContacts)
-                {
-                    //_aggregator.Publish(new TLUpdateContactsReset());
-                    SaveImportedPhones(importedPhonesCache, importingPhones);
-                }
-            });
-        }
-
-        private void SaveImportedPhones(Dictionary<string, string> importedPhonesCache, List<string> importingPhones)
-        {
-            foreach (var current in importingPhones)
-            {
-                importedPhonesCache[current] = current;
-            }
-
-            var vector = new TLVector<string>(importedPhonesCache.Keys);
-
-            lock (_importedPhonesRoot)
-            {
-                try
-                {
-                    var fileName = "importedPhones.dat";
-                    var text = fileName + ".temp";
-                    using (var file = File.Open(FileUtils.GetFileName(text), FileMode.Create))
-                    {
-                        using (var to = new BinaryWriter(file))
-                        {
-                            to.Write(vector.Count);
-
-                            foreach (var line in vector)
-                            {
-                                to.Write(line);
-                            }
-                        }
-
-                    }
-
-                    File.Copy(FileUtils.GetFileName(text), FileUtils.GetFileName(fileName), true);
-                }
-                catch { }
-            }
-        }
-
-        private Dictionary<string, string> GetImportedPhones()
-        {
-            var vector = TLUtils.OpenObjectFromMTProtoFile<TLVector<string>>(_importedPhonesRoot, "importedPhones.dat") ?? new TLVector<string>();
-            return vector.ToDictionary(x => x, y => y);
+            return await _protoService.SendAsync(new Telegram.Td.Api.ChangeImportedContacts(importingContacts));
         }
 
         #endregion
 
         #region Export
 
-        public async Task ExportAsync(TdWindows.Users result)
+        public async Task ExportAsync(Telegram.Td.Api.Users result)
         {
             using (await _syncLock.WaitAsync())
             {
@@ -192,7 +133,7 @@ namespace Unigram.Services
             }
         }
 
-        private async Task ExportAsync(ContactList contactList, ContactAnnotationList annotationList, TdWindows.Users result)
+        private async Task ExportAsync(ContactList contactList, ContactAnnotationList annotationList, Telegram.Td.Api.Users result)
         {
             if (result == null)
             {
@@ -207,6 +148,11 @@ namespace Unigram.Services
                 if (contact == null)
                 {
                     contact = new Contact();
+                }
+
+                if (user.ProfilePhoto != null && user.ProfilePhoto.Small.Local.IsDownloadingCompleted)
+                {
+                    contact.SourceDisplayPicture = await StorageFile.GetFileFromPathAsync(user.ProfilePhoto.Small.Local.Path);
                 }
 
                 contact.FirstName = user.FirstName ?? string.Empty;

@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
-using Telegram.Api;
-using Telegram.Api.Helpers;
-using Telegram.Api.TL;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Entities;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.SignIn;
@@ -22,7 +20,7 @@ namespace Unigram.ViewModels.SignIn
 {
     public class SignInPasswordViewModel : UnigramViewModelBase
     {
-        private SignInPasswordPage.NavigationParameters _parameters;
+        private AuthorizationStateWaitPassword _parameters;
 
         public SignInPasswordViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
@@ -37,6 +35,7 @@ namespace Unigram.ViewModels.SignIn
             var authState = ProtoService.GetAuthorizationState();
             if (authState is AuthorizationStateWaitPassword waitPassword)
             {
+                _parameters = waitPassword;
                 PasswordHint = waitPassword.PasswordHint;
             }
 
@@ -94,11 +93,11 @@ namespace Unigram.ViewModels.SignIn
             var response = await ProtoService.SendAsync(new CheckAuthenticationPassword(_password));
             if (response is Error error)
             {
-                if (error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
+                if (error.TypeEquals(ErrorType.PASSWORD_HASH_INVALID))
                 {
                     //await new MessageDialog(Resources.PasswordInvalidString, Resources.Error).ShowAsync();
                 }
-                else if (error.CodeEquals(TLErrorCode.FLOOD))
+                else if (error.CodeEquals(ErrorCode.FLOOD))
                 {
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
                 }
@@ -116,21 +115,15 @@ namespace Unigram.ViewModels.SignIn
                 return;
             }
 
-            if (_parameters.Result.HasRecoveryEmailAddress)
+            if (_parameters.HasRecoveryEmailAddress)
             {
                 IsLoading = true;
 
-                var response = await LegacyService.RequestPasswordRecoveryAsync();
-                if (response.IsSucceeded)
-                {
-                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, response.Result.EmailPattern), Strings.Resources.AppName, Strings.Resources.OK);
-
-                    // TODO: show recovery page
-                }
-                else if (response.Error != null)
+                var response = await ProtoService.SendAsync(new RequestAuthenticationPasswordRecovery());
+                if (response is Error error)
                 {
                     IsLoading = false;
-                    await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Resources.AppName, Strings.Resources.OK);
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
             else
@@ -148,35 +141,35 @@ namespace Unigram.ViewModels.SignIn
             {
                 IsLoading = true;
 
-                var response = await LegacyService.DeleteAccountAsync("Forgot password");
-                if (response.IsSucceeded)
+                var response = await ProtoService.SendAsync(new DeleteAccount("Forgot password"));
+                if (response is Ok)
                 {
                     //var logout = await LegacyService.LogOutAsync();
 
-                    var state = new SignUpPage.NavigationParameters
-                    {
-                        PhoneNumber = _parameters.PhoneNumber,
-                        PhoneCode = _parameters.PhoneCode,
-                        Result = _parameters.Result,
-                    };
+                    //var state = new SignUpPage.NavigationParameters
+                    //{
+                    //    PhoneNumber = _parameters.PhoneNumber,
+                    //    PhoneCode = _parameters.PhoneCode,
+                    //    Result = _parameters.Result,
+                    //};
 
-                    NavigationService.Navigate(typeof(SignUpPage), state);
+                    //NavigationService.Navigate(typeof(SignUpPage), state);
                 }
-                else if (response.Error != null)
+                else if (response is Error error)
                 {
                     IsLoading = false;
 
-                    if (response.Error.ErrorMessage.Contains("2FA_RECENT_CONFIRM"))
+                    if (error.Message.Contains("2FA_RECENT_CONFIRM"))
                     {
                         await TLMessageDialog.ShowAsync(Strings.Resources.ResetAccountCancelledAlert, Strings.Resources.AppName, Strings.Resources.OK);
                     }
-                    else if (response.Error.ErrorMessage.StartsWith("2FA_CONFIRM_WAIT_"))
+                    else if (error.Message.StartsWith("2FA_CONFIRM_WAIT_"))
                     {
                         // TODO: show info
                     }
                     else
                     {
-                        await TLMessageDialog.ShowAsync(response.Error.ErrorMessage, Strings.Resources.AppName, Strings.Resources.OK);
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                     }
                 }
             }

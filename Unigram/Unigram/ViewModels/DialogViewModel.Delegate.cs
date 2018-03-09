@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
@@ -15,6 +15,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels
 {
@@ -122,7 +123,7 @@ namespace Unigram.ViewModels
             }
             else if (content is Document document)
             {
-                return ProtoService.Preferences.ShouldDownloadDocument(GetChatType(chat), new NetworkTypeWiFi(), document.DocumentData.Size);
+                return ProtoService.Preferences.ShouldDownloadDocument(GetChatType(chat), new NetworkTypeWiFi(), document.DocumentValue.Size);
             }
             else if (content is Photo photo)
             {
@@ -134,7 +135,7 @@ namespace Unigram.ViewModels
             }
             else if (content is Video video)
             {
-                return ProtoService.Preferences.ShouldDownloadVideo(GetChatType(chat), new NetworkTypeWiFi(), video.VideoData.Size);
+                return ProtoService.Preferences.ShouldDownloadVideo(GetChatType(chat), new NetworkTypeWiFi(), video.VideoValue.Size);
             }
             else if (content is VideoNote videoNote)
             {
@@ -230,6 +231,12 @@ namespace Unigram.ViewModels
         {
             if (webPage.HasInstantView)
             {
+                //if (NavigationService is UnigramNavigationService asdas)
+                //{
+                //    asdas.NavigateToInstant(webPage.Url);
+                //    return;
+                //}
+
                 NavigationService.Navigate(typeof(InstantPage), webPage.Url);
             }
             else if (string.Equals(webPage.Type, "telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
@@ -407,7 +414,7 @@ namespace Unigram.ViewModels
             else
             {
                 GalleryViewModelBase viewModel;
-                if ((message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsBlurred())
+                if ((message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
                 {
                     viewModel = new DialogGalleryViewModel(ProtoService, Aggregator, message.ChatId, message.Get());
                 }

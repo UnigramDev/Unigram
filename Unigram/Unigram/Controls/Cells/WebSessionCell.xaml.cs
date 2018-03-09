@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using TdWindows;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
@@ -17,15 +17,13 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Cells
 {
     public sealed partial class WebSessionCell : Grid
     {
         public WebSessionCell()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public void UpdateConnectedWebsite(IProtoService protoService, ConnectedWebsite session)

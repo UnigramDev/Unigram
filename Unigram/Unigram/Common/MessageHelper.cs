@@ -6,10 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using Telegram.Api;
-using Telegram.Api.Helpers;
-using Telegram.Api.Services;
-using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
@@ -34,7 +30,8 @@ using Windows.UI.Xaml.Input;
 using Unigram.ViewModels.Dialogs;
 using Unigram.Services;
 using Template10.Services.NavigationService;
-using TdWindows;
+using Telegram.Td.Api;
+using Unigram.Entities;
 
 namespace Unigram.Common
 {
@@ -323,46 +320,47 @@ namespace Unigram.Common
             var confirm = await TLMessageDialog.ShowAsync($"{Strings.Resources.EnableProxyAlert}\n\n{Strings.Resources.UseProxyAddress}: {server}\n{Strings.Resources.UseProxyPort}: {port}\n{userText}{passText}\n{Strings.Resources.EnableProxyAlert2}", Strings.Resources.Proxy, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                SettingsHelper.ProxyServer = server ?? string.Empty;
-                SettingsHelper.ProxyPort = port;
-                SettingsHelper.ProxyUsername = username ?? string.Empty;
-                SettingsHelper.ProxyPassword = password ?? string.Empty;
-                SettingsHelper.IsProxyEnabled = true;
+                var proxy = ApplicationSettings.Current.Proxy;
+                proxy.Server = server = server ?? string.Empty;
+                proxy.Port = port;
+                proxy.Username = username = username ?? string.Empty;
+                proxy.Password = password = password ?? string.Empty;
+                proxy.IsEnabled = true;
 
                 protoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
             }
         }
 
-        public static async void NavigateToConfirmPhone(IMTProtoService protoService, string phone, string hash)
+        public static async void NavigateToConfirmPhone(IProtoService protoService, string phone, string hash)
         {
-            var response = await protoService.SendConfirmPhoneCodeAsync(hash, false);
-            if (response.IsSucceeded)
-            {
-                var state = new SignInSentCodePage.NavigationParameters
-                {
-                    PhoneNumber = phone,
-                    //Result = response.Result,
-                };
+            //var response = await protoService.SendConfirmPhoneCodeAsync(hash, false);
+            //if (response.IsSucceeded)
+            //{
+            //    var state = new SignInSentCodePage.NavigationParameters
+            //    {
+            //        PhoneNumber = phone,
+            //        //Result = response.Result,
+            //    };
 
-                App.Current.NavigationService.Navigate(typeof(SignInSentCodePage), state);
+            //    App.Current.NavigationService.Navigate(typeof(SignInSentCodePage), state);
 
-                //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
-                //{
-                //    if (frame != null)
-                //    {
-                //        frame.CloseBlockingProgress();
-                //    }
-                //    TelegramViewBase.NavigateToConfirmPhone(result);
-                //});
-            }
-            else
-            {
-                //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
-                //{
-                //    return;
-                //}
-                //Telegram.Api.Helpers.Execute.ShowDebugMessage(string.Format("account.sendConfirmPhoneCode error {0}", error));
-            };
+            //    //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+            //    //{
+            //    //    if (frame != null)
+            //    //    {
+            //    //        frame.CloseBlockingProgress();
+            //    //    }
+            //    //    TelegramViewBase.NavigateToConfirmPhone(result);
+            //    //});
+            //}
+            //else
+            //{
+            //    //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
+            //    //{
+            //    //    return;
+            //    //}
+            //    //Telegram.Api.Helpers.Execute.ShowDebugMessage(string.Format("account.sendConfirmPhoneCode error {0}", error));
+            //};
         }
 
         public static async void NavigateToStickerSet(string text)
@@ -398,7 +396,14 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    navigation.NavigateToChat(chat);
+                    if (long.TryParse(post, out long message))
+                    {
+                        navigation.NavigateToChat(chat, message: message << 20);
+                    }
+                    else
+                    {
+                        navigation.NavigateToChat(chat);
+                    }
                 }
             }
             else
@@ -429,33 +434,33 @@ namespace Unigram.Common
                     if (confirm == ContentDialogBaseResult.OK)
                     {
                         var import = await protoService.SendAsync(new JoinChatByInviteLink(link));
-                        if (import is Ok)
+                        if (import is Chat chat)
                         {
-                            await TLMessageDialog.ShowAsync("Joined", Strings.Resources.AppName, Strings.Resources.OK);
+                            navigation.NavigateToChat(chat);
                         }
                         else if (import is Error error)
                         {
-                            if (!error.CodeEquals(TLErrorCode.BAD_REQUEST))
+                            if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
                             {
                                 Execute.ShowDebugMessage("messages.importChatInvite error " + error);
                                 return;
                             }
-                            if (error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
+                            if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
                             {
                                 //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
                                 return;
                             }
-                            else if (error.TypeEquals(TLErrorType.USERS_TOO_MUCH))
+                            else if (error.TypeEquals(ErrorType.USERS_TOO_MUCH))
                             {
                                 //MessageBox.Show(Strings.Additional.UsersTooMuch, Strings.Additional.Error, 0);
                                 return;
                             }
-                            else if (error.TypeEquals(TLErrorType.BOTS_TOO_MUCH))
+                            else if (error.TypeEquals(ErrorType.BOTS_TOO_MUCH))
                             {
                                 //MessageBox.Show(Strings.Additional.BotsTooMuch, Strings.Additional.Error, 0);
                                 return;
                             }
-                            else if (error.TypeEquals(TLErrorType.USER_ALREADY_PARTICIPANT))
+                            else if (error.TypeEquals(ErrorType.USER_ALREADY_PARTICIPANT))
                             {
                                 return;
                             }
@@ -467,12 +472,12 @@ namespace Unigram.Common
             }
             else if (response is Error error)
             {
-                if (!error.CodeEquals(TLErrorCode.BAD_REQUEST))
+                if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
                 {
                     Execute.ShowDebugMessage("messages.checkChatInvite error " + error);
                     return;
                 }
-                if (error.TypeEquals(TLErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(TLErrorType.INVITE_HASH_INVALID) || error.TypeEquals(TLErrorType.INVITE_HASH_EXPIRED))
+                if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
                 {
                     //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
                     await TLMessageDialog.ShowAsync("This invite link is broken or has expired.", "Warning", "OK");
