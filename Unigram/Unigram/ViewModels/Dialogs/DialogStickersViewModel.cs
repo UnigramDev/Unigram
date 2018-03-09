@@ -17,6 +17,9 @@ using System.Collections.Specialized;
 using Windows.Storage;
 using System.Runtime.CompilerServices;
 using Telegram.Td.Api;
+using Windows.UI.Xaml.Data;
+using Windows.Foundation;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Unigram.ViewModels.Dialogs
 {
@@ -224,6 +227,19 @@ namespace Unigram.ViewModels.Dialogs
         public MvxObservableCollection<TLFeaturedStickerSet> FeaturedStickers { get; private set; }
 
         public StickerSetCollection SavedStickers { get; private set; }
+
+        private SearchStickerSetsCollection _search;
+        public SearchStickerSetsCollection Search
+        {
+            get
+            {
+                return _search;
+            }
+            set
+            {
+                Set(ref _search, value);
+            }
+        }
 
         //public void SyncGroup(TLChannelFull channelFull)
         //{
@@ -647,4 +663,53 @@ namespace Unigram.ViewModels.Dialogs
             }
         }
     }
+
+    public class SearchStickerSetsCollection : MvxObservableCollection<StickerSetViewModel>, ISupportIncrementalLoading
+    {
+        private readonly IProtoService _protoService;
+        private readonly bool _masks;
+        private readonly string _query;
+
+        private readonly List<int> _users = new List<int>();
+
+        private KeyedList<string, object> _local;
+        private KeyedList<string, object> _remote;
+
+        public SearchStickerSetsCollection(IProtoService protoService, bool masks, string query)
+        {
+            _protoService = protoService;
+            _masks = masks;
+            _query = query;
+        }
+
+        public string Query => _query;
+
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint phase)
+        {
+            return AsyncInfo.Run(async token =>
+            {
+                if (phase == 0)
+                {
+                    var response = await _protoService.SendAsync(new SearchInstalledStickerSets(_masks, _query, 100));
+                    if (response is StickerSets sets)
+                    {
+                        AddRange(sets.Sets.Select(x => new StickerSetViewModel(x)));
+                    }
+                }
+                else if (phase == 1)
+                {
+                    var response = await _protoService.SendAsync(new SearchStickerSets(_query));
+                    if (response is StickerSets sets)
+                    {
+                        AddRange(sets.Sets.Select(x => new StickerSetViewModel(x)));
+                    }
+                }
+
+                return new LoadMoreItemsResult();
+            });
+        }
+
+        public bool HasMoreItems => false;
+    }
+
 }

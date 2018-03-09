@@ -23,6 +23,7 @@
     <UserControl.Resources>
         <CollectionViewSource x:Name="FeaturedSource" Source="{x:Bind ViewModel.Stickers.FeaturedStickers}" ItemsPath="Covers" IsSourceGrouped="True"/>
         <CollectionViewSource x:Name="StickersSource" Source="{x:Bind ViewModel.Stickers.SavedStickers}" ItemsPath="Stickers" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="StickersSearchSource" Source="{x:Bind ViewModel.Stickers.Search}" ItemsPath="Stickers" IsSourceGrouped="True"/>
 
         <Style x:Name="ModernPivotRadioButtonStyle" TargetType="controls:PivotRadioButton">
             <Setter Property="Background" Value="Transparent" />
@@ -199,18 +200,18 @@
                         </GridView.ItemContainerTransitions>
                     </controls:ZoomableGridView>-->
                     <ListView x:Name="GifsView"
-                              ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
-                              SelectionMode="None"
-                              ContainerContentChanging="Animations_ContainerContentChanging"
-                              Padding="2">
+                                ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
+                                SelectionMode="None"
+                                ContainerContentChanging="Animations_ContainerContentChanging"
+                                Padding="2">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <controls:MosaicRow HorizontalAlignment="Stretch"/>
                                 <!--<GridView ItemsSource="{Binding}"
-                                          IsItemClickEnabled="True"
-                                          SelectionMode="None"
-                                          ItemClick="Gifs_ItemClick"
-                                          ContainerContentChanging="Animations_ContainerContentChanging">
+                                            IsItemClickEnabled="True"
+                                            SelectionMode="None"
+                                            ItemClick="Gifs_ItemClick"
+                                            ContainerContentChanging="Animations_ContainerContentChanging">
                                     <GridView.ItemsPanel>
                                         <ItemsPanelTemplate>
                                         </ItemsPanelTemplate>
@@ -314,12 +315,12 @@
                                                             BorderBrush="{TemplateBinding BorderBrush}"
                                                             BorderThickness="{TemplateBinding BorderThickness}">
                                                         <ContentPresenter x:Name="ContentPresenter"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          Content="{TemplateBinding Content}"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                                            Margin="{TemplateBinding Padding}"
+                                                                            Content="{TemplateBinding Content}"
+                                                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
                                                     </Border>
                                                 </ControlTemplate>
                                             </Setter.Value>
@@ -418,12 +419,12 @@
                                                                     BorderBrush="{TemplateBinding BorderBrush}"
                                                                     BorderThickness="{TemplateBinding BorderThickness}">
                                                         <ContentPresenter x:Name="ContentPresenter"
-                                                                                  Margin="{TemplateBinding Padding}"
-                                                                                  Content="{TemplateBinding Content}"
-                                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                                                    Margin="{TemplateBinding Padding}"
+                                                                                    Content="{TemplateBinding Content}"
+                                                                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                                    ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
                                                     </Border>
                                                 </ControlTemplate>
                                             </Setter.Value>
@@ -437,11 +438,11 @@
                                 <Image Margin="2"/>
                             </DataTemplate>
                         </GridView.ItemTemplate>
-                        <!--<GridView.Header>
+                        <GridView.Header>
                             <Border>
-                                <TextBox PlaceholderText="Search Stickers" Margin="10,8,10,0"/>
+                                <TextBox PlaceholderText="{CustomResource SearchStickersHint}" Margin="10,8,10,0"/>
                             </Border>
-                        </GridView.Header>-->
+                        </GridView.Header>
                         <GridView.Footer>
                             <Border Height="12"/>
                         </GridView.Footer>
@@ -478,20 +479,20 @@
             <Grid x:Name="ToolbarContainer">
                 <Border x:Name="Separator"/>
                 <!--
-                          Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"-->
+                            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"-->
                 <ListView x:Name="Toolbar"
-                          ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
-                          Height="{ThemeResource TelegramToolBarSmallHeight}"
-                          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                          IsItemClickEnabled="True"
-                          ItemClick="Toolbar_ItemClick"
-                          SelectionChanged="Toolbar_SelectionChanged"
-                          ContainerContentChanging="Toolbar_ContainerContentChanging"
-                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                          ScrollViewer.HorizontalScrollMode="Auto"
-                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                          ScrollViewer.VerticalScrollMode="Disabled"
-                          Grid.Row="0">
+                            ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
+                            Height="{ThemeResource TelegramToolBarSmallHeight}"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            IsItemClickEnabled="True"
+                            ItemClick="Toolbar_ItemClick"
+                            SelectionChanged="Toolbar_SelectionChanged"
+                            ContainerContentChanging="Toolbar_ContainerContentChanging"
+                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                            ScrollViewer.HorizontalScrollMode="Auto"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            ScrollViewer.VerticalScrollMode="Disabled"
+                            Grid.Row="0">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel Orientation="Horizontal"/>
@@ -685,16 +686,16 @@
                             <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.SavedGifs.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="0" Glyph="&#xE608;" CheckedGlyph="&#xE913;" Width="{ThemeResource TelegramToolBarSmallHeight}" Height="{ThemeResource TelegramToolBarSmallHeight}" FontFamily="{StaticResource TelegramThemeFontFamily}" Style="{StaticResource ModernPivotRadioButtonStyle}"/>
                             <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" Width="{ThemeResource TelegramToolBarSmallHeight}" Height="{ThemeResource TelegramToolBarSmallHeight}" FontFamily="{StaticResource TelegramThemeFontFamily}" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Padding="4">
                                 <Grid Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
-                                      CornerRadius="10"
-                                      MinWidth="20"
-                                      Height="20">
+                                        CornerRadius="10"
+                                        MinWidth="20"
+                                        Height="20">
                                     <TextBlock Text="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay}"
-                                               Style="{ThemeResource CaptionTextBlockStyle}"
-                                               Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
-                                               TextAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               TextLineBounds="TrimToBaseline,TrimToCapHeight"
-                                               Margin="5,0,5,0"/>
+                                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                                Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                TextAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                TextLineBounds="TrimToBaseline,TrimToCapHeight"
+                                                Margin="5,0,5,0"/>
                                 </Grid>
                             </controls:PivotRadioButton>
                             <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="2" Glyph="&#xE121;" Visibility="Collapsed"/>
