@@ -231,11 +231,11 @@ namespace Unigram.ViewModels
         {
             if (webPage.HasInstantView)
             {
-                if (NavigationService is UnigramNavigationService asdas)
-                {
-                    asdas.NavigateToInstant(webPage.Url);
-                    return;
-                }
+                //if (NavigationService is UnigramNavigationService asdas)
+                //{
+                //    asdas.NavigateToInstant(webPage.Url);
+                //    return;
+                //}
 
                 NavigationService.Navigate(typeof(InstantPage), webPage.Url);
             }
