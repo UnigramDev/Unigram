@@ -579,7 +579,7 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessPhoto(PageBlockPhoto block)
         {
-            var galleryItem = new GalleryPhotoItem(ViewModel.ProtoService, block.Photo, block.Caption?.ToString());
+            var galleryItem = new GalleryPhotoItem(ViewModel.ProtoService, block.Photo, GetPlainText(block.Caption));
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessagePhoto(block.Photo, null, false));
@@ -609,7 +609,7 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessVideo(PageBlockVideo block)
         {
-            var galleryItem = new GalleryVideoItem(ViewModel.ProtoService, block.Video, block.Caption?.ToString());
+            var galleryItem = new GalleryVideoItem(ViewModel.ProtoService, block.Video, GetPlainText(block.Caption));
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessageVideo(block.Video, null, false));
@@ -641,7 +641,7 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessAnimation(PageBlockAnimation block)
         {
-            var galleryItem = new GalleryAnimationItem(ViewModel.ProtoService, block.Animation, block.Caption?.ToString());
+            var galleryItem = new GalleryAnimationItem(ViewModel.ProtoService, block.Animation, GetPlainText(block.Caption));
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessageAnimation(block.Animation, null, false));
@@ -674,6 +674,38 @@ namespace Unigram.Views
         private MessageViewModel GetMessage(MessageContent content)
         {
             return new MessageViewModel(ViewModel.ProtoService, this, new Message { Content = content });
+        }
+
+        private string GetPlainText(RichText text)
+        {
+            switch (text)
+            {
+                case RichTextPlain plainText:
+                    return plainText.Text;
+                case RichTexts concatText:
+                    var builder = new StringBuilder();
+                    foreach (var concat in concatText.Texts)
+                    {
+                        builder.Append(GetPlainText(concat));
+                    }
+                    return builder.ToString();
+                case RichTextBold boldText:
+                    return GetPlainText(boldText.Text);
+                case RichTextEmailAddress emailText:
+                    return GetPlainText(emailText.Text);
+                case RichTextFixed fixedText:
+                    return GetPlainText(fixedText.Text);
+                case RichTextItalic italicText:
+                    return GetPlainText(italicText.Text);
+                case RichTextStrikethrough strikeText:
+                    return GetPlainText(strikeText.Text);
+                case RichTextUnderline underlineText:
+                    return GetPlainText(underlineText.Text);
+                case RichTextUrl urlText:
+                    return GetPlainText(urlText.Text);
+                default:
+                    return null;
+            }
         }
 
         private FrameworkElement ProcessEmbed(PageBlockEmbedded block)
