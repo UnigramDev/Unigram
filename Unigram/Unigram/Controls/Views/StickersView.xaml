@@ -438,11 +438,11 @@
                                 <Image Margin="2"/>
                             </DataTemplate>
                         </GridView.ItemTemplate>
-                        <GridView.Header>
+                        <!--<GridView.Header>
                             <Border>
                                 <TextBox PlaceholderText="{CustomResource SearchStickersHint}" Margin="10,8,10,0"/>
                             </Border>
-                        </GridView.Header>
+                        </GridView.Header>-->
                         <GridView.Footer>
                             <Border Height="12"/>
                         </GridView.Footer>
