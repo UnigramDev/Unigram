@@ -710,7 +710,7 @@ namespace Unigram.Views
                 var media = new ObservableCollection<StorageMedia>();
                 var files = new List<StorageFile>(items.Count);
 
-                foreach (var file in items.OfType<StorageFile>())
+                foreach (StorageFile file in items)
                 {
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||

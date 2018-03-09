@@ -610,7 +610,7 @@ namespace Unigram.ViewModels
                 {
                     var file = await photo.GetFileAsync();
 
-                    var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+                    var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
                     var props = await file.GetBasicPropertiesAsync();
                     var size = await ImageHelper.GetScaleAsync(file);
 

@@ -40,6 +40,26 @@ namespace Unigram.Common
             return (int)(dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
         }
 
+        public static string Enqueue(this StorageItemAccessList list, IStorageItem item)
+        {
+            if (list.MaximumItemsAllowed - 10 >= list.Entries.Count)
+            {
+                var first = list.Entries.FirstOrDefault();
+                var token = first.Token;
+
+                list.Remove(token);
+            }
+
+            try
+            {
+                return list.Add(item);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Applies the action to each element in the list.
         /// </summary>
@@ -91,7 +111,7 @@ namespace Unigram.Common
 
         public static async Task<InputFileGenerated> ToGeneratedAsync(this StorageFile file, string conversion = "copy")
         {
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
             var props = await file.GetBasicPropertiesAsync();
 
             return new InputFileGenerated(file.Path, conversion + "#" + props.DateModified.ToString("s"), (int)props.Size);
@@ -214,7 +234,7 @@ namespace Unigram.Common
                     // ensure that the last character doesn't inherit directionality from the outside context.
                     var appTextDirection = 1; // checks the <html> element's "dir" attribute.
                     var dataTextDirection = NativeUtils.GetDirectionality(data); // Run through the string until a non-neutral character is encountered,
-                                                                         // which determines the text direction.
+                                                                                 // which determines the text direction.
 
                     if (appTextDirection != dataTextDirection)
                     {

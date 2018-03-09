@@ -80,7 +80,7 @@ namespace Unigram.Controls.Messages.Content
                 Button.Glyph = "\uE10A";
                 Button.Progress = (double)file.Local.DownloadedSize / size;
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
 
                 Button.Glyph = "\uE10A";
@@ -144,7 +144,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }

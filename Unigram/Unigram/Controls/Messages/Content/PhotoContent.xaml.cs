@@ -100,7 +100,7 @@ namespace Unigram.Controls.Messages.Content
                 Button.Opacity = 1;
                 Overlay.Opacity = 0;
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
 
                 Button.Glyph = "\uE10A";
@@ -190,8 +190,6 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var id = _message.Id;
-
             var photo = GetContent(_message.Content);
             if (photo == null)
             {
@@ -209,7 +207,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));
             }
-            else if (file.Remote.IsUploadingActive)
+            else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
