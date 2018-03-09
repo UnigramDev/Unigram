@@ -2597,7 +2597,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new SendChatSetTtlMessage(chat.Id, dialog.TTLSeconds ?? 0));
             if (response is Message message)
             {
-                Items.Add(GetMessage(message));
+                //Items.Add(GetMessage(message));
             }
         }
 
