@@ -42,14 +42,19 @@ namespace Unigram.Common
 
         public static string Enqueue(this StorageItemAccessList list, IStorageItem item)
         {
-            if (list.MaximumItemsAllowed - 10 >= list.Entries.Count)
+            try
             {
-                var first = list.Entries.FirstOrDefault();
-                var token = first.Token;
-
-                list.Remove(token);
+                if (list.MaximumItemsAllowed - 10 >= list.Entries.Count)
+                {
+                    var first = list.Entries.FirstOrDefault();
+                    if (first.Token != null)
+                    {
+                        list.Remove(first.Token);
+                    }
+                }
             }
-
+            catch { }
+            
             try
             {
                 return list.Add(item);
