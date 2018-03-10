@@ -1205,7 +1205,7 @@ namespace Unigram.Views
         private Visibility MessageReport_Loaded(MessageViewModel message)
         {
             var chat = ViewModel.Chat;
-            if (chat == null)
+            if (chat == null || !chat.CanBeReported)
             {
                 return Visibility.Collapsed;
             }
