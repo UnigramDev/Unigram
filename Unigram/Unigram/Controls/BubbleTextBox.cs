@@ -38,6 +38,7 @@ using Telegram.Td.Api;
 using Unigram.Services;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Core.Common;
+using Unigram.Collections;
 
 namespace Unigram.Controls
 {
@@ -589,15 +590,7 @@ namespace Unigram.Controls
                 {
                     if (text.Trim().Length <= 14 && !string.IsNullOrWhiteSpace(text) && ViewModel.EditedMessage == null)
                     {
-                        //ViewModel.StickerPack = ViewModel.Stickers.StickersService.LoadStickersForEmoji(text.Trim());
-                        //ViewModel.ProtoService.Send(new GetStickers(text, int.MaxValue), result =>
-                        //{
-                        //    if (result is Stickers stickers)
-                        //    {
-                        //        this.BeginOnUIThread(() => ViewModel.StickerPack = stickers.StickersValue.ToList());
-                        //    }
-                        //});
-                        ViewModel.StickerPack = new StickerCollection(ViewModel.ProtoService, text.Trim());
+                        ViewModel.StickerPack = new SearchStickersCollection(ViewModel.ProtoService, text.Trim());
                     }
                     else
                     {
@@ -653,43 +646,6 @@ namespace Unigram.Controls
             }
 
             return null;
-        }
-
-        public class StickerCollection : MvxObservableCollection<Telegram.Td.Api.Sticker>, ISupportIncrementalLoading
-        {
-            private readonly IProtoService _protoService;
-            private readonly string _query;
-
-            private bool _hasMore = true;
-
-            public StickerCollection(IProtoService protoService, string query)
-            {
-                _protoService = protoService;
-                _query = query;
-            }
-
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-            {
-                return AsyncInfo.Run(async token =>
-                {
-                    count = 0;
-                    _hasMore = false;
-
-                    var response = await _protoService.SendAsync(new GetStickers(_query, 20));
-                    if (response is Stickers stickers)
-                    {
-                        foreach (var sticker in stickers.StickersValue)
-                        {
-                            Add(sticker);
-                            count++;
-                        }
-                    }
-
-                    return new LoadMoreItemsResult { Count = count };
-                });
-            }
-
-            public bool HasMoreItems => _hasMore;
         }
 
         public class UsernameCollection : MvxObservableCollection<Telegram.Td.Api.User>, ISupportIncrementalLoading
