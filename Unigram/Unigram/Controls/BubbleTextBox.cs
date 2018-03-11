@@ -1235,11 +1235,7 @@ namespace Unigram.Controls
                     //    paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).Font = consolas;
                     //}
                     //else 
-                    if (entity.Type is TextEntityTypeUrl ||
-                             entity.Type is TextEntityTypeEmailAddress ||
-                             entity.Type is TextEntityTypeMention ||
-                             entity.Type is TextEntityTypeHashtag ||
-                             entity.Type is TextEntityTypeBotCommand)
+                    if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeCashtag || entity.Type is TextEntityTypeBotCommand)
                     {
                         paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
                     }
