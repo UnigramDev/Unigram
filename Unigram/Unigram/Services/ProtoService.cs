@@ -363,10 +363,6 @@ namespace Unigram.Services
                 {
                     return Strings.Resources.SavedMessages;
                 }
-                else if (user.OutgoingLink is LinkStateKnowsPhoneNumber)
-                {
-                    return PhoneNumber.Format(user.PhoneNumber);
-                }
             }
 
             return chat.Title;

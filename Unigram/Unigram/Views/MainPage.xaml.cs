@@ -48,7 +48,6 @@ namespace Unigram.Views
         IHandle<UpdateChatPhoto>,
         IHandle<UpdateMessageMentionRead>,
         //IHandle<UpdateMessageContent>,
-        IHandle<UpdateUser>,
         IHandle<UpdateSecretChat>,
         IHandle<UpdateNotificationSettings>,
         IHandle<UpdateFile>
@@ -156,14 +155,6 @@ namespace Unigram.Views
         public void Handle(UpdateMessageContent update)
         {
             Handle(update.ChatId, update.MessageId, chat => chat.LastMessage.Content = update.NewContent, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
-        }
-
-        public void Handle(UpdateUser update)
-        {
-            if (_cacheService.TryGetChatFromUser(update.User.Id, out Chat result))
-            {
-                Handle(result.Id, (chatView, chat) => chatView.UpdateChatTitle(chat));
-            }
         }
 
         public void Handle(UpdateSecretChat update)
