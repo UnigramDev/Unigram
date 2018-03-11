@@ -13,7 +13,30 @@ using Unigram.Core.Notifications;
 using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.BasicGroups;
+using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Dialogs;
+using Unigram.ViewModels.Payments;
+using Unigram.ViewModels.SecretChats;
+using Unigram.ViewModels.Settings;
+using Unigram.ViewModels.Settings.Privacy;
+using Unigram.ViewModels.SignIn;
+using Unigram.ViewModels.Supergroups;
+using Unigram.ViewModels.Users;
 using Unigram.Views;
+using Unigram.Views.BasicGroups;
+using Unigram.Views.Channels;
+using Unigram.Views.Chats;
+using Unigram.Views.Dialogs;
+using Unigram.Views.Payments;
+using Unigram.Views.SecretChats;
+using Unigram.Views.Settings;
+using Unigram.Views.Settings.Privacy;
+using Unigram.Views.SignIn;
+using Unigram.Views.Supergroups;
+using Unigram.Views.Users;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
@@ -89,8 +112,6 @@ namespace Unigram
 #endif
 
             Locator.Configure();
-            UnigramContainer.Current.ResolveType<IGenerationService>();
-            CustomXamlResourceLoader.Current = new XamlResourceLoader();
 
             InitializeComponent();
 
@@ -124,6 +145,162 @@ namespace Unigram
                 });
 
 #endif
+        }
+
+        public override INavigable ResolveForPage(Page page, INavigationService navigationService)
+        {
+            var id = navigationService is UnigramNavigationService ex ? ex.SessionId : 0;
+            switch (page)
+            {
+                case BasicGroupEditPage basicGroupEdit:
+                    return UnigramContainer.Current.ResolveType<BasicGroupEditViewModel, IBasicGroupDelegate>(basicGroupEdit, id);
+                case ChannelCreateStep1Page channelCreateStep1:
+                    return UnigramContainer.Current.ResolveType<ChannelCreateStep1ViewModel>(id);
+                case ChannelCreateStep2Page channelCreateStep2:
+                    return UnigramContainer.Current.ResolveType<ChannelCreateStep2ViewModel>(id);
+                case ChannelCreateStep3Page channelCreateStep3:
+                    return UnigramContainer.Current.ResolveType<ChannelCreateStep3ViewModel>(id);
+                case ChatCreateStep1Page chatCreateStep1:
+                    return UnigramContainer.Current.ResolveType<ChatCreateStep1ViewModel>(id);
+                case ChatCreateStep2Page chatCreateStep2:
+                    return UnigramContainer.Current.ResolveType<ChatCreateStep2ViewModel>(id);
+                case ChatInviteLinkPage chatInviteLink:
+                    return UnigramContainer.Current.ResolveType<ChatInviteLinkViewModel>(id);
+                case ChatInvitePage chatInvite:
+                    return UnigramContainer.Current.ResolveType<ChatInviteViewModel>(id);
+                case DialogSharedMediaPage dialogSharedMedia:
+                    return UnigramContainer.Current.ResolveType<DialogSharedMediaViewModel, IFileDelegate>(dialogSharedMedia, id);
+                case DialogShareLocationPage dialogShareLocation:
+                    return UnigramContainer.Current.ResolveType<DialogShareLocationViewModel>(id);
+                case InstantPage instant:
+                    return UnigramContainer.Current.ResolveType<InstantViewModel>(id);
+                case MainPage main:
+                    return UnigramContainer.Current.ResolveType<MainViewModel>(id);
+                case PaymentFormStep1Page paymentFormStep1:
+                    return UnigramContainer.Current.ResolveType<PaymentFormStep1ViewModel>(id);
+                case PaymentFormStep2Page paymentFormStep2:
+                    return UnigramContainer.Current.ResolveType<PaymentFormStep2ViewModel>(id);
+                case PaymentFormStep3Page paymentFormStep3:
+                    return UnigramContainer.Current.ResolveType<PaymentFormStep3ViewModel>(id);
+                case PaymentFormStep4Page paymentFormStep4:
+                    return UnigramContainer.Current.ResolveType<PaymentFormStep4ViewModel>(id);
+                case PaymentFormStep5Page paymentFormStep5:
+                    return UnigramContainer.Current.ResolveType<PaymentFormStep5ViewModel>(id);
+                case PaymentReceiptPage paymentReceipt:
+                    return UnigramContainer.Current.ResolveType<PaymentReceiptViewModel>(id);
+                case ProfilePage profile:
+                    return UnigramContainer.Current.ResolveType<ProfileViewModel, IProfileDelegate>(profile, id);
+                case SecretChatCreatePage secretChatCreate:
+                    return UnigramContainer.Current.ResolveType<SecretChatCreateViewModel>(id);
+                case SettingsPhoneIntroPage settingsPhoneIntro:
+                    return UnigramContainer.Current.ResolveType<SettingsPhoneIntroViewModel>(id);
+                case SettingsPhonePage settingsPhone:
+                    return UnigramContainer.Current.ResolveType<SettingsPhoneViewModel>(id);
+                case SettingsPhoneSentCodePage settingsPhoneSentCode:
+                    return UnigramContainer.Current.ResolveType<SettingsPhoneSentCodeViewModel>(id);
+                case SettingsPrivacyAllowCallsPage settingsPrivacyAllowCalls:
+                    return UnigramContainer.Current.ResolveType<SettingsPrivacyAllowCallsViewModel>(id);
+                case SettingsPrivacyAllowChatInvitesPage settingsPrivacyAllowChatInvites:
+                    return UnigramContainer.Current.ResolveType<SettingsPrivacyAllowChatInvitesViewModel>(id);
+                case SettingsPrivacyAlwaysAllowCallsPage settingsPrivacyAlwaysAllowCalls:
+                    return UnigramContainer.Current.ResolveType<SettingsPrivacyAlwaysAllowCallsViewModel>(id);
+                case SettingsPrivacyAlwaysAllowChatInvitesPage settingsPrivacyAlwaysAllowChatInvites:
+                    return UnigramContainer.Current.ResolveType<SettingsPrivacyAlwaysAllowChatInvitesViewModel>(id);
+                case SettingsPrivacyAlwaysShowStatusPage settingsPrivacyAlwaysShowStatus:
+                    return UnigramContainer.Current.ResolveType<SettingsPrivacyAlwaysShowStatusViewModel>(id);
+                case SettingsPrivacyNeverAllowCallsPage settingsPrivacyNeverAllowCalls:
+                    return UnigramContainer.Current.ResolveType<SettingsPrivacyNeverAllowCallsViewModel>(id);
+                case SettingsPrivacyNeverAllowChatInvitesPage settingsPrivacyNeverAllowChatInvites:
+                    return UnigramContainer.Current.ResolveType<SettingsPrivacyNeverAllowChatInvitesViewModel>(id);
+                case SettingsPrivacyNeverShowStatusPage settingsPrivacyNeverShowStatus:
+                    return UnigramContainer.Current.ResolveType<SettingsPrivacyNeverShowStatusViewModel>(id);
+                case SettingsPrivacyShowStatusPage settingsPrivacyShowStatus:
+                    return UnigramContainer.Current.ResolveType<SettingsPrivacyShowStatusViewModel>(id);
+                case SettingsAppearancePage settingsAppearance:
+                    return UnigramContainer.Current.ResolveType<SettingsAppearanceViewModel>(id);
+                case SettingsBlockedUsersPage settingsBlockedUsers:
+                    return UnigramContainer.Current.ResolveType<SettingsBlockedUsersViewModel, IFileDelegate>(settingsBlockedUsers, id);
+                case SettingsBlockUserPage settingsBlockUser:
+                    return UnigramContainer.Current.ResolveType<SettingsBlockUserViewModel>(id);
+                case SettingsDataAndStoragePage settingsDataAndStorage:
+                    return UnigramContainer.Current.ResolveType<SettingsDataAndStorageViewModel>(id);
+                case SettingsDataAutoPage settingsDataAuto:
+                    return UnigramContainer.Current.ResolveType<SettingsDataAutoViewModel>(id);
+                case SettingsGeneralPage settingsGeneral:
+                    return UnigramContainer.Current.ResolveType<SettingsGeneralViewModel>(id);
+                case SettingsLanguagePage settingsLanguage:
+                    return UnigramContainer.Current.ResolveType<SettingsLanguageViewModel>(id);
+                case SettingsMasksArchivedPage settingsMasksArchived:
+                    return UnigramContainer.Current.ResolveType<SettingsMasksArchivedViewModel>(id);
+                case SettingsMasksPage settingsMasks:
+                    return UnigramContainer.Current.ResolveType<SettingsMasksViewModel>(id);
+                case SettingsNotificationsPage settingsNotifications:
+                    return UnigramContainer.Current.ResolveType<SettingsNotificationsViewModel>(id);
+                case SettingsPrivacyAndSecurityPage settingsPrivacyAndSecurity:
+                    return UnigramContainer.Current.ResolveType<SettingsPrivacyAndSecurityViewModel>(id);
+                case SettingsSecurityChangePasswordPage settingsSecurityChangePassword:
+                    return UnigramContainer.Current.ResolveType<SettingsSecurityChangePasswordViewModel>(id);
+                case SettingsSecurityEnterPasswordPage settingsSecurityEnterPassword:
+                    return UnigramContainer.Current.ResolveType<SettingsSecurityEnterPasswordViewModel>(id);
+                case SettingsSecurityPasscodePage settingsSecurityPasscode:
+                    return UnigramContainer.Current.ResolveType<SettingsSecurityPasscodeViewModel>(id);
+                case SettingsSessionsPage settingsSessions:
+                    return UnigramContainer.Current.ResolveType<SettingsSessionsViewModel>(id);
+                case SettingsStatsPage settingsNetwork:
+                    return UnigramContainer.Current.ResolveType<SettingsNetworkViewModel>(id);
+                case SettingsStickersArchivedPage settingsStickersArchived:
+                    return UnigramContainer.Current.ResolveType<SettingsStickersArchivedViewModel>(id);
+                case SettingsStickersFeaturedPage settingsStickersTrending:
+                    return UnigramContainer.Current.ResolveType<SettingsStickersTrendingViewModel>(id);
+                case SettingsStickersPage settingsStickers:
+                    return UnigramContainer.Current.ResolveType<SettingsStickersViewModel>(id);
+                case SettingsStoragePage settingsStorage:
+                    return UnigramContainer.Current.ResolveType<SettingsStorageViewModel>(id);
+                case SettingsUsernamePage settingsUsername:
+                    return UnigramContainer.Current.ResolveType<SettingsUsernameViewModel>(id);
+                case SettingsWallPaperPage settingsWallPaper:
+                    return UnigramContainer.Current.ResolveType<SettingsWallPaperViewModel>(id);
+                case SettingsWebSessionsPage settingsWebSessions:
+                    return UnigramContainer.Current.ResolveType<SettingsWebSessionsViewModel>(id);
+                case SettingsPage settings:
+                    return UnigramContainer.Current.ResolveType<SettingsViewModel, IUserDelegate>(settings, id);
+                case SignInPage signIn:
+                    return UnigramContainer.Current.ResolveType<SignInViewModel>(id);
+                case SignInPasswordPage signInPassword:
+                    return UnigramContainer.Current.ResolveType<SignInPasswordViewModel>(id);
+                case SignInSentCodePage signInSentCode:
+                    return UnigramContainer.Current.ResolveType<SignInSentCodeViewModel>(id);
+                case SignUpPage signUp:
+                    return UnigramContainer.Current.ResolveType<SignUpViewModel>(id);
+                case SupergroupAddAdministratorPage supergroupAddAdministrator:
+                    return UnigramContainer.Current.ResolveType<SupergroupAddAdministratorViewModel>(id);
+                case SupergroupAddRestrictedPage supergroupAddRestricted:
+                    return UnigramContainer.Current.ResolveType<SupergroupAddRestrictedViewModel>(id);
+                case SupergroupAdministratorsPage supergroupAdministrators:
+                    return UnigramContainer.Current.ResolveType<SupergroupAdministratorsViewModel, ISupergroupDelegate>(supergroupAdministrators, id);
+                case SupergroupBannedPage supergroupBanned:
+                    return UnigramContainer.Current.ResolveType<SupergroupBannedViewModel, ISupergroupDelegate>(supergroupBanned, id);
+                case SupergroupEditAdministratorPage supergroupEditAdministrator:
+                    return UnigramContainer.Current.ResolveType<SupergroupEditAdministratorViewModel, IMemberDelegate>(supergroupEditAdministrator, id);
+                case SupergroupEditPage supergroupEdit:
+                    return UnigramContainer.Current.ResolveType<SupergroupEditViewModel, ISupergroupDelegate>(supergroupEdit, id);
+                case SupergroupEditRestrictedPage supergroupEditRestricted:
+                    return UnigramContainer.Current.ResolveType<SupergroupEditRestrictedViewModel, IMemberDelegate>(supergroupEditRestricted, id);
+                case SupergroupEditStickerSetPage supergroupEditStickerSet:
+                    return UnigramContainer.Current.ResolveType<SupergroupEditStickerSetViewModel>(id);
+                case SupergroupEventLogPage supergroupEventLog:
+                    return UnigramContainer.Current.ResolveType<SupergroupEventLogViewModel>(id);
+                case SupergroupMembersPage supergroupMembers:
+                    return UnigramContainer.Current.ResolveType<SupergroupMembersViewModel, ISupergroupDelegate>(supergroupMembers, id);
+                case SupergroupRestrictedPage supergroupRestricted:
+                    return UnigramContainer.Current.ResolveType<SupergroupRestrictedViewModel, ISupergroupDelegate>(supergroupRestricted, id);
+                case UserCommonChatsPage userCommonChats:
+                    return UnigramContainer.Current.ResolveType<UserCommonChatsViewModel>(id);
+                case UserCreatePage userCreate:
+                    return UnigramContainer.Current.ResolveType<UserCreateViewModel>(id);
+            }
+
+            return base.ResolveForPage(page, navigationService);
         }
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)

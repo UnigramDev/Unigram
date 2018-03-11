@@ -31,10 +31,10 @@ namespace Unigram
 
         public void Configure()
         {
-            container.Build((builder, account) =>
+            container.Build((builder, session) =>
             {
-                builder.RegisterType<ProtoService>().As<IProtoService, ICacheService>().SingleInstance();
-                builder.RegisterType<GenerationService>().As<IGenerationService>().SingleInstance();
+                builder.RegisterType<ProtoService>().WithParameter("session", session).As<IProtoService, ICacheService>().SingleInstance();
+                builder.RegisterType<GenerationService>().As<IGenerationService>().SingleInstance().AutoActivate();
 
                 //builder.RegisterType<MTProtoService>().WithParameter("account", account).As<IMTProtoService>().SingleInstance();
                 builder.RegisterType<DeviceInfoService>().As<IDeviceInfoService>().SingleInstance();

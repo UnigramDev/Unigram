@@ -27,6 +27,8 @@ namespace Unigram.Common
             _protoService = protoService;
         }
 
+        public int SessionId => _protoService.SessionId;
+
         public async void NavigateToInstant(string url)
         {
             if (_instantLifetime == null)

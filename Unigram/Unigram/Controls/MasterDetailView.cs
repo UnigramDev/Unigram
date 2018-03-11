@@ -344,6 +344,7 @@ namespace Unigram.Controls
             {
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude) as NavigationService;
                 service.SerializationService = TLSerializationService.Current;
+                service.Frame.DataContext = new object();
                 service.FrameFacade.FrameId = key;
                 service.FrameFacade.BackRequested += (s, args) =>
                 {

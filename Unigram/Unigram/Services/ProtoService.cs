@@ -20,6 +20,8 @@ namespace Unigram.Services
         void Send(Function function, ClientResultHandler handler);
         void Send(Function function, Action<BaseObject> handler);
         Task<BaseObject> SendAsync(Function function);
+
+        int SessionId { get; }
     }
 
     public interface ICacheService
@@ -62,6 +64,7 @@ namespace Unigram.Services
     public class ProtoService : IProtoService, ClientResultHandler
     {
         private readonly Client _client;
+        private readonly int _session;
         private readonly IDeviceInfoService _deviceInfoService;
         private readonly IEventAggregator _aggregator;
 
@@ -92,12 +95,13 @@ namespace Unigram.Services
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
 
-        public ProtoService(IDeviceInfoService deviceInfoService, IEventAggregator aggregator)
+        public ProtoService(int session, IDeviceInfoService deviceInfoService, IEventAggregator aggregator)
         {
             Log.SetVerbosityLevel(ApplicationSettings.Current.VerbosityLevel);
-            Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log"));
+            Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{session}", "log"));
 
             _client = Client.Create(this);
+            _session = session;
             _deviceInfoService = deviceInfoService;
             _aggregator = aggregator;
 
@@ -105,7 +109,7 @@ namespace Unigram.Services
 
             var parameters = new TdlibParameters
             {
-                DatabaseDirectory = Path.Combine(ApplicationData.Current.LocalFolder.Path, "0"),
+                DatabaseDirectory = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{session}"),
                 UseSecretChats = true,
                 UseMessageDatabase = true,
                 ApiId = Constants.ApiId,
@@ -241,6 +245,8 @@ namespace Unigram.Services
         }
 
 
+
+        public int SessionId => _session;
 
         #region Cache
 
