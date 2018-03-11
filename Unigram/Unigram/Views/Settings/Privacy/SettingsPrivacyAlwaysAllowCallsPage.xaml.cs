@@ -21,7 +21,7 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyAlwaysAllowCallsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsPrivacyAlwaysAllowCallsViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsPrivacyAlwaysAllowCallsViewModel>();
             View.Attach();
         }
     }

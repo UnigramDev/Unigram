@@ -29,7 +29,7 @@ namespace Unigram.Views.Settings
         public SettingsAppearancePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsAppearanceViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsAppearanceViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 

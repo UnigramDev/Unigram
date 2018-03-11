@@ -61,7 +61,7 @@ namespace Unigram.Views
         public MainPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<MainViewModel>();
 
             _cacheService = ViewModel.CacheService;
 

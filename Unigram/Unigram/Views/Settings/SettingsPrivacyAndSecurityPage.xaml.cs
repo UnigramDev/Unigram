@@ -27,7 +27,7 @@ namespace Unigram.Views.Settings
         public SettingsPrivacyAndSecurityPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsPrivacyAndSecurityViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsPrivacyAndSecurityViewModel>();
         }
 
         private void Sessions_Click(object sender, RoutedEventArgs e)
@@ -62,7 +62,7 @@ namespace Unigram.Views.Settings
 
         private async void Passcode_Click(object sender, RoutedEventArgs e)
         {
-            var service = UnigramContainer.Current.ResolveType<IPasscodeService>();
+            var service = UnigramContainer.Current.Resolve<IPasscodeService>();
             if (sender != null && service.IsEnabled)
             {
                 var dialog = new SettingsSecurityPasscodeConfirmView();

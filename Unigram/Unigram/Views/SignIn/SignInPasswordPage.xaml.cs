@@ -26,7 +26,7 @@ namespace Unigram.Views.SignIn
         public SignInPasswordPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SignInPasswordViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SignInPasswordViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }

@@ -41,7 +41,7 @@ namespace Unigram.Views
             _containers[0] = factory(new ContainerBuilder(), 0);
         }
 
-        public TService ResolveType<TService>(int account = int.MaxValue)
+        public TService Resolve<TService>(int account = int.MaxValue)
         {
             if (account == int.MaxValue)
             {
@@ -58,7 +58,7 @@ namespace Unigram.Views
             return result;
         }
 
-        public TService ResolveType<TService, TDelegate>(TDelegate delegato, int account = int.MaxValue)
+        public TService Resolve<TService, TDelegate>(TDelegate delegato, int account = int.MaxValue)
             where TService : IDelegable<TDelegate>
             where TDelegate : IViewModelDelegate
         {

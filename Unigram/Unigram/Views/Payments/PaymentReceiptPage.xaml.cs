@@ -28,7 +28,7 @@ namespace Unigram.Views.Payments
         public PaymentReceiptPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<PaymentReceiptViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<PaymentReceiptViewModel>();
         }
 
         private string ConvertTitle(bool test)

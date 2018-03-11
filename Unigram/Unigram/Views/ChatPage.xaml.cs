@@ -77,7 +77,7 @@ namespace Unigram.Views
              {
                  _viewModel = ViewModel;
              };
-            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel, IDialogDelegate>(this);
+            DataContext = UnigramContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
             NavigationCacheMode = NavigationCacheMode.Required;
@@ -228,7 +228,7 @@ namespace Unigram.Views
                 //Bindings.StopTracking();
             }
 
-            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel, IDialogDelegate>(this);
+            DataContext = UnigramContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;

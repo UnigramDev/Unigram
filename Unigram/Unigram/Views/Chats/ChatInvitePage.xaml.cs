@@ -28,7 +28,7 @@ namespace Unigram.Views.Chats
         public ChatInvitePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ChatInviteViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<ChatInviteViewModel>();
         }
 
         private void Invite_Click(object sender, RoutedEventArgs e)

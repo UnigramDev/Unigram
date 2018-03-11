@@ -25,7 +25,7 @@ namespace Unigram.Views.Payments
         public PaymentFormStep3Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<PaymentFormStep3ViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<PaymentFormStep3ViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }

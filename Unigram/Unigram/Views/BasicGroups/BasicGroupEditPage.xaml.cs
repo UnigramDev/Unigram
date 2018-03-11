@@ -31,7 +31,7 @@ namespace Unigram.Views.BasicGroups
         public BasicGroupEditPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<BasicGroupEditViewModel, IBasicGroupDelegate>(this);
+            DataContext = UnigramContainer.Current.Resolve<BasicGroupEditViewModel, IBasicGroupDelegate>(this);
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)

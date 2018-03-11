@@ -35,7 +35,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupMembersPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupMembersViewModel, ISupergroupDelegate>(this);
+            DataContext = UnigramContainer.Current.Resolve<SupergroupMembersViewModel, ISupergroupDelegate>(this);
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>

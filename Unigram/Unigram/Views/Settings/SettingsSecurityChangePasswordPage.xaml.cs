@@ -23,7 +23,7 @@ namespace Unigram.Views.Settings
         public SettingsSecurityChangePasswordPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsSecurityChangePasswordViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsSecurityChangePasswordViewModel>();
         }
     }
 }

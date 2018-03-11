@@ -35,7 +35,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupBannedPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupBannedViewModel, ISupergroupDelegate>(this);
+            DataContext = UnigramContainer.Current.Resolve<SupergroupBannedViewModel, ISupergroupDelegate>(this);
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>

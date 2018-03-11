@@ -24,7 +24,7 @@ namespace Unigram.Views.Settings
         public SettingsNotificationsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsNotificationsViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsNotificationsViewModel>();
         }
 
         private async void Private_Click(object sender, RoutedEventArgs e)

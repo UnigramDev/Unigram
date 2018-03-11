@@ -53,7 +53,7 @@ namespace Unigram.Views
         public InstantPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<InstantViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<InstantViewModel>();
 
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = System.IO.File.ReadAllText(jsPath);

@@ -39,7 +39,7 @@ namespace Unigram.Controls.Views
         private ShareView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ShareViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<ShareViewModel>();
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;

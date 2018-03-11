@@ -32,7 +32,7 @@ namespace Unigram.Views.Settings
         public SettingsLanguagePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsLanguageViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsLanguageViewModel>();
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)

@@ -29,7 +29,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditStickerSetPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupEditStickerSetViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SupergroupEditStickerSetViewModel>();
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(ShortName, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>

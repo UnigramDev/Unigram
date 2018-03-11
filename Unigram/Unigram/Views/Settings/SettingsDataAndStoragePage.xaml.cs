@@ -27,7 +27,7 @@ namespace Unigram.Views.Settings
         public SettingsDataAndStoragePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsDataAndStorageViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsDataAndStorageViewModel>();
         }
 
         private void Storage_Click(object sender, RoutedEventArgs e)

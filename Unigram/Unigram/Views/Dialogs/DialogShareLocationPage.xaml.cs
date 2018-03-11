@@ -68,7 +68,7 @@ namespace Unigram.Views.Dialogs
         public DialogShareLocationPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<DialogShareLocationViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<DialogShareLocationViewModel>();
 
             Loaded += OnLoaded;
 

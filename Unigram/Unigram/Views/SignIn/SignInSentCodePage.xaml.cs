@@ -27,7 +27,7 @@ namespace Unigram.Views.SignIn
         public SignInSentCodePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SignInSentCodeViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SignInSentCodeViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }

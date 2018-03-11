@@ -27,7 +27,7 @@ namespace Unigram
             container = UnigramContainer.Current;
         }
 
-        public IHardwareService HardwareService => container.ResolveType<IHardwareService>();
+        public IHardwareService HardwareService => container.Resolve<IHardwareService>();
 
         public void Configure()
         {

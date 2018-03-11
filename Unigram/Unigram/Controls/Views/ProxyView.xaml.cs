@@ -153,7 +153,7 @@ namespace Unigram.Controls.Views
             }
 
             var title = Strings.Resources.ProxySettings;
-            var link = new Uri(MeUrlPrefixConverter.Convert(UnigramContainer.Current.ResolveType<IProtoService>(), $"socks?{string.Join("&", builder)}"));
+            var link = new Uri(MeUrlPrefixConverter.Convert(UnigramContainer.Current.Resolve<IProtoService>(), $"socks?{string.Join("&", builder)}"));
 
             await ShareView.GetForCurrentView().ShowAsync(link, title);
         }
