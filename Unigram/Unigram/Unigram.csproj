@@ -553,6 +553,9 @@
     <Compile Include="Views\Dialogs\DialogShareLocationPage.xaml.cs">
       <DependentUpon>DialogShareLocationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\IdenticonPage.xaml.cs">
+      <DependentUpon>IdenticonPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\InvitePage.xaml.cs">
       <DependentUpon>InvitePage.xaml</DependentUpon>
     </Compile>
@@ -710,9 +713,6 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupRestrictedPage.xaml.cs">
       <DependentUpon>SupergroupRestrictedPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Users\UserKeyHashPage.xaml.cs">
-      <DependentUpon>UserKeyHashPage.xaml</DependentUpon>
     </Compile>
     <Content Include="Assets\Audio\silence.mp3" />
     <Content Include="Assets\Audio\voip_busy.mp3" />
@@ -1728,6 +1728,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\IdenticonPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\InstantPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2009,10 +2013,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Users\UserCreatePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Users\UserKeyHashPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

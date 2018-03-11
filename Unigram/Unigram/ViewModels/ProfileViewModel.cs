@@ -585,7 +585,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(UserKeyHashPage), chat.Id);
+            NavigationService.Navigate(typeof(IdenticonPage), chat.Id);
         }
 
         public RelayCommand MigrateCommand { get; }
