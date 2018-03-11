@@ -100,6 +100,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region PaneToggleButtonVisibility
+
+        public Visibility PaneToggleButtonVisibility
+        {
+            get { return (Visibility)GetValue(PaneToggleButtonVisibilityProperty); }
+            set { SetValue(PaneToggleButtonVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty PaneToggleButtonVisibilityProperty =
+            DependencyProperty.Register("PaneToggleButtonVisibility", typeof(Visibility), typeof(NavigationView), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
+
         public event NavigationViewItemClickEventHandler ItemClick;
     }
 

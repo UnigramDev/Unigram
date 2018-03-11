@@ -141,7 +141,7 @@ namespace Unigram.Controls.Cells
             _chat = chat;
             Tag = chat;
 
-            UpdateVisualState(chat, false);
+            //UpdateViewState(chat, false, false);
 
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
@@ -155,9 +155,10 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public void UpdateVisualState(Chat chat, bool selected)
+        public void UpdateViewState(Chat chat, bool selected, bool compact)
         {
             VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
+            VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
         }
 
         private Visibility UpdateIsPinned(bool isPinned, int unreadCount)

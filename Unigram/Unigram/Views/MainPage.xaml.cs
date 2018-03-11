@@ -590,6 +590,15 @@ namespace Unigram.Views
             //    Separator.Visibility = Visibility.Visible;
             //}
 
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
+            {
+                Navigation.PaneToggleButtonVisibility = e.SourcePageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else
+            {
+                Navigation.PaneToggleButtonVisibility = Visibility.Visible;
+            }
+
             if (e.SourcePageType == typeof(ChatPage))
             {
                 var parameter = MasterDetail.NavigationService.SerializationService.Deserialize((string)e.Parameter);
@@ -626,13 +635,16 @@ namespace Unigram.Views
 
         private void OnStateChanged(object sender, EventArgs e)
         {
-            if (MasterDetail.CurrentState == MasterDetailState.Narrow)
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
                 ChatsList.SelectionMode = ListViewSelectionMode.None;
                 ChatsList.SelectedItem = null;
 
                 Separator.BorderThickness = new Thickness(0);
                 Separator.Visibility = Visibility.Collapsed;
+
+                Navigation.PaneToggleButtonVisibility = MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed;
+                Header.Visibility = Visibility.Visible;
             }
             else
             {
@@ -641,7 +653,12 @@ namespace Unigram.Views
 
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
                 Separator.Visibility = Visibility.Visible;
+
+                Navigation.PaneToggleButtonVisibility = Visibility.Visible;
+                Header.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
             }
+
+            ChatsList.UpdateViewState(MasterDetail.CurrentState);
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

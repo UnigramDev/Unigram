@@ -34,28 +34,33 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
+            <VisualStateGroup>
+                <VisualState x:Name="Expanded"/>
+                <VisualState x:Name="Compact">
+                    <VisualState.Setters>
+                        <Setter Target="UnreadBadge.(Grid.Column)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition />
+            <ColumnDefinition MinWidth="4"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!--<Ellipse Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2">
-             <Ellipse.Fill>
-             <ImageBrush ImageSource="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-             </Ellipse.Fill>
-             </Ellipse>-->
         <controls:ProfilePicture x:Name="Photo" Width="48" Height="48" VerticalAlignment="Top" IsHitTestVisible="False" Grid.RowSpan="2" />
 
         <Border x:Name="SavedMessages" Visibility="Collapsed" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top" Grid.RowSpan="2">
             <FontIcon Glyph="&#xE907;" Foreground="White" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
         </Border>
 
-        <Grid VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="1">
+        <Grid VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="1" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
@@ -112,76 +117,75 @@
                        Margin="0,0,0,1"
                        Grid.Column="2"/>
         </Grid>
-        <Grid Margin="12,0,0,0" Grid.Column="2" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock x:Name="BriefInfo"
-                       Style="{ThemeResource BodyTextBlockStyle}"
-                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                       TextTrimming="CharacterEllipsis"
-                       TextWrapping="NoWrap"
-                       MaxLines="1">
-                <ToolTipService.ToolTip>
-                    <ToolTip Opened="ToolTip_Opened"/>
-                </ToolTipService.ToolTip>
-                <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/><Run x:Name="DraftLabel" Foreground="Red"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
-            </TextBlock>
+        <TextBlock x:Name="BriefInfo"
+                   Style="{ThemeResource BodyTextBlockStyle}"
+                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                   TextTrimming="CharacterEllipsis"
+                   TextWrapping="NoWrap"
+                   MaxLines="1"
+                   Margin="12,0,0,0"
+                   Grid.Column="1"
+                   Grid.Row="1">
+            <ToolTipService.ToolTip>
+                <ToolTip Opened="ToolTip_Opened"/>
+            </ToolTipService.ToolTip>
+            <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/><Run x:Name="DraftLabel" Foreground="Red"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+        </TextBlock>
 
-            <!--<TextBlock x:Name="TypingLabel"
-                 Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
-                 Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}"
-                 Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
-                 Style="{StaticResource BodyTextBlockStyle}"
-                 TextWrapping="NoWrap"
-                 MaxLines="1"/>-->
+        <!--<TextBlock x:Name="TypingLabel"
+             Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
+             Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}"
+             Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+             Style="{StaticResource BodyTextBlockStyle}"
+             TextWrapping="NoWrap"
+             MaxLines="1"/>-->
 
-            <Border x:Name="PinnedIcon"
-                    Width="20"
-                    Height="20"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Right"
-                    Margin="8,2,0,0"
-                    Grid.ColumnSpan="2"
-                    Grid.Column="1">
-                <FontIcon Glyph="&#xE840;" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border x:Name="UnreadMentionsBadge"
-                    Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
-                    MinWidth="20"
-                    Height="20"
-                    CornerRadius="10"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Right"
-                    Margin="8,1,0,0"
-                    Visibility="Collapsed"
-                    Grid.Column="1">
-                <TextBlock x:Name="UnreadMentionsLabel"
-                           Text="@"
-                           Style="{ThemeResource CaptionTextBlockStyle}"
-                           Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
-                           TextAlignment="Center"
-                           Margin="4,1,4,0"/>
-            </Border>
-            <Grid x:Name="UnreadBadge"
-                  MinWidth="20"
-                  Height="20"
-                  CornerRadius="10"
-                  VerticalAlignment="Top"
-                  HorizontalAlignment="Right"
-                  Margin="8,1,0,0"
-                  Visibility="Collapsed"
-                  Grid.Column="2">
-                <Border x:Name="UnreadBackground" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"/>
-                <Border x:Name="UnreadMutedBackground" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"/>
-                <TextBlock x:Name="UnreadLabel"
-                           Style="{ThemeResource CaptionTextBlockStyle}"
-                           Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
-                           TextAlignment="Center"
-                           Margin="4,2,4,0"/>
-            </Grid>
+        <Border x:Name="PinnedIcon"
+                Width="20"
+                Height="20"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                Margin="8,2,0,-22"
+                Grid.ColumnSpan="2"
+                Grid.Column="2"
+                Grid.Row="1">
+            <FontIcon Glyph="&#xE840;" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+        <Border x:Name="UnreadMentionsBadge"
+                Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                MinWidth="20"
+                Height="20"
+                CornerRadius="10"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                Margin="8,1,0,-22"
+                Visibility="Collapsed"
+                Grid.Column="2"
+                Grid.Row="1">
+            <TextBlock x:Name="UnreadMentionsLabel"
+                       Text="@"
+                       Style="{ThemeResource CaptionTextBlockStyle}"
+                       Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                       TextAlignment="Center"
+                       Margin="4,1,4,0"/>
+        </Border>
+        <Grid x:Name="UnreadBadge"
+              MinWidth="20"
+              Height="20"
+              CornerRadius="10"
+              VerticalAlignment="Top"
+              HorizontalAlignment="Right"
+              Margin="8,1,0,-22"
+              Visibility="Collapsed"
+              Grid.Column="3"
+              Grid.Row="1">
+            <Border x:Name="UnreadBackground" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"/>
+            <Border x:Name="UnreadMutedBackground" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"/>
+            <TextBlock x:Name="UnreadLabel"
+                       Style="{ThemeResource CaptionTextBlockStyle}"
+                       Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                       TextAlignment="Center"
+                       Margin="4,2,4,0"/>
         </Grid>
     </Grid>
 </UserControl>

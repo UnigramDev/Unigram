@@ -9,6 +9,7 @@
                 <ControlTemplate TargetType="local:NavigationView">
                     <Grid>
                         <Grid Width="{StaticResource PaneToggleButtonSize}"
+                              Visibility="{TemplateBinding PaneToggleButtonVisibility}"
                               Margin="0,0,0,8"
                               HorizontalAlignment="Left"
                               VerticalAlignment="Top"
