@@ -81,8 +81,8 @@ namespace Unigram.Services
                     return;
                 }
 
-                var caption = _protoService.GetTitle(chat);
-                var content = UpdateFromLabel(chat, update.Message) + GetBriefLabel(update.Message);
+                var caption = GetCaption(chat);
+                var content = GetContent(chat, update.Message);
                 var sound = "";
                 var launch = GetLaunch(chat);
                 var tag = GetTag(update.Message);
@@ -259,9 +259,27 @@ namespace Unigram.Services
 
 
 
+        private string GetCaption(Chat chat)
+        {
+            if (chat.Type is ChatTypeSecret)
+            {
+                return Strings.Resources.AppName;
+            }
 
+            return _protoService.GetTitle(chat);
+        }
 
-        private string GetBriefLabel(Message value)
+        private string GetContent(Chat chat, Message message)
+        {
+            if (chat.Type is ChatTypeSecret)
+            {
+                return Strings.Resources.YouHaveNewMessage;
+            }
+
+            return UpdateFromLabel(chat, message) + GetBriefLabel(chat, message);
+        }
+
+        private string GetBriefLabel(Chat chat, Message value)
         {
             switch (value.Content)
             {
