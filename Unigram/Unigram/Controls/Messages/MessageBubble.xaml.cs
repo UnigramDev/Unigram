@@ -724,7 +724,7 @@ namespace Unigram.Controls.Messages
             }
             else if (type is TextEntityTypeHashtag || type is TextEntityTypeCashtag)
             {
-
+                message.Delegate.OpenHashtag(data);
             }
             else if (type is TextEntityTypeMention)
             {

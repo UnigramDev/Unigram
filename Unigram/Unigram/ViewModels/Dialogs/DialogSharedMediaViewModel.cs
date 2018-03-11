@@ -488,6 +488,10 @@ namespace Unigram.ViewModels.Dialogs
         {
         }
 
+        public void OpenHashtag(string hashtag)
+        {
+        }
+
         public void OpenUser(int userId)
         {
         }

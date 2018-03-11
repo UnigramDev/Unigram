@@ -357,6 +357,12 @@ namespace Unigram.ViewModels
             NavigationService.NavigateToChat(chat, message: messageId);
         }
 
+        public void OpenHashtag(string hashtag)
+        {
+            var search = Search = new DialogSearchViewModel(ProtoService, CacheService, Aggregator, this);
+            search.SearchCommand.Execute(hashtag);
+        }
+
         public async void OpenUrl(string url, bool untrust)
         {
             var navigation = url;
