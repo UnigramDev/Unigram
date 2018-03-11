@@ -45,6 +45,8 @@ namespace Unigram.Services
             _registrationLock = new DisposableMutex();
 
             _aggregator.Subscribe(this);
+
+            Handle(new UpdateUnreadMessageCount(protoService.UnreadCount, protoService.UnreadUnmutedCount));
         }
 
         public void Handle(UpdateUnreadMessageCount update)

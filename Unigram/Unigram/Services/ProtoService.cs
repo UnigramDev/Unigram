@@ -59,6 +59,9 @@ namespace Unigram.Services
 
         AutoDownloadPreferences Preferences { get; }
         void SetPreferences(AutoDownloadPreferences preferences);
+
+        int UnreadCount { get; }
+        int UnreadUnmutedCount { get; }
     }
 
     public class ProtoService : IProtoService, ClientResultHandler
@@ -249,6 +252,9 @@ namespace Unigram.Services
         public int SessionId => _session;
 
         #region Cache
+
+        public int UnreadCount { get; private set; }
+        public int UnreadUnmutedCount { get; private set; }
 
         private bool TryGetChatForFileId(int fileId, out Chat chat)
         {
@@ -788,6 +794,11 @@ namespace Unigram.Services
             else if (update is UpdateTrendingStickerSets updateTrendingStickerSets)
             {
 
+            }
+            else if (update is UpdateUnreadMessageCount updateUnreadMessageCount)
+            {
+                UnreadCount = updateUnreadMessageCount.UnreadCount;
+                UnreadUnmutedCount = updateUnreadMessageCount.UnreadUnmutedCount;
             }
             else if (update is UpdateUser updateUser)
             {
