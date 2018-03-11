@@ -1,5 +1,6 @@
 ﻿using Unigram.Common;
 using Unigram.Services;
+using Unigram.Services.Updates;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -49,6 +50,26 @@ namespace Unigram.ViewModels.Settings
             {
                 ApplicationSettings.Current.IsAutoPlayEnabled = value;
                 RaisePropertyChanged();
+            }
+        }
+
+        public bool IsWorkModeVisible
+        {
+            get
+            {
+                return ApplicationSettings.Current.IsWorkModeVisible;
+            }
+            set
+            {
+                ApplicationSettings.Current.IsWorkModeVisible = value;
+                RaisePropertyChanged();
+
+                if (!value)
+                {
+                    ApplicationSettings.Current.IsWorkModeEnabled = false;
+                }
+
+                Aggregator.Publish(new UpdateWorkMode(value, ApplicationSettings.Current.IsWorkModeEnabled));
             }
         }
     }

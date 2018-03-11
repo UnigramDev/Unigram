@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Items;
 using Unigram.ViewModels;
@@ -16,6 +17,7 @@ namespace Unigram.Controls
         public UnigramViewModelBase ViewModel => DataContext as UnigramViewModelBase;
 
         public MasterDetailState _viewState;
+        public ChatFilterMode _filterMode;
 
         public ChatListView()
         {
@@ -33,8 +35,8 @@ namespace Unigram.Controls
             var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
             if (content != null)
             {
-                content.UpdateViewState(args.Item as Telegram.Td.Api.Chat, args.ItemContainer.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
-                content.UpdateChat(ViewModel.ProtoService, args.Item as Telegram.Td.Api.Chat);
+                content.UpdateViewState(args.Item as Chat, _filterMode, args.ItemContainer.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
+                content.UpdateChat(ViewModel.ProtoService, args.Item as Chat);
                 args.Handled = true;
             }
         }
@@ -47,6 +49,12 @@ namespace Unigram.Controls
         public void UpdateViewState(MasterDetailState state)
         {
             _viewState = state;
+            UpdateVisibleChats();
+        }
+
+        public void UpdateFilterMode(ChatFilterMode filter)
+        {
+            _filterMode = filter;
             UpdateVisibleChats();
         }
 
@@ -69,7 +77,7 @@ namespace Unigram.Controls
                 var content = container.ContentTemplateRoot as ChatCell;
                 if (content != null)
                 {
-                    content.UpdateViewState(ItemFromContainer(container) as Telegram.Td.Api.Chat, container.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
+                    content.UpdateViewState(ItemFromContainer(container) as Chat, _filterMode, container.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
                 }
             }
         }
@@ -100,7 +108,7 @@ namespace Unigram.Controls
             var content = ContentTemplateRoot as ChatCell;
             if (content != null)
             {
-                content.UpdateViewState(_list.ItemFromContainer(this) as Telegram.Td.Api.Chat, this.IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact);
+                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, _list._filterMode, this.IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact);
             }
         }
     }

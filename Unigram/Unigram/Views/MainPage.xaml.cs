@@ -14,6 +14,7 @@ using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.Core.Notifications;
 using Unigram.Services;
+using Unigram.Services.Updates;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Supergroups;
 using Unigram.Views.Channels;
@@ -50,6 +51,8 @@ namespace Unigram.Views
         //IHandle<UpdateMessageContent>,
         IHandle<UpdateSecretChat>,
         IHandle<UpdateNotificationSettings>,
+        IHandle<UpdateUnreadMessageCount>,
+        IHandle<UpdateWorkMode>,
         IHandle<UpdateFile>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
@@ -171,6 +174,28 @@ namespace Unigram.Views
             {
                 Handle(chatScope.ChatId, (chatView, chat) => chatView.UpdateNotificationSettings(chat));
             }
+        }
+
+        public void Handle(UpdateUnreadMessageCount update)
+        {
+            this.BeginOnUIThread(() => ViewModel.UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount);
+        }
+
+        public void Handle(UpdateWorkMode update)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                if (update.IsVisible)
+                {
+                    WorkMode.Visibility = Visibility.Visible;
+                    WorkMode.IsChecked = update.IsEnabled;
+                }
+                else
+                {
+                    WorkMode.Visibility = Visibility.Collapsed;
+                    WorkMode.IsChecked = false;
+                }
+            });
         }
 
         public void Handle(UpdateFile update)
@@ -385,6 +410,17 @@ namespace Unigram.Views
             ViewModel.Contacts.NavigationService = MasterDetail.NavigationService;
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
             ViewModel.Settings.NavigationService = MasterDetail.NavigationService;
+
+            if (ApplicationSettings.Current.IsWorkModeVisible)
+            {
+                WorkMode.Visibility = Visibility.Visible;
+                WorkMode.IsChecked = ApplicationSettings.Current.IsWorkModeEnabled;
+            }
+            else
+            {
+                WorkMode.Visibility = Visibility.Collapsed;
+                WorkMode.IsChecked = false;
+            }
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -743,6 +779,12 @@ namespace Unigram.Views
         {
             Navigation.IsPaneOpen = false;
             MasterDetail.NavigationService.Navigate(typeof(AboutPage));
+        }
+
+        private void WorkMode_Click(object sender, RoutedEventArgs e)
+        {
+            var enabled = ApplicationSettings.Current.IsWorkModeEnabled = WorkMode.IsChecked == true;
+            ChatsList.UpdateFilterMode(enabled ? ChatFilterMode.Work : ChatFilterMode.None);
         }
 
         private void searchInit()

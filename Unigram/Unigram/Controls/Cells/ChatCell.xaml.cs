@@ -141,7 +141,7 @@ namespace Unigram.Controls.Cells
             _chat = chat;
             Tag = chat;
 
-            //UpdateViewState(chat, false, false);
+            //UpdateViewState(chat, ChatFilterMode.None, false, false);
 
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
@@ -155,10 +155,31 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public void UpdateViewState(Chat chat, bool selected, bool compact)
+        public bool UpdateFilterMode(Chat chat, ChatFilterMode filter)
         {
-            VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
-            VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
+            switch (filter)
+            {
+                case ChatFilterMode.Work:
+                    return chat.NotificationSettings.MuteFor > 0 ? false : true;
+                default:
+                case ChatFilterMode.None:
+                    return true;
+            }
+        }
+
+        public void UpdateViewState(Chat chat, ChatFilterMode filter, bool selected, bool compact)
+        {
+            var visible = UpdateFilterMode(chat, filter);
+            if (visible)
+            {
+                Visibility = Visibility.Visible;
+                VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
+                VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
+            }
+            else
+            {
+                Visibility = Visibility.Collapsed;
+            }
         }
 
         private Visibility UpdateIsPinned(bool isPinned, int unreadCount)
@@ -284,7 +305,7 @@ namespace Unigram.Controls.Cells
         }
 
         private string UpdateFromLabel(Chat chat, Message message)
-        { 
+        {
             if (message.IsService())
             {
                 return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, null, message));
@@ -535,5 +556,11 @@ namespace Unigram.Controls.Cells
                 tooltip.Content = BriefInfo.Text;
             }
         }
+    }
+
+    public enum ChatFilterMode
+    {
+        None,
+        Work,
     }
 }

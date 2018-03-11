@@ -25,6 +25,80 @@
         <CollectionViewSource x:Name="ChatsResults" Source="{x:Bind ViewModel.Chats.Search, Mode=OneWay}" IsSourceGrouped="True"/>
         <CollectionViewSource x:Name="ContactsResults" Source="{x:Bind ViewModel.Contacts.Search, Mode=OneWay}" IsSourceGrouped="True"/>
 
+        <Style x:Key="WorkModeButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Checked">
+                                        <VisualState.Setters>
+                                            <Setter Target="UncheckedContent.Visibility" Value="Collapsed"/>
+                                            <Setter Target="CheckedContent.Visibility" Value="Visible"/>
+                                            <Setter Target="ContentPresenter.Opacity" Value="1"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="CheckedPointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="UncheckedContent.Visibility" Value="Collapsed"/>
+                                            <Setter Target="CheckedContent.Visibility" Value="Visible"/>
+                                            <Setter Target="ContentPresenter.Opacity" Value="1"/>
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="CheckedPressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="UncheckedContent.Visibility" Value="Collapsed"/>
+                                            <Setter Target="CheckedContent.Visibility" Value="Visible"/>
+                                            <Setter Target="ContentPresenter.Opacity" Value="1"/>
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <TextBlock x:Name="UncheckedContent" Text="Hide muted chats" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                            <TextBlock x:Name="CheckedContent" Text="Show all chats" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Visibility="Collapsed"/>
+                            <ContentPresenter x:Name="ContentPresenter" Opacity="0" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style TargetType="controls:MasterDetailView">
             <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}"/>
             <!--<Setter Property="Background">
@@ -487,6 +561,7 @@
                                                 <Style TargetType="ListViewItem">
                                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                                     <Setter Property="Padding" Value="0"/>
+                                                    <Setter Property="MinHeight" Value="0"/>
                                                 </Style>
                                             </selectors:DialogStyleSelector.DialogStyle>
                                             <selectors:DialogStyleSelector.PinnedStyle>
@@ -494,6 +569,7 @@
                                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                                     <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
                                                     <Setter Property="Padding" Value="0"/>
+                                                    <Setter Property="MinHeight" Value="0"/>
                                                 </Style>
                                             </selectors:DialogStyleSelector.PinnedStyle>
                                         </selectors:DialogStyleSelector>
@@ -503,6 +579,22 @@
                                             <cells:ChatCell ContextRequested="Dialog_ContextRequested"/>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
+                                    <ListView.Header>
+                                        <ToggleButton x:Name="WorkMode" Checked="WorkMode_Click" Unchecked="WorkMode_Click" Style="{StaticResource WorkModeButtonStyle}">
+                                            <Border Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"
+                                                    MinWidth="20"
+                                                    Height="20"
+                                                    CornerRadius="10"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Right">
+                                                <TextBlock Text="{x:Bind ViewModel.UnreadMutedCount, Mode=OneWay}"
+                                                           Style="{ThemeResource CaptionTextBlockStyle}"
+                                                           Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                           TextAlignment="Center"
+                                                           Margin="4,2,4,0"/>
+                                            </Border>
+                                        </ToggleButton>
+                                    </ListView.Header>
                                     <ListView.Footer>
                                         <Border Height="6"/>
                                     </ListView.Footer>

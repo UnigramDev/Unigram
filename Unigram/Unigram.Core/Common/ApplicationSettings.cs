@@ -144,20 +144,37 @@ namespace Unigram.Common
             }
         }
 
-        private int? _contactsSavedCount;
-        public int ContactsSavedCount
+        private bool? _isWorkModeVisible;
+        public bool IsWorkModeVisible
         {
             get
             {
-                if (_contactsSavedCount == null)
-                    _contactsSavedCount = GetValueOrDefault("ContactsSavedCount", 0);
+                if (_isWorkModeVisible == null)
+                    _isWorkModeVisible = GetValueOrDefault("IsWorkModeVisible", false);
 
-                return _contactsSavedCount ?? 0;
+                return _isWorkModeVisible ?? false;
             }
             set
             {
-                _contactsSavedCount = value;
-                AddOrUpdateValue("ContactsSavedCount", value);
+                _isWorkModeVisible = value;
+                AddOrUpdateValue("IsWorkModeVisible", value);
+            }
+        }
+
+        private bool? _isWorkModeEnabled;
+        public bool IsWorkModeEnabled
+        {
+            get
+            {
+                if (_isWorkModeEnabled == null)
+                    _isWorkModeEnabled = GetValueOrDefault("IsWorkModeEnabled", false);
+
+                return _isWorkModeEnabled ?? false;
+            }
+            set
+            {
+                _isWorkModeEnabled = value;
+                AddOrUpdateValue("IsWorkModeEnabled", value);
             }
         }
 

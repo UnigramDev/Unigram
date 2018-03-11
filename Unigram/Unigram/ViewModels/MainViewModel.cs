@@ -80,6 +80,19 @@ namespace Unigram.ViewModels
             _liveLocationService.StopTracking();
         }
 
+        private int _unreadMutedCount;
+        public int UnreadMutedCount
+        {
+            get
+            {
+                return _unreadMutedCount;
+            }
+            set
+            {
+                Set(ref _unreadMutedCount, value);
+            }
+        }
+
         #region Typing
 
         //public void Handle(TLUpdateUserTyping update)
@@ -188,6 +201,8 @@ namespace Unigram.ViewModels
             //Dispatch(() => Dialogs.LoadFirstSlice());
             //Dispatch(() => Contacts.getTLContacts());
             //Dispatch(() => Contacts.GetSelfAsync());
+
+            UnreadMutedCount = CacheService.UnreadCount - CacheService.UnreadUnmutedCount;
 
             return Task.CompletedTask;
         }
