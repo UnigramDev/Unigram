@@ -26,6 +26,7 @@ namespace Unigram.Controls
         private GalleryItem _item;
 
         public GalleryItem Item => _item;
+        public Grid Inner => Panel;
 
         public GalleryContent()
         {
@@ -41,6 +42,8 @@ namespace Unigram.Controls
 
             Panel.Background = null;
             Texture.Source = null;
+
+            ScrollingHost.ChangeView(0, 0, 1, true);
 
             if (item == null)
             {
@@ -152,6 +155,14 @@ namespace Unigram.Controls
                     _delegate?.OpenFile(_item, file);
                 }
             }
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            Panel.MaxWidth = availableSize.Width;
+            Panel.MaxHeight = availableSize.Height;
+
+            return base.MeasureOverride(availableSize);
         }
     }
 }
