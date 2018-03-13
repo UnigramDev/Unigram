@@ -375,7 +375,7 @@ namespace Unigram.Views
                         {
                             if (bot.CanJoinGroups)
                             {
-                                CreateFlyoutItem(ref flyout, null, Strings.Resources.BotInvite);
+                                CreateFlyoutItem(ref flyout, ViewModel.InviteCommand, Strings.Resources.BotInvite);
                             }
 
                             CreateFlyoutItem(ref flyout, null, Strings.Resources.BotShare);

@@ -618,7 +618,7 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand InviteCommand { get; }
-        private void InviteExecute()
+        private async void InviteExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -626,7 +626,20 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(ChatInvitePage), chat.Id);
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            {
+                var user = ProtoService.GetUser(chat);
+                if (user == null)
+                {
+                    return;
+                }
+
+                await ShareView.GetForCurrentView().ShowAsync(user);
+            }
+            else
+            {
+                NavigationService.Navigate(typeof(ChatInvitePage), chat.Id);
+            }
         }
 
         public RelayCommand<bool> ToggleMuteCommand { get; }
