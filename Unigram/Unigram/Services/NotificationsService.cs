@@ -25,6 +25,7 @@ namespace Unigram.Services
     {
         Task RegisterAsync();
         Task UnregisterAsync();
+        Task CloseAsync();
     }
 
     public class NotificationsService : INotificationsService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateNewMessage>
@@ -89,7 +90,7 @@ namespace Unigram.Services
                 var launch = GetLaunch(chat);
                 var tag = GetTag(update.Message);
                 var group = GetGroup(update.Message, chat);
-                var picture = string.Empty;
+                var picture = GetPhoto(chat);
                 var date = BindConvert.Current.DateTime(update.Message.Date).ToString("o");
                 var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
 
@@ -241,7 +242,18 @@ namespace Unigram.Services
             ApplicationSettings.Current.NotificationsToken = null;
         }
 
-
+        public async Task CloseAsync()
+        {
+            try
+            {
+                var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+                channel.Close();
+            }
+            catch (Exception ex)
+            {
+                Debugger.Break();
+            }
+        }
 
 
 
@@ -280,6 +292,18 @@ namespace Unigram.Services
 
             return UpdateFromLabel(chat, message) + GetBriefLabel(chat, message);
         }
+
+        private string GetPhoto(Chat chat)
+        {
+            if (chat.Photo != null && chat.Photo.Small.Local.IsDownloadingCompleted)
+            {
+                return "ms-appdata:///local/0/profile_photos/" + Path.GetFileName(chat.Photo.Small.Local.Path);
+            }
+
+            return string.Empty;
+        }
+
+
 
         private string GetBriefLabel(Chat chat, Message value)
         {

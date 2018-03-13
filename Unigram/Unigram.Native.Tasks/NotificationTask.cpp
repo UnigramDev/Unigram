@@ -324,46 +324,21 @@ String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
 			auto ph = mtpeer->GetNamedObject("ph");
 			auto volume_id = ph->GetNamedString("volume_id");
 			auto local_id = ph->GetNamedString("local_id");
-			auto secret = ph->GetNamedString("secret");
 
 			std::wstring volumeSTR = volume_id->Data();
 			auto volumeULL = wcstoull(volumeSTR.c_str(), NULL, 0);
-			auto volumeLL = static_cast<signed long long>(volumeULL);
-
-			std::wstring secretSTR = secret->Data();
-			auto secretULL = wcstoull(secretSTR.c_str(), NULL, 0);
-			auto secretLL = static_cast<signed long long>(secretULL);
+			auto volume = static_cast<signed long long>(volumeULL);
 
 			auto temp = ApplicationData::Current->LocalFolder->Path;
 
-			std::wstringstream path;
-			path << temp->Data()
-				<< L"\\temp\\"
-				<< volumeLL
+			std::wstringstream almost;
+			almost << L"ms-appdata:///local/0/profile_photos/"
+				<< volume
 				<< L"_"
 				<< local_id->Data()
-				<< L"_"
-				<< secretLL
 				<< L".jpg";
 
-			WIN32_FIND_DATA FindFileData;
-			HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
-			int found = handle != INVALID_HANDLE_VALUE;
-			if (found)
-			{
-				FindClose(handle);
-
-				std::wstringstream almost;
-				almost << L"ms-appdata:///local/temp/"
-					<< volumeLL
-					<< L"_"
-					<< local_id->Data()
-					<< L"_"
-					<< secretLL
-					<< L".jpg";
-
-				return ref new String(almost.str().c_str());
-			}
+			return ref new String(almost.str().c_str());
 		}
 	}
 
@@ -722,7 +697,7 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	{
 		notification->Group = group;
 
-		if (tag != nullptr) 
+		if (tag != nullptr)
 		{
 			notification->RemoteId += "_";
 		}
