@@ -2214,9 +2214,12 @@ namespace Unigram.Views
 
 
 
-        public void UpdateUser(Chat chat, Telegram.Td.Api.User user, bool secret)
+        public void UpdateUser(Chat chat, User user, bool secret)
         {
-            ShowArea();
+            if (!secret)
+            {
+                ShowArea();
+            }
 
             ViewModel.ShowPinnedMessage(chat, null);
 
@@ -2227,7 +2230,7 @@ namespace Unigram.Views
             ViewModel.LastSeen = LastSeenConverter.GetLabel(user, true);
         }
 
-        public void UpdateUserFullInfo(Chat chat, Telegram.Td.Api.User user, UserFullInfo fullInfo, bool secret)
+        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret)
         {
             if (fullInfo.IsBlocked)
             {

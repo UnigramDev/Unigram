@@ -36,6 +36,7 @@ namespace Unigram.ViewModels
 
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>,
+        IHandle<UpdateSecretChat>,
         IHandle<UpdateBasicGroup>,
         IHandle<UpdateBasicGroupFullInfo>,
         IHandle<UpdateSupergroup>,
@@ -98,6 +99,20 @@ namespace Unigram.ViewModels
             else if (chat.Type is ChatTypeSecret secret && secret.UserId == update.UserId)
             {
                 BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, true));
+            }
+        }
+
+        public void Handle(UpdateSecretChat update)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSecret secret && secret.SecretChatId == update.SecretChat.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateSecretChat(chat, update.SecretChat));
             }
         }
 
