@@ -72,8 +72,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 1014530;
-        public const string CurrentChangelog = "Ladies and gentlemen, please welcome Unigram X.\r\nSince the beginning of the year we're working closely with TDLib creators to deliver you the best Telegram experience on Windows 10.\r\nWe're proud to announce that the wait is over, and the app has been rewritten from scratch to guarantee you performance, stability and security.\r\n\r\nHere's what we've done so far:\r\n- Every chat you open is now securely cached on your device, so you can browse them even when internet connection isn't available.\r\n- Secret chats are now fully supported: this allows you to communicate with your friends using end-to-end encryption, even on desktop.\r\n- My People integration: you can now pin your contacts to the Windows taskbar and use Unigram to chat with them without opening the full app.\r\n- The app is now faster, stronger, better.\r\n\r\nSome of the features available in the old app might be unavailable at the moment, but they're going to come soon.\r\nIf something important for you is missing in the app don't esitate to contact us and we'll work to bring it to you as soon as possible!";
+        public const int CurrentVersion = 1215620;
+        public const string CurrentChangelog = "- Work mode: hide muted chats to focus on important conversations.\r\n- Compact mode: the app will now show just profile pictures in chats list if the window isn't wide enough.\r\n- Zoom photos and videos: when you open a media full screen you can now zoom it using touch or mouse wheel.";
 
         private int? _appVersion;
         public int Version
