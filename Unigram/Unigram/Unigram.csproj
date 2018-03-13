@@ -20,9 +20,9 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
-    <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
+    <!--<BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>-->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -413,6 +413,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
+    <Compile Include="Triggers\CompactTrigger.cs" />
     <Compile Include="Triggers\DeviceFamilyTrigger.cs" />
     <Compile Include="Triggers\UserInteractionTrigger.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
@@ -1268,7 +1269,9 @@
     <PRIResource Include="Strings\nl\Resources.resw" />
     <PRIResource Include="Strings\pt-BR\Resources.resw" />
     <PRIResource Include="Strings\ru\Resources.resw" />
-    <PRIResource Include="Strings\uk\Resources.resw" />
+    <PRIResource Include="Strings\uk\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>

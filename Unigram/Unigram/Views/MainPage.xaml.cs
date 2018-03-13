@@ -1105,6 +1105,8 @@ namespace Unigram.Views
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            MasterDetail.AllowCompact = rpMasterTitlebar.SelectedIndex == 0;
+
             NavigationChats.IsChecked = rpMasterTitlebar.SelectedIndex == 0;
             NavigationContacts.IsChecked = rpMasterTitlebar.SelectedIndex == 1;
             NavigationCalls.IsChecked = rpMasterTitlebar.SelectedIndex == 2;
@@ -1131,6 +1133,14 @@ namespace Unigram.Views
             if (rpMasterTitlebar.SelectedIndex > 0)
             {
                 MasterDetail.Push(true);
+
+                if (Window.Current.Bounds.Width >= 501 && Window.Current.Bounds.Width < 820)
+                {
+                    while (MasterDetail.NavigationService.Frame.CanGoBack)
+                    {
+                        MasterDetail.NavigationService.Frame.GoBack();
+                    }
+                }
             }
         }
 

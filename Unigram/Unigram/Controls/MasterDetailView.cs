@@ -424,6 +424,7 @@ namespace Unigram.Controls
         }
 
         #region Public methods
+
         public bool CanGoBack
         {
             get
@@ -439,6 +440,11 @@ namespace Unigram.Controls
         {
             get
             {
+                if (AdaptiveStates == null)
+                {
+                    return MasterDetailState.Expanded;
+                }
+
                 return AdaptiveStates.CurrentState.Name == NarrowState
                     ? MasterDetailState.Minimal
                     : AdaptiveStates.CurrentState.Name == CompactState
@@ -449,6 +455,7 @@ namespace Unigram.Controls
 
         public event EventHandler ViewStateChanged;
         public event EventHandler Update;
+
         #endregion
 
         #region BlankType
@@ -460,6 +467,19 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty BlankPageTypeProperty =
             DependencyProperty.Register("BlankPageType", typeof(Type), typeof(MasterDetailView), new PropertyMetadata(typeof(BlankPage)));
+        #endregion
+
+        #region AllowCompact
+
+        public bool AllowCompact
+        {
+            get { return (bool)GetValue(AllowCompactProperty); }
+            set { SetValue(AllowCompactProperty, value); }
+        }
+
+        public static readonly DependencyProperty AllowCompactProperty =
+            DependencyProperty.Register("AllowCompact", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(true));
+
         #endregion
     }
 

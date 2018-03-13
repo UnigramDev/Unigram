@@ -9,6 +9,7 @@
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:triggers="using:Unigram.Triggers"
     mc:Ignorable="d"
     Loaded="OnLoaded"
     Unloaded="OnUnloaded">
@@ -130,7 +131,8 @@
                                     </VisualState>
                                     <VisualState x:Name="CompactState">
                                         <VisualState.StateTriggers>
-                                            <AdaptiveTrigger MinWindowWidth="501"/>
+                                            <!--<AdaptiveTrigger MinWindowWidth="501"/>-->
+                                            <triggers:CompactTrigger Allow="{Binding AllowCompact, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
                                         </VisualState.StateTriggers>
                                         <VisualState.Setters>
                                             <Setter Target="MasterColumn.Width" Value="72" />
