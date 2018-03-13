@@ -617,9 +617,13 @@ namespace Unigram.Controls
 
                         ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, username, index == 0, members); //GetUsernames(username.ToLower(), text.StartsWith('@' + username));
                     }
+                    else if (SearchByHashtag(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string hashtag, out int index2))
+                    {
+                        ViewModel.Autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, hashtag);
+                    }
                     else if (SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
                     {
-                        ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(replacement);
+                        ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(replacement.ToLower());
                     }
                     else if (text.Length > 0 && text[0] == '/' && SearchByCommand(text, out string command))
                     {
@@ -717,6 +721,43 @@ namespace Unigram.Controls
             public bool HasMoreItems => _hasMore;
         }
 
+        public class SearchHashtagsCollection : MvxObservableCollection<string>, ISupportIncrementalLoading
+        {
+            private readonly IProtoService _protoService;
+            private readonly string _query;
+
+            private bool _hasMore = true;
+
+            public SearchHashtagsCollection(IProtoService protoService, string query)
+            {
+                _protoService = protoService;
+                _query = query;
+            }
+
+            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            {
+                return AsyncInfo.Run(async token =>
+                {
+                    count = 0;
+                    _hasMore = false;
+
+                    var response = await _protoService.SendAsync(new SearchHashtags(_query, 20));
+                    if (response is Hashtags hashtags)
+                    {
+                        foreach (var value in hashtags.HashtagsValue)
+                        {
+                            Add("#" + value);
+                            count++;
+                        }
+                    }
+
+                    return new LoadMoreItemsResult { Count = count };
+                });
+            }
+
+            public bool HasMoreItems => _hasMore;
+        }
+
         public static bool SearchByCommand(string text, out string searchText)
         {
             searchText = string.Empty;
@@ -774,7 +815,7 @@ namespace Unigram.Controls
             {
                 if (text[i] == c)
                 {
-                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1 ] == '\r' || text[i - 1] == '\v')
+                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v')
                     {
                         index = i;
                         break;
@@ -953,6 +994,52 @@ namespace Unigram.Controls
                 }
 
                 searchText = text.Substring(index).TrimStart('@');
+            }
+
+            return found;
+        }
+
+        public static bool SearchByHashtag(string text, out string searchText, out int index)
+        {
+            index = -1;
+            searchText = string.Empty;
+
+            var found = true;
+            var i = text.Length - 1;
+
+            while (i >= 0)
+            {
+                if (text[i] == '#')
+                {
+                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v')
+                    {
+                        index = i;
+                        break;
+                    }
+
+                    found = false;
+                    break;
+                }
+                else
+                {
+                    if (!MessageHelper.IsValidUsernameSymbol(text[i]))
+                    {
+                        found = false;
+                        break;
+                    }
+
+                    i--;
+                }
+            }
+
+            if (found)
+            {
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                searchText = text.Substring(index).TrimStart('#');
             }
 
             return found;

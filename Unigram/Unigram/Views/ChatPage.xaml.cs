@@ -1680,8 +1680,6 @@ namespace Unigram.Views
                 TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.SetDefaultCharacterFormat(format);
 
-                ViewModel.Autocomplete = null;
-
                 if (index == 0 && user.Type is UserTypeBot bot && bot.IsInline)
                 {
                     ViewModel.ResolveInlineBot(user.Username);
@@ -1701,8 +1699,17 @@ namespace Unigram.Views
 
                 TextField.SetText(null, null);
                 ViewModel.SendCommand.Execute(insert);
+            }
+            else if (e.ClickedItem is string hashtag && BubbleTextBox.SearchByHashtag(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string initial, out int index2))
+            {
+                var insert = $"{hashtag} ";
+                var start = TextField.Document.Selection.StartPosition - 1 - initial.Length + insert.Length;
+                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - initial.Length, TextField.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
 
-                ViewModel.Autocomplete = null;
+                //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
+                //TextField.Document.Selection.StartPosition = start + 1;
+                TextField.Document.Selection.StartPosition = start;
             }
             else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
             {
@@ -1714,9 +1721,9 @@ namespace Unigram.Views
                 //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
                 //TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.Selection.StartPosition = start;
-
-                ViewModel.Autocomplete = null;
             }
+
+            ViewModel.Autocomplete = null;
         }
 
         #region Binding
