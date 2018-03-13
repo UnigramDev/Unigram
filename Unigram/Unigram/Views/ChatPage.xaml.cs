@@ -1414,30 +1414,26 @@ namespace Unigram.Views
             }
         }
 
-        public void Stickers_ItemClick(Sticker sticker)
+        public async void Stickers_ItemClick(Sticker sticker)
         {
             ViewModel.SendStickerCommand.Execute(sticker);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
 
+            await Task.Delay(100);
             TextField.FocusMaybe(FocusState.Keyboard);
         }
 
-        public void Animations_ItemClick(Animation animation)
+        public async void Animations_ItemClick(Animation animation)
         {
             ViewModel.SendAnimationCommand.Execute(animation);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
 
+            await Task.Delay(100);
             TextField.FocusMaybe(FocusState.Keyboard);
-        }
-
-        private async void DatePickerFlyout_DatePicked(DatePickerFlyout sender, DatePickedEventArgs args)
-        {
-            //var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, args.NewDate.Date);
-            //await ViewModel.LoadDateSliceAsync(offset);
         }
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -2129,6 +2125,7 @@ namespace Unigram.Views
 
             UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
 
+            Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
             ReportSpam.Text = chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret ? Strings.Resources.ReportSpam : Strings.Resources.ReportSpamAndLeave;
         }
 

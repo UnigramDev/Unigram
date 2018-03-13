@@ -489,7 +489,14 @@ namespace Unigram.Controls.Messages
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionLeftUser, "un1", fromUser, ref entities);
+                    if (message.IsChannelPost)
+                    {
+                        content = ReplaceWithLink(Strings.Resources.EventLogLeftChannel, "un1", fromUser, ref entities);
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.Resources.ActionLeftUser, "un1", fromUser, ref entities);
+                    }
                 }
             }
             else

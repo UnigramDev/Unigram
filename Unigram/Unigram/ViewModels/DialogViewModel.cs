@@ -2896,6 +2896,20 @@ namespace Unigram.ViewModels
                 return ReplyToMessage == null && EditingMessage == null;
             }
         }
+
+        public bool Matches(long messageId)
+        {
+            if (ReplyToMessage != null && ReplyToMessage.Id == messageId)
+            {
+                return true;
+            }
+            else if (EditingMessage != null && EditingMessage.Id == messageId)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 
     public enum ReplyToMessageState

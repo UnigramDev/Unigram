@@ -489,6 +489,10 @@ namespace Unigram.Views
 
                 content = grid.FindName("Bubble") as FrameworkElement;
             }
+            else if (content is StackPanel panel && !(content is MessageBubble))
+            {
+                content = panel.FindName("Service") as FrameworkElement;
+            }
 
             if (content is MessageBubble bubble)
             {
