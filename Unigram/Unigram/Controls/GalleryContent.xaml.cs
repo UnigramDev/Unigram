@@ -157,6 +157,11 @@ namespace Unigram.Controls
             }
         }
 
+        public void Reset()
+        {
+            ScrollingHost.ChangeView(0, 0, 1, true);
+        }
+
         protected override Size MeasureOverride(Size availableSize)
         {
             Panel.MaxWidth = availableSize.Width;

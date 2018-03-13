@@ -458,6 +458,10 @@ namespace Unigram.Controls.Views
 
         private void Dispose()
         {
+            Element2.Reset();
+            Element0.Reset();
+            Element1.Reset();
+
             if (_surface != null)
             {
                 _surface.Children.Remove(_mediaPlayerElement);
