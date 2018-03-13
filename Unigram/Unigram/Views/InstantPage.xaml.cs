@@ -48,7 +48,7 @@ namespace Unigram.Views
         private readonly string _injectedJs;
         private ScrollViewer _scrollingHost;
 
-        private FileContext<StackPanel> _filesMap = new FileContext<StackPanel>();
+        private FileContext<FrameworkElement> _filesMap = new FileContext<FrameworkElement>();
 
         public InstantPage()
         {
@@ -71,7 +71,7 @@ namespace Unigram.Views
 
         public void Handle(UpdateFile update)
         {
-            if (_filesMap.TryGetValue(update.File.Id, out List<StackPanel> elements))
+            if (_filesMap.TryGetValue(update.File.Id, out List<FrameworkElement> elements))
             {
                 this.BeginOnUIThread(() =>
                 {
@@ -83,7 +83,7 @@ namespace Unigram.Views
                             return;
                         }
 
-                        var content = panel.Children.FirstOrDefault() as IContentWithFile;
+                        var content = panel as IContentWithFile;
                         if (content == null)
                         {
                             return;
@@ -118,6 +118,12 @@ namespace Unigram.Views
             var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(url, false));
             if (response is WebPageInstantView instantView)
             {
+                if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                {
+                    ViewModel.ShareLink = uri;
+                    ViewModel.ShareTitle = url;
+                }
+
                 UpdateView(instantView);
             }
 
@@ -583,17 +589,18 @@ namespace Unigram.Views
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessagePhoto(block.Photo, null, false));
-            var element = new StackPanel { Tag = message, Style = Resources["BlockPhotoStyle"] as Style };
-
-            foreach (var size in block.Photo.Sizes)
-            {
-                _filesMap[size.Photo.Id].Add(element);
-            }
+            var element = new StackPanel { Style = Resources["BlockPhotoStyle"] as Style };
 
             var content = new PhotoContent(message);
+            content.Tag = message;
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
+
+            foreach (var size in block.Photo.Sizes)
+            {
+                _filesMap[size.Photo.Id].Add(content);
+            }
 
             element.Children.Add(content);
 
@@ -613,19 +620,20 @@ namespace Unigram.Views
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessageVideo(block.Video, null, false));
-            var element = new StackPanel { Tag = message, Style = Resources["BlockVideoStyle"] as Style };
-
-            if (block.Video.Thumbnail != null)
-            {
-                _filesMap[block.Video.Thumbnail.Photo.Id].Add(element);
-            }
-
-            _filesMap[block.Video.VideoValue.Id].Add(element);
+            var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new VideoContent(message);
+            content.Tag = message;
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
+
+            if (block.Video.Thumbnail != null)
+            {
+                _filesMap[block.Video.Thumbnail.Photo.Id].Add(content);
+            }
+
+            _filesMap[block.Video.VideoValue.Id].Add(content);
 
             element.Children.Add(content);
 
@@ -645,19 +653,20 @@ namespace Unigram.Views
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessageAnimation(block.Animation, null, false));
-            var element = new StackPanel { Tag = message, Style = Resources["BlockVideoStyle"] as Style };
-
-            if (block.Animation.Thumbnail != null)
-            {
-                _filesMap[block.Animation.Thumbnail.Photo.Id].Add(element);
-            }
-
-            _filesMap[block.Animation.AnimationValue.Id].Add(element);
+            var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new AnimationContent(message);
+            content.Tag = message;
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
+
+            if (block.Animation.Thumbnail != null)
+            {
+                _filesMap[block.Animation.Thumbnail.Photo.Id].Add(content);
+            }
+
+            _filesMap[block.Animation.AnimationValue.Id].Add(content);
 
             element.Children.Add(content);
 
@@ -773,29 +782,56 @@ namespace Unigram.Views
         {
             var element = new StackPanel { Style = Resources["BlockSlideshowStyle"] as Style };
 
-            var items = new List<ImageView>();
+            var items = new List<FrameworkElement>();
             foreach (var item in block.PageBlocks)
             {
                 if (item is PageBlockPhoto photoBlock)
                 {
-                    var image = new ImageView();
-                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photoBlock.Photo, true);
-                    image.Constraint = photoBlock.Photo;
+                    var galleryItem = new GalleryPhotoItem(ViewModel.ProtoService, photoBlock.Photo, GetPlainText(block.Caption));
+                    ViewModel.Gallery.Items.Add(galleryItem);
 
-                    items.Add(image);
+                    var message = GetMessage(new MessagePhoto(photoBlock.Photo, null, false));
+
+                    var content = new PhotoContent(message);
+                    content.Tag = message;
+                    content.HorizontalAlignment = HorizontalAlignment.Center;
+                    content.ClearValue(MaxWidthProperty);
+                    content.ClearValue(MaxHeightProperty);
+
+                    foreach (var size in photoBlock.Photo.Sizes)
+                    {
+                        _filesMap[size.Photo.Id].Add(content);
+                    }
+
+                    items.Add(content);
                 }
                 else if (item is PageBlockVideo videoBlock)
                 {
-                    var child = new ImageView();
-                    child.Source = (ImageSource)DefaultPhotoConverter.Convert(videoBlock.Video, true);
-                    child.Constraint = videoBlock.Video;
+                    var galleryItem = new GalleryVideoItem(ViewModel.ProtoService, videoBlock.Video, GetPlainText(block.Caption));
+                    ViewModel.Gallery.Items.Add(galleryItem);
 
-                    items.Add(child);
+                    var message = GetMessage(new MessageVideo(videoBlock.Video, null, false));
+
+                    var content = new VideoContent(message);
+                    content.Tag = message;
+                    content.HorizontalAlignment = HorizontalAlignment.Center;
+                    content.ClearValue(MaxWidthProperty);
+                    content.ClearValue(MaxHeightProperty);
+
+                    if (videoBlock.Video.Thumbnail != null)
+                    {
+                        _filesMap[videoBlock.Video.Thumbnail.Photo.Id].Add(content);
+                    }
+
+                    _filesMap[videoBlock.Video.VideoValue.Id].Add(content);
+
+                    items.Add(content);
                 }
             }
 
             var flip = new FlipView();
             flip.ItemsSource = items;
+            flip.MaxHeight = 420;
 
             element.Children.Add(flip);
 
@@ -1319,6 +1355,10 @@ namespace Unigram.Views
         }
 
         public void OpenUsername(string username)
+        {
+        }
+
+        public void OpenHashtag(string hashtag)
         {
         }
 
