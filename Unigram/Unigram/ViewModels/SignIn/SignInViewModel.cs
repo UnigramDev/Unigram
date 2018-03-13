@@ -17,9 +17,13 @@ namespace Unigram.ViewModels.SignIn
 {
     public class SignInViewModel : UnigramViewModelBase
     {
-        public SignInViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
+        private readonly INotificationsService _notificationsService;
+
+        public SignInViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, INotificationsService notificationsService)
             : base(protoService, cacheService, aggregator)
         {
+            _notificationsService = notificationsService;
+
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ProxyCommand = new RelayCommand(ProxyExecute);
         }
@@ -148,6 +152,7 @@ namespace Unigram.ViewModels.SignIn
             var phoneNumber = (_phoneCode + _phoneNumber).Replace(" ", string.Empty);
 
             await ProtoService.SendAsync(new SetOption("x_phonenumber", new OptionValueString(phoneNumber)));
+            await _notificationsService.CloseAsync();
 
             var response = await ProtoService.SendAsync(new SetAuthenticationPhoneNumber(phoneNumber, false, false));
             if (response is Error error)
