@@ -240,7 +240,7 @@ namespace Unigram.Controls
 
         private void OnBackRequested(object sender, HandledEventArgs e)
         {
-            BootStrapper.BackRequested -= OnBackRequested;
+            //BootStrapper.BackRequested -= OnBackRequested;
             OnBackRequestedOverride(sender, e);
         }
 
@@ -288,6 +288,8 @@ namespace Unigram.Controls
 
         public void Hide(ContentDialogBaseResult result)
         {
+            BootStrapper.BackRequested -= OnBackRequested;
+
             if (_popupHost == null || !_popupHost.IsOpen)
             {
                 return;

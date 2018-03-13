@@ -154,6 +154,8 @@ namespace Unigram.Controls
                 {
                     _delegate?.OpenFile(_item, file);
                 }
+
+                _delegate?.OpenItem(_item);
             }
         }
 

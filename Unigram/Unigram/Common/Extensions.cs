@@ -44,7 +44,7 @@ namespace Unigram.Common
         {
             try
             {
-                if (list.MaximumItemsAllowed - 10 >= list.Entries.Count)
+                if (list.Entries.Count >= list.MaximumItemsAllowed - 10)
                 {
                     var first = list.Entries.FirstOrDefault();
                     if (first.Token != null)

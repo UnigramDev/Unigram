@@ -144,6 +144,23 @@ namespace Unigram.Controls.Views
             Play(item, file);
         }
 
+        public void OpenItem(GalleryItem item)
+        {
+            if (_selecting)
+            {
+                return;
+            }
+
+            if (Transport.IsVisible)
+            {
+                Transport.Hide();
+            }
+            else
+            {
+                Transport.Show();
+            }
+        }
+
         private void ItemsStackPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var width = 40 + 4 + 4;

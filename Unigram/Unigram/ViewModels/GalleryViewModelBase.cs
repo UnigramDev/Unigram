@@ -685,6 +685,7 @@ namespace Unigram.ViewModels
 
     public interface IGalleryDelegate
     {
+        void OpenItem(GalleryItem item);
         void OpenFile(GalleryItem item, File file);
     }
 }
