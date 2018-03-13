@@ -93,6 +93,7 @@
         <common:AutoDownloadType x:Key="AutoDownloadDocuments">Documents</common:AutoDownloadType>
         <common:AutoDownloadType x:Key="AutoDownloadVoiceNotes">VoiceNotes</common:AutoDownloadType>
         <common:AutoDownloadType x:Key="AutoDownloadVideoNotes">VideoNotes</common:AutoDownloadType>
+        <common:AutoDownloadType x:Key="AutoDownloadAudios">Audios</common:AutoDownloadType>
         <common:AutoDownloadType x:Key="AutoDownloadAnimations">Animations</common:AutoDownloadType>
     </Page.Resources>
     
@@ -159,6 +160,12 @@
                         CommandParameter="{StaticResource AutoDownloadVideoNotes}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                         Tag="{CustomResource VideoMessagesAutodownload}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        CommandParameter="{StaticResource AutoDownloadAudios}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Tag="{CustomResource LocalMusicCache}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                     <controls:HyperButton
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"

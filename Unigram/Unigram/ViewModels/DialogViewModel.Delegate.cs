@@ -119,7 +119,7 @@ namespace Unigram.ViewModels
             }
             else if (content is Audio audio)
             {
-
+                return ProtoService.Preferences.ShouldDownloadAudio(GetChatType(chat), new NetworkTypeWiFi());
             }
             else if (content is Document document)
             {

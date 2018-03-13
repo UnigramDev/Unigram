@@ -35,6 +35,8 @@ namespace Unigram.ViewModels.Settings
                     ? Strings.Resources.VideoMessagesAutodownload
                     : type == AutoDownloadType.VoiceNotes
                     ? Strings.Resources.AudioAutodownload
+                    : type == AutoDownloadType.Audios
+                    ? Strings.Resources.LocalMusicCache
                     : Strings.Resources.LocalGifCache;
 
                 var preferences = ProtoService.Preferences;
@@ -48,6 +50,8 @@ namespace Unigram.ViewModels.Settings
                     ? preferences.VideoNotes
                     : type == AutoDownloadType.VoiceNotes
                     ? preferences.VoiceNotes
+                    : type == AutoDownloadType.Audios
+                    ? preferences.Audios
                     : preferences.Animations;
 
                 Contacts = mode.HasFlag(AutoDownloadMode.WifiContacts);
@@ -166,6 +170,10 @@ namespace Unigram.ViewModels.Settings
             else if (_type == AutoDownloadType.VideoNotes)
             {
                 preferences = preferences.UpdateVideoNotesMode(mode);
+            }
+            else if (_type == AutoDownloadType.Audios)
+            {
+                preferences = preferences.UpdateAudiosMode(mode);
             }
             else if (_type == AutoDownloadType.Animations)
             {
