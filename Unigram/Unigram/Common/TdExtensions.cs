@@ -257,6 +257,9 @@ namespace Unigram.Common
                     return video.Caption;
                 case MessageVoiceNote voiceNote:
                     return voiceNote.Caption;
+
+                case MessageText text:
+                    return text.Text;
             }
 
             return null;
@@ -811,12 +814,27 @@ namespace Unigram.Common
                 return false;
             }
 
-            if (supergroup.AnyoneCanInvite)
+            if (supergroup.AnyoneCanInvite && supergroup.Status is ChatMemberStatusMember)
             {
                 return true;
             }
 
             return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers;
+        }
+
+        public static bool CanInviteUsers(this BasicGroup basicGroup)
+        {
+            if (basicGroup.Status == null)
+            {
+                return false;
+            }
+
+            if (basicGroup.EveryoneIsAdministrator)
+            {
+                return true;
+            }
+
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers;
         }
 
 

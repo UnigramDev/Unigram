@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Native.Tasks;
@@ -28,7 +29,7 @@ namespace Unigram.Services
         Task CloseAsync();
     }
 
-    public class NotificationsService : INotificationsService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateNewMessage>
+    public class NotificationsService : INotificationsService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateNewMessage>, IHandle<UpdateServiceNotification>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -48,6 +49,26 @@ namespace Unigram.Services
             _aggregator.Subscribe(this);
 
             Handle(new UpdateUnreadMessageCount(protoService.UnreadCount, protoService.UnreadUnmutedCount));
+        }
+
+        public void Handle(UpdateServiceNotification update)
+        {
+            var caption = update.Content.GetCaption();
+            if (caption == null)
+            {
+                return;
+            }
+
+            var text = caption.Text;
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            Execute.BeginOnUIThread(async () =>
+            {
+                await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
+            });
         }
 
         public void Handle(UpdateUnreadMessageCount update)
