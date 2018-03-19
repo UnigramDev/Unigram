@@ -43,7 +43,7 @@ namespace Unigram.Controls
             Panel.Background = null;
             Texture.Source = null;
 
-            ScrollingHost.ChangeView(0, 0, 1, true);
+            //ScrollingHost.ChangeView(0, 0, 1, true);
 
             if (item == null)
             {
@@ -161,15 +161,15 @@ namespace Unigram.Controls
 
         public void Reset()
         {
-            ScrollingHost.ChangeView(0, 0, 1, true);
+            //ScrollingHost.ChangeView(0, 0, 1, true);
         }
 
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            Panel.MaxWidth = availableSize.Width;
-            Panel.MaxHeight = availableSize.Height;
+        //protected override Size MeasureOverride(Size availableSize)
+        //{
+        //    Panel.MaxWidth = availableSize.Width;
+        //    Panel.MaxHeight = availableSize.Height;
 
-            return base.MeasureOverride(availableSize);
-        }
+        //    return base.MeasureOverride(availableSize);
+        //}
     }
 }
