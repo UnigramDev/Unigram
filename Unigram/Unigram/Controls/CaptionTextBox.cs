@@ -149,7 +149,7 @@ namespace Unigram.Controls
             }
             else if (BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(SelectionStart, text.Length)), out string replacement) && replacement.Length > 0)
             {
-                View.Autocomplete = EmojiSuggestion.GetSuggestions(replacement);
+                View.Autocomplete = EmojiSuggestion.GetSuggestions(replacement.Length < 2 ? replacement : replacement.ToLower());
             }
             else
             {
