@@ -2291,7 +2291,7 @@ namespace Unigram.Views
             foreach (var member in fullInfo.Members)
             {
                 var user = ViewModel.ProtoService.GetUser(member.UserId);
-                if (user != null && user.Status is UserStatusOnline)
+                if (user != null && user.Type is UserTypeRegular && user.Status is UserStatusOnline)
                 {
                     count++;
                 }
@@ -2407,7 +2407,7 @@ namespace Unigram.Views
                     foreach (var member in members.Members)
                     {
                         var user = ViewModel.ProtoService.GetUser(member.UserId);
-                        if (user != null && user.Status is UserStatusOnline)
+                        if (user != null && user.Type is UserTypeRegular && user.Status is UserStatusOnline)
                         {
                             count++;
                         }
