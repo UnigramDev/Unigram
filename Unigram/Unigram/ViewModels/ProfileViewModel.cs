@@ -994,17 +994,10 @@ namespace Unigram.ViewModels
 
         public async void OpenUrl(string url, bool untrust)
         {
-            var navigation = url;
-            if (navigation.StartsWith("http") == false)
-            {
-                navigation = "http://" + url;
-            }
-
-            if (Uri.TryCreate(navigation, UriKind.Absolute, out Uri uri))
+            if (MessageHelper.TryCreateUri(url, out Uri uri))
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    //HandleTelegramUrl(message, navigation);
                     MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, url);
                 }
                 else

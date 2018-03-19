@@ -183,6 +183,16 @@ namespace Unigram.Common
             return hasRandALCat;
         }
 
+        public static bool TryCreateUri(string url, out Uri uri)
+        {
+            if (Uri.TryCreate(url, UriKind.Absolute, out uri))
+            {
+                return true;
+            }
+
+            return Uri.TryCreate("http://" + url, UriKind.Absolute, out uri);
+        }
+
         public static bool IsTelegramUrl(Uri uri)
         {
             if (Constants.TelegramHosts.Contains(uri.Host))
@@ -609,13 +619,7 @@ namespace Unigram.Common
             var item = sender as MenuFlyoutItem;
             var entity = item.DataContext as string;
 
-            var url = entity;
-            if (entity.StartsWith("http") == false)
-            {
-                url = "http://" + url;
-            }
-
-            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+            if (TryCreateUri(entity, out Uri uri))
             {
                 await Launcher.LaunchUriAsync(uri);
             }

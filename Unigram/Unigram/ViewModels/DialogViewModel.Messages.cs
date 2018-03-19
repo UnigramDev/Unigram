@@ -998,13 +998,7 @@ namespace Unigram.ViewModels
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)
                 {
-                    var url = urlButton.Url;
-                    if (url.StartsWith("http") == false)
-                    {
-                        url = "http://" + url;
-                    }
-
-                    if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                    if (MessageHelper.TryCreateUri(urlButton.Url, out Uri uri))
                     {
                         if (MessageHelper.IsTelegramUrl(uri))
                         {
@@ -1048,13 +1042,7 @@ namespace Unigram.ViewModels
                         }
                         else if (!string.IsNullOrEmpty(answer.Url))
                         {
-                            var url = answer.Url;
-                            if (url.StartsWith("http") == false)
-                            {
-                                url = "http://" + url;
-                            }
-
-                            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                            if (MessageHelper.TryCreateUri(answer.Url, out Uri uri))
                             {
                                 if (MessageHelper.IsTelegramUrl(uri))
                                 {

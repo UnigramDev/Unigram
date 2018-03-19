@@ -1246,13 +1246,7 @@ namespace Unigram.Views
             }
             else
             {
-                var url = urlText.Url;
-                if (url.StartsWith("http") == false)
-                {
-                    url = "http://" + url;
-                }
-
-                if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
                 {
                     if (MessageHelper.IsTelegramUrl(uri))
                     {
