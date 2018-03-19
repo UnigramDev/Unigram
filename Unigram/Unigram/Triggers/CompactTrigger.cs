@@ -15,6 +15,7 @@ namespace Unigram.Triggers
 
         public CompactTrigger()
         {
+            SetActive(Allow && Window.Current.Bounds.Width >= MinWindowWidth && Window.Current.Bounds.Width < MaxWindowWidth);
             Window.Current.SizeChanged += OnSizeChanged;
         }
 
