@@ -17,8 +17,6 @@ namespace Unigram.ViewModels.SignIn
 {
     public class SignInSentCodeViewModel : UnigramViewModelBase
     {
-        private string _phoneNumber;
-
         public SignInSentCodeViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
@@ -31,7 +29,6 @@ namespace Unigram.ViewModels.SignIn
             var authState = ProtoService.GetAuthorizationState();
             if (authState is AuthorizationStateWaitCode waitCode)
             {
-                _phoneNumber = ProtoService.GetOption<OptionValueString>("x_phonenumber").Value;
                 _codeInfo = waitCode.CodeInfo;
 
                 RaisePropertyChanged(() => CodeInfo);
@@ -86,7 +83,7 @@ namespace Unigram.ViewModels.SignIn
         {
             get
             {
-                return _phoneNumber;
+                return _codeInfo?.PhoneNumber;
             }
         }
 
