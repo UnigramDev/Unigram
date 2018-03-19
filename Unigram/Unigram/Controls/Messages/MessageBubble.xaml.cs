@@ -720,7 +720,7 @@ namespace Unigram.Controls.Messages
             }
             else if (type is TextEntityTypeEmailAddress)
             {
-
+                message.Delegate.OpenUrl("mailto:" + data, false);
             }
             else if (type is TextEntityTypePhoneNumber)
             {

@@ -826,7 +826,7 @@ namespace Unigram.Views
             }
             else if (type is TextEntityTypeEmailAddress)
             {
-
+                ViewModel.OpenUrl("mailto:" + data, false);
             }
             else if (type is TextEntityTypePhoneNumber)
             {
