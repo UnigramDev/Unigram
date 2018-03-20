@@ -18,8 +18,8 @@ namespace Unigram.ViewModels.Chats
     {
         public IChatDelegate Delegate { get; }
 
-        public ChatInviteViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public ChatInviteViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
         }
 

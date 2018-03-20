@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Settings
 {
     public abstract class SettingsStickersArchivedViewModelBase : UnigramViewModelBase
     {
-        public SettingsStickersArchivedViewModelBase(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, bool masks)
-            : base(protoService, cacheService, aggregator)
+        public SettingsStickersArchivedViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, bool masks)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new ItemsCollection(protoService, masks);
         }

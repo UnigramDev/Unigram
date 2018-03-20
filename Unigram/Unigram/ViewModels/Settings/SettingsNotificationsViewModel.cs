@@ -21,8 +21,8 @@ namespace Unigram.ViewModels.Settings
 
         private bool _suppressUpdating;
 
-        public SettingsNotificationsViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IVibrationService vibrationService) 
-            : base(protoService, cacheService, aggregator)
+        public SettingsNotificationsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVibrationService vibrationService) 
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _vibrationService = vibrationService;
 
@@ -189,11 +189,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.Notifications.InAppSounds;
+                return Settings.Notifications.InAppSounds;
             }
             set
             {
-                ApplicationSettings.Current.Notifications.InAppSounds = value;
+                Settings.Notifications.InAppSounds = value;
                 RaisePropertyChanged();
             }
         }
@@ -202,11 +202,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.Notifications.InAppVibrate;
+                return Settings.Notifications.InAppVibrate;
             }
             set
             {
-                ApplicationSettings.Current.Notifications.InAppVibrate = value;
+                Settings.Notifications.InAppVibrate = value;
                 RaisePropertyChanged();
             }
         }
@@ -215,11 +215,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.Notifications.InAppPreview;
+                return Settings.Notifications.InAppPreview;
             }
             set
             {
-                ApplicationSettings.Current.Notifications.InAppPreview = value;
+                Settings.Notifications.InAppPreview = value;
                 RaisePropertyChanged();
             }
         }
@@ -230,11 +230,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.Notifications.IncludeMutedChats;
+                return Settings.Notifications.IncludeMutedChats;
             }
             set
             {
-                ApplicationSettings.Current.Notifications.IncludeMutedChats = value;
+                Settings.Notifications.IncludeMutedChats = value;
                 RaisePropertyChanged();
             }
         }

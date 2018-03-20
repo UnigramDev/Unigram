@@ -29,8 +29,8 @@ namespace Unigram.ViewModels.Supergroups
     {
         public ISupergroupDelegate Delegate { get; set; }
 
-        public SupergroupEditViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SupergroupEditViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             AdminedPublicChannels = new MvxObservableCollection<Chat>();
 

@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Users
 {
     public class UserCommonChatsViewModel : UnigramViewModelBase
     {
-        public UserCommonChatsViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator)
+        public UserCommonChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+            : base(protoService, cacheService, settingsService, aggregator)
         {
         }
 

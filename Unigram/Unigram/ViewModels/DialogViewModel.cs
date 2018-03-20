@@ -105,15 +105,15 @@ namespace Unigram.ViewModels
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService)
-            : base(protoService, cacheService, aggregator)
+        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _locationService = locationService;
             _liveLocationService = liveLocationService;
             _pushService = pushService;
             _playbackService = playbackService;
 
-            _stickers = new DialogStickersViewModel(protoService, cacheService, aggregator);
+            _stickers = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
 
             _informativeTimer = new DispatcherTimer();
             _informativeTimer.Interval = TimeSpan.FromSeconds(5);
@@ -2435,7 +2435,7 @@ namespace Unigram.ViewModels
         public RelayCommand SearchCommand { get; }
         private void SearchExecute()
         {
-            Search = new DialogSearchViewModel(ProtoService, CacheService, Aggregator, this);
+            Search = new DialogSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
         }
 
         #endregion

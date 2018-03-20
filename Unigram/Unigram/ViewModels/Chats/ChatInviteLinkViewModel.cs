@@ -17,8 +17,8 @@ namespace Unigram.ViewModels.Chats
         IHandle<UpdateBasicGroupFullInfo>,
         IHandle<UpdateSupergroupFullInfo>
     {
-        public ChatInviteLinkViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public ChatInviteLinkViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             CopyCommand = new RelayCommand(CopyExecute);
             RevokeCommand = new RelayCommand(RevokeExecute);

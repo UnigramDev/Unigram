@@ -10,8 +10,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsBlockUserViewModel : UsersSelectionViewModel
     {
-        public SettingsBlockUserViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator)
+        public SettingsBlockUserViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+            : base(protoService, cacheService, settingsService, aggregator)
         {
         }
 

@@ -411,10 +411,10 @@ namespace Unigram.Views
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
             ViewModel.Settings.NavigationService = MasterDetail.NavigationService;
 
-            if (ApplicationSettings.Current.IsWorkModeVisible)
+            if (((UnigramViewModelBase)ViewModel).Settings.IsWorkModeVisible)
             {
                 WorkMode.Visibility = Visibility.Visible;
-                WorkMode.IsChecked = ApplicationSettings.Current.IsWorkModeEnabled;
+                WorkMode.IsChecked = ((UnigramViewModelBase)ViewModel).Settings.IsWorkModeEnabled;
             }
             else
             {
@@ -485,7 +485,7 @@ namespace Unigram.Views
         {
             if (MessageHelper.IsTelegramUrl(scheme))
             {
-                MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, MasterDetail.NavigationService, scheme.ToString());
+                MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, ViewModel.Chats.Settings, MasterDetail.NavigationService, scheme.ToString());
             }
             else if (scheme.Scheme.Equals("ms-contact-profile") || scheme.Scheme.Equals("ms-ipmessaging"))
             {
@@ -583,7 +583,7 @@ namespace Unigram.Views
                 }
                 if (server != null && int.TryParse(port, out int portCode))
                 {
-                    MessageHelper.NavigateToSocks(ViewModel.ProtoService, server, portCode, user, pass);
+                    MessageHelper.NavigateToSocks(ViewModel.ProtoService, ViewModel.Chats.Settings, server, portCode, user, pass);
                 }
                 else if (group != null)
                 {
@@ -783,7 +783,7 @@ namespace Unigram.Views
 
         private void WorkMode_Click(object sender, RoutedEventArgs e)
         {
-            var enabled = ApplicationSettings.Current.IsWorkModeEnabled = WorkMode.IsChecked == true;
+            var enabled = ((UnigramViewModelBase)ViewModel).Settings.IsWorkModeEnabled = WorkMode.IsChecked == true;
             ChatsList.UpdateFilterMode(enabled ? ChatFilterMode.Work : ChatFilterMode.None);
         }
 

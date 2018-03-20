@@ -21,8 +21,8 @@ namespace Unigram.ViewModels.Settings
     {
         private const string TempWallpaperFileName = "temp_wallpaper.jpg";
 
-        public SettingsWallPaperViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsWallPaperViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Wallpaper>();
 
@@ -64,7 +64,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var selected = ApplicationSettings.Current.SelectedBackground;
+            var selected = Settings.SelectedBackground;
             if (selected == -1)
             {
                 IsLocal = true;
@@ -201,13 +201,13 @@ namespace Unigram.ViewModels.Settings
                     Theme.Current.AddOrUpdateColor("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96));
                 }
 
-                ApplicationSettings.Current.SelectedBackground = wallpaper.Id;
-                ApplicationSettings.Current.SelectedColor = 0;
+                Settings.SelectedBackground = wallpaper.Id;
+                Settings.SelectedColor = 0;
             }
             else if (wallpaper != null)
             {
-                ApplicationSettings.Current.SelectedBackground = wallpaper.Id;
-                ApplicationSettings.Current.SelectedColor = wallpaper.Color;
+                Settings.SelectedBackground = wallpaper.Id;
+                Settings.SelectedColor = wallpaper.Color;
             }
             else if (_selectedItem == null && _isLocal)
             {
@@ -226,8 +226,8 @@ namespace Unigram.ViewModels.Settings
                     return;
                 }
 
-                ApplicationSettings.Current.SelectedBackground = -1;
-                ApplicationSettings.Current.SelectedColor = 0;
+                Settings.SelectedBackground = -1;
+                Settings.SelectedColor = 0;
             }
 
             Aggregator.Publish("Wallpaper");

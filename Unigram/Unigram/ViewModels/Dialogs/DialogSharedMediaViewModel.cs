@@ -24,8 +24,8 @@ namespace Unigram.ViewModels.Dialogs
     {
         public IFileDelegate Delegate { get; set; }
 
-        public DialogSharedMediaViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public DialogSharedMediaViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);

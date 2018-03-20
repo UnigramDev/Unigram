@@ -33,15 +33,17 @@ namespace Unigram.Services
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
+        private readonly ISettingsService _settings;
         private readonly IEventAggregator _aggregator;
 
         private readonly DisposableMutex _registrationLock;
         private bool _alreadyRegistered;
 
-        public NotificationsService(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
+        public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;
             _cacheService = cacheService;
+            _settings = settingsService;
             _aggregator = aggregator;
 
             _registrationLock = new DisposableMutex();
@@ -73,7 +75,7 @@ namespace Unigram.Services
 
         public void Handle(UpdateUnreadMessageCount update)
         {
-            if (ApplicationSettings.Current.Notifications.IncludeMutedChats)
+            if (_settings.Notifications.IncludeMutedChats)
             {
                 NotificationTask.UpdatePrimaryBadge(update.UnreadCount);
             }
@@ -85,7 +87,7 @@ namespace Unigram.Services
 
         public void Handle(UpdateNewMessage update)
         {
-            if (update.DisableNotification || !ApplicationSettings.Current.Notifications.InAppPreview)
+            if (update.DisableNotification || !_settings.Notifications.InAppPreview)
             {
                 return;
             }
@@ -202,11 +204,11 @@ namespace Unigram.Services
                         var result = await _protoService.SendAsync(new RegisterDevice(new DeviceTokenWindowsPush(channel.Uri), new int[0]));
                         if (result is Ok)
                         {
-                            ApplicationSettings.Current.NotificationsToken = channel.Uri;
+                            _settings.NotificationsToken = channel.Uri;
                         }
                         else
                         {
-                            ApplicationSettings.Current.NotificationsToken = null;
+                            _settings.NotificationsToken = null;
                         }
                     }
 
@@ -215,7 +217,7 @@ namespace Unigram.Services
                 catch (Exception ex)
                 {
                     _alreadyRegistered = false;
-                    ApplicationSettings.Current.NotificationsToken = null;
+                    _settings.NotificationsToken = null;
 
                     Debugger.Break();
                 }
@@ -254,13 +256,13 @@ namespace Unigram.Services
 
         public async Task UnregisterAsync()
         {
-            var channel = ApplicationSettings.Current.NotificationsToken;
+            var channel = _settings.NotificationsToken;
             //var response = await _protoService.UnregisterDeviceAsync(8, channel);
             //if (response.IsSucceeded)
             //{
             //}
 
-            ApplicationSettings.Current.NotificationsToken = null;
+            _settings.NotificationsToken = null;
         }
 
         public async Task CloseAsync()

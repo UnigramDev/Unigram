@@ -8,8 +8,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsStickersViewModel : SettingsStickersViewModelBase
     {
-        public SettingsStickersViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator, false)
+        public SettingsStickersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator, false)
         {
             SuggestCommand = new RelayCommand(SuggestExecute);
         }
@@ -18,11 +18,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.Stickers.SuggestionMode;
+                return Settings.Stickers.SuggestionMode;
             }
             set
             {
-                ApplicationSettings.Current.Stickers.SuggestionMode = value;
+                Settings.Stickers.SuggestionMode = value;
                 RaisePropertyChanged();
             }
         }

@@ -202,7 +202,7 @@
                                               Style="{StaticResource BadgeButtonStyle}"/>
                         <controls:BadgeButton x:Name="Members"
                                               Visibility="Collapsed"
-                                              Content="{CustomResource ChannelMembers}"
+                                              Content="{CustomResource ChannelSubscribers}"
                                               Command="{x:Bind ViewModel.ParticipantsCommand}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
                     </StackPanel>

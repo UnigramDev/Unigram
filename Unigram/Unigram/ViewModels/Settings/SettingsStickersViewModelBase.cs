@@ -20,8 +20,8 @@ namespace Unigram.ViewModels.Settings
         private bool _needReorder;
         private IList<long> _newOrder;
 
-        public SettingsStickersViewModelBase(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, bool masks)
-            : base(protoService, cacheService, aggregator)
+        public SettingsStickersViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, bool masks)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _masks = masks;
 

@@ -209,7 +209,7 @@ namespace Unigram.Common
             return false;
         }
 
-        public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, string url)
+        public static void OpenTelegramUrl(IProtoService protoService, ISettingsService settings, INavigationService navigation, string url)
         {
             // TODO: in-app navigation
             if (url.Contains("joinchat"))
@@ -276,7 +276,7 @@ namespace Unigram.Common
 
                                 if (server != null && int.TryParse(port, out int portCode))
                                 {
-                                    NavigateToSocks(protoService, server, portCode, user, pass);
+                                    NavigateToSocks(protoService, settings, server, portCode, user, pass);
                                 }
                             }
                             else if (username.Equals("share"))
@@ -323,14 +323,14 @@ namespace Unigram.Common
             await ForwardView.GetForCurrentView().ShowAsync(text, hasUrl);
         }
 
-        public static async void NavigateToSocks(IProtoService protoService, string server, int port, string username, string password)
+        public static async void NavigateToSocks(IProtoService protoService, ISettingsService settings, string server, int port, string username, string password)
         {
             var userText = username != null ? string.Format($"{Strings.Resources.UseProxyUsername}: {username}\n", username) : string.Empty;
             var passText = password != null ? string.Format($"{Strings.Resources.UseProxyPassword}: {password}\n", password) : string.Empty;
             var confirm = await TLMessageDialog.ShowAsync($"{Strings.Resources.EnableProxyAlert}\n\n{Strings.Resources.UseProxyAddress}: {server}\n{Strings.Resources.UseProxyPort}: {port}\n{userText}{passText}\n{Strings.Resources.EnableProxyAlert2}", Strings.Resources.Proxy, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                var proxy = ApplicationSettings.Current.Proxy;
+                var proxy = settings.Proxy;
                 proxy.Server = server = server ?? string.Empty;
                 proxy.Port = port;
                 proxy.Username = username = username ?? string.Empty;

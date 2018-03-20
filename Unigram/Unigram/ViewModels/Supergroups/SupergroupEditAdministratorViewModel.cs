@@ -21,8 +21,8 @@ namespace Unigram.ViewModels.Supergroups
     {
         public IMemberDelegate Delegate { get; set; }
 
-        public SupergroupEditAdministratorViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SupergroupEditAdministratorViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             ProfileCommand = new RelayCommand(ProfileExecute);
             SendCommand = new RelayCommand(SendExecute);

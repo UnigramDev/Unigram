@@ -17,8 +17,8 @@ namespace Unigram.ViewModels
 {
     public class ShareViewModel : UnigramViewModelBase
     {
-        public ShareViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, ChatsViewModel dialogs)
-            : base(protoService, cacheService, aggregator)
+        public ShareViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ChatsViewModel dialogs)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Chat>();
             SelectedItems = new MvxObservableCollection<Chat>();

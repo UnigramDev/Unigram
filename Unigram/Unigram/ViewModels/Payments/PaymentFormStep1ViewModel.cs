@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Payments
 {
     public class PaymentFormStep1ViewModel : PaymentFormViewModelBase
     {
-        public PaymentFormStep1ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public PaymentFormStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }

@@ -8,8 +8,8 @@ namespace Unigram.ViewModels.Settings
     {
         private readonly IContactsService _contactsService;
 
-        public SettingsGeneralViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IContactsService contactsService)
-            : base(protoService, cacheService, aggregator)
+        public SettingsGeneralViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
         }
@@ -18,11 +18,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.IsSendByEnterEnabled;
+                return Settings.IsSendByEnterEnabled;
             }
             set
             {
-                ApplicationSettings.Current.IsSendByEnterEnabled = value;
+                Settings.IsSendByEnterEnabled = value;
                 RaisePropertyChanged();
             }
         }
@@ -31,11 +31,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.IsReplaceEmojiEnabled;
+                return Settings.IsReplaceEmojiEnabled;
             }
             set
             {
-                ApplicationSettings.Current.IsReplaceEmojiEnabled = value;
+                Settings.IsReplaceEmojiEnabled = value;
                 RaisePropertyChanged();
             }
         }
@@ -44,11 +44,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.IsAutoPlayEnabled;
+                return Settings.IsAutoPlayEnabled;
             }
             set
             {
-                ApplicationSettings.Current.IsAutoPlayEnabled = value;
+                Settings.IsAutoPlayEnabled = value;
                 RaisePropertyChanged();
             }
         }
@@ -57,19 +57,19 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.IsWorkModeVisible;
+                return Settings.IsWorkModeVisible;
             }
             set
             {
-                ApplicationSettings.Current.IsWorkModeVisible = value;
+                Settings.IsWorkModeVisible = value;
                 RaisePropertyChanged();
 
                 if (!value)
                 {
-                    ApplicationSettings.Current.IsWorkModeEnabled = false;
+                    Settings.IsWorkModeEnabled = false;
                 }
 
-                Aggregator.Publish(new UpdateWorkMode(value, ApplicationSettings.Current.IsWorkModeEnabled));
+                Aggregator.Publish(new UpdateWorkMode(value, Settings.IsWorkModeEnabled));
             }
         }
     }

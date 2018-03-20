@@ -16,14 +16,16 @@ namespace Unigram.Collections
     public class SearchStickersCollection : MvxObservableCollection<Sticker>, ISupportIncrementalLoading
     {
         private readonly IProtoService _protoService;
+        private readonly ISettingsService _settings;
         private readonly string _query;
 
         private bool _first = true;
         private bool _hasMore = true;
 
-        public SearchStickersCollection(IProtoService protoService, string query)
+        public SearchStickersCollection(IProtoService protoService, ISettingsService settings, string query)
         {
             _protoService = protoService;
+            _settings = settings;
             _query = query;
         }
 
@@ -33,7 +35,7 @@ namespace Unigram.Collections
             {
                 count = 0;
 
-                if (_first && ApplicationSettings.Current.Stickers.SuggestionMode != StickersSuggestionMode.None)
+                if (_first && _settings.Stickers.SuggestionMode != StickersSuggestionMode.None)
                 {
                     _first = false;
 
@@ -47,7 +49,7 @@ namespace Unigram.Collections
                         }
                     }
                 }
-                else if (!_first && ApplicationSettings.Current.Stickers.SuggestionMode == StickersSuggestionMode.All)
+                else if (!_first && _settings.Stickers.SuggestionMode == StickersSuggestionMode.All)
                 {
                     _hasMore = false;
 

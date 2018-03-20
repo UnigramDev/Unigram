@@ -14,8 +14,8 @@ namespace Unigram.ViewModels
     {
         private readonly IPlaybackService _playbackService;
 
-        public PlaybackViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IPlaybackService playbackService)
-            : base(protoService, cacheService, aggregator)
+        public PlaybackViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _playbackService = playbackService;
 

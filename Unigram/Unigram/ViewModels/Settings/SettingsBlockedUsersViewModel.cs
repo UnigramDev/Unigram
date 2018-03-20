@@ -26,8 +26,8 @@ namespace Unigram.ViewModels.Settings
     {
         public IFileDelegate Delegate { get; set; }
 
-        public SettingsBlockedUsersViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsBlockedUsersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new ItemsCollection(protoService, cacheService);
 

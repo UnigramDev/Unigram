@@ -69,6 +69,7 @@ namespace Unigram.Services
         private readonly Client _client;
         private readonly int _session;
         private readonly IDeviceInfoService _deviceInfoService;
+        private readonly ISettingsService _settings;
         private readonly IEventAggregator _aggregator;
 
         private readonly Dictionary<string, object> _options = new Dictionary<string, object>();
@@ -98,7 +99,7 @@ namespace Unigram.Services
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
 
-        public ProtoService(int session, IDeviceInfoService deviceInfoService, IEventAggregator aggregator)
+        public ProtoService(int session, IDeviceInfoService deviceInfoService, ISettingsService settings, IEventAggregator aggregator)
         {
             Log.SetVerbosityLevel(ApplicationSettings.Current.VerbosityLevel);
             Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{session}", "log"));
@@ -210,7 +211,7 @@ namespace Unigram.Services
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
                 _client.Run();
 
-                var ttl = ApplicationSettings.Current.FilesTtl;
+                var ttl = _settings.FilesTtl;
                 if (ttl > 0)
                 {
                     _client.Send(new OptimizeStorage(long.MaxValue, ttl * 60 * 60 * 24, int.MaxValue, 0, new FileType[0], new long[0], new long[0], 0));

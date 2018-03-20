@@ -29,8 +29,8 @@ namespace Unigram.ViewModels
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, INotificationsService pushService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IContactsService contactsService, IPasscodeService passcodeService)
-            : base(protoService, cacheService, aggregator)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IContactsService contactsService, IPasscodeService passcodeService)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
             _vibrationService = vibrationService;
@@ -41,10 +41,10 @@ namespace Unigram.ViewModels
             _chatTypingManagers = new ConcurrentDictionary<int, InputTypingManager>();
 
             //Dialogs = new DialogCollection(protoService, cacheService);
-            Chats = new ChatsViewModel(protoService, cacheService, aggregator);
-            Contacts = new ContactsViewModel(protoService, cacheService, aggregator, contactsService);
-            Calls = new CallsViewModel(protoService, cacheService, aggregator);
-            Settings = new SettingsViewModel(protoService, cacheService, aggregator, pushService, contactsService);
+            Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator);
+            Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
+            Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
+            Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, pushService, contactsService);
 
             aggregator.Subscribe(this);
 

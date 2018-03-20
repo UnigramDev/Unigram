@@ -22,8 +22,8 @@ namespace Unigram.ViewModels.Settings
         private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
         private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
 
-        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IContactsService contactsService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
-            : base(protoService, cacheService, aggregator)
+        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
 
@@ -110,11 +110,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.PeerToPeerMode;
+                return Settings.PeerToPeerMode;
             }
             set
             {
-                ApplicationSettings.Current.PeerToPeerMode = value;
+                Settings.PeerToPeerMode = value;
                 RaisePropertyChanged();
             }
         }
@@ -123,11 +123,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.IsContactsSyncEnabled;
+                return Settings.IsContactsSyncEnabled;
             }
             set
             {
-                ApplicationSettings.Current.IsContactsSyncEnabled = value;
+                Settings.IsContactsSyncEnabled = value;
                 RaisePropertyChanged();
             }
         }

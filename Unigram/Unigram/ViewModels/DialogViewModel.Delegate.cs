@@ -243,7 +243,7 @@ namespace Unigram.ViewModels
                      string.Equals(webPage.Type, "telegram_channel", StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(webPage.Type, "telegram_message", StringComparison.OrdinalIgnoreCase))
             {
-                MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, webPage.Url);
+                MessageHelper.OpenTelegramUrl(ProtoService, Settings, NavigationService, webPage.Url);
             }
         }
 
@@ -359,7 +359,7 @@ namespace Unigram.ViewModels
 
         public void OpenHashtag(string hashtag)
         {
-            var search = Search = new DialogSearchViewModel(ProtoService, CacheService, Aggregator, this);
+            var search = Search = new DialogSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
             search.SearchCommand.Execute(hashtag);
         }
 
@@ -369,7 +369,7 @@ namespace Unigram.ViewModels
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, url);
+                    MessageHelper.OpenTelegramUrl(ProtoService, Settings, NavigationService, url);
                 }
                 else
                 {

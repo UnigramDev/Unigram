@@ -12,8 +12,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEventLogFilterViewModel : SupergroupMembersViewModelBase
     {
-        public SupergroupEventLogFilterViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator, new SupergroupMembersFilterAdministrators(), null)
+        public SupergroupEventLogFilterViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterAdministrators(), null)
         {
             GroupedItems = new ObservableCollection<SupergroupEventLogFilterViewModel> { this };
         }

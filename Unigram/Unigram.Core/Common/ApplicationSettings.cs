@@ -1,6 +1,39 @@
 using System;
+using Unigram.Common;
+using Unigram.Services;
 using Windows.Storage;
 using Windows.UI.Xaml;
+
+namespace Unigram.Services
+{
+    public interface ISettingsService
+    {
+        ProxySettings Proxy { get; }
+        NotificationsSettings Notifications { get; }
+        StickersSettings Stickers { get; }
+
+        bool IsWorkModeVisible { get; set; }
+        bool IsWorkModeEnabled { get; set; }
+
+        int FilesTtl { get; set; }
+
+        int VerbosityLevel { get; }
+
+        bool IsSendByEnterEnabled { get; set; }
+        bool IsReplaceEmojiEnabled { get; set; }
+        bool IsContactsSyncEnabled { get; set; }
+        bool IsAutoPlayEnabled { get; set; }
+        bool IsSendGrouped { get; set; }
+
+        string NotificationsToken { get; set; }
+
+        int SelectedBackground { get; set; }
+        int SelectedColor { get; set; }
+
+        int PeerToPeerMode { get; set; }
+        libtgvoip.DataSavingMode UseLessData { get; set; }
+    }
+}
 
 namespace Unigram.Common
 {
@@ -56,7 +89,7 @@ namespace Unigram.Common
         }
     }
 
-    public class ApplicationSettings : ApplicationSettingsBase
+    public class ApplicationSettings : ApplicationSettingsBase, ISettingsService
     {
         private static ApplicationSettings _current;
         public static ApplicationSettings Current
@@ -68,6 +101,17 @@ namespace Unigram.Common
 
                 return _current;
             }
+        }
+
+        private ApplicationSettings()
+        {
+
+        }
+
+        public ApplicationSettings(int session)
+            : base(session > 0 ? ApplicationData.Current.LocalSettings.CreateContainer(session.ToString(), ApplicationDataCreateDisposition.Always) : null)
+        {
+
         }
 
         #region App version

@@ -12,8 +12,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsLanguageViewModel : UnigramViewModelBase
     {
-        public SettingsLanguageViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsLanguageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<object>();
         }

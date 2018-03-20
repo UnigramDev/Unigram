@@ -20,8 +20,8 @@ namespace Unigram.ViewModels.Chats
     {
         private string _title;
 
-        public ChatCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public ChatCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _maximum = ProtoService.GetOption<OptionValueInteger>("supergroup_size_max").Value;
         }

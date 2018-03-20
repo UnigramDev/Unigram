@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
@@ -34,6 +35,7 @@ namespace Unigram
             container.Build((builder, session) =>
             {
                 builder.RegisterType<ProtoService>().WithParameter("session", session).As<IProtoService, ICacheService>().SingleInstance();
+                builder.RegisterType<ApplicationSettings>().WithParameter("session", session).As<ISettingsService>().SingleInstance();
                 builder.RegisterType<GenerationService>().As<IGenerationService>().SingleInstance().AutoActivate();
 
                 //builder.RegisterType<MTProtoService>().WithParameter("account", account).As<IMTProtoService>().SingleInstance();

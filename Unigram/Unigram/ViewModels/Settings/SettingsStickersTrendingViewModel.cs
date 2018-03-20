@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsStickersTrendingViewModel : UnigramViewModelBase, IHandle<UpdateTrendingStickerSets>
     {
-        public SettingsStickersTrendingViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsStickersTrendingViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<StickerSetInfo>();
             Aggregator.Subscribe(this);

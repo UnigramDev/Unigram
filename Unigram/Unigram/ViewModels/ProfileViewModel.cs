@@ -53,8 +53,8 @@ namespace Unigram.ViewModels
 
         public IProfileDelegate Delegate { get; set; }
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendMessageCommand = new RelayCommand(SendMessageExecute);
             MediaCommand = new RelayCommand(MediaExecute);
@@ -998,7 +998,7 @@ namespace Unigram.ViewModels
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, url);
+                    MessageHelper.OpenTelegramUrl(ProtoService, Settings, NavigationService, url);
                 }
                 else
                 {

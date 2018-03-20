@@ -19,8 +19,8 @@ namespace Unigram.ViewModels.Dialogs
         private readonly DialogViewModel _dialog;
         private readonly DisposableMutex _loadMoreLock;
 
-        public DialogSearchViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, DialogViewModel viewModel)
-            : base(protoService, cacheService, aggregator)
+        public DialogSearchViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, DialogViewModel viewModel)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _dialog = viewModel;
             _loadMoreLock = new DisposableMutex();

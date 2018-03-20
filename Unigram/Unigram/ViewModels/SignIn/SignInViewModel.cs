@@ -19,8 +19,8 @@ namespace Unigram.ViewModels.SignIn
     {
         private readonly INotificationsService _notificationsService;
 
-        public SignInViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, INotificationsService notificationsService)
-            : base(protoService, cacheService, aggregator)
+        public SignInViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _notificationsService = notificationsService;
 
@@ -192,10 +192,10 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand ProxyCommand { get; }
         private async void ProxyExecute()
         {
-            var proxy = ApplicationSettings.Current.Proxy;
+            var proxy = Settings.Proxy;
 
             var dialog = new ProxyView(false);
-            dialog.Server = ApplicationSettings.Current.Proxy.Server;
+            dialog.Server = proxy.Server;
             dialog.Port = proxy.Port.ToString();
             dialog.Username = proxy.Username;
             dialog.Password = proxy.Password;

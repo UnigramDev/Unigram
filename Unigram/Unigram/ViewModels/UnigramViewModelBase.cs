@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Common;
 using Template10.Mvvm;
+using Unigram.Common;
 using Unigram.Services;
 
 namespace Unigram.ViewModels
@@ -17,14 +18,16 @@ namespace Unigram.ViewModels
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
+        private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
         private readonly IDispatcherWrapper _dispatcher;
 
-        public UnigramViewModelBase(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
+        public UnigramViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;
             _cacheService = cacheService;
+            _settingsService = settingsService;
             _aggregator = aggregator;
         }
 
@@ -40,33 +43,12 @@ namespace Unigram.ViewModels
         //    }
         //}
 
-        public IProtoService ProtoService
-        {
-            get
-            {
-                return _protoService;
-            }
-        }
+        public IProtoService ProtoService => _protoService;
+        public ICacheService CacheService => _cacheService;
 
-        /// <summary>
-        /// Gets a refernce to the <see cref="Telegram.Api.Services.Cache.ICacheService"/> 
-        /// class that represente in memory cache
-        /// </summary>
-        public ICacheService CacheService
-        {
-            get
-            {
-                return _cacheService;
-            }
-        }
+        public ISettingsService Settings => _settingsService;
 
-        public IEventAggregator Aggregator
-        {
-            get
-            {
-                return _aggregator;
-            }
-        }
+        public IEventAggregator Aggregator => _aggregator;
 
         private bool _isLoading;
         public virtual bool IsLoading

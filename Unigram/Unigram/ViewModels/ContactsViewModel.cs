@@ -14,8 +14,8 @@ namespace Unigram.ViewModels
     {
         private IContactsService _contactsService;
 
-        public ContactsViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IContactsService contactsService)
-            : base(protoService, cacheService, aggregator)
+        public ContactsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
 
@@ -40,7 +40,7 @@ namespace Unigram.ViewModels
                         }
                     });
 
-                    if (ApplicationSettings.Current.IsContactsSyncEnabled)
+                    if (Settings.IsContactsSyncEnabled)
                     {
                         await _contactsService.ExportAsync(users);
                         await _contactsService.ImportAsync();

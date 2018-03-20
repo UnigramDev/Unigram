@@ -20,8 +20,8 @@ namespace Unigram.ViewModels.Settings
     {
         private string _phoneNumber;
 
-        public SettingsPhoneSentCodeViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsPhoneSentCodeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ResendCommand = new RelayCommand(ResendExecute, () => !IsLoading);

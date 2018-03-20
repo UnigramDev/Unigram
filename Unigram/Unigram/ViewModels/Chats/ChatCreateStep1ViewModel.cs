@@ -17,8 +17,8 @@ namespace Unigram.ViewModels.Chats
         private bool _uploadingPhoto;
         private Action _uploadingCallback;
 
-        public ChatCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public ChatCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);

@@ -14,8 +14,8 @@ namespace Unigram.ViewModels.Users
 {
     public class UserCreateViewModel : UnigramViewModelBase
     {
-        public UserCreateViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public UserCreateViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrEmpty(_firstName) && !string.IsNullOrEmpty(_phoneCode) && !string.IsNullOrEmpty(_phoneNumber));
         }

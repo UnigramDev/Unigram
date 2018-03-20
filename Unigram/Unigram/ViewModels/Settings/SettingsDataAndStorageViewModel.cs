@@ -20,8 +20,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsDataAndStorageViewModel : UnigramViewModelBase
     {
-        public SettingsDataAndStorageViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsDataAndStorageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             //AutoDownloads = new ObservableCollection<SettingsDataAutoDownload>
             //{
@@ -51,11 +51,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.UseLessData;
+                return Settings.UseLessData;
             }
             set
             {
-                ApplicationSettings.Current.UseLessData = value;
+                Settings.UseLessData = value;
                 RaisePropertyChanged();
             }
         }
@@ -142,7 +142,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ProxyCommand { get; }
         private async void ProxyExecute()
         {
-            var proxy = ApplicationSettings.Current.Proxy;
+            var proxy = Settings.Proxy;
 
             var dialog = new ProxyView(true);
             dialog.Server = proxy.Server;

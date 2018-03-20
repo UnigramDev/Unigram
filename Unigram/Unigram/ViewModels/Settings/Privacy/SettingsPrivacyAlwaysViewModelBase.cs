@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Settings.Privacy
 
         private TaskCompletionSource<UserPrivacySettingRuleAllowUsers> _tsc;
 
-        public SettingsPrivacyAlwaysViewModelBase(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, UserPrivacySetting inputKey)
-            : base(protoService, cacheService, aggregator)
+        public SettingsPrivacyAlwaysViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, UserPrivacySetting inputKey)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _inputKey = inputKey;
 

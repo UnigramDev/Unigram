@@ -74,7 +74,7 @@ namespace Unigram.Controls
                 }
 
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                if (ApplicationSettings.Current.IsSendByEnterEnabled)
+                if (ViewModel.Settings.IsSendByEnterEnabled)
                 {
                     var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
                     if (send)

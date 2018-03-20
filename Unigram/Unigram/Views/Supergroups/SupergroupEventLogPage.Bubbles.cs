@@ -28,7 +28,7 @@ namespace Unigram.Views.Supergroups
             if (_panel.FirstVisibleIndex > -1 && _panel.LastVisibleIndex > -1 && !e.IsIntermediate)
             {
                 var messages = new List<MessageViewModel>(_panel.LastVisibleIndex - _panel.FirstVisibleIndex);
-                var auto = ApplicationSettings.Current.IsAutoPlayEnabled;
+                var auto = ViewModel.Settings.IsAutoPlayEnabled;
                 var news = new Dictionary<string, MediaPlayerItem>();
 
                 for (int i = index0; i <= index1; i++)

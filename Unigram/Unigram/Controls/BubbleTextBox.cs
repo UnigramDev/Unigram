@@ -393,7 +393,7 @@ namespace Unigram.Controls
                 }
 
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                if (ApplicationSettings.Current.IsSendByEnterEnabled)
+                if (ViewModel.Settings.IsSendByEnterEnabled)
                 {
                     var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
                     if (send)
@@ -588,9 +588,9 @@ namespace Unigram.Controls
 
                 if (fast)
                 {
-                    if (text.Trim().Length <= 14 && !string.IsNullOrWhiteSpace(text) && ViewModel.EditedMessage == null)
+                    if (Emoji.ContainsSingleEmoji(text) && !string.IsNullOrWhiteSpace(text) && ViewModel.EditedMessage == null)
                     {
-                        ViewModel.StickerPack = new SearchStickersCollection(ViewModel.ProtoService, text.Trim());
+                        ViewModel.StickerPack = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
                     }
                     else
                     {
@@ -854,7 +854,7 @@ namespace Unigram.Controls
 
         private void FormatText()
         {
-            if (!ApplicationSettings.Current.IsReplaceEmojiEnabled)
+            if (!ViewModel.Settings.IsReplaceEmojiEnabled)
             {
                 return;
             }

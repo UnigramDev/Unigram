@@ -1065,6 +1065,21 @@ namespace Unigram.Views
 
             var element = sender as FrameworkElement;
             var message = element.Tag as MessageViewModel;
+            if (message == null && sender is SelectorItem selector && selector.ContentTemplateRoot is FrameworkElement content)
+            {
+                element = content;
+                message = content.Tag as MessageViewModel;
+
+                if (content is Grid grid)
+                {
+                    element = grid.FindName("Bubble") as FrameworkElement;
+                }
+                else if (content is StackPanel panel && !(content is MessageBubble))
+                {
+                    element = panel.FindName("Service") as FrameworkElement;
+                }
+            }
+
             if (message == null || message.Id == 0)
             {
                 return;
@@ -1113,7 +1128,11 @@ namespace Unigram.Views
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                flyout.ShowAt(sender, point);
+                flyout.ShowAt(element, point);
+            }
+            else if (flyout.Items.Count > 0)
+            {
+                flyout.ShowAt(element);
             }
         }
 

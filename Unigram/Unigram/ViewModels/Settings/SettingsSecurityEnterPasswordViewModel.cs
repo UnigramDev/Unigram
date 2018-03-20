@@ -21,8 +21,8 @@ namespace Unigram.ViewModels.Settings
     {
         //private TLAccountPassword _passwordBase;
 
-        public SettingsSecurityEnterPasswordViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator)
+        public SettingsSecurityEnterPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ForgotCommand = new RelayCommand(ForgotExecute);
