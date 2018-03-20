@@ -5,6 +5,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Services;
 using Windows.Foundation;
@@ -32,7 +33,7 @@ namespace Unigram.Collections
             {
                 count = 0;
 
-                if (_first)
+                if (_first && ApplicationSettings.Current.Stickers.SuggestionMode != StickersSuggestionMode.None)
                 {
                     _first = false;
 
@@ -46,7 +47,7 @@ namespace Unigram.Collections
                         }
                     }
                 }
-                else
+                else if (!_first && ApplicationSettings.Current.Stickers.SuggestionMode == StickersSuggestionMode.All)
                 {
                     _hasMore = false;
 

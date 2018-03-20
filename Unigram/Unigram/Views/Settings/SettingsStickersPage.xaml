@@ -30,6 +30,11 @@
             <ListView.Header>
                 <StackPanel>
                     <controls:BadgeButton
+                        Content="{CustomResource SuggestStickers}"
+                        Command="{x:Bind ViewModel.SuggestCommand}"
+                        Badge="{x:Bind ConvertSuggest(ViewModel.SuggestStickers), Mode=OneWay}"
+                        Style="{StaticResource BadgeButtonStyle}"/>
+                    <controls:BadgeButton
                         Content="{CustomResource FeaturedStickers}"
                         Click="FeaturedStickers_Click"
                         Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"

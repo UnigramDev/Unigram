@@ -5644,4 +5644,19 @@ If you forget your password, you will lose access to your Telegram account. Ther
   <data name="ActionBotAllowed" xml:space="preserve">
     <value>You allowed this bot to message you when you logged in on {0}.</value>
   </data>
+  <data name="SuggestStickers" xml:space="preserve">
+    <value>Suggest stickers by emoji</value>
+  </data>
+  <data name="SuggestStickersAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="SuggestStickersInstalled" xml:space="preserve">
+    <value>Added</value>
+  </data>
+  <data name="SuggestStickersNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="UnreadMessages" xml:space="preserve">
+    <value>Unread Messages</value>
+  </data>
 </root>

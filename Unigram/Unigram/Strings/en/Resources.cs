@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 03/07/2018 13:14:54
+// 	Generated: 03/20/2018 14:01:06
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -20267,6 +20267,61 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ActionBotAllowed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Suggest stickers by emoji"
+        /// </summary>
+        public static string SuggestStickers
+        {
+            get
+            {
+                return resourceLoader.GetString("SuggestStickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All"
+        /// </summary>
+        public static string SuggestStickersAll
+        {
+            get
+            {
+                return resourceLoader.GetString("SuggestStickersAll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Added"
+        /// </summary>
+        public static string SuggestStickersInstalled
+        {
+            get
+            {
+                return resourceLoader.GetString("SuggestStickersInstalled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "None"
+        /// </summary>
+        public static string SuggestStickersNone
+        {
+            get
+            {
+                return resourceLoader.GetString("SuggestStickersNone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unread Messages"
+        /// </summary>
+        public static string UnreadMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("UnreadMessages");
             }
         }
     }

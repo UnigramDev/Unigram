@@ -142,7 +142,4 @@
   <data name="Select" xml:space="preserve">
     <value>حدد</value>
   </data>
-  <data name="UnreadMessages" xml:space="preserve">
-    <value>رسائل غير مقروءة</value>
-  </data>
 </root>

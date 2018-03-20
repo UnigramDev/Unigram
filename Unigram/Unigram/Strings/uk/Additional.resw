@@ -142,7 +142,4 @@
   <data name="Select" xml:space="preserve">
     <value>Вибрати</value>
   </data>
-  <data name="UnreadMessages" xml:space="preserve">
-    <value>Непрочитаних повідомлень</value>
-  </data>
 </root>

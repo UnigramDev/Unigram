@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 02/28/2018 14:57:04
+// 	Generated: 03/20/2018 14:02:13
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -137,17 +137,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Select");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Unread Messages"
-        /// </summary>
-        public static string UnreadMessages
-        {
-            get
-            {
-                return resourceLoader.GetString("UnreadMessages");
             }
         }
     }
