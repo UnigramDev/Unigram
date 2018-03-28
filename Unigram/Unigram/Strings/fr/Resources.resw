@@ -94,6 +94,9 @@
   <data name="ActionAddUserYou" xml:space="preserve">
     <value>un1 vous a ajouté</value>
   </data>
+  <data name="ActionBotAllowed" xml:space="preserve">
+    <value>Vous avez autorisé ce bot à vous contacter lorsque vous vous êtes connecté à {0}.</value>
+  </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>un1 a modifié la photo du groupe</value>
   </data>
@@ -315,6 +318,9 @@
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>Toutes les photos</value>
+  </data>
+  <data name="AllowCustomQuickReply" xml:space="preserve">
+    <value>Réponses personnalisées</value>
   </data>
   <data name="AllowFillNumber" xml:space="preserve">
     <value>Autorisez Telegram à recevoir des appels et des SMS pour récupérer votre numéro, vous envoyer un code et l'entrer pour vous.</value>
@@ -644,7 +650,7 @@ La <![CDATA[<a href="https://telegram.org/faq#general">FAQ Telegram</a>]]> répo
     <value>De</value>
   </data>
   <data name="AutoNightLocation" xml:space="preserve">
-    <value>Levers et couchers de soleil locaux</value>
+    <value>Lever et coucher de soleil locaux</value>
   </data>
   <data name="AutoNightPreferred" xml:space="preserve">
     <value>Thème à utiliser</value>
@@ -662,7 +668,7 @@ La <![CDATA[<a href="https://telegram.org/faq#general">FAQ Telegram</a>]]> répo
     <value>À</value>
   </data>
   <data name="AutoNightUpdateLocation" xml:space="preserve">
-    <value>Mettre à jour la position</value>
+    <value>Actualiser la position</value>
   </data>
   <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
     <value>Le calcul des heures de lever et coucher de soleil requiert une vérification de votre position approximative. Cette position sera seulement stockée localement sur votre appareil.\n\nLever : {0}\nCoucher : {1}</value>
@@ -1015,6 +1021,9 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
   </data>
   <data name="ChannelMessageDocument" xml:space="preserve">
     <value>{0} a publié un fichier</value>
+  </data>
+  <data name="ChannelMessageFew" xml:space="preserve">
+    <value>{0} a publié {1}</value>
   </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} a publié un GIF</value>
@@ -1638,6 +1647,9 @@ Pour aller au delà et accéder à plus, passez à un supergroupe :
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
     <value>Montre des échanges dans le menu de partage</value>
+  </data>
+  <data name="DisappearingGif" xml:space="preserve">
+    <value>GIF secret</value>
   </data>
   <data name="DisappearingPhoto" xml:space="preserve">
     <value>Photo secrète</value>
@@ -2885,6 +2897,24 @@ Cette opération peut prendre plusieurs minutes.</value>
   <data name="MasksRemoved" xml:space="preserve">
     <value>Masques supprimés</value>
   </data>
+  <data name="MediaZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaOne" xml:space="preserve">
+    <value>{0} média</value>
+  </data>
+  <data name="MediaTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaOther" xml:space="preserve">
+    <value>{0} médias</value>
+  </data>
   <data name="MegaAddedBy" xml:space="preserve">
     <value>un1 vous a ajouté à ce groupe</value>
   </data>
@@ -3238,6 +3268,9 @@ ou ouvrez le menu pour plus d'options.</value>
   <data name="NoStickers" xml:space="preserve">
     <value>Aucun autocollant pour l'instant</value>
   </data>
+  <data name="NoStickersFound" xml:space="preserve">
+    <value>Aucun autocollant trouvé</value>
+  </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Il n'y a pas de compte Telegram associé à cet utilisateur.</value>
   </data>
@@ -3285,6 +3318,12 @@ ou ouvrez le menu pour plus d'options.</value>
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
     <value>{0} a épinglé un GIF</value>
+  </data>
+  <data name="NotificationActionPinnedInvoice" xml:space="preserve">
+    <value>{0} a épinglé une facture dans le groupe {1}</value>
+  </data>
+  <data name="NotificationActionPinnedInvoiceChannel" xml:space="preserve">
+    <value>{0} a épinglé une facture</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
     <value>{0} a épinglé un morceau dans le groupe {1}</value>
@@ -3361,6 +3400,12 @@ ou ouvrez le menu pour plus d'options.</value>
   <data name="NotificationGroupAddSelfMega" xml:space="preserve">
     <value>{0} a rejoint le groupe {1}</value>
   </data>
+  <data name="NotificationGroupFew" xml:space="preserve">
+    <value>{0} a envoyé {2} au groupe {1}</value>
+  </data>
+  <data name="NotificationGroupForwardedFew" xml:space="preserve">
+    <value>{0} a transféré {2} au groupe {1}</value>
+  </data>
   <data name="NotificationGroupKickMember" xml:space="preserve">
     <value>{0} a éjecté {2} du groupe {1}</value>
   </data>
@@ -3385,6 +3430,12 @@ ou ouvrez le menu pour plus d'options.</value>
   <data name="NotificationMessageDocument" xml:space="preserve">
     <value>{0} vous a envoyé un fichier</value>
   </data>
+  <data name="NotificationMessageFew" xml:space="preserve">
+    <value>{0} vous a envoyé {1}</value>
+  </data>
+  <data name="NotificationMessageForwardFew" xml:space="preserve">
+    <value>{0} vous a transféré {1}</value>
+  </data>
   <data name="NotificationMessageGame" xml:space="preserve">
     <value>{0} vous a invité à jouer à {1}</value>
   </data>
@@ -3405,6 +3456,9 @@ ou ouvrez le menu pour plus d'options.</value>
   </data>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} a envoyé un GIF au groupe {1}</value>
+  </data>
+  <data name="NotificationMessageGroupInvoice" xml:space="preserve">
+    <value>{0} a envoyé une facture au groupe {1} pour {2}</value>
   </data>
   <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
     <value>{0} a envoyé une position en temps réel au groupe {1}</value>
@@ -3435,6 +3489,9 @@ ou ouvrez le menu pour plus d'options.</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} a envoyé une vidéo au groupe {1}</value>
+  </data>
+  <data name="NotificationMessageInvoice" xml:space="preserve">
+    <value>{0} vous a envoyé une facture pour {1}</value>
   </data>
   <data name="NotificationMessageLiveLocation" xml:space="preserve">
     <value>{0} vous a envoyé une position en temps réel</value>
@@ -3976,6 +4033,24 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
   <data name="PhotoCaption" xml:space="preserve">
     <value>Légende photo</value>
   </data>
+  <data name="PhotosZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosOne" xml:space="preserve">
+    <value>{0} photo</value>
+  </data>
+  <data name="PhotosTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosOther" xml:space="preserve">
+    <value>{0} photos</value>
+  </data>
   <data name="PinMessage" xml:space="preserve">
     <value>Épingler</value>
   </data>
@@ -4108,6 +4183,21 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
   <data name="ProxySettings" xml:space="preserve">
     <value>Paramètres</value>
   </data>
+  <data name="QuickReplyCustom" xml:space="preserve">
+    <value>Message personnalisé...</value>
+  </data>
+  <data name="QuickReplyDefault1" xml:space="preserve">
+    <value>Je ne peux pas parler. Qu'est-ce qu'il y a ?</value>
+  </data>
+  <data name="QuickReplyDefault2" xml:space="preserve">
+    <value>Je te rappelle tout de suite.</value>
+  </data>
+  <data name="QuickReplyDefault3" xml:space="preserve">
+    <value>Je te rappelle plus tard.</value>
+  </data>
+  <data name="QuickReplyDefault4" xml:space="preserve">
+    <value>Je ne peux pas parler. Rappelle-moi plus tard.</value>
+  </data>
   <data name="RaiseToSpeak" xml:space="preserve">
     <value>Mettre à l'oreille pour parler</value>
   </data>
@@ -4194,6 +4284,9 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
   </data>
   <data name="ReportChatPornography" xml:space="preserve">
     <value>Pornographie</value>
+  </data>
+  <data name="ReportChatSent" xml:space="preserve">
+    <value>Signalement envoyé</value>
   </data>
   <data name="ReportChatSpam" xml:space="preserve">
     <value>Indésirable</value>
@@ -4347,7 +4440,7 @@ Le canal "**{1}**" deviendra privé.</value>
     <value>Ajouter à la galerie</value>
   </data>
   <data name="SaveToGallerySettings" xml:space="preserve">
-    <value>Ajouter à la galerie</value>
+    <value>Ajouter les photos à la galerie</value>
   </data>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Télécharger</value>
@@ -4398,6 +4491,9 @@ Il est possible que vous deviez redémarrer l'application pour que cela prenne e
   </data>
   <data name="SearchMessages" xml:space="preserve">
     <value>MESSAGES</value>
+  </data>
+  <data name="SearchStickersHint" xml:space="preserve">
+    <value>Chercher des autocollants</value>
   </data>
   <data name="SecondsZero" xml:space="preserve">
     <value/>
@@ -4720,7 +4816,7 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>Nous vous enverrons un SMS dans {0}:%2$02d</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
-    <value>Vous pourrez ajouter plus d'utilisateurs après avoir créé ce groupe en passant à un supergroupe.</value>
+    <value>Vous pourrez ajouter plus d'utilisateurs après avoir créé ce groupe et être passé à un supergroupe.</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Trier par</value>
@@ -4823,6 +4919,18 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   </data>
   <data name="SubscribersOther" xml:space="preserve">
     <value>{0} abonnés</value>
+  </data>
+  <data name="SuggestStickers" xml:space="preserve">
+    <value>Suggérer des autocollants pour les émojis</value>
+  </data>
+  <data name="SuggestStickersAll" xml:space="preserve">
+    <value>Tous</value>
+  </data>
+  <data name="SuggestStickersInstalled" xml:space="preserve">
+    <value>Ajoutés</value>
+  </data>
+  <data name="SuggestStickersNone" xml:space="preserve">
+    <value>Aucun</value>
   </data>
   <data name="Support" xml:space="preserve">
     <value>Assistance</value>
@@ -5006,6 +5114,9 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   </data>
   <data name="UnpinMessageAlert" xml:space="preserve">
     <value>Voulez-vous désépingler ce message ?</value>
+  </data>
+  <data name="UnreadMessages" xml:space="preserve">
+    <value>Messages non lus</value>
   </data>
   <data name="UnsupportedAttachment" xml:space="preserve">
     <value>Fichier joint non pris en charge</value>
@@ -5235,6 +5346,9 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
   <data name="VoipEndCall" xml:space="preserve">
     <value>Raccrocher</value>
   </data>
+  <data name="VoipErrorUnknown" xml:space="preserve">
+    <value>Impossible d'appeler actuellement.</value>
+  </data>
   <data name="VoipExchangingKeys" xml:space="preserve">
     <value>Échange des clés de chiffrement...</value>
   </data>
@@ -5249,6 +5363,9 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
   </data>
   <data name="VoipInCallBranding" xml:space="preserve">
     <value>Appel Telegram</value>
+  </data>
+  <data name="VoipInCallBrandingWithName" xml:space="preserve">
+    <value>Appeler {0} avec Telegram</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Appel entrant</value>
@@ -5288,6 +5405,12 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
   </data>
   <data name="VoipPeerOutdated" xml:space="preserve">
     <value>L'application de **{0}** ne permet pas les appels. La mise à jour de son application est nécessaire pour que vous puissiez l'appeler.</value>
+  </data>
+  <data name="VoipQuickReplies" xml:space="preserve">
+    <value>Répondre par message</value>
+  </data>
+  <data name="VoipQuickRepliesExplain" xml:space="preserve">
+    <value>Ces réponses rapides seront disponibles lorsque vous répondez à un appel entrant avec un message Telegram. Modifiez-les pour dire ce que vous voulez.</value>
   </data>
   <data name="VoipRateCallAlert" xml:space="preserve">
     <value>Évaluez la qualité de votre appel Telegram</value>

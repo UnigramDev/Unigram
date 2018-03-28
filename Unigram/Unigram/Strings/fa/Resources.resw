@@ -94,6 +94,10 @@
   <data name="ActionAddUserYou" xml:space="preserve">
     <value>un1 شما را اضافه کرد</value>
   </data>
+  <data name="ActionBotAllowed" xml:space="preserve">
+    <value>شما به این ربات اجازه دادید تا هرگاه در {0} وارد حساب کاربری خود شدید، به شما پیام ارسال کند.
+</value>
+  </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>un1 عکس گروه را تغییر داد</value>
   </data>
@@ -248,7 +252,7 @@
     <value>افزودن مخاطب</value>
   </data>
   <data name="AddContactTitle" xml:space="preserve">
-    <value>اضافه کردن مخاطب</value>
+    <value>افزودن مخاطب</value>
   </data>
   <data name="AddExceptions" xml:space="preserve">
     <value>افزودن استثناء </value>
@@ -272,7 +276,7 @@
     <value>افزودن میان‌بر</value>
   </data>
   <data name="AddStickers" xml:space="preserve">
-    <value>اضافه کردن استیکر</value>
+    <value>افزودن استیکر</value>
   </data>
   <data name="AddStickersInstalled" xml:space="preserve">
     <value>استیکرهای جدید اضافه شد</value>
@@ -315,6 +319,9 @@
   </data>
   <data name="AllPhotos" xml:space="preserve">
     <value>همه عکس‌ها</value>
+  </data>
+  <data name="AllowCustomQuickReply" xml:space="preserve">
+    <value>اجازه پیام سفارشی</value>
   </data>
   <data name="AllowFillNumber" xml:space="preserve">
     <value>لطفاً به تلگرام اجازه‌ دریافت تماس‌ها وپیامک‌ها را بدهید تا ما بتوانیم شماره تلفن شما را وارد کرده، کدی برایتان فرستاده و آن را برای شما وارد کنیم.</value>
@@ -658,7 +665,7 @@
     <value>برنامه‌ریزی شده</value>
   </data>
   <data name="AutoNightTheme" xml:space="preserve">
-    <value>حالت خودکار شب</value>
+    <value>قالب شب خودکار</value>
   </data>
   <data name="AutoNightTo" xml:space="preserve">
     <value>تا</value>
@@ -905,13 +912,13 @@
     <value>تغییر ایمیل بازیابی</value>
   </data>
   <data name="ChannelAddAdmin" xml:space="preserve">
-    <value>اضافه کردن مدیر</value>
+    <value>افزودن مدیر</value>
   </data>
   <data name="ChannelAddMembers" xml:space="preserve">
     <value>افزودن اعضا</value>
   </data>
   <data name="ChannelAddTo" xml:space="preserve">
-    <value>%@ به گروه اضافه شود؟</value>
+    <value>{0} به کانال اضافه شود؟</value>
   </data>
   <data name="ChannelAddedBy" xml:space="preserve">
     <value>un1 شما را به این کانال اضافه کرد</value>
@@ -1017,6 +1024,9 @@
   </data>
   <data name="ChannelMessageDocument" xml:space="preserve">
     <value>{0} یک فایل ارسال کرد</value>
+  </data>
+  <data name="ChannelMessageFew" xml:space="preserve">
+    <value>{0} {1} را ارسال کرد</value>
   </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} یک گیف ارسال کرد</value>
@@ -1640,6 +1650,9 @@
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
     <value>نمایش گفتگوهای گذشته در فهرست به اشتراک گذاری</value>
+  </data>
+  <data name="DisappearingGif" xml:space="preserve">
+    <value>گیف محرمانه</value>
   </data>
   <data name="DisappearingPhoto" xml:space="preserve">
     <value>عکس محرمانه</value>
@@ -2529,7 +2542,7 @@
     <value>فایل زبان نادرست است</value>
   </data>
   <data name="IncorrectTheme" xml:space="preserve">
-    <value>فایل زمینه نادرست است</value>
+    <value>فایل قالب نادرست است</value>
   </data>
   <data name="Info" xml:space="preserve">
     <value>اطلاعات</value>
@@ -2538,7 +2551,7 @@
     <value>مشاهده فوری</value>
   </data>
   <data name="InstantViewNightMode" xml:space="preserve">
-    <value>زمینه تیره به‌ صورت خودکار در هنگام شب فعال خواهد شد</value>
+    <value>قالب تیره به‌ صورت خودکار در هنگام شب فعال خواهد شد</value>
   </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>فضای ذخیره‌سازی داخلی</value>
@@ -2628,7 +2641,7 @@
     <value>{0} در حال ارسال ویدئو است...</value>
   </data>
   <data name="IsTyping" xml:space="preserve">
-    <value>در حال نوشتن...</value>
+    <value>در حال نوشتن است...</value>
   </data>
   <data name="IsTypingGroup" xml:space="preserve">
     <value>{0} در حال نوشتن است...</value>
@@ -2885,6 +2898,24 @@
   </data>
   <data name="MasksRemoved" xml:space="preserve">
     <value>ماسک‌ها حذف شدند</value>
+  </data>
+  <data name="MediaZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaOne" xml:space="preserve">
+    <value>{0} رسانه</value>
+  </data>
+  <data name="MediaTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaOther" xml:space="preserve">
+    <value>{0} رسانه</value>
   </data>
   <data name="MegaAddedBy" xml:space="preserve">
     <value>un1 شما را به این گروه اضافه کرد</value>
@@ -3239,6 +3270,9 @@
   <data name="NoStickers" xml:space="preserve">
     <value>هنوز استیکری موجود نیست</value>
   </data>
+  <data name="NoStickersFound" xml:space="preserve">
+    <value>استیکری یافت نشد</value>
+  </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>هیچ حساب کاربری تلگرامی با این نام کاربری وجود ندارد.</value>
   </data>
@@ -3286,6 +3320,12 @@
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
     <value>{0} یک گیف را سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedInvoice" xml:space="preserve">
+    <value>{0} یک صورت‌حساب در گروه {1} سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedInvoiceChannel" xml:space="preserve">
+    <value>{0} یک صورت‌حساب سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
     <value>{0} یک آهنگ را در گروه {1} سنجاق کرد</value>
@@ -3362,6 +3402,12 @@
   <data name="NotificationGroupAddSelfMega" xml:space="preserve">
     <value>{0} به گروه {1} پیوست</value>
   </data>
+  <data name="NotificationGroupFew" xml:space="preserve">
+    <value>{0} {2} را به گروه {1} ارسال کرد</value>
+  </data>
+  <data name="NotificationGroupForwardedFew" xml:space="preserve">
+    <value>{0} {2} را به گروه {1} هدایت کرد</value>
+  </data>
   <data name="NotificationGroupKickMember" xml:space="preserve">
     <value>{0} {2} را از گروه {1} حذف کرد</value>
   </data>
@@ -3386,6 +3432,12 @@
   <data name="NotificationMessageDocument" xml:space="preserve">
     <value>{0} برای شما یک فایل ارسال کرد</value>
   </data>
+  <data name="NotificationMessageFew" xml:space="preserve">
+    <value>{0} {1} را برای شما ارسال کرد</value>
+  </data>
+  <data name="NotificationMessageForwardFew" xml:space="preserve">
+    <value>{0} {1} را برای شما هدایت کرد</value>
+  </data>
   <data name="NotificationMessageGame" xml:space="preserve">
     <value>{0} شما را به بازی {1} دعوت کرد</value>
   </data>
@@ -3406,6 +3458,10 @@
   </data>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} یک گیف به گروه {1} ارسال کرد</value>
+  </data>
+  <data name="NotificationMessageGroupInvoice" xml:space="preserve">
+    <value>
+{0} یک صورت‌حساب به مبلغ {2} برای گروه {1} ارسال کرد</value>
   </data>
   <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
     <value>{0} یک موقعیت لحظه‌ای زنده را به گروه {1} ارسال کرد</value>
@@ -3436,6 +3492,9 @@
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} یک ویدئو به گروه {1} ارسال کرد</value>
+  </data>
+  <data name="NotificationMessageInvoice" xml:space="preserve">
+    <value>{0} یک صورت‌حساب به مبلغ {1} برای شما ارسال کرد</value>
   </data>
   <data name="NotificationMessageLiveLocation" xml:space="preserve">
     <value>{0} برای شما یک موقعیت لحظه‌ای ارسال کرد</value>
@@ -3638,9 +3697,8 @@
     <value>تماس‌های خروجی</value>
   </data>
   <data name="Page1Message" xml:space="preserve">
-    <value>**سریع‌ترین** برنامه‌ پیام‌رسانی در دنیا.
-تلگرام **رایگان** و **امن** است.
-</value>
+    <value>**سریع‌ترین** برنامه پیام‌رسان دنیا.
+تلگرام **رایگان** و **ایمن** است.</value>
   </data>
   <data name="Page1Title" xml:space="preserve">
     <value>تلگرام</value>
@@ -3787,7 +3845,7 @@
     <value>روش ارسال</value>
   </data>
   <data name="PaymentConfirmationMessage" xml:space="preserve">
-    <value>اطلاعات کارت %@ شما ذخیره شده است. لطفاً برای پرداخت با این کارت گذرواژه تأیید دو مرحله‌ای خود را وارد نمایید.</value>
+    <value>اطلاعات کارت {0} شما ذخیره شده است. لطفاً برای پرداخت با این کارت گذرواژه تأیید دو مرحله‌ای خود را وارد نمایید.</value>
   </data>
   <data name="PaymentConfirmationNewCard" xml:space="preserve">
     <value>کارت دیگری را انتخاب کنید</value>
@@ -3979,6 +4037,24 @@
   <data name="PhotoCaption" xml:space="preserve">
     <value>عنوان عکس</value>
   </data>
+  <data name="PhotosZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosOne" xml:space="preserve">
+    <value>{0} عکس</value>
+  </data>
+  <data name="PhotosTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosOther" xml:space="preserve">
+    <value>{0} عکس</value>
+  </data>
   <data name="PinMessage" xml:space="preserve">
     <value>سنجاق کردن</value>
   </data>
@@ -4111,6 +4187,21 @@
   <data name="ProxySettings" xml:space="preserve">
     <value>تنظیمات پروکسی</value>
   </data>
+  <data name="QuickReplyCustom" xml:space="preserve">
+    <value>پیام سفارشی...</value>
+  </data>
+  <data name="QuickReplyDefault1" xml:space="preserve">
+    <value>الان نمی‌توانم صحبت کنم. چه شده؟</value>
+  </data>
+  <data name="QuickReplyDefault2" xml:space="preserve">
+    <value>الان با شما تماس می‌گیرم.</value>
+  </data>
+  <data name="QuickReplyDefault3" xml:space="preserve">
+    <value>بعداً با شما تماس می‌گیرم.</value>
+  </data>
+  <data name="QuickReplyDefault4" xml:space="preserve">
+    <value>الان نمی‌توانم صحبت کنم. بعداً تماس می‌گیری؟</value>
+  </data>
   <data name="RaiseToSpeak" xml:space="preserve">
     <value>بالا بردن جهت صحبت</value>
   </data>
@@ -4197,6 +4288,9 @@
   </data>
   <data name="ReportChatPornography" xml:space="preserve">
     <value>مستهجن</value>
+  </data>
+  <data name="ReportChatSent" xml:space="preserve">
+    <value>گزارش ارسال شد</value>
   </data>
   <data name="ReportChatSpam" xml:space="preserve">
     <value>هرزنامه</value>
@@ -4400,6 +4494,9 @@
   </data>
   <data name="SearchMessages" xml:space="preserve">
     <value>پیام‌ها</value>
+  </data>
+  <data name="SearchStickersHint" xml:space="preserve">
+    <value>جستجوی بسته‌های استیکر</value>
   </data>
   <data name="SecondsZero" xml:space="preserve">
     <value/>
@@ -4826,6 +4923,18 @@
   <data name="SubscribersOther" xml:space="preserve">
     <value>{0} دنبال کننده</value>
   </data>
+  <data name="SuggestStickers" xml:space="preserve">
+    <value>پیشنهاد بر اساس شکلک</value>
+  </data>
+  <data name="SuggestStickersAll" xml:space="preserve">
+    <value>همه</value>
+  </data>
+  <data name="SuggestStickersInstalled" xml:space="preserve">
+    <value>اضافه شده</value>
+  </data>
+  <data name="SuggestStickersNone" xml:space="preserve">
+    <value>هیچ‌کدام</value>
+  </data>
   <data name="Support" xml:space="preserve">
     <value>پشتیبانی</value>
   </data>
@@ -5008,6 +5117,9 @@
   </data>
   <data name="UnpinMessageAlert" xml:space="preserve">
     <value>آیا می‌خواهید سنجاق این پیام را بردارید؟</value>
+  </data>
+  <data name="UnreadMessages" xml:space="preserve">
+    <value>پیام‌های خوانده نشده</value>
   </data>
   <data name="UnsupportedAttachment" xml:space="preserve">
     <value>از ضمیمه پشتیبانی نمی‌شود</value>
@@ -5237,6 +5349,9 @@
   <data name="VoipEndCall" xml:space="preserve">
     <value>پایان تماس</value>
   </data>
+  <data name="VoipErrorUnknown" xml:space="preserve">
+    <value>در حال حاضر امکان برقراری تماس تلگرامی وجود ندارد.</value>
+  </data>
   <data name="VoipExchangingKeys" xml:space="preserve">
     <value>در حال تبادل کلید‌های رمزگذاری</value>
   </data>
@@ -5251,6 +5366,10 @@
   </data>
   <data name="VoipInCallBranding" xml:space="preserve">
     <value>تماس تلگرامی</value>
+  </data>
+  <data name="VoipInCallBrandingWithName" xml:space="preserve">
+    <value>تماس تلگرامی با {0}
+</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>تماس دریافتی</value>
@@ -5290,6 +5409,12 @@
   </data>
   <data name="VoipPeerOutdated" xml:space="preserve">
     <value>برنامه **{0}** از تماس پشتیبانی نمی‌کند. او باید تلگرام خود را به‌روزرسانی کند تا شما بتوانید با او تماس بگیرید.</value>
+  </data>
+  <data name="VoipQuickReplies" xml:space="preserve">
+    <value>پاسخ با پیام متنی</value>
+  </data>
+  <data name="VoipQuickRepliesExplain" xml:space="preserve">
+    <value> این پاسخ‌های سریع هنگام پاسخ به تماس‌های دریافتی توسط پیام تلگرامی در دسترس خواهند بود. آن‌ها را به دلخواه خود تغییر دهید.</value>
   </data>
   <data name="VoipRateCallAlert" xml:space="preserve">
     <value>لطفاً به کیفیت تماس تلگرامی خود امتیاز دهید</value>
