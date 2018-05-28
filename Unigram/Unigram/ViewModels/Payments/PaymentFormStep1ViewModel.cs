@@ -51,7 +51,7 @@ namespace Unigram.ViewModels.Payments
             return Task.CompletedTask;
         }
 
-        private OrderInfo _info = new OrderInfo { ShippingAddress = new ShippingAddress() };
+        private OrderInfo _info = new OrderInfo { ShippingAddress = new Address() };
         public OrderInfo Info
         {
             get

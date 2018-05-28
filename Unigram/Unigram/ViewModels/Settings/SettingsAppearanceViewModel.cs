@@ -47,11 +47,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return (int)ApplicationSettings.Current.RequestedTheme;
+                return (int)Settings.RequestedTheme;
             }
             set
             {
-                ApplicationSettings.Current.RequestedTheme = (ElementTheme)value;
+                Settings.RequestedTheme = (ElementTheme)value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(() => IsThemeChanged);
             }
@@ -61,7 +61,7 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.CurrentTheme != ApplicationSettings.Current.RequestedTheme;
+                return Settings.CurrentTheme != Settings.RequestedTheme;
             }
         }
     }

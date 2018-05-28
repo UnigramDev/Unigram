@@ -36,7 +36,7 @@ namespace Unigram.Views.Payments
             return (test ? "Test " : string.Empty) +  Strings.Resources.PaymentCheckout;
         }
 
-        private string ConvertAddress(ShippingAddress address)
+        private string ConvertAddress(Address address)
         {
             if (address == null)
             {
