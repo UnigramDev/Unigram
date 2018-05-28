@@ -268,6 +268,9 @@
   <data name="AddMutual" xml:space="preserve">
     <value>Tambah kenalan ke channel anda</value>
   </data>
+  <data name="AddProxy" xml:space="preserve">
+    <value>Tambah Proksi</value>
+  </data>
   <data name="AddRecipient" xml:space="preserve">
     <value>Tambah penerima</value>
   </data>
@@ -672,7 +675,10 @@ Sila lihat  <![CDATA[<a href="https://telegram.org/faq#general">Soalan Lazim Tel
     <value>Kemaskini Lokasi</value>
   </data>
   <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
-    <value>Pengiraan masa matahari turun &amp; naik memerlukan semakan kali pertama anggaran lokasi anda. Nota, lokasi ini akan hanya disimpan di peranti anda.\n\nMatahari turun: {0}\nMatahari naik: {1}</value>
+    <value>Pengiraan masa matahari turun &amp; naik memerlukan semakan kali pertama anggaran lokasi anda. Nota, lokasi ini akan hanya disimpan di peranti anda.
+
+Matahari turun: {0}
+Matahari naik: {1}</value>
   </data>
   <data name="AutodownloadChannels" xml:space="preserve">
     <value>Channel</value>
@@ -697,6 +703,9 @@ Sila lihat  <![CDATA[<a href="https://telegram.org/faq#general">Soalan Lazim Tel
   </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>Mainauto GIF</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Ada</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Menunggu {0} untuk di talian...</value>
@@ -1217,6 +1226,9 @@ Jika tidak berminat, kami cadang tubuhkan channel peribadi.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} chat</value>
   </data>
+  <data name="Checking" xml:space="preserve">
+    <value>Memeriksa...</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Pilih negara</value>
   </data>
@@ -1327,11 +1339,17 @@ Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang a
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Anda pasti mahu hapuskan nombor ini dari log panggilan?</value>
   </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Disambung</value>
+  </data>
   <data name="Connecting" xml:space="preserve">
     <value>Menyambung...</value>
   </data>
+  <data name="ConnectingConnectProxy" xml:space="preserve">
+    <value>Sambung Proksi</value>
+  </data>
   <data name="ConnectingToProxy" xml:space="preserve">
-    <value>Menyambung ke proksi...</value>
+    <value>Menyambung ke proksi</value>
   </data>
   <data name="ConnectingToProxyDisable" xml:space="preserve">
     <value>Nyahaktif</value>
@@ -1355,7 +1373,7 @@ Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang a
     <value>Kenalan</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>Untuk menghubungi dengan setiap kenalan anda tanpa batasan, benarkan **Telegram** untuk akses ke kenalan anda.</value>
+    <value>Telegram perlu akses ke kenalan anda agar anda boleh berhubung dengan rakan anda di semua peranti. Kenalan anda akan diselaras secara berterusan dengan pelayan awan Telegram yang dipersulitkan.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>TERUSKAN</value>
@@ -1566,7 +1584,7 @@ Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang a
     <value>Hapus</value>
   </data>
   <data name="DeleteAccountHelp" xml:space="preserve">
-    <value>Sekiranya anda tidak di talian sekurangnya sekali dalam tempoh ini, akaun anda akan dihapus bersama dengan semua group, mesej dan kenalan.</value>
+    <value>Sekiranya anda tidak di talian sekurangnya sekali dalam tempoh ini, akaun anda akan dihapus bersama dengan semua mesej dan kenalan.</value>
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>Jika anda tidak aktif untuk</value>
@@ -1618,6 +1636,9 @@ Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang a
   </data>
   <data name="DeletePhoto" xml:space="preserve">
     <value>Hapus foto</value>
+  </data>
+  <data name="DeleteProxy" xml:space="preserve">
+    <value>Hapus Proksi</value>
   </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Repot spam </value>
@@ -3972,7 +3993,7 @@ Pembayaran akan dibuat terus kepada pemaju {0}. Telegram tidak memberikan sebara
     <value>Emel pemulihan anda {0} belum diaktifkan lagi dan menunggu pengesahan.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram perlu akses ke kenalan anda supaya anda boleh berhubung dengan mereka dari semua peranti.</value>
+    <value>Untuk dihubungi dengan kenalan anda di semua peranti, kenalan anda akan sentiasa diselaras dengan pelayan awan Telegram yang disulitkan.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram perlu akses untuk menarik ke atas aplikasi lain untuk mainkan video dalam mod Gambar-dalam-Gambar.</value>
@@ -4065,6 +4086,9 @@ Pembayaran akan dibuat terus kepada pemaju {0}. Telegram tidak memberikan sebara
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Semat ke atas</value>
+  </data>
+  <data name="Ping" xml:space="preserve">
+    <value>Ping: {0} ms</value>
   </data>
   <data name="PinnedMessage" xml:space="preserve">
     <value>Mesej Disemat</value>
@@ -4179,6 +4203,12 @@ Pembayaran akan dibuat terus kepada pemaju {0}. Telegram tidak memberikan sebara
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Proksi</value>
+  </data>
+  <data name="ProxyConnections" xml:space="preserve">
+    <value>Sambungan</value>
+  </data>
+  <data name="ProxyDetails" xml:space="preserve">
+    <value>Info Terperinci Proksi</value>
   </data>
   <data name="ProxySettings" xml:space="preserve">
     <value>Aturan Proksi</value>
@@ -4545,6 +4575,9 @@ Anda mungkin diminta untuk mula semula aplikasi bagi mengaktfikannya.</value>
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>Pratonton Link</value>
+  </data>
+  <data name="SecretWebPageInfo" xml:space="preserve">
+    <value>Link pratonton akan dijana di pelayan Telegram. Kami tidak simpan data mengenai link yang anda kirim.</value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Sekuriti</value>
@@ -4941,8 +4974,14 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   <data name="SyncContactsAdded" xml:space="preserve">
     <value>Kenalan dari peranti ini ditambah ke akaun anda.</value>
   </data>
+  <data name="SyncContactsDelete" xml:space="preserve">
+    <value>Hapus Kenalan yang Diselaraskan</value>
+  </data>
+  <data name="SyncContactsDeleteInfo" xml:space="preserve">
+    <value>Ini akan menghapus kenalan anda dari pelayan Telegram. Jika 'Selaras Kenalan" dipilih, kenalan akan diselaraskan semula.</value>
+  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
-    <value>Hidupkan untuk impot kenalan dari peranti ini ke akaun anda.</value>
+    <value>Hidupkan untuk menyelaras kenalan dari peranti ini ke akaun anda.</value>
   </data>
   <data name="SyncContactsInfoOn" xml:space="preserve">
     <value>Kenalan dari peranti ini akan ditambah ke akaun anda.</value>
@@ -5006,6 +5045,12 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>Sekat {0}</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>Terma Perkhidmatan</value>
+  </data>
+  <data name="TermsOfServiceLogin" xml:space="preserve">
+    <value>Dengan mendaftar, anda setuju dengan *Terma Servis*.</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>Teks disalin ke papanklip</value>
@@ -5078,6 +5123,9 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   </data>
   <data name="Typing" xml:space="preserve">
     <value>menaip...</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Tiada</value>
   </data>
   <data name="Unban" xml:space="preserve">
     <value>Tidak dilarang</value>
@@ -5184,8 +5232,32 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   <data name="UseProxyPort" xml:space="preserve">
     <value>Port</value>
   </data>
+  <data name="UseProxySecret" xml:space="preserve">
+    <value>Rahsia</value>
+  </data>
   <data name="UseProxySettings" xml:space="preserve">
     <value>Guna aturan proksi</value>
+  </data>
+  <data name="UseProxySocks5" xml:space="preserve">
+    <value>SOCKS5</value>
+  </data>
+  <data name="UseProxySponsor" xml:space="preserve">
+    <value>Penaja proksi</value>
+  </data>
+  <data name="UseProxySponsorInfo" xml:space="preserve">
+    <value>Channel ini dipapar oleh pelayan proksi anda. Untuk menghapus  channel ini dari senarai chat anda, nyahaktifkan proksi di Aturan Telegram.</value>
+  </data>
+  <data name="UseProxyTelegram" xml:space="preserve">
+    <value>Proksi MTProto</value>
+  </data>
+  <data name="UseProxyTelegramError" xml:space="preserve">
+    <value>Proksi yang anda guna tidak dikonfigur dengan betul dan akan dinyahaktifkan. Sila cari proksi yang lain.</value>
+  </data>
+  <data name="UseProxyTelegramInfo" xml:space="preserve">
+    <value>Aturan proksi MTProto.</value>
+  </data>
+  <data name="UseProxyTelegramInfo2" xml:space="preserve">
+    <value>Proksi ini mungkin akan memaparkan channel yang ditaja di senarai chat anda. Ianya tidak akan ditunjuk dalam mana-mana trafik Telegram.</value>
   </data>
   <data name="UseProxyUsername" xml:space="preserve">
     <value>Nama samaran</value>

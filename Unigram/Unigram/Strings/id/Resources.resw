@@ -268,6 +268,9 @@
   <data name="AddMutual" xml:space="preserve">
     <value>Tambahkan kontak pada channel Anda</value>
   </data>
+  <data name="AddProxy" xml:space="preserve">
+    <value>Tambah Proxy</value>
+  </data>
   <data name="AddRecipient" xml:space="preserve">
     <value>Tambahkan penerima</value>
   </data>
@@ -695,6 +698,9 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
   </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>Putar GIF otomatis</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Tersedia</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Menunggu {0} online...</value>
@@ -1215,6 +1221,9 @@ Jika Anda tidak tertarik, kami sarankan untuk membuat channel privat.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} chat</value>
   </data>
+  <data name="Checking" xml:space="preserve">
+    <value>Mengecek...</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Pilih negara</value>
   </data>
@@ -1325,11 +1334,17 @@ Ketika Telegram {1} diperbarui, foto tampil dengan waktu 1 menit atau kurang dan
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Apakah Anda yakin ingin menghapus entri ini dari log panggilan?</value>
   </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Terhubung</value>
+  </data>
   <data name="Connecting" xml:space="preserve">
     <value>Menghubungkan...</value>
   </data>
+  <data name="ConnectingConnectProxy" xml:space="preserve">
+    <value>Hubungkan ke Proxy</value>
+  </data>
   <data name="ConnectingToProxy" xml:space="preserve">
-    <value>Menghubungkan ke proxy ...</value>
+    <value>Menghubungkan ke proksi..</value>
   </data>
   <data name="ConnectingToProxyDisable" xml:space="preserve">
     <value>Nonaktifkan</value>
@@ -1353,7 +1368,7 @@ Ketika Telegram {1} diperbarui, foto tampil dengan waktu 1 menit atau kurang dan
     <value>Kontak</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>Agar lebih mudah terhubung dengan orang yang Anda kenal, izinkan **Telegram** ke kontak anda.</value>
+    <value>Telegram membutuhkan akses ke kontak sehingga Anda dapat menghubungi teman di semua perangkat. Kontak akan tetap tersinkron di server Telegram yang terenkripsi. </value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>LANJUTKAN</value>
@@ -1616,6 +1631,9 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergroup:
   </data>
   <data name="DeletePhoto" xml:space="preserve">
     <value>Hapus foto</value>
+  </data>
+  <data name="DeleteProxy" xml:space="preserve">
+    <value>Hapus Proxy?</value>
   </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Laporkan sebagai spam</value>
@@ -4065,6 +4083,9 @@ dari beberapa perangkat.</value>
   <data name="PinToTop" xml:space="preserve">
     <value>Sematkan ke atas</value>
   </data>
+  <data name="Ping" xml:space="preserve">
+    <value>Ping: {0} ms</value>
+  </data>
   <data name="PinnedMessage" xml:space="preserve">
     <value>Pesan Tersemat</value>
   </data>
@@ -4178,6 +4199,12 @@ dari beberapa perangkat.</value>
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Proxy</value>
+  </data>
+  <data name="ProxyConnections" xml:space="preserve">
+    <value>Koneksi</value>
+  </data>
+  <data name="ProxyDetails" xml:space="preserve">
+    <value>Detil Proxy</value>
   </data>
   <data name="ProxySettings" xml:space="preserve">
     <value>Pengaturan Proxy</value>
@@ -4544,6 +4571,9 @@ Anda mungkin perlu memulai ulang aplikasi agar berlaku.</value>
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>Pratinjau Tautan</value>
+  </data>
+  <data name="SecretWebPageInfo" xml:space="preserve">
+    <value>Tampilan Tautan akan ditampilkan di server Telegram. Kami tidak menyimpan data tautan yang Anda kirim. </value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Keamanan</value>
@@ -4940,6 +4970,12 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="SyncContactsAdded" xml:space="preserve">
     <value>Kontak dari perangkat ini sudah ditambahkan ke akun Anda.</value>
   </data>
+  <data name="SyncContactsDelete" xml:space="preserve">
+    <value>Hapus Kontak Tersinkron</value>
+  </data>
+  <data name="SyncContactsDeleteInfo" xml:space="preserve">
+    <value>Hal ini akan menghapus kontak Anda dari server Telegram. Jika "Sinkronisasi Kontak" diaktifkan, kontak akan disinkron ulang. </value>
+  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
     <value>Nyalakan untuk memasukkan kontak dari perangkat ke akun Anda. </value>
   </data>
@@ -5005,6 +5041,13 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>Blokir {0}</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>Syarat dan Ketentuan</value>
+  </data>
+  <data name="TermsOfServiceLogin" xml:space="preserve">
+    <value>Dengan mendaftar, 
+Anda setuju dengan *Syarat dan Ketentuan*. </value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>Teks disalin ke clipboard</value>
@@ -5077,6 +5120,9 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   </data>
   <data name="Typing" xml:space="preserve">
     <value>mengetik...</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Tidak Tersedia</value>
   </data>
   <data name="Unban" xml:space="preserve">
     <value>Buka blokir</value>
@@ -5183,8 +5229,32 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="UseProxyPort" xml:space="preserve">
     <value>Port</value>
   </data>
+  <data name="UseProxySecret" xml:space="preserve">
+    <value>Rahasia</value>
+  </data>
   <data name="UseProxySettings" xml:space="preserve">
     <value>Gunakan Pengaturan proxy</value>
+  </data>
+  <data name="UseProxySocks5" xml:space="preserve">
+    <value>SOCKS5</value>
+  </data>
+  <data name="UseProxySponsor" xml:space="preserve">
+    <value>Proxy sponsor</value>
+  </data>
+  <data name="UseProxySponsorInfo" xml:space="preserve">
+    <value>Channel ini ditampilkan oleh server proxy Anda. Untuk menghapus channel ini dari daftar chat Anda, nonaktifkan proxy di Pengaturan Telegram.</value>
+  </data>
+  <data name="UseProxyTelegram" xml:space="preserve">
+    <value>MTProto Proxy</value>
+  </data>
+  <data name="UseProxyTelegramError" xml:space="preserve">
+    <value>Proxy yang Anda gunakan tidak dikonfigurasi dengan benar dan akan dinonaktifkan. Mohon cari yang lain.</value>
+  </data>
+  <data name="UseProxyTelegramInfo" xml:space="preserve">
+    <value>Pengaturan proxy MTProto.</value>
+  </data>
+  <data name="UseProxyTelegramInfo2" xml:space="preserve">
+    <value>Proxy ini dapat menampilkan saluran bersponsor di daftar obrolan Anda. Hal ini tidak mengungkapkan aktivitas akun Telegram Anda.</value>
   </data>
   <data name="UseProxyUsername" xml:space="preserve">
     <value>Username</value>

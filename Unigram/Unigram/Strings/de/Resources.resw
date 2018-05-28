@@ -268,6 +268,9 @@
   <data name="AddMutual" xml:space="preserve">
     <value>Kontakte zum Kanal hinzufügen</value>
   </data>
+  <data name="AddProxy" xml:space="preserve">
+    <value>Proxy hinzufügen</value>
+  </data>
   <data name="AddRecipient" xml:space="preserve">
     <value>Empfänger hinzufügen</value>
   </data>
@@ -674,7 +677,10 @@ Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemein
     <value>Standort aktualisieren</value>
   </data>
   <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
-    <value>Um die Sonnenunter- und -aufgangszeiten zu berechnen, muss einmalig der ungefähre Standort geprüft werden. Der Standort wird lokal auf dem Gerät gespeichert.\n\nSonnenuntergang: {0}\nSonnenaufgang: {1}</value>
+    <value>Um die Sonnenunter- und -aufgangszeiten zu berechnen, muss einmalig der ungefähre Standort geprüft werden. Der Standort wird lokal auf dem Gerät gespeichert.
+
+Sonnenuntergang: {0}
+Sonnenaufgang: {1}</value>
   </data>
   <data name="AutodownloadChannels" xml:space="preserve">
     <value>Kanäle</value>
@@ -699,6 +705,9 @@ Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemein
   </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>GIFs autom. Abspielen</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Verfügbar</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Warte, bis {0} online geht...</value>
@@ -1220,6 +1229,9 @@ Wenn du das nicht möchtest, empfehlen wir dir einen privaten Kanal.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} Chats</value>
   </data>
+  <data name="Checking" xml:space="preserve">
+    <value>Prüfe...</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Wähle ein Land</value>
   </data>
@@ -1330,11 +1342,17 @@ Sobald {1} Telegram aktualisiert, werden Bilder mit Timern von 1 Minute und kür
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Möchtest du wirklich diesen Eintrag aus der Anrufliste löschen?</value>
   </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Verbunden</value>
+  </data>
   <data name="Connecting" xml:space="preserve">
     <value>Verbinde...</value>
   </data>
+  <data name="ConnectingConnectProxy" xml:space="preserve">
+    <value>Mit Proxy verbinden</value>
+  </data>
   <data name="ConnectingToProxy" xml:space="preserve">
-    <value>Verbinde mit Proxy...</value>
+    <value>Verbinde mit Proxy</value>
   </data>
   <data name="ConnectingToProxyDisable" xml:space="preserve">
     <value>Deaktivieren</value>
@@ -1358,7 +1376,7 @@ Sobald {1} Telegram aktualisiert, werden Bilder mit Timern von 1 Minute und kür
     <value>Kontakte</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>Um dich nahtlos mit jedem zu verbinden, den du kennst, erlaube **Telegram** Zugriff auf deine Kontakte.</value>
+    <value>Telegram benötigt Zugriff auf deine Kontakte, damit du dich mit Freunden auf all deinen Geräten verbinden kannst. Deine deine Kontakte werden durchgehend mit den stark verschlüsselten Cloud Servern von Telegram synchronisiert.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>WEITER</value>
@@ -1569,7 +1587,7 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
     <value>Löschen</value>
   </data>
   <data name="DeleteAccountHelp" xml:space="preserve">
-    <value>Wenn du dich innerhalb dieser Zeit nicht anmeldest, wird dein Konto mit allen Nachrichten, Gruppen und Kontakten gelöscht.</value>
+    <value>Wenn du innerhalb dieser Zeit nicht online bist, wird dein Konto mit allen Nachrichten und Kontakten gelöscht.</value>
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>Wenn inaktiv für</value>
@@ -1621,6 +1639,9 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
   </data>
   <data name="DeletePhoto" xml:space="preserve">
     <value>Bild löschen</value>
+  </data>
+  <data name="DeleteProxy" xml:space="preserve">
+    <value>Proxy löschen?</value>
   </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Spam melden</value>
@@ -4040,7 +4061,7 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
     <value>Deine E-Mail Adresse {0} wurde noch verifiziert und ist daher noch nicht aktiv.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram benötigt Zugriff auf deine Kontakte, um dich auf all deinen Geräten mit deinen Freunden zu verbinden.</value>
+    <value>Damit du dich mit Freunden auf all deinen Geräten verbinden kannst, werden deine Kontakte durchgehend mit den stark verschlüsselten Cloud Servern von Telegram synchronisiert.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram braucht Zugriff auf die Funktion 'Über andere Apps einblenden'. Nur so können Videos im Bild in Bild Modus wiedergegeben werden.</value>
@@ -4133,6 +4154,9 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Oben anheften</value>
+  </data>
+  <data name="Ping" xml:space="preserve">
+    <value>Ping: {0} ms</value>
   </data>
   <data name="PinnedMessage" xml:space="preserve">
     <value>Angeheftete Nachricht</value>
@@ -4247,6 +4271,12 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Proxy</value>
+  </data>
+  <data name="ProxyConnections" xml:space="preserve">
+    <value>Verbindungen</value>
+  </data>
+  <data name="ProxyDetails" xml:space="preserve">
+    <value>Proxy-Details</value>
   </data>
   <data name="ProxySettings" xml:space="preserve">
     <value>Proxy-Einstellungen</value>
@@ -4613,6 +4643,9 @@ Du musst die App nach der Änderung neu starten.</value>
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>Linkvorschau</value>
+  </data>
+  <data name="SecretWebPageInfo" xml:space="preserve">
+    <value>Die Linkvorschau wird auf den Telegram-Servern generiert. Wir speichern keine Daten über die von dir gesendeten Links.</value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Sicherheit</value>
@@ -5009,11 +5042,17 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="SyncContactsAdded" xml:space="preserve">
     <value>Kontakte von diesem Gerät wurden deinem Konto hinzugefügt.</value>
   </data>
+  <data name="SyncContactsDelete" xml:space="preserve">
+    <value>Synchronisierte Kontakte löschen</value>
+  </data>
+  <data name="SyncContactsDeleteInfo" xml:space="preserve">
+    <value>Das wird deine Kontakte von den Telegram-Servern entfernen.Wenn 'Kontakte synchronisieren' aktiviert ist, werden deine Kontakte erneut synchronisiert.</value>
+  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
-    <value>Einschalten, um Kontakte von diesem Gerät deinem Konto hinzuzufügen.</value>
+    <value>Aktiviere diese Option, um Kontakte von diesem Gerät durchgehend mit deinem Konto zu synchronisieren.</value>
   </data>
   <data name="SyncContactsInfoOn" xml:space="preserve">
-    <value>Kontakte von diesem Gerät werden deinem Konto hinzugefügt.</value>
+    <value>Kontakte dieses Gerätes werden deinem Konto hinzugefügt.</value>
   </data>
   <data name="SyncContactsOff" xml:space="preserve">
     <value>Kontakte von diesem Gerät werden deinem Konto nicht hinzugefügt.</value>
@@ -5074,6 +5113,13 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>{0} blockieren</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>Nutzungsbedingungen</value>
+  </data>
+  <data name="TermsOfServiceLogin" xml:space="preserve">
+    <value>Mit der Registrierung
+stimmst du den *Nutzungsbedigungen* zu.</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>Text in die Zwischenablage kopiert</value>
@@ -5147,6 +5193,9 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="Typing" xml:space="preserve">
     <value>tippt…</value>
   </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Nicht verfügbar</value>
+  </data>
   <data name="Unban" xml:space="preserve">
     <value>Entsperren</value>
   </data>
@@ -5193,7 +5242,7 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
     <value>Diese Nachricht wird von deiner Telegram-Version nicht unterstützt. Bitte aktualisiere Telegram um sie zu sehen: https://telegram.org/update</value>
   </data>
   <data name="UpdateContactsMessage" xml:space="preserve">
-    <value>Telegram hat viele nicht synchronisierte Kontakte erkannt. Möchte du diese jetzt synchronisieren? 'OK' wählen, wenn du dein eigenes Gerät, SIM-Karte und Google-Konto benutzt.</value>
+    <value>Telegram hat viele nicht synchronisierte Kontakte erkannt. Möchtest du diese jetzt synchronisieren? 'OK' wählen, wenn du dein eigenes Gerät, SIM-Karte und Google-Konto benutzt.</value>
   </data>
   <data name="UpdateContactsTitle" xml:space="preserve">
     <value>Kontakte aktualisieren?</value>
@@ -5252,8 +5301,32 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="UseProxyPort" xml:space="preserve">
     <value>Port</value>
   </data>
+  <data name="UseProxySecret" xml:space="preserve">
+    <value>Schlüssel</value>
+  </data>
   <data name="UseProxySettings" xml:space="preserve">
     <value>Proxy-Einstellungen benutzen</value>
+  </data>
+  <data name="UseProxySocks5" xml:space="preserve">
+    <value>SOCKS5</value>
+  </data>
+  <data name="UseProxySponsor" xml:space="preserve">
+    <value>Proxy-Sponsor</value>
+  </data>
+  <data name="UseProxySponsorInfo" xml:space="preserve">
+    <value>Dieser Kanal wird von deinem Proxyserver angezeigt. Deaktiviere den Proxy in den Einstellungen, um den Kanal zu entfernen.</value>
+  </data>
+  <data name="UseProxyTelegram" xml:space="preserve">
+    <value>MTProto Proxy</value>
+  </data>
+  <data name="UseProxyTelegramError" xml:space="preserve">
+    <value>Dein aktueller Proxy ist nicht korrekt konfiguriert und wird daher deaktiviert. Bitte suche dir einen anderen.</value>
+  </data>
+  <data name="UseProxyTelegramInfo" xml:space="preserve">
+    <value>MTProto Proxy-Einstellungen.</value>
+  </data>
+  <data name="UseProxyTelegramInfo2" xml:space="preserve">
+    <value>Dieser Proxy könnte einen gesponserten Kanal in deiner Chatliste anzeigen. Das wird jedoch nicht deinen Telegram-Datenverkehr enthüllen.</value>
   </data>
   <data name="UseProxyUsername" xml:space="preserve">
     <value>Benutzername</value>

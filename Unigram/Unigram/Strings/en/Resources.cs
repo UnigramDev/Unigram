@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 03/28/2018 19:23:23
+// 	Generated: 05/28/2018 12:07:56
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -819,6 +819,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AddMutual");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Proxy"
+        /// </summary>
+        public static string AddProxy
+        {
+            get
+            {
+                return resourceLoader.GetString("AddProxy");
             }
         }
         
@@ -2293,7 +2304,10 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Calculating sunset & sunrise times requires a one-time check of your approximate location. Note that this location is stored only locally on your device.\n\nSunset: {0}\nSunrise: {1}"
+        /// Localized resource similar to "Calculating sunset & sunrise times requires a one-time check of your approximate location. Note that this location is stored only locally on your device.
+        ///
+        ///Sunset: {0}
+        ///Sunrise: {1}"
         /// </summary>
         public static string AutoNightUpdateLocationInfo
         {
@@ -2388,6 +2402,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AutoplayGifs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Available"
+        /// </summary>
+        public static string Available
+        {
+            get
+            {
+                return resourceLoader.GetString("Available");
             }
         }
         
@@ -4301,6 +4326,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Checking..."
+        /// </summary>
+        public static string Checking
+        {
+            get
+            {
+                return resourceLoader.GetString("Checking");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Choose a country"
         /// </summary>
         public static string ChooseCountry
@@ -4699,6 +4735,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Connected"
+        /// </summary>
+        public static string Connected
+        {
+            get
+            {
+                return resourceLoader.GetString("Connected");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Connecting..."
         /// </summary>
         public static string Connecting
@@ -4710,7 +4757,18 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Connecting to proxy..."
+        /// Localized resource similar to "Connect Proxy"
+        /// </summary>
+        public static string ConnectingConnectProxy
+        {
+            get
+            {
+                return resourceLoader.GetString("ConnectingConnectProxy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connecting to proxy"
         /// </summary>
         public static string ConnectingToProxy
         {
@@ -4798,7 +4856,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "To seamlessly connect with everyone you know, allow **Telegram** access to your contacts."
+        /// Localized resource similar to "Telegram needs access to your contacts so that you can connect with your friends across all your devices. Your contacts will be continuosly synced with Telegram\'s heavily encrypted cloud servers."
         /// </summary>
         public static string ContactsPermissionAlert
         {
@@ -5537,7 +5595,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "If you do not come online at least once within this period, your account will be deleted along with all groups, messages and contacts."
+        /// Localized resource similar to "If you do not come online at least once within this period, your account will be deleted along with all messages and contacts."
         /// </summary>
         public static string DeleteAccountHelp
         {
@@ -5731,6 +5789,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DeletePhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete Proxy?"
+        /// </summary>
+        public static string DeleteProxy
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteProxy");
             }
         }
         
@@ -14453,7 +14522,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Telegram needs access to your contacts so that you can connect with your friends across all your devices."
+        /// Localized resource similar to "To let you connect with friends across all your devices, your contacts will be continuously synced with Telegram's heavily encrypted cloud servers."
         /// </summary>
         public static string PermissionContacts
         {
@@ -14792,6 +14861,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PinToTop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Ping: {0} ms"
+        /// </summary>
+        public static string Ping
+        {
+            get
+            {
+                return resourceLoader.GetString("Ping");
             }
         }
         
@@ -15210,6 +15290,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Proxy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connections"
+        /// </summary>
+        public static string ProxyConnections
+        {
+            get
+            {
+                return resourceLoader.GetString("ProxyConnections");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Proxy Details"
+        /// </summary>
+        public static string ProxyDetails
+        {
+            get
+            {
+                return resourceLoader.GetString("ProxyDetails");
             }
         }
         
@@ -16520,6 +16622,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SecretWebPage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link previews will be generated on Telegram servers. We do not store data about the links you send."
+        /// </summary>
+        public static string SecretWebPageInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("SecretWebPageInfo");
             }
         }
         
@@ -17967,7 +18080,29 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Turn on to import contacts from this device to your account."
+        /// Localized resource similar to "Delete Synced Contacts"
+        /// </summary>
+        public static string SyncContactsDelete
+        {
+            get
+            {
+                return resourceLoader.GetString("SyncContactsDelete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will remove your contacts from the Telegram servers. If 'Sync Contacts' is enabled, contacts will be re-synced."
+        /// </summary>
+        public static string SyncContactsDeleteInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("SyncContactsDeleteInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Turn on to continuously sync contacts from this device with your account."
         /// </summary>
         public static string SyncContactsInfoOff
         {
@@ -18205,6 +18340,29 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TerminateWebSessionStop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Terms of Service"
+        /// </summary>
+        public static string TermsOfService
+        {
+            get
+            {
+                return resourceLoader.GetString("TermsOfService");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "By signing up,
+        ///you agree to the *Terms of Service*."
+        /// </summary>
+        public static string TermsOfServiceLogin
+        {
+            get
+            {
+                return resourceLoader.GetString("TermsOfServiceLogin");
             }
         }
         
@@ -18469,6 +18627,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Typing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unavailable"
+        /// </summary>
+        public static string Unavailable
+        {
+            get
+            {
+                return resourceLoader.GetString("Unavailable");
             }
         }
         
@@ -18858,6 +19027,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Secret"
+        /// </summary>
+        public static string UseProxySecret
+        {
+            get
+            {
+                return resourceLoader.GetString("UseProxySecret");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Use proxy settings"
         /// </summary>
         public static string UseProxySettings
@@ -18865,6 +19045,83 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UseProxySettings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "SOCKS5"
+        /// </summary>
+        public static string UseProxySocks5
+        {
+            get
+            {
+                return resourceLoader.GetString("UseProxySocks5");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Proxy sponsor"
+        /// </summary>
+        public static string UseProxySponsor
+        {
+            get
+            {
+                return resourceLoader.GetString("UseProxySponsor");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This channel is shown by your proxy server. To remove this channel from your chats list, disable the proxy in Telegram Settings."
+        /// </summary>
+        public static string UseProxySponsorInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("UseProxySponsorInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "MTProto Proxy"
+        /// </summary>
+        public static string UseProxyTelegram
+        {
+            get
+            {
+                return resourceLoader.GetString("UseProxyTelegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The proxy you are using is not configured correctly and will be disabled. Please find another one."
+        /// </summary>
+        public static string UseProxyTelegramError
+        {
+            get
+            {
+                return resourceLoader.GetString("UseProxyTelegramError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "MTProto proxy settings."
+        /// </summary>
+        public static string UseProxyTelegramInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("UseProxyTelegramInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This proxy may display a sponsored channel in your chat list. This doesn't reveal any of your Telegram traffic."
+        /// </summary>
+        public static string UseProxyTelegramInfo2
+        {
+            get
+            {
+                return resourceLoader.GetString("UseProxyTelegramInfo2");
             }
         }
         

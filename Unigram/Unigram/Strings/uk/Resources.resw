@@ -268,6 +268,9 @@
   <data name="AddMutual" xml:space="preserve">
     <value>Додайте контакти до вашого каналу</value>
   </data>
+  <data name="AddProxy" xml:space="preserve">
+    <value>Додати проксі</value>
+  </data>
   <data name="AddRecipient" xml:space="preserve">
     <value>Додати одержувача</value>
   </data>
@@ -673,7 +676,10 @@
     <value>Оновити розташування</value>
   </data>
   <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
-    <value>Вирахування часу сходу та заходу сонця потребує одноразової перевірки вашого приблизного розташування. Зауважте, що розташування зберігається лише на вашому пристрої.\n\nЗахід: {0}\nСхід: {1}</value>
+    <value>Вирахування часу сходу та заходу сонця потребує одноразової перевірки вашого приблизного розташування. Зауважте, що розташування зберігається лише на вашому пристрої.
+
+Захід: {0}
+Схід: {1}</value>
   </data>
   <data name="AutodownloadChannels" xml:space="preserve">
     <value>Канали</value>
@@ -698,6 +704,9 @@
   </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>Автовідтворення GIF</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Доступний</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Чекаємо, коли {0} з'явиться в мережі...</value>
@@ -775,7 +784,7 @@
     <value>ПЕРЕЗАПУСТИТИ</value>
   </data>
   <data name="BytesReceived" xml:space="preserve">
-    <value>Байтів отримано</value>
+    <value>Байтів одержано</value>
   </data>
   <data name="BytesSent" xml:space="preserve">
     <value>Байтів надіслано</value>
@@ -905,7 +914,7 @@
     <value>Номер {0} вже прив'язано до акаунта Telegram. Видаліть той акаунт, перш ніж перейти на новий номер.</value>
   </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
-    <value>Ви зарезервували забагато публічних псевдонімів. Ви можете відкликати посилання з однієї з ваших старих груп чи каналів, або натомість створити приватний псевдонім.</value>
+    <value>Ви зайняли забагато публічних псевдонімів. Відкличте один з них або встановіть приватне посилання.</value>
   </data>
   <data name="ChangeRecoveryEmail" xml:space="preserve">
     <value>Змінити е-пошту для відновлення</value>
@@ -1076,7 +1085,7 @@
     <value>Приєднатися до приватних каналів можна лише за запрошувальним посиланням.</value>
   </data>
   <data name="ChannelPrivateLinkHelp" xml:space="preserve">
-    <value>Люди зможуть приєднатися до вашого каналу за цим посиланням. Посилання можна відкликати будь-коли.</value>
+    <value>За цим посиланням можна приєднатись до вашого каналу. Відкликати посилання можна будь-коли.</value>
   </data>
   <data name="ChannelPublic" xml:space="preserve">
     <value>Публічний канал</value>
@@ -1218,6 +1227,9 @@
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} чатів</value>
   </data>
+  <data name="Checking" xml:space="preserve">
+    <value>Перевірка...</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Виберіть країну</value>
   </data>
@@ -1328,11 +1340,17 @@
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Ви дійсно хочете видалити цей запис з журналу викликів?</value>
   </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Під'єднано</value>
+  </data>
   <data name="Connecting" xml:space="preserve">
     <value>З'єднання...</value>
   </data>
+  <data name="ConnectingConnectProxy" xml:space="preserve">
+    <value>Під'єднатися до проксі</value>
+  </data>
   <data name="ConnectingToProxy" xml:space="preserve">
-    <value>З'єднуємося з проксі...</value>
+    <value>З'єднуємося з проксі</value>
   </data>
   <data name="ConnectingToProxyDisable" xml:space="preserve">
     <value>Вимкнути</value>
@@ -1356,7 +1374,7 @@
     <value>Контакти</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>Щоб без перешкод з'єднуватися у усіма, кого ви знаєте, надайте **Telegram** доступ до контактів.</value>
+    <value>Для зв'язку з друзями на всіх своїх пристроях, Telegram потребує доступу до контактів, щоб постійно їх синхронізувати за допомогою зашифрованих серверів.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>ПРОДОВЖИТИ</value>
@@ -1567,7 +1585,7 @@
     <value>Видалити</value>
   </data>
   <data name="DeleteAccountHelp" xml:space="preserve">
-    <value>Якщо ви не ввійдете у свій акаунт хоча б раз впродовж цього періоду, його буде видалено разом із усіма групами, повідомленнями та контактами.</value>
+    <value>Якщо ви не з'явитеся в мережі хоча б раз упродовж цього періоду, ваш акаунт буде видалено разом із усіма повідомленнями та контактами.</value>
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>Якщо вас не було</value>
@@ -1619,6 +1637,9 @@
   </data>
   <data name="DeletePhoto" xml:space="preserve">
     <value>Видалити фото</value>
+  </data>
+  <data name="DeleteProxy" xml:space="preserve">
+    <value>Видалити проксі?</value>
   </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Скарга на спам</value>
@@ -2938,7 +2959,7 @@
     <value>Приєднатися до приватної групи можна за запрошенням чи за запрошувальним посиланням.</value>
   </data>
   <data name="MegaPrivateLinkHelp" xml:space="preserve">
-    <value>Люди зможуть приєднатися до вашої групи за цим посиланням. Посилання можна відкликати будь-коли.</value>
+    <value>За цим посиланням можна приєднатись до вашої групи. Відкликати посилання можна будь-коли.</value>
   </data>
   <data name="MegaPublic" xml:space="preserve">
     <value>Публічна група</value>
@@ -3973,7 +3994,7 @@
     <value>Ваша е-пошта для відновлення {0} ще не активна й очікує підтвердження.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram потребує доступу до контактів, щоб ви могли з'єднуватися з друзями на всіх пристроях.</value>
+    <value>Для зв'язку з друзями на всіх своїх пристроях, Telegram постійно синхронізуватиме контакти за допомогою зашифрованих серверів.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram потребує доступу працювати поверх інших програм, щоб відтворювати відео у вікні.</value>
@@ -4066,6 +4087,9 @@
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Прикріпити вгорі</value>
+  </data>
+  <data name="Ping" xml:space="preserve">
+    <value>Пінг: {0} мс</value>
   </data>
   <data name="PinnedMessage" xml:space="preserve">
     <value>Прикріплене повідомлення</value>
@@ -4180,6 +4204,12 @@
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Проксі</value>
+  </data>
+  <data name="ProxyConnections" xml:space="preserve">
+    <value>З'єднання</value>
+  </data>
+  <data name="ProxyDetails" xml:space="preserve">
+    <value>Деталі проксі</value>
   </data>
   <data name="ProxySettings" xml:space="preserve">
     <value>Налаштування проксі</value>
@@ -4547,6 +4577,9 @@
   <data name="SecretWebPage" xml:space="preserve">
     <value>Передогляд посилань</value>
   </data>
+  <data name="SecretWebPageInfo" xml:space="preserve">
+    <value>Передогляд посилань генерується на серверах Telegram. Ми не зберігаємо дані з надісланих вами посилань.</value>
+  </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Безпека</value>
   </data>
@@ -4667,7 +4700,7 @@
     <value>Ми надіслали SMS із кодом на ваш телефон **{0}**.</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
-    <value>Службові повідомлення</value>
+    <value>Службові сповіщення</value>
   </data>
   <data name="SessionsInfo" xml:space="preserve">
     <value>Керуйте вашими сеансами на інших пристроях.</value>
@@ -4943,8 +4976,14 @@
   <data name="SyncContactsAdded" xml:space="preserve">
     <value>Контакти з цього пристрою додані до вашого акаунта.</value>
   </data>
+  <data name="SyncContactsDelete" xml:space="preserve">
+    <value>Видалити синхронізовані контакти</value>
+  </data>
+  <data name="SyncContactsDeleteInfo" xml:space="preserve">
+    <value>Це вилучить ваші контакти з серверів Telegram. Якщо функцію "Синхронізувати контакти" увімкнено, контакти буде сихронізовано знову.</value>
+  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
-    <value>Увімкніть для імпорту контактів з цього пристрою на ваш акаунт.</value>
+    <value>Увімкніть для постійної синхронізації контактів цього пристрою з вашим акаунтом.</value>
   </data>
   <data name="SyncContactsInfoOn" xml:space="preserve">
     <value>Контакти з цього пристрою будуть додані до вашого акаунта.</value>
@@ -5008,6 +5047,13 @@
   </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>Заблокувати {0}</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>Умови використання</value>
+  </data>
+  <data name="TermsOfServiceLogin" xml:space="preserve">
+    <value>Реєструючись,
+ви погоджуєтеся з нашими *умовами використання*.</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>Текст скопійовано</value>
@@ -5080,6 +5126,9 @@
   </data>
   <data name="Typing" xml:space="preserve">
     <value>пише...</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Недоступний</value>
   </data>
   <data name="Unban" xml:space="preserve">
     <value>Розблокувати</value>
@@ -5187,8 +5236,32 @@ http://telegram.org/update</value>
   <data name="UseProxyPort" xml:space="preserve">
     <value>Порт</value>
   </data>
+  <data name="UseProxySecret" xml:space="preserve">
+    <value>Секрет</value>
+  </data>
   <data name="UseProxySettings" xml:space="preserve">
     <value>Використовувати налаштування проксі</value>
+  </data>
+  <data name="UseProxySocks5" xml:space="preserve">
+    <value>SOCKS5</value>
+  </data>
+  <data name="UseProxySponsor" xml:space="preserve">
+    <value>Спонсор проксі</value>
+  </data>
+  <data name="UseProxySponsorInfo" xml:space="preserve">
+    <value>Ваш проксі-сервер показує цей канал. Щоб видалити його зі списку чатів, вимкніть проксі у налаштуваннях Telegram.</value>
+  </data>
+  <data name="UseProxyTelegram" xml:space="preserve">
+    <value>Проксі MTProto</value>
+  </data>
+  <data name="UseProxyTelegramError" xml:space="preserve">
+    <value>Проксі, яким ви користуєтеся, буде вимкнено через неправильні налаштування. Радимо знайти інший.</value>
+  </data>
+  <data name="UseProxyTelegramInfo" xml:space="preserve">
+    <value>Налаштування проксі MTProto.</value>
+  </data>
+  <data name="UseProxyTelegramInfo2" xml:space="preserve">
+    <value>Цей проксі може показувати рекламний канал у вашому списку чатів. Це не робить видимим ваш трафік Telegram.</value>
   </data>
   <data name="UseProxyUsername" xml:space="preserve">
     <value>Ім'я користувача</value>
@@ -5395,10 +5468,10 @@ http://telegram.org/update</value>
     <value>Поза мережею</value>
   </data>
   <data name="VoipOngoingAlert" xml:space="preserve">
-    <value>Наразі у вас відбувається виклик із **{0}**. Покласти слухавку на тому виклику і розпочатий новий із **{1}**?</value>
+    <value>Зараз ви розмовляєте із **{0}**. Завершити цей виклик і зателефонувати **{1}**?</value>
   </data>
   <data name="VoipOngoingAlertTitle" xml:space="preserve">
-    <value>Зараз відбувається інший виклик</value>
+    <value>Триває інший виклик</value>
   </data>
   <data name="VoipOutgoingCall" xml:space="preserve">
     <value>Відбувається виклик Telegram</value>

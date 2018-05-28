@@ -268,6 +268,9 @@
   <data name="AddMutual" xml:space="preserve">
     <value>Ajouter des contacts à votre canal</value>
   </data>
+  <data name="AddProxy" xml:space="preserve">
+    <value>Ajouter un serveur proxy</value>
+  </data>
   <data name="AddRecipient" xml:space="preserve">
     <value>Ajouter un destinataire</value>
   </data>
@@ -522,7 +525,7 @@ Vous déconnecter supprimera tous vos échanges secrets.</value>
     <value>Voulez-vous vraiment débloquer ce contact ?</value>
   </data>
   <data name="AreYouSureWebSessions" xml:space="preserve">
-    <value>Voulez-vous vraiment déconnecter toutes les sites connectés avec Telegram ?</value>
+    <value>Voulez-vous vraiment déconnecter toutes les sites web où vous vous êtes connectés avec Telegram ?</value>
   </data>
   <data name="ArticleByAuthor" xml:space="preserve">
     <value>par {0}</value>
@@ -671,7 +674,10 @@ La <![CDATA[<a href="https://telegram.org/faq#general">FAQ Telegram</a>]]> répo
     <value>Actualiser la position</value>
   </data>
   <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
-    <value>Le calcul des heures de lever et coucher de soleil requiert une vérification de votre position approximative. Cette position sera seulement stockée localement sur votre appareil.\n\nLever : {0}\nCoucher : {1}</value>
+    <value>Le calcul des heures de lever et coucher de soleil requiert une vérification de votre position approximative. Cette position sera seulement stockée localement sur votre appareil.
+
+Lever : {0}
+Coucher : {1}</value>
   </data>
   <data name="AutodownloadChannels" xml:space="preserve">
     <value>Canaux</value>
@@ -696,6 +702,9 @@ La <![CDATA[<a href="https://telegram.org/faq#general">FAQ Telegram</a>]]> répo
   </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>Lire les GIF automatiquement</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Disponible</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>En attente de la connexion de {0}…</value>
@@ -886,7 +895,7 @@ Si ce n'était pas vous, merci d'insérer le code que nous venons de vous envoye
     <value>Changer le code d'accès</value>
   </data>
   <data name="ChangePasscodeInfo" xml:space="preserve">
-    <value>Une fois le code configuré, une icône s'affichera sur la page des échanges pour verrouiller et déverrouiller Telegram.
+    <value>Une fois le code configuré, une icône s'affichera sur la page des échanges. Touchez-la pour verrouiller et déverrouiller Telegram.
 
 Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application. Tous les échanges secrets seront perdus.</value>
   </data>
@@ -927,7 +936,7 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
     <value>Administrateurs</value>
   </data>
   <data name="ChannelAdminsInfo" xml:space="preserve">
-    <value>Vous pouvez ajouter des administrateurs pour vous aider à gérer votre canal. Sélectionnez-les pour les renvoyer.</value>
+    <value>Vous pouvez ajouter des administrateurs pour vous aider à gérer votre canal. Touchez et maintenez pour les renvoyer.</value>
   </data>
   <data name="ChannelAlertCreate" xml:space="preserve">
     <value>CRÉER UN CANAL</value>
@@ -1136,7 +1145,7 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
     <value>lien</value>
   </data>
   <data name="ChatAdmin" xml:space="preserve">
-    <value>admin</value>
+    <value>administrateur</value>
   </data>
   <data name="ChatBackground" xml:space="preserve">
     <value>Arrière-plan</value>
@@ -1216,6 +1225,9 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} échanges</value>
   </data>
+  <data name="Checking" xml:space="preserve">
+    <value>Vérification...</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Sélectionnez un pays</value>
   </data>
@@ -1265,7 +1277,7 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
     <value>Déconnecte tous les appareils sauf celui-ci.</value>
   </data>
   <data name="ClearOtherWebSessionsHelp" xml:space="preserve">
-    <value>Vous pouvez vous connecter aux sites qui acceptent l'authentification par Telegram.</value>
+    <value>Vous pouvez vous connecter aux sites web qui acceptent l'authentification par Telegram.</value>
   </data>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Effacer les émojis récents ?</value>
@@ -1319,30 +1331,36 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
     <value>Jaune</value>
   </data>
   <data name="CompatibilityChat" xml:space="preserve">
-    <value>{0} utilise une version antérieure de Telegram, les photos secrètes seront donc affichées en mode de compatibilité.
+    <value>{0} utilise une version antérieure de Telegram, les photos secrètes seront donc affichées en mode compatibilité.
 
-Une fois que {1} aura mis à jour Telegram, le mode "Appuyer et maintenir pour voir" s'appliquera pour les photos avec un délai d'une minute ou moins et vous serez averti s'il prend une capture d'écran.</value>
+Une fois que {1} aura mis à jour Telegram, le mode "Touchez et maintenez pour voir" s'appliquera pour les photos avec un délai d'une minute ou moins, et vous serez averti s'il prend une capture d'écran.</value>
   </data>
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Voulez-vous vraiment effacer cette entrée du journal des appels ?</value>
   </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Connecté</value>
+  </data>
   <data name="Connecting" xml:space="preserve">
     <value>Connexion…</value>
   </data>
+  <data name="ConnectingConnectProxy" xml:space="preserve">
+    <value>Connecter le proxy</value>
+  </data>
   <data name="ConnectingToProxy" xml:space="preserve">
-    <value>Connexion...</value>
+    <value>Connexion au proxy...</value>
   </data>
   <data name="ConnectingToProxyDisable" xml:space="preserve">
     <value>Désactiver</value>
   </data>
   <data name="ConnectingToProxyDisableAlert" xml:space="preserve">
-    <value>Voulez-vous vraiment désactiver le serveur mandataire {0} ? Vous pouvez le réactiver plus tard dans Données et stockage.</value>
+    <value>Voulez-vous vraiment désactiver le proxy {0} ? Vous pouvez le réactiver plus tard dans les paramètres (Données et stockage).</value>
   </data>
   <data name="ConnectingToProxyEnable" xml:space="preserve">
     <value>Activer</value>
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
-    <value>Désactivez le serveur mandataire ici...</value>
+    <value>Touchez pour désactiver le proxy...</value>
   </data>
   <data name="ContactJoined" xml:space="preserve">
     <value>Un contact a rejoint Telegram</value>
@@ -1354,7 +1372,7 @@ Une fois que {1} aura mis à jour Telegram, le mode "Appuyer et maintenir pour v
     <value>Contacts</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>Pour joindre vos amis facilement, autorisez **Telegram** à accéder à vos contacts.</value>
+    <value>Telegram doit accéder à vos contacts pour que vous puissiez joindre vos amis sur tous vos appareils. Vos contacts seront synchronisés en continu grâce aux serveurs hautement chiffrés de Telegram.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>CONTINUER</value>
@@ -1424,7 +1442,7 @@ Pour aller au delà et accéder à plus, passez à un supergroupe :
     <value>Créer un nouveau thème</value>
   </data>
   <data name="CreateNewThemeHelp" xml:space="preserve">
-    <value>Sélectionnez l'icône de palette pour voir les éléments sur chaque écran et les éditer.</value>
+    <value>Touchez l'icône de palette pour voir les éléments sur chaque écran et les éditer.</value>
   </data>
   <data name="CreateNewThemeInfo" xml:space="preserve">
     <value>Vous pouvez créer votre propre thème en changeant les couleurs depuis l'application. Vous pouvez toujours revenir au thème par défaut ici.</value>
@@ -1565,7 +1583,7 @@ Pour aller au delà et accéder à plus, passez à un supergroupe :
     <value>Supprimer</value>
   </data>
   <data name="DeleteAccountHelp" xml:space="preserve">
-    <value>Si vous ne vous connectez pas au moins une fois durant cette période, votre compte sera supprimé, ainsi que tous vos groupes, messages, et contacts.</value>
+    <value>Si vous ne vous connectez pas au moins une fois durant cette période, votre compte sera supprimé, ainsi que tous vos messages et contacts.</value>
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>Si vous êtes absent pendant</value>
@@ -1617,6 +1635,9 @@ Pour aller au delà et accéder à plus, passez à un supergroupe :
   </data>
   <data name="DeletePhoto" xml:space="preserve">
     <value>Supprimer la photo actuelle</value>
+  </data>
+  <data name="DeleteProxy" xml:space="preserve">
+    <value>Supprimer le serveur proxy ?</value>
   </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Signaler</value>
@@ -1774,10 +1795,10 @@ Pour aller au delà et accéder à plus, passez à un supergroupe :
     <value>Activer les animations</value>
   </data>
   <data name="EnableProxyAlert" xml:space="preserve">
-    <value>Voulez-vous vraiment activer ce serveur mandataire ?</value>
+    <value>Voulez-vous vraiment activer ce proxy ?</value>
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
-    <value>Vous pouvez le changer votre plus tard dans Données et stockage.</value>
+    <value>Vous pouvez changer votre proxy plus tard dans les paramètres (Données et stockage).</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Lire les médias en flux</value>
@@ -2423,7 +2444,7 @@ sur Telegram ?</value>
     <value>Notifications de groupes</value>
   </data>
   <data name="GroupPhotosHelp" xml:space="preserve">
-    <value>Envoyer les médias en un message</value>
+    <value>Envoyer les médias dans un seul message</value>
   </data>
   <data name="GroupStickers" xml:space="preserve">
     <value>Autocollants de groupe</value>
@@ -2471,10 +2492,10 @@ sur Telegram ?</value>
     <value>L'historique a été effacé</value>
   </data>
   <data name="HoldToAudio" xml:space="preserve">
-    <value>Maintenez et enregistrez. Touchez pour changer.</value>
+    <value>Maintenez pour enregistrer. Touchez pour changer.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
-    <value>Maintenez et filmez. Touchez pour changer.</value>
+    <value>Maintenez pour filmer. Touchez pour changer.</value>
   </data>
   <data name="HoursZero" xml:space="preserve">
     <value/>
@@ -2856,7 +2877,7 @@ Cette opération peut prendre plusieurs minutes.</value>
     <value>Mot de passe</value>
   </data>
   <data name="LoginPasswordText" xml:space="preserve">
-    <value>La double authentification est activée, le compte est protégé par un mot de passe additionnel.</value>
+    <value>La double authentification est activée, votre compte est donc protégé par un mot de passe additionnel.</value>
   </data>
   <data name="Long" xml:space="preserve">
     <value>Long</value>
@@ -2919,7 +2940,7 @@ Cette opération peut prendre plusieurs minutes.</value>
     <value>un1 vous a ajouté à ce groupe</value>
   </data>
   <data name="MegaAdminsInfo" xml:space="preserve">
-    <value>Vous pouvez ajouter des administrateurs pour vous aider à gérer votre groupe. Sélectionnez-les pour les renvoyer.</value>
+    <value>Vous pouvez ajouter des administrateurs pour vous aider à gérer votre groupe. Touchez et maintenez pour les renvoyer.</value>
   </data>
   <data name="MegaDeleteAlert" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer ce groupe ? Tous les membres seront éjectés et tous les messages seront perdus.</value>
@@ -3180,9 +3201,9 @@ Cette opération peut prendre plusieurs minutes.</value>
     <value>Aucun échange pour l'instant…</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
-    <value>Démarrez un échange avec le bouton
-nouveau message en bas à droite
-ou ouvrez le menu pour plus d'options.</value>
+    <value>Commencez à discuteur en appuyant sur
+le bouton nouveau message en bas à droite
+ou touchez le bouton du menu pour plus d'options.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>Aucun contact pour l'instant</value>
@@ -3221,7 +3242,7 @@ ou ouvrez le menu pour plus d'options.</value>
     <value>Aucune connexion active.</value>
   </data>
   <data name="NoOtherWebSessionsInfo" xml:space="preserve">
-    <value>Vous pouvez vous connecter aux sites qui acceptent l'authentification par Telegram.</value>
+    <value>Vous pouvez vous connecter aux sites web qui acceptent l'authentification par Telegram.</value>
   </data>
   <data name="NoPhotos" xml:space="preserve">
     <value>Aucune photo pour l'instant</value>
@@ -3688,7 +3709,7 @@ L'équipe Telegram</value>
     <value>Sessions actives</value>
   </data>
   <data name="OtherWebSessions" xml:space="preserve">
-    <value>Sites connectés</value>
+    <value>Sites web connectés</value>
   </data>
   <data name="OutgoingCalls" xml:space="preserve">
     <value>Appels sortants</value>
@@ -3972,7 +3993,7 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
     <value>Votre courriel de récupération {0} est inactif et doit être confirmé.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram doit accéder à vos contacts pour vous permettre de joindre vos amis sur tous vos appareils.</value>
+    <value>Pour vous permettre de joindre vos amis sur tous vos appareils, vos contacts seront synchronisés en continu grâce aux serveurs hautement chiffrés de Telegram.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram doit se superposer à d'autres applications pour lire des vidéos en incrustation.</value>
@@ -4066,6 +4087,9 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
   <data name="PinToTop" xml:space="preserve">
     <value>Épingler</value>
   </data>
+  <data name="Ping" xml:space="preserve">
+    <value>Ping : {0} ms</value>
+  </data>
   <data name="PinnedMessage" xml:space="preserve">
     <value>Message épinglé</value>
   </data>
@@ -4127,7 +4151,7 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
     <value>Bots et sites web</value>
   </data>
   <data name="PrivacyBotsInfo" xml:space="preserve">
-    <value>Les sites pour lesquels vous avez utilisé Telegram pour vous connecter.</value>
+    <value>Les sites web où vous vous êtes connectés avec Telegram.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
     <value>Sans pair à pair, tous les appels passeront par les serveurs Telegram pour cacher votre adresse IP, mais la qualité audio pourra légèrement diminuer.</value>
@@ -4178,10 +4202,16 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
     <value>Les messages de ce contact apparaîtront sur votre écran quand vous n'utilisez pas Telegram.</value>
   </data>
   <data name="Proxy" xml:space="preserve">
-    <value>Serveur mandataire</value>
+    <value>Proxy</value>
+  </data>
+  <data name="ProxyConnections" xml:space="preserve">
+    <value>Connexions</value>
+  </data>
+  <data name="ProxyDetails" xml:space="preserve">
+    <value>Détails du serveur proxy</value>
   </data>
   <data name="ProxySettings" xml:space="preserve">
-    <value>Paramètres</value>
+    <value>Paramètres de proxy</value>
   </data>
   <data name="QuickReplyCustom" xml:space="preserve">
     <value>Message personnalisé...</value>
@@ -4376,10 +4406,10 @@ Si vous réinitialisez votre compte, tous vos échanges seront supprimés.</valu
     <value>Pas d'accès à votre courriel {0} ?</value>
   </data>
   <data name="RestoreEmailTroubleText" xml:space="preserve">
-    <value>Si vous n'avez pas accès à votre courriel, vous pouvez vous rappeler de votre mot de passe ou réinitialiser votre compte.</value>
+    <value>Si vous n'avez plus accès à votre courriel, vous ne pouvez plus que vous rappeler de votre mot de passe ou réinitialiser votre compte.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
-    <value>Comme vous n'avez pas fourni de courriel de récupération, vous pouvez vous rappeler de votre mot de passe ou réinitialiser votre compte.</value>
+    <value>Comme vous n'avez pas fourni de courriel de récupération au moment de définir votre mot de passe, vous ne pouvez plus que vous rappeler de votre mot de passe ou réinitialiser votre compte.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Désolé</value>
@@ -4545,6 +4575,9 @@ Il est possible que vous deviez redémarrer l'application pour que cela prenne e
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>Aperçus des liens</value>
+  </data>
+  <data name="SecretWebPageInfo" xml:space="preserve">
+    <value>Les aperçus des liens seront générés sur les serveurs Telegram. Nous ne stockons pas de données sur les liens que vous envoyez.</value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Sécurité</value>
@@ -4837,7 +4870,7 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>Démarrer un échange secret</value>
   </data>
   <data name="StartMessaging" xml:space="preserve">
-    <value>COMMENCER</value>
+    <value>Commencer</value>
   </data>
   <data name="StartText" xml:space="preserve">
     <value>Confirmez votre indicatif national et entrez votre numéro.</value>
@@ -4921,7 +4954,7 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>{0} abonnés</value>
   </data>
   <data name="SuggestStickers" xml:space="preserve">
-    <value>Suggérer des autocollants pour les émojis</value>
+    <value>Suggérer des autocollants par émojis</value>
   </data>
   <data name="SuggestStickersAll" xml:space="preserve">
     <value>Tous</value>
@@ -4941,8 +4974,14 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="SyncContactsAdded" xml:space="preserve">
     <value>Les contacts de cet appareil ont été ajoutés à votre compte.</value>
   </data>
+  <data name="SyncContactsDelete" xml:space="preserve">
+    <value>Supprimer les contacts synchronisés</value>
+  </data>
+  <data name="SyncContactsDeleteInfo" xml:space="preserve">
+    <value>Cela supprima vos contacts des serveurs Telegram. Si "synchroniser les contacts" est activé, ceux-ci seront synchronisés à nouveau.</value>
+  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
-    <value>Activez pour importer les contacts de cet appareil vers votre compte.</value>
+    <value>Activez pour synchroniser en continu les contacts de cet appareil avec votre compte.</value>
   </data>
   <data name="SyncContactsInfoOn" xml:space="preserve">
     <value>Les contacts de cet appareil seront ajoutés à votre compte.</value>
@@ -4990,10 +5029,10 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>Fermer toutes les autres sessions</value>
   </data>
   <data name="TerminateAllWebSessions" xml:space="preserve">
-    <value>Déconnecter toutes les sites</value>
+    <value>Déconnecter toutes les sites web</value>
   </data>
   <data name="TerminateSessionInfo" xml:space="preserve">
-    <value>Sélectionnez une session pour la fermer.</value>
+    <value>Touchez une session pour la fermer.</value>
   </data>
   <data name="TerminateSessionQuestion" xml:space="preserve">
     <value>Fermer cette session ?</value>
@@ -5006,6 +5045,13 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>Bloquer {0}</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>Conditions de service</value>
+  </data>
+  <data name="TermsOfServiceLogin" xml:space="preserve">
+    <value>En vous inscrivant,
+vous acceptez les *conditions de services*.</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>Texte copié dans le presse-papier</value>
@@ -5079,17 +5125,20 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="Typing" xml:space="preserve">
     <value>écrit…</value>
   </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Indisponible</value>
+  </data>
   <data name="Unban" xml:space="preserve">
     <value>Débannir</value>
   </data>
   <data name="UnbanText" xml:space="preserve">
-    <value>Sélectionnez un utilisateur pour le débannir.</value>
+    <value>Touchez et maintenez un utilisateur pour le débannir.</value>
   </data>
   <data name="Unblock" xml:space="preserve">
     <value>Débloquer</value>
   </data>
   <data name="UnblockText" xml:space="preserve">
-    <value>Sélectionnez un utilisateur pour le débloquer.</value>
+    <value>Touchez et maintenez un utilisateur pour le débloquer.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Réinitialise les paramètres de notifications pour tous les contacts et groupes</value>
@@ -5170,13 +5219,13 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>Serveur</value>
   </data>
   <data name="UseProxyForCalls" xml:space="preserve">
-    <value>Utiliser pour les appels</value>
+    <value>Utiliser le proxy pour les appels</value>
   </data>
   <data name="UseProxyForCallsInfo" xml:space="preserve">
-    <value>Les serveurs mandataires peuvent dégrader la qualité de vos appels.</value>
+    <value>Les serveurs proxy peuvent dégrader la qualité de vos appels.</value>
   </data>
   <data name="UseProxyInfo" xml:space="preserve">
-    <value>Paramètres SOCKS5</value>
+    <value>Paramètres de proxy SOCKS v5</value>
   </data>
   <data name="UseProxyPassword" xml:space="preserve">
     <value>Mot de passe</value>
@@ -5184,8 +5233,32 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="UseProxyPort" xml:space="preserve">
     <value>Port</value>
   </data>
+  <data name="UseProxySecret" xml:space="preserve">
+    <value>Secret</value>
+  </data>
   <data name="UseProxySettings" xml:space="preserve">
-    <value>Utiliser le serveur mandataire</value>
+    <value>Utiliser les paramètres de proxy</value>
+  </data>
+  <data name="UseProxySocks5" xml:space="preserve">
+    <value>SOCKS v5</value>
+  </data>
+  <data name="UseProxySponsor" xml:space="preserve">
+    <value>Sponsor du proxy</value>
+  </data>
+  <data name="UseProxySponsorInfo" xml:space="preserve">
+    <value>Ce canal est affiché par votre proxy. Pour le supprimer de votre liste d'échanges, désactivez le proxy dans les paramètres Telegram.</value>
+  </data>
+  <data name="UseProxyTelegram" xml:space="preserve">
+    <value>Proxy MTProto</value>
+  </data>
+  <data name="UseProxyTelegramError" xml:space="preserve">
+    <value>Le proxy que vous utilisez n'est pas configuré correctement et va être désactivé. Merci d'en trouver un autre.</value>
+  </data>
+  <data name="UseProxyTelegramInfo" xml:space="preserve">
+    <value>Paramètres de proxy MTProto.</value>
+  </data>
+  <data name="UseProxyTelegramInfo2" xml:space="preserve">
+    <value>Ce proxy peut afficher un canal sponsorisé dans votre liste d'échanges. Cela ne révèle aucune de vos données Telegram.</value>
   </data>
   <data name="UseProxyUsername" xml:space="preserve">
     <value>Nom d'utilisateur</value>
