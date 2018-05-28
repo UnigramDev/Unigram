@@ -19,6 +19,7 @@ using Windows.ApplicationModel;
 using Windows.Data.Json;
 using Windows.Networking.PushNotifications;
 using Windows.System.Threading;
+using Windows.UI.Notifications;
 
 namespace Unigram.Services
 {
@@ -29,7 +30,7 @@ namespace Unigram.Services
         Task CloseAsync();
     }
 
-    public class NotificationsService : INotificationsService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateNewMessage>, IHandle<UpdateServiceNotification>
+    public class NotificationsService : INotificationsService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateNewMessage>, IHandle<UpdateChatReadInbox>, IHandle<UpdateServiceNotification>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -73,6 +74,20 @@ namespace Unigram.Services
             });
         }
 
+        public void Handle(UpdateChatReadInbox update)
+        {
+            if (update.UnreadCount == 0)
+            {
+                var chat = _cacheService.GetChat(update.ChatId);
+                if (chat == null)
+                {
+                    return;
+                }
+
+                ToastNotificationManager.History.RemoveGroup(GetGroup(chat), "App");
+            }
+        }
+
         public void Handle(UpdateUnreadMessageCount update)
         {
             if (_settings.Notifications.IncludeMutedChats)
@@ -112,7 +127,7 @@ namespace Unigram.Services
                 var sound = "";
                 var launch = GetLaunch(chat);
                 var tag = GetTag(update.Message);
-                var group = GetGroup(update.Message, chat);
+                var group = GetGroup(chat);
                 var picture = GetPhoto(chat);
                 var date = BindConvert.Current.DateTime(update.Message.Date).ToString("o");
                 var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
@@ -141,7 +156,7 @@ namespace Unigram.Services
             return (message.Id << 20).ToString();
         }
 
-        private string GetGroup(Message message, Chat chat)
+        private string GetGroup(Chat chat)
         {
             var group = string.Empty;
             if (chat.Type is ChatTypePrivate privata)
@@ -196,7 +211,7 @@ namespace Unigram.Services
 
                 try
                 {
-                    var oldUri = ApplicationSettings.Current.NotificationsToken;
+                    var oldUri = _settings.NotificationsToken;
 
                     var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
                     if (channel.Uri != oldUri)

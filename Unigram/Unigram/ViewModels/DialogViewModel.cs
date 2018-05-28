@@ -1572,6 +1572,8 @@ namespace Unigram.ViewModels
 
         private void RemoveNotifications()
         {
+            return;
+
             var chat = _chat;
             if (chat == null)
             {
@@ -1919,7 +1921,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetNotificationSettings(new NotificationSettingsScopeChat(chat.Id), new NotificationSettings(unmute ? 0 : 632053052, chat.NotificationSettings.Sound, chat.NotificationSettings.ShowPreview)));
+            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(false, unmute ? 0 : 632053052, false, chat.NotificationSettings.Sound, false, chat.NotificationSettings.ShowPreview)));
         }
 
         #endregion

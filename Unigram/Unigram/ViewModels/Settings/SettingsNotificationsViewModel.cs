@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsNotificationsViewModel : UnigramViewModelBase, IHandle<UpdateNotificationSettings>
+    public class SettingsNotificationsViewModel : UnigramViewModelBase, IHandle<UpdateScopeNotificationSettings>
     {
         private readonly IVibrationService _vibrationService;
 
@@ -34,9 +34,9 @@ namespace Unigram.ViewModels.Settings
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            ProtoService.Send(new GetNotificationSettings(new NotificationSettingsScopePrivateChats()), result =>
+            ProtoService.Send(new GetScopeNotificationSettings(new NotificationSettingsScopePrivateChats()), result =>
             {
-                if (result is NotificationSettings settings)
+                if (result is ScopeNotificationSettings settings)
                 {
                     BeginOnUIThread(() =>
                     {
@@ -46,9 +46,9 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            ProtoService.Send(new GetNotificationSettings(new NotificationSettingsScopeBasicGroupChats()), result =>
+            ProtoService.Send(new GetScopeNotificationSettings(new NotificationSettingsScopeGroupChats()), result =>
             {
-                if (result is NotificationSettings settings)
+                if (result is ScopeNotificationSettings settings)
                 {
                     BeginOnUIThread(() =>
                     {
@@ -63,12 +63,12 @@ namespace Unigram.ViewModels.Settings
 
         public Task UpdatePrivateAsync()
         {
-            return ProtoService.SendAsync(new SetNotificationSettings(new NotificationSettingsScopePrivateChats(), new NotificationSettings(_privateAlert ? 0 : int.MaxValue, string.Empty, _privatePreview)));
+            return ProtoService.SendAsync(new SetScopeNotificationSettings(new NotificationSettingsScopePrivateChats(), new ScopeNotificationSettings(_privateAlert ? 0 : int.MaxValue, string.Empty, _privatePreview)));
         }
 
         public Task UpdateGroupAsync()
         {
-            return ProtoService.SendAsync(new SetNotificationSettings(new NotificationSettingsScopeBasicGroupChats(), new NotificationSettings(_groupAlert ? 0 : int.MaxValue, string.Empty, _groupPreview)));
+            return ProtoService.SendAsync(new SetScopeNotificationSettings(new NotificationSettingsScopeGroupChats(), new ScopeNotificationSettings(_groupAlert ? 0 : int.MaxValue, string.Empty, _groupPreview)));
         }
 
         private async void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -239,7 +239,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public void Handle(UpdateNotificationSettings update)
+        public void Handle(UpdateScopeNotificationSettings update)
         {
             if (update.Scope is NotificationSettingsScopePrivateChats)
             {
@@ -249,7 +249,7 @@ namespace Unigram.ViewModels.Settings
                     PrivatePreview = update.NotificationSettings.ShowPreview;
                 });
             }
-            else if (update.Scope is NotificationSettingsScopeBasicGroupChats)
+            else if (update.Scope is NotificationSettingsScopeGroupChats)
             {
                 BeginOnUIThread(() =>
                 {

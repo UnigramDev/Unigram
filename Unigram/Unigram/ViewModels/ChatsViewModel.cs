@@ -81,7 +81,7 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> DialogNotifyCommand { get; }
         private void DialogNotifyExecute(Chat chat)
         {
-            ProtoService.Send(new SetNotificationSettings(new NotificationSettingsScopeChat(chat.Id), new NotificationSettings(chat.NotificationSettings.MuteFor > 0 ? 0 : 632053052, chat.NotificationSettings.Sound, chat.NotificationSettings.ShowPreview)));
+            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(false, chat.NotificationSettings.MuteFor > 0 ? 0 : 632053052, false, chat.NotificationSettings.Sound, false, chat.NotificationSettings.ShowPreview)));
         }
 
         public RelayCommand<Chat> DialogDeleteCommand { get; }

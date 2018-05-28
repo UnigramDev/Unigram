@@ -44,7 +44,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateUserStatus>,
         IHandle<UpdateChatTitle>,
         IHandle<UpdateChatPhoto>,
-        IHandle<UpdateNotificationSettings>,
+        IHandle<UpdateChatNotificationSettings>,
 
         IHandle<UpdateFile>
     {
@@ -202,9 +202,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        public void Handle(UpdateNotificationSettings update)
+        public void Handle(UpdateChatNotificationSettings update)
         {
-            if (update.Scope is NotificationSettingsScopeChat chat && chat.ChatId == _chat?.Id)
+            if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateNotificationSettings(_chat));
             }
