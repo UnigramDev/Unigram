@@ -337,7 +337,7 @@ namespace Unigram.Common
                 proxy.Password = password = password ?? string.Empty;
                 proxy.IsEnabled = true;
 
-                protoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
+                //protoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
             }
         }
 

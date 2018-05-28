@@ -40,6 +40,11 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsStatsPage));
         }
 
+        private void Proxy_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsProxiesPage));
+        }
+
         #region Binding
 
         private string ConvertUseLessData(DataSavingMode value)
@@ -57,6 +62,5 @@ namespace Unigram.Views.Settings
         }
 
         #endregion
-
     }
 }

@@ -267,6 +267,9 @@
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
     <Compile Include="Controls\ProfilePicture.cs" />
+    <Compile Include="Controls\ProxyStatusControl.xaml.cs">
+      <DependentUpon>ProxyStatusControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SelectGridView.cs" />
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
@@ -479,6 +482,7 @@
     <Compile Include="ViewModels\Settings\SettingsLanguageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNetworkViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsProxiesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSecurityChangePasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSecurityPasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersTrendingViewModel.cs" />
@@ -642,6 +646,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsLanguagePage.xaml.cs">
       <DependentUpon>SettingsLanguagePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsProxiesPage.xaml.cs">
+      <DependentUpon>SettingsProxiesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsSecurityChangePasswordPage.xaml.cs">
       <DependentUpon>SettingsSecurityChangePasswordPage.xaml</DependentUpon>
@@ -3703,6 +3710,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\ProxyStatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\StartupSwitch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -4049,6 +4060,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsLanguagePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsProxiesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

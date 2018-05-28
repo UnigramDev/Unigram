@@ -168,11 +168,11 @@ namespace Unigram.ViewModels.Settings
                 {
                     if (newValue)
                     {
-                        ProtoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
+                        //ProtoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
                     }
                     else
                     {
-                        ProtoService.Send(new SetProxy(new ProxyEmpty()));
+                        //ProtoService.Send(new SetProxy(new ProxyEmpty()));
                     }
                 }
             }
