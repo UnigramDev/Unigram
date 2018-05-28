@@ -50,7 +50,7 @@ namespace Unigram.Views
         IHandle<UpdateMessageMentionRead>,
         //IHandle<UpdateMessageContent>,
         IHandle<UpdateSecretChat>,
-        IHandle<UpdateNotificationSettings>,
+        IHandle<UpdateChatNotificationSettings>,
         IHandle<UpdateUnreadMessageCount>,
         IHandle<UpdateWorkMode>,
         IHandle<UpdateFile>
@@ -168,12 +168,9 @@ namespace Unigram.Views
             }
         }
 
-        public void Handle(UpdateNotificationSettings update)
+        public void Handle(UpdateChatNotificationSettings update)
         {
-            if (update.Scope is NotificationSettingsScopeChat chatScope)
-            {
-                Handle(chatScope.ChatId, (chatView, chat) => chatView.UpdateNotificationSettings(chat));
-            }
+            Handle(update.ChatId, (chatView, chat) => chatView.UpdateNotificationSettings(chat));
         }
 
         public void Handle(UpdateUnreadMessageCount update)
@@ -311,12 +308,12 @@ namespace Unigram.Views
 
             OnStateChanged(null, null);
 
-            if (ApplicationSettings.Current.Version < ApplicationSettings.CurrentVersion)
+            if (ViewModel.Chats.Settings.Version < ApplicationSettings.CurrentVersion)
             {
                 await TLMessageDialog.ShowAsync(ApplicationSettings.CurrentChangelog, "What's new", "OK");
             }
 
-            ApplicationSettings.Current.Version = ApplicationSettings.CurrentVersion;
+            ViewModel.Chats.Settings.Version = ApplicationSettings.CurrentVersion;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -976,6 +973,11 @@ namespace Unigram.Views
             //    return count < max ? Visibility.Visible : Visibility.Collapsed;
             //}
 
+            if (ViewModel.CacheService.IsChatPromoted(chat))
+            {
+                return Visibility.Collapsed;
+            }
+
             return Visibility.Visible;
         }
 
@@ -986,6 +988,11 @@ namespace Unigram.Views
 
         private Visibility DialogClear_Loaded(Chat chat)
         {
+            if (ViewModel.CacheService.IsChatPromoted(chat))
+            {
+                return Visibility.Collapsed;
+            }
+
             if (chat.Type is ChatTypeSupergroup super)
             {
                 var supergroup = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
@@ -1000,6 +1007,11 @@ namespace Unigram.Views
 
         private Visibility DialogDelete_Loaded(Chat chat)
         {
+            if (ViewModel.CacheService.IsChatPromoted(chat))
+            {
+                return Visibility.Collapsed;
+            }
+
             //if (dialog.With is TLChannel channel)
             //{
             //    return Visibility.Visible;
@@ -1034,6 +1046,11 @@ namespace Unigram.Views
 
         private Visibility DialogDeleteAndStop_Loaded(Chat chat)
         {
+            if (ViewModel.CacheService.IsChatPromoted(chat))
+            {
+                return Visibility.Collapsed;
+            }
+
             if (chat.Type is ChatTypePrivate privata)
             {
                 var user = ViewModel.ProtoService.GetUser(privata.UserId);

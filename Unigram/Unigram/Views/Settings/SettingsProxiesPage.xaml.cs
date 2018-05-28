@@ -28,7 +28,7 @@ namespace Unigram.Views.Settings
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-
+            ViewModel.EnableCommand.Execute(e.ClickedItem);
         }
     }
 }

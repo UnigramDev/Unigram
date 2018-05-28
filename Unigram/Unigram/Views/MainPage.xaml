@@ -558,7 +558,7 @@
                                                        ItemClick="ListView_ItemClick"
                                                        SelectionChanged="ListView_SelectionChanged">
                                     <ListView.ItemContainerStyleSelector>
-                                        <selectors:DialogStyleSelector>
+                                        <selectors:DialogStyleSelector CacheService="{x:Bind ViewModel.CacheService}">
                                             <selectors:DialogStyleSelector.DialogStyle>
                                                 <Style TargetType="ListViewItem">
                                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />

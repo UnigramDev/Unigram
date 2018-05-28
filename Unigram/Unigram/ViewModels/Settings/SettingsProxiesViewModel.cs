@@ -20,7 +20,11 @@ namespace Unigram.ViewModels.Settings
         {
             Items = new MvxObservableCollection<ProxyViewModel>();
 
+            ToggleCommand = new RelayCommand<bool>(ToggleExecute);
+
             AddCommand = new RelayCommand(AddExecute);
+            EnableCommand = new RelayCommand<ProxyViewModel>(EnableExecute);
+            RemoveCommand = new RelayCommand<ProxyViewModel>(RemoveExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -66,6 +70,27 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public RelayCommand<bool> ToggleCommand { get; }
+        private async void ToggleExecute(bool enable)
+        {
+            var item = _selectedItem;
+            if (item == null)
+            {
+                return;
+            }
+
+            if (enable)
+            {
+                item.IsEnabled = true;
+                var response = await ProtoService.SendAsync(new EnableProxy(item.Id));
+            }
+            else
+            {
+                item.IsEnabled = false;
+                var response = await ProtoService.SendAsync(new DisableProxy());
+            }
+        }
+
         public RelayCommand AddCommand { get; }
         private async void AddExecute()
         {
@@ -73,6 +98,16 @@ namespace Unigram.ViewModels.Settings
             if (response is Proxy proxy)
             {
                 Items.Add(new ProxyViewModel(proxy));
+            }
+        }
+
+        public RelayCommand<ProxyViewModel> EnableCommand { get; }
+        private async void EnableExecute(ProxyViewModel proxy)
+        {
+            var response = await ProtoService.SendAsync(new EnableProxy(proxy.Id));
+            if (response is Ok)
+            {
+                proxy.IsEnabled = true;
             }
         }
 
@@ -101,7 +136,7 @@ namespace Unigram.ViewModels.Settings
         }
 
         public ProxyType Type => _proxy.Type;
-        public bool IsEnabled => _proxy.IsEnabled;
+        public bool IsEnabled { get => _proxy.IsEnabled; set => _proxy.IsEnabled = value; }
         public int LastUsedDate => _proxy.LastUsedDate;
         public int Port => _proxy.Port;
         public string Server => _proxy.Server;

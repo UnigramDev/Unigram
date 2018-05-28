@@ -760,7 +760,18 @@ namespace Unigram.Common
 
 
 
+        public static bool IsMember(this Supergroup supergroup)
+        {
+            if (supergroup.Status == null)
+            {
+                return false;
+            }
 
+            return supergroup.Status is ChatMemberStatusCreator ||
+                supergroup.Status is ChatMemberStatusAdministrator ||
+                supergroup.Status is ChatMemberStatusMember ||
+                supergroup.Status is ChatMemberStatusRestricted;
+        }
 
         public static bool CanChangeInfo(this Supergroup supergroup)
         {

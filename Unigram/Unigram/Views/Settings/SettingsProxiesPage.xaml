@@ -23,7 +23,12 @@
                   SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                   Grid.Row="1">
             <ListView.Header>
-                <Button Content="add" Command="{x:Bind ViewModel.AddCommand}"/>
+                <StackPanel>
+                    <CheckBox x:Name="Toggle" Content="{CustomResource UseProxySettings}"
+                              Command="{x:Bind ViewModel.ToggleCommand}"
+                              CommandParameter="{x:Bind Toggle.IsChecked, Mode=OneWay}"/>
+                    <Button Content="add" Command="{x:Bind ViewModel.AddCommand}"/>
+                </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:ProxyViewModel">

@@ -38,6 +38,8 @@ namespace Unigram.Services
         IList<Chat> GetChats(IList<long> ids);
         IList<Chat> GetChats(int count);
 
+        bool IsChatPromoted(Chat chat);
+
         bool TryGetChatFromUser(int userId, out Chat chat);
         bool TryGetChatFromSecret(int secretId, out Chat chat);
 
@@ -91,6 +93,8 @@ namespace Unigram.Services
         private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
 
         private AutoDownloadPreferences _preferences;
+
+        private long _promotedChatId;
 
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
@@ -281,6 +285,19 @@ namespace Unigram.Services
             return false;
         }
 
+        public bool IsChatPromoted(Chat chat)
+        {
+            if (_promotedChatId == chat.Id && chat.Type is ChatTypeSupergroup type)
+            {
+                var supergroup = GetSupergroup(type.SupergroupId);
+                if (supergroup != null)
+                {
+                    return !supergroup.IsMember();
+                }
+            }
+
+            return false;
+        }
 
 
 
@@ -757,9 +774,9 @@ namespace Unigram.Services
             {
 
             }
-            else if (update is UpdateNotificationSettings updateNotificationSettings)
+            else if (update is UpdateChatNotificationSettings updateNotificationSettings)
             {
-                if (updateNotificationSettings.Scope is NotificationSettingsScopeChat chatScope && _chats.TryGetValue(chatScope.ChatId, out Chat value))
+                if (_chats.TryGetValue(updateNotificationSettings.ChatId, out Chat value))
                 {
                     value.NotificationSettings = updateNotificationSettings.NotificationSettings;
                 }
@@ -767,6 +784,10 @@ namespace Unigram.Services
             else if (update is UpdateOption updateOption)
             {
                 _options[updateOption.Name] = updateOption.Value;
+            }
+            else if (update is UpdatePromotedChat updatePromotedChat)
+            {
+                _promotedChatId = updatePromotedChat.ChatId;
             }
             else if (update is UpdateRecentStickers updateRecentStickers)
             {

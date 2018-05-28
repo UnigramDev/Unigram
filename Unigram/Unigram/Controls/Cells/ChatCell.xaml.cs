@@ -516,6 +516,11 @@ namespace Unigram.Controls.Cells
 
         private string UpdateTimeLabel(Chat chat)
         {
+            if (_protoService != null && _protoService.IsChatPromoted(chat))
+            {
+                return Strings.Resources.UseProxySponsor;
+            }
+
             var lastMessage = chat.LastMessage;
             if (lastMessage != null)
             {
