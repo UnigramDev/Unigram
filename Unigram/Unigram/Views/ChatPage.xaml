@@ -938,6 +938,11 @@
                                                 IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                                 Command="{x:Bind ViewModel.SendContactCommand}"
                                                 Tag="&#xE187;"/>
+                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                Text="{CustomResource AttachInk}"
+                                                IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                                Command="{x:Bind ViewModel.SendInkCommand}"
+                                                Tag="&#xEDC6;"/>
                                 <MenuFlyout.MenuFlyoutPresenterStyle>
                                     <Style TargetType="MenuFlyoutPresenter">
                                         <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />

@@ -650,5 +650,29 @@ namespace Unigram.ViewModels
 
             //return ProtoService.Execute(new ParseTextEntities(text.Format(), new TextParseModeMarkdown())) as FormattedText;
         }
+
+        public RelayCommand SendInkCommand { get; }
+
+        private async void SendInkExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var dialog = new SendInkView { ViewModel = this };
+
+            var dialogResult = await dialog.ShowAsync();
+
+            TextField?.FocusMaybe(FocusState.Keyboard);
+
+            if (dialogResult == ContentDialogBaseResult.OK)
+            {
+                StorageFile storageFile = await dialog.GetInkAsPngFile();
+                await SendPhotoAsync(storageFile, null, false, 0);
+            }
+        }
+
     }
 }

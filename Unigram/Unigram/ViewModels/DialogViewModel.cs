@@ -188,6 +188,7 @@ namespace Unigram.ViewModels
             SendMediaCommand = new RelayCommand(SendMediaExecute);
             SendContactCommand = new RelayCommand(SendContactExecute);
             SendLocationCommand = new RelayCommand(SendLocationExecute);
+            SendInkCommand = new RelayCommand(SendInkExecute);
 
             //Items = new LegacyMessageCollection();
             //Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
