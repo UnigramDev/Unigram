@@ -11,7 +11,7 @@
 
     <views:UsersSelectionView>
         <views:UsersSelectionView.Header>
-            <controls:HyperButton
+            <Button
                 Click="Invite_Click"
                 Visibility="{x:Bind (Visibility)ViewModel.IsCreator, Mode=OneWay}"
                 Style="{StaticResource HyperButtonStyle}">
@@ -22,7 +22,7 @@
                     <TextBlock Text="{CustomResource InviteToGroupByLink}" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.IsGroup, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBlock Text="{CustomResource ChannelInviteViaLink}" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.IsGroup, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
                 </StackPanel>
-            </controls:HyperButton>
+            </Button>
         </views:UsersSelectionView.Header>
     </views:UsersSelectionView>
 </Page>

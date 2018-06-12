@@ -99,9 +99,9 @@
                 </UserControl>
 
                 <StackPanel x:Name="DismissPanel" Visibility="Collapsed" Margin="0,24">
-                    <controls:HyperButton Command="{x:Bind ViewModel.DismissCommand}"
-                                          Style="{StaticResource HyperButtonStyle}"
-                                          Content="{CustomResource EditAdminRemoveAdmin}"/>
+                    <Button Command="{x:Bind ViewModel.DismissCommand}"
+                            Style="{StaticResource HyperButtonStyle}"
+                            Content="{CustomResource EditAdminRemoveAdmin}"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

@@ -42,7 +42,7 @@
                         IsOn="{x:Bind ViewModel.Passcode.IsEnabled, Mode=OneWay}"
                         Header="{CustomResource Passcode}"
                         Style="{ThemeResource CheckButtonStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         Click="Edit_Click"
                         IsEnabled="{x:Bind ViewModel.Passcode.IsEnabled, Mode=OneWay}"
                         Tag="{CustomResource ChangePasscode}"

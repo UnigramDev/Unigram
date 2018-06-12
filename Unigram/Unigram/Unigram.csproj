@@ -3291,7 +3291,6 @@
     <Compile Include="Controls\BubbleListViewItem.cs" />
     <Compile Include="Controls\BubbleTextBox.cs" />
     <Compile Include="Controls\GlyphButton.cs" />
-    <Compile Include="Controls\HyperButton.cs" />
     <Compile Include="Controls\InputDialog.xaml.cs">
       <DependentUpon>InputDialog.xaml</DependentUpon>
     </Compile>

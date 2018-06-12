@@ -250,7 +250,7 @@
                     </StackPanel>
                 </Grid>
 
-                <controls:HyperButton
+                <Button
                     Content="{CustomResource ChatBackground}"
                     Click="Wallpaper_Click"
                     Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"

@@ -135,18 +135,18 @@
                 </Grid>
 
                 <StackPanel>
-                    <controls:HyperButton x:Name="PhoneNumber"
-                                          Tag="{CustomResource Phone}"
-                                          Style="{StaticResource SubtitleButtonStyle}"
-                                          Click="Phone_Click"/>
-                    <controls:HyperButton x:Name="Username"
-                                          Tag="{CustomResource Username}"
-                                          Style="{StaticResource SubtitleButtonStyle}"
-                                          Click="Username_Click"/>
-                    <controls:HyperButton x:Name="Bio"
-                                          Tag="{CustomResource UserBio}"
-                                          Style="{StaticResource SubtitleButtonStyle}"
-                                          Click="About_Click"/>
+                    <Button x:Name="PhoneNumber"
+                            Tag="{CustomResource Phone}"
+                            Style="{StaticResource SubtitleButtonStyle}"
+                            Click="Phone_Click"/>
+                    <Button x:Name="Username"
+                            Tag="{CustomResource Username}"
+                            Style="{StaticResource SubtitleButtonStyle}"
+                            Click="Username_Click"/>
+                    <Button x:Name="Bio"
+                            Tag="{CustomResource UserBio}"
+                            Style="{StaticResource SubtitleButtonStyle}"
+                            Click="About_Click"/>
                 </StackPanel>
 
                 <StackPanel Margin="0,24,0,0">
