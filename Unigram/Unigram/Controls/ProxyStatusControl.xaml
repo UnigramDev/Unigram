@@ -9,5 +9,21 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <TextBlock x:Name="Label" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+    <TextBlock x:Name="Label" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Connected"/>
+                <VisualState x:Name="Available">
+                    <VisualState.Setters>
+                        <Setter Target="Label.Foreground" Value="{ThemeResource MessageCallForegroundBrush}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Unavailable">
+                    <VisualState.Setters>
+                        <Setter Target="Label.Foreground" Value="{ThemeResource MessageCallMissedForegroundBrush}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </TextBlock>
 </UserControl>

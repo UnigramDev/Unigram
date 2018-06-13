@@ -7,24 +7,28 @@ using Telegram.Td.Api;
 using Template10.Mvvm;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Core.Common;
 using Unigram.Services;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsProxiesViewModel : UnigramViewModelBase
+    public class SettingsProxiesViewModel : UnigramViewModelBase, IHandle<UpdateConnectionState>
     {
         public SettingsProxiesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<ProxyViewModel>();
-
-            ToggleCommand = new RelayCommand<bool>(ToggleExecute);
+            Items = new MvxObservableCollection<ConnectionViewModel>();
 
             AddCommand = new RelayCommand(AddExecute);
-            EnableCommand = new RelayCommand<ProxyViewModel>(EnableExecute);
+            EnableCommand = new RelayCommand<ConnectionViewModel>(EnableExecute);
             RemoveCommand = new RelayCommand<ProxyViewModel>(RemoveExecute);
+            ShareCommand = new RelayCommand<ProxyViewModel>(ShareExecute);
+
+            aggregator.Subscribe(this);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -32,10 +36,16 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.SendAsync(new GetProxies());
             if (response is Proxies proxies)
             {
-                var items = proxies.ProxiesValue.Select(x => new ProxyViewModel(x)).ToList();
+                var items = proxies.ProxiesValue.Select(x => new ProxyViewModel(x) as ConnectionViewModel).ToList();
+                items.Insert(0, new ConnectionViewModel());
 
                 Items.ReplaceWith(items);
-                SelectedItem = items.FirstOrDefault(x => x.IsEnabled);
+                SelectedItem = items.OfType<ProxyViewModel>().FirstOrDefault(x => x.IsEnabled) ?? items.FirstOrDefault();
+
+                if (_selectedItem != null)
+                {
+                    _selectedItem.IsEnabled = true;
+                }
 
                 Parallel.ForEach(items, async proxy =>
                 {
@@ -44,21 +54,54 @@ namespace Unigram.ViewModels.Settings
                     {
                         if (status is Seconds seconds)
                         {
-                            proxy.Status = new ProxyStatus(seconds.SecondsValue);
+                            proxy.Seconds = seconds.SecondsValue;
+                            proxy.Status = new ConnectionStatusReady(proxy.IsEnabled, seconds.SecondsValue);
                         }
                         else if (status is Error error)
                         {
-                            proxy.Status = new ProxyStatus(error);
+                            proxy.Status = new ConnectionStatusError(error);
                         }
                     });
                 });
             }
         }
 
-        public MvxObservableCollection<ProxyViewModel> Items { get; private set; }
+        public void Handle(UpdateConnectionState update)
+        {
+            BeginOnUIThread(() => Handle(update.State));
+        }
 
-        private ProxyViewModel _selectedItem;
-        public ProxyViewModel SelectedItem
+        private void Handle(ConnectionState state)
+        {
+            foreach (var item in Items)
+            {
+                if (!item.IsEnabled)
+                {
+                    item.Status = new ConnectionStatusReady(false, item.Seconds);
+                    continue;
+                }
+
+                switch (state)
+                {
+                    case ConnectionStateWaitingForNetwork waitingForNetwork:
+                        //ShowStatus(Strings.Resources.WaitingForNetwork);
+                        break;
+                    case ConnectionStateConnecting connecting:
+                    case ConnectionStateConnectingToProxy connectingToProxy:
+                        item.Status = new ConnectionStatusConnecting();
+                        break;
+                    case ConnectionStateUpdating updating:
+                    case ConnectionStateReady ready:
+                        item.Status = new ConnectionStatusReady(true, item.Seconds);
+                        break;
+                }
+            }
+        }
+
+        public MvxObservableCollection<ConnectionViewModel> Items { get; private set; }
+
+        private ConnectionViewModel _selectedItem;
+        public ConnectionViewModel SelectedItem
         {
             get
             {
@@ -70,80 +113,81 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<bool> ToggleCommand { get; }
-        private async void ToggleExecute(bool enable)
+        public RelayCommand AddCommand { get; }
+        private async void AddExecute()
         {
-            var item = _selectedItem;
-            if (item == null)
+            var dialog = new ProxyView();
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            if (enable)
-            {
-                item.IsEnabled = true;
-                var response = await ProtoService.SendAsync(new EnableProxy(item.Id));
-            }
-            else
-            {
-                item.IsEnabled = false;
-                var response = await ProtoService.SendAsync(new DisableProxy());
-            }
-        }
-
-        public RelayCommand AddCommand { get; }
-        private async void AddExecute()
-        {
-            var response = await ProtoService.SendAsync(new AddProxy("192.168.1.55", 8888, false, new ProxyTypeMtproto("fdda254c78d9fa202ac536079e88b808")));
+            var response = await ProtoService.SendAsync(new AddProxy(dialog.Server, dialog.Port, false, dialog.Type));
             if (response is Proxy proxy)
             {
                 Items.Add(new ProxyViewModel(proxy));
             }
         }
 
-        public RelayCommand<ProxyViewModel> EnableCommand { get; }
-        private async void EnableExecute(ProxyViewModel proxy)
+        public RelayCommand<ConnectionViewModel> EnableCommand { get; }
+        private async void EnableExecute(ConnectionViewModel connection)
         {
-            var response = await ProtoService.SendAsync(new EnableProxy(proxy.Id));
-            if (response is Ok)
+            MarkAsEnabled(connection);
+
+            if (connection is ProxyViewModel proxy)
             {
-                proxy.IsEnabled = true;
+                await ProtoService.SendAsync(new EnableProxy(proxy.Id));
             }
+            else
+            {
+                await ProtoService.SendAsync(new DisableProxy());
+            }
+
+            Handle(ProtoService.GetConnectionState());
         }
 
         public RelayCommand<ProxyViewModel> RemoveCommand { get; }
         private async void RemoveExecute(ProxyViewModel proxy)
         {
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.DeleteProxy, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+            if (confirm != ContentDialogResult.Primary)
             {
-                var response = await ProtoService.SendAsync(new RemoveProxy(proxy.Id));
-                if (response is Ok)
-                {
-                    Items.Remove(proxy);
-                }
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new RemoveProxy(proxy.Id));
+            if (response is Ok)
+            {
+                Items.Remove(proxy);
+            }
+
+            Handle(ProtoService.GetConnectionState());
+        }
+
+        public RelayCommand<ProxyViewModel> ShareCommand { get; }
+        private async void ShareExecute(ProxyViewModel proxy)
+        {
+            var response = await ProtoService.SendAsync(new GetProxyLink(proxy.Id));
+            if (response is Text text && Uri.TryCreate(text.TextValue, UriKind.Absolute, out Uri uri))
+            {
+                await ShareView.GetForCurrentView().ShowAsync(uri, Strings.Resources.Proxy);
+            }
+        }
+
+        private void MarkAsEnabled(ConnectionViewModel connection)
+        {
+            foreach (var item in Items)
+            {
+                item.IsEnabled = item.Id == connection.Id;
             }
         }
     }
 
-    public class ProxyViewModel : BindableBase
+    public class ConnectionViewModel : BindableBase
     {
-        private readonly Proxy _proxy;
-
-        public ProxyViewModel(Proxy proxy)
-        {
-            _proxy = proxy;
-        }
-
-        public ProxyType Type => _proxy.Type;
-        public bool IsEnabled { get => _proxy.IsEnabled; set => _proxy.IsEnabled = value; }
-        public int LastUsedDate => _proxy.LastUsedDate;
-        public int Port => _proxy.Port;
-        public string Server => _proxy.Server;
-        public int Id => _proxy.Id;
-
-        private ProxyStatus _status;
-        public ProxyStatus Status
+        private ConnectionStatus _status = new ConnectionStatusChecking();
+        public ConnectionStatus Status
         {
             get
             {
@@ -154,21 +198,61 @@ namespace Unigram.ViewModels.Settings
                 Set(ref _status, value);
             }
         }
+
+        public double Seconds { get; set; }
+
+        public virtual bool IsEnabled { get; set; }
+        public virtual int Id { get; private set; }
     }
 
-    public class ProxyStatus
+    public class ProxyViewModel : ConnectionViewModel
     {
-        public ProxyStatus(double seconds)
+        private readonly Proxy _proxy;
+
+        public ProxyViewModel(Proxy proxy)
         {
+            _proxy = proxy;
+        }
+
+        public ProxyType Type => _proxy.Type;
+        public override bool IsEnabled { get => _proxy.IsEnabled; set => _proxy.IsEnabled = value; }
+        public int LastUsedDate => _proxy.LastUsedDate;
+        public int Port => _proxy.Port;
+        public string Server => _proxy.Server;
+        public override int Id => _proxy.Id;
+    }
+
+    public interface ConnectionStatus
+    {
+    }
+
+    public class ConnectionStatusChecking : ConnectionStatus
+    {
+    }
+
+    public class ConnectionStatusConnecting : ConnectionStatus
+    {
+    }
+
+    public class ConnectionStatusReady : ConnectionStatus
+    {
+        public ConnectionStatusReady(bool connected, double seconds)
+        {
+            IsConnected = connected;
             Seconds = seconds;
         }
 
-        public ProxyStatus(Error error)
+        public bool IsConnected { get; private set; }
+        public double Seconds { get; private set; }
+    }
+
+    public class ConnectionStatusError : ConnectionStatus
+    {
+        public ConnectionStatusError(Error error)
         {
             Error = error;
         }
 
-        public double Seconds { get; private set; }
         public Error Error { get; private set; }
     }
 }

@@ -47,6 +47,8 @@ namespace Unigram.Views
             bundle.TryGetValue("message", out long messageId);
             bundle.TryGetValue("chat", out long chatId);
 
+            _shareMessage = new Message { ChatId = chatId, Id = messageId };
+
             //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
             //{
             //    var tuple = new TLTuple<string, string, string, TLMessage>(from);
@@ -70,7 +72,7 @@ namespace Unigram.Views
 
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
-            //await ShareView.GetForCurrentView().ShowAsync(_shareMessage);
+            await ShareView.GetForCurrentView().ShowAsync(_shareMessage);
         }
 
         private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
@@ -79,7 +81,7 @@ namespace Unigram.Views
             {
                 this.BeginOnUIThread(async () =>
                 {
-                    //await ShareView.GetForCurrentView().ShowAsync(_shareMessage, withMyScore);
+                    await ShareView.GetForCurrentView().ShowAsync(_shareMessage, withMyScore);
                 });
             }));
         }

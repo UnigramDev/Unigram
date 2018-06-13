@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
     xmlns:viewModels="using:Unigram.ViewModels.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -15,7 +16,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="{CustomResource Proxy}" />
+        <controls:PageHeader Text="{CustomResource ProxySettings}" />
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
                   ItemClick="List_ItemClick"
@@ -24,26 +25,58 @@
                   Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
-                    <CheckBox x:Name="Toggle" Content="{CustomResource UseProxySettings}"
-                              Command="{x:Bind ViewModel.ToggleCommand}"
-                              CommandParameter="{x:Bind Toggle.IsChecked, Mode=OneWay}"/>
-                    <Button Content="add" Command="{x:Bind ViewModel.AddCommand}"/>
+                    <Button
+                        Tag="{CustomResource AddProxy}"
+                        Command="{x:Bind ViewModel.AddCommand}"
+                        Style="{StaticResource HyperDetailButtonStyle}"
+                        Margin="0,0,0,12"/>
                 </StackPanel>
             </ListView.Header>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:ProxyViewModel">
-                    <Grid Margin="0,6" Background="Transparent">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis">
-                            <Run Text="{x:Bind Server}"/><Run Text=":"/><Run Text="{x:Bind Port}"/>
-                        </TextBlock>
-                        <controls:ProxyStatusControl Status="{x:Bind Status, Mode=OneWay}" VerticalAlignment="Top" Grid.Row="1"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+            <ListView.ItemTemplateSelector>
+                <selectors:ConnectionTemplateSelector>
+                    <selectors:ConnectionTemplateSelector.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:ConnectionViewModel">
+                            <Grid Margin="0,12" Background="Transparent">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="Without Proxy" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                                <controls:ProxyStatusControl Status="{x:Bind Status, Mode=OneWay}" VerticalAlignment="Top" Grid.Row="1"/>
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:ConnectionTemplateSelector.ItemTemplate>
+                    <selectors:ConnectionTemplateSelector.ProxyTemplate>
+                        <DataTemplate x:DataType="viewModels:ProxyViewModel">
+                            <Grid Margin="0,12" Background="Transparent" ContextRequested="Proxy_ContextRequested">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis">
+                                    <Run Text="{x:Bind Server}"/><Run Text=":"/><Run Text="{x:Bind Port}"/>
+                                </TextBlock>
+                                <controls:ProxyStatusControl Status="{x:Bind Status, Mode=OneWay}" VerticalAlignment="Top" Grid.Row="1"/>
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:ConnectionTemplateSelector.ProxyTemplate>
+                </selectors:ConnectionTemplateSelector>
+            </ListView.ItemTemplateSelector>
+            <ListView.Footer>
+                <StackPanel>
+                    <CheckBox
+                        x:Name="FieldCalls"
+                        Content="{CustomResource UseProxyForCalls}"
+                        IsEnabled="False"
+                        Margin="12,12,12,4"/>
+                    <TextBlock
+                        Text="{CustomResource UseProxyForCallsInfo}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,0,12,12"
+                        Grid.Row="6"/>
+                </StackPanel>
+            </ListView.Footer>
         </ListView>
     </Grid>
 </Page>

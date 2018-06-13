@@ -14,8 +14,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls
 {
     public sealed partial class ProxyStatusControl : UserControl
@@ -25,25 +23,57 @@ namespace Unigram.Controls
             this.InitializeComponent();
         }
 
-        public ProxyStatus Status
+        public ConnectionStatus Status
         {
             set => UpdateView(value);
         }
 
-        private void UpdateView(ProxyStatus value)
+        private void UpdateView(ConnectionStatus value)
         {
-            if (value == null)
+            if (value is ConnectionStatusChecking)
             {
-                Label.Text = Strings.Resources.Checking;
+                UpdateTextAndState(Strings.Resources.Checking, nameof(Connected));
             }
-            else if (value.Error == null)
+            else if (value is ConnectionStatusConnecting)
             {
-                Label.Text = string.Format(Strings.Resources.Ping, value.Seconds * 1000);
+                UpdateTextAndState(Strings.Resources.Connecting, nameof(Connected));
+            }
+            else if (value is ConnectionStatusReady ready)
+            {
+                if (ready.IsConnected)
+                {
+                    if (ready.Seconds != 0)
+                    {
+                        UpdateTextAndState(string.Format(Strings.Resources.Connected + ", " + Strings.Resources.Ping, Math.Truncate(ready.Seconds * 1000)), nameof(Connected));
+                    }
+                    else
+                    {
+                        UpdateTextAndState(Strings.Resources.Connected, nameof(Connected));
+                    }
+                }
+                else
+                {
+                    if (ready.Seconds != 0)
+                    {
+                        UpdateTextAndState(string.Format(Strings.Resources.Available + ", " + Strings.Resources.Ping, Math.Truncate(ready.Seconds * 1000)), nameof(Available));
+                    }
+                    else
+                    {
+                        UpdateTextAndState(Strings.Resources.Available, nameof(Available));
+                    }
+                }
             }
             else
             {
-                Label.Text = Strings.Resources.Unavailable;
+                UpdateTextAndState(Strings.Resources.Unavailable, nameof(Unavailable));
             }
+        }
+
+        private void UpdateTextAndState(string text, string state)
+        {
+            VisualStateManager.GoToState(this, state, false);
+
+            Label.Text = text;
         }
     }
 }

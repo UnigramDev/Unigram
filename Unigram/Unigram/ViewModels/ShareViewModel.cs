@@ -224,14 +224,14 @@ namespace Unigram.ViewModels
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, false));
-                    //if (response is Telegram.Td.Api.Messages messages)
-                    //{
-                    //    foreach (var message in messages.MessagesValue)
-                    //    {
-                    //        Aggregator.Publish(new UpdateNewMessage(message, true, false));
-                    //    }
-                    //}
+                    if (IsWithMyScore)
+                    {
+                        var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, false, false, null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true)));
+                    }
+                    else
+                    {
+                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, false));
+                    }
                 }
 
                 NavigationService.GoBack();
@@ -245,8 +245,14 @@ namespace Unigram.ViewModels
 
                 NavigationService.GoBack();
             }
-            else if (ShareLink != null)
+            else if (_shareLink != null)
             {
+                var formatted = new FormattedText(_shareLink.ToString(), new TextEntity[0]);
+
+                foreach (var chat in chats)
+                {
+                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, false, false, null, new InputMessageText(formatted, false, false)));
+                }
 
                 NavigationService.GoBack();
             }
