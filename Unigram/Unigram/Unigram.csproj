@@ -390,6 +390,7 @@
     <Compile Include="Logs\Logger.cs" />
     <Compile Include="Logs\LogHelper.cs" />
     <Compile Include="Logs\LogLevel.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
     <Compile Include="Selectors\ParticipantTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />

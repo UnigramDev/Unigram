@@ -95,12 +95,17 @@ namespace Unigram
 
         private MediaExtensionManager m_mediaExtensionManager;
 
+        public App() : this(0)
+        {
+
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
-        public App()
+        public App(int session)
         {
             if (ApplicationSettings.Current.RequestedTheme != ElementTheme.Default)
             {
@@ -111,7 +116,7 @@ namespace Unigram
             Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en";
 #endif
 
-            Locator.Configure();
+            Locator.Configure(session);
 
             InitializeComponent();
 

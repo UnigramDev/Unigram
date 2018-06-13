@@ -26,7 +26,7 @@ namespace Unigram.Views
             }
         }
 
-        public void Build(Func<ContainerBuilder, int, IContainer> factory)
+        public void Build(int id, Func<ContainerBuilder, int, IContainer> factory)
         {
             //for (int i = 0; i < Telegram.Api.Constants.AccountsMaxCount; i++)
             //{
@@ -38,7 +38,7 @@ namespace Unigram.Views
 
             //}
 
-            _containers[0] = factory(new ContainerBuilder(), 0);
+            _containers[id] = factory(new ContainerBuilder(), id);
         }
 
         public TService Resolve<TService>(int account = int.MaxValue)
