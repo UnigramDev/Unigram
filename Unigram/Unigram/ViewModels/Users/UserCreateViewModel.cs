@@ -156,7 +156,7 @@ namespace Unigram.ViewModels.Users
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var response = await ProtoService.SendAsync(new ImportContacts(new[] { new Contact() }));
+            var response = await ProtoService.SendAsync(new ImportContacts(new[] { new Contact(_phoneCode + _phoneNumber, _firstName, _lastName, 0) }));
             if (response is ImportedContacts imported)
             {
                 if (imported.UserIds.Count > 0)
