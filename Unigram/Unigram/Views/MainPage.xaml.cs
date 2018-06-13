@@ -175,7 +175,11 @@ namespace Unigram.Views
 
         public void Handle(UpdateUnreadMessageCount update)
         {
-            this.BeginOnUIThread(() => ViewModel.UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount);
+            this.BeginOnUIThread(() =>
+            {
+                ViewModel.UnreadUnmutedCount = update.UnreadUnmutedCount;
+                ViewModel.UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
+            });
         }
 
         public void Handle(UpdateWorkMode update)
@@ -915,6 +919,7 @@ namespace Unigram.Views
 
             CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Chats.DialogPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop);
             CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Chats.DialogNotifyCommand, chat, chat.NotificationSettings.MuteFor > 0 ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications);
+            CreateFlyoutItem(ref flyout, DialogMark_Loaded, null, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread);
             CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Chats.DialogClearCommand, chat, Strings.Resources.ClearHistory);
             CreateFlyoutItem(ref flyout, DialogDelete_Loaded, ViewModel.Chats.DialogDeleteCommand, chat, DialogDelete_Text(chat));
             CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Chats.DialogDeleteAndStopCommand, chat, Strings.Resources.DeleteAndStop);
@@ -963,6 +968,11 @@ namespace Unigram.Views
 
                 flyout.Items.Add(flyoutItem);
             }
+        }
+
+        private Visibility DialogMark_Loaded(Chat chat)
+        {
+            return Visibility.Visible;
         }
 
         private Visibility DialogPin_Loaded(Chat chat)

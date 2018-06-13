@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/13/2018 13:44:18
+// 	Generated: 06/13/2018 19:22:39
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -21100,6 +21100,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SignUp");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mark as read"
+        /// </summary>
+        public static string MarkAsRead
+        {
+            get
+            {
+                return resourceLoader.GetString("MarkAsRead");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mark as unread"
+        /// </summary>
+        public static string MarkAsUnread
+        {
+            get
+            {
+                return resourceLoader.GetString("MarkAsUnread");
             }
         }
     }

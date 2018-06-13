@@ -437,6 +437,17 @@ namespace Unigram.Common
             }
         }
 
+        public static bool IsUnread(this Chat chat)
+        {
+            // TODO: next tdlib version
+            //if (chat.HasUnreadMark)
+            //{
+            //    return true;
+            //}
+
+            return chat.UnreadCount > 0;
+        }
+
         public static bool IsForever(this ChatMemberStatusRestricted restricted)
         {
             return restricted.RestrictedUntilDate == 0 || Math.Abs(restricted.RestrictedUntilDate - DateTime.Now.ToTimestamp() / 1000) > 5 * 365 * 24 * 60 * 60;

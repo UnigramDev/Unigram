@@ -93,6 +93,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private int _unreadUnmutedCount;
+        public int UnreadUnmutedCount
+        {
+            get
+            {
+                return _unreadUnmutedCount;
+            }
+            set
+            {
+                Set(ref _unreadUnmutedCount, value);
+            }
+        }
+
         #region Typing
 
         //public void Handle(TLUpdateUserTyping update)

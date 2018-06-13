@@ -5877,4 +5877,10 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   <data name="SignUp" xml:space="preserve">
     <value>SignUp</value>
   </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>Mark as read</value>
+  </data>
+  <data name="MarkAsUnread" xml:space="preserve">
+    <value>Mark as unread</value>
+  </data>
 </root>
