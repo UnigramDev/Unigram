@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Telegram.Td.Api;
@@ -17,6 +18,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages
 {
@@ -634,7 +636,8 @@ namespace Unigram.Controls.Messages
             {
                 if (entity.Offset > previous)
                 {
-                    span.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
+                    //span.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
+                    AddRawText(new RichTextBlock(), span, text.Substring(previous, entity.Offset - previous), FontStyle.Normal, FontWeights.Normal, new FontFamily("Segoe UI"));
                 }
 
                 if (entity.Length + entity.Offset > text.Length)
@@ -701,7 +704,8 @@ namespace Unigram.Controls.Messages
 
             if (text.Length > previous)
             {
-                span.Inlines.Add(new Run { Text = text.Substring(previous) });
+                //span.Inlines.Add(new Run { Text = text.Substring(previous) });
+                AddRawText(new RichTextBlock(), span, text.Substring(previous), FontStyle.Normal, FontWeights.Normal, new FontFamily("Segoe UI"));
             }
 
             if (MessageHelper.IsAnyCharacterRightToLeft(text))
@@ -710,6 +714,255 @@ namespace Unigram.Controls.Messages
             }
 
             return true;
+        }
+
+        private static void AddRawText(RichTextBlock text_block, Span par, string raw_text, FontStyle fontStyle, FontWeight fontWeight, FontFamily fontFamily)
+        {
+            var textEnumerator = StringInfo.GetTextElementEnumerator(raw_text);
+            bool cont = false;
+
+            var nextElements = new List<Tuple<string, byte[], string>>();
+
+            //string nextText = null;
+            //byte[] nextBytes = null;
+            //string nextBytesStr = null;
+
+            StringBuilder sb = new StringBuilder();
+
+            // Note: Begins at element -1 (none).
+            cont = textEnumerator.MoveNext();
+            while (cont)
+            {
+                string text;
+                byte[] bytes;
+                string bytesStr;
+
+                if (nextElements.Count > 0)
+                {
+                    text = nextElements[0].Item1;
+                    bytes = nextElements[0].Item2;
+                    bytesStr = nextElements[0].Item3;
+
+                    nextElements.RemoveAt(0);
+                }
+                else
+                {
+                    text = textEnumerator.GetTextElement();
+                    bytes = Encoding.BigEndianUnicode.GetBytes(text);
+                    bytesStr = ConvertToHexString(bytes);
+                }
+
+                if (Emoji.FlagsPrefixes.ContainsKey(bytesStr) && textEnumerator.MoveNext())
+                {
+                    var text2 = textEnumerator.GetTextElement();
+                    var bytes2 = Encoding.BigEndianUnicode.GetBytes(text2);
+                    var bytesStr2 = ConvertToHexString(bytes2);
+
+                    bytesStr += bytesStr2;
+                    text += text2;
+                }
+
+                string bytesValue2;
+                if (string.IsNullOrEmpty(bytesStr)
+                    || Emoji.SkinsDict.TryGetValue(bytesStr, out bytesValue2))
+                {
+                    if (nextElements.Count == 0)
+                    {
+                        cont = textEnumerator.MoveNext();
+                    }
+                    continue;   //skip unknown skin emoji
+                }
+
+                string bytesValue;
+                TreeNode node;
+                //System.Diagnostics.Debug.WriteLine(bytesStr);
+                // skinned emoji
+                if (Emoji.SkinnedDict.TryGetValue(bytesStr, out bytesValue))
+                {
+                    if (textEnumerator.MoveNext())
+                    {
+                        var text2 = textEnumerator.GetTextElement();
+                        var bytes2 = Encoding.BigEndianUnicode.GetBytes(text2);
+                        var bytesStr2 = ConvertToHexString(bytes2);
+
+                        if (string.IsNullOrEmpty(bytesStr2))
+                        {
+                            if (textEnumerator.MoveNext())
+                            {
+                                text2 = textEnumerator.GetTextElement();
+                                bytes2 = Encoding.BigEndianUnicode.GetBytes(text2);
+                                bytesStr2 = ConvertToHexString(bytes2);
+                            }
+                        }
+
+                        // skins
+                        if (Emoji.SkinsDict.TryGetValue(bytesStr2, out bytesValue2) && Emoji.SkinnedDict.TryGetValue(bytesStr + bytesStr2, out bytesValue2))
+                        {
+                            bytesValue = bytesValue2;
+                        }
+                        // joined emoji
+                        else if (Emoji.JoinedEmojiTree.Values.TryGetValue(bytesStr, out node) && node.Values.TryGetValue(bytesStr2, out node))
+                        {
+                            var initBytesValue = bytesValue;
+                            bytesValue += bytesStr2;
+
+                            var localNextElements = new List<Tuple<string, byte[], string>>();
+
+                            var isJoinedEmoji = true;
+
+                            cont = textEnumerator.MoveNext();
+                            while (cont)
+                            {
+                                text2 = textEnumerator.GetTextElement();
+                                bytes2 = Encoding.BigEndianUnicode.GetBytes(text2);
+                                bytesStr2 = ConvertToHexString(bytes2);
+                                localNextElements.Add(new Tuple<string, byte[], string>(text2, bytes2, bytesStr2));
+
+                                if (string.IsNullOrEmpty(bytesStr2))
+                                {
+                                    if (textEnumerator.MoveNext())
+                                    {
+                                        text2 = textEnumerator.GetTextElement();
+                                        bytes2 = Encoding.BigEndianUnicode.GetBytes(text2);
+                                        bytesStr2 = ConvertToHexString(bytes2);
+                                        localNextElements.Add(new Tuple<string, byte[], string>(text2, bytes2, bytesStr2));
+                                    }
+                                }
+
+                                var previousNode = node;
+                                if (node.Values.TryGetValue(bytesStr2, out node))
+                                {
+                                    bytesValue += bytesStr2;
+                                    if (node.Values.Count == 0)
+                                    {
+                                        localNextElements.Clear();
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    if (previousNode.IsEnded)
+                                    {
+                                        localNextElements.Clear();
+                                        localNextElements.Add(new Tuple<string, byte[], string>(text2, bytes2, bytesStr2));
+                                    }
+
+                                    isJoinedEmoji = previousNode.IsEnded;
+                                    break;
+                                }
+
+                                cont = textEnumerator.MoveNext();
+                                if (!cont)
+                                {
+                                    localNextElements.Clear();
+                                }
+                            }
+
+                            if (!isJoinedEmoji)
+                            {
+                                bytesValue = initBytesValue;
+                            }
+
+                            for (var i = 0; i < localNextElements.Count; i++)
+                            {
+                                nextElements.Add(localNextElements[i]);
+                            }
+                        }
+                        else
+                        {
+                            nextElements.Add(new Tuple<string, byte[], string>(text2, bytes2, bytesStr2));
+                        }
+                    }
+
+                    AddTextAndEmoji(text_block, par, fontStyle, fontWeight, fontFamily, sb, bytesValue);
+                }
+                else if (Emoji.Dict.TryGetValue(bytesStr, out bytesValue))
+                {
+                    AddTextAndEmoji(text_block, par, fontStyle, fontWeight, fontFamily, sb, bytesValue);
+                }
+                else
+                {
+                    sb = sb.Append(text);
+                }
+
+                if (nextElements.Count == 0)
+                {
+                    cont = textEnumerator.MoveNext();
+                }
+            }
+
+            var sbStrLast = sb.ToString();
+
+            if (sbStrLast != string.Empty)
+            {
+                par.Inlines.Add(GetRunWithStyle(sbStrLast, text_block, fontStyle, fontWeight, fontFamily));
+            }
+        }
+
+        private static void AddTextAndEmoji(RichTextBlock text_block, Span par, FontStyle fontStyle, FontWeight fontWeight, FontFamily fontFamily, StringBuilder sb, string bytesValue)
+        {
+            var sbStr = sb.ToString();
+            sb.Clear();
+            if (sbStr != string.Empty)
+            {
+                par.Inlines.Add(GetRunWithStyle(sbStr, text_block, fontStyle, fontWeight, fontFamily));
+            }
+            double imageHeight;
+            //System.Diagnostics.Debug.WriteLine(bytesValue);
+            par.Inlines.Add(GetImage(bytesValue, out imageHeight));
+            text_block.MinHeight = imageHeight; //+ 10;
+        }
+
+        public static string ConvertToHexString(byte[] bytes)
+        {
+            //remove end FE0F/FE0E bytes
+            var length = bytes.Length;
+            if (bytes.Length >= 2
+                && bytes[bytes.Length - 2] == 254
+                && (bytes[bytes.Length - 1] == 15 || bytes[bytes.Length - 1] == 14))
+            {
+                length -= 2;
+            }
+            var sb = new StringBuilder();
+            for (var i = 0; i < length; i++)
+            {
+                sb = sb.Append(System.Convert.ToString(bytes[i], 16).PadLeft(2, '0'));
+            }
+
+            return sb.ToString().ToUpperInvariant();
+        }
+
+        // Fetch run with PhoneTextNormalStyle
+        public static Run GetRunWithStyle(string text, RichTextBlock richTextBox, FontStyle fontStyle, FontWeight fontWeight, FontFamily fontFamily)
+        {
+            var run = new Run();
+
+            run.FontFamily = richTextBox.FontFamily;
+            //run.FontSize = richTextBox.FontSize * TextScaleFactor;
+            //run.Foreground = richTextBox.Foreground;// (Brush)Application.Current.Resources["PhoneForegroundBrush"];
+            run.Text = text;
+            run.FontStyle = fontStyle;
+            run.FontWeight = fontWeight;
+            run.FontFamily = fontFamily;
+
+            return run;
+        }
+
+        private static InlineUIContainer GetImage(string name, out double height)
+        {
+            var image = new Image();
+            image.Source = new BitmapImage(new Uri(string.Format("ms-appx:///Assets/Emojis/Separated/{0}.png", name))) { DecodePixelWidth = 18, DecodePixelHeight = 18, DecodePixelType = DecodePixelType.Logical };
+            image.Height = 18;
+            image.Width = 18;
+            image.VerticalAlignment = VerticalAlignment.Center;
+            image.Margin = new Thickness(0, 4.0, 0, -4.0);
+            var container = new InlineUIContainer { };
+
+            height = image.Height;
+
+            container.Child = image;//new Border {Child = image, Background = new SolidColorBrush(Colors.Red), Opacity = 0.7};
+
+            return container;
         }
 
         private void Entity_Click(MessageViewModel message, TextEntityType type, string data)

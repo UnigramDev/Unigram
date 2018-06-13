@@ -588,7 +588,7 @@ namespace Unigram.Controls
 
                 if (fast)
                 {
-                    if (Emoji.ContainsSingleEmoji(text) && !string.IsNullOrWhiteSpace(text) && ViewModel.EditedMessage == null)
+                    if (Emojis.ContainsSingleEmoji(text) && !string.IsNullOrWhiteSpace(text) && ViewModel.EditedMessage == null)
                     {
                         ViewModel.StickerPack = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
                     }
