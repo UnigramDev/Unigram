@@ -209,7 +209,7 @@ namespace Unigram.Common
             return false;
         }
 
-        public static void OpenTelegramUrl(IProtoService protoService, ISettingsService settings, INavigationService navigation, string url)
+        public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, string url)
         {
             // TODO: in-app navigation
             if (url.Contains("joinchat"))
@@ -267,16 +267,17 @@ namespace Unigram.Common
                             {
                                 navigation.Navigate(typeof(InstantPage), url);
                             }
-                            else if (username.Equals("socks", StringComparison.OrdinalIgnoreCase))
+                            else if (username.Equals("proxy", StringComparison.OrdinalIgnoreCase) || username.Equals("socks", StringComparison.OrdinalIgnoreCase))
                             {
                                 var server = query.GetParameter("server");
                                 var port = query.GetParameter("port");
                                 var user = query.GetParameter("user");
                                 var pass = query.GetParameter("pass");
+                                var secret = query.GetParameter("secret");
 
                                 if (server != null && int.TryParse(port, out int portCode))
                                 {
-                                    NavigateToSocks(protoService, settings, server, portCode, user, pass);
+                                    NavigateToProxy(protoService, server, portCode, user, pass, secret);
                                 }
                             }
                             else if (username.Equals("share"))
@@ -323,21 +324,26 @@ namespace Unigram.Common
             await ForwardView.GetForCurrentView().ShowAsync(text, hasUrl);
         }
 
-        public static async void NavigateToSocks(IProtoService protoService, ISettingsService settings, string server, int port, string username, string password)
+        public static async void NavigateToProxy(IProtoService protoService, string server, int port, string username, string password, string secret)
         {
-            var userText = username != null ? string.Format($"{Strings.Resources.UseProxyUsername}: {username}\n", username) : string.Empty;
-            var passText = password != null ? string.Format($"{Strings.Resources.UseProxyPassword}: {password}\n", password) : string.Empty;
-            var confirm = await TLMessageDialog.ShowAsync($"{Strings.Resources.EnableProxyAlert}\n\n{Strings.Resources.UseProxyAddress}: {server}\n{Strings.Resources.UseProxyPort}: {port}\n{userText}{passText}\n{Strings.Resources.EnableProxyAlert2}", Strings.Resources.Proxy, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
+            var userText = username != null ? $"{Strings.Resources.UseProxyUsername}: {username}\n" : string.Empty;
+            var passText = password != null ? $"{Strings.Resources.UseProxyPassword}: {password}\n" : string.Empty;
+            var secretText = secret != null ? $"{Strings.Resources.UseProxySecret}: {secret}\n" : string.Empty;
+            var secretInfo = secret != null ? $"\n\n{Strings.Resources.UseProxyTelegramInfo2}" : string.Empty;
+            var confirm = await TLMessageDialog.ShowAsync($"{Strings.Resources.EnableProxyAlert}\n\n{Strings.Resources.UseProxyAddress}: {server}\n{Strings.Resources.UseProxyPort}: {port}\n{userText}{passText}{secretText}\n{Strings.Resources.EnableProxyAlert2}{secretInfo}", Strings.Resources.Proxy, Strings.Resources.ConnectingConnectProxy, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                var proxy = settings.Proxy;
-                proxy.Server = server = server ?? string.Empty;
-                proxy.Port = port;
-                proxy.Username = username = username ?? string.Empty;
-                proxy.Password = password = password ?? string.Empty;
-                proxy.IsEnabled = true;
+                ProxyType type;
+                if (secret != null)
+                {
+                    type = new ProxyTypeMtproto(secret);
+                }
+                else
+                {
+                    type = new ProxyTypeSocks5(username ?? string.Empty, password ?? string.Empty);
+                }
 
-                //protoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
+                protoService.Send(new AddProxy(server ?? string.Empty, port, true, type));
             }
         }
 

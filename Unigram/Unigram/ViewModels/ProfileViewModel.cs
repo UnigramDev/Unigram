@@ -998,7 +998,7 @@ namespace Unigram.ViewModels
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    MessageHelper.OpenTelegramUrl(ProtoService, Settings, NavigationService, url);
+                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, url);
                 }
                 else
                 {

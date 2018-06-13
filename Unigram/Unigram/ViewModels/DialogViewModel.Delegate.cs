@@ -243,7 +243,7 @@ namespace Unigram.ViewModels
                      string.Equals(webPage.Type, "telegram_channel", StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(webPage.Type, "telegram_message", StringComparison.OrdinalIgnoreCase))
             {
-                MessageHelper.OpenTelegramUrl(ProtoService, Settings, NavigationService, webPage.Url);
+                MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, webPage.Url);
             }
         }
 
@@ -369,7 +369,7 @@ namespace Unigram.ViewModels
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    MessageHelper.OpenTelegramUrl(ProtoService, Settings, NavigationService, url);
+                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, url);
                 }
                 else
                 {

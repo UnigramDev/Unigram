@@ -482,7 +482,7 @@ namespace Unigram.Views
         {
             if (MessageHelper.IsTelegramUrl(scheme))
             {
-                MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, ViewModel.Chats.Settings, MasterDetail.NavigationService, scheme.ToString());
+                MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, MasterDetail.NavigationService, scheme.ToString());
             }
             else if (scheme.Scheme.Equals("ms-contact-profile") || scheme.Scheme.Equals("ms-ipmessaging"))
             {
@@ -512,6 +512,7 @@ namespace Unigram.Views
                 string port = null;
                 string user = null;
                 string pass = null;
+                string secret = null;
                 bool hasUrl = false;
 
                 var query = scheme.Query.ParseQueryString();
@@ -561,12 +562,13 @@ namespace Unigram.Views
                     phone = query.GetParameter("phone");
                     phoneHash = query.GetParameter("hash");
                 }
-                else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks"))
+                else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks") || scheme.AbsoluteUri.StartsWith("tg:proxy") || scheme.AbsoluteUri.StartsWith("tg://proxy"))
                 {
                     server = query.GetParameter("server");
                     port = query.GetParameter("port");
                     user = query.GetParameter("user");
                     pass = query.GetParameter("pass");
+                    secret = query.GetParameter("secret");
                 }
 
                 if (message != null && message.StartsWith("@"))
@@ -580,7 +582,7 @@ namespace Unigram.Views
                 }
                 if (server != null && int.TryParse(port, out int portCode))
                 {
-                    MessageHelper.NavigateToSocks(ViewModel.ProtoService, ViewModel.Chats.Settings, server, portCode, user, pass);
+                    MessageHelper.NavigateToProxy(ViewModel.ProtoService, server, portCode, user, pass, secret);
                 }
                 else if (group != null)
                 {
