@@ -21,7 +21,7 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyNeverShowStatusPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsPrivacyNeverShowStatusViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsPrivacyNeverShowStatusViewModel>();
             View.Attach();
         }
     }

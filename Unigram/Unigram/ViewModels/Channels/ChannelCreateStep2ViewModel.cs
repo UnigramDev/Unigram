@@ -17,8 +17,8 @@ namespace Unigram.ViewModels.Channels
 {
     public class ChannelCreateStep2ViewModel : UnigramViewModelBase
     {
-        public ChannelCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator)
+        public ChannelCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             AdminedPublicChannels = new MvxObservableCollection<Chat>();
 

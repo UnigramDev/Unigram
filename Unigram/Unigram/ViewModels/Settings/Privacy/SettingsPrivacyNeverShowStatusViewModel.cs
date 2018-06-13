@@ -10,8 +10,8 @@ namespace Unigram.ViewModels.Settings.Privacy
 {
     class SettingsPrivacyNeverShowStatusViewModel : SettingsPrivacyNeverViewModelBase
     {
-        public SettingsPrivacyNeverShowStatusViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator, new UserPrivacySettingShowStatus())
+        public SettingsPrivacyNeverShowStatusViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator, new UserPrivacySettingShowStatus())
         {
         }
 

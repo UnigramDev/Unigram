@@ -77,7 +77,7 @@ namespace Unigram.Views
              {
                  _viewModel = ViewModel;
              };
-            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel, IDialogDelegate>(this);
+            DataContext = UnigramContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
             NavigationCacheMode = NavigationCacheMode.Required;
@@ -228,7 +228,7 @@ namespace Unigram.Views
                 //Bindings.StopTracking();
             }
 
-            DataContext = UnigramContainer.Current.ResolveType<DialogViewModel, IDialogDelegate>(this);
+            DataContext = UnigramContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -1065,6 +1065,21 @@ namespace Unigram.Views
 
             var element = sender as FrameworkElement;
             var message = element.Tag as MessageViewModel;
+            if (message == null && sender is SelectorItem selector && selector.ContentTemplateRoot is FrameworkElement content)
+            {
+                element = content;
+                message = content.Tag as MessageViewModel;
+
+                if (content is Grid grid)
+                {
+                    element = grid.FindName("Bubble") as FrameworkElement;
+                }
+                else if (content is StackPanel panel && !(content is MessageBubble))
+                {
+                    element = panel.FindName("Service") as FrameworkElement;
+                }
+            }
+
             if (message == null || message.Id == 0)
             {
                 return;
@@ -1113,7 +1128,11 @@ namespace Unigram.Views
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                flyout.ShowAt(sender, point);
+                flyout.ShowAt(element, point);
+            }
+            else if (flyout.Items.Count > 0)
+            {
+                flyout.ShowAt(element);
             }
         }
 
@@ -1205,7 +1224,7 @@ namespace Unigram.Views
         private Visibility MessageReport_Loaded(MessageViewModel message)
         {
             var chat = ViewModel.Chat;
-            if (chat == null)
+            if (chat == null || !chat.CanBeReported)
             {
                 return Visibility.Collapsed;
             }
@@ -1414,30 +1433,26 @@ namespace Unigram.Views
             }
         }
 
-        public void Stickers_ItemClick(Sticker sticker)
+        public async void Stickers_ItemClick(Sticker sticker)
         {
             ViewModel.SendStickerCommand.Execute(sticker);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
 
+            await Task.Delay(100);
             TextField.FocusMaybe(FocusState.Keyboard);
         }
 
-        public void Animations_ItemClick(Animation animation)
+        public async void Animations_ItemClick(Animation animation)
         {
             ViewModel.SendAnimationCommand.Execute(animation);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
 
+            await Task.Delay(100);
             TextField.FocusMaybe(FocusState.Keyboard);
-        }
-
-        private async void DatePickerFlyout_DatePicked(DatePickerFlyout sender, DatePickedEventArgs args)
-        {
-            //var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, args.NewDate.Date);
-            //await ViewModel.LoadDateSliceAsync(offset);
         }
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -1680,8 +1695,6 @@ namespace Unigram.Views
                 TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.SetDefaultCharacterFormat(format);
 
-                ViewModel.Autocomplete = null;
-
                 if (index == 0 && user.Type is UserTypeBot bot && bot.IsInline)
                 {
                     ViewModel.ResolveInlineBot(user.Username);
@@ -1701,8 +1714,17 @@ namespace Unigram.Views
 
                 TextField.SetText(null, null);
                 ViewModel.SendCommand.Execute(insert);
+            }
+            else if (e.ClickedItem is string hashtag && BubbleTextBox.SearchByHashtag(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string initial, out int index2))
+            {
+                var insert = $"{hashtag} ";
+                var start = TextField.Document.Selection.StartPosition - 1 - initial.Length + insert.Length;
+                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - initial.Length, TextField.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
 
-                ViewModel.Autocomplete = null;
+                //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
+                //TextField.Document.Selection.StartPosition = start + 1;
+                TextField.Document.Selection.StartPosition = start;
             }
             else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
             {
@@ -1714,9 +1736,9 @@ namespace Unigram.Views
                 //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
                 //TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.Selection.StartPosition = start;
-
-                ViewModel.Autocomplete = null;
             }
+
+            ViewModel.Autocomplete = null;
         }
 
         #region Binding
@@ -2122,6 +2144,7 @@ namespace Unigram.Views
 
             UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
 
+            Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
             ReportSpam.Text = chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret ? Strings.Resources.ReportSpam : Strings.Resources.ReportSpamAndLeave;
         }
 
@@ -2207,9 +2230,12 @@ namespace Unigram.Views
 
 
 
-        public void UpdateUser(Chat chat, Telegram.Td.Api.User user, bool secret)
+        public void UpdateUser(Chat chat, User user, bool secret)
         {
-            ShowArea();
+            if (!secret)
+            {
+                ShowArea();
+            }
 
             ViewModel.ShowPinnedMessage(chat, null);
 
@@ -2220,7 +2246,7 @@ namespace Unigram.Views
             ViewModel.LastSeen = LastSeenConverter.GetLabel(user, true);
         }
 
-        public void UpdateUserFullInfo(Chat chat, Telegram.Td.Api.User user, UserFullInfo fullInfo, bool secret)
+        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret)
         {
             if (fullInfo.IsBlocked)
             {
@@ -2284,7 +2310,7 @@ namespace Unigram.Views
             foreach (var member in fullInfo.Members)
             {
                 var user = ViewModel.ProtoService.GetUser(member.UserId);
-                if (user != null && user.Status is UserStatusOnline)
+                if (user != null && user.Type is UserTypeRegular && user.Status is UserStatusOnline)
                 {
                     count++;
                 }
@@ -2400,7 +2426,7 @@ namespace Unigram.Views
                     foreach (var member in members.Members)
                     {
                         var user = ViewModel.ProtoService.GetUser(member.UserId);
-                        if (user != null && user.Status is UserStatusOnline)
+                        if (user != null && user.Type is UserTypeRegular && user.Status is UserStatusOnline)
                         {
                             count++;
                         }

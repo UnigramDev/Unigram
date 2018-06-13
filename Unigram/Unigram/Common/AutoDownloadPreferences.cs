@@ -39,6 +39,7 @@ namespace Unigram.Common
         Documents,
         VoiceNotes,
         VideoNotes,
+        Audios,
         Animations
     }
 
@@ -67,6 +68,7 @@ namespace Unigram.Common
             _maximumDocumentSize = container.GetInt32("maxDocumentSize", 10);
             _voiceNotes = (AutoDownloadMode)container.GetInt32("voiceNotes", (int)AutoDownloadMode.All);
             _videoNotes = (AutoDownloadMode)container.GetInt32("videoNotes", (int)AutoDownloadMode.All);
+            _audios = (AutoDownloadMode)container.GetInt32("audios", (int)AutoDownloadMode.None);
             _animations = (AutoDownloadMode)container.GetInt32("animations", (int)AutoDownloadMode.All);
         }
 
@@ -80,6 +82,7 @@ namespace Unigram.Common
             container.Values["maxDocumentSize"] = _maximumDocumentSize;
             container.Values["voiceNotes"] = (int)_voiceNotes;
             container.Values["videoNotes"] = (int)_videoNotes;
+            container.Values["audios"] = (int)_audios;
             container.Values["animations"] = (int)_animations;
         }
 
@@ -95,6 +98,7 @@ namespace Unigram.Common
                 preferences._maximumDocumentSize = 10;
                 preferences._voiceNotes = AutoDownloadMode.All;
                 preferences._videoNotes = AutoDownloadMode.All;
+                preferences._audios = AutoDownloadMode.None;
                 preferences._animations = AutoDownloadMode.All;
                 return preferences;
 
@@ -110,6 +114,7 @@ namespace Unigram.Common
         private int _maximumDocumentSize;
         private AutoDownloadMode _voiceNotes;
         private AutoDownloadMode _videoNotes;
+        private AutoDownloadMode _audios;
         private AutoDownloadMode _animations;
 
 
@@ -123,6 +128,7 @@ namespace Unigram.Common
         public int MaximumDocumentSize => _maximumDocumentSize;
         public AutoDownloadMode VoiceNotes => _voiceNotes;
         public AutoDownloadMode VideoNotes => _videoNotes;
+        public AutoDownloadMode Audios => _audios;
         public AutoDownloadMode Animations => _animations;
 
         public AutoDownloadPreferences UpdateDisabled(bool disabled)
@@ -136,6 +142,7 @@ namespace Unigram.Common
             preferences._maximumDocumentSize = _maximumDocumentSize;
             preferences._voiceNotes = _voiceNotes;
             preferences._videoNotes = _videoNotes;
+            preferences._audios = _audios;
             preferences._animations = _animations;
             return preferences;
         }
@@ -150,6 +157,7 @@ namespace Unigram.Common
             preferences._maximumDocumentSize = _maximumDocumentSize;
             preferences._voiceNotes = _voiceNotes;
             preferences._videoNotes = _videoNotes;
+            preferences._audios = _audios;
             preferences._animations = _animations;
             return preferences;
         }
@@ -164,6 +172,7 @@ namespace Unigram.Common
             preferences._maximumDocumentSize = _maximumDocumentSize;
             preferences._voiceNotes = _voiceNotes;
             preferences._videoNotes = _videoNotes;
+            preferences._audios = _audios;
             preferences._animations = _animations;
             return preferences;
         }
@@ -178,20 +187,7 @@ namespace Unigram.Common
             preferences._maximumDocumentSize = maximumSize;
             preferences._voiceNotes = _voiceNotes;
             preferences._videoNotes = _videoNotes;
-            preferences._animations = _animations;
-            return preferences;
-        }
-
-        public AutoDownloadPreferences UpdateGifsMode(AutoDownloadMode mode)
-        {
-            var preferences = new AutoDownloadPreferences();
-            preferences._photos = _photos;
-            preferences._videos = _videos;
-            preferences._maximumVideoSize = _maximumVideoSize;
-            preferences._documents = _documents;
-            preferences._maximumDocumentSize = _maximumDocumentSize;
-            preferences._voiceNotes = mode;
-            preferences._videoNotes = _videoNotes;
+            preferences._audios = _audios;
             preferences._animations = _animations;
             return preferences;
         }
@@ -206,6 +202,7 @@ namespace Unigram.Common
             preferences._maximumDocumentSize = _maximumDocumentSize;
             preferences._voiceNotes = mode;
             preferences._videoNotes = _videoNotes;
+            preferences._audios = _audios;
             preferences._animations = _animations;
             return preferences;
         }
@@ -220,6 +217,7 @@ namespace Unigram.Common
             preferences._maximumDocumentSize = _maximumDocumentSize;
             preferences._voiceNotes = _voiceNotes;
             preferences._videoNotes = mode;
+            preferences._audios = _audios;
             preferences._animations = _animations;
             return preferences;
         }
@@ -235,6 +233,22 @@ namespace Unigram.Common
             preferences._voiceNotes = _voiceNotes;
             preferences._videoNotes = _videoNotes;
             preferences._animations = mode;
+            preferences._audios = _audios;
+            return preferences;
+        }
+
+        public AutoDownloadPreferences UpdateAudiosMode(AutoDownloadMode mode)
+        {
+            var preferences = new AutoDownloadPreferences();
+            preferences._photos = _photos;
+            preferences._videos = _videos;
+            preferences._maximumVideoSize = _maximumVideoSize;
+            preferences._documents = _documents;
+            preferences._maximumDocumentSize = _maximumDocumentSize;
+            preferences._voiceNotes = _voiceNotes;
+            preferences._videoNotes = _videoNotes;
+            preferences._animations = _animations;
+            preferences._audios = mode;
             return preferences;
         }
 
@@ -351,6 +365,16 @@ namespace Unigram.Common
             }
 
             return ShouldDownload(_animations, chat, networkType);
+        }
+
+        public bool ShouldDownloadAudio(AutoDownloadChat chat, NetworkType networkType)
+        {
+            if (_disabled)
+            {
+                return false;
+            }
+
+            return ShouldDownload(_audios, chat, networkType);
         }
     }
 }

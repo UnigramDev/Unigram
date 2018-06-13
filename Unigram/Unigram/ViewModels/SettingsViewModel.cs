@@ -30,8 +30,8 @@ namespace Unigram.ViewModels
 
         public IUserDelegate Delegate { get; set; }
 
-        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService) 
-            : base(protoService, cacheService, aggregator)
+        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService) 
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
             _contactsService = contactsService;
@@ -161,14 +161,14 @@ namespace Unigram.ViewModels
                 // TODO:
             }
 
-            if (ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "RequestRestartAsync"))
-            {
-                await CoreApplication.RequestRestartAsync(string.Empty);
-            }
-            else
-            {
-                App.Current.Exit();
-            }
+            //if (ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "RequestRestartAsync"))
+            //{
+            //    await CoreApplication.RequestRestartAsync(string.Empty);
+            //}
+            //else
+            //{
+            //    App.Current.Exit();
+            //}
         }
     }
 }

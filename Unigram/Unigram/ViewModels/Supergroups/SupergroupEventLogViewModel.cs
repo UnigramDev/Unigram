@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEventLogViewModel : UnigramViewModelBase, IMessageDelegate
     {
-        public SupergroupEventLogViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SupergroupEventLogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
         }
 
@@ -704,6 +704,10 @@ namespace Unigram.ViewModels.Supergroups
         }
 
         public void OpenUsername(string username)
+        {
+        }
+
+        public void OpenHashtag(string hashtag)
         {
         }
 

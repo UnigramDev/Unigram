@@ -94,6 +94,9 @@
   <data name="ActionAddUserYou" xml:space="preserve">
     <value>un1 heeft je toegevoegd</value>
   </data>
+  <data name="ActionBotAllowed" xml:space="preserve">
+    <value>Je hebt deze bot toegestaan je berichten te sturen door in te loggen op {0}.</value>
+  </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>un1 heeft de groepsafbeelding gewijzigd</value>
   </data>
@@ -265,6 +268,9 @@
   <data name="AddMutual" xml:space="preserve">
     <value>Contacten aan je kanaal toevoegen</value>
   </data>
+  <data name="AddProxy" xml:space="preserve">
+    <value>Proxy toevoegen</value>
+  </data>
   <data name="AddRecipient" xml:space="preserve">
     <value>Ontvanger toevoegen</value>
   </data>
@@ -318,6 +324,9 @@
   </data>
   <data name="AllVideo" xml:space="preserve">
     <value>Alle video's</value>
+  </data>
+  <data name="AllowCustomQuickReply" xml:space="preserve">
+    <value>Aangepast toestaan</value>
   </data>
   <data name="AllowFillNumber" xml:space="preserve">
     <value>Sta het ontvangen van oproepen en SMS toe zodat we je nummer kunnen invullen en automatisch je inlogcode kunnen invoeren.</value>
@@ -668,7 +677,10 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general-questions">veel
     <value>Locatie bijwerken</value>
   </data>
   <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
-    <value>Het berekenen van zonsopkomst en -ondergang vereist een eenmalige controle van je locatie bij benadering. Deze locatie zal alleen lokaal op je apparaat worden opgeslagen. \n\nzonsondergang: {0}\nzonsopkomst: {1}</value>
+    <value>Het berekenen van zonsopkomst en -ondergang vereist een eenmalige controle van je locatie bij benadering. Deze locatie zal alleen lokaal op je apparaat worden opgeslagen. 
+
+Zonsondergang: {0}
+Zonsopkomst: {1}</value>
   </data>
   <data name="AutodownloadChannels" xml:space="preserve">
     <value>Kanalen</value>
@@ -693,6 +705,9 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general-questions">veel
   </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>GIF's automatisch afspelen</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Beschikbaar</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Wachten tot {0} online komt</value>
@@ -1019,6 +1034,9 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
   <data name="ChannelMessageDocument" xml:space="preserve">
     <value>{0} plaatste een bestand</value>
   </data>
+  <data name="ChannelMessageFew" xml:space="preserve">
+    <value>{0} plaatste {1}</value>
+  </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} plaatste een GIF</value>
   </data>
@@ -1213,6 +1231,9 @@ Wil je dit niet dan kun je een privé-kanaal aanmaken.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} chats</value>
   </data>
+  <data name="Checking" xml:space="preserve">
+    <value>Controleren...</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Kies een land</value>
   </data>
@@ -1323,11 +1344,17 @@ Zodra {1} Telegram updatet werken foto's met timers voor 1 minuut of minder in d
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Gesprek echt uit oproepgeschiedenis wissen?</value>
   </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Verbonden</value>
+  </data>
   <data name="Connecting" xml:space="preserve">
     <value>Verbinden</value>
   </data>
+  <data name="ConnectingConnectProxy" xml:space="preserve">
+    <value>Verbinden met proxy</value>
+  </data>
   <data name="ConnectingToProxy" xml:space="preserve">
-    <value>Verbinden met proxy...</value>
+    <value>Verbinden met proxy</value>
   </data>
   <data name="ConnectingToProxyDisable" xml:space="preserve">
     <value>Uitschakelen</value>
@@ -1351,7 +1378,7 @@ Zodra {1} Telegram updatet werken foto's met timers voor 1 minuut of minder in d
     <value>Contacten</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>Geef **Telegram** toegang tot je contacten zodat je makkelijk contact kunt opnemen met iedereen die je kent.</value>
+    <value>Geef Telegram toegang tot je contacten zodat je makkelijk contact kunt opnemen met iedereen die je kent. Telegram synchroniseert je contacten continu naar onze zwaar versleutelde Cloud-servers.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>DOORGAAN</value>
@@ -1562,7 +1589,7 @@ Wil je extra functies en een hogere limiet? Waardeer op naar een supergroep:
     <value>Verwijder</value>
   </data>
   <data name="DeleteAccountHelp" xml:space="preserve">
-    <value>Als je binnen deze periode niet minimaal één keer ingelogd bent geweest zal je account worden verwijderd, inclusief alle groepen, berichten en contacten.</value>
+    <value>Als je binnen deze periode niet minimaal één keer ingelogd bent geweest zal je account worden verwijderd, inclusief alle berichten en contacten.</value>
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>Indien afwezig voor</value>
@@ -1615,6 +1642,9 @@ Wil je extra functies en een hogere limiet? Waardeer op naar een supergroep:
   <data name="DeletePhoto" xml:space="preserve">
     <value>Foto verwijderen</value>
   </data>
+  <data name="DeleteProxy" xml:space="preserve">
+    <value>Proxy verwijderen?</value>
+  </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Spam melden</value>
   </data>
@@ -1644,6 +1674,9 @@ Wil je extra functies en een hogere limiet? Waardeer op naar een supergroep:
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
     <value>Recente chats in snel delen weergeven</value>
+  </data>
+  <data name="DisappearingGif" xml:space="preserve">
+    <value>Geheime GIF</value>
   </data>
   <data name="DisappearingPhoto" xml:space="preserve">
     <value>Geheime foto</value>
@@ -2951,6 +2984,24 @@ Dit kan enkele minuten duren.</value>
   <data name="MasksRemoved" xml:space="preserve">
     <value>Maskers verwijderd</value>
   </data>
+  <data name="MediaZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaOne" xml:space="preserve">
+    <value>{0} media</value>
+  </data>
+  <data name="MediaTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaOther" xml:space="preserve">
+    <value>{0} media</value>
+  </data>
   <data name="MegaAddedBy" xml:space="preserve">
     <value>un1 heeft je toegevoegd aan deze groep</value>
   </data>
@@ -3304,6 +3355,9 @@ of druk op de menuknop voor meer opties.</value>
   <data name="NoStickers" xml:space="preserve">
     <value>Nog geen stickers</value>
   </data>
+  <data name="NoStickersFound" xml:space="preserve">
+    <value>Geen stickers gevonden</value>
+  </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Er is geen Telegram-account met deze gebruikersnaam.</value>
   </data>
@@ -3351,6 +3405,12 @@ of druk op de menuknop voor meer opties.</value>
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
     <value>{0} heeft GIF vastgezet</value>
+  </data>
+  <data name="NotificationActionPinnedInvoice" xml:space="preserve">
+    <value>{0} heeft een factuur in de groep {1} vastgezet</value>
+  </data>
+  <data name="NotificationActionPinnedInvoiceChannel" xml:space="preserve">
+    <value>{0} heeft een factuur vastgezet</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
     <value>{0} heeft muziekbestand vastgezet in de groep {1}</value>
@@ -3427,6 +3487,12 @@ of druk op de menuknop voor meer opties.</value>
   <data name="NotificationGroupAddSelfMega" xml:space="preserve">
     <value>{0} is nu lid van de groep {1}</value>
   </data>
+  <data name="NotificationGroupFew" xml:space="preserve">
+    <value>{0} heeft {2} naar de groep {1} gestuurd</value>
+  </data>
+  <data name="NotificationGroupForwardedFew" xml:space="preserve">
+    <value>{0} heeft {2} naar de groep {1} doorgestuurd</value>
+  </data>
   <data name="NotificationGroupKickMember" xml:space="preserve">
     <value>{0} heeft {2} verwijderd uit de groep {1}</value>
   </data>
@@ -3451,6 +3517,12 @@ of druk op de menuknop voor meer opties.</value>
   <data name="NotificationMessageDocument" xml:space="preserve">
     <value>{0} heeft je een bestand gestuurd</value>
   </data>
+  <data name="NotificationMessageFew" xml:space="preserve">
+    <value>{0} heeft je {1} gestuurd</value>
+  </data>
+  <data name="NotificationMessageForwardFew" xml:space="preserve">
+    <value>{0} heeft {1} naar je doorgestuurd</value>
+  </data>
   <data name="NotificationMessageGame" xml:space="preserve">
     <value>{0} wil {1} met je spelen</value>
   </data>
@@ -3471,6 +3543,9 @@ of druk op de menuknop voor meer opties.</value>
   </data>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} heeft een GIF gestuurd naar de groep {1}</value>
+  </data>
+  <data name="NotificationMessageGroupInvoice" xml:space="preserve">
+    <value>{0} heeft een factuur naar de groep {1} voor {2} gestuurd</value>
   </data>
   <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
     <value>{0} deelt een live-locatie met groep {1}</value>
@@ -3501,6 +3576,9 @@ of druk op de menuknop voor meer opties.</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} heeft een video gestuurd naar de groep {1}</value>
+  </data>
+  <data name="NotificationMessageInvoice" xml:space="preserve">
+    <value>{0} heeft je een factuur voor {1} gestuurd</value>
   </data>
   <data name="NotificationMessageLiveLocation" xml:space="preserve">
     <value>{0} deelt een live-locatie met je</value>
@@ -3981,7 +4059,7 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
     <value>Je herstel-e-mailadres {0} is nog niet actief en in afwachting van bevestiging.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram heeft toegang tot je contacten nodig zodat je kan chatten met je vrienden vanaf al je apparaten.</value>
+    <value>Om vanaf al je apparaten contact te kunnen leggen met je vrienden zullen je contacten continu worden gesynchroniseerd met onze zwaar versleutelde Cloud-servers.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram heeft de toestemming 'over andere apps tekenen' nodig om video's af te spelen in Picture-in-Picture-modus.</value>
@@ -4042,6 +4120,24 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   <data name="PhotoCaption" xml:space="preserve">
     <value>Foto-onderschrift</value>
   </data>
+  <data name="PhotosZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosOne" xml:space="preserve">
+    <value>{0} foto</value>
+  </data>
+  <data name="PhotosTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosOther" xml:space="preserve">
+    <value>{0} foto's</value>
+  </data>
   <data name="PinMessage" xml:space="preserve">
     <value>Vastzetten</value>
   </data>
@@ -4056,6 +4152,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Vastzetten</value>
+  </data>
+  <data name="Ping" xml:space="preserve">
+    <value>Ping: {0} ms</value>
   </data>
   <data name="PinnedMessage" xml:space="preserve">
     <value>Vastgezet bericht</value>
@@ -4171,8 +4270,29 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   <data name="Proxy" xml:space="preserve">
     <value>Proxy</value>
   </data>
+  <data name="ProxyConnections" xml:space="preserve">
+    <value>Connecties</value>
+  </data>
+  <data name="ProxyDetails" xml:space="preserve">
+    <value>Proxy-details</value>
+  </data>
   <data name="ProxySettings" xml:space="preserve">
     <value>Proxy-instellingen</value>
+  </data>
+  <data name="QuickReplyCustom" xml:space="preserve">
+    <value>Aangepast bericht.</value>
+  </data>
+  <data name="QuickReplyDefault1" xml:space="preserve">
+    <value>Kan nu niet praten, wat is er?</value>
+  </data>
+  <data name="QuickReplyDefault2" xml:space="preserve">
+    <value>Ik bel je zo terug.</value>
+  </data>
+  <data name="QuickReplyDefault3" xml:space="preserve">
+    <value>Ik bel je later.</value>
+  </data>
+  <data name="QuickReplyDefault4" xml:space="preserve">
+    <value>Kan nu niet praten, bel je me later?</value>
   </data>
   <data name="RaiseToSpeak" xml:space="preserve">
     <value>Houd bij oor</value>
@@ -4260,6 +4380,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   </data>
   <data name="ReportChatPornography" xml:space="preserve">
     <value>Pornografie</value>
+  </data>
+  <data name="ReportChatSent" xml:space="preserve">
+    <value>Melding verzonden</value>
   </data>
   <data name="ReportChatSpam" xml:space="preserve">
     <value>Spam</value>
@@ -4465,6 +4588,9 @@ Herstart de app om deze optie actief te maken.</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>BERICHTEN</value>
   </data>
+  <data name="SearchStickersHint" xml:space="preserve">
+    <value>Zoek stickerbundels</value>
+  </data>
   <data name="SecondsZero" xml:space="preserve">
     <value/>
   </data>
@@ -4515,6 +4641,9 @@ Herstart de app om deze optie actief te maken.</value>
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>Link-voorbeelden</value>
+  </data>
+  <data name="SecretWebPageInfo" xml:space="preserve">
+    <value>Link-voorvertoningen worden gegenereerd op de servers van Telegram. We slaan geen data op over de verstuurde links</value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Veiligheid</value>
@@ -4890,6 +5019,18 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="SubscribersOther" xml:space="preserve">
     <value>{0} abonnees</value>
   </data>
+  <data name="SuggestStickers" xml:space="preserve">
+    <value>Stickersuggesties</value>
+  </data>
+  <data name="SuggestStickersAll" xml:space="preserve">
+    <value>Alles</value>
+  </data>
+  <data name="SuggestStickersInstalled" xml:space="preserve">
+    <value>Toegevoegd</value>
+  </data>
+  <data name="SuggestStickersNone" xml:space="preserve">
+    <value>Geen</value>
+  </data>
   <data name="Support" xml:space="preserve">
     <value>Ondersteuning</value>
   </data>
@@ -4899,8 +5040,15 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="SyncContactsAdded" xml:space="preserve">
     <value>Contacten van dit apparaat zijn aan je account toegevoegd.</value>
   </data>
+  <data name="SyncContactsDelete" xml:space="preserve">
+    <value>Wis gesynchroniseerde contacten</value>
+  </data>
+  <data name="SyncContactsDeleteInfo" xml:space="preserve">
+    <value>Hiermee verwijder je je contacten van de Telegram-servers.
+als 'Contacten Synchroniseren' is ingeschakeld worden je contacten opnieuw gesynchroniseerd.</value>
+  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
-    <value>Inschakelen om contacten van dit apparaat naar je account te importeren.</value>
+    <value>Inschakelen om contacten continu naar  je account te synchroniseren</value>
   </data>
   <data name="SyncContactsInfoOn" xml:space="preserve">
     <value>Contacten van dit apparaat worden aan je account toegevoegd.</value>
@@ -4964,6 +5112,13 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>{0} blokkeren</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>Algemene voorwaarden</value>
+  </data>
+  <data name="TermsOfServiceLogin" xml:space="preserve">
+    <value>Door aan te melden ga je akkoord 
+met onze *Algemene voorwaarden*.</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>Tekst gekopieerd naar klembord.</value>
@@ -5037,6 +5192,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="Typing" xml:space="preserve">
     <value>aan het typen</value>
   </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Onbeschikbaar</value>
+  </data>
   <data name="Unban" xml:space="preserve">
     <value>Deblokkeer</value>
   </data>
@@ -5072,6 +5230,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="UnpinMessageAlert" xml:space="preserve">
     <value>Wil je dit bericht losmaken?</value>
+  </data>
+  <data name="UnreadMessages" xml:space="preserve">
+    <value>Ongelezen berichten</value>
   </data>
   <data name="UnsupportedAttachment" xml:space="preserve">
     <value>Bestandstype niet ondersteund</value>
@@ -5139,8 +5300,32 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="UseProxyPort" xml:space="preserve">
     <value>Poort</value>
   </data>
+  <data name="UseProxySecret" xml:space="preserve">
+    <value>Sleutel</value>
+  </data>
   <data name="UseProxySettings" xml:space="preserve">
     <value>Gebruik proxy-instellingen</value>
+  </data>
+  <data name="UseProxySocks5" xml:space="preserve">
+    <value>SOCKS5</value>
+  </data>
+  <data name="UseProxySponsor" xml:space="preserve">
+    <value>Proxy-sponsor</value>
+  </data>
+  <data name="UseProxySponsorInfo" xml:space="preserve">
+    <value>Dit kanaal is zichtbaar omdat je een proxy-server gebruikt, om dit kanaal te verwijderen uit je chatoverzicht kun je de proxy uitschakelen via de instellingen van Telegram.</value>
+  </data>
+  <data name="UseProxyTelegram" xml:space="preserve">
+    <value>MTProto Proxy</value>
+  </data>
+  <data name="UseProxyTelegramError" xml:space="preserve">
+    <value>De door jou ingestelde proxy is niet correct geconfigureerd en zal daarom worden uitgeschakeld. Probeer een andere Proxy.</value>
+  </data>
+  <data name="UseProxyTelegramInfo" xml:space="preserve">
+    <value>MTProto-proxy-instellingen.</value>
+  </data>
+  <data name="UseProxyTelegramInfo2" xml:space="preserve">
+    <value>De proxy die je gebruikt kan een gesponsord kanaal weergeven in je chatoverzicht, maar heeft geen inzage in je Telegram-verkeer.</value>
   </data>
   <data name="UseProxyUsername" xml:space="preserve">
     <value>Gebruiker</value>
@@ -5301,6 +5486,9 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   <data name="VoipEndCall" xml:space="preserve">
     <value>Oproep beëindigen</value>
   </data>
+  <data name="VoipErrorUnknown" xml:space="preserve">
+    <value>Kan momenteel geen Telegram-oproep starten.</value>
+  </data>
   <data name="VoipExchangingKeys" xml:space="preserve">
     <value>Encryptiesleutels uitwisselen</value>
   </data>
@@ -5315,6 +5503,9 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   </data>
   <data name="VoipInCallBranding" xml:space="preserve">
     <value>Telegram-oproep</value>
+  </data>
+  <data name="VoipInCallBrandingWithName" xml:space="preserve">
+    <value>Telegram-oproep naar {0}</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Inkomende oproep</value>
@@ -5354,6 +5545,12 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   </data>
   <data name="VoipPeerOutdated" xml:space="preserve">
     <value>**{0}** heeft nog geen ondersteuning voor spraakoproepen en zal eerst een update moeten uitvoeren.</value>
+  </data>
+  <data name="VoipQuickReplies" xml:space="preserve">
+    <value>Antwoord met bericht</value>
+  </data>
+  <data name="VoipQuickRepliesExplain" xml:space="preserve">
+    <value>Deze snelle antwoorden zijn beschikbaar als je reageert op een inkomende oproep met een Telegram-bericht. Je kunt deze zelf wijzigen.</value>
   </data>
   <data name="VoipRateCallAlert" xml:space="preserve">
     <value>Beoordeel de kwaliteit van je Telegram-oproep.</value>

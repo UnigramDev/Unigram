@@ -94,6 +94,9 @@
   <data name="ActionAddUserYou" xml:space="preserve">
     <value>un1 добавил(а) вас</value>
   </data>
+  <data name="ActionBotAllowed" xml:space="preserve">
+    <value>Вы разрешили этому боту писать вам, когда авторизовались на {0}.</value>
+  </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>un1 изменил(а) фото группы</value>
   </data>
@@ -265,6 +268,9 @@
   <data name="AddMutual" xml:space="preserve">
     <value>Пригласить подписаться на канал</value>
   </data>
+  <data name="AddProxy" xml:space="preserve">
+    <value>Добавить прокси</value>
+  </data>
   <data name="AddRecipient" xml:space="preserve">
     <value>Добавить получателя</value>
   </data>
@@ -318,6 +324,9 @@
   </data>
   <data name="AllVideo" xml:space="preserve">
     <value>Все видео</value>
+  </data>
+  <data name="AllowCustomQuickReply" xml:space="preserve">
+    <value>Задать свой текст</value>
   </data>
   <data name="AllowFillNumber" xml:space="preserve">
     <value>Разрешите приложению принимать звонки и SMS, чтобы мы могли заполнять ваш номер телефона, отправлять код авторизации и подставлять его автоматически.</value>
@@ -671,7 +680,10 @@
     <value>Обновить геопозицию</value>
   </data>
   <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
-    <value>Чтобы определить время захода и восхода солнца, необходимо разово получить данные о Вашем примерном местоположении. Эта информация будет храниться только на данном устройстве.\n\nЗакат: {0}\nРассвет: {1}</value>
+    <value>Чтобы определить время захода и восхода солнца, необходимо разово получить данные о Вашем примерном местоположении. Эта информация будет храниться только на данном устройстве.
+
+Закат: {0}
+Рассвет: {1}</value>
   </data>
   <data name="AutodownloadChannels" xml:space="preserve">
     <value>Каналы</value>
@@ -696,6 +708,9 @@
   </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>Автозапуск GIF</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Доступен</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Ждём, когда {0} появится в сети...</value>
@@ -1044,6 +1059,9 @@
   <data name="ChannelMessageDocument" xml:space="preserve">
     <value>В канал {0} отправили файл</value>
   </data>
+  <data name="ChannelMessageFew" xml:space="preserve">
+    <value>{0} опубликовал(а) {1}</value>
+  </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>В канал {0} отправили GIF</value>
   </data>
@@ -1114,7 +1132,7 @@
     <value>Модератор</value>
   </data>
   <data name="ChannelMute" xml:space="preserve">
-    <value>ОТКЛЮЧИТЬ УВЕДОМЛЕНИЯ</value>
+    <value>Отключить уведомления</value>
   </data>
   <data name="ChannelNotifyMembersInfoOff" xml:space="preserve">
     <value>Участники не получают уведомления о публикациях</value>
@@ -1179,7 +1197,7 @@
     <value>Публичный</value>
   </data>
   <data name="ChannelUnmute" xml:space="preserve">
-    <value>ВКЛЮЧИТЬ УВЕДОМЛЕНИЯ</value>
+    <value>Включить уведомления</value>
   </data>
   <data name="ChannelUserAddLimit" xml:space="preserve">
     <value>Извините, вы можете добавить в канал только первых 200 участников. А вот по пригласительной ссылке на канал может подписаться неограниченное количество человек.</value>
@@ -1288,6 +1306,9 @@
   </data>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} чатов</value>
+  </data>
+  <data name="Checking" xml:space="preserve">
+    <value>Проверка...</value>
   </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Выберите страну</value>
@@ -1399,11 +1420,17 @@
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Вы точно хотите удалить запись из истории звонков?</value>
   </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Подключен</value>
+  </data>
   <data name="Connecting" xml:space="preserve">
     <value>Соединение...</value>
   </data>
+  <data name="ConnectingConnectProxy" xml:space="preserve">
+    <value>Подключить прокси</value>
+  </data>
   <data name="ConnectingToProxy" xml:space="preserve">
-    <value>Соединение с прокси...</value>
+    <value>Подключение к прокси...</value>
   </data>
   <data name="ConnectingToProxyDisable" xml:space="preserve">
     <value>Отключить</value>
@@ -1427,7 +1454,7 @@
     <value>Контакты</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>Чтобы связаться со знакомыми было проще, разрешите **Telegram** доступ к Вашим контактам.</value>
+    <value>Telegram требуется доступ к вашим контактам, чтобы вы могли оставаться на связи с друзьями с любого устройства. Актуальная информация о ваших контактах будет храниться зашифрованной в облаке Telegram.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>ПРОДОЛЖИТЬ</value>
@@ -1644,7 +1671,7 @@
     <value>Удалить</value>
   </data>
   <data name="DeleteAccountHelp" xml:space="preserve">
-    <value>Если Вы ни разу не заглянете в Telegram за это время, аккаунт будет удалён вместе со всеми группами, сообщениями и контактами.</value>
+    <value>Если Вы ни разу не заглянете в Telegram за это время, аккаунт будет удалён вместе со всеми сообщениями и контактами.</value>
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>Если Вас не было</value>
@@ -1700,6 +1727,9 @@
   <data name="DeletePhoto" xml:space="preserve">
     <value>Удалить фото</value>
   </data>
+  <data name="DeleteProxy" xml:space="preserve">
+    <value>Удалить прокси?</value>
+  </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Сообщить о спаме</value>
   </data>
@@ -1735,6 +1765,9 @@
   </data>
   <data name="Disabled" xml:space="preserve">
     <value>Отключён</value>
+  </data>
+  <data name="DisappearingGif" xml:space="preserve">
+    <value>Секретный GIF</value>
   </data>
   <data name="DisappearingPhoto" xml:space="preserve">
     <value>Секретное фото</value>
@@ -2889,7 +2922,7 @@
     <value>Установить "{0}" язык?</value>
   </data>
   <data name="LastName" xml:space="preserve">
-    <value>Фамилия (не обязательно)</value>
+    <value>Фамилия (необязательно)</value>
   </data>
   <data name="LastSeen" xml:space="preserve">
     <value>был(а)</value>
@@ -3132,6 +3165,24 @@
   </data>
   <data name="MasksRemoved" xml:space="preserve">
     <value>Маски удалены</value>
+  </data>
+  <data name="MediaZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaOne" xml:space="preserve">
+    <value>{0} медиафайл</value>
+  </data>
+  <data name="MediaTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaFew" xml:space="preserve">
+    <value>{0} медиафайла</value>
+  </data>
+  <data name="MediaMany" xml:space="preserve">
+    <value>{0} медиафайлов</value>
+  </data>
+  <data name="MediaOther" xml:space="preserve">
+    <value>{0} медиафайлов</value>
   </data>
   <data name="MegaAddedBy" xml:space="preserve">
     <value>un1 добавил(а) вас в эту группу</value>
@@ -3498,6 +3549,9 @@
   <data name="NoStickers" xml:space="preserve">
     <value>Стикеров пока нет</value>
   </data>
+  <data name="NoStickersFound" xml:space="preserve">
+    <value>Стикеры не найдены</value>
+  </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Нет аккаунта Telegram с таким именем пользователя.</value>
   </data>
@@ -3557,6 +3611,12 @@
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
     <value>{0} закрепил(а) GIF</value>
+  </data>
+  <data name="NotificationActionPinnedInvoice" xml:space="preserve">
+    <value>{0} закрепил(а) счёт в «{1}»</value>
+  </data>
+  <data name="NotificationActionPinnedInvoiceChannel" xml:space="preserve">
+    <value>{0} закрепил(а) счёт</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
     <value>{0} закрепил(а) трек в группе {1}</value>
@@ -3633,6 +3693,12 @@
   <data name="NotificationGroupAddSelfMega" xml:space="preserve">
     <value>{0} теперь в «{1}»</value>
   </data>
+  <data name="NotificationGroupFew" xml:space="preserve">
+    <value>{0} отправил(а) {2} в «{1}»</value>
+  </data>
+  <data name="NotificationGroupForwardedFew" xml:space="preserve">
+    <value>{0} переслал(а) {2} в «{1}»</value>
+  </data>
   <data name="NotificationGroupKickMember" xml:space="preserve">
     <value>{0} удалил(а) {2} из группы {1}</value>
   </data>
@@ -3657,6 +3723,12 @@
   <data name="NotificationMessageDocument" xml:space="preserve">
     <value>{0} прислал(а) файл</value>
   </data>
+  <data name="NotificationMessageFew" xml:space="preserve">
+    <value>{0} отправил(а) вам {1}</value>
+  </data>
+  <data name="NotificationMessageForwardFew" xml:space="preserve">
+    <value>{0} переслал(а) вам {1}</value>
+  </data>
   <data name="NotificationMessageGame" xml:space="preserve">
     <value>{0} пригласил(а) вас сыграть в {1}</value>
   </data>
@@ -3677,6 +3749,9 @@
   </data>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} отправил(а) GIF в «{1}»</value>
+  </data>
+  <data name="NotificationMessageGroupInvoice" xml:space="preserve">
+    <value>{0} отправил(а) счёт на {2} в «{1}»</value>
   </data>
   <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
     <value>{0} отправил(а) трансляцию геопозиции в «{1}»</value>
@@ -3707,6 +3782,9 @@
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} отправил(а) видео в «{1}»</value>
+  </data>
+  <data name="NotificationMessageInvoice" xml:space="preserve">
+    <value>{0} отправил(а) вам счёт на {1}</value>
   </data>
   <data name="NotificationMessageLiveLocation" xml:space="preserve">
     <value>{0} прислал(а) трансляцию геопозиции</value>
@@ -4221,7 +4299,7 @@
     <value>Ваш адрес электронной почты для восстановления {0} ещё не активирован и ожидает подтверждения.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram требуется доступ к Вашим контактам, чтобы Вы могли оставаться на связи с друзьями с любого устройства.</value>
+    <value>Актуальная информация о ваших контактах будет храниться зашифрованной в облаке Telegram, чтобы вы могли связаться с друзьями с любого устройства.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram требуется доступ к работе поверх других приложений, чтобы показывать видео в режиме картинка в картинке.</value>
@@ -4323,6 +4401,9 @@
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Закрепить</value>
+  </data>
+  <data name="Ping" xml:space="preserve">
+    <value>пинг: {0} мс</value>
   </data>
   <data name="PinnedMessage" xml:space="preserve">
     <value>Закреплённое сообщение</value>
@@ -4438,8 +4519,29 @@
   <data name="Proxy" xml:space="preserve">
     <value>Прокси</value>
   </data>
+  <data name="ProxyConnections" xml:space="preserve">
+    <value>Подключения</value>
+  </data>
+  <data name="ProxyDetails" xml:space="preserve">
+    <value>Прокси-сервер</value>
+  </data>
   <data name="ProxySettings" xml:space="preserve">
     <value>Настройки прокси</value>
+  </data>
+  <data name="QuickReplyCustom" xml:space="preserve">
+    <value>Ваше сообщение...</value>
+  </data>
+  <data name="QuickReplyDefault1" xml:space="preserve">
+    <value>Извини, сейчас не могу ответить.</value>
+  </data>
+  <data name="QuickReplyDefault2" xml:space="preserve">
+    <value>Перезвоню, как только смогу.</value>
+  </data>
+  <data name="QuickReplyDefault3" xml:space="preserve">
+    <value>Перезвоню позже.</value>
+  </data>
+  <data name="QuickReplyDefault4" xml:space="preserve">
+    <value>Не могу ответить. Перезвони, пожалуйста.</value>
   </data>
   <data name="RaiseToSpeak" xml:space="preserve">
     <value>Запись голоса при приближении</value>
@@ -4530,6 +4632,9 @@
   </data>
   <data name="ReportChatPornography" xml:space="preserve">
     <value>Порнография</value>
+  </data>
+  <data name="ReportChatSent" xml:space="preserve">
+    <value>Жалоба отправлена</value>
   </data>
   <data name="ReportChatSpam" xml:space="preserve">
     <value>Спам</value>
@@ -4735,6 +4840,9 @@
   <data name="SearchMessages" xml:space="preserve">
     <value>СООБЩЕНИЯ</value>
   </data>
+  <data name="SearchStickersHint" xml:space="preserve">
+    <value>Поиск стикеров</value>
+  </data>
   <data name="SecondsZero" xml:space="preserve">
     <value>{0} сек.</value>
   </data>
@@ -4785,6 +4893,9 @@
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>Предпросмотр ссылок</value>
+  </data>
+  <data name="SecretWebPageInfo" xml:space="preserve">
+    <value>Предпросмотр для ссылок создается на серверах Telegram. Мы не храним данные об отправленных Вами ссылках.</value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Безопасность</value>
@@ -5164,6 +5275,18 @@
   <data name="SubscribersOther" xml:space="preserve">
     <value>{0} подписчиков</value>
   </data>
+  <data name="SuggestStickers" xml:space="preserve">
+    <value>Подсказка по эмодзи</value>
+  </data>
+  <data name="SuggestStickersAll" xml:space="preserve">
+    <value>Любые стикеры</value>
+  </data>
+  <data name="SuggestStickersInstalled" xml:space="preserve">
+    <value>Стикеры из своих наборов</value>
+  </data>
+  <data name="SuggestStickersNone" xml:space="preserve">
+    <value>Нет</value>
+  </data>
   <data name="Support" xml:space="preserve">
     <value>Поддержка</value>
   </data>
@@ -5173,8 +5296,14 @@
   <data name="SyncContactsAdded" xml:space="preserve">
     <value>Контакты с этого устройства были добавлены к Вашему аккаунту.</value>
   </data>
+  <data name="SyncContactsDelete" xml:space="preserve">
+    <value>Удалить импортированные контакты</value>
+  </data>
+  <data name="SyncContactsDeleteInfo" xml:space="preserve">
+    <value>В этом случае ваши контакты будут удалены с серверов Telegram. Если включена опция «Синхронизировать контакты», контакты синхронизируются заново.</value>
+  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
-    <value>Включите, чтобы импортировать контакты с этого устройства.</value>
+    <value>Включите, чтобы добавлять контакты с этого устройства к Вашему аккаунту.</value>
   </data>
   <data name="SyncContactsInfoOn" xml:space="preserve">
     <value>Контакты с этого устройства будут импортироваться в Ваш аккаунт.</value>
@@ -5213,7 +5342,7 @@
     <value>{0} контактов в Telegram</value>
   </data>
   <data name="TelegramFaq" xml:space="preserve">
-    <value>Вопросы о Telegram</value>
+    <value> Вопросы о Telegram</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq</value>
@@ -5241,6 +5370,13 @@
   </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>Заблокировать {0}</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>Пользовательское соглашение</value>
+  </data>
+  <data name="TermsOfServiceLogin" xml:space="preserve">
+    <value>Регистрируясь,
+Вы принимаете *Пользовательское соглашение*.</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>Текст скопирован в буфер обмена</value>
@@ -5317,6 +5453,9 @@
   <data name="Typing" xml:space="preserve">
     <value>печатает</value>
   </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Недоступен</value>
+  </data>
   <data name="Unban" xml:space="preserve">
     <value>Разблокировать</value>
   </data>
@@ -5352,6 +5491,9 @@
   </data>
   <data name="UnpinMessageAlert" xml:space="preserve">
     <value>Хотите открепить это сообщение?</value>
+  </data>
+  <data name="UnreadMessages" xml:space="preserve">
+    <value>Непрочитанные сообщения</value>
   </data>
   <data name="UnsupportedAttachment" xml:space="preserve">
     <value>Вложение не поддерживается</value>
@@ -5419,11 +5561,35 @@
   <data name="UseProxyPort" xml:space="preserve">
     <value>Порт</value>
   </data>
+  <data name="UseProxySecret" xml:space="preserve">
+    <value>Ключ</value>
+  </data>
   <data name="UseProxySettings" xml:space="preserve">
-    <value>Использовать настройки прокси</value>
+    <value>Использовать прокси</value>
+  </data>
+  <data name="UseProxySocks5" xml:space="preserve">
+    <value>SOCKS5</value>
+  </data>
+  <data name="UseProxySponsor" xml:space="preserve">
+    <value>Спонсор прокси</value>
+  </data>
+  <data name="UseProxySponsorInfo" xml:space="preserve">
+    <value>Этот канал показан прокси-сервером. Чтобы убрать канал из списка чатов, отключите прокси в настройках Telegram.</value>
+  </data>
+  <data name="UseProxyTelegram" xml:space="preserve">
+    <value>Прокси MTProto</value>
+  </data>
+  <data name="UseProxyTelegramError" xml:space="preserve">
+    <value>Подключенный вами прокси-сервер использует некорректные настройки и будет выключен. Пожалуйста, выберите другой.</value>
+  </data>
+  <data name="UseProxyTelegramInfo" xml:space="preserve">
+    <value>Настройки прокси MTProto.</value>
+  </data>
+  <data name="UseProxyTelegramInfo2" xml:space="preserve">
+    <value>Этот прокси-сервер может показывать канал спонсора в списке ваших чатов. Это не раскрывает ваш трафик.</value>
   </data>
   <data name="UseProxyUsername" xml:space="preserve">
-    <value>Имя пользователя</value>
+    <value>Логин</value>
   </data>
   <data name="UserAlreadyInGroup" xml:space="preserve">
     <value>Этот пользователь уже в этой группе.</value>
@@ -5605,6 +5771,9 @@
   <data name="VoipEndCall" xml:space="preserve">
     <value>Завершить звонок</value>
   </data>
+  <data name="VoipErrorUnknown" xml:space="preserve">
+    <value>Не удалось позвонить через Telegram.</value>
+  </data>
   <data name="VoipExchangingKeys" xml:space="preserve">
     <value>Обмен ключами шифрования</value>
   </data>
@@ -5622,6 +5791,9 @@
   </data>
   <data name="VoipInCallBranding" xml:space="preserve">
     <value>Звонок Telegram</value>
+  </data>
+  <data name="VoipInCallBrandingWithName" xml:space="preserve">
+    <value>Звонок {0} через Telegram</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Входящий звонок</value>
@@ -5661,6 +5833,12 @@
   </data>
   <data name="VoipPeerOutdated" xml:space="preserve">
     <value>**{0}** использует приложение, которое не поддерживает звонки. Пользователю нужно обновить приложение, чтобы вы могли созвониться.</value>
+  </data>
+  <data name="VoipQuickReplies" xml:space="preserve">
+    <value>Ответить сообщением</value>
+  </data>
+  <data name="VoipQuickRepliesExplain" xml:space="preserve">
+    <value>Напишите здесь подходящий текст, чтобы быстро отправлять его в ответ на звонок через Telegram.</value>
   </data>
   <data name="VoipRateCallAlert" xml:space="preserve">
     <value>Пожалуйста, оцените качество звонка через Telegram</value>

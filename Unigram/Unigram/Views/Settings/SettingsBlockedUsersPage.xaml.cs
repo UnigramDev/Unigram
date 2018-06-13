@@ -31,7 +31,7 @@ namespace Unigram.Views.Settings
         public SettingsBlockedUsersPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsBlockedUsersViewModel, IFileDelegate>(this);
+            DataContext = UnigramContainer.Current.Resolve<SettingsBlockedUsersViewModel, IFileDelegate>(this);
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)

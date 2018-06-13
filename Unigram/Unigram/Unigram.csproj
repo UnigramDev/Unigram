@@ -11,7 +11,7 @@
     <AssemblyName>Unigram</AssemblyName>
     <DefaultLanguage>en</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.17134.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -22,7 +22,10 @@
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
-    <!--<BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>-->
+    <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
+    <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -104,6 +107,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Collections\SearchChatsCollection.cs" />
+    <Compile Include="Collections\SearchStickersCollection.cs" />
     <Compile Include="Collections\SearchUsersCollection.cs" />
     <Compile Include="Common\ContainerBuilder.cs" />
     <Compile Include="Common\Execute.cs" />
@@ -266,6 +270,9 @@
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
     <Compile Include="Controls\ProfilePicture.cs" />
+    <Compile Include="Controls\ProxyStatusControl.xaml.cs">
+      <DependentUpon>ProxyStatusControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SelectGridView.cs" />
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
@@ -386,7 +393,9 @@
     <Compile Include="Logs\Logger.cs" />
     <Compile Include="Logs\LogHelper.cs" />
     <Compile Include="Logs\LogLevel.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
+    <Compile Include="Selectors\ConnectionTemplateSelector.cs" />
     <Compile Include="Selectors\ParticipantTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
@@ -401,6 +410,7 @@
     <Compile Include="Services\PasscodeService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\ProtoService.cs" />
+    <Compile Include="Services\Updates\UpdateWorkMode.cs" />
     <Compile Include="Strings\en\Additional.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -411,6 +421,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
+    <Compile Include="Triggers\CompactTrigger.cs" />
     <Compile Include="Triggers\DeviceFamilyTrigger.cs" />
     <Compile Include="Triggers\UserInteractionTrigger.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
@@ -426,6 +437,7 @@
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
+    <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />
     <Compile Include="ViewModels\Dialogs\DialogGalleryViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogSearchViewModel.cs" />
@@ -476,6 +488,7 @@
     <Compile Include="ViewModels\Settings\SettingsLanguageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNetworkViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsProxiesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSecurityChangePasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSecurityPasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersTrendingViewModel.cs" />
@@ -551,6 +564,9 @@
     </Compile>
     <Compile Include="Views\Dialogs\DialogShareLocationPage.xaml.cs">
       <DependentUpon>DialogShareLocationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IdenticonPage.xaml.cs">
+      <DependentUpon>IdenticonPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\InvitePage.xaml.cs">
       <DependentUpon>InvitePage.xaml</DependentUpon>
@@ -637,6 +653,9 @@
     <Compile Include="Views\Settings\SettingsLanguagePage.xaml.cs">
       <DependentUpon>SettingsLanguagePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsProxiesPage.xaml.cs">
+      <DependentUpon>SettingsProxiesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsSecurityChangePasswordPage.xaml.cs">
       <DependentUpon>SettingsSecurityChangePasswordPage.xaml</DependentUpon>
     </Compile>
@@ -709,9 +728,6 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupRestrictedPage.xaml.cs">
       <DependentUpon>SupergroupRestrictedPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Users\UserKeyHashPage.xaml.cs">
-      <DependentUpon>UserKeyHashPage.xaml</DependentUpon>
     </Compile>
     <Content Include="Assets\Audio\silence.mp3" />
     <Content Include="Assets\Audio\voip_busy.mp3" />
@@ -1112,7 +1128,6 @@
     <Compile Include="Controls\BubbleListViewItem.cs" />
     <Compile Include="Controls\BubbleTextBox.cs" />
     <Compile Include="Controls\GlyphButton.cs" />
-    <Compile Include="Controls\HyperButton.cs" />
     <Compile Include="Controls\InputDialog.xaml.cs">
       <DependentUpon>InputDialog.xaml</DependentUpon>
     </Compile>
@@ -1248,25 +1263,51 @@
     </PRIResource>
     <PRIResource Include="Strings\de\Additional.resw" />
     <PRIResource Include="Strings\ar\Additional.resw" />
-    <PRIResource Include="Strings\ar\Resources.resw" />
-    <PRIResource Include="Strings\de\Resources.resw" />
+    <PRIResource Include="Strings\ar\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\de\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <PRIResource Include="Strings\en\Resources.resw">
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Resources.cs</LastGenOutput>
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <SubType>Designer</SubType>
     </PRIResource>
-    <PRIResource Include="Strings\es\Resources.resw" />
-    <PRIResource Include="Strings\fa\Resources.resw" />
-    <PRIResource Include="Strings\fr\Resources.resw" />
-    <PRIResource Include="Strings\id\Resources.resw" />
-    <PRIResource Include="Strings\it\Resources.resw" />
-    <PRIResource Include="Strings\ko\Resources.resw" />
-    <PRIResource Include="Strings\ms\Resources.resw" />
-    <PRIResource Include="Strings\nl\Resources.resw" />
-    <PRIResource Include="Strings\pt-BR\Resources.resw" />
-    <PRIResource Include="Strings\ru\Resources.resw" />
-    <PRIResource Include="Strings\uk\Resources.resw" />
+    <PRIResource Include="Strings\es\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\fa\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\fr\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\id\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\it\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ko\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ms\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\nl\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\pt-BR\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ru\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\uk\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1364,7 +1405,7 @@
     <Content Include="Assets\Sounds\Sound5.wav" />
     <Content Include="Assets\Sounds\Sound6.wav" />
     <Content Include="Assets\Webviews\injected.js" />
-    <None Include="Package.xml" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
@@ -1503,6 +1544,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\PlaybackHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ProxyStatusControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1727,6 +1772,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\IdenticonPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\InstantPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1848,6 +1897,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsLanguagePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsProxiesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2011,26 +2064,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Users\UserKeyHashPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac">
-      <Version>4.6.2</Version>
+      <Version>4.8.0</Version>
     </PackageReference>
     <PackageReference Include="HockeySDK.UWP">
       <Version>4.1.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.7</Version>
+      <Version>6.1.4</Version>
     </PackageReference>
     <PackageReference Include="Mono.Options">
       <Version>5.3.0.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>11.0.1</Version>
+      <Version>11.0.2</Version>
     </PackageReference>
     <PackageReference Include="System.Reactive">
       <Version>3.1.1</Version>
@@ -2039,7 +2088,7 @@
       <Version>4.4.0</Version>
     </PackageReference>
     <PackageReference Include="Win2d.uwp">
-      <Version>1.21.0</Version>
+      <Version>1.22.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -2080,13 +2129,13 @@
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
-    <SDKReference Include="TDLib.UWP, Version=1.0">
-      <Name>TDLib for Universal Windows Platfrom</Name>
+    <SDKReference Include="Telegram.Td.UWP, Version=1.0">
+      <Name>TDLib for Universal Windows Platform</Name>
     </SDKReference>
-    <SDKReference Include="WindowsDesktop, Version=10.0.16299.0">
-      <Name>Windows Desktop Extensions for the UWP</Name>
+    <SDKReference Include="WindowsDesktop, Version=10.0.17134.0">
+      <Name>Windows Desktop Extensions for the UWP %28WindowsDesktop, Version=10.0.17134.0%29</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.16299.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.17134.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>

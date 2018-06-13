@@ -406,7 +406,7 @@
                             <MenuFlyoutItem x:Name="FlyoutSaveAs"
                                             Command="{x:Bind ViewModel.SaveCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
-                                            Text="Save as..." />
+                                            Text="Save as..."/>
                             <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"
                                             Text="{CustomResource OpenInExternalApp}" />

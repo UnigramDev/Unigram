@@ -26,7 +26,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
 using Unigram.Common;
 using Unigram.Converters;
-using Windows.System;
 using Windows.UI.Core;
 using Telegram.Td.Api;
 
@@ -39,7 +38,7 @@ namespace Unigram.Controls.Views
         private ShareView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ShareViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<ShareViewModel>();
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -70,7 +69,14 @@ namespace Unigram.Controls.Views
 
             DataTransferManager.GetForCurrentView().DataRequested -= OnDataRequested;
 
-            List.SelectedItems.Clear();
+            if (List.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                List.SelectedItems.Clear();
+            }
+            else
+            {
+                List.SelectedItem = null;
+            }
         }
 
         private void OnShareProvidersRequested(DataTransferManager sender, ShareProvidersRequestedEventArgs args)
@@ -127,10 +133,13 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(Message message, bool withMyScore = false)
         {
+            List.SelectionMode = ListViewSelectionMode.Multiple;
+
             ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
             ViewModel.Messages = new[] { message };
+            ViewModel.InviteBot = null;
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = withMyScore;
 
@@ -172,10 +181,13 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(IList<Message> messages, bool withMyScore = false)
         {
+            List.SelectionMode = ListViewSelectionMode.Multiple;
+
             ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
             ViewModel.Messages = messages;
+            ViewModel.InviteBot = null;
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = withMyScore;
 
@@ -184,10 +196,13 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(Uri link, string title)
         {
+            List.SelectionMode = ListViewSelectionMode.Multiple;
+
             ViewModel.Comment = null;
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
             ViewModel.Messages = null;
+            ViewModel.InviteBot = null;
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = false;
 
@@ -196,10 +211,13 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(InputMessageContent inputMedia)
         {
+            List.SelectionMode = ListViewSelectionMode.Multiple;
+
             ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
             ViewModel.Messages = null;
+            ViewModel.InviteBot = null;
             ViewModel.InputMedia = inputMedia;
             ViewModel.IsWithMyScore = false;
 
@@ -207,6 +225,20 @@ namespace Unigram.Controls.Views
             //{
             //    // TODO: maybe?
             //}
+
+            return ShowAsync();
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(User bot)
+        {
+            List.SelectionMode = ListViewSelectionMode.Single;
+
+            ViewModel.Comment = null;
+            ViewModel.ShareLink = null;
+            ViewModel.ShareTitle = null;
+            ViewModel.Messages = null;
+            ViewModel.InviteBot = bot;
+            ViewModel.IsWithMyScore = false;
 
             return ShowAsync();
         }
@@ -434,9 +466,14 @@ namespace Unigram.Controls.Views
             DataTransferManager.ShowShareUI();
         }
 
+        private Visibility ConvertCommentVisibility(int count, User bot)
+        {
+            return count > 0 && bot == null ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
+            if (Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
             {
                 foreach (var item in ViewModel.SelectedItems)
                 {

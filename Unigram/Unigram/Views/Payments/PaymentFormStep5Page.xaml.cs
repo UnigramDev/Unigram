@@ -28,7 +28,7 @@ namespace Unigram.Views.Payments
         public PaymentFormStep5Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<PaymentFormStep5ViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<PaymentFormStep5ViewModel>();
         }
 
         private string ConvertTitle(bool test)
@@ -36,7 +36,7 @@ namespace Unigram.Views.Payments
             return (test ? "Test " : string.Empty) +  Strings.Resources.PaymentCheckout;
         }
 
-        private string ConvertAddress(ShippingAddress address)
+        private string ConvertAddress(Address address)
         {
             if (address == null)
             {

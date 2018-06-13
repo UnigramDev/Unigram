@@ -492,7 +492,7 @@ namespace Unigram.Common
                 return value;
             }
 
-            var context = new WindowContext(UnigramContainer.Current.ResolveType<IProtoService>(), UnigramContainer.Current.ResolveType<IEventAggregator>());
+            var context = new WindowContext(UnigramContainer.Current.Resolve<IProtoService>(), UnigramContainer.Current.Resolve<IEventAggregator>());
             _windowContext[id] = context;
 
             return context;

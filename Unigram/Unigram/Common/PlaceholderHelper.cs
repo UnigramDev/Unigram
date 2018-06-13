@@ -53,25 +53,25 @@ namespace Unigram.Common
             var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
-                if (chat.Type is ChatTypePrivate privata)
-                {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(privata.UserId % _colors.Length)], InitialNameStringConverter.Convert(chat), stream);
-                }
-                else if (chat.Type is ChatTypeSecret secret)
-                {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(secret.UserId % _colors.Length)], InitialNameStringConverter.Convert(chat), stream);
-                }
-                else if (chat.Type is ChatTypeBasicGroup basic)
-                {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(basic.BasicGroupId % _colors.Length)], InitialNameStringConverter.Convert(chat), stream);
-                }
-                else if (chat.Type is ChatTypeSupergroup super)
-                {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(super.SupergroupId % _colors.Length)], InitialNameStringConverter.Convert(chat), stream);
-                }
-
                 try
                 {
+                    if (chat.Type is ChatTypePrivate privata)
+                    {
+                        PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(privata.UserId % _colors.Length)], InitialNameStringConverter.Convert(chat), stream);
+                    }
+                    else if (chat.Type is ChatTypeSecret secret)
+                    {
+                        PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(secret.UserId % _colors.Length)], InitialNameStringConverter.Convert(chat), stream);
+                    }
+                    else if (chat.Type is ChatTypeBasicGroup basic)
+                    {
+                        PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(basic.BasicGroupId % _colors.Length)], InitialNameStringConverter.Convert(chat), stream);
+                    }
+                    else if (chat.Type is ChatTypeSupergroup super)
+                    {
+                        PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(super.SupergroupId % _colors.Length)], InitialNameStringConverter.Convert(chat), stream);
+                    }
+
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -85,9 +85,10 @@ namespace Unigram.Common
             var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
-                PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[0], InitialNameStringConverter.Convert(chat), stream);
                 try
                 {
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[0], InitialNameStringConverter.Convert(chat), stream);
+
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -101,9 +102,10 @@ namespace Unigram.Common
             var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
-                PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(user.Id % _colors.Length)], InitialNameStringConverter.Convert(user), stream);
                 try
                 {
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(user.Id % _colors.Length)], InitialNameStringConverter.Convert(user), stream);
+
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -197,9 +199,10 @@ namespace Unigram.Common
             var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
-                PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(color, InitialNameStringConverter.Convert(text), stream);
                 try
                 {
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(color, InitialNameStringConverter.Convert(text), stream);
+
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -213,9 +216,10 @@ namespace Unigram.Common
             var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
-                PlaceholderImageHelper.GetForCurrentView().DrawThumbnailPlaceholder(path, 3, stream);
                 try
                 {
+                    PlaceholderImageHelper.GetForCurrentView().DrawThumbnailPlaceholder(path, 3, stream);
+
                     bitmap.SetSource(stream);
                 }
                 catch { }

@@ -14,8 +14,8 @@ namespace Unigram.ViewModels.Users
 {
     public class UserCreateViewModel : UnigramViewModelBase
     {
-        public UserCreateViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public UserCreateViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrEmpty(_firstName) && !string.IsNullOrEmpty(_phoneCode) && !string.IsNullOrEmpty(_phoneNumber));
         }
@@ -156,7 +156,7 @@ namespace Unigram.ViewModels.Users
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var response = await ProtoService.SendAsync(new ImportContacts(new[] { new Contact() }));
+            var response = await ProtoService.SendAsync(new ImportContacts(new[] { new Contact(_phoneCode + _phoneNumber, _firstName, _lastName, 0) }));
             if (response is ImportedContacts imported)
             {
                 if (imported.UserIds.Count > 0)

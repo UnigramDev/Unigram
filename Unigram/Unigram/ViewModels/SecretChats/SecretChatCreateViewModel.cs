@@ -14,8 +14,8 @@ namespace Unigram.ViewModels.SecretChats
 {
     public class SecretChatCreateViewModel : UsersSelectionViewModel
     {
-        public SecretChatCreateViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SecretChatCreateViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
         }
 

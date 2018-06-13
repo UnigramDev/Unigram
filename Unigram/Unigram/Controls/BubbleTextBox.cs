@@ -38,6 +38,7 @@ using Telegram.Td.Api;
 using Unigram.Services;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Core.Common;
+using Unigram.Collections;
 
 namespace Unigram.Controls
 {
@@ -392,7 +393,7 @@ namespace Unigram.Controls
                 }
 
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                if (ApplicationSettings.Current.IsSendByEnterEnabled)
+                if (ViewModel.Settings.IsSendByEnterEnabled)
                 {
                     var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
                     if (send)
@@ -587,17 +588,9 @@ namespace Unigram.Controls
 
                 if (fast)
                 {
-                    if (text.Trim().Length <= 14 && !string.IsNullOrWhiteSpace(text) && ViewModel.EditedMessage == null)
+                    if (Emoji.ContainsSingleEmoji(text) && !string.IsNullOrWhiteSpace(text) && ViewModel.EditedMessage == null)
                     {
-                        //ViewModel.StickerPack = ViewModel.Stickers.StickersService.LoadStickersForEmoji(text.Trim());
-                        //ViewModel.ProtoService.Send(new GetStickers(text, int.MaxValue), result =>
-                        //{
-                        //    if (result is Stickers stickers)
-                        //    {
-                        //        this.BeginOnUIThread(() => ViewModel.StickerPack = stickers.StickersValue.ToList());
-                        //    }
-                        //});
-                        ViewModel.StickerPack = new StickerCollection(ViewModel.ProtoService, text.Trim());
+                        ViewModel.StickerPack = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
                     }
                     else
                     {
@@ -624,9 +617,13 @@ namespace Unigram.Controls
 
                         ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, username, index == 0, members); //GetUsernames(username.ToLower(), text.StartsWith('@' + username));
                     }
+                    else if (SearchByHashtag(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string hashtag, out int index2))
+                    {
+                        ViewModel.Autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, hashtag);
+                    }
                     else if (SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
                     {
-                        ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(replacement);
+                        ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(replacement.Length < 2 ? replacement : replacement.ToLower());
                     }
                     else if (text.Length > 0 && text[0] == '/' && SearchByCommand(text, out string command))
                     {
@@ -653,43 +650,6 @@ namespace Unigram.Controls
             }
 
             return null;
-        }
-
-        public class StickerCollection : MvxObservableCollection<Telegram.Td.Api.Sticker>, ISupportIncrementalLoading
-        {
-            private readonly IProtoService _protoService;
-            private readonly string _query;
-
-            private bool _hasMore = true;
-
-            public StickerCollection(IProtoService protoService, string query)
-            {
-                _protoService = protoService;
-                _query = query;
-            }
-
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-            {
-                return AsyncInfo.Run(async token =>
-                {
-                    count = 0;
-                    _hasMore = false;
-
-                    var response = await _protoService.SendAsync(new GetStickers(_query, 20));
-                    if (response is Stickers stickers)
-                    {
-                        foreach (var sticker in stickers.StickersValue)
-                        {
-                            Add(sticker);
-                            count++;
-                        }
-                    }
-
-                    return new LoadMoreItemsResult { Count = count };
-                });
-            }
-
-            public bool HasMoreItems => _hasMore;
         }
 
         public class UsernameCollection : MvxObservableCollection<Telegram.Td.Api.User>, ISupportIncrementalLoading
@@ -761,6 +721,43 @@ namespace Unigram.Controls
             public bool HasMoreItems => _hasMore;
         }
 
+        public class SearchHashtagsCollection : MvxObservableCollection<string>, ISupportIncrementalLoading
+        {
+            private readonly IProtoService _protoService;
+            private readonly string _query;
+
+            private bool _hasMore = true;
+
+            public SearchHashtagsCollection(IProtoService protoService, string query)
+            {
+                _protoService = protoService;
+                _query = query;
+            }
+
+            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            {
+                return AsyncInfo.Run(async token =>
+                {
+                    count = 0;
+                    _hasMore = false;
+
+                    var response = await _protoService.SendAsync(new SearchHashtags(_query, 20));
+                    if (response is Hashtags hashtags)
+                    {
+                        foreach (var value in hashtags.HashtagsValue)
+                        {
+                            Add("#" + value);
+                            count++;
+                        }
+                    }
+
+                    return new LoadMoreItemsResult { Count = count };
+                });
+            }
+
+            public bool HasMoreItems => _hasMore;
+        }
+
         public static bool SearchByCommand(string text, out string searchText)
         {
             searchText = string.Empty;
@@ -818,7 +815,7 @@ namespace Unigram.Controls
             {
                 if (text[i] == c)
                 {
-                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1 ] == '\r' || text[i - 1] == '\v')
+                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v')
                     {
                         index = i;
                         break;
@@ -857,7 +854,7 @@ namespace Unigram.Controls
 
         private void FormatText()
         {
-            if (!ApplicationSettings.Current.IsReplaceEmojiEnabled)
+            if (!ViewModel.Settings.IsReplaceEmojiEnabled)
             {
                 return;
             }
@@ -997,6 +994,52 @@ namespace Unigram.Controls
                 }
 
                 searchText = text.Substring(index).TrimStart('@');
+            }
+
+            return found;
+        }
+
+        public static bool SearchByHashtag(string text, out string searchText, out int index)
+        {
+            index = -1;
+            searchText = string.Empty;
+
+            var found = true;
+            var i = text.Length - 1;
+
+            while (i >= 0)
+            {
+                if (text[i] == '#')
+                {
+                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v')
+                    {
+                        index = i;
+                        break;
+                    }
+
+                    found = false;
+                    break;
+                }
+                else
+                {
+                    if (!MessageHelper.IsValidUsernameSymbol(text[i]))
+                    {
+                        found = false;
+                        break;
+                    }
+
+                    i--;
+                }
+            }
+
+            if (found)
+            {
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                searchText = text.Substring(index).TrimStart('#');
             }
 
             return found;
@@ -1235,11 +1278,7 @@ namespace Unigram.Controls
                     //    paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).Font = consolas;
                     //}
                     //else 
-                    if (entity.Type is TextEntityTypeUrl ||
-                             entity.Type is TextEntityTypeEmailAddress ||
-                             entity.Type is TextEntityTypeMention ||
-                             entity.Type is TextEntityTypeHashtag ||
-                             entity.Type is TextEntityTypeBotCommand)
+                    if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypePhoneNumber || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeCashtag || entity.Type is TextEntityTypeBotCommand)
                     {
                         paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
                     }

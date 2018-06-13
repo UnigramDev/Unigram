@@ -28,7 +28,7 @@ namespace Unigram.Views.Payments
         public PaymentReceiptPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<PaymentReceiptViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<PaymentReceiptViewModel>();
         }
 
         private string ConvertTitle(bool test)
@@ -36,7 +36,7 @@ namespace Unigram.Views.Payments
             return (test ? "Test " : string.Empty) + Strings.Resources.PaymentReceipt;
         }
 
-        private string ConvertAddress(ShippingAddress address)
+        private string ConvertAddress(Address address)
         {
             if (address == null)
             {

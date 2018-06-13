@@ -31,7 +31,7 @@ namespace Unigram.Views.Settings
         public SettingsStickersPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsStickersViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsStickersViewModel>();
         }
 
         private void FeaturedStickers_Click(object sender, RoutedEventArgs e)
@@ -118,6 +118,25 @@ namespace Unigram.Views.Settings
             }
 
             args.Handled = true;
+        }
+
+        #endregion
+
+        #region Binding
+
+        private string ConvertSuggest(StickersSuggestionMode mode)
+        {
+            switch (mode)
+            {
+                case StickersSuggestionMode.All:
+                    return Strings.Resources.SuggestStickersAll;
+                case StickersSuggestionMode.Installed:
+                    return Strings.Resources.SuggestStickersInstalled;
+                case StickersSuggestionMode.None:
+                    return Strings.Resources.SuggestStickersNone;
+            }
+
+            return null;
         }
 
         #endregion

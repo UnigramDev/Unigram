@@ -22,8 +22,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsPhoneViewModel : UnigramViewModelBase
     {
-        public SettingsPhoneViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsPhoneViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }

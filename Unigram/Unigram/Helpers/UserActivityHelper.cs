@@ -35,7 +35,7 @@ namespace Unigram.Helpers
         {
             get
             {
-                return _cacheService ?? (_cacheService = UnigramContainer.Current.ResolveType<ICacheService>());
+                return _cacheService ?? (_cacheService = UnigramContainer.Current.Resolve<ICacheService>());
             }
         }
 

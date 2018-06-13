@@ -23,8 +23,8 @@ namespace Unigram.ViewModels.BasicGroups
     {
         public IBasicGroupDelegate Delegate { get; set; }
 
-        public BasicGroupEditViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public BasicGroupEditViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);

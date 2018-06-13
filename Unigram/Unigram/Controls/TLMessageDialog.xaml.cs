@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Core.Helpers;
 using Windows.Foundation;
@@ -115,6 +116,18 @@ namespace Unigram.Controls
             }
         }
 
+        public FormattedText FormattedMessage
+        {
+            get
+            {
+                return TextBlockHelper.GetFormattedText(MessageLabel);
+            }
+            set
+            {
+                TextBlockHelper.SetFormattedText(MessageLabel, value);
+            }
+        }
+
         public string CheckBoxLabel
         {
             get
@@ -145,6 +158,17 @@ namespace Unigram.Controls
             var dialog = new TLMessageDialog();
             dialog.Title = title;
             dialog.Message = message;
+            dialog.PrimaryButtonText = primary ?? string.Empty;
+            dialog.SecondaryButtonText = secondary ?? string.Empty;
+
+            return dialog.ShowQueuedAsync();
+        }
+
+        public static Task<ContentDialogResult> ShowAsync(FormattedText message, string title = null, string primary = null, string secondary = null)
+        {
+            var dialog = new TLMessageDialog();
+            dialog.Title = title;
+            dialog.FormattedMessage = message;
             dialog.PrimaryButtonText = primary ?? string.Empty;
             dialog.SecondaryButtonText = secondary ?? string.Empty;
 

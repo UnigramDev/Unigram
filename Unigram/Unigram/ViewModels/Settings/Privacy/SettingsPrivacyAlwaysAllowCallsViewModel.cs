@@ -10,8 +10,8 @@ namespace Unigram.ViewModels.Settings.Privacy
 {
     public class SettingsPrivacyAlwaysAllowCallsViewModel : SettingsPrivacyAlwaysViewModelBase
     {
-        public SettingsPrivacyAlwaysAllowCallsViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator, new UserPrivacySettingAllowCalls())
+        public SettingsPrivacyAlwaysAllowCallsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator, new UserPrivacySettingAllowCalls())
         {
         }
 

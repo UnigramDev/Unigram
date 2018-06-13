@@ -26,7 +26,7 @@ namespace Unigram.Views.Users
         public UserCreatePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<UserCreateViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<UserCreateViewModel>();
         }
 
         private void PrimaryInput_KeyDown(object sender, KeyRoutedEventArgs e)

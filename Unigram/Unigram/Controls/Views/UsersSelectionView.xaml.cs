@@ -24,8 +24,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Views
 {
     public sealed partial class UsersSelectionView : Grid
@@ -34,11 +32,6 @@ namespace Unigram.Controls.Views
 
         public UsersSelectionView()
         {
-            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
-            {
-                DataContext = new SettingsBlockUserViewModel(null, null, null);
-            }
-
             InitializeComponent();
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");

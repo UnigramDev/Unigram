@@ -15,8 +15,8 @@ namespace Unigram.ViewModels.Settings
     {
         private readonly IPasscodeService _passcodeService;
 
-        public SettingsSecurityPasscodeViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IPasscodeService passcodeService)
-            : base(protoService, cacheService, aggregator)
+        public SettingsSecurityPasscodeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IPasscodeService passcodeService)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _passcodeService = passcodeService;
 

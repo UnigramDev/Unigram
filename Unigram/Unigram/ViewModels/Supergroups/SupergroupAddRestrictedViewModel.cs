@@ -17,8 +17,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupAddRestrictedViewModel : SupergroupMembersViewModelBase
     {
-        public SupergroupAddRestrictedViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
+        public SupergroupAddRestrictedViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
         {
         }
 

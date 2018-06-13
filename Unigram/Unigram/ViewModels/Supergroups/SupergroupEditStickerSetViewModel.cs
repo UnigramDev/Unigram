@@ -13,8 +13,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditStickerSetViewModel : UnigramViewModelBase, IHandle<UpdateSupergroupFullInfo>
     {
-        public SupergroupEditStickerSetViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SupergroupEditStickerSetViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
             CancelCommand = new RelayCommand(CancelExecute);

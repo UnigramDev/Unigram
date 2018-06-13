@@ -14,8 +14,8 @@ namespace Unigram.ViewModels.Settings
         private readonly Dictionary<int, int> _indexToSize = new Dictionary<int, int> { { 0, 12 }, { 1, 13 }, { 2, 14 }, { 3, 15 }, { 4, 16 }, { 5, 17 }, { 6, 18 } };
         private readonly Dictionary<int, int> _sizeToIndex = new Dictionary<int, int> { { 12, 0 }, { 13, 1 }, { 14, 2 }, { 15, 3 }, { 16, 4 }, { 17, 5 }, { 18, 6 } };
 
-        public SettingsAppearanceViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsAppearanceViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
         }
 
@@ -47,11 +47,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return (int)ApplicationSettings.Current.RequestedTheme;
+                return (int)Settings.RequestedTheme;
             }
             set
             {
-                ApplicationSettings.Current.RequestedTheme = (ElementTheme)value;
+                Settings.RequestedTheme = (ElementTheme)value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(() => IsThemeChanged);
             }
@@ -61,7 +61,7 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.CurrentTheme != ApplicationSettings.Current.RequestedTheme;
+                return Settings.CurrentTheme != Settings.RequestedTheme;
             }
         }
     }

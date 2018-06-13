@@ -27,7 +27,7 @@ namespace Unigram.Views.Settings
         public SettingsDataAndStoragePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsDataAndStorageViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsDataAndStorageViewModel>();
         }
 
         private void Storage_Click(object sender, RoutedEventArgs e)
@@ -38,6 +38,11 @@ namespace Unigram.Views.Settings
         private void Stats_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsStatsPage));
+        }
+
+        private void Proxy_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsProxiesPage));
         }
 
         #region Binding
@@ -57,6 +62,5 @@ namespace Unigram.Views.Settings
         }
 
         #endregion
-
     }
 }

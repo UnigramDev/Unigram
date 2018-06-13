@@ -20,8 +20,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsStorageViewModel : UnigramViewModelBase
     {
-        public SettingsStorageViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsStorageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             ChangeTtlCommand = new RelayCommand(ChangeTtlExecute);
             ClearCacheCommand = new RelayCommand(ClearCacheExecute);
@@ -58,11 +58,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.FilesTtl;
+                return Settings.FilesTtl;
             }
             set
             {
-                ApplicationSettings.Current.FilesTtl = value;
+                Settings.FilesTtl = value;
                 RaisePropertyChanged();
             }
         }

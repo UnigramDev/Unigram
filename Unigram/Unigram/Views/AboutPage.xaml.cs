@@ -14,7 +14,7 @@ namespace Unigram.Views
         public AboutPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<AboutViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<AboutViewModel>();
         }
     }
 }

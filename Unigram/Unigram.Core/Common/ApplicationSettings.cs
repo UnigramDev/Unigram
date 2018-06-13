@@ -1,46 +1,97 @@
 using System;
+using Unigram.Common;
+using Unigram.Services;
 using Windows.Storage;
 using Windows.UI.Xaml;
+
+namespace Unigram.Services
+{
+    public interface ISettingsService
+    {
+        int Session { get; }
+        int Version { get; set; }
+
+        NotificationsSettings Notifications { get; }
+        StickersSettings Stickers { get; }
+
+        ElementTheme CurrentTheme { get; }
+        ElementTheme RequestedTheme { get; set; }
+
+        bool IsWorkModeVisible { get; set; }
+        bool IsWorkModeEnabled { get; set; }
+
+        int FilesTtl { get; set; }
+
+        int VerbosityLevel { get; }
+
+        bool IsSendByEnterEnabled { get; set; }
+        bool IsReplaceEmojiEnabled { get; set; }
+        bool IsContactsSyncEnabled { get; set; }
+        bool IsAutoPlayEnabled { get; set; }
+        bool IsSendGrouped { get; set; }
+
+        string NotificationsToken { get; set; }
+
+        int SelectedBackground { get; set; }
+        int SelectedColor { get; set; }
+
+        int PeerToPeerMode { get; set; }
+        libtgvoip.DataSavingMode UseLessData { get; set; }
+    }
+}
 
 namespace Unigram.Common
 {
     public class ApplicationSettingsBase
     {
-        protected readonly ApplicationDataContainer isolatedStore;
+        protected readonly ApplicationDataContainer _container;
 
         public ApplicationSettingsBase(ApplicationDataContainer container = null)
         {
-            isolatedStore = container ?? ApplicationData.Current.LocalSettings;
+            _container = container ?? ApplicationData.Current.LocalSettings;
         }
+
+
 
         public bool AddOrUpdateValue(string key, Object value)
         {
+            return AddOrUpdateValue(_container, key, value);
+        }
+
+        protected bool AddOrUpdateValue(ApplicationDataContainer container, string key, Object value)
+        {
             bool valueChanged = false;
 
-            if (isolatedStore.Values.ContainsKey(key))
+            if (container.Values.ContainsKey(key))
             {
-                if (isolatedStore.Values[key] != value)
+                if (container.Values[key] != value)
                 {
-                    isolatedStore.Values[key] = value;
+                    container.Values[key] = value;
                     valueChanged = true;
                 }
             }
             else
             {
-                isolatedStore.Values.Add(key, value);
+                container.Values.Add(key, value);
                 valueChanged = true;
             }
 
             return valueChanged;
         }
 
+
         public valueType GetValueOrDefault<valueType>(string key, valueType defaultValue)
+        {
+            return GetValueOrDefault<valueType>(_container, key, defaultValue);
+        }
+
+        protected valueType GetValueOrDefault<valueType>(ApplicationDataContainer container, string key, valueType defaultValue)
         {
             valueType value;
 
-            if (isolatedStore.Values.ContainsKey(key))
+            if (container.Values.ContainsKey(key))
             {
-                value = (valueType)isolatedStore.Values[key];
+                value = (valueType)container.Values[key];
             }
             else
             {
@@ -52,11 +103,11 @@ namespace Unigram.Common
 
         public void Clear()
         {
-            isolatedStore.Values.Clear();
+            _container.Values.Clear();
         }
     }
 
-    public class ApplicationSettings : ApplicationSettingsBase
+    public class ApplicationSettings : ApplicationSettingsBase, ISettingsService
     {
         private static ApplicationSettings _current;
         public static ApplicationSettings Current
@@ -70,10 +121,25 @@ namespace Unigram.Common
             }
         }
 
+        private readonly int _session;
+
+        private ApplicationSettings()
+        {
+
+        }
+
+        public ApplicationSettings(int session)
+            : base(session > 0 ? ApplicationData.Current.LocalSettings.CreateContainer(session.ToString(), ApplicationDataCreateDisposition.Always) : null)
+        {
+            _session = session;
+        }
+
         #region App version
 
-        public const int CurrentVersion = 1014530;
-        public const string CurrentChangelog = "Ladies and gentlemen, please welcome Unigram X.\r\nSince the beginning of the year we're working closely with TDLib creators to deliver you the best Telegram experience on Windows 10.\r\nWe're proud to announce that the wait is over, and the app has been rewritten from scratch to guarantee you performance, stability and security.\r\n\r\nHere's what we've done so far:\r\n- Every chat you open is now securely cached on your device, so you can browse them even when internet connection isn't available.\r\n- Secret chats are now fully supported: this allows you to communicate with your friends using end-to-end encryption, even on desktop.\r\n- My People integration: you can now pin your contacts to the Windows taskbar and use Unigram to chat with them without opening the full app.\r\n- The app is now faster, stronger, better.\r\n\r\nSome of the features available in the old app might be unavailable at the moment, but they're going to come soon.\r\nIf something important for you is missing in the app don't esitate to contact us and we'll work to bring it to you as soon as possible!";
+        public const int CurrentVersion = 1215620;
+        public const string CurrentChangelog = "- Work mode: hide muted chats to focus on important conversations.\r\n- Compact mode: the app will now show just profile pictures in chats list if the window isn't wide enough.\r\n- Zoom photos and videos: when you open a media full screen you can now zoom it using touch or mouse wheel.";
+
+        public int Session => _session;
 
         private int? _appVersion;
         public int Version
@@ -94,21 +160,21 @@ namespace Unigram.Common
 
         #endregion
 
-        private ProxySettings _proxy;
-        public ProxySettings Proxy
-        {
-            get
-            {
-                return _proxy = _proxy ?? new ProxySettings();
-            }
-        }
-
         private NotificationsSettings _notifications;
         public NotificationsSettings Notifications
         {
             get
             {
-                return _notifications = _notifications ?? new NotificationsSettings();
+                return _notifications = _notifications ?? new NotificationsSettings(_container);
+            }
+        }
+
+        private StickersSettings _stickers;
+        public StickersSettings Stickers
+        {
+            get
+            {
+                return _stickers = _stickers ?? new StickersSettings(_container);
             }
         }
 
@@ -131,7 +197,7 @@ namespace Unigram.Common
             {
                 if (_requestedTheme == null)
                 {
-                    _requestedTheme = (ElementTheme)GetValueOrDefault("RequestedTheme", (int)ElementTheme.Default);
+                    _requestedTheme = (ElementTheme)GetValueOrDefault(ApplicationData.Current.LocalSettings, "RequestedTheme", (int)ElementTheme.Default);
                     _currentTheme = _requestedTheme;
                 }
 
@@ -140,24 +206,41 @@ namespace Unigram.Common
             set
             {
                 _requestedTheme = value;
-                AddOrUpdateValue("RequestedTheme", (int)value);
+                AddOrUpdateValue(ApplicationData.Current.LocalSettings, "RequestedTheme", (int)value);
             }
         }
 
-        private int? _contactsSavedCount;
-        public int ContactsSavedCount
+        private bool? _isWorkModeVisible;
+        public bool IsWorkModeVisible
         {
             get
             {
-                if (_contactsSavedCount == null)
-                    _contactsSavedCount = GetValueOrDefault("ContactsSavedCount", 0);
+                if (_isWorkModeVisible == null)
+                    _isWorkModeVisible = GetValueOrDefault("IsWorkModeVisible", false);
 
-                return _contactsSavedCount ?? 0;
+                return _isWorkModeVisible ?? false;
             }
             set
             {
-                _contactsSavedCount = value;
-                AddOrUpdateValue("ContactsSavedCount", value);
+                _isWorkModeVisible = value;
+                AddOrUpdateValue("IsWorkModeVisible", value);
+            }
+        }
+
+        private bool? _isWorkModeEnabled;
+        public bool IsWorkModeEnabled
+        {
+            get
+            {
+                if (_isWorkModeEnabled == null)
+                    _isWorkModeEnabled = GetValueOrDefault("IsWorkModeEnabled", false);
+
+                return _isWorkModeEnabled ?? false;
+            }
+            set
+            {
+                _isWorkModeEnabled = value;
+                AddOrUpdateValue("IsWorkModeEnabled", value);
             }
         }
 
@@ -398,6 +481,12 @@ namespace Unigram.Common
 
     public class NotificationsSettings : ApplicationSettingsBase
     {
+        public NotificationsSettings(ApplicationDataContainer container)
+            : base(container)
+        {
+
+        }
+
         private bool? _inAppPreview;
         public bool InAppPreview
         {
@@ -467,119 +556,36 @@ namespace Unigram.Common
         }
     }
 
-    public class ProxySettings : ApplicationSettingsBase
+    public class StickersSettings : ApplicationSettingsBase
     {
-        public void CleanUp()
+        public StickersSettings(ApplicationDataContainer container)
+            : base(container)
         {
-            _isEnabled = null;
-            _isCallsEnabled = null;
-            _server = null;
-            _port = null;
-            _username = null;
-            _password = null;
+
         }
 
-        private bool? _isEnabled;
-        public bool IsEnabled
+        private int? _suggestionMode;
+        public StickersSuggestionMode SuggestionMode
         {
             get
             {
-                if (_isEnabled == null)
-                    _isEnabled = GetValueOrDefault("ProxyEnabled", false);
+                if (_suggestionMode == null)
+                    _suggestionMode = GetValueOrDefault("SuggestionMode", 0);
 
-                return _isEnabled ?? false;
+                return (StickersSuggestionMode)(_suggestionMode ?? 0);
             }
             set
             {
-                _isEnabled = value;
-                AddOrUpdateValue("ProxyEnabled", value);
+                _suggestionMode = (int)value;
+                AddOrUpdateValue("SuggestionMode", (int)value);
             }
         }
+    }
 
-        private bool? _isCallsEnabled;
-        public bool IsCallsEnabled
-        {
-            get
-            {
-                if (_isCallsEnabled == null)
-                    _isCallsEnabled = GetValueOrDefault("CallsProxyEnabled", false);
-
-                return _isCallsEnabled ?? false;
-            }
-            set
-            {
-                _isCallsEnabled = value;
-                AddOrUpdateValue("CallsProxyEnabled", value);
-            }
-        }
-
-        private string _server;
-        public string Server
-        {
-            get
-            {
-                if (_server == null)
-                    _server = GetValueOrDefault<string>("ProxyServer", null);
-
-                return _server;
-            }
-            set
-            {
-                _server = value;
-                AddOrUpdateValue("ProxyServer", value);
-            }
-        }
-
-        private int? _port;
-        public int Port
-        {
-            get
-            {
-                if (_port == null)
-                    _port = GetValueOrDefault("ProxyPort", 1080);
-
-                return _port ?? 1080;
-            }
-            set
-            {
-                _port = value;
-                AddOrUpdateValue("ProxyPort", value);
-            }
-        }
-
-        private string _username;
-        public string Username
-        {
-            get
-            {
-                if (_username == null)
-                    _username = GetValueOrDefault<string>("ProxyUsername", null);
-
-                return _username;
-            }
-            set
-            {
-                _username = value;
-                AddOrUpdateValue("ProxyUsername", value);
-            }
-        }
-
-        private string _password;
-        public string Password
-        {
-            get
-            {
-                if (_password == null)
-                    _password = GetValueOrDefault<string>("ProxyPassword", null);
-
-                return _password;
-            }
-            set
-            {
-                _password = value;
-                AddOrUpdateValue("ProxyPassword", value);
-            }
-        }
-
+    public enum StickersSuggestionMode
+    {
+        All,
+        Installed,
+        None
     }
 }

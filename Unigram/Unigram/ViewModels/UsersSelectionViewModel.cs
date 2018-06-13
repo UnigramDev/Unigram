@@ -15,8 +15,8 @@ namespace Unigram.ViewModels
 {
     public abstract class UsersSelectionViewModel : UnigramViewModelBase
     {
-        public UsersSelectionViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator)
+        public UsersSelectionViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new SortedObservableCollection<User>(new UserComparer(false));
             SelectedItems = new MvxObservableCollection<User>();

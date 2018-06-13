@@ -26,7 +26,7 @@ namespace Unigram.Controls
 {
     public sealed partial class PlaybackHeader : UserControl
     {
-        public IPlaybackService Playback { get; } = UnigramContainer.Current.ResolveType<IPlaybackService>();
+        public IPlaybackService Playback { get; } = UnigramContainer.Current.Resolve<IPlaybackService>();
 
         public PlaybackHeader()
         {

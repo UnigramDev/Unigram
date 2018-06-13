@@ -63,17 +63,17 @@
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource SecurityTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         IsEnabled="False"
                         Tag="{CustomResource Passcode}"
                         Click="Passcode_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         IsEnabled="False"
                         Tag="{CustomResource TwoStepVerification}"
                         Click="Sessions_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         Tag="{CustomResource SessionsTitle}" 
                         Click="Sessions_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
@@ -101,11 +101,11 @@
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource PrivacyBots}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         Command="{x:Bind ViewModel.ClearPaymentsCommand}"
                         Tag="{CustomResource PrivacyPaymentsClear}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         Click="WebSessions_Click"
                         Tag="{CustomResource WebSessionsTitle}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>

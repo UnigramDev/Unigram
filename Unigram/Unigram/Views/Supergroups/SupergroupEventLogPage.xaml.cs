@@ -40,7 +40,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEventLogPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupEventLogViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SupergroupEventLogViewModel>();
 
             _typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());

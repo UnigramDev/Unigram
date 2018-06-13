@@ -11,7 +11,7 @@
     <AssemblyName>Unigram.Tasks</AssemblyName>
     <DefaultLanguage>en</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.17134.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -107,17 +107,15 @@
     <Compile Include="InteractiveTask.cs" />
     <Compile Include="TelegramGameProxy.cs" />
     <Compile Include="TelegramPaymentProxy.cs" />
-    <Compile Include="TLPush.cs" />
-    <Compile Include="TLPushUtils.cs" />
     <Compile Include="VoIPServiceTask.cs" />
     <Compile Include="VoIPCallTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.7</Version>
+      <Version>6.1.4</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>11.0.1</Version>
+      <Version>11.0.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -166,8 +164,8 @@
     <PRIResource Include="Strings\ms\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="TDLib.UWP, Version=1.0">
-      <Name>TDLib for Universal Windows Platfrom</Name>
+    <SDKReference Include="Telegram.Td.UWP, Version=1.0">
+      <Name>TDLib for Universal Windows Platform</Name>
     </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

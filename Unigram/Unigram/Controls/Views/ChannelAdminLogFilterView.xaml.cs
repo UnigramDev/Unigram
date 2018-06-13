@@ -34,7 +34,7 @@ namespace Unigram.Controls.Views
         private ChannelAdminLogFilterView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SupergroupEventLogFilterViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SupergroupEventLogFilterViewModel>();
         }
 
         private static ChannelAdminLogFilterView _current;

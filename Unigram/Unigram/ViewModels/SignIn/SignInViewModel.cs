@@ -17,9 +17,13 @@ namespace Unigram.ViewModels.SignIn
 {
     public class SignInViewModel : UnigramViewModelBase
     {
-        public SignInViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        private readonly INotificationsService _notificationsService;
+
+        public SignInViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
+            _notificationsService = notificationsService;
+
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ProxyCommand = new RelayCommand(ProxyExecute);
         }
@@ -147,7 +151,7 @@ namespace Unigram.ViewModels.SignIn
 
             var phoneNumber = (_phoneCode + _phoneNumber).Replace(" ", string.Empty);
 
-            await ProtoService.SendAsync(new SetOption("x_phonenumber", new OptionValueString(phoneNumber)));
+            await _notificationsService.CloseAsync();
 
             var response = await ProtoService.SendAsync(new SetAuthenticationPhoneNumber(phoneNumber, false, false));
             if (response is Error error)
@@ -188,40 +192,40 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand ProxyCommand { get; }
         private async void ProxyExecute()
         {
-            var proxy = ApplicationSettings.Current.Proxy;
+            //var proxy = Settings.Proxy;
 
-            var dialog = new ProxyView(false);
-            dialog.Server = ApplicationSettings.Current.Proxy.Server;
-            dialog.Port = proxy.Port.ToString();
-            dialog.Username = proxy.Username;
-            dialog.Password = proxy.Password;
-            dialog.IsProxyEnabled = proxy.IsEnabled;
-            dialog.IsCallsProxyEnabled = proxy.IsCallsEnabled;
+            //var dialog = new ProxyView();
+            ////dialog.Server = proxy.Server;
+            ////dialog.Port = proxy.Port.ToString();
+            ////dialog.Username = proxy.Username;
+            ////dialog.Password = proxy.Password;
+            ////dialog.IsProxyEnabled = proxy.IsEnabled;
+            ////dialog.IsCallsProxyEnabled = proxy.IsCallsEnabled;
 
-            var enabled = proxy.IsEnabled == true;
+            //var enabled = proxy.IsEnabled == true;
 
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
-            {
-                var server = proxy.Server = dialog.Server ?? string.Empty;
-                var port = proxy.Port = Extensions.TryParseOrDefault(dialog.Port, 1080);
-                var username = proxy.Username = dialog.Username ?? string.Empty;
-                var password = proxy.Password = dialog.Password ?? string.Empty;
-                var newValue = proxy.IsEnabled = dialog.IsProxyEnabled;
-                proxy.IsCallsEnabled = dialog.IsCallsProxyEnabled;
+            //var confirm = await dialog.ShowQueuedAsync();
+            //if (confirm == ContentDialogResult.Primary)
+            //{
+            //    var server = proxy.Server = dialog.Server ?? string.Empty;
+            //    //var port = proxy.Port = Extensions.TryParseOrDefault(dialog.Port, 1080);
+            //    //var username = proxy.Username = dialog.Username ?? string.Empty;
+            //    //var password = proxy.Password = dialog.Password ?? string.Empty;
+            //    //var newValue = proxy.IsEnabled = dialog.IsProxyEnabled;
+            //    //proxy.IsCallsEnabled = dialog.IsCallsProxyEnabled;
 
-                if (newValue || newValue != enabled)
-                {
-                    if (newValue)
-                    {
-                        ProtoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
-                    }
-                    else
-                    {
-                        ProtoService.Send(new SetProxy(new ProxyEmpty()));
-                    }
-                }
-            }
+            //    //if (newValue || newValue != enabled)
+            //    //{
+            //    //    if (newValue)
+            //    //    {
+            //    //        //ProtoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
+            //    //    }
+            //    //    else
+            //    //    {
+            //    //        //ProtoService.Send(new SetProxy(new ProxyEmpty()));
+            //    //    }
+            //    //}
+            //}
         }
     }
 }

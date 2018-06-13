@@ -21,8 +21,10 @@ namespace Unigram.ViewModels
 {
     public class ChatsViewModel : UnigramViewModelBase, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
     {
-        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        private readonly Dictionary<long, ChatViewModel> _viewModels = new Dictionary<long, ChatViewModel>();
+
+        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new ItemsCollection(protoService, aggregator, this);
 
@@ -81,7 +83,7 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> DialogNotifyCommand { get; }
         private void DialogNotifyExecute(Chat chat)
         {
-            ProtoService.Send(new SetNotificationSettings(new NotificationSettingsScopeChat(chat.Id), new NotificationSettings(chat.NotificationSettings.MuteFor > 0 ? 0 : 632053052, chat.NotificationSettings.Sound, chat.NotificationSettings.ShowPreview)));
+            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(false, chat.NotificationSettings.MuteFor > 0 ? 0 : 632053052, false, chat.NotificationSettings.Sound, false, chat.NotificationSettings.ShowPreview)));
         }
 
         public RelayCommand<Chat> DialogDeleteCommand { get; }
@@ -145,7 +147,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateChatOrder update)
         {
-            var chat = ProtoService.GetChat(update.ChatId);
+            var chat = GetChat(update.ChatId);
             if (chat != null)
             {
                 BeginOnUIThread(() =>
@@ -171,7 +173,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateChatLastMessage update)
         {
-            var chat = ProtoService.GetChat(update.ChatId);
+            var chat = GetChat(update.ChatId);
             if (chat != null)
             {
                 BeginOnUIThread(() =>
@@ -197,7 +199,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateChatIsPinned update)
         {
-            var chat = ProtoService.GetChat(update.ChatId);
+            var chat = GetChat(update.ChatId);
             if (chat != null)
             {
                 BeginOnUIThread(() =>
@@ -223,7 +225,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateChatDraftMessage update)
         {
-            var chat = ProtoService.GetChat(update.ChatId);
+            var chat = GetChat(update.ChatId);
             if (chat != null)
             {
                 BeginOnUIThread(() =>
@@ -245,6 +247,23 @@ namespace Unigram.ViewModels
                     }
                 });
             }
+        }
+
+        private Chat GetChat(long chatId)
+        {
+            //if (_viewModels.ContainsKey(chatId))
+            //{
+            //    return _viewModels[chatId];
+            //}
+            //else
+            //{
+            //    var chat = ProtoService.GetChat(chatId);
+            //    var item = _viewModels[chatId] = new ChatViewModel(ProtoService, chat);
+
+            //    return item;
+            //}
+
+            return ProtoService.GetChat(chatId);
         }
 
         class ItemsCollection : SortedObservableCollection<Chat>, IGroupSupportIncrementalLoading

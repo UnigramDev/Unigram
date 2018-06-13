@@ -78,10 +78,10 @@
                 </StackPanel>
 
                 <StackPanel x:Name="DismissPanel" Visibility="Collapsed" Margin="0,24">
-                    <controls:HyperButton Command="{x:Bind ViewModel.DismissCommand}"
-                                          Content="{CustomResource ChannelBlockUser}"
-                                          Style="{StaticResource HyperButtonStyle}"
-                                          Foreground="Red"/>
+                    <Button Command="{x:Bind ViewModel.DismissCommand}"
+                            Content="{CustomResource ChannelBlockUser}"
+                            Style="{StaticResource HyperButtonStyle}"
+                            Foreground="Red"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

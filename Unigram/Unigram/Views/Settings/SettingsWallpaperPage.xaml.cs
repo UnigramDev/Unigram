@@ -27,7 +27,7 @@ namespace Unigram.Views.Settings
         public SettingsWallPaperPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsWallPaperViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsWallPaperViewModel>();
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

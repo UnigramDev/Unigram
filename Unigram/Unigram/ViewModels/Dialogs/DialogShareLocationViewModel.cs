@@ -19,8 +19,8 @@ namespace Unigram.ViewModels.Dialogs
     {
         private readonly ILocationService _locationService;
 
-        public DialogShareLocationViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, ILocationService foursquareService)
-            : base(protoService, cacheService, aggregator)
+        public DialogShareLocationViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService foursquareService)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _locationService = foursquareService;
 

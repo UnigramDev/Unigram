@@ -29,7 +29,7 @@ namespace Unigram.Views.Settings
         public SettingsMasksArchivedPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsMasksArchivedViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsMasksArchivedViewModel>();
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)

@@ -105,15 +105,15 @@ namespace Unigram.ViewModels
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService)
-            : base(protoService, cacheService, aggregator)
+        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _locationService = locationService;
             _liveLocationService = liveLocationService;
             _pushService = pushService;
             _playbackService = playbackService;
 
-            _stickers = new DialogStickersViewModel(protoService, cacheService, aggregator);
+            _stickers = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
 
             _informativeTimer = new DispatcherTimer();
             _informativeTimer.Interval = TimeSpan.FromSeconds(5);
@@ -1572,6 +1572,8 @@ namespace Unigram.ViewModels
 
         private void RemoveNotifications()
         {
+            return;
+
             var chat = _chat;
             if (chat == null)
             {
@@ -1919,7 +1921,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetNotificationSettings(new NotificationSettingsScopeChat(chat.Id), new NotificationSettings(unmute ? 0 : 632053052, chat.NotificationSettings.Sound, chat.NotificationSettings.ShowPreview)));
+            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(false, unmute ? 0 : 632053052, false, chat.NotificationSettings.Sound, false, chat.NotificationSettings.ShowPreview)));
         }
 
         #endregion
@@ -2435,7 +2437,7 @@ namespace Unigram.ViewModels
         public RelayCommand SearchCommand { get; }
         private void SearchExecute()
         {
-            Search = new DialogSearchViewModel(ProtoService, CacheService, Aggregator, this);
+            Search = new DialogSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
         }
 
         #endregion
@@ -2895,6 +2897,20 @@ namespace Unigram.ViewModels
             {
                 return ReplyToMessage == null && EditingMessage == null;
             }
+        }
+
+        public bool Matches(long messageId)
+        {
+            if (ReplyToMessage != null && ReplyToMessage.Id == messageId)
+            {
+                return true;
+            }
+            else if (EditingMessage != null && EditingMessage.Id == messageId)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 

@@ -93,6 +93,7 @@
         <common:AutoDownloadType x:Key="AutoDownloadDocuments">Documents</common:AutoDownloadType>
         <common:AutoDownloadType x:Key="AutoDownloadVoiceNotes">VoiceNotes</common:AutoDownloadType>
         <common:AutoDownloadType x:Key="AutoDownloadVideoNotes">VideoNotes</common:AutoDownloadType>
+        <common:AutoDownloadType x:Key="AutoDownloadAudios">Audios</common:AutoDownloadType>
         <common:AutoDownloadType x:Key="AutoDownloadAnimations">Animations</common:AutoDownloadType>
     </Page.Resources>
     
@@ -110,11 +111,11 @@
             <StackPanel Margin="0,0,0,48">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource DataUsage}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         Tag="{CustomResource StorageUsage}"
                         Click="Storage_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         Tag="Network Usage"
                         Click="Stats_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
@@ -127,19 +128,19 @@
                         Header="{CustomResource AutoDownloadMedia}"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
-                    <controls:HyperButton
+                    <Button
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{StaticResource AutoDownloadPhotos}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                         Tag="{CustomResource LocalPhotoCache}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{StaticResource AutoDownloadVideos}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                         Tag="{CustomResource LocalVideoCache}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{StaticResource AutoDownloadDocuments}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
@@ -148,25 +149,31 @@
                     <!--<controls:HyperButton
                          Tag="{CustomResource AttachMusic}"
                          Style="{StaticResource HyperDetailButtonStyle}"/>-->
-                    <controls:HyperButton
+                    <Button
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{StaticResource AutoDownloadVoiceNotes}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                         Tag="{CustomResource AudioAutodownload}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{StaticResource AutoDownloadVideoNotes}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                         Tag="{CustomResource VideoMessagesAutodownload}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton
+                    <Button
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        CommandParameter="{StaticResource AutoDownloadAudios}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Tag="{CustomResource LocalMusicCache}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <Button
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{StaticResource AutoDownloadAnimations}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                         Tag="{CustomResource LocalGifCache}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         Command="{x:Bind ViewModel.ResetAutoDownloadCommand}"
                         Tag="{CustomResource ResetAutomaticMediaDownload}"
                         Style="{StaticResource HyperDetailButtonStyle}"
@@ -183,9 +190,9 @@
                 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource Proxy}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton
+                    <Button
                         Tag="{CustomResource ProxySettings}"
-                        Command="{x:Bind ViewModel.ProxyCommand}"
+                        Click="Proxy_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                 </StackPanel>
             </StackPanel>

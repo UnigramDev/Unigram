@@ -30,22 +30,43 @@
             <ListView.Header>
                 <StackPanel>
                     <controls:BadgeButton
+                        Content="{CustomResource SuggestStickers}"
+                        Command="{x:Bind ViewModel.SuggestCommand}"
+                        Badge="{x:Bind ConvertSuggest(ViewModel.SuggestStickers), Mode=OneWay}"
+                        Style="{StaticResource BadgeButtonStyle}"/>
+                    <controls:BadgeButton
                         Content="{CustomResource FeaturedStickers}"
                         Click="FeaturedStickers_Click"
                         Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
                         BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource BadgeButtonStyle}"/>
+                    <TextBlock
+                        Text="{CustomResource FeaturedStickersInfo}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,24"/>
+                    <Button
+                        Content="{CustomResource Masks}"
+                        Click="Masks_Click"
+                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                        Style="{StaticResource HyperButtonStyle}"/>
+                    <TextBlock
+                        Text="{CustomResource MasksInfo}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,24"/>
                     <controls:BadgeButton
                         Content="{CustomResource ArchivedStickers}"
                         Click="ArchivedStickers_Click"
                         Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource BadgeButtonStyle}"/>
-                    <controls:HyperButton
-                        Content="{CustomResource Masks}"
-                        Click="Masks_Click"
-                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                        Style="{StaticResource HyperButtonStyle}"/>
+                    <TextBlock
+                        Text="{CustomResource ArchivedStickersInfo}"
+                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,24"/>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>

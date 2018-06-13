@@ -12,8 +12,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupMembersViewModel : SupergroupMembersViewModelBase
     {
-        public SupergroupMembersViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
+        public SupergroupMembersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
         {
             ParticipantPromoteCommand = new RelayCommand<ChatMember>(ParticipantPromoteExecute);
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);

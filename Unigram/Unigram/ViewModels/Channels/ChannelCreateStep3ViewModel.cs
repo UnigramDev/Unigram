@@ -9,8 +9,8 @@ namespace Unigram.ViewModels.Channels
 {
     public class ChannelCreateStep3ViewModel : UsersSelectionViewModel
     {
-        public ChannelCreateStep3ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator)
+        public ChannelCreateStep3ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+            : base(protoService, cacheService, settingsService, aggregator)
         {
         }
     }

@@ -56,7 +56,7 @@ namespace Unigram.Services
         private List<Message> _items;
         private Queue<Message> _queue;
 
-        public PlaybackService(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
+        public PlaybackService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;
             _cacheService = cacheService;

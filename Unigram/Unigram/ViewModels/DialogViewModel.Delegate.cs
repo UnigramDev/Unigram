@@ -119,7 +119,7 @@ namespace Unigram.ViewModels
             }
             else if (content is Audio audio)
             {
-
+                return ProtoService.Preferences.ShouldDownloadAudio(GetChatType(chat), new NetworkTypeWiFi());
             }
             else if (content is Document document)
             {
@@ -357,19 +357,18 @@ namespace Unigram.ViewModels
             NavigationService.NavigateToChat(chat, message: messageId);
         }
 
+        public void OpenHashtag(string hashtag)
+        {
+            var search = Search = new DialogSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
+            search.SearchCommand.Execute(hashtag);
+        }
+
         public async void OpenUrl(string url, bool untrust)
         {
-            var navigation = url;
-            if (navigation.StartsWith("http") == false)
-            {
-                navigation = "http://" + url;
-            }
-
-            if (Uri.TryCreate(navigation, UriKind.Absolute, out Uri uri))
+            if (MessageHelper.TryCreateUri(url, out Uri uri))
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    //HandleTelegramUrl(message, navigation);
                     MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, url);
                 }
                 else

@@ -66,6 +66,11 @@ namespace Unigram.Controls.Views
 
             #endregion
 
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
+            {
+                FlyoutSaveAs.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.S, ScopeOwner = this });
+            }
+
             Layer.Visibility = Visibility.Collapsed;
 
             _layer = ElementCompositionPreview.GetElementVisual(Layer);
@@ -137,6 +142,23 @@ namespace Unigram.Controls.Views
         public void OpenFile(GalleryItem item, File file)
         {
             Play(item, file);
+        }
+
+        public void OpenItem(GalleryItem item)
+        {
+            if (_selecting)
+            {
+                return;
+            }
+
+            if (Transport.IsVisible)
+            {
+                Transport.Hide();
+            }
+            else
+            {
+                Transport.Show();
+            }
         }
 
         private void ItemsStackPanel_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -281,7 +303,7 @@ namespace Unigram.Controls.Views
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             var container = GetContainer(0);
-            var root = container.Children[0];
+            var root = container.Inner;
 
             if (root != null && ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem)
             {
@@ -342,7 +364,7 @@ namespace Unigram.Controls.Views
             {
                 Layer.Visibility = Visibility.Visible;
 
-                if (animation.TryStart(image.Children[0]))
+                if (animation.TryStart(image.Inner))
                 {
                     animation.Completed += (s, args) =>
                     {
@@ -350,7 +372,7 @@ namespace Unigram.Controls.Views
 
                         if (item.IsVideo)
                         {
-                            Play(image.Children[0] as Grid, item, item.GetFile());
+                            Play(image.Inner, item, item.GetFile());
                         }
                     };
 
@@ -362,7 +384,7 @@ namespace Unigram.Controls.Views
 
             if (item.IsVideo)
             {
-                Play(image.Children[0] as Grid, item, item.GetFile());
+                Play(image.Inner, item, item.GetFile());
             }
         }
 
@@ -410,7 +432,7 @@ namespace Unigram.Controls.Views
                 //    Play(parent, item);
                 //}
 
-                Play(container.Children[0] as Grid, item, file);
+                Play(container.Inner, item, file);
             }
             catch { }
         }
@@ -453,6 +475,10 @@ namespace Unigram.Controls.Views
 
         private void Dispose()
         {
+            Element2.Reset();
+            Element0.Reset();
+            Element1.Reset();
+
             if (_surface != null)
             {
                 _surface.Children.Remove(_mediaPlayerElement);

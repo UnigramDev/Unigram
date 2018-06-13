@@ -13,8 +13,8 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupBannedViewModel : SupergroupMembersViewModelBase
     {
-        public SupergroupBannedViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator, null, query => new SupergroupMembersFilterBanned(query))
+        public SupergroupBannedViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+            : base(protoService, cacheService, settingsService, aggregator, null, query => new SupergroupMembersFilterBanned(query))
         {
             AddCommand = new RelayCommand(AddExecute);
             ParticipantDismissCommand = new RelayCommand<ChatMember>(ParticipantDismissExecute);

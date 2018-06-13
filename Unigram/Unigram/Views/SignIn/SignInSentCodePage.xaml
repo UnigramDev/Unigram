@@ -37,7 +37,7 @@
                 Text="{CustomResource YourCode}"
                 Style="{ThemeResource TitleTextBlockStyle}"/>
             <TextBlock
-                common:TextBlockHelper.Markdown="{x:Bind ConvertType(ViewModel.CodeInfo, ViewModel.PhoneNumber), FallbackValue=''}"
+                common:TextBlockHelper.Markdown="{x:Bind ConvertType(ViewModel.CodeInfo), FallbackValue=''}"
                 Style="{StaticResource BodyTextBlockStyle}"
                 Padding="0,8,0,16"
                 Grid.Row="1"/>

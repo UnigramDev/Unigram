@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
@@ -27,14 +28,16 @@ namespace Unigram
             container = UnigramContainer.Current;
         }
 
-        public IHardwareService HardwareService => container.ResolveType<IHardwareService>();
+        public IHardwareService HardwareService => container.Resolve<IHardwareService>();
 
-        public void Configure()
+        public void Configure(int id)
         {
-            container.Build((builder, account) =>
+            container.Build(id, (builder, session) =>
             {
-                builder.RegisterType<ProtoService>().As<IProtoService, ICacheService>().SingleInstance();
-                builder.RegisterType<GenerationService>().As<IGenerationService>().SingleInstance();
+                builder.RegisterType<ProtoService>().WithParameter("session", session).As<IProtoService, ICacheService>().SingleInstance();
+                builder.RegisterType<ApplicationSettings>().WithParameter("session", session).As<ISettingsService>().SingleInstance();
+                builder.RegisterType<NotificationsService>().As<INotificationsService>().SingleInstance().AutoActivate();
+                builder.RegisterType<GenerationService>().As<IGenerationService>().SingleInstance().AutoActivate();
 
                 //builder.RegisterType<MTProtoService>().WithParameter("account", account).As<IMTProtoService>().SingleInstance();
                 builder.RegisterType<DeviceInfoService>().As<IDeviceInfoService>().SingleInstance();
@@ -43,7 +46,6 @@ namespace Unigram
                 builder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
                 builder.RegisterType<LiveLocationService>().As<ILiveLocationService>().SingleInstance();
                 builder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
-                builder.RegisterType<NotificationsService>().As<INotificationsService>().SingleInstance();
                 builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
                 builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
                 builder.RegisterType<PasscodeService>().As<IPasscodeService>().SingleInstance();
@@ -121,6 +123,7 @@ namespace Unigram
                 builder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
                 builder.RegisterType<SettingsDataAndStorageViewModel>().SingleInstance();
                 builder.RegisterType<SettingsDataAutoViewModel>().SingleInstance();
+                builder.RegisterType<SettingsProxiesViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPrivacyAndSecurityViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPrivacyAllowCallsViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyAllowChatInvitesViewModel>(); //.SingleInstance();

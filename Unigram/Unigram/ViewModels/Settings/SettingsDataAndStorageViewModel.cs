@@ -20,21 +20,12 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsDataAndStorageViewModel : UnigramViewModelBase
     {
-        public SettingsDataAndStorageViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsDataAndStorageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
-            //AutoDownloads = new ObservableCollection<SettingsDataAutoDownload>
-            //{
-            //    new SettingsDataAutoDownload(Strings.Resources.WhenUsingMobileData, NetworkType.Mobile),
-            //    new SettingsDataAutoDownload(Strings.Resources.WhenConnectedOnWiFi, NetworkType.WiFi),
-            //    new SettingsDataAutoDownload(Strings.Resources.WhenRoaming, NetworkType.Roaming),
-            //};
-
-            //AutoDownloadCommand = new RelayCommand<NetworkType>(AutoDownloadExecute);
             AutoDownloadCommand = new RelayCommand<AutoDownloadType>(AutoDownloadExecute);
             ResetAutoDownloadCommand = new RelayCommand(ResetAutoDownloadExecute);
             UseLessDataCommand = new RelayCommand(UseLessDataExecute);
-            ProxyCommand = new RelayCommand(ProxyExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -51,11 +42,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ApplicationSettings.Current.UseLessData;
+                return Settings.UseLessData;
             }
             set
             {
-                ApplicationSettings.Current.UseLessData = value;
+                Settings.UseLessData = value;
                 RaisePropertyChanged();
             }
         }
@@ -72,23 +63,6 @@ namespace Unigram.ViewModels.Settings
                 RaisePropertyChanged();
             }
         }
-
-        //public ObservableCollection<SettingsDataAutoDownload> AutoDownloads { get; private set; }
-
-        //public RelayCommand<NetworkType> AutoDownloadCommand { get; }
-        //private async void AutoDownloadExecute(NetworkType network)
-        //{
-        //    var confirm = await SettingsDownloadView.Current.ShowAsync(ApplicationSettings.Current.AutoDownload[network]);
-        //    if (confirm == ContentDialogBaseResult.OK)
-        //    {
-        //        ApplicationSettings.Current.AutoDownload[network] = SettingsDownloadView.Current.SelectedItems;
-
-        //        foreach (var item in AutoDownloads)
-        //        {
-        //            item.Refresh();
-        //        }
-        //    }
-        //}
 
         public RelayCommand UseLessDataCommand { get; }
         private async void UseLessDataExecute()
@@ -138,75 +112,5 @@ namespace Unigram.ViewModels.Settings
                 RaisePropertyChanged(() => AutoDownloadEnabled);
             }
         }
-
-        public RelayCommand ProxyCommand { get; }
-        private async void ProxyExecute()
-        {
-            var proxy = ApplicationSettings.Current.Proxy;
-
-            var dialog = new ProxyView(true);
-            dialog.Server = proxy.Server;
-            dialog.Port = proxy.Port.ToString();
-            dialog.Username = proxy.Username;
-            dialog.Password = proxy.Password;
-            dialog.IsProxyEnabled = proxy.IsEnabled;
-            dialog.IsCallsProxyEnabled = proxy.IsCallsEnabled;
-
-            var enabled = proxy.IsEnabled == true;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
-            {
-                var server = proxy.Server = dialog.Server ?? string.Empty;
-                var port = proxy.Port = Extensions.TryParseOrDefault(dialog.Port, 1080);
-                var username = proxy.Username = dialog.Username ?? string.Empty;
-                var password = proxy.Password = dialog.Password ?? string.Empty;
-                var newValue = proxy.IsEnabled = dialog.IsProxyEnabled;
-                proxy.IsCallsEnabled = dialog.IsCallsProxyEnabled;
-
-                if (newValue || newValue != enabled)
-                {
-                    if (newValue)
-                    {
-                        ProtoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
-                    }
-                    else
-                    {
-                        ProtoService.Send(new SetProxy(new ProxyEmpty()));
-                    }
-                }
-            }
-        }
     }
-
-    //public class SettingsDataAutoDownload : BindableBase
-    //{
-    //    public SettingsDataAutoDownload(string title, NetworkType network)
-    //    {
-    //        Title = title;
-    //        Type = network;
-    //    }
-
-    //    public string Title { get; private set; }
-
-    //    public NetworkType Type { get; private set; }
-
-    //    private AutoDownloadType _flags;
-    //    public AutoDownloadType Flags
-    //    {
-    //        get
-    //        {
-    //            return _flags;
-    //        }
-    //        set
-    //        {
-    //            Set(ref _flags, value);
-    //        }
-    //    }
-
-    //    public void Refresh()
-    //    {
-    //        Flags = ApplicationSettings.Current.AutoDownload[Type];
-    //    }
-    //}
 }

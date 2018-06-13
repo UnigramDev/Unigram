@@ -282,7 +282,7 @@ namespace Unigram.ViewModels
         {
             if (MediaLibrary.SelectedCount > 0)
             {
-                if (ApplicationSettings.Current.IsSendGrouped && MediaLibrary.SelectedCount > 1)
+                if (Settings.IsSendGrouped && MediaLibrary.SelectedCount > 1)
                 {
                     var items = MediaLibrary.Where(x => x.IsSelected).ToList();
                     var group = new List<StorageMedia>(Math.Min(items.Count, 10));

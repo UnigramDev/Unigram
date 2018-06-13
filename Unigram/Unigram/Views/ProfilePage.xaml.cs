@@ -40,7 +40,7 @@ namespace Unigram.Views
         public ProfilePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ProfileViewModel, IProfileDelegate>(this);
+            DataContext = UnigramContainer.Current.Resolve<ProfileViewModel, IProfileDelegate>(this);
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
@@ -375,7 +375,7 @@ namespace Unigram.Views
                         {
                             if (bot.CanJoinGroups)
                             {
-                                CreateFlyoutItem(ref flyout, null, Strings.Resources.BotInvite);
+                                CreateFlyoutItem(ref flyout, ViewModel.InviteCommand, Strings.Resources.BotInvite);
                             }
 
                             CreateFlyoutItem(ref flyout, null, Strings.Resources.BotShare);
@@ -773,7 +773,7 @@ namespace Unigram.Views
                     // TODO any additional
                     span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
                 }
-                else if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeBotCommand)
+                else if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypePhoneNumber || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeCashtag || entity.Type is TextEntityTypeBotCommand)
                 {
                     var hyperlink = new Hyperlink();
                     var data = text.Substring(entity.Offset, entity.Length);
@@ -826,9 +826,13 @@ namespace Unigram.Views
             }
             else if (type is TextEntityTypeEmailAddress)
             {
-
+                ViewModel.OpenUrl("mailto:" + data, false);
             }
-            else if (type is TextEntityTypeHashtag)
+            else if (type is TextEntityTypePhoneNumber)
+            {
+                ViewModel.OpenUrl("tel:" + data, false);
+            }
+            else if (type is TextEntityTypeHashtag || type is TextEntityTypeCashtag)
             {
 
             }

@@ -28,7 +28,7 @@ namespace Unigram.Views.Chats
         public ChatCreateStep1Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ChatCreateStep1ViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<ChatCreateStep1ViewModel>();
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)

@@ -17,8 +17,8 @@ namespace Unigram.ViewModels
 {
     public class ShareViewModel : UnigramViewModelBase
     {
-        public ShareViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, ChatsViewModel dialogs)
-            : base(protoService, cacheService, aggregator)
+        public ShareViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ChatsViewModel dialogs)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Chat>();
             SelectedItems = new MvxObservableCollection<Chat>();
@@ -37,17 +37,61 @@ namespace Unigram.ViewModels
             if (response is Telegram.Td.Api.Chats chats)
             {
                 var list = ProtoService.GetChats(chats.ChatIds);
+                Items.Clear();
 
-                Items.ReplaceWith(list);
+                if (_inviteBot == null)
+                {
+                    var myId = ProtoService.GetMyId();
+                    var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);
+                    if (self == null)
+                    {
+                        self = await ProtoService.SendAsync(new CreatePrivateChat(myId, false)) as Chat;
+                    }
+
+                    if (self != null)
+                    {
+                        list.Remove(self);
+                        list.Insert(0, self);
+                    }
+                }
+
+                foreach (var chat in list)
+                {
+                    if (_inviteBot != null)
+                    {
+                        if (chat.Type is ChatTypeBasicGroup basic)
+                        {
+                            var basicGroup = ProtoService.GetBasicGroup(basic.BasicGroupId);
+                            if (basicGroup == null)
+                            {
+                                continue;
+                            }
+
+                            if (basicGroup.CanInviteUsers())
+                            {
+                                Items.Add(chat);
+                            }
+                        }
+                        else if (chat.Type is ChatTypeSupergroup super)
+                        {
+                            var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                            if (supergroup == null)
+                            {
+                                continue;
+                            }
+
+                            if (supergroup.CanInviteUsers())
+                            {
+                                Items.Add(chat);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Items.Add(chat);
+                    }
+                }
             }
-
-            //var dialogs = GetDialogs();
-            //if (dialogs != null)
-            //{
-            //    Items.ReplaceWith(dialogs);
-            //}
-
-            //return Task.CompletedTask;
         }
 
         private MvxObservableCollection<Chat> _selectedItems = new MvxObservableCollection<Chat>();
@@ -87,6 +131,19 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _messages, value);
+            }
+        }
+
+        private User _inviteBot;
+        public User InviteBot
+        {
+            get
+            {
+                return _inviteBot;
+            }
+            set
+            {
+                Set(ref _inviteBot, value);
             }
         }
 
@@ -167,14 +224,14 @@ namespace Unigram.ViewModels
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, false));
-                    //if (response is Telegram.Td.Api.Messages messages)
-                    //{
-                    //    foreach (var message in messages.MessagesValue)
-                    //    {
-                    //        Aggregator.Publish(new UpdateNewMessage(message, true, false));
-                    //    }
-                    //}
+                    if (IsWithMyScore)
+                    {
+                        var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, false, false, null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true)));
+                    }
+                    else
+                    {
+                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, false));
+                    }
                 }
 
                 NavigationService.GoBack();
@@ -188,10 +245,30 @@ namespace Unigram.ViewModels
 
                 NavigationService.GoBack();
             }
-            else if (ShareLink != null)
+            else if (_shareLink != null)
             {
+                var formatted = new FormattedText(_shareLink.ToString(), new TextEntity[0]);
+
+                foreach (var chat in chats)
+                {
+                    var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, false, false, null, new InputMessageText(formatted, false, false)));
+                }
 
                 NavigationService.GoBack();
+            }
+            else if (_inviteBot != null)
+            {
+                var chat = chats.FirstOrDefault();
+                if (chat == null)
+                {
+                    return;
+                }
+
+                var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, _inviteBot.Id, new ChatMemberStatusMember()));
+                if (response is Ok)
+                {
+                    NavigationService.GoBack();
+                }
             }
 
             //App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);

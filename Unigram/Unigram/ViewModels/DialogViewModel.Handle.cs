@@ -36,6 +36,7 @@ namespace Unigram.ViewModels
 
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>,
+        IHandle<UpdateSecretChat>,
         IHandle<UpdateBasicGroup>,
         IHandle<UpdateBasicGroupFullInfo>,
         IHandle<UpdateSupergroup>,
@@ -43,7 +44,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateUserStatus>,
         IHandle<UpdateChatTitle>,
         IHandle<UpdateChatPhoto>,
-        IHandle<UpdateNotificationSettings>,
+        IHandle<UpdateChatNotificationSettings>,
 
         IHandle<UpdateFile>
     {
@@ -98,6 +99,20 @@ namespace Unigram.ViewModels
             else if (chat.Type is ChatTypeSecret secret && secret.UserId == update.UserId)
             {
                 BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, true));
+            }
+        }
+
+        public void Handle(UpdateSecretChat update)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSecret secret && secret.SecretChatId == update.SecretChat.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateSecretChat(chat, update.SecretChat));
             }
         }
 
@@ -187,9 +202,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        public void Handle(UpdateNotificationSettings update)
+        public void Handle(UpdateChatNotificationSettings update)
         {
-            if (update.Scope is NotificationSettingsScopeChat chat && chat.ChatId == _chat?.Id)
+            if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateNotificationSettings(_chat));
             }
@@ -311,6 +326,15 @@ namespace Unigram.ViewModels
 
                                 Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
                             }
+                        }
+                    }
+
+                    foreach (var id in update.MessageIds)
+                    {
+                        if (_embedData != null && _embedData.Matches(id))
+                        {
+                            ClearReplyCommand.Execute();
+                            break;
                         }
                     }
                 });

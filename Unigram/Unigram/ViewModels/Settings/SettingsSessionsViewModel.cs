@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsSessionsViewModel : UnigramViewModelBase
     {
-        public SettingsSessionsViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator)
+        public SettingsSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new SortedObservableCollection<Session>(new SessionComparer());
 

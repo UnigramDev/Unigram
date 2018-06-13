@@ -223,7 +223,7 @@
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,8" ContextRequested="Message_ContextRequested">
-                <messages:MessageService Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Style="{StaticResource ServiceButtonStyle}">
+                <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Style="{StaticResource ServiceButtonStyle}">
                     <TextBlock Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 </messages:MessageService>
 
@@ -456,7 +456,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" ToolTipService.ToolTip="{CustomResource Delete}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                    <controls:GlyphButton Glyph="&#xE730;" Command="{x:Bind ViewModel.MessagesReportCommand}" ToolTipService.ToolTip="{CustomResource ReportChat}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
+                    <controls:GlyphButton Glyph="&#xE730;" Command="{x:Bind ViewModel.MessagesReportCommand}" ToolTipService.ToolTip="{CustomResource ReportChat}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" x:Name="Report" Grid.Column="1"/>
                     <controls:GlyphButton Glyph="&#xE16F;" Command="{x:Bind ViewModel.MessagesCopyCommand}" ToolTipService.ToolTip="{CustomResource Copy}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="2"/>
                     <controls:GlyphButton Glyph="&#xE111;" Command="{x:Bind ViewModel.MessagesForwardCommand}" ToolTipService.ToolTip="{CustomResource Forward}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="3"/>
 
@@ -804,11 +804,6 @@
                             <ItemsStackPanel Orientation="Horizontal"/>
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
-                    <!--<GridView.ItemTemplate>
-                         <DataTemplate x:DataType="tl:TLDocument">
-                         <Image x:Phase="3" Margin="4,8" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="60" Height="60"/>
-                         </DataTemplate>
-                         </GridView.ItemTemplate>-->
                     <GridView.ItemTemplate>
                         <DataTemplate>
                             <Image Margin="4,8" Width="60" Height="60"/>

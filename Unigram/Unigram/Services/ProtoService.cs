@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Helpers;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -20,6 +19,8 @@ namespace Unigram.Services
         void Send(Function function, ClientResultHandler handler);
         void Send(Function function, Action<BaseObject> handler);
         Task<BaseObject> SendAsync(Function function);
+
+        int SessionId { get; }
     }
 
     public interface ICacheService
@@ -35,6 +36,8 @@ namespace Unigram.Services
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
         IList<Chat> GetChats(int count);
+
+        bool IsChatPromoted(Chat chat);
 
         bool TryGetChatFromUser(int userId, out Chat chat);
         bool TryGetChatFromSecret(int secretId, out Chat chat);
@@ -57,12 +60,17 @@ namespace Unigram.Services
 
         AutoDownloadPreferences Preferences { get; }
         void SetPreferences(AutoDownloadPreferences preferences);
+
+        int UnreadCount { get; }
+        int UnreadUnmutedCount { get; }
     }
 
     public class ProtoService : IProtoService, ClientResultHandler
     {
-        private readonly Client _client;
+        private Client _client;
+        private readonly int _session;
         private readonly IDeviceInfoService _deviceInfoService;
+        private readonly ISettingsService _settings;
         private readonly IEventAggregator _aggregator;
 
         private readonly Dictionary<string, object> _options = new Dictionary<string, object>();
@@ -85,6 +93,8 @@ namespace Unigram.Services
 
         private AutoDownloadPreferences _preferences;
 
+        private long _promotedChatId;
+
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
         private IList<long> _installedMaskSets;
@@ -92,20 +102,27 @@ namespace Unigram.Services
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
 
-        public ProtoService(IDeviceInfoService deviceInfoService, IEventAggregator aggregator)
+        public ProtoService(int session, IDeviceInfoService deviceInfoService, ISettingsService settings, IEventAggregator aggregator)
         {
             Log.SetVerbosityLevel(ApplicationSettings.Current.VerbosityLevel);
-            Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log"));
+            Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{session}", "log"));
 
-            _client = Client.Create(this);
+            _session = session;
             _deviceInfoService = deviceInfoService;
             _aggregator = aggregator;
 
             _preferences = new AutoDownloadPreferences(ApplicationData.Current.LocalSettings.CreateContainer("autoDownload", ApplicationDataCreateDisposition.Always));
 
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            _client = Client.Create(this);
+
             var parameters = new TdlibParameters
             {
-                DatabaseDirectory = Path.Combine(ApplicationData.Current.LocalFolder.Path, "0"),
+                DatabaseDirectory = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
                 UseSecretChats = true,
                 UseMessageDatabase = true,
                 ApiId = Constants.ApiId,
@@ -114,6 +131,7 @@ namespace Unigram.Services
                 DeviceModel = _deviceInfoService.DeviceModel,
                 SystemVersion = _deviceInfoService.SystemVersion,
                 ApplicationVersion = _deviceInfoService.AppVersion,
+                UseTestDc = false
             };
 
 #if MOCKUP
@@ -203,12 +221,42 @@ namespace Unigram.Services
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
                 _client.Run();
 
-                var ttl = ApplicationSettings.Current.FilesTtl;
+                var ttl = _settings.FilesTtl;
                 if (ttl > 0)
                 {
                     _client.Send(new OptimizeStorage(long.MaxValue, ttl * 60 * 60 * 24, int.MaxValue, 0, new FileType[0], new long[0], new long[0], 0));
                 }
             });
+        }
+
+        public void CleanUp()
+        {
+            _options.Clear();
+
+            _chats.Clear();
+
+            _secretChats.Clear();
+
+            _users.Clear();
+            _usersFull.Clear();
+
+            _basicGroups.Clear();
+            _basicGroupsFull.Clear();
+
+            _supergroups.Clear();
+            _supergroupsFull.Clear();
+
+            _chatsMap.Clear();
+            _usersMap.Clear();
+
+            _promotedChatId = 0;
+
+            _favoriteStickers?.Clear();
+            _installedStickerSets?.Clear();
+            _installedMaskSets?.Clear();
+
+            _authorizationState = null;
+            _connectionState = null;
         }
 
 
@@ -242,7 +290,12 @@ namespace Unigram.Services
 
 
 
+        public int SessionId => _session;
+
         #region Cache
+
+        public int UnreadCount { get; private set; }
+        public int UnreadUnmutedCount { get; private set; }
 
         private bool TryGetChatForFileId(int fileId, out Chat chat)
         {
@@ -268,6 +321,19 @@ namespace Unigram.Services
             return false;
         }
 
+        public bool IsChatPromoted(Chat chat)
+        {
+            if (_promotedChatId == chat.Id && chat.Type is ChatTypeSupergroup type)
+            {
+                var supergroup = GetSupergroup(type.SupergroupId);
+                if (supergroup != null)
+                {
+                    return !supergroup.IsMember();
+                }
+            }
+
+            return false;
+        }
 
 
 
@@ -356,10 +422,6 @@ namespace Unigram.Services
                 else if (user.Id == GetMyId())
                 {
                     return Strings.Resources.SavedMessages;
-                }
-                else if (user.OutgoingLink is LinkStateKnowsPhoneNumber)
-                {
-                    return PhoneNumber.Format(user.PhoneNumber);
                 }
             }
 
@@ -545,6 +607,14 @@ namespace Unigram.Services
         {
             if (update is UpdateAuthorizationState updateAuthorizationState)
             {
+                switch (updateAuthorizationState.AuthorizationState)
+                {
+                    case AuthorizationStateClosed closed:
+                        CleanUp();
+                        Initialize();
+                        break;
+                }
+
                 _authorizationState = updateAuthorizationState.AuthorizationState;
             }
             else if (update is UpdateBasicGroup updateBasicGroup)
@@ -748,9 +818,9 @@ namespace Unigram.Services
             {
 
             }
-            else if (update is UpdateNotificationSettings updateNotificationSettings)
+            else if (update is UpdateChatNotificationSettings updateNotificationSettings)
             {
-                if (updateNotificationSettings.Scope is NotificationSettingsScopeChat chatScope && _chats.TryGetValue(chatScope.ChatId, out Chat value))
+                if (_chats.TryGetValue(updateNotificationSettings.ChatId, out Chat value))
                 {
                     value.NotificationSettings = updateNotificationSettings.NotificationSettings;
                 }
@@ -758,6 +828,10 @@ namespace Unigram.Services
             else if (update is UpdateOption updateOption)
             {
                 _options[updateOption.Name] = updateOption.Value;
+            }
+            else if (update is UpdatePromotedChat updatePromotedChat)
+            {
+                _promotedChatId = updatePromotedChat.ChatId;
             }
             else if (update is UpdateRecentStickers updateRecentStickers)
             {
@@ -783,9 +857,18 @@ namespace Unigram.Services
             {
                 _supergroupsFull[updateSupergroupFullInfo.SupergroupId] = updateSupergroupFullInfo.SupergroupFullInfo;
             }
+            else if (update is UpdateTermsOfService updateTermsOfService)
+            {
+
+            }
             else if (update is UpdateTrendingStickerSets updateTrendingStickerSets)
             {
 
+            }
+            else if (update is UpdateUnreadMessageCount updateUnreadMessageCount)
+            {
+                UnreadCount = updateUnreadMessageCount.UnreadCount;
+                UnreadUnmutedCount = updateUnreadMessageCount.UnreadUnmutedCount;
             }
             else if (update is UpdateUser updateUser)
             {

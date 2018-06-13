@@ -489,7 +489,14 @@ namespace Unigram.Controls.Messages
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionLeftUser, "un1", fromUser, ref entities);
+                    if (message.IsChannelPost)
+                    {
+                        content = ReplaceWithLink(Strings.Resources.EventLogLeftChannel, "un1", fromUser, ref entities);
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.Resources.ActionLeftUser, "un1", fromUser, ref entities);
+                    }
                 }
             }
             else
@@ -929,7 +936,7 @@ namespace Unigram.Controls.Messages
                     // TODO any additional
                     span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
                 }
-                else if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeBotCommand)
+                else if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypePhoneNumber || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeCashtag || entity.Type is TextEntityTypeBotCommand)
                 {
                     var data = text.Substring(entity.Offset, entity.Length);
 
@@ -992,11 +999,15 @@ namespace Unigram.Controls.Messages
             }
             else if (type is TextEntityTypeEmailAddress)
             {
-
+                message.Delegate.OpenUrl("mailto:" + data, false);
             }
-            else if (type is TextEntityTypeHashtag)
+            else if (type is TextEntityTypePhoneNumber)
             {
-
+                message.Delegate.OpenUrl("tel:" + data, false);
+            }
+            else if (type is TextEntityTypeHashtag || type is TextEntityTypeCashtag)
+            {
+                message.Delegate.OpenHashtag(data);
             }
             else if (type is TextEntityTypeMention)
             {

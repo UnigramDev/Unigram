@@ -23,7 +23,7 @@ namespace Unigram.Views.SecretChats
         public SecretChatCreatePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SecretChatCreateViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SecretChatCreateViewModel>();
             View.Attach();
         }
     }

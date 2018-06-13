@@ -27,7 +27,7 @@ namespace Unigram.Views.SignIn
         public SignInSentCodePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SignInSentCodeViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SignInSentCodeViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
@@ -49,7 +49,7 @@ namespace Unigram.Views.SignIn
 
         #region Binding
 
-        private string ConvertType(AuthenticationCodeInfo codeInfo, string number)
+        private string ConvertType(AuthenticationCodeInfo codeInfo)
         {
             if (codeInfo == null)
             {
@@ -61,7 +61,7 @@ namespace Unigram.Views.SignIn
                 case AuthenticationCodeTypeTelegramMessage appType:
                     return Strings.Resources.SentAppCode;
                 case AuthenticationCodeTypeSms smsType:
-                    return string.Format(Strings.Resources.SentSmsCode, PhoneNumber.Format(number));
+                    return string.Format(Strings.Resources.SentSmsCode, PhoneNumber.Format(codeInfo.PhoneNumber));
             }
 
             return null;

@@ -14,6 +14,7 @@ using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.Core.Notifications;
 using Unigram.Services;
+using Unigram.Services.Updates;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Supergroups;
 using Unigram.Views.Channels;
@@ -48,9 +49,10 @@ namespace Unigram.Views
         IHandle<UpdateChatPhoto>,
         IHandle<UpdateMessageMentionRead>,
         //IHandle<UpdateMessageContent>,
-        IHandle<UpdateUser>,
         IHandle<UpdateSecretChat>,
-        IHandle<UpdateNotificationSettings>,
+        IHandle<UpdateChatNotificationSettings>,
+        IHandle<UpdateUnreadMessageCount>,
+        IHandle<UpdateWorkMode>,
         IHandle<UpdateFile>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
@@ -61,7 +63,7 @@ namespace Unigram.Views
         public MainPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<MainViewModel>();
 
             _cacheService = ViewModel.CacheService;
 
@@ -158,14 +160,6 @@ namespace Unigram.Views
             Handle(update.ChatId, update.MessageId, chat => chat.LastMessage.Content = update.NewContent, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
         }
 
-        public void Handle(UpdateUser update)
-        {
-            if (_cacheService.TryGetChatFromUser(update.User.Id, out Chat result))
-            {
-                Handle(result.Id, (chatView, chat) => chatView.UpdateChatTitle(chat));
-            }
-        }
-
         public void Handle(UpdateSecretChat update)
         {
             if (_cacheService.TryGetChatFromSecret(update.SecretChat.Id, out Chat result))
@@ -174,12 +168,31 @@ namespace Unigram.Views
             }
         }
 
-        public void Handle(UpdateNotificationSettings update)
+        public void Handle(UpdateChatNotificationSettings update)
         {
-            if (update.Scope is NotificationSettingsScopeChat chatScope)
+            Handle(update.ChatId, (chatView, chat) => chatView.UpdateNotificationSettings(chat));
+        }
+
+        public void Handle(UpdateUnreadMessageCount update)
+        {
+            this.BeginOnUIThread(() => ViewModel.UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount);
+        }
+
+        public void Handle(UpdateWorkMode update)
+        {
+            this.BeginOnUIThread(() =>
             {
-                Handle(chatScope.ChatId, (chatView, chat) => chatView.UpdateNotificationSettings(chat));
-            }
+                if (update.IsVisible)
+                {
+                    WorkMode.Visibility = Visibility.Visible;
+                    WorkMode.IsChecked = update.IsEnabled;
+                }
+                else
+                {
+                    WorkMode.Visibility = Visibility.Collapsed;
+                    WorkMode.IsChecked = false;
+                }
+            });
         }
 
         public void Handle(UpdateFile update)
@@ -295,12 +308,12 @@ namespace Unigram.Views
 
             OnStateChanged(null, null);
 
-            if (ApplicationSettings.Current.Version < ApplicationSettings.CurrentVersion)
+            if (ViewModel.Chats.Settings.Version < ApplicationSettings.CurrentVersion)
             {
                 await TLMessageDialog.ShowAsync(ApplicationSettings.CurrentChangelog, "What's new", "OK");
             }
 
-            ApplicationSettings.Current.Version = ApplicationSettings.CurrentVersion;
+            ViewModel.Chats.Settings.Version = ApplicationSettings.CurrentVersion;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -394,6 +407,17 @@ namespace Unigram.Views
             ViewModel.Contacts.NavigationService = MasterDetail.NavigationService;
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
             ViewModel.Settings.NavigationService = MasterDetail.NavigationService;
+
+            if (((UnigramViewModelBase)ViewModel).Settings.IsWorkModeVisible)
+            {
+                WorkMode.Visibility = Visibility.Visible;
+                WorkMode.IsChecked = ((UnigramViewModelBase)ViewModel).Settings.IsWorkModeEnabled;
+            }
+            else
+            {
+                WorkMode.Visibility = Visibility.Collapsed;
+                WorkMode.IsChecked = false;
+            }
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -488,6 +512,7 @@ namespace Unigram.Views
                 string port = null;
                 string user = null;
                 string pass = null;
+                string secret = null;
                 bool hasUrl = false;
 
                 var query = scheme.Query.ParseQueryString();
@@ -537,12 +562,13 @@ namespace Unigram.Views
                     phone = query.GetParameter("phone");
                     phoneHash = query.GetParameter("hash");
                 }
-                else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks"))
+                else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks") || scheme.AbsoluteUri.StartsWith("tg:proxy") || scheme.AbsoluteUri.StartsWith("tg://proxy"))
                 {
                     server = query.GetParameter("server");
                     port = query.GetParameter("port");
                     user = query.GetParameter("user");
                     pass = query.GetParameter("pass");
+                    secret = query.GetParameter("secret");
                 }
 
                 if (message != null && message.StartsWith("@"))
@@ -556,7 +582,7 @@ namespace Unigram.Views
                 }
                 if (server != null && int.TryParse(port, out int portCode))
                 {
-                    MessageHelper.NavigateToSocks(ViewModel.ProtoService, server, portCode, user, pass);
+                    MessageHelper.NavigateToProxy(ViewModel.ProtoService, server, portCode, user, pass, secret);
                 }
                 else if (group != null)
                 {
@@ -589,6 +615,15 @@ namespace Unigram.Views
             //    Grid.SetRow(Separator, 1);
             //    Separator.Visibility = Visibility.Visible;
             //}
+
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
+            {
+                Navigation.PaneToggleButtonVisibility = e.SourcePageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else
+            {
+                Navigation.PaneToggleButtonVisibility = Visibility.Visible;
+            }
 
             if (e.SourcePageType == typeof(ChatPage))
             {
@@ -626,13 +661,16 @@ namespace Unigram.Views
 
         private void OnStateChanged(object sender, EventArgs e)
         {
-            if (MasterDetail.CurrentState == MasterDetailState.Narrow)
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
                 ChatsList.SelectionMode = ListViewSelectionMode.None;
                 ChatsList.SelectedItem = null;
 
                 Separator.BorderThickness = new Thickness(0);
                 Separator.Visibility = Visibility.Collapsed;
+
+                Navigation.PaneToggleButtonVisibility = MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed;
+                Header.Visibility = Visibility.Visible;
             }
             else
             {
@@ -641,7 +679,12 @@ namespace Unigram.Views
 
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
                 Separator.Visibility = Visibility.Visible;
+
+                Navigation.PaneToggleButtonVisibility = Visibility.Visible;
+                Header.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
             }
+
+            ChatsList.UpdateViewState(MasterDetail.CurrentState);
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -735,6 +778,12 @@ namespace Unigram.Views
         {
             Navigation.IsPaneOpen = false;
             MasterDetail.NavigationService.Navigate(typeof(AboutPage));
+        }
+
+        private void WorkMode_Click(object sender, RoutedEventArgs e)
+        {
+            var enabled = ((UnigramViewModelBase)ViewModel).Settings.IsWorkModeEnabled = WorkMode.IsChecked == true;
+            ChatsList.UpdateFilterMode(enabled ? ChatFilterMode.Work : ChatFilterMode.None);
         }
 
         private void searchInit()
@@ -926,6 +975,11 @@ namespace Unigram.Views
             //    return count < max ? Visibility.Visible : Visibility.Collapsed;
             //}
 
+            if (ViewModel.CacheService.IsChatPromoted(chat))
+            {
+                return Visibility.Collapsed;
+            }
+
             return Visibility.Visible;
         }
 
@@ -936,6 +990,11 @@ namespace Unigram.Views
 
         private Visibility DialogClear_Loaded(Chat chat)
         {
+            if (ViewModel.CacheService.IsChatPromoted(chat))
+            {
+                return Visibility.Collapsed;
+            }
+
             if (chat.Type is ChatTypeSupergroup super)
             {
                 var supergroup = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
@@ -950,6 +1009,11 @@ namespace Unigram.Views
 
         private Visibility DialogDelete_Loaded(Chat chat)
         {
+            if (ViewModel.CacheService.IsChatPromoted(chat))
+            {
+                return Visibility.Collapsed;
+            }
+
             //if (dialog.With is TLChannel channel)
             //{
             //    return Visibility.Visible;
@@ -984,6 +1048,11 @@ namespace Unigram.Views
 
         private Visibility DialogDeleteAndStop_Loaded(Chat chat)
         {
+            if (ViewModel.CacheService.IsChatPromoted(chat))
+            {
+                return Visibility.Collapsed;
+            }
+
             if (chat.Type is ChatTypePrivate privata)
             {
                 var user = ViewModel.ProtoService.GetUser(privata.UserId);
@@ -1055,6 +1124,8 @@ namespace Unigram.Views
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            MasterDetail.AllowCompact = rpMasterTitlebar.SelectedIndex == 0;
+
             NavigationChats.IsChecked = rpMasterTitlebar.SelectedIndex == 0;
             NavigationContacts.IsChecked = rpMasterTitlebar.SelectedIndex == 1;
             NavigationCalls.IsChecked = rpMasterTitlebar.SelectedIndex == 2;
@@ -1081,6 +1152,14 @@ namespace Unigram.Views
             if (rpMasterTitlebar.SelectedIndex > 0)
             {
                 MasterDetail.Push(true);
+
+                if (Window.Current.Bounds.Width >= 501 && Window.Current.Bounds.Width < 820)
+                {
+                    while (MasterDetail.NavigationService.Frame.CanGoBack)
+                    {
+                        MasterDetail.NavigationService.Frame.GoBack();
+                    }
+                }
             }
         }
 

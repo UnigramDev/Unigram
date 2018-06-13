@@ -25,6 +25,7 @@ namespace Unigram.ViewModels.Delegates
         void OpenViaBot(int viaBotUserId);
 
         void OpenUrl(string url, bool untrust);
+        void OpenHashtag(string hashtag);
 
         void SendBotCommand(string command);
 

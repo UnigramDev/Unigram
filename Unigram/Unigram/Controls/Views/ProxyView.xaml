@@ -21,7 +21,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock
-                Text="{CustomResource ProxySettings}"
+                Text="{CustomResource ProxyDetails}"
                 Style="{StaticResource BaseTextBlockStyle}"
                 VerticalAlignment="Center"
                 Margin="12,0"/>
@@ -30,58 +30,59 @@
                 Click="Share_Click"
                 Glyph="&#xE72D;"
                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                Grid.Column="1"/>
+                Grid.Column="1"
+                Visibility="Collapsed"/>
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
     </ContentDialog.Title>
     
     <StackPanel>
-        <CheckBox
-            x:Name="FieldEnabled"
-            Content="{CustomResource UseProxySettings}"
-            Checked="Enable_Toggled"
-            Unchecked="Enable_Toggled"
+        <RadioButton
+            x:Name="TypeSocks"
+            Content="{CustomResource UseProxySocks5}"
+            Checked="Type_Toggled"
+            Unchecked="Type_Toggled"
+            IsChecked="True"
+            Margin="12,6,12,0"/>
+        <RadioButton
+            x:Name="TypeProto"
+            Content="{CustomResource UseProxyTelegram}"
+            Checked="Type_Toggled"
+            Unchecked="Type_Toggled"
             Margin="12,6,12,0"/>
 
         <TextBox
             x:Name="FieldServer"
             PlaceholderText="{CustomResource UseProxyAddress}"
-            Margin="12,12,12,12"
-            Grid.Row="1"/>
+            Margin="12,12,12,12"/>
         <TextBox
             x:Name="FieldPort"
             PlaceholderText="{CustomResource UseProxyPort}"
             InputScope="Number"
-            Margin="12,0,12,12"
-            Grid.Row="2"/>
-        <TextBox
-            x:Name="FieldUsername"
-            PlaceholderText="{CustomResource UseProxyUsername}"
-            Margin="12,0,12,12"
-            Grid.Row="3"/>
-        <PasswordBox
-            x:Name="FieldPassword"
-            PlaceholderText="{CustomResource UseProxyPassword}"
-            Margin="12,0,12,12"
-            Grid.Row="4"/>
+            Margin="12,0,12,12"/>
+        <StackPanel x:Name="TypeSocksPanel">
+            <TextBox
+                x:Name="FieldUsername"
+                PlaceholderText="{CustomResource UseProxyUsername}"
+                Margin="12,0,12,12"/>
+            <PasswordBox
+                x:Name="FieldPassword"
+                PlaceholderText="{CustomResource UseProxyPassword}"
+                Margin="12,0,12,12"/>
+        </StackPanel>
+        <StackPanel x:Name="TypeProtoPanel" Visibility="Collapsed">
+            <TextBox
+                x:Name="FieldSecret"
+                PlaceholderText="{CustomResource UseProxySecret}"
+                Margin="12,0,12,12"/>
+        </StackPanel>
 
         <TextBlock
+            x:Name="Info"
             Text="{CustomResource UseProxyInfo}" 
             Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
             Margin="12,0,12,12"
             Style="{StaticResource CaptionTextBlockStyle}"
-            Grid.Row="6"/>
-
-        <CheckBox
-            x:Name="FieldCalls"
-            Content="{CustomResource UseProxyForCalls}"
-            IsEnabled="False"
-            Margin="12,12,12,4"/>
-        <TextBlock
-            Text="{CustomResource UseProxyForCallsInfo}"
-            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-            Style="{StaticResource CaptionTextBlockStyle}"
-            Margin="12,0,12,12"
             Grid.Row="6"/>
     </StackPanel>
 </ContentDialog>

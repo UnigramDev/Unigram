@@ -26,7 +26,7 @@ namespace Unigram.Views
             }
         }
 
-        public void Build(Func<ContainerBuilder, int, IContainer> factory)
+        public void Build(int id, Func<ContainerBuilder, int, IContainer> factory)
         {
             //for (int i = 0; i < Telegram.Api.Constants.AccountsMaxCount; i++)
             //{
@@ -38,10 +38,10 @@ namespace Unigram.Views
 
             //}
 
-            _containers[0] = factory(new ContainerBuilder(), 0);
+            _containers[id] = factory(new ContainerBuilder(), id);
         }
 
-        public TService ResolveType<TService>(int account = int.MaxValue)
+        public TService Resolve<TService>(int account = int.MaxValue)
         {
             if (account == int.MaxValue)
             {
@@ -58,7 +58,7 @@ namespace Unigram.Views
             return result;
         }
 
-        public TService ResolveType<TService, TDelegate>(TDelegate delegato, int account = int.MaxValue)
+        public TService Resolve<TService, TDelegate>(TDelegate delegato, int account = int.MaxValue)
             where TService : IDelegable<TDelegate>
             where TDelegate : IViewModelDelegate
         {

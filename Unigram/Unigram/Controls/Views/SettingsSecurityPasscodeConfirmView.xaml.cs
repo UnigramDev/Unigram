@@ -35,7 +35,7 @@ namespace Unigram.Controls.Views
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var service = UnigramContainer.Current.ResolveType<IPasscodeService>();
+            var service = UnigramContainer.Current.Resolve<IPasscodeService>();
             if (service == null)
             {
                 return;

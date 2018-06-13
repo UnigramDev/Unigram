@@ -13,7 +13,30 @@ using Unigram.Core.Notifications;
 using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.BasicGroups;
+using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Dialogs;
+using Unigram.ViewModels.Payments;
+using Unigram.ViewModels.SecretChats;
+using Unigram.ViewModels.Settings;
+using Unigram.ViewModels.Settings.Privacy;
+using Unigram.ViewModels.SignIn;
+using Unigram.ViewModels.Supergroups;
+using Unigram.ViewModels.Users;
 using Unigram.Views;
+using Unigram.Views.BasicGroups;
+using Unigram.Views.Channels;
+using Unigram.Views.Chats;
+using Unigram.Views.Dialogs;
+using Unigram.Views.Payments;
+using Unigram.Views.SecretChats;
+using Unigram.Views.Settings;
+using Unigram.Views.Settings.Privacy;
+using Unigram.Views.SignIn;
+using Unigram.Views.Supergroups;
+using Unigram.Views.Users;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
@@ -72,12 +95,17 @@ namespace Unigram
 
         private MediaExtensionManager m_mediaExtensionManager;
 
+        public App() : this(0)
+        {
+
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
-        public App()
+        public App(int session)
         {
             if (ApplicationSettings.Current.RequestedTheme != ElementTheme.Default)
             {
@@ -88,9 +116,7 @@ namespace Unigram
             Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en";
 #endif
 
-            Locator.Configure();
-            UnigramContainer.Current.ResolveType<IGenerationService>();
-            CustomXamlResourceLoader.Current = new XamlResourceLoader();
+            Locator.Configure(session);
 
             InitializeComponent();
 
@@ -126,6 +152,164 @@ namespace Unigram
 #endif
         }
 
+        public override INavigable ResolveForPage(Page page, INavigationService navigationService)
+        {
+            var id = navigationService is UnigramNavigationService ex ? ex.SessionId : 0;
+            var container = UnigramContainer.Current;
+
+            switch (page)
+            {
+                case BasicGroupEditPage basicGroupEdit:
+                    return container.Resolve<BasicGroupEditViewModel, IBasicGroupDelegate>(basicGroupEdit, id);
+                case ChannelCreateStep1Page channelCreateStep1:
+                    return container.Resolve<ChannelCreateStep1ViewModel>(id);
+                case ChannelCreateStep2Page channelCreateStep2:
+                    return container.Resolve<ChannelCreateStep2ViewModel>(id);
+                case ChannelCreateStep3Page channelCreateStep3:
+                    return container.Resolve<ChannelCreateStep3ViewModel>(id);
+                case ChatCreateStep1Page chatCreateStep1:
+                    return container.Resolve<ChatCreateStep1ViewModel>(id);
+                case ChatCreateStep2Page chatCreateStep2:
+                    return container.Resolve<ChatCreateStep2ViewModel>(id);
+                case ChatInviteLinkPage chatInviteLink:
+                    return container.Resolve<ChatInviteLinkViewModel>(id);
+                case ChatInvitePage chatInvite:
+                    return container.Resolve<ChatInviteViewModel>(id);
+                case DialogSharedMediaPage dialogSharedMedia:
+                    return container.Resolve<DialogSharedMediaViewModel, IFileDelegate>(dialogSharedMedia, id);
+                case DialogShareLocationPage dialogShareLocation:
+                    return container.Resolve<DialogShareLocationViewModel>(id);
+                case InstantPage instant:
+                    return container.Resolve<InstantViewModel>(id);
+                case MainPage main:
+                    return container.Resolve<MainViewModel>(id);
+                case PaymentFormStep1Page paymentFormStep1:
+                    return container.Resolve<PaymentFormStep1ViewModel>(id);
+                case PaymentFormStep2Page paymentFormStep2:
+                    return container.Resolve<PaymentFormStep2ViewModel>(id);
+                case PaymentFormStep3Page paymentFormStep3:
+                    return container.Resolve<PaymentFormStep3ViewModel>(id);
+                case PaymentFormStep4Page paymentFormStep4:
+                    return container.Resolve<PaymentFormStep4ViewModel>(id);
+                case PaymentFormStep5Page paymentFormStep5:
+                    return container.Resolve<PaymentFormStep5ViewModel>(id);
+                case PaymentReceiptPage paymentReceipt:
+                    return container.Resolve<PaymentReceiptViewModel>(id);
+                case ProfilePage profile:
+                    return container.Resolve<ProfileViewModel, IProfileDelegate>(profile, id);
+                case SecretChatCreatePage secretChatCreate:
+                    return container.Resolve<SecretChatCreateViewModel>(id);
+                case SettingsPhoneIntroPage settingsPhoneIntro:
+                    return container.Resolve<SettingsPhoneIntroViewModel>(id);
+                case SettingsPhonePage settingsPhone:
+                    return container.Resolve<SettingsPhoneViewModel>(id);
+                case SettingsPhoneSentCodePage settingsPhoneSentCode:
+                    return container.Resolve<SettingsPhoneSentCodeViewModel>(id);
+                case SettingsPrivacyAllowCallsPage settingsPrivacyAllowCalls:
+                    return container.Resolve<SettingsPrivacyAllowCallsViewModel>(id);
+                case SettingsPrivacyAllowChatInvitesPage settingsPrivacyAllowChatInvites:
+                    return container.Resolve<SettingsPrivacyAllowChatInvitesViewModel>(id);
+                case SettingsPrivacyAlwaysAllowCallsPage settingsPrivacyAlwaysAllowCalls:
+                    return container.Resolve<SettingsPrivacyAlwaysAllowCallsViewModel>(id);
+                case SettingsPrivacyAlwaysAllowChatInvitesPage settingsPrivacyAlwaysAllowChatInvites:
+                    return container.Resolve<SettingsPrivacyAlwaysAllowChatInvitesViewModel>(id);
+                case SettingsPrivacyAlwaysShowStatusPage settingsPrivacyAlwaysShowStatus:
+                    return container.Resolve<SettingsPrivacyAlwaysShowStatusViewModel>(id);
+                case SettingsPrivacyNeverAllowCallsPage settingsPrivacyNeverAllowCalls:
+                    return container.Resolve<SettingsPrivacyNeverAllowCallsViewModel>(id);
+                case SettingsPrivacyNeverAllowChatInvitesPage settingsPrivacyNeverAllowChatInvites:
+                    return container.Resolve<SettingsPrivacyNeverAllowChatInvitesViewModel>(id);
+                case SettingsPrivacyNeverShowStatusPage settingsPrivacyNeverShowStatus:
+                    return container.Resolve<SettingsPrivacyNeverShowStatusViewModel>(id);
+                case SettingsPrivacyShowStatusPage settingsPrivacyShowStatus:
+                    return container.Resolve<SettingsPrivacyShowStatusViewModel>(id);
+                case SettingsAppearancePage settingsAppearance:
+                    return container.Resolve<SettingsAppearanceViewModel>(id);
+                case SettingsBlockedUsersPage settingsBlockedUsers:
+                    return container.Resolve<SettingsBlockedUsersViewModel, IFileDelegate>(settingsBlockedUsers, id);
+                case SettingsBlockUserPage settingsBlockUser:
+                    return container.Resolve<SettingsBlockUserViewModel>(id);
+                case SettingsDataAndStoragePage settingsDataAndStorage:
+                    return container.Resolve<SettingsDataAndStorageViewModel>(id);
+                case SettingsDataAutoPage settingsDataAuto:
+                    return container.Resolve<SettingsDataAutoViewModel>(id);
+                case SettingsGeneralPage settingsGeneral:
+                    return container.Resolve<SettingsGeneralViewModel>(id);
+                case SettingsLanguagePage settingsLanguage:
+                    return container.Resolve<SettingsLanguageViewModel>(id);
+                case SettingsMasksArchivedPage settingsMasksArchived:
+                    return container.Resolve<SettingsMasksArchivedViewModel>(id);
+                case SettingsMasksPage settingsMasks:
+                    return container.Resolve<SettingsMasksViewModel>(id);
+                case SettingsNotificationsPage settingsNotifications:
+                    return container.Resolve<SettingsNotificationsViewModel>(id);
+                case SettingsPrivacyAndSecurityPage settingsPrivacyAndSecurity:
+                    return container.Resolve<SettingsPrivacyAndSecurityViewModel>(id);
+                case SettingsSecurityChangePasswordPage settingsSecurityChangePassword:
+                    return container.Resolve<SettingsSecurityChangePasswordViewModel>(id);
+                case SettingsSecurityEnterPasswordPage settingsSecurityEnterPassword:
+                    return container.Resolve<SettingsSecurityEnterPasswordViewModel>(id);
+                case SettingsSecurityPasscodePage settingsSecurityPasscode:
+                    return container.Resolve<SettingsSecurityPasscodeViewModel>(id);
+                case SettingsSessionsPage settingsSessions:
+                    return container.Resolve<SettingsSessionsViewModel>(id);
+                case SettingsStatsPage settingsNetwork:
+                    return container.Resolve<SettingsNetworkViewModel>(id);
+                case SettingsStickersArchivedPage settingsStickersArchived:
+                    return container.Resolve<SettingsStickersArchivedViewModel>(id);
+                case SettingsStickersFeaturedPage settingsStickersTrending:
+                    return container.Resolve<SettingsStickersTrendingViewModel>(id);
+                case SettingsStickersPage settingsStickers:
+                    return container.Resolve<SettingsStickersViewModel>(id);
+                case SettingsStoragePage settingsStorage:
+                    return container.Resolve<SettingsStorageViewModel>(id);
+                case SettingsUsernamePage settingsUsername:
+                    return container.Resolve<SettingsUsernameViewModel>(id);
+                case SettingsWallPaperPage settingsWallPaper:
+                    return container.Resolve<SettingsWallPaperViewModel>(id);
+                case SettingsWebSessionsPage settingsWebSessions:
+                    return container.Resolve<SettingsWebSessionsViewModel>(id);
+                case SettingsPage settings:
+                    return container.Resolve<SettingsViewModel, IUserDelegate>(settings, id);
+                case SignInPage signIn:
+                    return container.Resolve<SignInViewModel>(id);
+                case SignInPasswordPage signInPassword:
+                    return container.Resolve<SignInPasswordViewModel>(id);
+                case SignInSentCodePage signInSentCode:
+                    return container.Resolve<SignInSentCodeViewModel>(id);
+                case SignUpPage signUp:
+                    return container.Resolve<SignUpViewModel>(id);
+                case SupergroupAddAdministratorPage supergroupAddAdministrator:
+                    return container.Resolve<SupergroupAddAdministratorViewModel>(id);
+                case SupergroupAddRestrictedPage supergroupAddRestricted:
+                    return container.Resolve<SupergroupAddRestrictedViewModel>(id);
+                case SupergroupAdministratorsPage supergroupAdministrators:
+                    return container.Resolve<SupergroupAdministratorsViewModel, ISupergroupDelegate>(supergroupAdministrators, id);
+                case SupergroupBannedPage supergroupBanned:
+                    return container.Resolve<SupergroupBannedViewModel, ISupergroupDelegate>(supergroupBanned, id);
+                case SupergroupEditAdministratorPage supergroupEditAdministrator:
+                    return container.Resolve<SupergroupEditAdministratorViewModel, IMemberDelegate>(supergroupEditAdministrator, id);
+                case SupergroupEditPage supergroupEdit:
+                    return container.Resolve<SupergroupEditViewModel, ISupergroupDelegate>(supergroupEdit, id);
+                case SupergroupEditRestrictedPage supergroupEditRestricted:
+                    return container.Resolve<SupergroupEditRestrictedViewModel, IMemberDelegate>(supergroupEditRestricted, id);
+                case SupergroupEditStickerSetPage supergroupEditStickerSet:
+                    return container.Resolve<SupergroupEditStickerSetViewModel>(id);
+                case SupergroupEventLogPage supergroupEventLog:
+                    return container.Resolve<SupergroupEventLogViewModel>(id);
+                case SupergroupMembersPage supergroupMembers:
+                    return container.Resolve<SupergroupMembersViewModel, ISupergroupDelegate>(supergroupMembers, id);
+                case SupergroupRestrictedPage supergroupRestricted:
+                    return container.Resolve<SupergroupRestrictedViewModel, ISupergroupDelegate>(supergroupRestricted, id);
+                case UserCommonChatsPage userCommonChats:
+                    return container.Resolve<UserCommonChatsViewModel>(id);
+                case UserCreatePage userCreate:
+                    return container.Resolve<UserCreateViewModel>(id);
+            }
+
+            return base.ResolveForPage(page, navigationService);
+        }
+
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
         {
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
@@ -137,7 +321,7 @@ namespace Unigram
         {
             Execute.BeginOnUIThread(() =>
             {
-                var passcode = UnigramContainer.Current.ResolveType<IPasscodeService>();
+                var passcode = UnigramContainer.Current.Resolve<IPasscodeService>();
                 if (passcode != null && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
                 {
                     passcode.Lock();
@@ -176,7 +360,7 @@ namespace Unigram
             IsVisible = e.Visible;
             HandleActivated(e.Visible);
 
-            var passcode = UnigramContainer.Current.ResolveType<IPasscodeService>();
+            var passcode = UnigramContainer.Current.Resolve<IPasscodeService>();
             if (passcode != null)
             {
                 if (e.Visible && passcode.IsLockscreenRequired)
@@ -210,10 +394,10 @@ namespace Unigram
 
         private void HandleActivated(bool active)
         {
-            var aggregator = UnigramContainer.Current.ResolveType<IEventAggregator>();
+            var aggregator = UnigramContainer.Current.Resolve<IEventAggregator>();
             aggregator.Publish(active ? "Window_Activated" : "Window_Deactivated");
 
-            var protoService = UnigramContainer.Current.ResolveType<IProtoService>();
+            var protoService = UnigramContainer.Current.Resolve<IProtoService>();
             protoService.Send(new SetOption("online", new OptionValueBoolean(active)));
         }
 
@@ -254,7 +438,7 @@ namespace Unigram
 
         protected override INavigationService CreateNavigationService(Frame frame)
         {
-            return new UnigramNavigationService(UnigramContainer.Current.ResolveType<IProtoService>(), frame);
+            return new UnigramNavigationService(UnigramContainer.Current.Resolve<IProtoService>(), frame);
         }
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
@@ -262,7 +446,7 @@ namespace Unigram
             //Locator.Configure();
             //UnigramContainer.Current.ResolveType<IGenerationService>();
 
-            var passcode = UnigramContainer.Current.ResolveType<IPasscodeService>();
+            var passcode = UnigramContainer.Current.Resolve<IPasscodeService>();
             if (passcode != null && passcode.IsEnabled)
             {
                 passcode.Lock();
@@ -291,7 +475,7 @@ namespace Unigram
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            var service = UnigramContainer.Current.ResolveType<IProtoService>();
+            var service = UnigramContainer.Current.Resolve<IProtoService>();
 
             var state = service.GetAuthorizationState();
             if (state == null)

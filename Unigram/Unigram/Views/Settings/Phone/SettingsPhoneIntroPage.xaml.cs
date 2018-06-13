@@ -24,7 +24,7 @@ namespace Unigram.Views.Settings
         public SettingsPhoneIntroPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsPhoneIntroViewModel>();
+            DataContext = UnigramContainer.Current.Resolve<SettingsPhoneIntroViewModel>();
         }
 
         private async void Change_Click(object sender, RoutedEventArgs e)

@@ -17,8 +17,8 @@ namespace Unigram.ViewModels.Supergroups
 
         public ISupergroupDelegate Delegate { get; set; }
 
-        public SupergroupMembersViewModelBase(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, SupergroupMembersFilter filter, Func<string, SupergroupMembersFilter> search)
-            : base(protoService, cacheService, aggregator)
+        public SupergroupMembersViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, SupergroupMembersFilter filter, Func<string, SupergroupMembersFilter> search)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             _filter = filter;
             _find = search;

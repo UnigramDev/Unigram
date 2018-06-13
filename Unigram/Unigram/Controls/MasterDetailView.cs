@@ -33,6 +33,7 @@ namespace Unigram.Controls
         private VisualStateGroup AdaptiveStates;
         private bool IsMasterHidden;
         private const string NarrowState = "NarrowState";
+        private const string CompactState = "CompactState";
 
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
@@ -86,11 +87,11 @@ namespace Unigram.Controls
         {
             UpdateVisualState();
 
-            if (CurrentState == MasterDetailState.Narrow && DetailFrame.CurrentSourcePageType == BlankPageType)
+            if (CurrentState == MasterDetailState.Minimal && DetailFrame.CurrentSourcePageType == BlankPageType)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }
-            else if (CurrentState == MasterDetailState.Filled)
+            else if (CurrentState == MasterDetailState.Compact || CurrentState == MasterDetailState.Expanded)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }
@@ -99,7 +100,7 @@ namespace Unigram.Controls
                 MasterPresenter.Visibility = Visibility.Collapsed;
             }
 
-            if (CurrentState != MasterDetailState.Narrow && ViewStateChanged != null)
+            if (CurrentState != MasterDetailState.Minimal && ViewStateChanged != null)
             {
                 ViewStateChanged(this, EventArgs.Empty);
             }
@@ -119,7 +120,7 @@ namespace Unigram.Controls
             // else hide it.
             if (DetailFrame != null && DetailFrame.CanGoBack && !Windows.ApplicationModel.DesignMode.DesignModeEnabled)
             {
-                if (CurrentState != MasterDetailState.Narrow)
+                if (CurrentState != MasterDetailState.Minimal)
                 {
                     //if (DetailFrame.SourcePageType == typeof(DialogPage) ||
                     //    DetailFrame.SourcePageType == typeof(AboutPage) ||
@@ -161,7 +162,7 @@ namespace Unigram.Controls
         {
             if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
             {
-                if (DetailFrame.CanGoBack && CurrentState == MasterDetailState.Narrow)
+                if (DetailFrame.CanGoBack && CurrentState == MasterDetailState.Minimal)
                 {
                     DetailFrame.GoBack();
                     args.Handled = true;
@@ -207,7 +208,7 @@ namespace Unigram.Controls
             {
                 UpdateVisualState();
 
-                if (CurrentState != MasterDetailState.Narrow && ViewStateChanged != null)
+                if (CurrentState != MasterDetailState.Minimal && ViewStateChanged != null)
                 {
                     ViewStateChanged(this, EventArgs.Empty);
                 }
@@ -234,11 +235,11 @@ namespace Unigram.Controls
                 Push(false);
             }
 
-            if (CurrentState == MasterDetailState.Narrow && e.SourcePageType == BlankPageType)
+            if (CurrentState == MasterDetailState.Minimal && e.SourcePageType == BlankPageType)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }
-            else if (CurrentState == MasterDetailState.Filled)
+            else if (CurrentState == MasterDetailState.Compact || CurrentState == MasterDetailState.Expanded)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }
@@ -247,7 +248,7 @@ namespace Unigram.Controls
                 MasterPresenter.Visibility = Visibility.Collapsed;
             }
 
-            if (CurrentState == MasterDetailState.Narrow)
+            if (CurrentState == MasterDetailState.Minimal)
             {
                 if (e.NavigationMode == NavigationMode.New && DetailFrame.BackStackDepth == 1)
                 {
@@ -344,6 +345,7 @@ namespace Unigram.Controls
             {
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude) as NavigationService;
                 service.SerializationService = TLSerializationService.Current;
+                service.Frame.DataContext = new object();
                 service.FrameFacade.FrameId = key;
                 service.FrameFacade.BackRequested += (s, args) =>
                 {
@@ -396,7 +398,7 @@ namespace Unigram.Controls
         {
             ViewStateChanged?.Invoke(this, EventArgs.Empty);
 
-            if (CurrentState == MasterDetailState.Filled && IsMasterHidden)
+            if ((CurrentState == MasterDetailState.Compact || CurrentState == MasterDetailState.Expanded) && IsMasterHidden)
             {
                 //var anim = new DrillOutThemeAnimation();
                 //anim.EntranceTarget = MasterPresenter;
@@ -407,11 +409,11 @@ namespace Unigram.Controls
                 //board.Begin();
             }
 
-            if (CurrentState == MasterDetailState.Narrow && BlankPageType == DetailFrame?.CurrentSourcePageType)
+            if (CurrentState == MasterDetailState.Minimal && BlankPageType == DetailFrame?.CurrentSourcePageType)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }
-            else if (CurrentState == MasterDetailState.Filled)
+            else if (CurrentState == MasterDetailState.Compact || CurrentState == MasterDetailState.Expanded)
             {
                 MasterPresenter.Visibility = Visibility.Visible;
             }
@@ -422,6 +424,7 @@ namespace Unigram.Controls
         }
 
         #region Public methods
+
         public bool CanGoBack
         {
             get
@@ -437,12 +440,22 @@ namespace Unigram.Controls
         {
             get
             {
-                return AdaptiveStates.CurrentState.Name == NarrowState ? MasterDetailState.Narrow : MasterDetailState.Filled;
+                if (AdaptiveStates == null)
+                {
+                    return MasterDetailState.Expanded;
+                }
+
+                return AdaptiveStates.CurrentState.Name == NarrowState
+                    ? MasterDetailState.Minimal
+                    : AdaptiveStates.CurrentState.Name == CompactState
+                    ? MasterDetailState.Compact
+                    : MasterDetailState.Expanded;
             }
         }
 
         public event EventHandler ViewStateChanged;
         public event EventHandler Update;
+
         #endregion
 
         #region BlankType
@@ -455,12 +468,26 @@ namespace Unigram.Controls
         public static readonly DependencyProperty BlankPageTypeProperty =
             DependencyProperty.Register("BlankPageType", typeof(Type), typeof(MasterDetailView), new PropertyMetadata(typeof(BlankPage)));
         #endregion
+
+        #region AllowCompact
+
+        public bool AllowCompact
+        {
+            get { return (bool)GetValue(AllowCompactProperty); }
+            set { SetValue(AllowCompactProperty, value); }
+        }
+
+        public static readonly DependencyProperty AllowCompactProperty =
+            DependencyProperty.Register("AllowCompact", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(true));
+
+        #endregion
     }
 
     public enum MasterDetailState
     {
-        Narrow,
-        Filled
+        Minimal,
+        Compact,
+        Expanded
     }
 
     public interface IMasterDetailPage

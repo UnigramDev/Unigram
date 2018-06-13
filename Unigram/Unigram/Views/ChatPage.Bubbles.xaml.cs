@@ -122,7 +122,7 @@ namespace Unigram.Views
 
             if (animations.Count > 0 && !intermediate)
             {
-                Play(animations, ApplicationSettings.Current.IsAutoPlayEnabled);
+                Play(animations, ViewModel.Settings.IsAutoPlayEnabled);
             }
         }
 
@@ -451,6 +451,8 @@ namespace Unigram.Views
             var message = args.Item as MessageViewModel;
 
             var content = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
+            content.Tag = message;
+
             if (content is Grid grid)
             {
                 var photo = grid.FindName("Photo") as ProfilePicture;
@@ -489,6 +491,10 @@ namespace Unigram.Views
 
                 content = grid.FindName("Bubble") as FrameworkElement;
             }
+            else if (content is StackPanel panel && !(content is MessageBubble))
+            {
+                content = panel.FindName("Service") as FrameworkElement;
+            }
 
             if (content is MessageBubble bubble)
             {
@@ -505,6 +511,7 @@ namespace Unigram.Views
         private SelectorItem CreateSelectorItem(string typeName)
         {
             SelectorItem item = new ListViewItem();
+            //item.ContextRequested += Message_ContextRequested;
             //item.ContentTemplate = _typeToTemplateMapping[typeName];
             item.ContentTemplate = Resources[typeName] as DataTemplate;
             item.Tag = typeName;

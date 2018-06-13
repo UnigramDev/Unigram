@@ -15,8 +15,8 @@ namespace Unigram.ViewModels.Channels
 {
     public class ChannelCreateStep1ViewModel : UnigramViewModelBase
     {
-        public ChannelCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator)
+        public ChannelCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);

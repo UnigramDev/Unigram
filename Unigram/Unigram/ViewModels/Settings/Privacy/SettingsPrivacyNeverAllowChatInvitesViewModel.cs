@@ -10,8 +10,8 @@ namespace Unigram.ViewModels.Settings.Privacy
 {
     public class SettingsPrivacyNeverAllowChatInvitesViewModel : SettingsPrivacyNeverViewModelBase
     {
-        public SettingsPrivacyNeverAllowChatInvitesViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator, new UserPrivacySettingAllowChatInvites())
+        public SettingsPrivacyNeverAllowChatInvitesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator, new UserPrivacySettingAllowChatInvites())
         {
         }
 

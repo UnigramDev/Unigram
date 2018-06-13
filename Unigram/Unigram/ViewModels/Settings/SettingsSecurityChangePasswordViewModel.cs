@@ -10,8 +10,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsSecurityChangePasswordViewModel : UnigramViewModelBase
     {
-        public SettingsSecurityChangePasswordViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsSecurityChangePasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
         }

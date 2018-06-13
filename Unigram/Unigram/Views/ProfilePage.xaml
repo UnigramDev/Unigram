@@ -104,11 +104,11 @@
                     </Grid>
 
                     <StackPanel>
-                        <controls:HyperButton x:Name="UserPhone"
-                                              Visibility="Collapsed"
-                                              Tag="{CustomResource PhoneMobile}"
-                                              Command="{x:Bind ViewModel.CallCommand}"
-                                              Style="{StaticResource SubtitleButtonStyle}"/>
+                        <Button x:Name="UserPhone"
+                                Visibility="Collapsed"
+                                Tag="{CustomResource PhoneMobile}"
+                                Command="{x:Bind ViewModel.CallCommand}"
+                                Style="{StaticResource SubtitleButtonStyle}"/>
 
                         <StackPanel x:Name="DescriptionPanel" Visibility="Collapsed">
                             <TextBlock x:Name="DescriptionTitle" Visibility="Collapsed" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
@@ -124,10 +124,10 @@
                             <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
                         </StackPanel>
 
-                        <controls:HyperButton x:Name="Username"
-                                              Visibility="Collapsed"
-                                              Tag="{CustomResource Username}"
-                                              Style="{StaticResource SubtitleButtonStyle}"/>
+                        <Button x:Name="Username"
+                                Visibility="Collapsed"
+                                Tag="{CustomResource Username}"
+                                Style="{StaticResource SubtitleButtonStyle}"/>
 
                     </StackPanel>
 
@@ -166,25 +166,25 @@
                                               Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
 
-                        <controls:HyperButton x:Name="GroupLeave"
-                                              Content="{CustomResource LeaveChannel}"
-                                              Command="{x:Bind ViewModel.DeleteCommand}"
-                                              Style="{StaticResource HyperButtonStyle}"
-                                              Foreground="Red"/>
-                        <controls:HyperButton x:Name="GroupInvite"
-                                              Content="{CustomResource AddMember}"
-                                              Command="{x:Bind ViewModel.InviteCommand}"
-                                              Style="{StaticResource HyperButtonStyle}"
-                                              Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                        <Button x:Name="GroupLeave"
+                                Content="{CustomResource LeaveChannel}"
+                                Command="{x:Bind ViewModel.DeleteCommand}"
+                                Style="{StaticResource HyperButtonStyle}"
+                                Foreground="Red"/>
+                        <Button x:Name="GroupInvite"
+                                Content="{CustomResource AddMember}"
+                                Command="{x:Bind ViewModel.InviteCommand}"
+                                Style="{StaticResource HyperButtonStyle}"
+                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                     </StackPanel>
 
                     <StackPanel Margin="0,24,0,18">
-                        <controls:HyperButton x:Name="EventLog"
-                                              Visibility="Collapsed"
-                                              Content="{CustomResource EventLog}"
-                                              Command="{x:Bind ViewModel.AdminLogCommand}"
-                                              Style="{StaticResource HyperButtonStyle}"
-                                              Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                        <Button x:Name="EventLog"
+                                Visibility="Collapsed"
+                                Content="{CustomResource EventLog}"
+                                Command="{x:Bind ViewModel.AdminLogCommand}"
+                                Style="{StaticResource HyperButtonStyle}"
+                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                         <controls:BadgeButton x:Name="Admins"
                                               Visibility="Collapsed"
                                               Content="{CustomResource ChannelAdministrators}"
@@ -202,7 +202,7 @@
                                               Style="{StaticResource BadgeButtonStyle}"/>
                         <controls:BadgeButton x:Name="Members"
                                               Visibility="Collapsed"
-                                              Content="{CustomResource ChannelMembers}"
+                                              Content="{CustomResource ChannelSubscribers}"
                                               Command="{x:Bind ViewModel.ParticipantsCommand}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
                     </StackPanel>

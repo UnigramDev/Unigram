@@ -11,8 +11,8 @@ namespace Unigram.ViewModels
     /// </summary>
     public class AboutViewModel : UnigramViewModelBase
     {
-        public AboutViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public AboutViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             UsefulPrivacyCommand = new RelayCommand(UsefulPrivacyExecute);
             UsefulFaqCommand = new RelayCommand(UsefulFaqExecute);

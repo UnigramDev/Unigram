@@ -9,8 +9,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsSecurityPasswordViewModel : UnigramViewModelBase
     {
-        public SettingsSecurityPasswordViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public SettingsSecurityPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
         }
 

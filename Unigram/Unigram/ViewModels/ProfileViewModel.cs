@@ -46,15 +46,15 @@ namespace Unigram.ViewModels
         IHandle<UpdateUserStatus>,
         IHandle<UpdateChatTitle>,
         IHandle<UpdateChatPhoto>,
-        IHandle<UpdateNotificationSettings>,
+        IHandle<UpdateChatNotificationSettings>,
         IHandle<UpdateFile>
     {
         public string LastSeen { get; internal set; }
 
         public IProfileDelegate Delegate { get; set; }
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator)
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
         {
             SendMessageCommand = new RelayCommand(SendMessageExecute);
             MediaCommand = new RelayCommand(MediaExecute);
@@ -325,9 +325,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        public void Handle(UpdateNotificationSettings update)
+        public void Handle(UpdateChatNotificationSettings update)
         {
-            if (update.Scope is NotificationSettingsScopeChat chat && chat.ChatId == _chat?.Id)
+            if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => RaisePropertyChanged(() => Chat));
             }
@@ -585,7 +585,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(UserKeyHashPage), chat.Id);
+            NavigationService.Navigate(typeof(IdenticonPage), chat.Id);
         }
 
         public RelayCommand MigrateCommand { get; }
@@ -618,7 +618,7 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand InviteCommand { get; }
-        private void InviteExecute()
+        private async void InviteExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -626,7 +626,20 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(ChatInvitePage), chat.Id);
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            {
+                var user = ProtoService.GetUser(chat);
+                if (user == null)
+                {
+                    return;
+                }
+
+                await ShareView.GetForCurrentView().ShowAsync(user);
+            }
+            else
+            {
+                NavigationService.Navigate(typeof(ChatInvitePage), chat.Id);
+            }
         }
 
         public RelayCommand<bool> ToggleMuteCommand { get; }
@@ -638,7 +651,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetNotificationSettings(new NotificationSettingsScopeChat(chat.Id), new NotificationSettings(unmute ? 0 : 632053052, chat.NotificationSettings.Sound, chat.NotificationSettings.ShowPreview)));
+            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(false, unmute ? 0 : 632053052, false, chat.NotificationSettings.Sound, false, chat.NotificationSettings.ShowPreview)));
         }
 
         #region Call
@@ -981,17 +994,10 @@ namespace Unigram.ViewModels
 
         public async void OpenUrl(string url, bool untrust)
         {
-            var navigation = url;
-            if (navigation.StartsWith("http") == false)
-            {
-                navigation = "http://" + url;
-            }
-
-            if (Uri.TryCreate(navigation, UriKind.Absolute, out Uri uri))
+            if (MessageHelper.TryCreateUri(url, out Uri uri))
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    //HandleTelegramUrl(message, navigation);
                     MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, url);
                 }
                 else

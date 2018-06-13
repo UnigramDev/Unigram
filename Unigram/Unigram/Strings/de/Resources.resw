@@ -94,6 +94,9 @@
   <data name="ActionAddUserYou" xml:space="preserve">
     <value>un1 hat dich hinzugefügt</value>
   </data>
+  <data name="ActionBotAllowed" xml:space="preserve">
+    <value>Du hast diesem Bot erlaubt dich anzuschreiben, wenn du dich bei {0} anmeldest.</value>
+  </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>un1 hat das Gruppenbild geändert</value>
   </data>
@@ -265,6 +268,9 @@
   <data name="AddMutual" xml:space="preserve">
     <value>Kontakte zum Kanal hinzufügen</value>
   </data>
+  <data name="AddProxy" xml:space="preserve">
+    <value>Proxy hinzufügen</value>
+  </data>
   <data name="AddRecipient" xml:space="preserve">
     <value>Empfänger hinzufügen</value>
   </data>
@@ -318,6 +324,9 @@
   </data>
   <data name="AllVideo" xml:space="preserve">
     <value>Alle Videos</value>
+  </data>
+  <data name="AllowCustomQuickReply" xml:space="preserve">
+    <value>Eigene erlauben</value>
   </data>
   <data name="AllowFillNumber" xml:space="preserve">
     <value>Bitte erlaube Telegram Anrufe und SMS zu empfangen, so dass wir deine Handynummer eintragen, einen Code senden und diesen automatisch eintragen können.</value>
@@ -519,7 +528,7 @@ Wichtig: Abmelden löscht deine Geheimen Chats.</value>
     <value>Blockierung für diesen Kontakt wirklich aufheben?</value>
   </data>
   <data name="AreYouSureWebSessions" xml:space="preserve">
-    <value>Verbindung zu allen Internetseiten trennen, auf denen du mit Telegram angemeldet bist?</value>
+    <value>Verbindung zu allen Webseiten trennen, auf denen du mit Telegram angemeldet bist?</value>
   </data>
   <data name="ArticleByAuthor" xml:space="preserve">
     <value>von {0}</value>
@@ -531,7 +540,7 @@ Wichtig: Abmelden löscht deine Geheimen Chats.</value>
     <value>Eine Frage stellen</value>
   </data>
   <data name="AskAQuestionInfo" xml:space="preserve">
-    <value>Bedenke bitte, dass der Telegram Support von ehrenamtlichen Helfern betreut wird. Alle versuchen so schnell wie möglich zu antworten, dies kann jedoch manchmal ein bisschen dauern.
+    <value>Bedenke bitte, dass der Telegram Support von Freiwilligen betreut wird. Alle versuchen so schnell wie möglich zu antworten, dies kann jedoch manchmal ein bisschen dauern.
 
 Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemeine-fragen">Telegram FAQ</a>]]> nach. Dort findest du Antworten auf die meisten Fragen und wichtige Tipps zur <![CDATA[<a href="https://telegram.org/faq/de#problembehandlung">Problembehandlung</a>]]>.</value>
   </data>
@@ -668,7 +677,10 @@ Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemein
     <value>Standort aktualisieren</value>
   </data>
   <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
-    <value>Um die Sonnenunter- und -aufgangszeiten zu berechnen, muss einmalig der ungefähre Standort geprüft werden. Der Standort wird lokal auf dem Gerät gespeichert.\n\nSonnenuntergang: {0}\nSonnenaufgang: {1}</value>
+    <value>Um die Sonnenunter- und -aufgangszeiten zu berechnen, muss einmalig der ungefähre Standort geprüft werden. Der Standort wird lokal auf dem Gerät gespeichert.
+
+Sonnenuntergang: {0}
+Sonnenaufgang: {1}</value>
   </data>
   <data name="AutodownloadChannels" xml:space="preserve">
     <value>Kanäle</value>
@@ -693,6 +705,9 @@ Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemein
   </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>GIFs autom. Abspielen</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Verfügbar</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Warte, bis {0} online geht...</value>
@@ -1017,6 +1032,9 @@ Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemein
   <data name="ChannelMessageDocument" xml:space="preserve">
     <value>{0} hat eine Datei gesendet</value>
   </data>
+  <data name="ChannelMessageFew" xml:space="preserve">
+    <value>{0} hat {1} gesendet</value>
+  </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
     <value>{0} hat ein GIF gesendet</value>
   </data>
@@ -1211,6 +1229,9 @@ Wenn du das nicht möchtest, empfehlen wir dir einen privaten Kanal.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} Chats</value>
   </data>
+  <data name="Checking" xml:space="preserve">
+    <value>Prüfe...</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Wähle ein Land</value>
   </data>
@@ -1260,7 +1281,7 @@ Wenn du das nicht möchtest, empfehlen wir dir einen privaten Kanal.</value>
     <value>Alle Geräte außer diesem werden abgemeldet.</value>
   </data>
   <data name="ClearOtherWebSessionsHelp" xml:space="preserve">
-    <value>Melde dich auf Internetseiten an, die eine Anmeldung mit Telegram unterstützen.</value>
+    <value>Melde dich auf Webseiten an, die eine Anmeldung mit Telegram unterstützen.</value>
   </data>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Zuletzt benutzte Emoji leeren?</value>
@@ -1321,11 +1342,17 @@ Sobald {1} Telegram aktualisiert, werden Bilder mit Timern von 1 Minute und kür
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Möchtest du wirklich diesen Eintrag aus der Anrufliste löschen?</value>
   </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Verbunden</value>
+  </data>
   <data name="Connecting" xml:space="preserve">
     <value>Verbinde...</value>
   </data>
+  <data name="ConnectingConnectProxy" xml:space="preserve">
+    <value>Mit Proxy verbinden</value>
+  </data>
   <data name="ConnectingToProxy" xml:space="preserve">
-    <value>Verbinde mit Proxy...</value>
+    <value>Verbinde mit Proxy</value>
   </data>
   <data name="ConnectingToProxyDisable" xml:space="preserve">
     <value>Deaktivieren</value>
@@ -1349,7 +1376,7 @@ Sobald {1} Telegram aktualisiert, werden Bilder mit Timern von 1 Minute und kür
     <value>Kontakte</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>Um dich nahtlos mit jedem zu verbinden, den du kennst, erlaube **Telegram** Zugriff auf deine Kontakte.</value>
+    <value>Telegram benötigt Zugriff auf deine Kontakte, damit du dich mit Freunden auf all deinen Geräten verbinden kannst. Deine deine Kontakte werden durchgehend mit den stark verschlüsselten Cloud Servern von Telegram synchronisiert.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>WEITER</value>
@@ -1515,7 +1542,7 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
     <value>**{0}** Tage</value>
   </data>
   <data name="DebugClearLogs" xml:space="preserve">
-    <value>Protolldateien leeren</value>
+    <value>Protokolldateien leeren</value>
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>Debug-Menü</value>
@@ -1560,7 +1587,7 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
     <value>Löschen</value>
   </data>
   <data name="DeleteAccountHelp" xml:space="preserve">
-    <value>Wenn du dich innerhalb dieser Zeit nicht anmeldest, wird dein Konto mit allen Nachrichten, Gruppen und Kontakten gelöscht.</value>
+    <value>Wenn du innerhalb dieser Zeit nicht online bist, wird dein Konto mit allen Nachrichten und Kontakten gelöscht.</value>
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>Wenn inaktiv für</value>
@@ -1613,6 +1640,9 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
   <data name="DeletePhoto" xml:space="preserve">
     <value>Bild löschen</value>
   </data>
+  <data name="DeleteProxy" xml:space="preserve">
+    <value>Proxy löschen?</value>
+  </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Spam melden</value>
   </data>
@@ -1642,6 +1672,9 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
     <value>Letzte Chats im Teilen-Menü anzeigen</value>
+  </data>
+  <data name="DisappearingGif" xml:space="preserve">
+    <value>Geheimes GIF</value>
   </data>
   <data name="DisappearingPhoto" xml:space="preserve">
     <value>Geheimes Bild</value>
@@ -2775,7 +2808,7 @@ Alle Medien bleiben in der Telegram Cloud gespeichert und können jederzeit wied
     <value>zul. online</value>
   </data>
   <data name="LastSeenDateFormatted" xml:space="preserve">
-    <value>zuletzt online {0}</value>
+    <value>zul. online {0}</value>
   </data>
   <data name="LastSeenEverybody" xml:space="preserve">
     <value>Jeder</value>
@@ -2784,7 +2817,7 @@ Alle Medien bleiben in der Telegram Cloud gespeichert und können jederzeit wied
     <value>Jeder (-{0})</value>
   </data>
   <data name="LastSeenFormatted" xml:space="preserve">
-    <value>zuletzt online {0}</value>
+    <value>zul. online {0}</value>
   </data>
   <data name="LastSeenNobody" xml:space="preserve">
     <value>Niemand</value>
@@ -2952,6 +2985,24 @@ Hinweis: Der Vorgang kann mehrere Minuten dauern.</value>
   </data>
   <data name="MasksRemoved" xml:space="preserve">
     <value>Masken entfernt</value>
+  </data>
+  <data name="MediaZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaOne" xml:space="preserve">
+    <value>{0} Medium</value>
+  </data>
+  <data name="MediaTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaOther" xml:space="preserve">
+    <value>{0} Medien</value>
   </data>
   <data name="MegaAddedBy" xml:space="preserve">
     <value>un1 hat dich hinzugefügt</value>
@@ -3259,7 +3310,7 @@ um die restlichen Optionen zu öffnen.</value>
     <value>Keine aktiven Anmeldungen.</value>
   </data>
   <data name="NoOtherWebSessionsInfo" xml:space="preserve">
-    <value>Du kannst dich auf unterstützen Internetseiten mit deinem Telegram-Konto anmelden.</value>
+    <value>Du kannst dich auf unterstützten Webseiten mit deinem Telegram-Konto anmelden.</value>
   </data>
   <data name="NoPhotos" xml:space="preserve">
     <value>Noch keine Bilder</value>
@@ -3305,6 +3356,9 @@ um die restlichen Optionen zu öffnen.</value>
   </data>
   <data name="NoStickers" xml:space="preserve">
     <value>Noch keine Sticker</value>
+  </data>
+  <data name="NoStickersFound" xml:space="preserve">
+    <value>Keine Sticker gefunden</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Kein Konto mit diesem Benutzernamen</value>
@@ -3353,6 +3407,12 @@ um die restlichen Optionen zu öffnen.</value>
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
     <value>{0} hat ein GIF angeheftet</value>
+  </data>
+  <data name="NotificationActionPinnedInvoice" xml:space="preserve">
+    <value>{0} hat eine Rechnung in der Gruppe {1} angeheftet</value>
+  </data>
+  <data name="NotificationActionPinnedInvoiceChannel" xml:space="preserve">
+    <value>{0} hat eine Rechnung angeheftet</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
     <value>{0} hat ein Musikstück in der Gruppe {1} angeheftet</value>
@@ -3429,6 +3489,12 @@ um die restlichen Optionen zu öffnen.</value>
   <data name="NotificationGroupAddSelfMega" xml:space="preserve">
     <value>{0} ist der Gruppe {1} beigetreten</value>
   </data>
+  <data name="NotificationGroupFew" xml:space="preserve">
+    <value>{0} hat {2} an die Gruppe {1} gesendet</value>
+  </data>
+  <data name="NotificationGroupForwardedFew" xml:space="preserve">
+    <value>{0} hat {2} an die Gruppe {1} weitergeleitet</value>
+  </data>
   <data name="NotificationGroupKickMember" xml:space="preserve">
     <value>{0} hat {2} aus der Gruppe {1} entfernt</value>
   </data>
@@ -3453,6 +3519,12 @@ um die restlichen Optionen zu öffnen.</value>
   <data name="NotificationMessageDocument" xml:space="preserve">
     <value>{0} hat dir eine Datei gesendet</value>
   </data>
+  <data name="NotificationMessageFew" xml:space="preserve">
+    <value>{0} hat dir {1} gesendet</value>
+  </data>
+  <data name="NotificationMessageForwardFew" xml:space="preserve">
+    <value>{0} hat dir {1} weitergeleitet</value>
+  </data>
   <data name="NotificationMessageGame" xml:space="preserve">
     <value>{0} hat dich eingeladen, {1} zu spielen</value>
   </data>
@@ -3473,6 +3545,9 @@ um die restlichen Optionen zu öffnen.</value>
   </data>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} hat ein GIF an die Gruppe {1} gesendet</value>
+  </data>
+  <data name="NotificationMessageGroupInvoice" xml:space="preserve">
+    <value>{0} hat eine Rechnung der Gruppe {1} für {2} gesendet</value>
   </data>
   <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
     <value>{0} hat einen Live-Standort mit der Gruppe {1} geteilt</value>
@@ -3503,6 +3578,9 @@ um die restlichen Optionen zu öffnen.</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
     <value>{0} hat ein Video an die Gruppe {1} gesendet</value>
+  </data>
+  <data name="NotificationMessageInvoice" xml:space="preserve">
+    <value>{0} hat dir eine Rechnung für {1} gesendet</value>
   </data>
   <data name="NotificationMessageLiveLocation" xml:space="preserve">
     <value>{0} hat dir einen Live-Standort gesendet</value>
@@ -3698,7 +3776,7 @@ Dein Telegram Team</value>
     <value>Andere Sitzungen</value>
   </data>
   <data name="OtherWebSessions" xml:space="preserve">
-    <value>Verbundene Internetseiten</value>
+    <value>Verbundene Webseiten</value>
   </data>
   <data name="OutgoingCalls" xml:space="preserve">
     <value>Ausgehende Anrufe</value>
@@ -3983,7 +4061,7 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
     <value>Deine E-Mail Adresse {0} wurde noch verifiziert und ist daher noch nicht aktiv.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram benötigt Zugriff auf deine Kontakte, um dich auf all deinen Geräten mit deinen Freunden zu verbinden.</value>
+    <value>Damit du dich mit Freunden auf all deinen Geräten verbinden kannst, werden deine Kontakte durchgehend mit den stark verschlüsselten Cloud Servern von Telegram synchronisiert.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram braucht Zugriff auf die Funktion 'Über andere Apps einblenden'. Nur so können Videos im Bild in Bild Modus wiedergegeben werden.</value>
@@ -4044,6 +4122,24 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
   <data name="PhotoCaption" xml:space="preserve">
     <value>Bildbeschriftung</value>
   </data>
+  <data name="PhotosZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosOne" xml:space="preserve">
+    <value>{0} Bild</value>
+  </data>
+  <data name="PhotosTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosOther" xml:space="preserve">
+    <value>{0} Bilder</value>
+  </data>
   <data name="PinMessage" xml:space="preserve">
     <value>Anheften</value>
   </data>
@@ -4058,6 +4154,9 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Oben anheften</value>
+  </data>
+  <data name="Ping" xml:space="preserve">
+    <value>Ping: {0} ms</value>
   </data>
   <data name="PinnedMessage" xml:space="preserve">
     <value>Angeheftete Nachricht</value>
@@ -4117,10 +4216,10 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
     <value>Mitteilungen höherer Priorität funktionieren auch, wenn sich dein Telefon im "Bitte nicht stören"-Modus befindet.</value>
   </data>
   <data name="PrivacyBots" xml:space="preserve">
-    <value>Bots und Internetseiten</value>
+    <value>Bots und Webseiten</value>
   </data>
   <data name="PrivacyBotsInfo" xml:space="preserve">
-    <value>Internetseiten, bei denen du mit Telegram angemeldet bist.</value>
+    <value>Webseiten, bei denen du mit Telegram angemeldet bist.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
     <value>Deaktivierst du Peer-to-Peer, werden alle Anrufe über die Telegram Server geleitet. Dadurch ist deine IP-Adresse nicht mehr sichtbar, die Gesprächsqualität wird jedoch leicht abnehmen.</value>
@@ -4173,8 +4272,29 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
   <data name="Proxy" xml:space="preserve">
     <value>Proxy</value>
   </data>
+  <data name="ProxyConnections" xml:space="preserve">
+    <value>Verbindungen</value>
+  </data>
+  <data name="ProxyDetails" xml:space="preserve">
+    <value>Proxy-Details</value>
+  </data>
   <data name="ProxySettings" xml:space="preserve">
     <value>Proxy-Einstellungen</value>
+  </data>
+  <data name="QuickReplyCustom" xml:space="preserve">
+    <value>Eigene Nachricht...</value>
+  </data>
+  <data name="QuickReplyDefault1" xml:space="preserve">
+    <value>Kann nicht sprechen. Was gibt's?</value>
+  </data>
+  <data name="QuickReplyDefault2" xml:space="preserve">
+    <value>Ich rufe dich gleich zurück.</value>
+  </data>
+  <data name="QuickReplyDefault3" xml:space="preserve">
+    <value>Ich rufe dich später an.</value>
+  </data>
+  <data name="QuickReplyDefault4" xml:space="preserve">
+    <value>Ich kann gerade nicht sprechen.</value>
   </data>
   <data name="RaiseToSpeak" xml:space="preserve">
     <value>Zum Sprechen ans Ohr</value>
@@ -4262,6 +4382,9 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
   </data>
   <data name="ReportChatPornography" xml:space="preserve">
     <value>Pornografie</value>
+  </data>
+  <data name="ReportChatSent" xml:space="preserve">
+    <value>Meldung gesendet</value>
   </data>
   <data name="ReportChatSpam" xml:space="preserve">
     <value>Spam</value>
@@ -4467,6 +4590,9 @@ Du musst die App nach der Änderung neu starten.</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>NACHRICHTEN</value>
   </data>
+  <data name="SearchStickersHint" xml:space="preserve">
+    <value>Sticker suchen</value>
+  </data>
   <data name="SecondsZero" xml:space="preserve">
     <value/>
   </data>
@@ -4517,6 +4643,9 @@ Du musst die App nach der Änderung neu starten.</value>
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>Linkvorschau</value>
+  </data>
+  <data name="SecretWebPageInfo" xml:space="preserve">
+    <value>Die Linkvorschau wird auf den Telegram-Servern generiert. Wir speichern keine Daten über die von dir gesendeten Links.</value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Sicherheit</value>
@@ -4892,6 +5021,18 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="SubscribersOther" xml:space="preserve">
     <value>{0} Abonnenten</value>
   </data>
+  <data name="SuggestStickers" xml:space="preserve">
+    <value>Sticker für Emoji vorschlagen</value>
+  </data>
+  <data name="SuggestStickersAll" xml:space="preserve">
+    <value>Alle</value>
+  </data>
+  <data name="SuggestStickersInstalled" xml:space="preserve">
+    <value>Hinzugefügte</value>
+  </data>
+  <data name="SuggestStickersNone" xml:space="preserve">
+    <value>Keine</value>
+  </data>
   <data name="Support" xml:space="preserve">
     <value>Support</value>
   </data>
@@ -4901,11 +5042,17 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="SyncContactsAdded" xml:space="preserve">
     <value>Kontakte von diesem Gerät wurden deinem Konto hinzugefügt.</value>
   </data>
+  <data name="SyncContactsDelete" xml:space="preserve">
+    <value>Synchronisierte Kontakte löschen</value>
+  </data>
+  <data name="SyncContactsDeleteInfo" xml:space="preserve">
+    <value>Das wird deine Kontakte von den Telegram-Servern entfernen.Wenn 'Kontakte synchronisieren' aktiviert ist, werden deine Kontakte erneut synchronisiert.</value>
+  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
-    <value>Einschalten, um Kontakte von diesem Gerät deinem Konto hinzuzufügen.</value>
+    <value>Aktiviere diese Option, um Kontakte von diesem Gerät durchgehend mit deinem Konto zu synchronisieren.</value>
   </data>
   <data name="SyncContactsInfoOn" xml:space="preserve">
-    <value>Kontakte von diesem Gerät werden deinem Konto hinzugefügt.</value>
+    <value>Kontakte dieses Gerätes werden deinem Konto hinzugefügt.</value>
   </data>
   <data name="SyncContactsOff" xml:space="preserve">
     <value>Kontakte von diesem Gerät werden deinem Konto nicht hinzugefügt.</value>
@@ -4950,7 +5097,7 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
     <value>Alle anderen Sitzungen abmelden</value>
   </data>
   <data name="TerminateAllWebSessions" xml:space="preserve">
-    <value>Alle Internetseiten trennen</value>
+    <value>Alle Webseiten trennen</value>
   </data>
   <data name="TerminateSessionInfo" xml:space="preserve">
     <value>Tippe auf eine Sitzung um sie zu beenden.</value>
@@ -4966,6 +5113,13 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>{0} blockieren</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>Nutzungsbedingungen</value>
+  </data>
+  <data name="TermsOfServiceLogin" xml:space="preserve">
+    <value>Mit der Registrierung
+stimmst du den *Nutzungsbedigungen* zu.</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>Text in die Zwischenablage kopiert</value>
@@ -5039,6 +5193,9 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="Typing" xml:space="preserve">
     <value>tippt…</value>
   </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Nicht verfügbar</value>
+  </data>
   <data name="Unban" xml:space="preserve">
     <value>Entsperren</value>
   </data>
@@ -5075,6 +5232,9 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="UnpinMessageAlert" xml:space="preserve">
     <value>Angeheftete Nachricht wieder entfernen?</value>
   </data>
+  <data name="UnreadMessages" xml:space="preserve">
+    <value>Ungelesene Nachrichten</value>
+  </data>
   <data name="UnsupportedAttachment" xml:space="preserve">
     <value>Nicht unterstützte Datei</value>
   </data>
@@ -5082,7 +5242,7 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
     <value>Diese Nachricht wird von deiner Telegram-Version nicht unterstützt. Bitte aktualisiere Telegram um sie zu sehen: https://telegram.org/update</value>
   </data>
   <data name="UpdateContactsMessage" xml:space="preserve">
-    <value>Telegram hat viele nicht synchronisierte Kontakte erkannt. Möchte du diese jetzt synchronisieren? 'OK' wählen, wenn du dein eigenes Gerät, SIM-Karte und Google-Konto benutzt.</value>
+    <value>Telegram hat viele nicht synchronisierte Kontakte erkannt. Möchtest du diese jetzt synchronisieren? 'OK' wählen, wenn du dein eigenes Gerät, SIM-Karte und Google-Konto benutzt.</value>
   </data>
   <data name="UpdateContactsTitle" xml:space="preserve">
     <value>Kontakte aktualisieren?</value>
@@ -5141,8 +5301,32 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="UseProxyPort" xml:space="preserve">
     <value>Port</value>
   </data>
+  <data name="UseProxySecret" xml:space="preserve">
+    <value>Schlüssel</value>
+  </data>
   <data name="UseProxySettings" xml:space="preserve">
     <value>Proxy-Einstellungen benutzen</value>
+  </data>
+  <data name="UseProxySocks5" xml:space="preserve">
+    <value>SOCKS5</value>
+  </data>
+  <data name="UseProxySponsor" xml:space="preserve">
+    <value>Proxy-Sponsor</value>
+  </data>
+  <data name="UseProxySponsorInfo" xml:space="preserve">
+    <value>Dieser Kanal wird von deinem Proxyserver angezeigt. Deaktiviere den Proxy in den Einstellungen, um den Kanal zu entfernen.</value>
+  </data>
+  <data name="UseProxyTelegram" xml:space="preserve">
+    <value>MTProto Proxy</value>
+  </data>
+  <data name="UseProxyTelegramError" xml:space="preserve">
+    <value>Dein aktueller Proxy ist nicht korrekt konfiguriert und wird daher deaktiviert. Bitte suche dir einen anderen.</value>
+  </data>
+  <data name="UseProxyTelegramInfo" xml:space="preserve">
+    <value>MTProto Proxy-Einstellungen.</value>
+  </data>
+  <data name="UseProxyTelegramInfo2" xml:space="preserve">
+    <value>Dieser Proxy könnte einen gesponserten Kanal in deiner Chatliste anzeigen. Das wird jedoch nicht deinen Telegram-Datenverkehr enthüllen.</value>
   </data>
   <data name="UseProxyUsername" xml:space="preserve">
     <value>Benutzername</value>
@@ -5303,6 +5487,9 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
   <data name="VoipEndCall" xml:space="preserve">
     <value>Auflegen</value>
   </data>
+  <data name="VoipErrorUnknown" xml:space="preserve">
+    <value>Telegram-Anruf kann im Moment nicht geführt werden.</value>
+  </data>
   <data name="VoipExchangingKeys" xml:space="preserve">
     <value>Tausche Schlüssel aus</value>
   </data>
@@ -5317,6 +5504,9 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
   </data>
   <data name="VoipInCallBranding" xml:space="preserve">
     <value>Telegram-Anruf</value>
+  </data>
+  <data name="VoipInCallBrandingWithName" xml:space="preserve">
+    <value>Telegram-Anruf mit {0}</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Eingehender Anruf</value>
@@ -5356,6 +5546,12 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
   </data>
   <data name="VoipPeerOutdated" xml:space="preserve">
     <value>**{0}** unterstützt keine Anrufe. Dein Chatpartner muss seine App aktualisieren, bevor du ihn anrufen kannst.</value>
+  </data>
+  <data name="VoipQuickReplies" xml:space="preserve">
+    <value>Mit Nachricht antworten</value>
+  </data>
+  <data name="VoipQuickRepliesExplain" xml:space="preserve">
+    <value>Beantworte einen eingehenden Telegram-Anruf mit diesen Nachrichten. Du kannst die Texte jederzeit ändern.</value>
   </data>
   <data name="VoipRateCallAlert" xml:space="preserve">
     <value>Bewerte bitte die Qualität deines Telegram-Anrufs</value>
