@@ -55,10 +55,13 @@ namespace Unigram.ViewModels.Settings
                         if (status is Seconds seconds)
                         {
                             proxy.Seconds = seconds.SecondsValue;
+                            proxy.Error = null;
                             proxy.Status = new ConnectionStatusReady(proxy.IsEnabled, seconds.SecondsValue);
                         }
                         else if (status is Error error)
                         {
+                            proxy.Seconds = 0;
+                            proxy.Error = error;
                             proxy.Status = new ConnectionStatusError(error);
                         }
                     });
@@ -77,7 +80,15 @@ namespace Unigram.ViewModels.Settings
             {
                 if (!item.IsEnabled)
                 {
-                    item.Status = new ConnectionStatusReady(false, item.Seconds);
+                    if (item.Error != null)
+                    {
+                        item.Status = new ConnectionStatusError(item.Error);
+                    }
+                    else
+                    {
+                        item.Status = new ConnectionStatusReady(false, item.Seconds);
+                    }
+
                     continue;
                 }
 
@@ -200,6 +211,7 @@ namespace Unigram.ViewModels.Settings
         }
 
         public double Seconds { get; set; }
+        public Error Error { get; set; }
 
         public virtual bool IsEnabled { get; set; }
         public virtual int Id { get; private set; }

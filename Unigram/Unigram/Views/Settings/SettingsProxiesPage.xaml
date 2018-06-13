@@ -29,7 +29,13 @@
                         Tag="{CustomResource AddProxy}"
                         Command="{x:Bind ViewModel.AddCommand}"
                         Style="{StaticResource HyperDetailButtonStyle}"
-                        Margin="0,0,0,12"/>
+                        Margin="0,0,0,16"/>
+
+                    <TextBlock Text="{CustomResource ProxyConnections}"
+                               Foreground="{ThemeResource TelegramForegroundAccentBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               FontWeight="SemiBold"
+                               Margin="12,0,12,0"/>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplateSelector>
