@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://unigram.me">
+  <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">
     <img src="https://raw.githubusercontent.com/UnigramDev/Unigram/develop/Unigram/Assets/StoreLogo/Release/StoreLogo.scale-200.png" width=80 height=80>
   </a>
 
