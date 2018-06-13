@@ -83,7 +83,7 @@ namespace Unigram.ViewModels.SignIn
                         return;
                     }
 
-                    NavigationService.Navigate(typeof(SignInPage));
+                    ProtoService.Send(new LogOut());
                 }
 
                 var confirm = await TLMessageDialog.ShowAsync(waitCode.TermsOfService.Text, Strings.Resources.TermsOfService, Strings.Resources.SignUp, Strings.Resources.Decline);

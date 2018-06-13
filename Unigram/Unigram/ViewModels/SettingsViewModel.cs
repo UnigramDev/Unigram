@@ -161,14 +161,14 @@ namespace Unigram.ViewModels
                 // TODO:
             }
 
-            if (ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "RequestRestartAsync"))
-            {
-                await CoreApplication.RequestRestartAsync(string.Empty);
-            }
-            else
-            {
-                App.Current.Exit();
-            }
+            //if (ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "RequestRestartAsync"))
+            //{
+            //    await CoreApplication.RequestRestartAsync(string.Empty);
+            //}
+            //else
+            //{
+            //    App.Current.Exit();
+            //}
         }
     }
 }

@@ -67,7 +67,7 @@ namespace Unigram.Services
 
     public class ProtoService : IProtoService, ClientResultHandler
     {
-        private readonly Client _client;
+        private Client _client;
         private readonly int _session;
         private readonly IDeviceInfoService _deviceInfoService;
         private readonly ISettingsService _settings;
@@ -107,16 +107,22 @@ namespace Unigram.Services
             Log.SetVerbosityLevel(ApplicationSettings.Current.VerbosityLevel);
             Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{session}", "log"));
 
-            _client = Client.Create(this);
             _session = session;
             _deviceInfoService = deviceInfoService;
             _aggregator = aggregator;
 
             _preferences = new AutoDownloadPreferences(ApplicationData.Current.LocalSettings.CreateContainer("autoDownload", ApplicationDataCreateDisposition.Always));
 
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            _client = Client.Create(this);
+
             var parameters = new TdlibParameters
             {
-                DatabaseDirectory = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{session}"),
+                DatabaseDirectory = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
                 UseSecretChats = true,
                 UseMessageDatabase = true,
                 ApiId = Constants.ApiId,
@@ -221,6 +227,36 @@ namespace Unigram.Services
                     _client.Send(new OptimizeStorage(long.MaxValue, ttl * 60 * 60 * 24, int.MaxValue, 0, new FileType[0], new long[0], new long[0], 0));
                 }
             });
+        }
+
+        public void CleanUp()
+        {
+            _options.Clear();
+
+            _chats.Clear();
+
+            _secretChats.Clear();
+
+            _users.Clear();
+            _usersFull.Clear();
+
+            _basicGroups.Clear();
+            _basicGroupsFull.Clear();
+
+            _supergroups.Clear();
+            _supergroupsFull.Clear();
+
+            _chatsMap.Clear();
+            _usersMap.Clear();
+
+            _promotedChatId = 0;
+
+            _favoriteStickers?.Clear();
+            _installedStickerSets?.Clear();
+            _installedMaskSets?.Clear();
+
+            _authorizationState = null;
+            _connectionState = null;
         }
 
 
@@ -571,6 +607,14 @@ namespace Unigram.Services
         {
             if (update is UpdateAuthorizationState updateAuthorizationState)
             {
+                switch (updateAuthorizationState.AuthorizationState)
+                {
+                    case AuthorizationStateClosed closed:
+                        CleanUp();
+                        Initialize();
+                        break;
+                }
+
                 _authorizationState = updateAuthorizationState.AuthorizationState;
             }
             else if (update is UpdateBasicGroup updateBasicGroup)
