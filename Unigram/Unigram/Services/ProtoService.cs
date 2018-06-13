@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Helpers;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -126,6 +125,7 @@ namespace Unigram.Services
                 DeviceModel = _deviceInfoService.DeviceModel,
                 SystemVersion = _deviceInfoService.SystemVersion,
                 ApplicationVersion = _deviceInfoService.AppVersion,
+                UseTestDc = false
             };
 
 #if MOCKUP
@@ -812,6 +812,10 @@ namespace Unigram.Services
             else if (update is UpdateSupergroupFullInfo updateSupergroupFullInfo)
             {
                 _supergroupsFull[updateSupergroupFullInfo.SupergroupId] = updateSupergroupFullInfo.SupergroupFullInfo;
+            }
+            else if (update is UpdateTermsOfService updateTermsOfService)
+            {
+
             }
             else if (update is UpdateTrendingStickerSets updateTrendingStickerSets)
             {

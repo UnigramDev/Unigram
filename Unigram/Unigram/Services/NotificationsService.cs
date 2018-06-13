@@ -20,6 +20,7 @@ using Windows.Data.Json;
 using Windows.Networking.PushNotifications;
 using Windows.System.Threading;
 using Windows.UI.Notifications;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
@@ -30,7 +31,7 @@ namespace Unigram.Services
         Task CloseAsync();
     }
 
-    public class NotificationsService : INotificationsService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateNewMessage>, IHandle<UpdateChatReadInbox>, IHandle<UpdateServiceNotification>
+    public class NotificationsService : INotificationsService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateNewMessage>, IHandle<UpdateChatReadInbox>, IHandle<UpdateServiceNotification>, IHandle<UpdateTermsOfService>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -54,6 +55,60 @@ namespace Unigram.Services
             Handle(new UpdateUnreadMessageCount(protoService.UnreadCount, protoService.UnreadUnmutedCount));
         }
 
+        public async void Handle(UpdateTermsOfService update)
+        {
+            var terms = update.TermsOfService;
+            if (terms == null)
+            {
+                return;
+            }
+
+            async void DeleteAccount()
+            {
+                var decline = await TLMessageDialog.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
+                if (decline != ContentDialogResult.Primary)
+                {
+                    Handle(update);
+                    return;
+                }
+
+                var delete = await TLMessageDialog.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
+                if (delete != ContentDialogResult.Primary)
+                {
+                    Handle(update);
+                    return;
+                }
+
+                _protoService.Send(new DeleteAccount("Decline ToS update"));
+            }
+
+            if (terms.ShowPopup)
+            {
+                await Task.Delay(2000);
+                await WindowWrapper.Default().Dispatcher.Dispatch(async () =>
+                {
+                    var confirm = await TLMessageDialog.ShowAsync(terms.Text, Strings.Resources.PrivacyPolicyAndTerms, Strings.Resources.Agree, Strings.Resources.Cancel);
+                    if (confirm != ContentDialogResult.Primary)
+                    {
+                        DeleteAccount();
+                        return;
+                    }
+
+                    if (terms.MinUserAge > 0)
+                    {
+                        var age = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.TosAgeText, terms.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
+                        if (age != ContentDialogResult.Primary)
+                        {
+                            DeleteAccount();
+                            return;
+                        }
+                    }
+
+                    _protoService.Send(new AcceptTermsOfService(update.TermsOfServiceId));
+                });
+            }
+        }
+
         public void Handle(UpdateServiceNotification update)
         {
             var caption = update.Content.GetCaption();
@@ -68,7 +123,7 @@ namespace Unigram.Services
                 return;
             }
 
-            Execute.BeginOnUIThread(async () =>
+            WindowWrapper.Default().Dispatcher.Dispatch(async () =>
             {
                 await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
             });

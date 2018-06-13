@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 05/28/2018 12:07:56
+// 	Generated: 06/13/2018 13:44:18
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -4856,7 +4856,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Telegram needs access to your contacts so that you can connect with your friends across all your devices. Your contacts will be continuosly synced with Telegram\'s heavily encrypted cloud servers."
+        /// Localized resource similar to "Telegram needs access to your contacts so that you can connect with your friends across all your devices. Your contacts will be continuosly synced with Telegram's heavily encrypted cloud servers."
         /// </summary>
         public static string ContactsPermissionAlert
         {
@@ -20964,6 +20964,142 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessagesOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Accept"
+        /// </summary>
+        public static string Accept
+        {
+            get
+            {
+                return resourceLoader.GetString("Accept");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Agree"
+        /// </summary>
+        public static string Agree
+        {
+            get
+            {
+                return resourceLoader.GetString("Agree");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Back"
+        /// </summary>
+        public static string Back
+        {
+            get
+            {
+                return resourceLoader.GetString("Back");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "DELETE NOW"
+        /// </summary>
+        public static string Deactivate
+        {
+            get
+            {
+                return resourceLoader.GetString("Deactivate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Decline"
+        /// </summary>
+        public static string Decline
+        {
+            get
+            {
+                return resourceLoader.GetString("Decline");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Decline & Deactivate"
+        /// </summary>
+        public static string DeclineDeactivate
+        {
+            get
+            {
+                return resourceLoader.GetString("DeclineDeactivate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Privacy Policy and Terms of Service"
+        /// </summary>
+        public static string PrivacyPolicyAndTerms
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyPolicyAndTerms");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tap Agree to confirm that you are {0} or over."
+        /// </summary>
+        public static string TosAgeText
+        {
+            get
+            {
+                return resourceLoader.GetString("TosAgeText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Age Verification"
+        /// </summary>
+        public static string TosAgeTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TosAgeTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Warning, this will irreversibly delete your Telegram account along with all the data you store in the Telegram cloud.
+        ///
+        ///We will provide a tool to download your data before June, 23 – so you may want to wait a little before deleting."
+        /// </summary>
+        public static string TosDeclineDeleteAccount
+        {
+            get
+            {
+                return resourceLoader.GetString("TosDeclineDeleteAccount");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We're very sorry, but this means we must part ways here. Unlike others, we don't use your data for ad targeting or other commercial purposes. Telegram only stores the information it needs to function as a feature-rich cloud service. You can adjust how we use your data (e.g., delete synced contacts) in Privacy & Security settings.
+        ///
+        ///But if you're generally not OK with Telegram's modest needs, it won't be possible for us to provide this service. You can deactivate your account now — or look around some more and deactivate it later if you feel you're not happy with the way we use your data. How does that sound?"
+        /// </summary>
+        public static string TosUpdateDecline
+        {
+            get
+            {
+                return resourceLoader.GetString("TosUpdateDecline");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "SignUp"
+        /// </summary>
+        public static string SignUp
+        {
+            get
+            {
+                return resourceLoader.GetString("SignUp");
             }
         }
     }

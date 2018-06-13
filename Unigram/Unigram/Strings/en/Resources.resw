@@ -1382,7 +1382,7 @@ Once {1} updates Telegram, photos with timers for 1 minute or less will start wo
     <value>Contacts</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>Telegram needs access to your contacts so that you can connect with your friends across all your devices. Your contacts will be continuosly synced with Telegram\'s heavily encrypted cloud servers.</value>
+    <value>Telegram needs access to your contacts so that you can connect with your friends across all your devices. Your contacts will be continuosly synced with Telegram's heavily encrypted cloud servers.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>CONTINUE</value>
@@ -5836,5 +5836,45 @@ If you forget your password, you will lose access to your Telegram account. Ther
   </data>
   <data name="MessagesOther" xml:space="preserve">
     <value>{0} messages</value>
+  </data>
+  <data name="Accept" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="Agree" xml:space="preserve">
+    <value>Agree</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>DELETE NOW</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="DeclineDeactivate" xml:space="preserve">
+    <value>Decline &amp; Deactivate</value>
+  </data>
+  <data name="PrivacyPolicyAndTerms" xml:space="preserve">
+    <value>Privacy Policy and Terms of Service</value>
+  </data>
+  <data name="TosAgeText" xml:space="preserve">
+    <value>Tap Agree to confirm that you are {0} or over.</value>
+  </data>
+  <data name="TosAgeTitle" xml:space="preserve">
+    <value>Age Verification</value>
+  </data>
+  <data name="TosDeclineDeleteAccount" xml:space="preserve">
+    <value>Warning, this will irreversibly delete your Telegram account along with all the data you store in the Telegram cloud.
+
+We will provide a tool to download your data before June, 23 – so you may want to wait a little before deleting.</value>
+  </data>
+  <data name="TosUpdateDecline" xml:space="preserve">
+    <value>We're very sorry, but this means we must part ways here. Unlike others, we don't use your data for ad targeting or other commercial purposes. Telegram only stores the information it needs to function as a feature-rich cloud service. You can adjust how we use your data (e.g., delete synced contacts) in Privacy &amp; Security settings.
+
+But if you're generally not OK with Telegram's modest needs, it won't be possible for us to provide this service. You can deactivate your account now — or look around some more and deactivate it later if you feel you're not happy with the way we use your data. How does that sound?</value>
+  </data>
+  <data name="SignUp" xml:space="preserve">
+    <value>SignUp</value>
   </data>
 </root>

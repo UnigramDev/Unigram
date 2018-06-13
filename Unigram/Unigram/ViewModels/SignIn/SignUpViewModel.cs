@@ -11,12 +11,13 @@ using Unigram.Views.SignIn;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.SignIn
 {
     public class SignUpViewModel : UnigramViewModelBase
     {
-        public SignUpViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public SignUpViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -61,6 +62,46 @@ namespace Unigram.ViewModels.SignIn
             {
                 RaisePropertyChanged("FIRSTNAME_INVALID");
                 return;
+            }
+
+            var state = ProtoService.GetAuthorizationState();
+            if (state is AuthorizationStateWaitCode waitCode && waitCode.TermsOfService != null && waitCode.TermsOfService.ShowPopup)
+            {
+                async void CancelSignUp()
+                {
+                    var decline = await TLMessageDialog.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
+                    if (decline != ContentDialogResult.Primary)
+                    {
+                        SendExecute();
+                        return;
+                    }
+
+                    var delete = await TLMessageDialog.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
+                    if (delete != ContentDialogResult.Primary)
+                    {
+                        SendExecute();
+                        return;
+                    }
+
+                    NavigationService.Navigate(typeof(SignInPage));
+                }
+
+                var confirm = await TLMessageDialog.ShowAsync(waitCode.TermsOfService.Text, Strings.Resources.TermsOfService, Strings.Resources.SignUp, Strings.Resources.Decline);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    CancelSignUp();
+                    return;
+                }
+
+                if (waitCode.TermsOfService.MinUserAge > 0)
+                {
+                    var age = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.TosAgeText, waitCode.TermsOfService.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
+                    if (age != ContentDialogResult.Primary)
+                    {
+                        CancelSignUp();
+                        return;
+                    }
+                }
             }
 
             await ProtoService.SendAsync(new SetOption("x_firstname", new OptionValueString(_firstName ?? string.Empty)));
