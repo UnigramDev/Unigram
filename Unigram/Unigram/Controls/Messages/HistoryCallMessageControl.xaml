@@ -39,7 +39,8 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{x:Bind ConvertCount(ViewModel, ViewModel.Items.Count)}"
+                <TextBlock x:Name="DisplayLabel"
+                           Text="{x:Bind ConvertCount(ViewModel, ViewModel.Items.Count)}"
                            Foreground="{ThemeResource MessageForegroundBrush}"
                            Style="{StaticResource BodyTextBlockStyle}"
                            TextWrapping="NoWrap"

@@ -155,8 +155,8 @@ namespace Unigram.Views.Settings
                 Message2.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/AccentOut.xaml") });
             }
 
-            Preview.RequestedTheme = ApplicationSettings.Current.RequestedTheme == ElementTheme.Dark || (ApplicationSettings.Current.RequestedTheme == ElementTheme.Default && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
-            Preview.RequestedTheme = ApplicationSettings.Current.RequestedTheme;
+            Preview.RequestedTheme = ViewModel.Settings.RequestedTheme == ElementTheme.Dark || (ViewModel.Settings.RequestedTheme == ElementTheme.Default && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
+            Preview.RequestedTheme = ViewModel.Settings.RequestedTheme;
         }
     }
 }
