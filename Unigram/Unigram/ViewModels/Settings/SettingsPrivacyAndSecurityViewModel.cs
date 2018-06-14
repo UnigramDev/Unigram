@@ -134,6 +134,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsSecretPreviewsEnabled
+        {
+            get
+            {
+                return Settings.IsSecretPreviewsEnabled;
+            }
+            set
+            {
+                Settings.IsSecretPreviewsEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion
 
         public RelayCommand PasswordCommand { get; }

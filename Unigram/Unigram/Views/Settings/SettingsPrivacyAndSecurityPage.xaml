@@ -148,6 +148,20 @@
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,0"/>
                 </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource SecretChat}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsSecretPreviewsEnabled, Mode=TwoWay}"
+                        Header="{CustomResource SecretWebPage}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+
+                    <TextBlock
+                        Text="{CustomResource SecretWebPageInfo}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,0"/>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

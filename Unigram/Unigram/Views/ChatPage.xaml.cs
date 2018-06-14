@@ -487,6 +487,17 @@ namespace Unigram.Views
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
             }
 
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSecret && !ViewModel.Settings.IsSecretPreviewsEnabled)
+            {
+                return;
+            }
+
             var text = ViewModel.GetText();
             var embedded = ViewModel.EmbedData;
 
