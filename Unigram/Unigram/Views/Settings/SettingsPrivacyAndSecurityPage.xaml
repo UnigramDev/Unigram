@@ -119,6 +119,10 @@
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource Contacts}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <Button
+                        Command="{x:Bind ViewModel.ClearContactsCommand}"
+                        Tag="{CustomResource SyncContactsDelete}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                         Header="{CustomResource SyncContacts}"
