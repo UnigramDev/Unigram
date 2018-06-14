@@ -42,7 +42,7 @@
                 <selectors:ConnectionTemplateSelector>
                     <selectors:ConnectionTemplateSelector.ItemTemplate>
                         <DataTemplate x:DataType="viewModels:ConnectionViewModel">
-                            <Grid Margin="0,12" Background="Transparent">
+                            <Grid Padding="0,12" Background="Transparent">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -54,7 +54,7 @@
                     </selectors:ConnectionTemplateSelector.ItemTemplate>
                     <selectors:ConnectionTemplateSelector.ProxyTemplate>
                         <DataTemplate x:DataType="viewModels:ProxyViewModel">
-                            <Grid Margin="0,12" Background="Transparent" ContextRequested="Proxy_ContextRequested">
+                            <Grid Padding="0,12" Background="Transparent" ContextRequested="Proxy_ContextRequested">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -68,6 +68,11 @@
                     </selectors:ConnectionTemplateSelector.ProxyTemplate>
                 </selectors:ConnectionTemplateSelector>
             </ListView.ItemTemplateSelector>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.Footer>
                 <StackPanel>
                     <CheckBox

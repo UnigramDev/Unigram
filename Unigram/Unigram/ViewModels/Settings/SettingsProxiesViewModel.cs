@@ -47,7 +47,7 @@ namespace Unigram.ViewModels.Settings
                     _selectedItem.IsEnabled = true;
                 }
 
-                Parallel.ForEach(items, async proxy =>
+                Parallel.ForEach(items, new ParallelOptions { MaxDegreeOfParallelism = 5 }, async proxy =>
                 {
                     var status = await ProtoService.SendAsync(new PingProxy(proxy.Id));
                     BeginOnUIThread(() =>

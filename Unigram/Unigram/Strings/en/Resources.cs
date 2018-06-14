@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/13/2018 13:44:18
+// 	Generated: 06/14/2018 12:17:46
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -21093,7 +21093,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "SignUp"
+        /// Localized resource similar to "Sign Up"
         /// </summary>
         public static string SignUp
         {

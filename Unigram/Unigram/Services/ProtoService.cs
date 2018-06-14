@@ -109,6 +109,7 @@ namespace Unigram.Services
 
             _session = session;
             _deviceInfoService = deviceInfoService;
+            _settings = settings;
             _aggregator = aggregator;
 
             _preferences = new AutoDownloadPreferences(ApplicationData.Current.LocalSettings.CreateContainer("autoDownload", ApplicationDataCreateDisposition.Always));
