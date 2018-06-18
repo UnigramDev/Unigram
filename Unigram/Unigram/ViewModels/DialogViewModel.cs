@@ -334,6 +334,14 @@ namespace Unigram.ViewModels
             }
         }
 
+        public int UnreadCount
+        {
+            get
+            {
+                return _chat?.UnreadCount ?? 0;
+            }
+        }
+
         private bool _isReportSpam;
         public bool IsReportSpam
         {
@@ -803,7 +811,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                await LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, SnapPointsAlignment.Near);
+                await LoadMessageSliceAsync(null, 0, SnapPointsAlignment.Near);
             }
         }
 
