@@ -230,6 +230,20 @@ namespace Unigram.Services
             });
         }
 
+        private async void UpdateVersion()
+        {
+            if (_settings.Version < ApplicationSettings.CurrentVersion)
+            {
+                var response = await SendAsync(new CreatePrivateChat(777000, false));
+                if (response is Chat chat)
+                {
+                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(new FormattedText("What's new:\r\n" + ApplicationSettings.CurrentChangelog, new TextEntity[0]), true, false)));
+                }
+            }
+
+            _settings.UpdateVersion();
+        }
+
         public void CleanUp()
         {
             _options.Clear();
@@ -613,6 +627,9 @@ namespace Unigram.Services
                     case AuthorizationStateClosed closed:
                         CleanUp();
                         Initialize();
+                        break;
+                    case AuthorizationStateReady ready:
+                        UpdateVersion();
                         break;
                 }
 

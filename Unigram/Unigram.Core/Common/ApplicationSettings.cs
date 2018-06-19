@@ -9,7 +9,9 @@ namespace Unigram.Services
     public interface ISettingsService
     {
         int Session { get; }
-        int Version { get; set; }
+        int Version { get; }
+
+        void UpdateVersion();
 
         NotificationsSettings Notifications { get; }
         StickersSettings Stickers { get; }
@@ -142,21 +144,26 @@ namespace Unigram.Common
 
         public int Session => _session;
 
-        private int? _appVersion;
+        private int? _version;
         public int Version
         {
             get
             {
-                if (_appVersion == null)
-                    _appVersion = GetValueOrDefault("AppVersion", 0);
+                if (_version == null)
+                    _version = GetValueOrDefault("AppVersion", 0);
 
-                return _appVersion ?? 0;
+                return _version ?? 0;
             }
-            set
+            private set
             {
-                _appVersion = value;
+                _version = value;
                 AddOrUpdateValue("AppVersion", value);
             }
+        }
+
+        public void UpdateVersion()
+        {
+            Version = CurrentVersion;
         }
 
         #endregion

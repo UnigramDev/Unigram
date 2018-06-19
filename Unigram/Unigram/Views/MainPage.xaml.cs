@@ -307,13 +307,6 @@ namespace Unigram.Views
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
 
             OnStateChanged(null, null);
-
-            if (ViewModel.Chats.Settings.Version < ApplicationSettings.CurrentVersion)
-            {
-                await TLMessageDialog.ShowAsync(ApplicationSettings.CurrentChangelog, "What's new", "OK");
-            }
-
-            ViewModel.Chats.Settings.Version = ApplicationSettings.CurrentVersion;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
