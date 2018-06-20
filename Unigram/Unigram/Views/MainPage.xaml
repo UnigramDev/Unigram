@@ -414,6 +414,7 @@
                                                 PlaceholderText="{CustomResource Search}"
                                                 PreventKeyboardDisplayOnProgrammaticFocus="True"
                                                 Clean="Search_LostFocus"
+                                                GotFocus="Search_GotFocus"
                                                 LostFocus="Search_LostFocus"
                                                 TextChanged="Search_TextChanged"
                                                 KeyDown="Search_KeyDown"
@@ -449,6 +450,54 @@
                                       ItemClick="ListView_ItemClick"
                                       ContainerContentChanging="DialogsSearchListView_ContainerContentChanging"
                                       SelectionChanged="ListView_SelectionChanged">
+                                <ListView.Header>
+                                    <StackPanel Visibility="{x:Bind ViewModel.Chats.TopChats,Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                                            <TextBlock Text="{CustomResource ChatHints}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                        <ListView SelectionMode="None"
+                                                  IsItemClickEnabled="True"
+                                                  ItemClick="ListView_ItemClick"
+                                                  ContainerContentChanging="TopChats_ContainerContentChanging"
+                                                  ItemsSource="{x:Bind ViewModel.Chats.TopChats, Mode=OneWay}"
+                                                  Style="{StaticResource HorizontalListViewStyle}">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Margin="0,12">
+                                                        <Grid Width="48" Height="48" Margin="12,0">
+                                                            <controls:ProfilePicture IsHitTestVisible="False"/>
+                                                            <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                                                                    MinWidth="20"
+                                                                    Height="20"
+                                                                    CornerRadius="10"
+                                                                    VerticalAlignment="Top"
+                                                                    HorizontalAlignment="Right"
+                                                                    Margin="0,-2,-2,0"
+                                                                    Visibility="Collapsed">
+                                                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                                                           Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                                           TextAlignment="Center"
+                                                                           Margin="4,2,4,0"/>
+                                                            </Border>
+                                                        </Grid>
+
+                                                        <TextBlock Margin="0,8,0,0" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                            <ListView.ItemContainerStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="MinWidth" Value="0"/>
+                                                    <Setter Property="Padding" Value="0"/>
+                                                </Style>
+                                            </ListView.ItemContainerStyle>
+                                        </ListView>
+
+                                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                                            <TextBlock Text="{CustomResource Recent}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                    </StackPanel>
+                                </ListView.Header>
                                 <ListView.ItemTemplateSelector>
                                     <selectors:SearchTemplateSelector>
                                         <selectors:SearchTemplateSelector.ChatTemplate>

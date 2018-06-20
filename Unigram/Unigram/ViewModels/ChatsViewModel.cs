@@ -73,6 +73,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private TopChatsCollection _topChats;
+        public TopChatsCollection TopChats
+        {
+            get
+            {
+                return _topChats;
+            }
+            set
+            {
+                Set(ref _topChats, value);
+            }
+        }
+
         #region Commands
 
         public RelayCommand<Chat> DialogPinCommand { get; }
@@ -361,19 +374,45 @@ namespace Unigram.ViewModels
         }
     }
 
-    public class ChatsPlaceholderViewModel : TLViewModelBase
+    public class TopChatsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
     {
-        public ChatsPlaceholderViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        private readonly IProtoService _protoService;
+        private readonly TopChatCategory _category;
+        private readonly int _limit;
+
+        private bool _hasMore = false;
+
+        public TopChatsCollection(IProtoService protoService, TopChatCategory category, int limit)
         {
+            _protoService = protoService;
+            _category = category;
+            _limit = limit;
         }
 
-        public ObservableCollection<Chat> TopPeers { get; set; }
-        public ObservableCollection<Chat> Recents { get; set; }
-
-        public async Task Load()
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            var response = await ProtoService.SendAsync(new GetTopChats(new TopChatCategoryUsers(), 30));
+            return AsyncInfo.Run(async token =>
+            {
+                count = 0;
+
+                var response = await _protoService.SendAsync(new GetTopChats(_category, _limit));
+                if (response is Telegram.Td.Api.Chats chats)
+                {
+                    foreach (var id in chats.ChatIds)
+                    {
+                        var chat = _protoService.GetChat(id);
+                        if (chat != null)
+                        {
+                            Add(chat);
+                            count++;
+                        }
+                    }
+                }
+
+                return new LoadMoreItemsResult { Count = count };
+            });
         }
+
+        public bool HasMoreItems => _hasMore;
     }
 }

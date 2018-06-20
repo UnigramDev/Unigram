@@ -46,6 +46,13 @@ namespace Unigram.Collections
         {
             return AsyncInfo.Run(async token =>
             {
+                // If the query string is empty we want to load recent chats only
+                var empty = string.IsNullOrEmpty(_query);
+                if (empty && phase > 0)
+                {
+                    return new LoadMoreItemsResult();
+                }
+
                 if (phase == 0)
                 {
                     var response = await _protoService.SendAsync(new SearchChats(_query, 100));

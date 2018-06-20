@@ -32,7 +32,7 @@ namespace Unigram.Services
         AuthorizationState GetAuthorizationState();
         ConnectionState GetConnectionState();
 
-        string GetTitle(Chat chat);
+        string GetTitle(Chat chat, bool tiny = false);
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
         IList<Chat> GetChats(int count);
@@ -420,7 +420,7 @@ namespace Unigram.Services
             return false;
         }
 
-        public string GetTitle(Chat chat)
+        public string GetTitle(Chat chat, bool tiny = false)
         {
             if (chat == null)
             {
@@ -437,6 +437,10 @@ namespace Unigram.Services
                 else if (user.Id == GetMyId())
                 {
                     return Strings.Resources.SavedMessages;
+                }
+                else if (tiny)
+                {
+                    return user.FirstName;
                 }
             }
 
