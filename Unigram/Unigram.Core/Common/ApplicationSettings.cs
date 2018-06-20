@@ -139,8 +139,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 1215620;
-        public const string CurrentChangelog = "- Work mode: hide muted chats to focus on important conversations.\r\n- Compact mode: the app will now show just profile pictures in chats list if the window isn't wide enough.\r\n- Zoom photos and videos: when you open a media full screen you can now zoom it using touch or mouse wheel.";
+        public const int CurrentVersion = 1415790;
+        public const string CurrentChangelog = "What's new in version 1.4.1579:\r\n- New search view with your most used and recent chats.";
 
         public int Session => _session;
 

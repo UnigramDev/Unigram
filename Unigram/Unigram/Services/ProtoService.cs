@@ -237,7 +237,7 @@ namespace Unigram.Services
                 var response = await SendAsync(new CreatePrivateChat(777000, false));
                 if (response is Chat chat)
                 {
-                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(new FormattedText("What's new:\r\n" + ApplicationSettings.CurrentChangelog, new TextEntity[0]), true, false)));
+                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(new FormattedText(ApplicationSettings.CurrentChangelog, new TextEntity[0]), true, false)));
                 }
             }
 
