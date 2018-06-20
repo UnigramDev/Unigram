@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsWebSessionsViewModel : UnigramViewModelBase
+    public class SettingsWebSessionsViewModel : TLViewModelBase
     {
         public SettingsWebSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator)

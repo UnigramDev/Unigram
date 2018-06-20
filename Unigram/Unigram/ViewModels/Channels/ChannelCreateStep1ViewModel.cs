@@ -13,7 +13,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Channels
 {
-    public class ChannelCreateStep1ViewModel : UnigramViewModelBase
+    public class ChannelCreateStep1ViewModel : TLViewModelBase
     {
         public ChannelCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator)

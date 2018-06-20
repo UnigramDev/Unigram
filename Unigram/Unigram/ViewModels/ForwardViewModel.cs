@@ -14,7 +14,7 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels
 {
-    public class ForwardViewModel : UnigramViewModelBase
+    public class ForwardViewModel : TLViewModelBase
     {
         public ForwardViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

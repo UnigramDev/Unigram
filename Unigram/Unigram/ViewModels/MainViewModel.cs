@@ -17,7 +17,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.ViewModels
 {
-    public class MainViewModel : UnigramViewModelBase, IHandle<UpdateServiceNotification>
+    public class MainViewModel : TLViewModelBase, IHandle<UpdateServiceNotification>
     {
         private readonly INotificationsService _pushService;
         private readonly IVibrationService _vibrationService;

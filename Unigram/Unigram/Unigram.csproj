@@ -523,6 +523,7 @@
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModelBase.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupRestrictedViewModel.cs" />
+    <Compile Include="ViewModels\TLViewModelBase.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
@@ -1173,7 +1174,6 @@
     <Compile Include="ViewModels\Settings\SettingsSessionsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsUsernameViewModel.cs" />
-    <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\Users\UserPhotosViewModel.cs" />
     <Compile Include="Views\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>

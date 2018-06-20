@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsProxiesViewModel : UnigramViewModelBase, IHandle<UpdateConnectionState>
+    public class SettingsProxiesViewModel : TLViewModelBase, IHandle<UpdateConnectionState>
     {
         public SettingsProxiesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

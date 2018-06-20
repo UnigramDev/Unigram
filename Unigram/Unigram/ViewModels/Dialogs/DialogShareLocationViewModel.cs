@@ -15,7 +15,7 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels.Dialogs
 {
-    public class DialogShareLocationViewModel : UnigramViewModelBase
+    public class DialogShareLocationViewModel : TLViewModelBase
     {
         private readonly ILocationService _locationService;
 

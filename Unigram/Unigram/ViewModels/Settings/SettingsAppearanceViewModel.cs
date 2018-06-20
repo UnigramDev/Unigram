@@ -9,7 +9,7 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsAppearanceViewModel : UnigramViewModelBase
+    public class SettingsAppearanceViewModel : TLViewModelBase
     {
         private readonly Dictionary<int, int> _indexToSize = new Dictionary<int, int> { { 0, 12 }, { 1, 13 }, { 2, 14 }, { 3, 15 }, { 4, 16 }, { 5, 17 }, { 6, 18 } };
         private readonly Dictionary<int, int> _sizeToIndex = new Dictionary<int, int> { { 12, 0 }, { 13, 1 }, { 14, 2 }, { 15, 3 }, { 16, 4 }, { 17, 5 }, { 18, 6 } };

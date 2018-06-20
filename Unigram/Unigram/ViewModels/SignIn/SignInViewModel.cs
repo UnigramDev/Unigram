@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.SignIn
 {
-    public class SignInViewModel : UnigramViewModelBase
+    public class SignInViewModel : TLViewModelBase
     {
         private readonly INotificationsService _notificationsService;
 

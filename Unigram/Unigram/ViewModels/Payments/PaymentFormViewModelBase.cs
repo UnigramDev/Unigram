@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Payments
 {
-    public class PaymentFormViewModelBase : UnigramViewModelBase
+    public class PaymentFormViewModelBase : TLViewModelBase
     {
         public PaymentFormViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator)

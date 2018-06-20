@@ -22,7 +22,7 @@ using Windows.System;
 
 namespace Unigram.ViewModels
 {
-    public abstract class GalleryViewModelBase : UnigramViewModelBase/*, IHandle<UpdateFile>*/
+    public abstract class GalleryViewModelBase : TLViewModelBase/*, IHandle<UpdateFile>*/
     {
         public IFileDelegate Delegate { get; set; }
 

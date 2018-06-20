@@ -401,10 +401,10 @@ namespace Unigram.Views
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
             ViewModel.Settings.NavigationService = MasterDetail.NavigationService;
 
-            if (((UnigramViewModelBase)ViewModel).Settings.IsWorkModeVisible)
+            if (((TLViewModelBase)ViewModel).Settings.IsWorkModeVisible)
             {
                 WorkMode.Visibility = Visibility.Visible;
-                WorkMode.IsChecked = ((UnigramViewModelBase)ViewModel).Settings.IsWorkModeEnabled;
+                WorkMode.IsChecked = ((TLViewModelBase)ViewModel).Settings.IsWorkModeEnabled;
             }
             else
             {
@@ -775,7 +775,7 @@ namespace Unigram.Views
 
         private void WorkMode_Click(object sender, RoutedEventArgs e)
         {
-            var enabled = ((UnigramViewModelBase)ViewModel).Settings.IsWorkModeEnabled = WorkMode.IsChecked == true;
+            var enabled = ((TLViewModelBase)ViewModel).Settings.IsWorkModeEnabled = WorkMode.IsChecked == true;
             ChatsList.UpdateFilterMode(enabled ? ChatFilterMode.Work : ChatFilterMode.None);
         }
 

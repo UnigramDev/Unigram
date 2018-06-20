@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPrivacyAndSecurityViewModel : UnigramViewModelBase
+    public class SettingsPrivacyAndSecurityViewModel : TLViewModelBase
     {
         private readonly IContactsService _contactsService;
 

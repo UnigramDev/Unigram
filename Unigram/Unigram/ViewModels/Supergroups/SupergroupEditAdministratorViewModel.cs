@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupEditAdministratorViewModel : UnigramViewModelBase, IDelegable<IMemberDelegate>
+    public class SupergroupEditAdministratorViewModel : TLViewModelBase, IDelegable<IMemberDelegate>
     {
         public IMemberDelegate Delegate { get; set; }
 

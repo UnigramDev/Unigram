@@ -14,7 +14,7 @@ namespace Unigram.ViewModels
     /// <summary>
     /// Base class for ViewModel
     /// </summary>
-    public class UnigramViewModelBase : ViewModelBase
+    public class TLViewModelBase : ViewModelBase
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -23,7 +23,7 @@ namespace Unigram.ViewModels
 
         private readonly IDispatcherWrapper _dispatcher;
 
-        public UnigramViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public TLViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;
             _cacheService = cacheService;

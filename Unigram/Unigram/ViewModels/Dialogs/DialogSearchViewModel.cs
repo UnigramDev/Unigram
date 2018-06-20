@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels.Dialogs
 {
-    public class DialogSearchViewModel : UnigramViewModelBase
+    public class DialogSearchViewModel : TLViewModelBase
     {
         private readonly DialogViewModel _dialog;
         private readonly DisposableMutex _loadMoreLock;

@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.BasicGroups
 {
-    public class BasicGroupEditViewModel : UnigramViewModelBase,
+    public class BasicGroupEditViewModel : TLViewModelBase,
         IDelegable<IBasicGroupDelegate>,
         IHandle<UpdateBasicGroup>,
         IHandle<UpdateBasicGroupFullInfo>,

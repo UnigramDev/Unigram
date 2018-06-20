@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Template10.Mvvm;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
@@ -19,7 +20,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {
-    public class ChatsViewModel : UnigramViewModelBase, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
+    public class ChatsViewModel : TLViewModelBase, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
     {
         private readonly Dictionary<long, ChatViewModel> _viewModels = new Dictionary<long, ChatViewModel>();
 
@@ -357,6 +358,22 @@ namespace Unigram.ViewModels
             User = user;
             Query = query;
             IsPublic = pub;
+        }
+    }
+
+    public class ChatsPlaceholderViewModel : TLViewModelBase
+    {
+        public ChatsPlaceholderViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(protoService, cacheService, settingsService, aggregator)
+        {
+        }
+
+        public ObservableCollection<Chat> TopPeers { get; set; }
+        public ObservableCollection<Chat> Recents { get; set; }
+
+        public async Task Load()
+        {
+            var response = await ProtoService.SendAsync(new GetTopChats(new TopChatCategoryUsers(), 30));
         }
     }
 }

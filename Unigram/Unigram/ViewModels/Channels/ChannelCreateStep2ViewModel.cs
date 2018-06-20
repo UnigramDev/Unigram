@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
-    public class ChannelCreateStep2ViewModel : UnigramViewModelBase
+    public class ChannelCreateStep2ViewModel : TLViewModelBase
     {
         public ChannelCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator)

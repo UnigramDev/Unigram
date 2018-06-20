@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class ShareViewModel : UnigramViewModelBase
+    public class ShareViewModel : TLViewModelBase
     {
         public ShareViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ChatsViewModel dialogs)
             : base(protoService, cacheService, settingsService, aggregator)

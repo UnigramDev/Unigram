@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Users
 {
-    public class UserCommonChatsViewModel : UnigramViewModelBase
+    public class UserCommonChatsViewModel : TLViewModelBase
     {
         public UserCommonChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator)

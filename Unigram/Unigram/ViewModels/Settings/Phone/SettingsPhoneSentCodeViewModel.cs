@@ -16,7 +16,7 @@ using Unigram.Entities;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPhoneSentCodeViewModel : UnigramViewModelBase
+    public class SettingsPhoneSentCodeViewModel : TLViewModelBase
     {
         private string _phoneNumber;
 

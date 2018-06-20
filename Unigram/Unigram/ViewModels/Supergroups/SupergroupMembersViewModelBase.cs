@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupMembersViewModelBase : UnigramViewModelBase, IDelegable<ISupergroupDelegate>
+    public class SupergroupMembersViewModelBase : TLViewModelBase, IDelegable<ISupergroupDelegate>
     {
         private readonly SupergroupMembersFilter _filter;
         private readonly Func<string, SupergroupMembersFilter> _find;

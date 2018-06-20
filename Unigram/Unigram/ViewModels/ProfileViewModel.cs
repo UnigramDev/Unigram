@@ -35,7 +35,7 @@ using Unigram.Views.BasicGroups;
 
 namespace Unigram.ViewModels
 {
-    public class ProfileViewModel : UnigramViewModelBase,
+    public class ProfileViewModel : TLViewModelBase,
         IDelegable<IProfileDelegate>,
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>,

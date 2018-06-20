@@ -37,7 +37,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public partial class DialogViewModel : UnigramViewModelBase, IDelegable<IDialogDelegate>
+    public partial class DialogViewModel : TLViewModelBase, IDelegable<IDialogDelegate>
     {
         private List<MessageViewModel> _selectedItems = new List<MessageViewModel>();
         public List<MessageViewModel> SelectedItems
@@ -811,7 +811,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                await LoadMessageSliceAsync(null, 0, SnapPointsAlignment.Near);
+                await LoadMessageSliceAsync(null, long.MaxValue, SnapPointsAlignment.Near);
             }
         }
 

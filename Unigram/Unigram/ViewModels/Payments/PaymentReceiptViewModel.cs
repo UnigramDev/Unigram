@@ -11,7 +11,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Payments
 {
-    public class PaymentReceiptViewModel : UnigramViewModelBase
+    public class PaymentReceiptViewModel : TLViewModelBase
     {
         public PaymentReceiptViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

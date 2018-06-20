@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupEditViewModel : UnigramViewModelBase,
+    public class SupergroupEditViewModel : TLViewModelBase,
         IDelegable<ISupergroupDelegate>,
         IHandle<UpdateSupergroup>,
         IHandle<UpdateSupergroupFullInfo>,
