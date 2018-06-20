@@ -408,7 +408,7 @@ namespace Unigram.Views
             }
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequested(Template10.Common.HandledEventArgs args)
         {
             if (ViewModel.Search != null)
             {

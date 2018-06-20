@@ -90,7 +90,7 @@ namespace Unigram.Views.Dialogs
             }
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequested(Template10.Common.HandledEventArgs args)
         {
             if (ViewModel.SelectionMode != ListViewSelectionMode.None)
             {
