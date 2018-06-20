@@ -523,6 +523,7 @@
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModelBase.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupRestrictedViewModel.cs" />
+    <Compile Include="ViewModels\TLMultipleViewModelBase.cs" />
     <Compile Include="ViewModels\TLViewModelBase.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
