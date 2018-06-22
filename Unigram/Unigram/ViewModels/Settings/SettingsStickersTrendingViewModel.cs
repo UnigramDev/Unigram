@@ -14,7 +14,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsStickersTrendingViewModel : UnigramViewModelBase, IHandle<UpdateTrendingStickerSets>
+    public class SettingsStickersTrendingViewModel : TLViewModelBase, IHandle<UpdateTrendingStickerSets>
     {
         public SettingsStickersTrendingViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

@@ -9,13 +9,14 @@ using Unigram.Controls.Views;
 using Unigram.Entities;
 using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Settings;
 using Unigram.Views.SignIn;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.SignIn
 {
-    public class SignInViewModel : UnigramViewModelBase
+    public class SignInViewModel : TLViewModelBase
     {
         private readonly INotificationsService _notificationsService;
 
@@ -190,42 +191,9 @@ namespace Unigram.ViewModels.SignIn
         }
 
         public RelayCommand ProxyCommand { get; }
-        private async void ProxyExecute()
+        private void ProxyExecute()
         {
-            //var proxy = Settings.Proxy;
-
-            //var dialog = new ProxyView();
-            ////dialog.Server = proxy.Server;
-            ////dialog.Port = proxy.Port.ToString();
-            ////dialog.Username = proxy.Username;
-            ////dialog.Password = proxy.Password;
-            ////dialog.IsProxyEnabled = proxy.IsEnabled;
-            ////dialog.IsCallsProxyEnabled = proxy.IsCallsEnabled;
-
-            //var enabled = proxy.IsEnabled == true;
-
-            //var confirm = await dialog.ShowQueuedAsync();
-            //if (confirm == ContentDialogResult.Primary)
-            //{
-            //    var server = proxy.Server = dialog.Server ?? string.Empty;
-            //    //var port = proxy.Port = Extensions.TryParseOrDefault(dialog.Port, 1080);
-            //    //var username = proxy.Username = dialog.Username ?? string.Empty;
-            //    //var password = proxy.Password = dialog.Password ?? string.Empty;
-            //    //var newValue = proxy.IsEnabled = dialog.IsProxyEnabled;
-            //    //proxy.IsCallsEnabled = dialog.IsCallsProxyEnabled;
-
-            //    //if (newValue || newValue != enabled)
-            //    //{
-            //    //    if (newValue)
-            //    //    {
-            //    //        //ProtoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
-            //    //    }
-            //    //    else
-            //    //    {
-            //    //        //ProtoService.Send(new SetProxy(new ProxyEmpty()));
-            //    //    }
-            //    //}
-            //}
+            NavigationService.Navigate(typeof(SettingsProxiesPage));
         }
     }
 }

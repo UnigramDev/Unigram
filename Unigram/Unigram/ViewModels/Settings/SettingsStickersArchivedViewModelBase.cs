@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels.Settings
 {
-    public abstract class SettingsStickersArchivedViewModelBase : UnigramViewModelBase
+    public abstract class SettingsStickersArchivedViewModelBase : TLViewModelBase
     {
         public SettingsStickersArchivedViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, bool masks)
             : base(protoService, cacheService, settingsService, aggregator)

@@ -10,7 +10,7 @@ using Unigram.ViewModels.Supergroups;
 
 namespace Unigram.ViewModels
 {
-    public class ContactsViewModel : UnigramViewModelBase
+    public class ContactsViewModel : TLViewModelBase
     {
         private IContactsService _contactsService;
 

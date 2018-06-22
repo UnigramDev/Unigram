@@ -17,7 +17,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.ViewModels
 {
-    public class MainViewModel : UnigramViewModelBase, IHandle<UpdateServiceNotification>
+    public class MainViewModel : TLMultipleViewModelBase, IHandle<UpdateServiceNotification>
     {
         private readonly INotificationsService _pushService;
         private readonly IVibrationService _vibrationService;
@@ -46,23 +46,15 @@ namespace Unigram.ViewModels
             Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
             Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, pushService, contactsService);
 
+            ChildViewModels.Add(Chats);
+            ChildViewModels.Add(Contacts);
+            ChildViewModels.Add(Calls);
+            ChildViewModels.Add(Settings);
+
             aggregator.Subscribe(this);
 
             LiveLocationCommand = new RelayCommand(LiveLocationExecute);
             StopLiveLocationCommand = new RelayCommand(StopLiveLocationExecute);
-        }
-
-        public override IDispatcherWrapper Dispatcher
-        {
-            get => base.Dispatcher;
-            set
-            {
-                base.Dispatcher = value;
-                Chats.Dispatcher = value;
-                Contacts.Dispatcher = value;
-                Calls.Dispatcher = value;
-                Settings.Dispatcher = value;
-            }
         }
 
         public ILiveLocationService LiveLocation => _liveLocationService;
@@ -209,15 +201,15 @@ namespace Unigram.ViewModels
                 Execute.BeginOnThreadPool(() => _pushService.RegisterAsync());
             }
 
-            BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
-            BeginOnUIThread(() => Settings.OnNavigatedToAsync(parameter, mode, state));
+            //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
+            //BeginOnUIThread(() => Settings.OnNavigatedToAsync(parameter, mode, state));
             //Dispatch(() => Dialogs.LoadFirstSlice());
             //Dispatch(() => Contacts.getTLContacts());
             //Dispatch(() => Contacts.GetSelfAsync());
 
             UnreadMutedCount = CacheService.UnreadCount - CacheService.UnreadUnmutedCount;
 
-            return Task.CompletedTask;
+            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         public ChatsViewModel Chats { get; private set; }

@@ -14,7 +14,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsSessionsViewModel : UnigramViewModelBase
+    public class SettingsSessionsViewModel : TLViewModelBase
     {
         public SettingsSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator)

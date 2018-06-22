@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.SignIn
 {
-    public class SignInPasswordViewModel : UnigramViewModelBase
+    public class SignInPasswordViewModel : TLViewModelBase
     {
         private AuthorizationStateWaitPassword _parameters;
 

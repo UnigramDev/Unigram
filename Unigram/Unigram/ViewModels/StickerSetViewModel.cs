@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class StickerSetViewModel : UnigramViewModelBase
+    public class StickerSetViewModel : TLViewModelBase
     {
         public StickerSetViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

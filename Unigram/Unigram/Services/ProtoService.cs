@@ -32,7 +32,7 @@ namespace Unigram.Services
         AuthorizationState GetAuthorizationState();
         ConnectionState GetConnectionState();
 
-        string GetTitle(Chat chat);
+        string GetTitle(Chat chat, bool tiny = false);
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
         IList<Chat> GetChats(int count);
@@ -109,6 +109,7 @@ namespace Unigram.Services
 
             _session = session;
             _deviceInfoService = deviceInfoService;
+            _settings = settings;
             _aggregator = aggregator;
 
             _preferences = new AutoDownloadPreferences(ApplicationData.Current.LocalSettings.CreateContainer("autoDownload", ApplicationDataCreateDisposition.Always));
@@ -227,6 +228,20 @@ namespace Unigram.Services
                     _client.Send(new OptimizeStorage(long.MaxValue, ttl * 60 * 60 * 24, int.MaxValue, 0, new FileType[0], new long[0], new long[0], 0));
                 }
             });
+        }
+
+        private async void UpdateVersion()
+        {
+            if (_settings.Version < ApplicationSettings.CurrentVersion)
+            {
+                var response = await SendAsync(new CreatePrivateChat(777000, false));
+                if (response is Chat chat)
+                {
+                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(new FormattedText(ApplicationSettings.CurrentChangelog, new TextEntity[0]), true, false)));
+                }
+            }
+
+            _settings.UpdateVersion();
         }
 
         public void CleanUp()
@@ -405,7 +420,7 @@ namespace Unigram.Services
             return false;
         }
 
-        public string GetTitle(Chat chat)
+        public string GetTitle(Chat chat, bool tiny = false)
         {
             if (chat == null)
             {
@@ -422,6 +437,10 @@ namespace Unigram.Services
                 else if (user.Id == GetMyId())
                 {
                     return Strings.Resources.SavedMessages;
+                }
+                else if (tiny)
+                {
+                    return user.FirstName;
                 }
             }
 
@@ -612,6 +631,9 @@ namespace Unigram.Services
                     case AuthorizationStateClosed closed:
                         CleanUp();
                         Initialize();
+                        break;
+                    case AuthorizationStateReady ready:
+                        UpdateVersion();
                         break;
                 }
 

@@ -37,7 +37,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public partial class DialogViewModel : UnigramViewModelBase, IDelegable<IDialogDelegate>
+    public partial class DialogViewModel : TLViewModelBase, IDelegable<IDialogDelegate>
     {
         private List<MessageViewModel> _selectedItems = new List<MessageViewModel>();
         public List<MessageViewModel> SelectedItems
@@ -331,6 +331,14 @@ namespace Unigram.ViewModels
                 }
 
                 Set(ref _informativeMessage, value);
+            }
+        }
+
+        public int UnreadCount
+        {
+            get
+            {
+                return _chat?.UnreadCount ?? 0;
             }
         }
 
@@ -803,7 +811,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                await LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, SnapPointsAlignment.Near);
+                await LoadMessageSliceAsync(null, long.MaxValue, SnapPointsAlignment.Near);
             }
         }
 
@@ -1815,21 +1823,27 @@ namespace Unigram.ViewModels
         {
             text = text.Format();
 
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var disablePreview = false;
+            if (chat.Type is ChatTypeSecret)
+            {
+                disablePreview = !Settings.IsSecretPreviewsEnabled;
+            }
+
             var embedded = EmbedData;
             if (embedded != null && embedded.EditingMessage != null)
             {
                 var editing = embedded.EditingMessage;
 
-                var chat = _chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
                 Function function;
                 if (editing.Content is MessageText)
                 {
-                    function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(GetFormattedText(text), false, true));
+                    function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(GetFormattedText(text), disablePreview, true));
                 }
                 else
                 {
@@ -1864,7 +1878,7 @@ namespace Unigram.ViewModels
                     for (int a = 0; a < count; a++)
                     {
                         var message = text.Substr(a * 4096, Math.Min((a + 1) * 4096, text.Length));
-                        var input = new InputMessageText(GetFormattedText(message), false, true);
+                        var input = new InputMessageText(GetFormattedText(message), disablePreview, true);
 
                         var boh = await SendMessageAsync(reply, input);
                     }

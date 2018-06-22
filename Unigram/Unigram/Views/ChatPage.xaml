@@ -748,9 +748,8 @@
                 </StackPanel>
 
                 <StackPanel x:Name="Arrow" Visibility="Collapsed">
-                    <!--Visibility="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"-->
                     <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
-                            Visibility="Collapsed"
+                            Visibility="{x:Bind ViewModel.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
                             MinWidth="20"
                             Height="20"
                             CornerRadius="10"
@@ -758,6 +757,7 @@
                             Margin="0,6,0,-12"
                             Canvas.ZIndex="1">
                         <TextBlock x:Name="UnreadCount"
+                                   Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
                                    Style="{ThemeResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                    TextAlignment="Center"

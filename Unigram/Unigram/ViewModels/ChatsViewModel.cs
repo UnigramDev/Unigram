@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Template10.Mvvm;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
@@ -19,7 +20,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {
-    public class ChatsViewModel : UnigramViewModelBase, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
+    public class ChatsViewModel : TLViewModelBase, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
     {
         private readonly Dictionary<long, ChatViewModel> _viewModels = new Dictionary<long, ChatViewModel>();
 
@@ -69,6 +70,19 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _search, value);
+            }
+        }
+
+        private TopChatsCollection _topChats;
+        public TopChatsCollection TopChats
+        {
+            get
+            {
+                return _topChats;
+            }
+            set
+            {
+                Set(ref _topChats, value);
             }
         }
 
@@ -358,5 +372,47 @@ namespace Unigram.ViewModels
             Query = query;
             IsPublic = pub;
         }
+    }
+
+    public class TopChatsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
+    {
+        private readonly IProtoService _protoService;
+        private readonly TopChatCategory _category;
+        private readonly int _limit;
+
+        private bool _hasMore = false;
+
+        public TopChatsCollection(IProtoService protoService, TopChatCategory category, int limit)
+        {
+            _protoService = protoService;
+            _category = category;
+            _limit = limit;
+        }
+
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        {
+            return AsyncInfo.Run(async token =>
+            {
+                count = 0;
+
+                var response = await _protoService.SendAsync(new GetTopChats(_category, _limit));
+                if (response is Telegram.Td.Api.Chats chats)
+                {
+                    foreach (var id in chats.ChatIds)
+                    {
+                        var chat = _protoService.GetChat(id);
+                        if (chat != null)
+                        {
+                            Add(chat);
+                            count++;
+                        }
+                    }
+                }
+
+                return new LoadMoreItemsResult { Count = count };
+            });
+        }
+
+        public bool HasMoreItems => _hasMore;
     }
 }

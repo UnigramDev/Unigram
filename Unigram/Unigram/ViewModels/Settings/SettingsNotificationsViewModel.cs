@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsNotificationsViewModel : UnigramViewModelBase, IHandle<UpdateScopeNotificationSettings>
+    public class SettingsNotificationsViewModel : TLViewModelBase, IHandle<UpdateScopeNotificationSettings>
     {
         private readonly IVibrationService _vibrationService;
 

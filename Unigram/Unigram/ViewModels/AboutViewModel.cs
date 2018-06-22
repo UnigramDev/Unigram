@@ -9,7 +9,7 @@ namespace Unigram.ViewModels
     /// <summary>
     /// ViewModel for the <see cref="Unigram.Views.AboutPage"/> View.
     /// </summary>
-    public class AboutViewModel : UnigramViewModelBase
+    public class AboutViewModel : TLViewModelBase
     {
         public AboutViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

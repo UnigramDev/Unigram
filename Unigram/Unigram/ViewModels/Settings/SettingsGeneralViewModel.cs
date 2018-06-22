@@ -4,7 +4,7 @@ using Unigram.Services.Updates;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsGeneralViewModel : UnigramViewModelBase
+    public class SettingsGeneralViewModel : TLViewModelBase
     {
         private readonly IContactsService _contactsService;
 

@@ -19,6 +19,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatReplyMarkup>,
         IHandle<UpdateChatUnreadMentionCount>,
         IHandle<UpdateChatReadOutbox>,
+        IHandle<UpdateChatReadInbox>,
         IHandle<UpdateChatDraftMessage>,
 
         IHandle<UpdateUserChatAction>,
@@ -278,6 +279,17 @@ namespace Unigram.ViewModels
                             bubble.UpdateMessageState(Items[i]);
                         }
                     }
+                });
+            }
+        }
+
+        public void Handle(UpdateChatReadInbox update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() =>
+                {
+                    RaisePropertyChanged(() => UnreadCount);
                 });
             }
         }

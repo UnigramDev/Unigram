@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Chats
 {
-    public class ChatInviteLinkViewModel : UnigramViewModelBase,
+    public class ChatInviteLinkViewModel : TLViewModelBase,
         IHandle<UpdateBasicGroupFullInfo>,
         IHandle<UpdateSupergroupFullInfo>
     {

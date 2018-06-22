@@ -11,7 +11,7 @@ using Unigram.Core.Common;
 
 namespace Unigram.ViewModels
 {
-    public class AttachedStickersViewModel : UnigramViewModelBase
+    public class AttachedStickersViewModel : TLViewModelBase
     {
         public AttachedStickersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

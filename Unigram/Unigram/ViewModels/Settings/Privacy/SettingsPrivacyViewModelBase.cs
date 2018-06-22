@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPrivacyViewModelBase : UnigramViewModelBase, IHandle<UpdateUserPrivacySettingRules>
+    public class SettingsPrivacyViewModelBase : TLViewModelBase, IHandle<UpdateUserPrivacySettingRules>
     {
         private readonly UserPrivacySetting _inputKey;
 

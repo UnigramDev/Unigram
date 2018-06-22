@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupEditStickerSetViewModel : UnigramViewModelBase, IHandle<UpdateSupergroupFullInfo>
+    public class SupergroupEditStickerSetViewModel : TLViewModelBase, IHandle<UpdateSupergroupFullInfo>
     {
         public SupergroupEditStickerSetViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

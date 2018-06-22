@@ -16,7 +16,6 @@ using Unigram.Core.Notifications;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.ViewModels;
-using Unigram.ViewModels.Supergroups;
 using Unigram.Views.Channels;
 using Unigram.Views.Chats;
 using Unigram.Views.SecretChats;
@@ -311,13 +310,6 @@ namespace Unigram.Views
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
 
             OnStateChanged(null, null);
-
-            if (ViewModel.Chats.Settings.Version < ApplicationSettings.CurrentVersion)
-            {
-                await TLMessageDialog.ShowAsync(ApplicationSettings.CurrentChangelog, "What's new", "OK");
-            }
-
-            ViewModel.Chats.Settings.Version = ApplicationSettings.CurrentVersion;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -412,10 +404,10 @@ namespace Unigram.Views
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
             ViewModel.Settings.NavigationService = MasterDetail.NavigationService;
 
-            if (((UnigramViewModelBase)ViewModel).Settings.IsWorkModeVisible)
+            if (((TLViewModelBase)ViewModel).Settings.IsWorkModeVisible)
             {
                 WorkMode.Visibility = Visibility.Visible;
-                WorkMode.IsChecked = ((UnigramViewModelBase)ViewModel).Settings.IsWorkModeEnabled;
+                WorkMode.IsChecked = ((TLViewModelBase)ViewModel).Settings.IsWorkModeEnabled;
             }
             else
             {
@@ -733,7 +725,15 @@ namespace Unigram.Views
             }
             else if (item is SearchResult result)
             {
-                item = result.Chat ?? (object)result.User;
+                if (result.Chat != null)
+                {
+                    item = result.Chat;
+                    ViewModel.ProtoService.Send(new AddRecentlyFoundChat(result.Chat.Id));
+                }
+                else
+                {
+                    item = result.User;
+                }
             }
 
             //if (item is TLMessageCommonBase message)
@@ -786,7 +786,7 @@ namespace Unigram.Views
 
         private void WorkMode_Click(object sender, RoutedEventArgs e)
         {
-            var enabled = ((UnigramViewModelBase)ViewModel).Settings.IsWorkModeEnabled = WorkMode.IsChecked == true;
+            var enabled = ((TLViewModelBase)ViewModel).Settings.IsWorkModeEnabled = WorkMode.IsChecked == true;
             ChatsList.UpdateFilterMode(enabled ? ChatFilterMode.Work : ChatFilterMode.None);
         }
 
@@ -835,12 +835,13 @@ namespace Unigram.Views
 
         private async void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (string.IsNullOrEmpty(SearchField.Text))
+            if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrEmpty(SearchField.Text))
             {
                 if (rpMasterTitlebar.SelectedIndex == 0)
                 {
                     DialogsPanel.Visibility = Visibility.Visible;
 
+                    ViewModel.Chats.TopChats = null;
                     ViewModel.Chats.Search = null;
                 }
                 else
@@ -855,6 +856,16 @@ namespace Unigram.Views
                 if (rpMasterTitlebar.SelectedIndex == 0)
                 {
                     DialogsPanel.Visibility = Visibility.Collapsed;
+
+                    if (string.IsNullOrEmpty(SearchField.Text))
+                    {
+                        var top = ViewModel.Chats.TopChats = new TopChatsCollection(ViewModel.ProtoService, new TopChatCategoryUsers(), 30);
+                        await top.LoadMoreItemsAsync(0);
+                    }
+                    else
+                    {
+                        ViewModel.Chats.TopChats = null;
+                    }
 
                     var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text);
                     await items.LoadMoreItemsAsync(0);
@@ -1154,6 +1165,7 @@ namespace Unigram.Views
 
             try
             {
+                ViewModel.Chats.TopChats = null;
                 ViewModel.Chats.Search = null;
                 ViewModel.Contacts.Search = null;
             }
@@ -1225,6 +1237,11 @@ namespace Unigram.Views
             SearchField.Focus(FocusState.Keyboard);
         }
 
+        private void Search_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Search_TextChanged(null, null);
+        }
+
         private void Search_LostFocus(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(SearchField.Text))
@@ -1234,6 +1251,8 @@ namespace Unigram.Views
 
                 rpMasterTitlebar.Focus(FocusState.Programmatic);
             }
+
+            Search_TextChanged(null, null);
         }
 
         private void Lock_Click(object sender, RoutedEventArgs e)
@@ -1526,6 +1545,39 @@ namespace Unigram.Views
             }
 
             args.Handled = true;
+        }
+
+        private void TopChats_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as StackPanel;
+            var chat = args.Item as Chat;
+
+            var grid = content.Children[0] as Grid;
+
+            var photo = grid.Children[0] as ProfilePicture;
+            var title = content.Children[1] as TextBlock;
+
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.ProtoService.GetMyId())
+            {
+                photo.Source = PlaceholderHelper.GetChat(null, chat, 48, 48);
+                title.Text = Strings.Resources.SavedMessages;
+            }
+            else
+            {
+                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48, 48);
+                title.Text = ViewModel.ProtoService.GetTitle(chat, true);
+            }
+
+            var badge = grid.Children[1] as Border;
+            var text = badge.Child as TextBlock;
+
+            badge.Visibility = chat.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            text.Text = chat.UnreadCount.ToString();
         }
     }
 }

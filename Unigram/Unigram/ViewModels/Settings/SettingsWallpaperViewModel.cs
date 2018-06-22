@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsWallPaperViewModel : UnigramViewModelBase
+    public class SettingsWallPaperViewModel : TLViewModelBase
     {
         private const string TempWallpaperFileName = "temp_wallpaper.jpg";
 

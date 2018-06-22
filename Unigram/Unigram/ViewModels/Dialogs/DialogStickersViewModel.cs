@@ -23,7 +23,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Unigram.ViewModels.Dialogs
 {
-    public class DialogStickersViewModel : UnigramViewModelBase, IHandle<UpdateRecentStickers>
+    public class DialogStickersViewModel : TLViewModelBase, IHandle<UpdateRecentStickers>
     {
         private StickerSetViewModel _recentSet;
         private StickerSetViewModel _favoriteSet;

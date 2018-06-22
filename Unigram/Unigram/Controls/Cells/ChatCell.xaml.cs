@@ -549,6 +549,14 @@ namespace Unigram.Controls.Cells
             {
                 return "\uE1F6";
             }
+            //else if (chat.Type is ChatTypePrivate privata && _protoService != null)
+            //{
+            //    var user = _protoService.GetUser(privata.UserId);
+            //    if (user != null && user.Type is UserTypeBot)
+            //    {
+            //        return "\uE99A";
+            //    }
+            //}
 
             return string.Empty;
         }

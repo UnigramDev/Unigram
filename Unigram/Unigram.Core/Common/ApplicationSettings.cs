@@ -9,7 +9,9 @@ namespace Unigram.Services
     public interface ISettingsService
     {
         int Session { get; }
-        int Version { get; set; }
+        int Version { get; }
+
+        void UpdateVersion();
 
         NotificationsSettings Notifications { get; }
         StickersSettings Stickers { get; }
@@ -27,6 +29,7 @@ namespace Unigram.Services
         bool IsSendByEnterEnabled { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
+        bool IsSecretPreviewsEnabled { get; set; }
         bool IsAutoPlayEnabled { get; set; }
         bool IsSendGrouped { get; set; }
 
@@ -136,26 +139,31 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 1215620;
-        public const string CurrentChangelog = "- Work mode: hide muted chats to focus on important conversations.\r\n- Compact mode: the app will now show just profile pictures in chats list if the window isn't wide enough.\r\n- Zoom photos and videos: when you open a media full screen you can now zoom it using touch or mouse wheel.";
+        public const int CurrentVersion = 1415790;
+        public const string CurrentChangelog = "What's new in version 1.4.1579:\r\n- New search view with your most used and recent chats.";
 
         public int Session => _session;
 
-        private int? _appVersion;
+        private int? _version;
         public int Version
         {
             get
             {
-                if (_appVersion == null)
-                    _appVersion = GetValueOrDefault("AppVersion", 0);
+                if (_version == null)
+                    _version = GetValueOrDefault("AppVersion", 0);
 
-                return _appVersion ?? 0;
+                return _version ?? 0;
             }
-            set
+            private set
             {
-                _appVersion = value;
+                _version = value;
                 AddOrUpdateValue("AppVersion", value);
             }
+        }
+
+        public void UpdateVersion()
+        {
+            Version = CurrentVersion;
         }
 
         #endregion
@@ -332,6 +340,23 @@ namespace Unigram.Common
             {
                 _isContactsSyncEnabled = value;
                 AddOrUpdateValue("IsContactsSyncEnabled", value);
+            }
+        }
+
+        private bool? _isSecretPreviewsEnabled;
+        public bool IsSecretPreviewsEnabled
+        {
+            get
+            {
+                if (_isSecretPreviewsEnabled == null)
+                    _isSecretPreviewsEnabled = GetValueOrDefault("IsSecretPreviewsEnabled", true);
+
+                return _isSecretPreviewsEnabled ?? true;
+            }
+            set
+            {
+                _isSecretPreviewsEnabled = value;
+                AddOrUpdateValue("IsSecretPreviewsEnabled", value);
             }
         }
 

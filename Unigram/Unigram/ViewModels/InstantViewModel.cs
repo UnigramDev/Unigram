@@ -10,7 +10,7 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels
 {
-    public class InstantViewModel : UnigramViewModelBase
+    public class InstantViewModel : TLViewModelBase
     {
         public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator)

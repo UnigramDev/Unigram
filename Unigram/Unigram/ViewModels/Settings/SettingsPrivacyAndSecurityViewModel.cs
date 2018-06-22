@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels.Settings.Privacy;
 using Unigram.Views.Settings;
@@ -14,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPrivacyAndSecurityViewModel : UnigramViewModelBase
+    public class SettingsPrivacyAndSecurityViewModel : TLViewModelBase
     {
         private readonly IContactsService _contactsService;
 
@@ -32,6 +33,7 @@ namespace Unigram.ViewModels.Settings
             _allowChatInvitesRules = chatInvite;
 
             PasswordCommand = new RelayCommand(PasswordExecute);
+            ClearContactsCommand = new RelayCommand(ClearContactsExecute);
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
             AccountTTLCommand = new RelayCommand(AccountTTLExecute);
             PeerToPeerCommand = new RelayCommand(PeerToPeerExecute);
@@ -132,6 +134,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsSecretPreviewsEnabled
+        {
+            get
+            {
+                return Settings.IsSecretPreviewsEnabled;
+            }
+            set
+            {
+                Settings.IsSecretPreviewsEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion
 
         public RelayCommand PasswordCommand { get; }
@@ -153,6 +168,34 @@ namespace Unigram.ViewModels.Settings
             //{
             //    // TODO
             //}
+        }
+
+        public RelayCommand ClearContactsCommand { get; }
+        private async void ClearContactsExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.SyncContactsDeleteInfo, Strings.Resources.Contacts, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            IsContactsSyncEnabled = false;
+
+            var clear = await ProtoService.SendAsync(new ClearImportedContacts());
+            if (clear is Error)
+            {
+                // TODO
+            }
+
+            var contacts = await ProtoService.SendAsync(new SearchContacts(string.Empty, int.MaxValue));
+            if (contacts is Telegram.Td.Api.Users users)
+            {
+                var delete = await ProtoService.SendAsync(new RemoveContacts(users.UserIds));
+                if (delete is Error)
+                {
+                    // TODO
+                }
+            }
         }
 
         public RelayCommand ClearPaymentsCommand { get; }

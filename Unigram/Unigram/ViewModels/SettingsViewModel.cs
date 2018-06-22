@@ -20,7 +20,7 @@ using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels
 {
-   public class SettingsViewModel : UnigramViewModelBase,
+   public class SettingsViewModel : TLViewModelBase,
         IDelegable<IUserDelegate>,
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>

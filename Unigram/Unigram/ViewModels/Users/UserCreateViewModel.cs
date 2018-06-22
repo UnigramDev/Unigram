@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Users
 {
-    public class UserCreateViewModel : UnigramViewModelBase
+    public class UserCreateViewModel : TLViewModelBase
     {
         public UserCreateViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

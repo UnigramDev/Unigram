@@ -20,7 +20,7 @@ using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels.Dialogs
 {
-    public class DialogSharedMediaViewModel : UnigramViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>
+    public class DialogSharedMediaViewModel : TLViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>
     {
         public IFileDelegate Delegate { get; set; }
 

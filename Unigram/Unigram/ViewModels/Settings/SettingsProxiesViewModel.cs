@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsProxiesViewModel : UnigramViewModelBase, IHandle<UpdateConnectionState>
+    public class SettingsProxiesViewModel : TLViewModelBase, IHandle<UpdateConnectionState>
     {
         public SettingsProxiesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -47,7 +47,7 @@ namespace Unigram.ViewModels.Settings
                     _selectedItem.IsEnabled = true;
                 }
 
-                Parallel.ForEach(items, async proxy =>
+                Parallel.ForEach(items, new ParallelOptions { MaxDegreeOfParallelism = 5 }, async proxy =>
                 {
                     var status = await ProtoService.SendAsync(new PingProxy(proxy.Id));
                     BeginOnUIThread(() =>
