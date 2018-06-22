@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -11,295 +13,295 @@ namespace Unigram.Services
 {
     class AlertsService
     {
-        //public static void ProcessError(TLRPCError error, TLType request, params Object[] args)
+        //public static void ProcessError(IDispatcherWrapper fragment, Error error, Type request, params object[] args)
         //{
-        //    if (error.ErrorCode == 406 || error.ErrorMessage == null)
+        //    if (error.Code == 406 || error.Message == null)
         //    {
-        //        return;
+        //        return null;
         //    }
-        //    if (request == TLType.ChannelsJoinChannel ||
-        //        request == TLType.ChannelsEditAdmin ||
-        //        request == TLType.ChannelsInviteToChannel ||
-        //        request == TLType.MessagesAddChatUser ||
-        //        request == TLType.MessagesStartBot ||
-        //        request == TLType.ChannelsEditBanned)
+
+        //    if (request is TL_account_saveSecureValue || request is TL_account_getAuthorizationForm)
         //    {
-        //        //if (fragment != null)
-        //        //{
-        //        ShowAddUserAlert(error.ErrorMessage, (Boolean)args[0]);
-        //        //}
-        //        //else
-        //        //{
-        //        //    if (error.ErrorMessage.Equals("PEER_FLOOD"))
-        //        //    {
-        //        //        ShowPeerFloodAlert(1);
-        //        //    }
-        //        //}
-        //    }
-        //    else if (request == TLType.MessagesCreateChat)
-        //    {
-        //        if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
+        //        if (error.Message.Contains("PHONE_NUMBER_INVALID"))
         //        {
-        //            ShowFloodWaitAlert(error.ErrorMessage);
+        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidPhoneNumber);
+        //        }
+        //        else if (error.Message.StartsWith("FLOOD_WAIT"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
         //        }
         //        else
         //        {
-        //            ShowAddUserAlert(error.ErrorMessage, false);
+        //            ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred + "\n" + error.Message);
         //        }
         //    }
-        //    else if (request == TLType.ChannelsCreateChannel)
+        //    else if (request is TL_channels_joinChannel ||
+        //     request is TL_channels_editAdmin ||
+        //     request is TL_channels_inviteToChannel ||
+        //     request is TL_messages_addChatUser ||
+        //     request is TL_messages_startBot ||
+        //     request is TL_channels_editBanned)
         //    {
-        //        if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
+        //        if (fragment != null)
         //        {
-        //            ShowFloodWaitAlert(error.ErrorMessage);
-        //        }
-        //    }
-        //    else if (request == TLType.MessagesEditMessage)
-        //    {
-        //        if (!error.ErrorMessage.Equals("MESSAGE_NOT_MODIFIED"))
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.EditMessageError);
-        //        }
-        //    }
-        //    else if (request == TLType.MessagesSendMessage ||
-        //             request == TLType.MessagesSendMedia ||
-        //             request == TLType.MessagesSendInlineBotResult ||
-        //             request == TLType.MessagesForwardMessages)
-        //    {
-        //        if (error.ErrorMessage.Equals("PEER_FLOOD"))
-        //        {
-        //            ShowPeerFloodAlert(0);
-        //        }
-        //    }
-        //    else if (request == TLType.MessagesImportChatInvite)
-        //    {
-        //        if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.FloodWait);
-        //        }
-        //        else if (error.ErrorMessage.Equals("USERS_TOO_MUCH"))
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.JoinToGroupErrorFull);
+        //            ShowAddUserAlert(error.Message, fragment, (Boolean)args[0]);
         //        }
         //        else
         //        {
-        //            ShowSimpleAlert(Strings.Resources.JoinToGroupErrorNotExist);
-        //        }
-        //    }
-        //    else if (request == TLType.MessagesGetAttachedStickers)
-        //    {
-        //        //Toast.makeText(fragment.getParentActivity(), Strings.Resources.ErrorOccurred + "\n" + error.ErrorMessage, Toast.LENGTH_SHORT).show();
-        //    }
-        //    else if (request == TLType.AccountConfirmPhone)
-        //    {
-        //        if (error.ErrorMessage.Contains("PHONE_CODE_EMPTY") || error.ErrorMessage.Contains("PHONE_CODE_INVALID"))
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.InvalidCode);
-        //        }
-        //        else if (error.ErrorMessage.Contains("PHONE_CODE_EXPIRED"))
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.CodeExpired);
-        //        }
-        //        else if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.FloodWait);
-        //        }
-        //        else
-        //        {
-        //            ShowSimpleAlert(error.ErrorMessage);
-        //        }
-        //    }
-        //    else if (request == TLType.AuthResendCode)
-        //    {
-        //        if (error.ErrorMessage.Contains("PHONE_NUMBER_INVALID"))
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.InvalidPhoneNumber);
-        //        }
-        //        else if (error.ErrorMessage.Contains("PHONE_CODE_EMPTY") || error.ErrorMessage.Contains("PHONE_CODE_INVALID"))
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.InvalidCode);
-        //        }
-        //        else if (error.ErrorMessage.Contains("PHONE_CODE_EXPIRED"))
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.CodeExpired);
-        //        }
-        //        else if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.FloodWait);
-        //        }
-        //        else if (error.ErrorCode != -1000)
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.ErrorOccurred + "\n" + error.ErrorMessage);
-        //        }
-        //    }
-        //    else if (request == TLType.AccountSendConfirmPhoneCode)
-        //    {
-        //        if (error.ErrorCode == 400)
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.CancelLinkExpired);
-        //        }
-        //        else if (error.ErrorMessage != null)
-        //        {
-        //            if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
+        //            if (error.Message.equals("PEER_FLOOD"))
         //            {
-        //                ShowSimpleAlert(Strings.Resources.FloodWait);
+        //                NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.needShowAlert, 1);
+        //            }
+        //        }
+        //    }
+        //    else if (request is TL_messages_createChat)
+        //    {
+        //        if (error.Message.StartsWith("FLOOD_WAIT"))
+        //        {
+        //            ShowFloodWaitAlert(fragment, error.Message);
+        //        }
+        //        else
+        //        {
+        //            ShowAddUserAlert(fragment, error.Message, false);
+        //        }
+        //    }
+        //    else if (request is TL_channels_createChannel)
+        //    {
+        //        if (error.Message.StartsWith("FLOOD_WAIT"))
+        //        {
+        //            ShowFloodWaitAlert(fragment, error.Message);
+        //        }
+        //        else
+        //        {
+        //            ShowAddUserAlert(fragment, error.Message, false);
+        //        }
+        //    }
+        //    else if (request is TL_messages_editMessage)
+        //    {
+        //        if (!error.Message.Equals("MESSAGE_NOT_MODIFIED"))
+        //        {
+        //            if (fragment != null)
+        //            {
+        //                ShowSimpleAlert(fragment, Strings.Resources.EditMessageError);
         //            }
         //            else
         //            {
-        //                ShowSimpleAlert(Strings.Resources.ErrorOccurred);
+        //                ShowSimpleToast(fragment, Strings.Resources.EditMessageError);
         //            }
         //        }
         //    }
-        //    else if (request == TLType.AccountChangePhone)
+        //    else if (request is TL_messages_sendMessage ||
+        //              request is TL_messages_sendMedia ||
+
+        //              request is TL_messages_sendBroadcast ||
+        //              request is TL_messages_sendInlineBotResult ||
+
+        //              request is TL_messages_forwardMessages)
         //    {
-        //        if (error.ErrorMessage.Contains("PHONE_NUMBER_INVALID"))
+        //        if (error.Message.Equals("PEER_FLOOD"))
         //        {
-        //            ShowSimpleAlert(Strings.Resources.InvalidPhoneNumber);
+        //            NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.needShowAlert, 0);
         //        }
-        //        else if (error.ErrorMessage.Contains("PHONE_CODE_EMPTY") || error.ErrorMessage.Contains("PHONE_CODE_INVALID"))
+        //    }
+        //    else if (request is TL_messages_importChatInvite)
+        //    {
+        //        if (error.Message.StartsWith("FLOOD_WAIT"))
         //        {
-        //            ShowSimpleAlert(Strings.Resources.InvalidCode);
+        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
         //        }
-        //        else if (error.ErrorMessage.Contains("PHONE_CODE_EXPIRED"))
+        //        else if (error.Message.Equals("USERS_TOO_MUCH"))
         //        {
-        //            ShowSimpleAlert(Strings.Resources.CodeExpired);
-        //        }
-        //        else if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
-        //        {
-        //            ShowSimpleAlert(Strings.Resources.FloodWait);
+        //            ShowSimpleAlert(fragment, Strings.Resources.JoinToGroupErrorFull);
         //        }
         //        else
         //        {
-        //            ShowSimpleAlert(error.ErrorMessage);
+        //            ShowSimpleAlert(fragment, Strings.Resources.JoinToGroupErrorNotExist);
         //        }
         //    }
-        //    else if (request == TLType.AccountSendChangePhoneCode)
+        //    else if (request is TL_messages_getAttachedStickers)
         //    {
-        //        if (error.ErrorMessage.Contains("PHONE_NUMBER_INVALID"))
+        //        if (fragment != null && fragment.getParentActivity() != null)
         //        {
-        //            ShowSimpleAlert(Strings.Resources.InvalidPhoneNumber);
+        //            Toast.makeText(fragment.getParentActivity(), Strings.Resources.ErrorOccurred + "\n" + error.text, Toast.LENGTH_SHORT).show();
         //        }
-        //        else if (error.ErrorMessage.Contains("PHONE_CODE_EMPTY") || error.ErrorMessage.Contains("PHONE_CODE_INVALID"))
+        //    }
+        //    else if (request is TL_account_confirmPhone || request is TL_account_verifyPhone || request is TL_account_verifyEmail)
+        //    {
+        //        if (error.Message.Contains("PHONE_CODE_EMPTY") || error.Message.Contains("PHONE_CODE_INVALID") || error.Message.Contains("CODE_INVALID") || error.Message.Contains("CODE_EMPTY"))
         //        {
-        //            ShowSimpleAlert(Strings.Resources.InvalidCode);
+        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidCode);
         //        }
-        //        else if (error.ErrorMessage.Contains("PHONE_CODE_EXPIRED"))
+        //        else if (error.Message.Contains("PHONE_CODE_EXPIRED") || error.Message.Contains("EMAIL_VERIFY_EXPIRED"))
         //        {
-        //            ShowSimpleAlert(Strings.Resources.CodeExpired);
+        //            ShowSimpleAlert(fragment, Strings.Resources.CodeExpired);
         //        }
-        //        else if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
+        //        else if (error.Message.StartsWith("FLOOD_WAIT"))
         //        {
-        //            ShowSimpleAlert(Strings.Resources.FloodWait);
-        //        }
-        //        else if (error.ErrorMessage.StartsWith("PHONE_NUMBER_OCCUPIED"))
-        //        {
-        //            ShowSimpleAlert(string.Format(Strings.Resources.ChangePhoneNumberOccupied, (String)args[0]));
+        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
         //        }
         //        else
         //        {
-        //            ShowSimpleAlert(Strings.Resources.ErrorOccurred);
+        //            ShowSimpleAlert(fragment, error.Message);
         //        }
         //    }
-        //    else if (request == TLType.AccountUpdateUsername)
+        //    else if (request is TL_auth_resendCode)
         //    {
-        //        switch (error.ErrorMessage)
+        //        if (error.Message.Contains("PHONE_NUMBER_INVALID"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidPhoneNumber);
+        //        }
+        //        else if (error.Message.Contains("PHONE_CODE_EMPTY") || error.Message.Contains("PHONE_CODE_INVALID"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidCode);
+        //        }
+        //        else if (error.Message.Contains("PHONE_CODE_EXPIRED"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.CodeExpired);
+        //        }
+        //        else if (error.Message.StartsWith("FLOOD_WAIT"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //        }
+        //        else if (error.Code != -1000)
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred + "\n" + error.Message);
+        //        }
+        //    }
+        //    else if (request is TL_account_sendConfirmPhoneCode)
+        //    {
+        //        if (error.Code == 400)
+        //        {
+        //            return ShowSimpleAlert(fragment, Strings.Resources.CancelLinkExpired);
+        //        }
+        //        else if (error.Message != null)
+        //        {
+        //            if (error.Message.StartsWith("FLOOD_WAIT"))
+        //            {
+        //                return ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //            }
+        //            else
+        //            {
+        //                return ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred);
+        //            }
+        //        }
+        //    }
+        //    else if (request is TL_account_changePhone)
+        //    {
+        //        if (error.Message.Contains("PHONE_NUMBER_INVALID"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidPhoneNumber);
+        //        }
+        //        else if (error.Message.Contains("PHONE_CODE_EMPTY") || error.Message.Contains("PHONE_CODE_INVALID"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidCode);
+        //        }
+        //        else if (error.Message.Contains("PHONE_CODE_EXPIRED"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.CodeExpired);
+        //        }
+        //        else if (error.Message.StartsWith("FLOOD_WAIT"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //        }
+        //        else
+        //        {
+        //            ShowSimpleAlert(fragment, error.Message);
+        //        }
+        //    }
+        //    else if (request is TL_account_sendChangePhoneCode)
+        //    {
+        //        if (error.Message.Contains("PHONE_NUMBER_INVALID"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidPhoneNumber);
+        //        }
+        //        else if (error.Message.Contains("PHONE_CODE_EMPTY") || error.Message.Contains("PHONE_CODE_INVALID"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.InvalidCode);
+        //        }
+        //        else if (error.Message.Contains("PHONE_CODE_EXPIRED"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.CodeExpired);
+        //        }
+        //        else if (error.Message.StartsWith("FLOOD_WAIT"))
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
+        //        }
+        //        else if (error.Message.StartsWith("PHONE_NUMBER_OCCUPIED"))
+        //        {
+        //            ShowSimpleAlert(fragment, LocaleController.formatString("ChangePhoneNumberOccupied", R.string.ChangePhoneNumberOccupied, (String)args[0]));
+        //        }
+        //        else
+        //        {
+        //            ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred);
+        //        }
+        //    }
+        //    else if (request is TL_updateUserName)
+        //    {
+        //        switch (error.Message)
         //        {
         //            case "USERNAME_INVALID":
-        //                ShowSimpleAlert(Strings.Resources.UsernameInvalid);
+        //                ShowSimpleAlert(fragment, Strings.Resources.UsernameInvalid);
         //                break;
         //            case "USERNAME_OCCUPIED":
-        //                ShowSimpleAlert(Strings.Resources.UsernameInUse);
+        //                ShowSimpleAlert(fragment, Strings.Resources.UsernameInUse);
         //                break;
-        //            //case "USERNAMES_UNAVAILABLE":
-        //            //    ShowSimpleAlert(Strings.Resources.FeatureUnavailable);
-        //            //    break;
         //            default:
-        //                ShowSimpleAlert(Strings.Resources.ErrorOccurred);
+        //                ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred);
         //                break;
         //        }
         //    }
-        //    else if (request == TLType.ContactsImportContacts)
+        //    else if (request is TL_contacts_importContacts)
         //    {
-        //        if (error == null || error.ErrorMessage.StartsWith("FLOOD_WAIT"))
+        //        if (error == null || error.Message.StartsWith("FLOOD_WAIT"))
         //        {
-        //            ShowSimpleAlert(Strings.Resources.FloodWait);
+        //            ShowSimpleAlert(fragment, Strings.Resources.FloodWait);
         //        }
         //        else
         //        {
-        //            ShowSimpleAlert(Strings.Resources.ErrorOccurred + "\n" + error.ErrorMessage);
+        //            ShowSimpleAlert(fragment, Strings.Resources.ErrorOccurred + "\n" + error.Message);
         //        }
         //    }
-        //    else if (request == TLType.AccountGetPassword || request == TLType.AccountGetTmpPassword)
+        //    else if (request is TL_account_getPassword || request is TL_account_getTmpPassword)
         //    {
-        //        if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
+        //        if (error.Message.StartsWith("FLOOD_WAIT"))
         //        {
-        //            ShowSimpleToast(GetFloodWaitString(error.ErrorMessage));
+        //            ShowSimpleToast(fragment, getFloodWaitString(error.Message));
         //        }
         //        else
         //        {
-        //            ShowSimpleToast(error.ErrorMessage);
+        //            ShowSimpleToast(fragment, error.Message);
         //        }
         //    }
-        //    else if (request == TLType.PaymentsSendPaymentForm)
+        //    else if (request is TL_payments_sendPaymentForm)
         //    {
-        //        switch (error.ErrorMessage)
+        //        switch (error.Message)
         //        {
         //            case "BOT_PRECHECKOUT_FAILED":
-        //                ShowSimpleToast(Strings.Resources.PaymentPrecheckoutFailed);
+        //                ShowSimpleToast(fragment, Strings.Resources.PaymentPrecheckoutFailed);
         //                break;
         //            case "PAYMENT_FAILED":
-        //                ShowSimpleToast(Strings.Resources.PaymentFailed);
+        //                ShowSimpleToast(fragment, Strings.Resources.PaymentFailed);
         //                break;
         //            default:
-        //                ShowSimpleToast(error.ErrorMessage);
+        //                ShowSimpleToast(fragment, error.Message);
         //                break;
         //        }
         //    }
-        //    else if (request == TLType.PaymentsValidateRequestedInfo)
+        //    else if (request is TL_payments_validateRequestedInfo)
         //    {
-        //        switch (error.ErrorMessage)
+        //        switch (error.Message)
         //        {
         //            case "SHIPPING_NOT_AVAILABLE":
-        //                ShowSimpleToast(Strings.Resources.PaymentNoShippingMethod);
+        //                ShowSimpleToast(fragment, Strings.Resources.PaymentNoShippingMethod);
         //                break;
         //            default:
-        //                ShowSimpleToast(error.ErrorMessage);
+        //                ShowSimpleToast(fragment, error.Message);
         //                break;
         //        }
         //    }
-        //    //// Added
-        //    //else if (request == TLType.AuthSignUp)
-        //    //{
-        //    //    if (error.ErrorMessage.Contains("PHONE_NUMBER_INVALID"))
-        //    //    {
-        //    //        ShowSimpleAlert(Strings.Resources.InvalidPhoneNumber);
-        //    //    }
-        //    //    else if (error.ErrorMessage.Contains("PHONE_CODE_EMPTY") || error.ErrorMessage.Contains("PHONE_CODE_INVALID"))
-        //    //    {
-        //    //        ShowSimpleAlert(Strings.Resources.InvalidCode);
-        //    //    }
-        //    //    else if (error.ErrorMessage.Contains("PHONE_CODE_EXPIRED"))
-        //    //    {
-        //    //        ShowSimpleAlert(Strings.Resources.CodeExpired);
-        //    //    }
-        //    //    else if (error.ErrorMessage.Contains("FIRSTNAME_INVALID"))
-        //    //    {
-        //    //        ShowSimpleAlert(Strings.Resources.InvalidFirstName);
-        //    //    }
-        //    //    else if (error.ErrorMessage.Contains("LASTNAME_INVALID"))
-        //    //    {
-        //    //        ShowSimpleAlert(Strings.Resources.InvalidLastName);
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        ShowSimpleAlert(error.ErrorMessage);
-        //    //    }
-        //    //}
-
-        //    return;
         //}
 
-        private static async void ShowPeerFloodAlert(int reason)
+        private static async void ShowPeerFloodAlert(IDispatcherWrapper fragment, int reason)
         {
             var dialog = new TLMessageDialog();
             dialog.Title = Strings.Resources.AppName;
@@ -330,7 +332,7 @@ namespace Unigram.Services
             await dialog.ShowQueuedAsync();
         }
 
-        public static void ShowSimpleToast(String text)
+        public static void ShowSimpleToast(IDispatcherWrapper fragment, String text)
         {
             if (text == null)
             {
@@ -342,10 +344,10 @@ namespace Unigram.Services
             //toast.show();
             //return toast;
 
-            ShowSimpleAlert(text);
+            ShowSimpleAlert(fragment, text);
         }
 
-        public static async void ShowSimpleAlert(String text)
+        public static async void ShowSimpleAlert(IDispatcherWrapper fragment, String text)
         {
             if (text == null)
             {
@@ -366,17 +368,17 @@ namespace Unigram.Services
             return string.Format(Strings.Resources.FloodWaitTime, Locale.FormatCallDuration(time));
         }
 
-        public static void ShowFloodWaitAlert(String error)
+        public static void ShowFloodWaitAlert(IDispatcherWrapper fragment, String error)
         {
             if (error == null || !error.StartsWith("FLOOD_WAIT"))
             {
                 return;
             }
 
-            ShowSimpleAlert(GetFloodWaitString(error));
+            ShowSimpleAlert(fragment, GetFloodWaitString(error));
         }
 
-        public static async void ShowAddUserAlert(string error, bool channel)
+        public static async void ShowAddUserAlert(IDispatcherWrapper fragment, string error, bool channel)
         {
             if (error == null)
             {
