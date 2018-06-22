@@ -1155,6 +1155,7 @@ namespace Unigram.Views
 
             try
             {
+                ViewModel.Chats.TopChats = null;
                 ViewModel.Chats.Search = null;
                 ViewModel.Contacts.Search = null;
             }
