@@ -73,14 +73,19 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatReadInbox(Chat chat)
         {
-            PinnedIcon.Visibility = chat.UnreadCount == 0 && chat.IsPinned ? Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Visibility = chat.UnreadCount > 0 ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
-            UnreadLabel.Text = chat.UnreadCount.ToString();
+            PinnedIcon.Visibility = (chat.UnreadCount == 0 && !chat.IsMarkedAsUnread) && chat.IsPinned ? Visibility.Visible : Visibility.Collapsed;
+            UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
+            UnreadLabel.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
         }
 
         public void UpdateChatReadOutbox(Chat chat)
         {
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
+        }
+
+        public void UpdateChatIsMarkedAsUnread(Chat chat)
+        {
+
         }
 
         public void UpdateChatUnreadMentionCount(Chat chat)
@@ -447,6 +452,13 @@ namespace Unigram.Controls.Cells
 
                 return result + $"{Strings.Resources.AttachPhoto}, ";
             }
+            else if (message.Content is MessageCall call)
+            {
+                var outgoing = message.IsOutgoing;
+                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+
+                return result + (missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming));
+            }
             else if (message.Content is MessageUnsupported)
             {
                 return result + Strings.Resources.UnsupportedAttachment;
@@ -516,7 +528,7 @@ namespace Unigram.Controls.Cells
 
         private string UpdateTimeLabel(Chat chat)
         {
-            if (_protoService != null && _protoService.IsChatPromoted(chat))
+            if (_protoService != null && _protoService.IsChatSponsored(chat))
             {
                 return Strings.Resources.UseProxySponsor;
             }

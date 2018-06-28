@@ -23,7 +23,7 @@ namespace Unigram.Selectors
             var chat = item as Chat;
             if (chat != null)
             {
-                return chat.IsPinned || (CacheService != null && CacheService.IsChatPromoted(chat)) ? PinnedStyle : DialogStyle;
+                return chat.IsPinned || (CacheService != null && CacheService.IsChatSponsored(chat)) ? PinnedStyle : DialogStyle;
             }
 
             return base.SelectStyleCore(item, container);

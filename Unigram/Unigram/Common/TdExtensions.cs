@@ -439,11 +439,10 @@ namespace Unigram.Common
 
         public static bool IsUnread(this Chat chat)
         {
-            // TODO: next tdlib version
-            //if (chat.HasUnreadMark)
-            //{
-            //    return true;
-            //}
+            if (chat.IsMarkedAsUnread)
+            {
+                return true;
+            }
 
             return chat.UnreadCount > 0;
         }

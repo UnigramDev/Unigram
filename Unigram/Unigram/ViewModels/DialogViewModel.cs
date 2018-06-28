@@ -1311,6 +1311,11 @@ namespace Unigram.ViewModels
             }
 #endif
 
+            if (chat.IsMarkedAsUnread)
+            {
+                ProtoService.Send(new ToggleChatIsMarkedAsUnread(chat.Id, false));
+            }
+
             ProtoService.Send(new OpenChat(chat.Id));
 
             Delegate?.UpdateChat(chat);
@@ -2259,7 +2264,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new GetMe());
             if (response is User user)
             {
-                await SendContactAsync(new Contact(user.PhoneNumber, user.FirstName, user.LanguageCode, user.Id));
+                await SendContactAsync(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id));
             }
         }
 
@@ -2287,7 +2292,7 @@ namespace Unigram.ViewModels
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new ImportContacts(new[] { new Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, user.Id) }));
+                ProtoService.Send(new ImportContacts(new[] { new Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id) }));
             }
         }
 

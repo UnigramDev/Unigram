@@ -37,7 +37,8 @@ namespace Unigram.Services
         IList<Chat> GetChats(IList<long> ids);
         IList<Chat> GetChats(int count);
 
-        bool IsChatPromoted(Chat chat);
+        bool IsChatSavedMessages(Chat chat);
+        bool IsChatSponsored(Chat chat);
 
         bool TryGetChatFromUser(int userId, out Chat chat);
         bool TryGetChatFromSecret(int secretId, out Chat chat);
@@ -92,8 +93,6 @@ namespace Unigram.Services
         private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
 
         private AutoDownloadPreferences _preferences;
-
-        private long _promotedChatId;
 
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
@@ -264,8 +263,6 @@ namespace Unigram.Services
             _chatsMap.Clear();
             _usersMap.Clear();
 
-            _promotedChatId = 0;
-
             _favoriteStickers?.Clear();
             _installedStickerSets?.Clear();
             _installedMaskSets?.Clear();
@@ -333,20 +330,6 @@ namespace Unigram.Services
             }
 
             user = null;
-            return false;
-        }
-
-        public bool IsChatPromoted(Chat chat)
-        {
-            if (_promotedChatId == chat.Id && chat.Type is ChatTypeSupergroup type)
-            {
-                var supergroup = GetSupergroup(type.SupergroupId);
-                if (supergroup != null)
-                {
-                    return !supergroup.IsMember();
-                }
-            }
-
             return false;
         }
 
@@ -455,6 +438,30 @@ namespace Unigram.Services
             }
 
             return null;
+        }
+
+        public bool IsChatSavedMessages(Chat chat)
+        {
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == GetMyId())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsChatSponsored(Chat chat)
+        {
+            if (chat.IsSponsored && chat.Type is ChatTypeSupergroup type)
+            {
+                var supergroup = GetSupergroup(type.SupergroupId);
+                if (supergroup != null)
+                {
+                    return !supergroup.IsMember();
+                }
+            }
+
+            return false;
         }
 
         public bool TryGetChatFromUser(int userId, out Chat chat)
@@ -659,12 +666,27 @@ namespace Unigram.Services
                     value.DraftMessage = updateChatDraftMessage.DraftMessage;
                 }
             }
+            else if (update is UpdateChatIsMarkedAsUnread updateChatIsMarkedAsUnread)
+            {
+                if (_chats.TryGetValue(updateChatIsMarkedAsUnread.ChatId, out Chat value))
+                {
+                    value.IsMarkedAsUnread = updateChatIsMarkedAsUnread.IsMarkedAsUnread;
+                }
+            }
             else if (update is UpdateChatIsPinned updateChatIsPinned)
             {
                 if (_chats.TryGetValue(updateChatIsPinned.ChatId, out Chat value))
                 {
                     value.Order = updateChatIsPinned.Order;
                     value.IsPinned = updateChatIsPinned.IsPinned;
+                }
+            }
+            else if (update is UpdateChatIsSponsored updateChatIsSponsored)
+            {
+                if (_chats.TryGetValue(updateChatIsSponsored.ChatId, out Chat value))
+                {
+                    value.Order = updateChatIsSponsored.Order;
+                    value.IsSponsored = updateChatIsSponsored.IsSponsored;
                 }
             }
             else if (update is UpdateChatLastMessage updateChatLastMessage)
@@ -850,10 +872,6 @@ namespace Unigram.Services
             else if (update is UpdateOption updateOption)
             {
                 _options[updateOption.Name] = updateOption.Value;
-            }
-            else if (update is UpdatePromotedChat updatePromotedChat)
-            {
-                _promotedChatId = updatePromotedChat.ChatId;
             }
             else if (update is UpdateRecentStickers updateRecentStickers)
             {

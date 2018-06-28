@@ -39,8 +39,9 @@ namespace Unigram.Views
 {
     public sealed partial class MainPage : Page, IMasterDetailPage,
         IHandle<UpdateChatDraftMessage>,
-        IHandle<UpdateChatIsPinned>,
         IHandle<UpdateChatLastMessage>,
+        IHandle<UpdateChatIsPinned>,
+        IHandle<UpdateChatIsMarkedAsUnread>,
         IHandle<UpdateChatReadInbox>,
         IHandle<UpdateChatReadOutbox>,
         IHandle<UpdateChatUnreadMentionCount>,
@@ -120,6 +121,11 @@ namespace Unigram.Views
         }
 
         public void Handle(UpdateChatIsPinned update)
+        {
+            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatReadInbox(chat));
+        }
+
+        public void Handle(UpdateChatIsMarkedAsUnread update)
         {
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatReadInbox(chat));
         }
@@ -930,7 +936,7 @@ namespace Unigram.Views
 
             CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Chats.DialogPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop);
             CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Chats.DialogNotifyCommand, chat, chat.NotificationSettings.MuteFor > 0 ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications);
-            CreateFlyoutItem(ref flyout, DialogMark_Loaded, null, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread);
+            CreateFlyoutItem(ref flyout, DialogMark_Loaded, ViewModel.Chats.DialogMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread);
             CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Chats.DialogClearCommand, chat, Strings.Resources.ClearHistory);
             CreateFlyoutItem(ref flyout, DialogDelete_Loaded, ViewModel.Chats.DialogDeleteCommand, chat, DialogDelete_Text(chat));
             CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Chats.DialogDeleteAndStopCommand, chat, Strings.Resources.DeleteAndStop);
@@ -983,6 +989,11 @@ namespace Unigram.Views
 
         private Visibility DialogMark_Loaded(Chat chat)
         {
+            if (ViewModel.CacheService.IsChatSavedMessages(chat))
+            {
+                return Visibility.Collapsed;
+            }
+
             return Visibility.Visible;
         }
 
@@ -996,7 +1007,7 @@ namespace Unigram.Views
             //    return count < max ? Visibility.Visible : Visibility.Collapsed;
             //}
 
-            if (ViewModel.CacheService.IsChatPromoted(chat))
+            if (ViewModel.CacheService.IsChatSponsored(chat))
             {
                 return Visibility.Collapsed;
             }
@@ -1006,12 +1017,17 @@ namespace Unigram.Views
 
         private Visibility DialogNotify_Loaded(Chat chat)
         {
+            if (ViewModel.CacheService.IsChatSavedMessages(chat))
+            {
+                return Visibility.Collapsed;
+            }
+
             return Visibility.Visible;
         }
 
         private Visibility DialogClear_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsChatPromoted(chat))
+            if (ViewModel.CacheService.IsChatSponsored(chat))
             {
                 return Visibility.Collapsed;
             }
@@ -1030,7 +1046,7 @@ namespace Unigram.Views
 
         private Visibility DialogDelete_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsChatPromoted(chat))
+            if (ViewModel.CacheService.IsChatSponsored(chat))
             {
                 return Visibility.Collapsed;
             }
@@ -1069,7 +1085,7 @@ namespace Unigram.Views
 
         private Visibility DialogDeleteAndStop_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsChatPromoted(chat))
+            if (ViewModel.CacheService.IsChatSponsored(chat))
             {
                 return Visibility.Collapsed;
             }

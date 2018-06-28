@@ -30,6 +30,7 @@ namespace Unigram.ViewModels
             Items = new ItemsCollection(protoService, aggregator, this);
 
             DialogPinCommand = new RelayCommand<Chat>(DialogPinExecute);
+            DialogMarkCommand = new RelayCommand<Chat>(DialogMarkExecute);
             DialogNotifyCommand = new RelayCommand<Chat>(DialogNotifyExecute);
             DialogDeleteCommand = new RelayCommand<Chat>(DialogDeleteExecute);
             DialogClearCommand = new RelayCommand<Chat>(DialogClearExecute);
@@ -92,6 +93,12 @@ namespace Unigram.ViewModels
         private void DialogPinExecute(Chat chat)
         {
             ProtoService.Send(new ToggleChatIsPinned(chat.Id, !chat.IsPinned));
+        }
+
+        public RelayCommand<Chat> DialogMarkCommand { get; }
+        private void DialogMarkExecute(Chat chat)
+        {
+            ProtoService.Send(new ToggleChatIsMarkedAsUnread(chat.Id, !chat.IsMarkedAsUnread));
         }
 
         public RelayCommand<Chat> DialogNotifyCommand { get; }
