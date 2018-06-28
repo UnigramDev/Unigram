@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/13/2018 19:22:39
+// 	Generated: 06/27/2018 15:32:38
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -71,6 +71,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AbortPassword");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Accept"
+        /// </summary>
+        public static string Accept
+        {
+            get
+            {
+                return resourceLoader.GetString("Accept");
             }
         }
         
@@ -192,6 +203,160 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ActionBotAllowed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Address"
+        /// </summary>
+        public static string ActionBotDocumentAddress
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentAddress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bank Statement"
+        /// </summary>
+        public static string ActionBotDocumentBankStatement
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentBankStatement");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Driver Licence"
+        /// </summary>
+        public static string ActionBotDocumentDriverLicence
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentDriverLicence");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Email Address"
+        /// </summary>
+        public static string ActionBotDocumentEmail
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentEmail");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Personal details"
+        /// </summary>
+        public static string ActionBotDocumentIdentity
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentIdentity");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Identity Card"
+        /// </summary>
+        public static string ActionBotDocumentIdentityCard
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentIdentityCard");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Internal Passport"
+        /// </summary>
+        public static string ActionBotDocumentInternalPassport
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentInternalPassport");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Passport"
+        /// </summary>
+        public static string ActionBotDocumentPassport
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentPassport");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Passport Registration"
+        /// </summary>
+        public static string ActionBotDocumentPassportRegistration
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentPassportRegistration");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Phone Number"
+        /// </summary>
+        public static string ActionBotDocumentPhone
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentPhone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tenancy Agreement"
+        /// </summary>
+        public static string ActionBotDocumentRentalAgreement
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentRentalAgreement");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Temporary Registration"
+        /// </summary>
+        public static string ActionBotDocumentTemporaryRegistration
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentTemporaryRegistration");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Utility Bill"
+        /// </summary>
+        public static string ActionBotDocumentUtilityBill
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocumentUtilityBill");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} received the following documents: {1}"
+        /// </summary>
+        public static string ActionBotDocuments
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionBotDocuments");
             }
         }
         
@@ -911,6 +1076,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Add to Existing Contact"
+        /// </summary>
+        public static string AddToExistingContact
+        {
+            get
+            {
+                return resourceLoader.GetString("AddToExistingContact");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Add to Favorites"
         /// </summary>
         public static string AddToFavorites
@@ -984,6 +1160,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AddedToFavorites");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Agree"
+        /// </summary>
+        public static string Agree
+        {
+            get
+            {
+                return resourceLoader.GetString("Agree");
             }
         }
         
@@ -1863,6 +2050,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Self-Destructing Photo"
+        /// </summary>
+        public static string AttachDestructingPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("AttachDestructingPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Self-Destructing Video"
+        /// </summary>
+        public static string AttachDestructingVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("AttachDestructingVideo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "File"
         /// </summary>
         public static string AttachDocument
@@ -2424,6 +2633,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AwaitingEncryption");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Back"
+        /// </summary>
+        public static string Back
+        {
+            get
+            {
+                return resourceLoader.GetString("Back");
             }
         }
         
@@ -3053,6 +3273,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CancelRegistration");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel sending"
+        /// </summary>
+        public static string CancelSending
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelSending");
             }
         }
         
@@ -4823,6 +5054,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Job"
+        /// </summary>
+        public static string ContactJob
+        {
+            get
+            {
+                return resourceLoader.GetString("ContactJob");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Title"
+        /// </summary>
+        public static string ContactJobTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ContactJobTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Contact joined Telegram"
         /// </summary>
         public static string ContactJoined
@@ -4845,6 +5098,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "SHARE CONTACT"
+        /// </summary>
+        public static string ContactShare
+        {
+            get
+            {
+                return resourceLoader.GetString("ContactShare");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Contacts"
         /// </summary>
         public static string Contacts
@@ -4856,7 +5120,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Telegram needs access to your contacts so that you can connect with your friends across all your devices. Your contacts will be continuosly synced with Telegram's heavily encrypted cloud servers."
+        /// Localized resource similar to "**Telegram** needs access to your contacts so that you can connect with your friends across all your devices. Your contacts will be continuously synced with Telegram's heavily encrypted cloud servers."
         /// </summary>
         public static string ContactsPermissionAlert
         {
@@ -5063,6 +5327,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CreateGroupError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create Link"
+        /// </summary>
+        public static string CreateLink
+        {
+            get
+            {
+                return resourceLoader.GetString("CreateLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create New Contact"
+        /// </summary>
+        public static string CreateNewContact
+        {
+            get
+            {
+                return resourceLoader.GetString("CreateNewContact");
             }
         }
         
@@ -5430,6 +5716,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "DELETE NOW"
+        /// </summary>
+        public static string Deactivate
+        {
+            get
+            {
+                return resourceLoader.GetString("Deactivate");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Clear Logs"
         /// </summary>
         public static string DebugClearLogs
@@ -5558,6 +5855,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DebugSendLogs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Decline"
+        /// </summary>
+        public static string Decline
+        {
+            get
+            {
+                return resourceLoader.GetString("Decline");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Decline & Deactivate"
+        /// </summary>
+        public static string DeclineDeactivate
+        {
+            get
+            {
+                return resourceLoader.GetString("DeclineDeactivate");
             }
         }
         
@@ -6233,6 +6552,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Edit Caption"
+        /// </summary>
+        public static string EditCaption
+        {
+            get
+            {
+                return resourceLoader.GetString("EditCaption");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Edit"
         /// </summary>
         public static string EditContact
@@ -6244,6 +6574,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Edit Message"
+        /// </summary>
+        public static string EditMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("EditMessage");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, you can't edit this message."
         /// </summary>
         public static string EditMessageError
@@ -6251,6 +6592,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EditMessageError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tap to edit media"
+        /// </summary>
+        public static string EditMessageMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("EditMessageMedia");
             }
         }
         
@@ -6900,6 +7252,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EventLogEditedGroupTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 edited media:"
+        /// </summary>
+        public static string EventLogEditedMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 edited media and caption:"
+        /// </summary>
+        public static string EventLogEditedMediaCaption
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedMediaCaption");
             }
         }
         
@@ -7815,6 +8189,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FileUploadLimit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilesZero
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesZero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} file"
+        /// </summary>
+        public static string FilesOne
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilesTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilesFew
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilesMany
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} files"
+        /// </summary>
+        public static string FilesOther
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesOther");
             }
         }
         
@@ -10607,6 +11047,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Mark as read"
+        /// </summary>
+        public static string MarkAsRead
+        {
+            get
+            {
+                return resourceLoader.GetString("MarkAsRead");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mark as unread"
+        /// </summary>
+        public static string MarkAsUnread
+        {
+            get
+            {
+                return resourceLoader.GetString("MarkAsUnread");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Masks"
         /// </summary>
         public static string Masks
@@ -11670,6 +12132,19 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NoChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Start messaging by pressing the
+        ///new message button in the bottom right corner
+        ///or tap the menu button for more options."
+        /// </summary>
+        public static string NoChatsContactsHelp
+        {
+            get
+            {
+                return resourceLoader.GetString("NoChatsContactsHelp");
             }
         }
         
@@ -13761,6 +14236,1176 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "To confirm your address, please upload a scan or photo of the selected document (all pages)."
+        /// </summary>
+        public static string PassportAddAddressUploadInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddAddressUploadInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Tenancy Agreement"
+        /// </summary>
+        public static string PassportAddAgreement
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddAgreement");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of your tenancy agreement."
+        /// </summary>
+        public static string PassportAddAgreementInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddAgreementInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Bank Statement"
+        /// </summary>
+        public static string PassportAddBank
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddBank");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of your bank statement."
+        /// </summary>
+        public static string PassportAddBankInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddBankInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Utility Bill"
+        /// </summary>
+        public static string PassportAddBill
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddBill");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of your utility bill."
+        /// </summary>
+        public static string PassportAddBillInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddBillInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Identity Card"
+        /// </summary>
+        public static string PassportAddCard
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddCard");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Internal Passport"
+        /// </summary>
+        public static string PassportAddInternalPassport
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddInternalPassport");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Driver Licence"
+        /// </summary>
+        public static string PassportAddLicence
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddLicence");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Passport"
+        /// </summary>
+        public static string PassportAddPassport
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddPassport");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Passport Registration"
+        /// </summary>
+        public static string PassportAddPassportRegistration
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddPassportRegistration");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of your passport registration page."
+        /// </summary>
+        public static string PassportAddPassportRegistrationInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddPassportRegistrationInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Temporary Registration"
+        /// </summary>
+        public static string PassportAddTemporaryRegistration
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddTemporaryRegistration");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of your temporary registration."
+        /// </summary>
+        public static string PassportAddTemporaryRegistrationInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddTemporaryRegistrationInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Address"
+        /// </summary>
+        public static string PassportAddress
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Address"
+        /// </summary>
+        public static string PassportAddressHeader
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddressHeader");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload proof of your address"
+        /// </summary>
+        public static string PassportAddressInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddressInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please provide your address"
+        /// </summary>
+        public static string PassportAddressNoUploadInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAddressNoUploadInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "AUTHORIZE"
+        /// </summary>
+        public static string PassportAuthorize
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportAuthorize");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Date of Birth"
+        /// </summary>
+        public static string PassportBirthdate
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportBirthdate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Citizenship"
+        /// </summary>
+        public static string PassportCitizenship
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportCitizenship");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "City"
+        /// </summary>
+        public static string PassportCity
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportCity");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Country"
+        /// </summary>
+        public static string PassportCountry
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportCountry");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete address details?"
+        /// </summary>
+        public static string PassportDeleteAddressAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeleteAddressAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete Document"
+        /// </summary>
+        public static string PassportDeleteDocument
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeleteDocument");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete address details"
+        /// </summary>
+        public static string PassportDeleteDocumentAddress
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeleteDocumentAddress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete this document?"
+        /// </summary>
+        public static string PassportDeleteDocumentAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeleteDocumentAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete personal details"
+        /// </summary>
+        public static string PassportDeleteDocumentPersonal
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeleteDocumentPersonal");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete email?"
+        /// </summary>
+        public static string PassportDeleteEmailAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeleteEmailAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete"
+        /// </summary>
+        public static string PassportDeleteInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeleteInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete personal details?"
+        /// </summary>
+        public static string PassportDeletePersonalAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeletePersonalAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete phone number?"
+        /// </summary>
+        public static string PassportDeletePhoneAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeletePhoneAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete scan?"
+        /// </summary>
+        public static string PassportDeleteScan
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeleteScan");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete this scan?"
+        /// </summary>
+        public static string PassportDeleteScanAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeleteScanAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete selfie?"
+        /// </summary>
+        public static string PassportDeleteSelfie
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeleteSelfie");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete this selfie?"
+        /// </summary>
+        public static string PassportDeleteSelfieAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDeleteSelfieAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Discard"
+        /// </summary>
+        public static string PassportDiscard
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDiscard");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to discard all information you've entered?"
+        /// </summary>
+        public static string PassportDiscardChanges
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDiscardChanges");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Document Details"
+        /// </summary>
+        public static string PassportDocumentDetails
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDocumentDetails");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Document Number"
+        /// </summary>
+        public static string PassportDocumentNumber
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDocumentNumber");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scans"
+        /// </summary>
+        public static string PassportDocuments
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportDocuments");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Email"
+        /// </summary>
+        public static string PassportEmail
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportEmail");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Code"
+        /// </summary>
+        public static string PassportEmailCode
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportEmailCode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter your email address"
+        /// </summary>
+        public static string PassportEmailInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportEmailInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Note: You will receive a confirmation code on the email address you provide."
+        /// </summary>
+        public static string PassportEmailUploadInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportEmailUploadInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter the confirmation code we've just sent to {0}."
+        /// </summary>
+        public static string PassportEmailVerifyInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportEmailVerifyInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Expires"
+        /// </summary>
+        public static string PassportExpired
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportExpired");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Female"
+        /// </summary>
+        public static string PassportFemale
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportFemale");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Front Side"
+        /// </summary>
+        public static string PassportFrontSide
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportFrontSide");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a photo of the front side of the document"
+        /// </summary>
+        public static string PassportFrontSideInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportFrontSideInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Gender"
+        /// </summary>
+        public static string PassportGender
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportGender");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Identity Document"
+        /// </summary>
+        public static string PassportIdentityDocument
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportIdentityDocument");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a scan of your passport or other ID"
+        /// </summary>
+        public static string PassportIdentityDocumentInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportIdentityDocumentInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "With Telegram Passport you can easily sign up for websites and services that require identity verification.
+        ///
+        ///Your information, personal data, and documents are protected by end-to-end encryption. Nobody, including Telegram, can access them without your permission.
+        ///
+        ///You can visit our FAQ to learn more."
+        /// </summary>
+        public static string PassportInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "What is Telegram Passport?"
+        /// </summary>
+        public static string PassportInfoTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportInfoTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Issued"
+        /// </summary>
+        public static string PassportIssued
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportIssued");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Main Page"
+        /// </summary>
+        public static string PassportMainPage
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportMainPage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a photo of the main page of the document"
+        /// </summary>
+        public static string PassportMainPageInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportMainPageInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Male"
+        /// </summary>
+        public static string PassportMale
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportMale");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Name"
+        /// </summary>
+        public static string PassportName
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportName");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have no documents yet"
+        /// </summary>
+        public static string PassportNoDocuments
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportNoDocuments");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add a Document"
+        /// </summary>
+        public static string PassportNoDocumentsAdd
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportNoDocumentsAdd");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can add your phone number, email address, identity document or residential address."
+        /// </summary>
+        public static string PassportNoDocumentsInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportNoDocumentsInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "None"
+        /// </summary>
+        public static string PassportNoExpireDate
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportNoExpireDate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are sending your documents directly to {0} and allowing their @{1} to send you messages."
+        /// </summary>
+        public static string PassportNoPolicy
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportNoPolicy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Personal Details"
+        /// </summary>
+        public static string PassportPersonal
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPersonal");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Personal Details"
+        /// </summary>
+        public static string PassportPersonalDetails
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPersonalDetails");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Fill in your personal details"
+        /// </summary>
+        public static string PassportPersonalDetailsInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPersonalDetailsInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The document must contain your photograph, first and last name, date of birth, document number, country of issue, and expiry date."
+        /// </summary>
+        public static string PassportPersonalUploadInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPersonalUploadInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Phone Number"
+        /// </summary>
+        public static string PassportPhone
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPhone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter your phone number"
+        /// </summary>
+        public static string PassportPhoneInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPhoneInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Note: You will receive a confirmation code on the phone number you provide."
+        /// </summary>
+        public static string PassportPhoneUploadInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPhoneUploadInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Or enter a new phone number"
+        /// </summary>
+        public static string PassportPhoneUseOther
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPhoneUseOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use {0}"
+        /// </summary>
+        public static string PassportPhoneUseSame
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPhoneUseSame");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use the same email as on Telegram."
+        /// </summary>
+        public static string PassportPhoneUseSameEmailInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPhoneUseSameEmailInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Use the same phone number as on Telegram."
+        /// </summary>
+        public static string PassportPhoneUseSameInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPhoneUseSameInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You accept the *{0} Privacy Policy* and allow their @{1} to send you messages."
+        /// </summary>
+        public static string PassportPolicy
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPolicy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Postcode"
+        /// </summary>
+        public static string PassportPostcode
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportPostcode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Provided Information"
+        /// </summary>
+        public static string PassportProvidedInformation
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportProvidedInformation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} requests access to your personal data to sign you up for their services."
+        /// </summary>
+        public static string PassportRequest
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportRequest");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter your Telegram Password to decrypt your data."
+        /// </summary>
+        public static string PassportRequestPasswordInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportRequestPasswordInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Requested Information"
+        /// </summary>
+        public static string PassportRequestedInformation
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportRequestedInformation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Required Documents"
+        /// </summary>
+        public static string PassportRequiredDocuments
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportRequiredDocuments");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Residence"
+        /// </summary>
+        public static string PassportResidence
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportResidence");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Residential Address"
+        /// </summary>
+        public static string PassportResidentialAddress
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportResidentialAddress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reverse Side"
+        /// </summary>
+        public static string PassportReverseSide
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportReverseSide");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a photo of the reverse side of the document"
+        /// </summary>
+        public static string PassportReverseSideInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportReverseSideInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan Your Passport"
+        /// </summary>
+        public static string PassportScanPassport
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportScanPassport");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan your passport or identity card with machine-readable zone to fill personal details automatically."
+        /// </summary>
+        public static string PassportScanPassportInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportScanPassportInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select Date of Birth"
+        /// </summary>
+        public static string PassportSelectBithdayDate
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSelectBithdayDate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select Expiry Date"
+        /// </summary>
+        public static string PassportSelectExpiredDate
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSelectExpiredDate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select Gender"
+        /// </summary>
+        public static string PassportSelectGender
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSelectGender");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Does not Expire"
+        /// </summary>
+        public static string PassportSelectNotExpire
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSelectNotExpire");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enter your password to access your personal data."
+        /// </summary>
+        public static string PassportSelfRequest
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSelfRequest");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Selfie"
+        /// </summary>
+        public static string PassportSelfie
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSelfie");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload a selfie of yourself holding the document"
+        /// </summary>
+        public static string PassportSelfieInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSelfieInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "State/Region"
+        /// </summary>
+        public static string PassportState
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportState");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Street"
+        /// </summary>
+        public static string PassportStreet1
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportStreet1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Street"
+        /// </summary>
+        public static string PassportStreet2
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportStreet2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Surname"
+        /// </summary>
+        public static string PassportSurname
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSurname");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload Additional Scans"
+        /// </summary>
+        public static string PassportUploadAdditinalDocument
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportUploadAdditinalDocument");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Upload Scans"
+        /// </summary>
+        public static string PassportUploadDocument
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportUploadDocument");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can't upload more than {0} files."
+        /// </summary>
+        public static string PassportUploadMaxReached
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportUploadMaxReached");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can upload only image files."
+        /// </summary>
+        public static string PassportUploadNotImage
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportUploadNotImage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please use latin characters only."
+        /// </summary>
+        public static string PassportUseLatinOnly
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportUseLatinOnly");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Hint must be different from your password"
         /// </summary>
         public static string PasswordAsHintError
@@ -14522,7 +16167,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "To let you connect with friends across all your devices, your contacts will be continuously synced with Telegram's heavily encrypted cloud servers."
+        /// Localized resource similar to "Telegram needs access to your contacts so that you can connect with your friends across all your devices."
         /// </summary>
         public static string PermissionContacts
         {
@@ -15224,6 +16869,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PrivacyPolicy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Privacy Policy and Terms of Service"
+        /// </summary>
+        public static string PrivacyPolicyAndTerms
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyPolicyAndTerms");
             }
         }
         
@@ -15947,6 +17603,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to reset all notification settings to default?"
+        /// </summary>
+        public static string ResetNotificationsAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsAlert");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Reset all notification settings to default"
         /// </summary>
         public static string ResetNotificationsText
@@ -16044,6 +17711,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RestorePasswordNoEmailTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "RESET ACCOUNT"
+        /// </summary>
+        public static string RestorePasswordResetAccount
+        {
+            get
+            {
+                return resourceLoader.GetString("RestorePasswordResetAccount");
             }
         }
         
@@ -16644,6 +18322,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SecurityTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select Account"
+        /// </summary>
+        public static string SelectAccount
+        {
+            get
+            {
+                return resourceLoader.GetString("SelectAccount");
             }
         }
         
@@ -17530,6 +19219,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Sign Up"
+        /// </summary>
+        public static string SignUp
+        {
+            get
+            {
+                return resourceLoader.GetString("SignUp");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Show media as separate messages"
         /// </summary>
         public static string SinglePhotosHelp
@@ -18003,6 +19703,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Suggest Frequent Contacts"
+        /// </summary>
+        public static string SuggestContacts
+        {
+            get
+            {
+                return resourceLoader.GetString("SuggestContacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will delete all data about the people you message frequently as well the inline bots you are likely to use."
+        /// </summary>
+        public static string SuggestContactsAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("SuggestContactsAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Display people you message frequently at the top of the search section for quick access."
+        /// </summary>
+        public static string SuggestContactsInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("SuggestContactsInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Suggest stickers by emoji"
         /// </summary>
         public static string SuggestStickers
@@ -18252,6 +19985,63 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TelegramFaqUrl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram Passport"
+        /// </summary>
+        public static string TelegramPassport
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPassport");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "CREATE A PASSWORD"
+        /// </summary>
+        public static string TelegramPassportCreatePassword
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPassportCreatePassword");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please create a password to secure your personal data with end-to-end encryption.
+        ///
+        ///This password will also be required whenever you log in to Telegram on a new device."
+        /// </summary>
+        public static string TelegramPassportCreatePasswordInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPassportCreatePasswordInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete Passport"
+        /// </summary>
+        public static string TelegramPassportDelete
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPassportDelete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete your Telegram Passport?"
+        /// </summary>
+        public static string TelegramPassportDeleteAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPassportDeleteAlert");
             }
         }
         
@@ -18565,6 +20355,69 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Tap Agree to confirm that you are {0} or over."
+        /// </summary>
+        public static string TosAgeText
+        {
+            get
+            {
+                return resourceLoader.GetString("TosAgeText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Age Verification"
+        /// </summary>
+        public static string TosAgeTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TosAgeTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We're very sorry, but this means you can't sign up for Telegram.
+        ///
+        ///Unlike others, we don't use your data for ad targeting or other commercial purposes. Telegram only stores the information it needs to function as a feature-rich cloud service. You can adjust how we use your data (e.g., delete synced contacts) in Privacy & Security settings.
+        ///
+        ///But if you're generally not OK with Telegram's modest needs, it won't be possible for us to provide this service."
+        /// </summary>
+        public static string TosDecline
+        {
+            get
+            {
+                return resourceLoader.GetString("TosDecline");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Warning, this will irreversibly delete your Telegram account along with all the data you store in the Telegram cloud.
+        ///
+        ///Important: You can Cancel now and export your data before deleting your account instead losing it all. (To do this, open the latest version of Telegram Desktop and go to Settings > Export Telegram Data.)"
+        /// </summary>
+        public static string TosDeclineDeleteAccount
+        {
+            get
+            {
+                return resourceLoader.GetString("TosDeclineDeleteAccount");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We're very sorry, but this means we must part ways here. Unlike others, we don't use your data for ad targeting or other commercial purposes. Telegram only stores the information it needs to function as a feature-rich cloud service. You can adjust how we use your data (e.g., delete synced contacts) in Privacy & Security settings.
+        ///
+        ///But if you're generally not OK with Telegram's modest needs, it won't be possible for us to provide this service. You can deactivate your account now — or look around some more and deactivate it later if you feel you're not happy with the way we use your data."
+        /// </summary>
+        public static string TosUpdateDecline
+        {
+            get
+            {
+                return resourceLoader.GetString("TosUpdateDecline");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Total"
         /// </summary>
         public static string TotalDataUsage
@@ -18583,6 +20436,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TurnPasswordOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Warning! All data saved in your Telegram Passport will be lost!"
+        /// </summary>
+        public static string TurnPasswordOffPassport
+        {
+            get
+            {
+                return resourceLoader.GetString("TurnPasswordOffPassport");
             }
         }
         
@@ -18627,6 +20491,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Typing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "URL"
+        /// </summary>
+        public static string URL
+        {
+            get
+            {
+                return resourceLoader.GetString("URL");
             }
         }
         
@@ -18807,6 +20682,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Update app"
+        /// </summary>
+        public static string UpdateApp
+        {
+            get
+            {
+                return resourceLoader.GetString("UpdateApp");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, your Telegram app is out of date and can’t handle this request. Please update Telegram."
+        /// </summary>
+        public static string UpdateAppAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("UpdateAppAlert");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Telegram has detected many unsynced contacts, would you like to sync them now? Choose 'OK' if you're using your own device, SIM card and Google account."
         /// </summary>
         public static string UpdateContactsMessage
@@ -18917,6 +20814,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Upload {0}"
+        /// </summary>
+        public static string UploadItems
+        {
+            get
+            {
+                return resourceLoader.GetString("UploadItems");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "USB transfer active"
         /// </summary>
         public static string UsbActive
@@ -18994,7 +20902,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "SOCKS5 proxy settings"
+        /// Localized resource similar to "SOCKS5 proxy settings."
         /// </summary>
         public static string UseProxyInfo
         {
@@ -19038,7 +20946,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Use proxy settings"
+        /// Localized resource similar to "Use Proxy"
         /// </summary>
         public static string UseProxySettings
         {
@@ -19631,6 +21539,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VideoMessagesAutodownload");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "VIEW CONTACT"
+        /// </summary>
+        public static string ViewContact
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "VIEW CONTACT"
+        /// </summary>
+        public static string ViewDetails
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewDetails");
             }
         }
         
@@ -20526,6 +22456,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Your contacts on Telegram"
+        /// </summary>
+        public static string YourContacts
+        {
+            get
+            {
+                return resourceLoader.GetString("YourContacts");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Your E-Mail"
         /// </summary>
         public static string YourEmail
@@ -20660,6 +22601,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Cancel"
+        /// </summary>
+        public static string TgCancel
+        {
+            get
+            {
+                return resourceLoader.GetString("TgCancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open Google Play"
+        /// </summary>
+        public static string TgOpenGooglePlay
+        {
+            get
+            {
+                return resourceLoader.GetString("TgOpenGooglePlay");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "MMMM d"
         /// </summary>
         public static string ChatDate
@@ -20678,6 +22641,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChatFullDate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You need Telegram to log in to **{0}**. Would you like to install it now?"
+        /// </summary>
+        public static string DownloadTelegramText
+        {
+            get
+            {
+                return resourceLoader.GetString("DownloadTelegramText");
             }
         }
         
@@ -20902,6 +22876,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Log in with Telegram"
+        /// </summary>
+        public static string LoginWithTelegram
+        {
+            get
+            {
+                return resourceLoader.GetString("LoginWithTelegram");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string MessagesZero
@@ -20964,164 +22949,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessagesOther");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Accept"
-        /// </summary>
-        public static string Accept
-        {
-            get
-            {
-                return resourceLoader.GetString("Accept");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Agree"
-        /// </summary>
-        public static string Agree
-        {
-            get
-            {
-                return resourceLoader.GetString("Agree");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Back"
-        /// </summary>
-        public static string Back
-        {
-            get
-            {
-                return resourceLoader.GetString("Back");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "DELETE NOW"
-        /// </summary>
-        public static string Deactivate
-        {
-            get
-            {
-                return resourceLoader.GetString("Deactivate");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Decline"
-        /// </summary>
-        public static string Decline
-        {
-            get
-            {
-                return resourceLoader.GetString("Decline");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Decline & Deactivate"
-        /// </summary>
-        public static string DeclineDeactivate
-        {
-            get
-            {
-                return resourceLoader.GetString("DeclineDeactivate");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Privacy Policy and Terms of Service"
-        /// </summary>
-        public static string PrivacyPolicyAndTerms
-        {
-            get
-            {
-                return resourceLoader.GetString("PrivacyPolicyAndTerms");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Tap Agree to confirm that you are {0} or over."
-        /// </summary>
-        public static string TosAgeText
-        {
-            get
-            {
-                return resourceLoader.GetString("TosAgeText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Age Verification"
-        /// </summary>
-        public static string TosAgeTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("TosAgeTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Warning, this will irreversibly delete your Telegram account along with all the data you store in the Telegram cloud.
-        ///
-        ///We will provide a tool to download your data before June, 23 – so you may want to wait a little before deleting."
-        /// </summary>
-        public static string TosDeclineDeleteAccount
-        {
-            get
-            {
-                return resourceLoader.GetString("TosDeclineDeleteAccount");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "We're very sorry, but this means we must part ways here. Unlike others, we don't use your data for ad targeting or other commercial purposes. Telegram only stores the information it needs to function as a feature-rich cloud service. You can adjust how we use your data (e.g., delete synced contacts) in Privacy & Security settings.
-        ///
-        ///But if you're generally not OK with Telegram's modest needs, it won't be possible for us to provide this service. You can deactivate your account now — or look around some more and deactivate it later if you feel you're not happy with the way we use your data. How does that sound?"
-        /// </summary>
-        public static string TosUpdateDecline
-        {
-            get
-            {
-                return resourceLoader.GetString("TosUpdateDecline");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "SignUp"
-        /// </summary>
-        public static string SignUp
-        {
-            get
-            {
-                return resourceLoader.GetString("SignUp");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Mark as read"
-        /// </summary>
-        public static string MarkAsRead
-        {
-            get
-            {
-                return resourceLoader.GetString("MarkAsRead");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Mark as unread"
-        /// </summary>
-        public static string MarkAsUnread
-        {
-            get
-            {
-                return resourceLoader.GetString("MarkAsUnread");
             }
         }
     }

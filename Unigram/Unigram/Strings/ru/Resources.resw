@@ -64,6 +64,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>Отменить настройку двухэтапной аутентификации</value>
   </data>
+  <data name="Accept" xml:space="preserve">
+    <value>Принять</value>
+  </data>
   <data name="AccessError" xml:space="preserve">
     <value>Ошибка доступа</value>
   </data>
@@ -96,6 +99,48 @@
   </data>
   <data name="ActionBotAllowed" xml:space="preserve">
     <value>Вы разрешили этому боту писать вам, когда авторизовались на {0}.</value>
+  </data>
+  <data name="ActionBotDocumentAddress" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
+  <data name="ActionBotDocumentBankStatement" xml:space="preserve">
+    <value>Справка из банка</value>
+  </data>
+  <data name="ActionBotDocumentDriverLicence" xml:space="preserve">
+    <value>Водительские права</value>
+  </data>
+  <data name="ActionBotDocumentEmail" xml:space="preserve">
+    <value>Электронная почта</value>
+  </data>
+  <data name="ActionBotDocumentIdentity" xml:space="preserve">
+    <value>Личная информация</value>
+  </data>
+  <data name="ActionBotDocumentIdentityCard" xml:space="preserve">
+    <value>Удостоверение личности</value>
+  </data>
+  <data name="ActionBotDocumentInternalPassport" xml:space="preserve">
+    <value>Внутренний паспорт</value>
+  </data>
+  <data name="ActionBotDocumentPassport" xml:space="preserve">
+    <value>Паспорт</value>
+  </data>
+  <data name="ActionBotDocumentPassportRegistration" xml:space="preserve">
+    <value>Прописка</value>
+  </data>
+  <data name="ActionBotDocumentPhone" xml:space="preserve">
+    <value>Номер телефона</value>
+  </data>
+  <data name="ActionBotDocumentRentalAgreement" xml:space="preserve">
+    <value>Договор об аренде</value>
+  </data>
+  <data name="ActionBotDocumentTemporaryRegistration" xml:space="preserve">
+    <value>Временная прописка</value>
+  </data>
+  <data name="ActionBotDocumentUtilityBill" xml:space="preserve">
+    <value>Коммунальный счёт</value>
+  </data>
+  <data name="ActionBotDocuments" xml:space="preserve">
+    <value>{0} получил следующие документы: {1}</value>
   </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>un1 изменил(а) фото группы</value>
@@ -292,6 +337,9 @@
   <data name="AddToContacts" xml:space="preserve">
     <value>Добавить в контакты</value>
   </data>
+  <data name="AddToExistingContact" xml:space="preserve">
+    <value>Добавить в имеющийся</value>
+  </data>
   <data name="AddToFavorites" xml:space="preserve">
     <value>Добавить в избранные</value>
   </data>
@@ -312,6 +360,9 @@
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Стикер добавлен в избранные</value>
+  </data>
+  <data name="Agree" xml:space="preserve">
+    <value>Принять</value>
   </data>
   <data name="Alert" xml:space="preserve">
     <value>Сигнал</value>
@@ -558,6 +609,12 @@
   </data>
   <data name="AttachContact" xml:space="preserve">
     <value>Контакт</value>
+  </data>
+  <data name="AttachDestructingPhoto" xml:space="preserve">
+    <value>Самоуничтожающееся фото</value>
+  </data>
+  <data name="AttachDestructingVideo" xml:space="preserve">
+    <value>Самоуничтожающееся видео</value>
   </data>
   <data name="AttachDocument" xml:space="preserve">
     <value>Файл</value>
@@ -896,6 +953,9 @@
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>Отмена регистрации</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>Отменить отправку</value>
   </data>
   <data name="CantPlayVideo" xml:space="preserve">
     <value>Не удалось воспроизвести видео в приложении. Попробовать сторонний видеоплеер?</value>
@@ -1444,17 +1504,26 @@
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
     <value>Нажмите для отключения прокси...</value>
   </data>
+  <data name="ContactJob" xml:space="preserve">
+    <value>Работа</value>
+  </data>
+  <data name="ContactJobTitle" xml:space="preserve">
+    <value>Должность</value>
+  </data>
   <data name="ContactJoined" xml:space="preserve">
     <value>Контакт присоединился к Telegram</value>
   </data>
   <data name="ContactNotRegistered" xml:space="preserve">
     <value>{0} пока нет в Telegram, хотите пригласить присоединиться?</value>
   </data>
+  <data name="ContactShare" xml:space="preserve">
+    <value>Отправить контакт</value>
+  </data>
   <data name="Contacts" xml:space="preserve">
     <value>Контакты</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>Telegram требуется доступ к вашим контактам, чтобы вы могли оставаться на связи с друзьями с любого устройства. Актуальная информация о ваших контактах будет храниться зашифрованной в облаке Telegram.</value>
+    <value>**Telegram** требуется доступ к вашим контактам, чтобы вы могли оставаться на связи с друзьями с любого устройства. Актуальная информация о ваших контактах будет храниться зашифрованной в облаке Telegram.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>ПРОДОЛЖИТЬ</value>
@@ -1522,6 +1591,9 @@
   </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>Вы не можете создать группу с этими пользователями из-за их настроек приватности.</value>
+  </data>
+  <data name="CreateLink" xml:space="preserve">
+    <value>Добавить ссылку</value>
   </data>
   <data name="CreateNewTheme" xml:space="preserve">
     <value>Создать новую тему</value>
@@ -1625,6 +1697,9 @@
   <data name="DaysBoldOther" xml:space="preserve">
     <value><![CDATA[<b>{0}</b>]]> д.</value>
   </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Удалить сейчас</value>
+  </data>
   <data name="DebugClearLogs" xml:space="preserve">
     <value>Очистить лог</value>
   </data>
@@ -1660,6 +1735,12 @@
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Отправить лог</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Отклонить</value>
+  </data>
+  <data name="DeclineDeactivate" xml:space="preserve">
+    <value>Отклонить и удалить</value>
   </data>
   <data name="Default" xml:space="preserve">
     <value>По умолчанию</value>
@@ -1853,14 +1934,23 @@
   <data name="EditAdminWhatCanDo" xml:space="preserve">
     <value>Этому администратору разрешено:</value>
   </data>
+  <data name="EditCaption" xml:space="preserve">
+    <value>Изменить подпись</value>
+  </data>
   <data name="EditContact" xml:space="preserve">
     <value>Изменить</value>
   </data>
   <data name="EditImage" xml:space="preserve">
     <value>Редактировать изображение</value>
   </data>
+  <data name="EditMessage" xml:space="preserve">
+    <value>Редактировать сообщение</value>
+  </data>
   <data name="EditMessageError" xml:space="preserve">
     <value>К сожалению, Вы не можете изменить сообщение.</value>
+  </data>
+  <data name="EditMessageMedia" xml:space="preserve">
+    <value>Изменить медиа</value>
   </data>
   <data name="EditName" xml:space="preserve">
     <value>Изменить имя</value>
@@ -2051,6 +2141,12 @@
   </data>
   <data name="EventLogEditedGroupTitle" xml:space="preserve">
     <value>un1 переименовал(а) группу в «{0}»</value>
+  </data>
+  <data name="EventLogEditedMedia" xml:space="preserve">
+    <value>un1 отредактировал(а) медиа:</value>
+  </data>
+  <data name="EventLogEditedMediaCaption" xml:space="preserve">
+    <value>un1 отредактировал(а) медиа и подпись:</value>
   </data>
   <data name="EventLogEditedMessages" xml:space="preserve">
     <value>un1 отредактировал(а) сообщение:</value>
@@ -2315,6 +2411,24 @@
   </data>
   <data name="FileUploadLimit" xml:space="preserve">
     <value>Размер файла не может превышать {0}</value>
+  </data>
+  <data name="FilesZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesOne" xml:space="preserve">
+    <value>{0} файл</value>
+  </data>
+  <data name="FilesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesFew" xml:space="preserve">
+    <value>{0} файла</value>
+  </data>
+  <data name="FilesMany" xml:space="preserve">
+    <value>{0} файлов</value>
+  </data>
+  <data name="FilesOther" xml:space="preserve">
+    <value>{0} файлов</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Файлы</value>
@@ -3157,6 +3271,12 @@
   <data name="Map" xml:space="preserve">
     <value>Карта</value>
   </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>Пометить прочитанным</value>
+  </data>
+  <data name="MarkAsUnread" xml:space="preserve">
+    <value>Пометить как непрочитанное</value>
+  </data>
   <data name="Masks" xml:space="preserve">
     <value>Маски</value>
   </data>
@@ -3456,6 +3576,11 @@
   </data>
   <data name="NoChats" xml:space="preserve">
     <value>Чатов пока нет...</value>
+  </data>
+  <data name="NoChatsContactsHelp" xml:space="preserve">
+    <value>Чтобы начать общаться,
+нажмите на значок нового чата в правом нижнем
+углу или на кнопку меню.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
     <value>Чтобы начать общаться,
@@ -4086,6 +4211,328 @@
   <data name="PasscodePassword" xml:space="preserve">
     <value>Пароль</value>
   </data>
+  <data name="PassportAddAddressUploadInfo" xml:space="preserve">
+    <value>Чтобы подтвердить адрес, загрузите скан или фотографию выбранного документа (все страницы).</value>
+  </data>
+  <data name="PassportAddAgreement" xml:space="preserve">
+    <value>Добавить договор об аренде</value>
+  </data>
+  <data name="PassportAddAgreementInfo" xml:space="preserve">
+    <value>Загрузите скан договора об аренде.</value>
+  </data>
+  <data name="PassportAddBank" xml:space="preserve">
+    <value>Добавить справку из банка</value>
+  </data>
+  <data name="PassportAddBankInfo" xml:space="preserve">
+    <value>Загрузите скан справки из банка</value>
+  </data>
+  <data name="PassportAddBill" xml:space="preserve">
+    <value>Добавить коммунальный счёт</value>
+  </data>
+  <data name="PassportAddBillInfo" xml:space="preserve">
+    <value>Загрузите скан коммунального платежа.</value>
+  </data>
+  <data name="PassportAddCard" xml:space="preserve">
+    <value>Добавить удостоверение личности</value>
+  </data>
+  <data name="PassportAddInternalPassport" xml:space="preserve">
+    <value>Добавить внутренний паспорт</value>
+  </data>
+  <data name="PassportAddLicence" xml:space="preserve">
+    <value>Добавить водительские права</value>
+  </data>
+  <data name="PassportAddPassport" xml:space="preserve">
+    <value>Добавить паспорт</value>
+  </data>
+  <data name="PassportAddPassportRegistration" xml:space="preserve">
+    <value>Прописка</value>
+  </data>
+  <data name="PassportAddPassportRegistrationInfo" xml:space="preserve">
+    <value>Загрузите скан страницы паспорта с пропиской</value>
+  </data>
+  <data name="PassportAddTemporaryRegistration" xml:space="preserve">
+    <value>Временная прописка</value>
+  </data>
+  <data name="PassportAddTemporaryRegistrationInfo" xml:space="preserve">
+    <value>Загрузитe скан временной прописки.</value>
+  </data>
+  <data name="PassportAddress" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
+  <data name="PassportAddressHeader" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
+  <data name="PassportAddressInfo" xml:space="preserve">
+    <value>Загрузите подтверждение адреса</value>
+  </data>
+  <data name="PassportAddressNoUploadInfo" xml:space="preserve">
+    <value>Укажите свой адрес</value>
+  </data>
+  <data name="PassportAuthorize" xml:space="preserve">
+    <value>Авторизоваться</value>
+  </data>
+  <data name="PassportBirthdate" xml:space="preserve">
+    <value>Дата рождения</value>
+  </data>
+  <data name="PassportCitizenship" xml:space="preserve">
+    <value>Гражданство</value>
+  </data>
+  <data name="PassportCity" xml:space="preserve">
+    <value>Город</value>
+  </data>
+  <data name="PassportCountry" xml:space="preserve">
+    <value>Страна</value>
+  </data>
+  <data name="PassportDeleteAddressAlert" xml:space="preserve">
+    <value>Вы точно хотите удалить данные об адресе?</value>
+  </data>
+  <data name="PassportDeleteDocument" xml:space="preserve">
+    <value>Удалить документ</value>
+  </data>
+  <data name="PassportDeleteDocumentAddress" xml:space="preserve">
+    <value>Удалить данные об адресе</value>
+  </data>
+  <data name="PassportDeleteDocumentAlert" xml:space="preserve">
+    <value>Вы точно хотите удалить этот документ?</value>
+  </data>
+  <data name="PassportDeleteDocumentPersonal" xml:space="preserve">
+    <value>Удалить личную информацию</value>
+  </data>
+  <data name="PassportDeleteEmailAlert" xml:space="preserve">
+    <value>Удалить почту?</value>
+  </data>
+  <data name="PassportDeleteInfo" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="PassportDeletePersonalAlert" xml:space="preserve">
+    <value>Вы точно хотите удалить личную информацию?</value>
+  </data>
+  <data name="PassportDeletePhoneAlert" xml:space="preserve">
+    <value>Удалить номер телефона?</value>
+  </data>
+  <data name="PassportDeleteScan" xml:space="preserve">
+    <value>Удалить скан?</value>
+  </data>
+  <data name="PassportDeleteScanAlert" xml:space="preserve">
+    <value>Вы точно хотите удалить этот скан?</value>
+  </data>
+  <data name="PassportDeleteSelfie" xml:space="preserve">
+    <value>Удалить селфи?</value>
+  </data>
+  <data name="PassportDeleteSelfieAlert" xml:space="preserve">
+    <value>Вы точно хотите удалить это селфи?</value>
+  </data>
+  <data name="PassportDiscard" xml:space="preserve">
+    <value>Отменить</value>
+  </data>
+  <data name="PassportDiscardChanges" xml:space="preserve">
+    <value>Вы точно хотите отменить всю введённую информацию?</value>
+  </data>
+  <data name="PassportDocumentDetails" xml:space="preserve">
+    <value>Данные о документе</value>
+  </data>
+  <data name="PassportDocumentNumber" xml:space="preserve">
+    <value>Номер документа</value>
+  </data>
+  <data name="PassportDocuments" xml:space="preserve">
+    <value>Сканы</value>
+  </data>
+  <data name="PassportEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="PassportEmailCode" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="PassportEmailInfo" xml:space="preserve">
+    <value>Укажите свой адрес электронной почты</value>
+  </data>
+  <data name="PassportEmailUploadInfo" xml:space="preserve">
+    <value>Обратите внимание: на указанную вами электронную почту придет код подтверждения.</value>
+  </data>
+  <data name="PassportEmailVerifyInfo" xml:space="preserve">
+    <value>Введите код подтверждения, который был только что отправлен на {0}.</value>
+  </data>
+  <data name="PassportExpired" xml:space="preserve">
+    <value>Срок действия</value>
+  </data>
+  <data name="PassportFemale" xml:space="preserve">
+    <value>Женский</value>
+  </data>
+  <data name="PassportFrontSide" xml:space="preserve">
+    <value>Лицевая сторона</value>
+  </data>
+  <data name="PassportFrontSideInfo" xml:space="preserve">
+    <value>Загрузить фотографию лицевой стороны документа</value>
+  </data>
+  <data name="PassportGender" xml:space="preserve">
+    <value>Пол</value>
+  </data>
+  <data name="PassportIdentityDocument" xml:space="preserve">
+    <value>Удостоверение личности</value>
+  </data>
+  <data name="PassportIdentityDocumentInfo" xml:space="preserve">
+    <value>Загрузить скан паспорта или другого удостоверения личности</value>
+  </data>
+  <data name="PassportInfo" xml:space="preserve">
+    <value>С помощью Telegram Passport можно зарегистрироваться на сайтах и сервисах, где требуется идентификация личности.
+
+Ваша информация, персональные данные и документы защищены оконечным шифрованием (end-to-end). Никто, включая Telegram, не сможет получить к ним доступ без Вашего согласия.
+
+Почитать об этом подробнее можно в нашем FAQ.</value>
+  </data>
+  <data name="PassportInfoTitle" xml:space="preserve">
+    <value>Что такое Telegram Passport?</value>
+  </data>
+  <data name="PassportIssued" xml:space="preserve">
+    <value>Выдан</value>
+  </data>
+  <data name="PassportMainPage" xml:space="preserve">
+    <value>Главная страница</value>
+  </data>
+  <data name="PassportMainPageInfo" xml:space="preserve">
+    <value>Загрузить фотографию главной страницы документа</value>
+  </data>
+  <data name="PassportMale" xml:space="preserve">
+    <value>Мужской</value>
+  </data>
+  <data name="PassportName" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="PassportNoDocuments" xml:space="preserve">
+    <value>У вас пока нет документов</value>
+  </data>
+  <data name="PassportNoDocumentsAdd" xml:space="preserve">
+    <value>Добавить документ</value>
+  </data>
+  <data name="PassportNoDocumentsInfo" xml:space="preserve">
+    <value>Вы можете добавить свой номер телефона, email, удостоверение личности или адрес проживания.</value>
+  </data>
+  <data name="PassportNoExpireDate" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="PassportNoPolicy" xml:space="preserve">
+    <value>Вы отправите документы напрямую {0} и разрешите их боту @{1} писать вам сообщения.</value>
+  </data>
+  <data name="PassportPersonal" xml:space="preserve">
+    <value>Личная информация</value>
+  </data>
+  <data name="PassportPersonalDetails" xml:space="preserve">
+    <value>Личная информация</value>
+  </data>
+  <data name="PassportPersonalDetailsInfo" xml:space="preserve">
+    <value>Заполните личную информацию</value>
+  </data>
+  <data name="PassportPersonalUploadInfo" xml:space="preserve">
+    <value>В документе должны быть ваша фотография, имя и фамилия, дата рождения, номер документа, страна получения и срок действия.</value>
+  </data>
+  <data name="PassportPhone" xml:space="preserve">
+    <value>Номер телефона</value>
+  </data>
+  <data name="PassportPhoneInfo" xml:space="preserve">
+    <value>Укажите свой номер телефона</value>
+  </data>
+  <data name="PassportPhoneUploadInfo" xml:space="preserve">
+    <value>Обратите внимание: на указанный вами номер телефона придет код подтверждения.</value>
+  </data>
+  <data name="PassportPhoneUseOther" xml:space="preserve">
+    <value>Или введите другой номер телефона</value>
+  </data>
+  <data name="PassportPhoneUseSame" xml:space="preserve">
+    <value>Использовать {0}</value>
+  </data>
+  <data name="PassportPhoneUseSameEmailInfo" xml:space="preserve">
+    <value>Используйте тот же адрес электронной почты, что и в Telegram.</value>
+  </data>
+  <data name="PassportPhoneUseSameInfo" xml:space="preserve">
+    <value>Используйте тот же номер телефона, что и в Telegram.</value>
+  </data>
+  <data name="PassportPolicy" xml:space="preserve">
+    <value>Вы принимаете *Политику конфиденциальности {0}* и разрешаете их боту @{1} писать вам сообщения.</value>
+  </data>
+  <data name="PassportPostcode" xml:space="preserve">
+    <value>Индекс</value>
+  </data>
+  <data name="PassportProvidedInformation" xml:space="preserve">
+    <value>Предоставленная информация</value>
+  </data>
+  <data name="PassportRequest" xml:space="preserve">
+    <value>Для регистрации {0} запрашивает доступ к вашей личной информации.</value>
+  </data>
+  <data name="PassportRequestPasswordInfo" xml:space="preserve">
+    <value>Для расшифровки данных введите свой пароль от Telegram.</value>
+  </data>
+  <data name="PassportRequestedInformation" xml:space="preserve">
+    <value>Требуемая информация</value>
+  </data>
+  <data name="PassportRequiredDocuments" xml:space="preserve">
+    <value>Необходимые документы</value>
+  </data>
+  <data name="PassportResidence" xml:space="preserve">
+    <value>Местожительство</value>
+  </data>
+  <data name="PassportResidentialAddress" xml:space="preserve">
+    <value>Адрес проживания</value>
+  </data>
+  <data name="PassportReverseSide" xml:space="preserve">
+    <value>Обратная сторона</value>
+  </data>
+  <data name="PassportReverseSideInfo" xml:space="preserve">
+    <value>Загрузить фотографию обратной стороны документа</value>
+  </data>
+  <data name="PassportScanPassport" xml:space="preserve">
+    <value>Отсканируйте свой паспорт</value>
+  </data>
+  <data name="PassportScanPassportInfo" xml:space="preserve">
+    <value>Чтобы автоматически заполнить личные данные, сканируйте свой паспорт или удостоверение личности с областью для считывания компьютером.</value>
+  </data>
+  <data name="PassportSelectBithdayDate" xml:space="preserve">
+    <value>Выбрать дату рождения</value>
+  </data>
+  <data name="PassportSelectExpiredDate" xml:space="preserve">
+    <value>Выбрать срок действия</value>
+  </data>
+  <data name="PassportSelectGender" xml:space="preserve">
+    <value>Выбрать пол</value>
+  </data>
+  <data name="PassportSelectNotExpire" xml:space="preserve">
+    <value>Не истекает</value>
+  </data>
+  <data name="PassportSelfRequest" xml:space="preserve">
+    <value>Для доступа к личной информации, пожалуйста, введите свой пароль.</value>
+  </data>
+  <data name="PassportSelfie" xml:space="preserve">
+    <value>Селфи</value>
+  </data>
+  <data name="PassportSelfieInfo" xml:space="preserve">
+    <value>Загрузите фотографию, где вы держите свой документ.</value>
+  </data>
+  <data name="PassportState" xml:space="preserve">
+    <value>Область</value>
+  </data>
+  <data name="PassportStreet1" xml:space="preserve">
+    <value>Улица</value>
+  </data>
+  <data name="PassportStreet2" xml:space="preserve">
+    <value>Улица</value>
+  </data>
+  <data name="PassportSurname" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="PassportUploadAdditinalDocument" xml:space="preserve">
+    <value>Загрузить дополнительные сканы</value>
+  </data>
+  <data name="PassportUploadDocument" xml:space="preserve">
+    <value>Загрузить сканы</value>
+  </data>
+  <data name="PassportUploadMaxReached" xml:space="preserve">
+    <value>Невозможно загрузить больше {0} файлов.</value>
+  </data>
+  <data name="PassportUploadNotImage" xml:space="preserve">
+    <value>Вы можете загружать только изображения.</value>
+  </data>
+  <data name="PassportUseLatinOnly" xml:space="preserve">
+    <value>Пожалуйста, используйте только латиницу.</value>
+  </data>
   <data name="PasswordAsHintError" xml:space="preserve">
     <value>Подсказка не должна совпадать с паролем</value>
   </data>
@@ -4501,6 +4948,9 @@
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Политика конфиденциальности</value>
   </data>
+  <data name="PrivacyPolicyAndTerms" xml:space="preserve">
+    <value>Пользовательское соглашение и конфиденциальность</value>
+  </data>
   <data name="PrivacyPolicyUrl" xml:space="preserve">
     <value>https://telegram.org/privacy</value>
   </data>
@@ -4703,6 +5153,9 @@
 
 Если вы сбросите ваш аккаунт, все ваши сообщения и чаты будут удалены.</value>
   </data>
+  <data name="ResetNotificationsAlert" xml:space="preserve">
+    <value>Вы точно хотите сбросить настройки уведомлений и использовать настройки по умолчанию?</value>
+  </data>
   <data name="ResetNotificationsText" xml:space="preserve">
     <value>Сброс настроек уведомлений на стандартные</value>
   </data>
@@ -4731,6 +5184,9 @@
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Сожалеем</value>
+  </data>
+  <data name="RestorePasswordResetAccount" xml:space="preserve">
+    <value>СБРОС АККАУНТА</value>
   </data>
   <data name="Retry" xml:space="preserve">
     <value>Повторить</value>
@@ -4899,6 +5355,9 @@
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Безопасность</value>
+  </data>
+  <data name="SelectAccount" xml:space="preserve">
+    <value>Выбрать аккаунт</value>
   </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Выберите чат</value>
@@ -5145,6 +5604,9 @@
   <data name="Shuffle" xml:space="preserve">
     <value>Случайный порядок</value>
   </data>
+  <data name="SignUp" xml:space="preserve">
+    <value>Зарегистрироваться</value>
+  </data>
   <data name="SinglePhotosHelp" xml:space="preserve">
     <value>
 Не группировать фотографии</value>
@@ -5275,6 +5737,15 @@
   <data name="SubscribersOther" xml:space="preserve">
     <value>{0} подписчиков</value>
   </data>
+  <data name="SuggestContacts" xml:space="preserve">
+    <value>Подсказка людей при поиске</value>
+  </data>
+  <data name="SuggestContactsAlert" xml:space="preserve">
+    <value>В этом случае информация о том, каким пользователям вы часто пишете и какими ботами обычно пользуетесь, будет удалена.</value>
+  </data>
+  <data name="SuggestContactsInfo" xml:space="preserve">
+    <value>Показывать пользователей, которым вы часто пишете, вверху в разделе поиска.</value>
+  </data>
   <data name="SuggestStickers" xml:space="preserve">
     <value>Подсказка по эмодзи</value>
   </data>
@@ -5346,6 +5817,23 @@
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq</value>
+  </data>
+  <data name="TelegramPassport" xml:space="preserve">
+    <value>Telegram Passport</value>
+  </data>
+  <data name="TelegramPassportCreatePassword" xml:space="preserve">
+    <value>ЗАДАТЬ ПАРОЛЬ</value>
+  </data>
+  <data name="TelegramPassportCreatePasswordInfo" xml:space="preserve">
+    <value>Чтобы защитить свои данные оконечным шифрованием, пожалуйста, задайте пароль.
+
+Этот пароль также будет запрашиваться при входе в Telegram с нового устройства.</value>
+  </data>
+  <data name="TelegramPassportDelete" xml:space="preserve">
+    <value>Удалить паспорт</value>
+  </data>
+  <data name="TelegramPassportDeleteAlert" xml:space="preserve">
+    <value>Вы точно хотите удалить свой Telegram Passport?</value>
   </data>
   <data name="TelegramVersion" xml:space="preserve">
     <value>Telegram для Android {0}</value>
@@ -5435,11 +5923,39 @@
   <data name="TodayAtFormatted" xml:space="preserve">
     <value>в {0}</value>
   </data>
+  <data name="TosAgeText" xml:space="preserve">
+    <value>Нажмите «Принять» для подтверждения, что вам {0} лет или более.</value>
+  </data>
+  <data name="TosAgeTitle" xml:space="preserve">
+    <value>Подтверждение возраста</value>
+  </data>
+  <data name="TosDecline" xml:space="preserve">
+    <value>К сожалению, это означает, что Вы не сможете зарегистрироваться в Telegram.
+
+В отличие от других сервисов, мы не используем Ваши данные для рекламы и других коммерческих целей. На серверах хранится только та информация, которая позволяет Вам полноценно пользоваться Telegram. Вы можете регулировать доступ к своим данным в настройках приложения, в разделе Конфиденциальность и безопасность.
+
+Если Вы не готовы предоставить минимальные нужные данные , увы, мы не сможем обеспечить работу Telegram.</value>
+  </data>
+  <data name="TosDeclineDeleteAccount" xml:space="preserve">
+    <value>Внимание: в этом случае ваш аккаунт в Telegram будет необратимо удален вместе со всей информацией, которую вы храните на серверах Telegram.
+
+Важно: вы можете отменить удаление и сначала экспортировать данные своего аккаунта, чтобы не потерять их. (Для этого зайдите в аккаунт через свежую версию Telegram для ПК и выберите Настройки > Экспорт данных из Telegram.)</value>
+  </data>
+  <data name="TosUpdateDecline" xml:space="preserve">
+    <value>К сожалению, в этом случае придется отказаться от использования Telegram. 
+
+В отличие от других сервисов, мы не используем Ваши данные для рекламы и иных коммерческих целей. На серверах хранится только та информация, которая позволяет Вам полноценно пользоваться Telegram. Вы можете регулировать доступ к своим данным в настройках приложения, в разделе Конфиденциальность и безопасность.
+
+Если Вы не готовы предоставить минимальные нужные данные , увы, мы не сможем обеспечить работу Telegram. Вы можете удалить аккаунт — или сперва осмотреться и удалить аккаунт позже, если останутся сомнения.</value>
+  </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>Всего</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Отключить пароль</value>
+  </data>
+  <data name="TurnPasswordOffPassport" xml:space="preserve">
+    <value>Внимание! Все данные, сохранённые в вашем Telegram Passport, будут потеряны!</value>
   </data>
   <data name="TurnPasswordOffQuestion" xml:space="preserve">
     <value>Вы точно хотите отключить пароль?</value>
@@ -5452,6 +5968,9 @@
   </data>
   <data name="Typing" xml:space="preserve">
     <value>печатает</value>
+  </data>
+  <data name="URL" xml:space="preserve">
+    <value>URL</value>
   </data>
   <data name="Unavailable" xml:space="preserve">
     <value>Недоступен</value>
@@ -5501,6 +6020,12 @@
   <data name="UnsupportedMedia" xml:space="preserve">
     <value>Сообщение не поддерживается Вашей версией Telegram. Пожалуйста, обновите приложение, чтобы его увидеть: https://telegram.org/update</value>
   </data>
+  <data name="UpdateApp" xml:space="preserve">
+    <value>Обновить приложение</value>
+  </data>
+  <data name="UpdateAppAlert" xml:space="preserve">
+    <value>К сожалению, ваша версия приложения устарела и не может обработать этот запрос. Пожалуйста, обновите Telegram.</value>
+  </data>
   <data name="UpdateContactsMessage" xml:space="preserve">
     <value>Обнаружено много несинхронизированных контактов, хотите синхронизировать их? Нажмите «ОК», если сейчас вы используете своё устройство, SIM-карту и аккаунт Google.</value>
   </data>
@@ -5530,6 +6055,9 @@
   </data>
   <data name="UpgradeGroup" xml:space="preserve">
     <value>Сделать супергруппой</value>
+  </data>
+  <data name="UploadItems" xml:space="preserve">
+    <value>Загрузить {0}</value>
   </data>
   <data name="UsbActive" xml:space="preserve">
     <value>Передача по USB активна</value>
@@ -5734,6 +6262,12 @@
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Видеосообщения</value>
+  </data>
+  <data name="ViewContact" xml:space="preserve">
+    <value>ПРОСМОТР КОНТАКТА</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>ПОДРОБНЕЕ</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>Посмотреть набор</value>
@@ -5984,6 +6518,9 @@
   <data name="YourCode" xml:space="preserve">
     <value>Проверка телефона</value>
   </data>
+  <data name="YourContacts" xml:space="preserve">
+    <value>Ваши контакты в Telegram</value>
+  </data>
   <data name="YourEmail" xml:space="preserve">
     <value>Введите адрес электронной почты</value>
   </data>
@@ -6022,11 +6559,20 @@
   <data name="YourPhone" xml:space="preserve">
     <value>Ваш телефон</value>
   </data>
+  <data name="TgCancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="TgOpenGooglePlay" xml:space="preserve">
+    <value>Открыть Google Play</value>
+  </data>
   <data name="ChatDate" xml:space="preserve">
     <value>d MMMM</value>
   </data>
   <data name="ChatFullDate" xml:space="preserve">
     <value>d MMMM yyyy</value>
+  </data>
+  <data name="DownloadTelegramText" xml:space="preserve">
+    <value>Чтобы авторизоваться в **{0}**, требуется Telegram. Хотите установить его сейчас?</value>
   </data>
   <data name="FormatDateAtTime" xml:space="preserve">
     <value>{0} в {1}</value>
@@ -6087,6 +6633,9 @@
   </data>
   <data name="ItemsOther" xml:space="preserve">
     <value>{0} элементов</value>
+  </data>
+  <data name="LoginWithTelegram" xml:space="preserve">
+    <value>Войти через Telegram</value>
   </data>
   <data name="MessagesZero" xml:space="preserve">
     <value>нет сообщений</value>

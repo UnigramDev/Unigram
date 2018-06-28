@@ -64,6 +64,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>Einrichten abbrechen</value>
   </data>
+  <data name="Accept" xml:space="preserve">
+    <value>Akzeptieren</value>
+  </data>
   <data name="AccessError" xml:space="preserve">
     <value>Zugriffsfehler</value>
   </data>
@@ -96,6 +99,48 @@
   </data>
   <data name="ActionBotAllowed" xml:space="preserve">
     <value>Du hast diesem Bot erlaubt dich anzuschreiben, wenn du dich bei {0} anmeldest.</value>
+  </data>
+  <data name="ActionBotDocumentAddress" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="ActionBotDocumentBankStatement" xml:space="preserve">
+    <value>Kontoauszug</value>
+  </data>
+  <data name="ActionBotDocumentDriverLicence" xml:space="preserve">
+    <value>Führerschein</value>
+  </data>
+  <data name="ActionBotDocumentEmail" xml:space="preserve">
+    <value>E-Mail-Adresse</value>
+  </data>
+  <data name="ActionBotDocumentIdentity" xml:space="preserve">
+    <value>Persönliche Daten</value>
+  </data>
+  <data name="ActionBotDocumentIdentityCard" xml:space="preserve">
+    <value>Personalausweis</value>
+  </data>
+  <data name="ActionBotDocumentInternalPassport" xml:space="preserve">
+    <value>Nationaler Reisepass</value>
+  </data>
+  <data name="ActionBotDocumentPassport" xml:space="preserve">
+    <value>Reisepass</value>
+  </data>
+  <data name="ActionBotDocumentPassportRegistration" xml:space="preserve">
+    <value>Reisepass-Registrierung</value>
+  </data>
+  <data name="ActionBotDocumentPhone" xml:space="preserve">
+    <value>Telefonnummer</value>
+  </data>
+  <data name="ActionBotDocumentRentalAgreement" xml:space="preserve">
+    <value>Mietvertrag</value>
+  </data>
+  <data name="ActionBotDocumentTemporaryRegistration" xml:space="preserve">
+    <value>Temporäre Registrierung</value>
+  </data>
+  <data name="ActionBotDocumentUtilityBill" xml:space="preserve">
+    <value>Versorgerrechnung</value>
+  </data>
+  <data name="ActionBotDocuments" xml:space="preserve">
+    <value>{0} hat die folgenden Dokumente erhalten: {1}</value>
   </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>un1 hat das Gruppenbild geändert</value>
@@ -292,6 +337,9 @@
   <data name="AddToContacts" xml:space="preserve">
     <value>Zu Kontakten hinzufügen</value>
   </data>
+  <data name="AddToExistingContact" xml:space="preserve">
+    <value>Bestehendem Kontakt hinzufügen</value>
+  </data>
   <data name="AddToFavorites" xml:space="preserve">
     <value>Zu Favoriten hinzufügen</value>
   </data>
@@ -312,6 +360,9 @@
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>Sticker wurde Favoriten hinzugefügt</value>
+  </data>
+  <data name="Agree" xml:space="preserve">
+    <value>Zustimmen</value>
   </data>
   <data name="Alert" xml:space="preserve">
     <value>Benachrichtigung</value>
@@ -556,6 +607,12 @@ Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemein
   <data name="AttachContact" xml:space="preserve">
     <value>Kontakt</value>
   </data>
+  <data name="AttachDestructingPhoto" xml:space="preserve">
+    <value>Selbstzerstörendes Bild</value>
+  </data>
+  <data name="AttachDestructingVideo" xml:space="preserve">
+    <value>Selbstzerstörendes Video</value>
+  </data>
   <data name="AttachDocument" xml:space="preserve">
     <value>Datei</value>
   </data>
@@ -711,6 +768,9 @@ Sonnenaufgang: {1}</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Warte, bis {0} online geht...</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Zurück</value>
   </data>
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Hintergrunddaten eingeschränkt.</value>
@@ -882,6 +942,9 @@ Sonnenaufgang: {1}</value>
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>Registrierung abbrechen</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>Versand abbrechen</value>
   </data>
   <data name="CantPlayVideo" xml:space="preserve">
     <value>App konnte dieses Video nicht abspielen. Möchtest du es mit einem externen Player abspielen?</value>
@@ -1366,17 +1429,26 @@ Sobald {1} Telegram aktualisiert, werden Bilder mit Timern von 1 Minute und kür
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
     <value>Hier tippen, um Proxy zu deaktivieren...</value>
   </data>
+  <data name="ContactJob" xml:space="preserve">
+    <value>Arbeit</value>
+  </data>
+  <data name="ContactJobTitle" xml:space="preserve">
+    <value>Position</value>
+  </data>
   <data name="ContactJoined" xml:space="preserve">
     <value>Kontakt ist Telegram beigetreten</value>
   </data>
   <data name="ContactNotRegistered" xml:space="preserve">
     <value>{0} ist noch nicht bei Telegram. Willst du diesen Nutzer einladen?</value>
   </data>
+  <data name="ContactShare" xml:space="preserve">
+    <value>KONTAKT TEILEN</value>
+  </data>
   <data name="Contacts" xml:space="preserve">
     <value>Kontakte</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>Telegram benötigt Zugriff auf deine Kontakte, damit du dich mit Freunden auf all deinen Geräten verbinden kannst. Deine deine Kontakte werden durchgehend mit den stark verschlüsselten Cloud Servern von Telegram synchronisiert.</value>
+    <value>**Telegram** benötigt Zugriff auf deine Kontakte, damit du dich mit Freunden auf all deinen Geräten verbinden kannst. Deine Kontakte werden durchgehend mit den stark verschlüsselten Cloud-Servern von Telegram synchronisiert.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>WEITER</value>
@@ -1441,6 +1513,12 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
   </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>Du kannst mit diesen Nutzern keine Gruppe erstellen, weil sie es nicht erlauben.</value>
+  </data>
+  <data name="CreateLink" xml:space="preserve">
+    <value>Link erstellen</value>
+  </data>
+  <data name="CreateNewContact" xml:space="preserve">
+    <value>Neuen Kontakt erstellen</value>
   </data>
   <data name="CreateNewTheme" xml:space="preserve">
     <value>Neues Thema erstellen</value>
@@ -1541,6 +1619,9 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
   <data name="DaysBoldOther" xml:space="preserve">
     <value>**{0}** Tage</value>
   </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>JETZT LÖSCHEN</value>
+  </data>
   <data name="DebugClearLogs" xml:space="preserve">
     <value>Protokolldateien leeren</value>
   </data>
@@ -1576,6 +1657,12 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Protokolldateien senden</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Ablehnen</value>
+  </data>
+  <data name="DeclineDeactivate" xml:space="preserve">
+    <value>Ablehnen &amp; Deaktivieren</value>
   </data>
   <data name="Default" xml:space="preserve">
     <value>Standard</value>
@@ -1760,11 +1847,20 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
   <data name="EditAdminWhatCanDo" xml:space="preserve">
     <value>Was kann dieser Admin machen?</value>
   </data>
+  <data name="EditCaption" xml:space="preserve">
+    <value>Beschriftung bearbeiten</value>
+  </data>
   <data name="EditContact" xml:space="preserve">
     <value>Bearbeiten</value>
   </data>
+  <data name="EditMessage" xml:space="preserve">
+    <value>Nachricht bearbeiten</value>
+  </data>
   <data name="EditMessageError" xml:space="preserve">
     <value>Du kannst diese Nachricht nicht bearbeiten.</value>
+  </data>
+  <data name="EditMessageMedia" xml:space="preserve">
+    <value>Antippen, um Medium zu bearbeiten</value>
   </data>
   <data name="EditName" xml:space="preserve">
     <value>Name bearbeiten</value>
@@ -1953,6 +2049,12 @@ Erfahre mehr unter telegram.org</value>
   </data>
   <data name="EventLogEditedGroupTitle" xml:space="preserve">
     <value>un1 hat die Gruppe "{0}" umbenannt</value>
+  </data>
+  <data name="EventLogEditedMedia" xml:space="preserve">
+    <value>un1 hat Medium bearbeitet:</value>
+  </data>
+  <data name="EventLogEditedMediaCaption" xml:space="preserve">
+    <value>un1 hat Medium und Beschriftung bearbeitet:</value>
   </data>
   <data name="EventLogEditedMessages" xml:space="preserve">
     <value>un1 hat diese Nachricht bearbeitet:</value>
@@ -2212,6 +2314,24 @@ Dauer: {1}</value>
   </data>
   <data name="FileUploadLimit" xml:space="preserve">
     <value>Die Datei darf nicht größer als {0} sein</value>
+  </data>
+  <data name="FilesZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesOne" xml:space="preserve">
+    <value>{0} Datei</value>
+  </data>
+  <data name="FilesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesOther" xml:space="preserve">
+    <value>{0} Dateien</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Dateien</value>
@@ -2977,6 +3097,12 @@ Hinweis: Der Vorgang kann mehrere Minuten dauern.</value>
   <data name="Map" xml:space="preserve">
     <value>Karte</value>
   </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>Als gelesen markieren</value>
+  </data>
+  <data name="MarkAsUnread" xml:space="preserve">
+    <value>Als ungelesen markieren</value>
+  </data>
   <data name="Masks" xml:space="preserve">
     <value>Masken</value>
   </data>
@@ -3267,6 +3393,11 @@ Hinweis: Der Vorgang kann mehrere Minuten dauern.</value>
   </data>
   <data name="NoChats" xml:space="preserve">
     <value>Noch keine Chats…</value>
+  </data>
+  <data name="NoChatsContactsHelp" xml:space="preserve">
+    <value>Tippe unten auf den Stift für deine erste
+Chatnachricht oder auf den Menüknopf
+um die restlichen Optionen zu öffnen.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
     <value>Tippe unten auf den Stift für deine erste
@@ -3851,6 +3982,328 @@ synchronisiert benutzen.</value>
   <data name="PasscodePassword" xml:space="preserve">
     <value>Kennwort</value>
   </data>
+  <data name="PassportAddAddressUploadInfo" xml:space="preserve">
+    <value>Um deine Adresse zu bestätigen, Scan oder ein Bild der ausgewählten Dokumente (alle Seiten) hochladen.</value>
+  </data>
+  <data name="PassportAddAgreement" xml:space="preserve">
+    <value>Mietvertrag hinzufügen</value>
+  </data>
+  <data name="PassportAddAgreementInfo" xml:space="preserve">
+    <value>Scan deines Mietvertrages hochladen</value>
+  </data>
+  <data name="PassportAddBank" xml:space="preserve">
+    <value>Kontoauszug hinzufügen</value>
+  </data>
+  <data name="PassportAddBankInfo" xml:space="preserve">
+    <value>Scan deines Kontoauszugs hochladen.</value>
+  </data>
+  <data name="PassportAddBill" xml:space="preserve">
+    <value>Versorgerrechnung hinzufügen</value>
+  </data>
+  <data name="PassportAddBillInfo" xml:space="preserve">
+    <value>Scan deiner Versorgerrechnung hochladen.</value>
+  </data>
+  <data name="PassportAddCard" xml:space="preserve">
+    <value>Personalausweis hinzufügen</value>
+  </data>
+  <data name="PassportAddInternalPassport" xml:space="preserve">
+    <value>Nationalen Reisepass hinzufügen</value>
+  </data>
+  <data name="PassportAddLicence" xml:space="preserve">
+    <value>Führerschein hinzufügen</value>
+  </data>
+  <data name="PassportAddPassport" xml:space="preserve">
+    <value>Reisepass hinzufügen</value>
+  </data>
+  <data name="PassportAddPassportRegistration" xml:space="preserve">
+    <value>Reisepass-Registrierung</value>
+  </data>
+  <data name="PassportAddPassportRegistrationInfo" xml:space="preserve">
+    <value>Scan deiner Reisepass-Registrierung hochladen.</value>
+  </data>
+  <data name="PassportAddTemporaryRegistration" xml:space="preserve">
+    <value>Vorläufige Registrierung</value>
+  </data>
+  <data name="PassportAddTemporaryRegistrationInfo" xml:space="preserve">
+    <value>Scan deiner temporären Registrierung hochladen.</value>
+  </data>
+  <data name="PassportAddress" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="PassportAddressHeader" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="PassportAddressInfo" xml:space="preserve">
+    <value>Adressnachweis hochladen</value>
+  </data>
+  <data name="PassportAddressNoUploadInfo" xml:space="preserve">
+    <value>Bitte Adresse eingeben</value>
+  </data>
+  <data name="PassportAuthorize" xml:space="preserve">
+    <value>AUTORISIEREN</value>
+  </data>
+  <data name="PassportBirthdate" xml:space="preserve">
+    <value>Geburtsdatum</value>
+  </data>
+  <data name="PassportCitizenship" xml:space="preserve">
+    <value>Staatsangehörigkeit</value>
+  </data>
+  <data name="PassportCity" xml:space="preserve">
+    <value>Stadt</value>
+  </data>
+  <data name="PassportCountry" xml:space="preserve">
+    <value>Land</value>
+  </data>
+  <data name="PassportDeleteAddressAlert" xml:space="preserve">
+    <value>Deine Adressinformationen wirklich löschen?</value>
+  </data>
+  <data name="PassportDeleteDocument" xml:space="preserve">
+    <value>Dokument löschen</value>
+  </data>
+  <data name="PassportDeleteDocumentAddress" xml:space="preserve">
+    <value>Adressinformationen löschen</value>
+  </data>
+  <data name="PassportDeleteDocumentAlert" xml:space="preserve">
+    <value>Bist du sicher, dass du dieses Dokument wirklich löschen willst?</value>
+  </data>
+  <data name="PassportDeleteDocumentPersonal" xml:space="preserve">
+    <value>Persönliche Daten löschen</value>
+  </data>
+  <data name="PassportDeleteEmailAlert" xml:space="preserve">
+    <value>E-Mail löschen?</value>
+  </data>
+  <data name="PassportDeleteInfo" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="PassportDeletePersonalAlert" xml:space="preserve">
+    <value>Möchtest du wirklich deine persönlichen Daten löschen?</value>
+  </data>
+  <data name="PassportDeletePhoneAlert" xml:space="preserve">
+    <value>Telefonnummer löschen?</value>
+  </data>
+  <data name="PassportDeleteScan" xml:space="preserve">
+    <value>Scan löschen?</value>
+  </data>
+  <data name="PassportDeleteScanAlert" xml:space="preserve">
+    <value>Möchtest du diesen Scan wirklich löschen?</value>
+  </data>
+  <data name="PassportDeleteSelfie" xml:space="preserve">
+    <value>Selfie löschen?</value>
+  </data>
+  <data name="PassportDeleteSelfieAlert" xml:space="preserve">
+    <value>Möchtest du dieses Selfie wirklich löschen?</value>
+  </data>
+  <data name="PassportDiscard" xml:space="preserve">
+    <value>Verwerfen</value>
+  </data>
+  <data name="PassportDiscardChanges" xml:space="preserve">
+    <value>Möchtest du wirklich alle eingegeben Informationen verwerfen?</value>
+  </data>
+  <data name="PassportDocumentDetails" xml:space="preserve">
+    <value>Dokumenten-Details</value>
+  </data>
+  <data name="PassportDocumentNumber" xml:space="preserve">
+    <value>Ausweisnummer</value>
+  </data>
+  <data name="PassportDocuments" xml:space="preserve">
+    <value>Scans</value>
+  </data>
+  <data name="PassportEmail" xml:space="preserve">
+    <value>E-Mail</value>
+  </data>
+  <data name="PassportEmailCode" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="PassportEmailInfo" xml:space="preserve">
+    <value>Deine E-Mail Adresse eingeben</value>
+  </data>
+  <data name="PassportEmailUploadInfo" xml:space="preserve">
+    <value>Du bekommst einen Bestätigungscode per E-Mail gesendet.</value>
+  </data>
+  <data name="PassportEmailVerifyInfo" xml:space="preserve">
+    <value>Bitte den Code eintippen, der dir gerade an {0} gesendet wurde.</value>
+  </data>
+  <data name="PassportExpired" xml:space="preserve">
+    <value>Ablaufdatum</value>
+  </data>
+  <data name="PassportFemale" xml:space="preserve">
+    <value>Weiblich</value>
+  </data>
+  <data name="PassportFrontSide" xml:space="preserve">
+    <value>Vorderseite</value>
+  </data>
+  <data name="PassportFrontSideInfo" xml:space="preserve">
+    <value>Foto der Vorderseite des Dokuments hochladen</value>
+  </data>
+  <data name="PassportGender" xml:space="preserve">
+    <value>Geschlecht</value>
+  </data>
+  <data name="PassportIdentityDocument" xml:space="preserve">
+    <value>Identitätsdokument</value>
+  </data>
+  <data name="PassportIdentityDocumentInfo" xml:space="preserve">
+    <value>Scan deines Ausweises hochladen</value>
+  </data>
+  <data name="PassportInfo" xml:space="preserve">
+    <value>Mit Telegram Passport kannst du dich ganz einfach bei Webseiten und Diensten anmelden, die eine Identitätsprüfung erfordern.
+
+Deine Informationen, persönlichen Daten und Dokumente sind durch Ende-zu-Ende-Verschlüsselung geschützt. Niemand, einschließlich Telegram, kann ohne deine Erlaubnis darauf zugreifen.
+
+Mehr dazu in unseren FAQs.</value>
+  </data>
+  <data name="PassportInfoTitle" xml:space="preserve">
+    <value>Was ist Telegram Passport?</value>
+  </data>
+  <data name="PassportIssued" xml:space="preserve">
+    <value>Ausgestellt</value>
+  </data>
+  <data name="PassportMainPage" xml:space="preserve">
+    <value>Hauptseite</value>
+  </data>
+  <data name="PassportMainPageInfo" xml:space="preserve">
+    <value>Foto der Hauptseite des Dokuments hochladen</value>
+  </data>
+  <data name="PassportMale" xml:space="preserve">
+    <value>Männlich</value>
+  </data>
+  <data name="PassportName" xml:space="preserve">
+    <value>Vorname</value>
+  </data>
+  <data name="PassportNoDocuments" xml:space="preserve">
+    <value>Du hast noch keine Dokumente</value>
+  </data>
+  <data name="PassportNoDocumentsAdd" xml:space="preserve">
+    <value>Dokument hinzufügen</value>
+  </data>
+  <data name="PassportNoDocumentsInfo" xml:space="preserve">
+    <value>Du kannst deine Telefonnummer, E-Mail-Adresse, Identitätsdokument oder Wohnadresse hinzufügen.</value>
+  </data>
+  <data name="PassportNoExpireDate" xml:space="preserve">
+    <value>Keines</value>
+  </data>
+  <data name="PassportNoPolicy" xml:space="preserve">
+    <value>Du sendest deine Dokumente direkt {0} und erlaubst dem {1} Bot, dir Nachrichten zu senden.</value>
+  </data>
+  <data name="PassportPersonal" xml:space="preserve">
+    <value>Persönliche Daten</value>
+  </data>
+  <data name="PassportPersonalDetails" xml:space="preserve">
+    <value>Persönliche Daten</value>
+  </data>
+  <data name="PassportPersonalDetailsInfo" xml:space="preserve">
+    <value>Deine persönlichen Daten eingeben</value>
+  </data>
+  <data name="PassportPersonalUploadInfo" xml:space="preserve">
+    <value>Das Dokument muss dein Foto, Vor- und Nachname, Geburtsdatum, Ausweisnummer, Ausstellungsort und Ablaufdatum beinhalten.</value>
+  </data>
+  <data name="PassportPhone" xml:space="preserve">
+    <value>Telefonnummer</value>
+  </data>
+  <data name="PassportPhoneInfo" xml:space="preserve">
+    <value>Deine Telefonnummer eingeben</value>
+  </data>
+  <data name="PassportPhoneUploadInfo" xml:space="preserve">
+    <value>Dir wird ein Bestätigungscode an die Nummer gesendet.</value>
+  </data>
+  <data name="PassportPhoneUseOther" xml:space="preserve">
+    <value>Oder neue Telefonnummer eingeben</value>
+  </data>
+  <data name="PassportPhoneUseSame" xml:space="preserve">
+    <value>{0} verwenden</value>
+  </data>
+  <data name="PassportPhoneUseSameEmailInfo" xml:space="preserve">
+    <value>Gleiche E-Mail wie bei Telegram verwenden.</value>
+  </data>
+  <data name="PassportPhoneUseSameInfo" xml:space="preserve">
+    <value>Gleiche Telefonnummer wie bei Telegram verwenden.</value>
+  </data>
+  <data name="PassportPolicy" xml:space="preserve">
+    <value>Du akzeptierst die *{0} Datenschutzerklärung* und erlaubst {1} dir Nachrichten zu senden.</value>
+  </data>
+  <data name="PassportPostcode" xml:space="preserve">
+    <value>Postleitzahl</value>
+  </data>
+  <data name="PassportProvidedInformation" xml:space="preserve">
+    <value>Hinterlegte Informationen</value>
+  </data>
+  <data name="PassportRequest" xml:space="preserve">
+    <value>{0} verlangt Zugriff auf deine persönlichen Daten, damit du dich dort registrieren kannst.</value>
+  </data>
+  <data name="PassportRequestPasswordInfo" xml:space="preserve">
+    <value>Dein Kennwort wird benötigt, um die Daten zu entschlüsseln.</value>
+  </data>
+  <data name="PassportRequestedInformation" xml:space="preserve">
+    <value>Angeforderte Informationen</value>
+  </data>
+  <data name="PassportRequiredDocuments" xml:space="preserve">
+    <value>Notwendige Dokumente</value>
+  </data>
+  <data name="PassportResidence" xml:space="preserve">
+    <value>Wohnsitz</value>
+  </data>
+  <data name="PassportResidentialAddress" xml:space="preserve">
+    <value>Wohnsitzadresse</value>
+  </data>
+  <data name="PassportReverseSide" xml:space="preserve">
+    <value>Rückseite</value>
+  </data>
+  <data name="PassportReverseSideInfo" xml:space="preserve">
+    <value>Foto der Rückseite des Dokuments hochladen</value>
+  </data>
+  <data name="PassportScanPassport" xml:space="preserve">
+    <value>Deinen Reisepass einscannen</value>
+  </data>
+  <data name="PassportScanPassportInfo" xml:space="preserve">
+    <value>Scanne deinen Reisepass oder Ausweis mit maschinenlesbaren Bereich ein, um persönliche Daten automatisch einzutragen.</value>
+  </data>
+  <data name="PassportSelectBithdayDate" xml:space="preserve">
+    <value>Geburtsdatum auswählen</value>
+  </data>
+  <data name="PassportSelectExpiredDate" xml:space="preserve">
+    <value>Ablaufdatum auswählen</value>
+  </data>
+  <data name="PassportSelectGender" xml:space="preserve">
+    <value>Geschlecht auswählen</value>
+  </data>
+  <data name="PassportSelectNotExpire" xml:space="preserve">
+    <value>Läuft nicht ab</value>
+  </data>
+  <data name="PassportSelfRequest" xml:space="preserve">
+    <value>Bitte dein Telegram-Kennwort eingeben, damit du auf deine persönlichen Daten zugreifen kannst.</value>
+  </data>
+  <data name="PassportSelfie" xml:space="preserve">
+    <value>Selfie</value>
+  </data>
+  <data name="PassportSelfieInfo" xml:space="preserve">
+    <value>Selfie von dir zusammen mit einem Dokument hochladen</value>
+  </data>
+  <data name="PassportState" xml:space="preserve">
+    <value>Bundesland</value>
+  </data>
+  <data name="PassportStreet1" xml:space="preserve">
+    <value>Straße</value>
+  </data>
+  <data name="PassportStreet2" xml:space="preserve">
+    <value>Straße</value>
+  </data>
+  <data name="PassportSurname" xml:space="preserve">
+    <value>Nachname</value>
+  </data>
+  <data name="PassportUploadAdditinalDocument" xml:space="preserve">
+    <value>Weitere Scans hochladen</value>
+  </data>
+  <data name="PassportUploadDocument" xml:space="preserve">
+    <value>Scans hochladen</value>
+  </data>
+  <data name="PassportUploadMaxReached" xml:space="preserve">
+    <value>Nicht mehr als {0} Dateien können hochgeladen werden.</value>
+  </data>
+  <data name="PassportUploadNotImage" xml:space="preserve">
+    <value>Nur Bilder können hochladen werden.</value>
+  </data>
+  <data name="PassportUseLatinOnly" xml:space="preserve">
+    <value>Bitte nur lateinische Schriftzeichen benutzen.</value>
+  </data>
   <data name="PasswordAsHintError" xml:space="preserve">
     <value>Der Hinweis darf nicht das Kennwort sein.</value>
   </data>
@@ -4061,7 +4514,7 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
     <value>Deine E-Mail Adresse {0} wurde noch verifiziert und ist daher noch nicht aktiv.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Damit du dich mit Freunden auf all deinen Geräten verbinden kannst, werden deine Kontakte durchgehend mit den stark verschlüsselten Cloud Servern von Telegram synchronisiert.</value>
+    <value>Telegram benötigt Zugriff auf deine Kontakte, um dich auf all deinen Geräten mit deinen Freunden zu verbinden.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram braucht Zugriff auf die Funktion 'Über andere Apps einblenden'. Nur so können Videos im Bild in Bild Modus wiedergegeben werden.</value>
@@ -4253,6 +4706,9 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Datenschutzerklärung</value>
+  </data>
+  <data name="PrivacyPolicyAndTerms" xml:space="preserve">
+    <value>Datenschutzerklärung und Nutzungsbedingungen</value>
   </data>
   <data name="PrivacyPolicyUrl" xml:space="preserve">
     <value>https://telegram.org/privacy</value>
@@ -4453,6 +4909,9 @@ Du kannst den Vorgang jederzeit abbrechen.</value>
 
 Wenn du dein Konto zurücksetzt, sind alle Chats gelöscht.</value>
   </data>
+  <data name="ResetNotificationsAlert" xml:space="preserve">
+    <value>Möchtest du wirklich alle Benachrichtigungseinstellungen auf die Standardeinstellungen zurücksetzen?</value>
+  </data>
   <data name="ResetNotificationsText" xml:space="preserve">
     <value>Alle Einstellungen für Mitteilungen zurücksetzen</value>
   </data>
@@ -4481,6 +4940,9 @@ Wenn du dein Konto zurücksetzt, sind alle Chats gelöscht.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Tut uns leid</value>
+  </data>
+  <data name="RestorePasswordResetAccount" xml:space="preserve">
+    <value>KONTO ZURÜCKSETZEN</value>
   </data>
   <data name="Retry" xml:space="preserve">
     <value>Erneut versuchen</value>
@@ -4649,6 +5111,9 @@ Du musst die App nach der Änderung neu starten.</value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Sicherheit</value>
+  </data>
+  <data name="SelectAccount" xml:space="preserve">
+    <value>Konto auswählen</value>
   </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Chat auswählen</value>
@@ -4892,6 +5357,9 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="Shuffle" xml:space="preserve">
     <value>Zufallswiedergabe</value>
   </data>
+  <data name="SignUp" xml:space="preserve">
+    <value>Registrieren</value>
+  </data>
   <data name="SinglePhotosHelp" xml:space="preserve">
     <value>Zeigt Medien als einzelne Nachrichten</value>
   </data>
@@ -5021,6 +5489,15 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="SubscribersOther" xml:space="preserve">
     <value>{0} Abonnenten</value>
   </data>
+  <data name="SuggestContacts" xml:space="preserve">
+    <value>Häufige Kontakte vorschlagen</value>
+  </data>
+  <data name="SuggestContactsAlert" xml:space="preserve">
+    <value>Das löscht alle Daten über Personen mit denen du häufig chattest, sowie Vorschläge für Inline-Bots.</value>
+  </data>
+  <data name="SuggestContactsInfo" xml:space="preserve">
+    <value>Zeigt Leute im oberen Bereich der Suche an, die du häufig kontaktiert hast.</value>
+  </data>
   <data name="SuggestStickers" xml:space="preserve">
     <value>Sticker für Emoji vorschlagen</value>
   </data>
@@ -5089,6 +5566,23 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq/de</value>
+  </data>
+  <data name="TelegramPassport" xml:space="preserve">
+    <value>Telegram Passport</value>
+  </data>
+  <data name="TelegramPassportCreatePassword" xml:space="preserve">
+    <value>EIN KENNWORT ERSTELLEN</value>
+  </data>
+  <data name="TelegramPassportCreatePasswordInfo" xml:space="preserve">
+    <value>Bitte Kennwort einrichten, um deine persönlichen Daten mit Ende-zu-Ende-Verschlüsselung zu schützen.
+
+Das Kennwort wird außerdem benötigt, wenn du dich mit Telegram von einem neuen Gerät verbindest.</value>
+  </data>
+  <data name="TelegramPassportDelete" xml:space="preserve">
+    <value>Reisepass löschen</value>
+  </data>
+  <data name="TelegramPassportDeleteAlert" xml:space="preserve">
+    <value>Möchtest du wirklich deinen Telegram Passport löschen?</value>
   </data>
   <data name="TelegramVersion" xml:space="preserve">
     <value>Telegram für Android {0}</value>
@@ -5175,11 +5669,37 @@ stimmst du den *Nutzungsbedigungen* zu.</value>
   <data name="TodayAtFormatted" xml:space="preserve">
     <value>um {0}</value>
   </data>
+  <data name="TosAgeText" xml:space="preserve">
+    <value>Tippe auf Zustimmen, um zu bestätigen, dass du mindestens {0} oder älter bist.</value>
+  </data>
+  <data name="TosAgeTitle" xml:space="preserve">
+    <value>Altersverifikation</value>
+  </data>
+  <data name="TosDecline" xml:space="preserve">
+    <value>Tut uns sehr leid, aber in diesem Fall kannst du dich nicht bei Telegram registrieren.
+
+Im Gegensatz zu anderen, nutzen wir deine Daten nicht für die Ausrichtung von Werbung und verkaufen sie nicht an andere. Telegram speichert nur die Informationen, die es benötigt, um als funktionsreicher Cloud-Dienst aufzutreten. Im Bereich 'Privatsphäre &amp; Sicherheit' kannst du festlegen, wie wir deine Daten verwenden.
+
+Wenn du allgemein nicht mit unseren bescheidenen Anforderungen einverstanden bist, wird es uns nicht möglich sein, dir diesen Dienst anzubieten.</value>
+  </data>
+  <data name="TosDeclineDeleteAccount" xml:space="preserve">
+    <value>Warnung! Das wird dein Telegram-Konto mit all deinen Daten aus der Telegram-Cloud unwiderruflich löschen.
+
+Wichtig: Du kannst jetzt abbrechen und deine Daten vor der Löschung noch exportieren. (Öffne dazu die aktuellste Verson von Telegram Desktop > Einstellungen > Telegram-Daten exportieren.)</value>
+  </data>
+  <data name="TosUpdateDecline" xml:space="preserve">
+    <value>Es tut uns sehr leid aber in diesem Fall müssen sich unsere Wege trennen. Im Gegensatz zu anderen, werden bei Telegram deine Daten nicht für Werbezielerfassungen oder sonstige kommerzielle Zwecke verwendet. Telegram speichert nur die Informationen, die es braucht, um dir einen funktionsreichen Cloud-Dienst anbieten zu können. Unter 'Privatsphäre &amp; Sicherheit' kannst du festlegen, wie wir deine Daten verwenden (z.B. synchronisierte Kontakte löschen).
+
+Wenn du dennoch mit unseren bescheidenen Anforderungen nicht einverstanden bist, wird es uns nicht möglich sein, dir diesen Dienst anzubieten. Du kannst dein Konto jetzt löschen oder dich noch etwas umschauen und jederzeit später löschen, sofern du mit Telegram nicht zufrieden sein solltest.</value>
+  </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>Insgesamt</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Kennwort deaktivieren</value>
+  </data>
+  <data name="TurnPasswordOffPassport" xml:space="preserve">
+    <value>Warnung! Alle Daten in deinem Telegram Passport gehen verloren!</value>
   </data>
   <data name="TurnPasswordOffQuestion" xml:space="preserve">
     <value>Sicher, dass du dein Kennwort deaktivieren willst?</value>
@@ -5192,6 +5712,9 @@ stimmst du den *Nutzungsbedigungen* zu.</value>
   </data>
   <data name="Typing" xml:space="preserve">
     <value>tippt…</value>
+  </data>
+  <data name="URL" xml:space="preserve">
+    <value>URL</value>
   </data>
   <data name="Unavailable" xml:space="preserve">
     <value>Nicht verfügbar</value>
@@ -5209,7 +5732,7 @@ stimmst du den *Nutzungsbedigungen* zu.</value>
     <value>Gedrückt halten um freizugeben.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Setzt alle benutzerdefinierten Einstellungen für Mitteilungen zurück</value>
+    <value>Das setzt alle deine benutzerdefinierten Einstellungen für Kontakte und Gruppen zurück.</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Unbekannter Fehler</value>
@@ -5241,6 +5764,12 @@ stimmst du den *Nutzungsbedigungen* zu.</value>
   <data name="UnsupportedMedia" xml:space="preserve">
     <value>Diese Nachricht wird von deiner Telegram-Version nicht unterstützt. Bitte aktualisiere Telegram um sie zu sehen: https://telegram.org/update</value>
   </data>
+  <data name="UpdateApp" xml:space="preserve">
+    <value>App aktualisieren</value>
+  </data>
+  <data name="UpdateAppAlert" xml:space="preserve">
+    <value>Deine Telegram-App ist leider veraltet und kann diese Anfrage nicht verarbeiten. Bitte aktualisiere Telegram.</value>
+  </data>
   <data name="UpdateContactsMessage" xml:space="preserve">
     <value>Telegram hat viele nicht synchronisierte Kontakte erkannt. Möchtest du diese jetzt synchronisieren? 'OK' wählen, wenn du dein eigenes Gerät, SIM-Karte und Google-Konto benutzt.</value>
   </data>
@@ -5270,6 +5799,9 @@ stimmst du den *Nutzungsbedigungen* zu.</value>
   </data>
   <data name="UpgradeGroup" xml:space="preserve">
     <value>In Supergruppe ändern</value>
+  </data>
+  <data name="UploadItems" xml:space="preserve">
+    <value>{0} hochladen</value>
   </data>
   <data name="UsbActive" xml:space="preserve">
     <value>USB-Transfer aktiv</value>
@@ -5450,6 +5982,12 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Videonachrichten</value>
+  </data>
+  <data name="ViewContact" xml:space="preserve">
+    <value>KONTAKT ANZEIGEN</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>KONTAKT ANZEIGEN</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>Paket anzeigen</value>
@@ -5694,6 +6232,9 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
   <data name="YourCode" xml:space="preserve">
     <value>Nummer verifizieren</value>
   </data>
+  <data name="YourContacts" xml:space="preserve">
+    <value>Deine Kontakte bei Telegram</value>
+  </data>
   <data name="YourEmail" xml:space="preserve">
     <value>Deine E-Mail</value>
   </data>
@@ -5732,11 +6273,20 @@ Wenn du dein Passwort vergisst, verlierst du den Zugang zu deinem Telegram Konto
   <data name="YourPhone" xml:space="preserve">
     <value>Dein Telefon</value>
   </data>
+  <data name="TgCancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="TgOpenGooglePlay" xml:space="preserve">
+    <value>Google Play öffnen</value>
+  </data>
   <data name="ChatDate" xml:space="preserve">
     <value>d'.' MMMM</value>
   </data>
   <data name="ChatFullDate" xml:space="preserve">
     <value>d MMMM, yyyy</value>
+  </data>
+  <data name="DownloadTelegramText" xml:space="preserve">
+    <value>Du brauchst Telegram, um dich bei **{0}** anmelden zu können. Möchtest du es jetzt installieren?</value>
   </data>
   <data name="FormatDateAtTime" xml:space="preserve">
     <value>{0} um {1}</value>
@@ -5797,6 +6347,9 @@ Wenn du dein Passwort vergisst, verlierst du den Zugang zu deinem Telegram Konto
   </data>
   <data name="ItemsOther" xml:space="preserve">
     <value>{0} Objekte</value>
+  </data>
+  <data name="LoginWithTelegram" xml:space="preserve">
+    <value>Mit Telegram anmelden</value>
   </data>
   <data name="MessagesZero" xml:space="preserve">
     <value/>
