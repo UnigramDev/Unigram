@@ -1119,7 +1119,7 @@ namespace Unigram.ViewModels
                         var confirm = await TLMessageDialog.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
-                            await SendContactAsync(new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, cached.Id));
+                            await SendContactAsync(new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id));
                         }
                     }
                 }
@@ -1300,7 +1300,7 @@ namespace Unigram.ViewModels
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new ImportContacts(new[] { new Contact(contact.Contact.PhoneNumber, dialog.FirstName, dialog.LastName, contact.Contact.UserId) }));
+                ProtoService.Send(new ImportContacts(new[] { new Contact(contact.Contact.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, contact.Contact.UserId) }));
             }
         }
 

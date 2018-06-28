@@ -480,7 +480,7 @@ namespace Unigram.ViewModels
                                 var user = ProtoService.GetUser(userId);
                                 if (user != null)
                                 {
-                                    contact = new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LanguageCode, user.Id);
+                                    contact = new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id);
                                 }
                             }
                         }
@@ -497,7 +497,7 @@ namespace Unigram.ViewModels
                         return;
                     }
 
-                    contact = new Telegram.Td.Api.Contact(phone.Number, picked.FirstName, picked.LastName, 0);
+                    contact = new Telegram.Td.Api.Contact(phone.Number, picked.FirstName, picked.LastName, string.Empty, 0);
                 }
 
                 if (contact != null)
