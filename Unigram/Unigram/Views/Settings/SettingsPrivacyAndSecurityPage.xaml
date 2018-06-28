@@ -127,9 +127,13 @@
                         IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                         Header="{CustomResource SyncContacts}"
                         Style="{ThemeResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsContactsSuggestEnabled, Mode=TwoWay}"
+                        Header="{CustomResource SuggestContacts}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
 
                     <TextBlock
-                        Text="{x:Bind ConvertSync(ViewModel.IsContactsSyncEnabled), Mode=OneWay}"
+                        Text="{CustomResource SuggestContactsInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,0"/>

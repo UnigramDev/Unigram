@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPrivacyAndSecurityViewModel : TLViewModelBase
+    public class SettingsPrivacyAndSecurityViewModel : TLViewModelBase, IHandle<UpdateOption>
     {
         private readonly IContactsService _contactsService;
 
@@ -37,6 +37,8 @@ namespace Unigram.ViewModels.Settings
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
             AccountTTLCommand = new RelayCommand(AccountTTLExecute);
             PeerToPeerCommand = new RelayCommand(PeerToPeerExecute);
+
+            aggregator.Subscribe(this);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -134,6 +136,18 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsContactsSuggestEnabled
+        {
+            get
+            {
+                return ProtoService.GetOption<OptionValueBoolean>("disable_top_chats")?.Value ?? true;
+            }
+            set
+            {
+                SetSuggestContacts(value);
+            }
+        }
+
         public bool IsSecretPreviewsEnabled
         {
             get
@@ -148,6 +162,29 @@ namespace Unigram.ViewModels.Settings
         }
 
         #endregion
+
+        public void Handle(UpdateOption update)
+        {
+            if (update.Name.Equals("disable_top_chats"))
+            {
+                BeginOnUIThread(() => RaisePropertyChanged(() => IsContactsSuggestEnabled));
+            }
+        }
+
+        private async void SetSuggestContacts(bool value)
+        {
+            if (!value)
+            {
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.SuggestContactsAlert, Strings.Resources.AppName, Strings.Resources.MuteDisable, Strings.Resources.Cancel);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    RaisePropertyChanged(() => IsContactsSuggestEnabled);
+                    return;
+                }
+            }
+
+            ProtoService.Send(new SetOption("disable_top_chats", new OptionValueBoolean(value)));
+        }
 
         public RelayCommand PasswordCommand { get; }
         private async void PasswordExecute()
