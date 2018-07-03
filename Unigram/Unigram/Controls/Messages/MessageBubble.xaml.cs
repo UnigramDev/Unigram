@@ -386,7 +386,7 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, 3);
                 Grid.SetRow(Message, 2);
             }
-            else if ((message.Content is MessageText webPage && webPage.WebPage != null) || message.Content is MessageGame)
+            else if ((message.Content is MessageText webPage && webPage.WebPage != null) || message.Content is MessageGame || message.Content is MessageContact)
             {
                 Media.Margin = new Thickness(0);
                 Placeholder.Visibility = Visibility.Collapsed;

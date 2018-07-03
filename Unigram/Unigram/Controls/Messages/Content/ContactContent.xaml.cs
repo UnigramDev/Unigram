@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage.Streams;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -67,13 +68,32 @@ namespace Unigram.Controls.Messages.Content
             return content is MessageContact;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             var contact = _message.Content as MessageContact;
             if (contact == null)
             {
                 return;
             }
+
+            //try
+            //{
+            //    var stream = new InMemoryRandomAccessStream();
+            //    var writer = new DataWriter(stream.GetOutputStreamAt(0));
+
+            //    var reference = RandomAccessStreamReference.CreateFromStream(stream);
+
+            //    writer.WriteString(contact.Contact.Vcard);
+            //    await writer.StoreAsync();
+
+            //    var system = await Windows.ApplicationModel.Contacts.ContactManager.ConvertVCardToContactAsync(reference);
+
+            //    var transform = this.TransformToVisual(Window.Current.Content as UIElement);
+            //    var point = transform.TransformPoint(new Point());
+
+            //    Windows.ApplicationModel.Contacts.ContactManager.ShowContactCard(system, new Rect(point.X, point.Y, ActualWidth, ActualHeight));
+            //}
+            //catch { }
 
             _message.Delegate.OpenUser(contact.Contact.UserId);
         }
