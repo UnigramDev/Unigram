@@ -29,12 +29,12 @@ namespace Unigram.ViewModels
         {
             Items = new ItemsCollection(protoService, aggregator, this);
 
-            DialogPinCommand = new RelayCommand<Chat>(DialogPinExecute);
-            DialogMarkCommand = new RelayCommand<Chat>(DialogMarkExecute);
-            DialogNotifyCommand = new RelayCommand<Chat>(DialogNotifyExecute);
-            DialogDeleteCommand = new RelayCommand<Chat>(DialogDeleteExecute);
-            DialogClearCommand = new RelayCommand<Chat>(DialogClearExecute);
-            DialogDeleteAndStopCommand = new RelayCommand<Chat>(DialogDeleteAndStopExecute);
+            ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
+            ChatMarkCommand = new RelayCommand<Chat>(ChatMarkExecute);
+            ChatNotifyCommand = new RelayCommand<Chat>(ChatNotifyExecute);
+            ChatDeleteCommand = new RelayCommand<Chat>(ChatDeleteExecute);
+            ChatClearCommand = new RelayCommand<Chat>(ChatClearExecute);
+            ChatDeleteAndStopCommand = new RelayCommand<Chat>(ChatDeleteAndStopExecute);
 
             aggregator.Subscribe(this);
             protoService.Send(new GetChats(long.MaxValue, 0, 20));
@@ -89,26 +89,33 @@ namespace Unigram.ViewModels
 
         #region Commands
 
-        public RelayCommand<Chat> DialogPinCommand { get; }
-        private void DialogPinExecute(Chat chat)
+        public RelayCommand<Chat> ChatPinCommand { get; }
+        private void ChatPinExecute(Chat chat)
         {
             ProtoService.Send(new ToggleChatIsPinned(chat.Id, !chat.IsPinned));
         }
 
-        public RelayCommand<Chat> DialogMarkCommand { get; }
-        private void DialogMarkExecute(Chat chat)
+        public RelayCommand<Chat> ChatMarkCommand { get; }
+        private void ChatMarkExecute(Chat chat)
         {
-            ProtoService.Send(new ToggleChatIsMarkedAsUnread(chat.Id, !chat.IsMarkedAsUnread));
+            if (chat.UnreadCount > 0)
+            {
+                ProtoService.Send(new ViewMessages(chat.Id, new[] { chat.LastMessage.Id }, true));
+            }
+            else
+            {
+                ProtoService.Send(new ToggleChatIsMarkedAsUnread(chat.Id, !chat.IsMarkedAsUnread));
+            }
         }
 
-        public RelayCommand<Chat> DialogNotifyCommand { get; }
-        private void DialogNotifyExecute(Chat chat)
+        public RelayCommand<Chat> ChatNotifyCommand { get; }
+        private void ChatNotifyExecute(Chat chat)
         {
             ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(false, chat.NotificationSettings.MuteFor > 0 ? 0 : 632053052, false, chat.NotificationSettings.Sound, false, chat.NotificationSettings.ShowPreview)));
         }
 
-        public RelayCommand<Chat> DialogDeleteCommand { get; }
-        private async void DialogDeleteExecute(Chat chat)
+        public RelayCommand<Chat> ChatDeleteCommand { get; }
+        private async void ChatDeleteExecute(Chat chat)
         {
             var message = Strings.Resources.AreYouSureDeleteAndExit;
             if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
@@ -136,8 +143,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<Chat> DialogClearCommand { get; }
-        private async void DialogClearExecute(Chat chat)
+        public RelayCommand<Chat> ChatClearCommand { get; }
+        private async void ChatClearExecute(Chat chat)
         {
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistory, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
@@ -146,8 +153,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<Chat> DialogDeleteAndStopCommand { get; }
-        private async void DialogDeleteAndStopExecute(Chat chat)
+        public RelayCommand<Chat> ChatDeleteAndStopCommand { get; }
+        private async void ChatDeleteAndStopExecute(Chat chat)
         {
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureDeleteThisChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary && chat.Type is ChatTypePrivate privata)
