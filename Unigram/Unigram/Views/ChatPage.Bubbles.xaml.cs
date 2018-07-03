@@ -458,6 +458,7 @@ namespace Unigram.Views
                 var photo = grid.FindName("Photo") as ProfilePicture;
                 if (photo != null)
                 {
+                    photo.Visibility = message.IsLast ? Visibility.Visible : Visibility.Collapsed;
                     photo.Tag = message;
 
                     if (message.IsSaved())
@@ -467,7 +468,7 @@ namespace Unigram.Views
                             var user = message.ProtoService.GetUser(fromUser.SenderUserId);
                             if (user != null)
                             {
-                                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 32, 32);
+                                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30, 30);
                             }
                         }
                         else if (message.ForwardInfo is MessageForwardedPost post)
@@ -475,7 +476,7 @@ namespace Unigram.Views
                             var chat = message.ProtoService.GetChat(post.ForwardedFromChatId);
                             if (chat != null)
                             {
-                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 32, 32);
+                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30, 30);
                             }
                         }
                     }
@@ -484,7 +485,7 @@ namespace Unigram.Views
                         var user = message.GetSenderUser();
                         if (user != null)
                         {
-                            photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 32, 32);
+                            photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30, 30);
                         }
                     }
                 }

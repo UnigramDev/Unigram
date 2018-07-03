@@ -273,9 +273,9 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendMessageTemplate">
-            <Grid Margin="-52,0,0,0" HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+            <Grid Margin="-48,0,0,0" HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="52"/>
+                    <ColumnDefinition Width="50"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>

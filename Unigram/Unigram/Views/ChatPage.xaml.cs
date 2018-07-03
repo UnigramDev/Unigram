@@ -242,6 +242,7 @@ namespace Unigram.Views
             SearchBar.Update(ViewModel.Search);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
+            ViewModel.Items.AttachChanged = OnAttachChanged;
             //Bindings.Update();
 
             //LosingFocus -= DialogPage_LosingFocus;
@@ -267,6 +268,54 @@ namespace Unigram.Views
         //        args.Handled = true;
         //    }
         //}
+
+        private void OnAttachChanged(IEnumerable<MessageViewModel> items)
+        {
+            foreach (var message in items)
+            {
+                if (message == null)
+                {
+                    continue;
+                }
+
+                var container = Messages.ContainerFromItem(message) as SelectorItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
+                var content = container.ContentTemplateRoot as FrameworkElement;
+                if (content == null)
+                {
+                    continue;
+                }
+
+                if (content is Grid grid)
+                {
+                    var photo = grid.FindName("Photo") as ProfilePicture;
+                    if (photo != null)
+                    {
+                        photo.Visibility = message.IsLast ? Visibility.Visible : Visibility.Collapsed;
+                    }
+
+                    content = grid.FindName("Bubble") as FrameworkElement;
+                }
+                else if (content is StackPanel panel && !(content is MessageBubble))
+                {
+                    content = panel.FindName("Service") as FrameworkElement;
+                }
+
+                if (content is MessageBubble bubble)
+                {
+                    bubble.UpdateAttach(message);
+                    bubble.UpdateMessageHeader(message);
+                }
+                else if (content is MessageService service)
+                {
+                    //service.UpdateAttach(item);
+                }
+            }
+        }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {

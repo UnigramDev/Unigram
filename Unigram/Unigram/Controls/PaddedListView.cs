@@ -40,18 +40,18 @@ namespace Unigram.Controls
                         }
                         else
                         {
-                            container.Padding = new Thickness(52, 0, 12, 0);
+                            container.Padding = new Thickness(50, 0, 12, 0);
                         }
                     }
                     else
                     {
                         if (message.Content is MessageSticker || message.Content is MessageVideoNote)
                         {
-                            container.Padding = new Thickness(52, 0, 12, 0);
+                            container.Padding = new Thickness(50, 0, 12, 0);
                         }
                         else
                         {
-                            container.Padding = new Thickness(52, 0, false ? 12 : 52, 0);
+                            container.Padding = new Thickness(50, 0, false ? 12 : 50, 0);
                         }
                     }
                 }
@@ -65,11 +65,11 @@ namespace Unigram.Controls
                     {
                         if (message.IsOutgoing && !message.IsChannelPost)
                         {
-                            container.Padding = new Thickness(52, 0, 12, 0);
+                            container.Padding = new Thickness(50, 0, 12, 0);
                         }
                         else
                         {
-                            container.Padding = new Thickness(12, 0, false ? 12 : 52, 0);
+                            container.Padding = new Thickness(12, 0, false ? 12 : 50, 0);
                         }
                     }
                 }

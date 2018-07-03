@@ -2717,6 +2717,8 @@ namespace Unigram.ViewModels
         private readonly Dictionary<long, MessageViewModel> _messages = new Dictionary<long, MessageViewModel>();
         private readonly HashSet<DateTime> _dates = new HashSet<DateTime>();
 
+        public Action<IEnumerable<MessageViewModel>> AttachChanged;
+
         public bool ContainsKey(long id)
         {
             return _messages.ContainsKey(id);
@@ -2736,8 +2738,23 @@ namespace Unigram.ViewModels
             UpdateSeparatorOnInsert(item, next, index);
             UpdateSeparatorOnInsert(previous, item, index - 1);
 
-            //UpdateAttach(next, item, index + 1);
-            //UpdateAttach(item, previous, index);
+            var hash1 = AttachHash(item);
+            var hash2 = AttachHash(next);
+            var hash3 = AttachHash(previous);
+
+            UpdateAttach(next, item, index + 1);
+            UpdateAttach(item, previous, index);
+
+            var update1 = AttachHash(item);
+            var update2 = AttachHash(next);
+            var update3 = AttachHash(previous);
+
+            AttachChanged?.Invoke(new[]
+            {
+                hash3 != update3 ? previous : null,
+                hash1 != update1 ? item : null,
+                hash2 != update2 ? next : null
+            });
         }
 
         protected override void RemoveItem(int index)
@@ -2747,7 +2764,19 @@ namespace Unigram.ViewModels
             var next = index > 0 ? this[index - 1] : null;
             var previous = index < Count - 1 ? this[index + 1] : null;
 
-            //UpdateAttach(previous, next, index + 1);
+            var hash2 = AttachHash(next);
+            var hash3 = AttachHash(previous);
+
+            UpdateAttach(previous, next, index + 1);
+
+            var update2 = AttachHash(next);
+            var update3 = AttachHash(previous);
+
+            AttachChanged?.Invoke(new[]
+            {
+                hash3 != update3 ? previous : null,
+                hash2 != update2 ? next : null
+            });
 
             base.RemoveItem(index);
 
@@ -2827,6 +2856,21 @@ namespace Unigram.ViewModels
         //        items.RemoveAt(index - 1);
         //    }
         //}
+
+        private static int AttachHash(MessageViewModel item)
+        {
+            var hash = 0;
+            if (item != null && item.IsFirst)
+            {
+                hash |= 1 << 0;
+            }
+            if (item != null && item.IsLast)
+            {
+                hash |= 2 << 0;
+            }
+
+            return hash;
+        }
 
         private static void UpdateAttach(MessageViewModel item, MessageViewModel previous, int index)
         {
