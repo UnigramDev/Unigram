@@ -550,6 +550,13 @@ namespace Unigram.Services
 
                 return result + $"{Strings.Resources.AttachPhoto}, ";
             }
+            else if (message.Content is MessageCall call)
+            {
+                var outgoing = message.IsOutgoing;
+                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+
+                return result + (missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming));
+            }
             else if (message.Content is MessageUnsupported)
             {
                 return result + Strings.Resources.UnsupportedAttachment;

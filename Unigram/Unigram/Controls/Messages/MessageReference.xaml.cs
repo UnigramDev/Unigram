@@ -377,6 +377,8 @@ namespace Unigram.Controls.Messages
                     return SetAnimationTemplate(message, animation, title);
                 case MessageAudio audio:
                     return SetAudioTemplate(message, audio, title);
+                case MessageCall call:
+                    return SetCallTemplate(message, call, title);
                 case MessageContact contact:
                     return SetContactTemplate(message, contact, title);
                 case MessageDocument document:
@@ -604,6 +606,23 @@ namespace Unigram.Controls.Messages
 
             TitleLabel.Text = GetFromLabel(message, title);
             ServiceLabel.Text = Strings.Resources.AttachLocation + ", " + venue.Venue.Title.Replace("\r\n", "\n").Replace('\n', ' ');
+            MessageLabel.Text = string.Empty;
+
+            return true;
+        }
+
+        private bool SetCallTemplate(MessageViewModel message, MessageCall call, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            var outgoing = message.IsOutgoing;
+            var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming);
             MessageLabel.Text = string.Empty;
 
             return true;
