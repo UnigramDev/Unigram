@@ -11,6 +11,75 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
+    <UserControl.Resources>
+        <Style x:Name="InlineButtonStyle" TargetType="controls:GlyphHyperlinkButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource MessageMediaForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+            <Setter Property="Glyph" Value="&#xE700;" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Width" Value="48" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="CornerRadius" Value="24" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:GlyphHyperlinkButton">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                            <TextBlock
+                                x:Name="ContentPresenter"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="{TemplateBinding Glyph}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <Grid x:Name="LayoutRoot">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -23,28 +92,21 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <TextBlock x:Name="TitleLabel"
-                   Foreground="{ThemeResource MessageForegroundBrush}"
-                   Style="{StaticResource BaseTextBlockStyle}"/>
-
-        <TextBlock Foreground="{ThemeResource MessageSubtleLabelBrush}"
-                   Style="{StaticResource CaptionTextBlockStyle}"
-                   Margin="0,6,0,-2"
-                   Grid.Row="1">
-            <ToolTipService.ToolTip>
-                <ToolTip Opened="ToolTip_Opened"/>
-            </ToolTipService.ToolTip>
-            <Run x:Name="ReasonGlyph" FontSize="10" Foreground="{ThemeResource MessageCallForegroundBrush}" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-            <Run x:Name="DateLabel"/><Run x:Name="DurationLabel"/>
-        </TextBlock>
-
-        <controls:GlyphButton Glyph="&#xE13A;" Height="40" Width="40" CornerRadius="20" VerticalAlignment="Stretch" Margin="12,-4,-6,-6" Grid.Column="1" Grid.RowSpan="2"/>
+        <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
+            <controls:GlyphHyperlinkButton x:Name="Button" Glyph="&#xE13A;" Click="Button_Click" Style="{StaticResource InlineButtonStyle}"/>
+        </Border>
+        <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
+            <TextBlock x:Name="TitleLabel" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
+            <TextBlock Style="{ThemeResource DisabledCaptionTextBlockStyle}">
+                <ToolTipService.ToolTip>
+                    <ToolTip Opened="ToolTip_Opened"/>
+                </ToolTipService.ToolTip>
+                <Run x:Name="ReasonGlyph" FontSize="10" Foreground="{ThemeResource MessageCallForegroundBrush}" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                <Run x:Name="DateLabel"/><Run x:Name="DurationLabel"/>
+            </TextBlock>
+        </StackPanel>
     </Grid>
 </UserControl>
