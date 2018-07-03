@@ -21,7 +21,7 @@
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>CE7E95812C4B2B0C8A7D5EA3DB7D201C2F459116</PackageCertificateThumbprint>
     <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
@@ -128,6 +128,7 @@
     <Compile Include="Common\PhoneNumber.cs" />
     <Compile Include="Common\PlaceholderHelper.cs" />
     <Compile Include="Common\RatioControl.cs" />
+    <Compile Include="Common\Shadow.cs" />
     <Compile Include="Common\TdExtensions.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\Theme.cs" />

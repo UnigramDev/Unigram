@@ -89,18 +89,7 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
 
             var separator = ElementCompositionPreview.GetElementVisual(Separator);
-            var shadow = separator.Compositor.CreateDropShadow();
-            shadow.BlurRadius = 20;
-            shadow.Opacity = 0.25f;
-            shadow.Color = Colors.Black;
-
-            var visual = separator.Compositor.CreateSpriteVisual();
-            visual.Shadow = shadow;
-            visual.Size = new Vector2(20, 0);
-            visual.Offset = new Vector3(0, 0, 0);
-            visual.Clip = visual.Compositor.CreateInsetClip(-100, 0, 19, 0);
-
-            ElementCompositionPreview.SetElementChildVisual(Separator, visual);
+            var visual = Shadow.Attach(Separator, 20, 0.25f, separator.Compositor.CreateInsetClip(-100, 0, 19, 0));
 
             Separator.SizeChanged += (s, args) =>
             {
@@ -843,6 +832,8 @@ namespace Unigram.Views
         {
             if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrEmpty(SearchField.Text))
             {
+                rpMasterTitlebar.IsLocked = false;
+
                 if (rpMasterTitlebar.SelectedIndex == 0)
                 {
                     DialogsPanel.Visibility = Visibility.Visible;
@@ -859,6 +850,8 @@ namespace Unigram.Views
             }
             else
             {
+                rpMasterTitlebar.IsLocked = true;
+
                 if (rpMasterTitlebar.SelectedIndex == 0)
                 {
                     DialogsPanel.Visibility = Visibility.Collapsed;
@@ -934,12 +927,12 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var chat = element.Tag as Chat;
 
-            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Chats.DialogPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop);
-            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Chats.DialogNotifyCommand, chat, chat.NotificationSettings.MuteFor > 0 ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications);
-            CreateFlyoutItem(ref flyout, DialogMark_Loaded, ViewModel.Chats.DialogMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread);
-            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Chats.DialogClearCommand, chat, Strings.Resources.ClearHistory);
-            CreateFlyoutItem(ref flyout, DialogDelete_Loaded, ViewModel.Chats.DialogDeleteCommand, chat, DialogDelete_Text(chat));
-            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Chats.DialogDeleteAndStopCommand, chat, Strings.Resources.DeleteAndStop);
+            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Chats.ChatPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop);
+            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Chats.ChatNotifyCommand, chat, chat.NotificationSettings.MuteFor > 0 ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications);
+            CreateFlyoutItem(ref flyout, DialogMark_Loaded, ViewModel.Chats.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread);
+            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Chats.ChatClearCommand, chat, Strings.Resources.ClearHistory);
+            CreateFlyoutItem(ref flyout, DialogDelete_Loaded, ViewModel.Chats.ChatDeleteCommand, chat, DialogDelete_Text(chat));
+            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Chats.ChatDeleteAndStopCommand, chat, Strings.Resources.DeleteAndStop);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -1181,6 +1174,8 @@ namespace Unigram.Views
 
             try
             {
+                rpMasterTitlebar.IsLocked = false;
+
                 ViewModel.Chats.TopChats = null;
                 ViewModel.Chats.Search = null;
                 ViewModel.Contacts.Search = null;

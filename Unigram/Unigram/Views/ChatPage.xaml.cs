@@ -140,6 +140,10 @@ namespace Unigram.Views
                 ElapsedLabel.Text = btnVoiceMessage.Elapsed.ToString("m\\:ss\\.ff");
             };
 
+            var visual = Shadow.Attach(ArrowShadow, 2, 0.25f, null);
+            visual.Size = new Vector2(36, 36);
+            visual.Offset = new Vector3(0, 1, 0);
+
             //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
             //{
             //    var visual = ElementCompositionPreview.GetElementVisual(Header);
