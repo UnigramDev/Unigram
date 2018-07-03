@@ -139,8 +139,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 1415790;
-        public const string CurrentChangelog = "What's new in version 1.4.1579:\r\n- New search view with your most used and recent chats.";
+        public const int CurrentVersion = 1615900;
+        public const string CurrentChangelog = "New in version 1.6.1590:\r\n- Messages bubbles design has been improved.";
 
         public int Session => _session;
 
