@@ -824,7 +824,7 @@ namespace Unigram.ViewModels
                     var confirm = await dialog.ShowQueuedAsync();
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        ProtoService.Send(new PinSupergroupMessage(supergroup.SupergroupId, message.Id, dialog.IsChecked == true));
+                        ProtoService.Send(new PinSupergroupMessage(supergroup.SupergroupId, message.Id, dialog.IsChecked == false));
                     }
                 }
             }
