@@ -46,6 +46,11 @@ namespace Unigram.Common
             _window.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
             _window.Activated += OnActivated;
 
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
+            UpdateTitleBar();
+
             var app = App.Current as App;
             app.UISettings.ColorValuesChanged += UISettings_ColorValuesChanged;
 

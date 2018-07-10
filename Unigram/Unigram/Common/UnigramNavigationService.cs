@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Services.NavigationService;
 using Template10.Services.ViewService;
 using Unigram.Services;
 using Unigram.Views;
+using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Common
 {
@@ -104,8 +101,15 @@ namespace Unigram.Common
                     App.Current.SessionState.Remove("message_id");
                 }
 
-
-                Navigate(typeof(ChatPage), chat.Id);
+                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+                if (shift)
+                {
+                    await OpenAsync(typeof(ChatPage), chat.Id);
+                }
+                else
+                {
+                    await NavigateAsync(typeof(ChatPage), chat.Id);
+                }
             }
         }
 

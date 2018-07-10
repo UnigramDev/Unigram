@@ -99,6 +99,10 @@ namespace Unigram.Views
                 Header.Visibility = Visibility.Collapsed;
                 FindName("BackgroundPresenter");
             }
+            else if (!Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().IsMain)
+            {
+                FindName("BackgroundPresenter");
+            }
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
