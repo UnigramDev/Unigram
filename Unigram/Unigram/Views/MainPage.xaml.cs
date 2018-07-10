@@ -690,11 +690,11 @@ namespace Unigram.Views
             {
                 if (cat.Id == 0)
                 {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), 9L);
+                    MasterDetail.NavigationService.Navigate(typeof(ChatPage), 9L);
                 }
                 else if (cat.Id == 1)
                 {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), 10L);
+                    MasterDetail.NavigationService.Navigate(typeof(ChatPage), 10L);
                 }
             }
 
