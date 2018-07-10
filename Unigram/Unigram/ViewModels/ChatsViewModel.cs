@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {
-    public class ChatsViewModel : TLViewModelBase, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
+    public class ChatsViewModel : TLViewModelBase, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatIsSponsored>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
     {
         private readonly Dictionary<long, ChatViewModel> _viewModels = new Dictionary<long, ChatViewModel>();
 
@@ -175,90 +175,37 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateChatOrder update)
         {
-            var chat = GetChat(update.ChatId);
-            if (chat != null)
-            {
-                BeginOnUIThread(() =>
-                {
-                    if (update.Order == 0)
-                    {
-                        Items.Remove(chat);
-                    }
-                    else
-                    {
-                        var index = Items.IndexOf(chat);
-                        var next = Items.NextIndexOf(chat);
-
-                        if (next >= 0 && index != next)
-                        {
-                            Items.Remove(chat);
-                            Items.Add(chat);
-                        }
-                    }
-                });
-            }
+            Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatLastMessage update)
         {
-            var chat = GetChat(update.ChatId);
-            if (chat != null)
-            {
-                BeginOnUIThread(() =>
-                {
-                    if (update.Order == 0)
-                    {
-                        Items.Remove(chat);
-                    }
-                    else
-                    {
-                        var index = Items.IndexOf(chat);
-                        var next = Items.NextIndexOf(chat);
-
-                        if (next >= 0 && index != next)
-                        {
-                            Items.Remove(chat);
-                            Items.Add(chat);
-                        }
-                    }
-                });
-            }
+            Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatIsPinned update)
         {
-            var chat = GetChat(update.ChatId);
-            if (chat != null)
-            {
-                BeginOnUIThread(() =>
-                {
-                    if (update.Order == 0)
-                    {
-                        Items.Remove(chat);
-                    }
-                    else
-                    {
-                        var index = Items.IndexOf(chat);
-                        var next = Items.NextIndexOf(chat);
+            Handle(update.ChatId, update.Order);
+        }
 
-                        if (next >= 0 && index != next)
-                        {
-                            Items.Remove(chat);
-                            Items.Add(chat);
-                        }
-                    }
-                });
-            }
+        public void Handle(UpdateChatIsSponsored update)
+        {
+            Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatDraftMessage update)
         {
-            var chat = GetChat(update.ChatId);
+            Handle(update.ChatId, update.Order);
+        }
+
+        private void Handle(long chatId, long order)
+        {
+            var chat = GetChat(chatId);
             if (chat != null)
             {
                 BeginOnUIThread(() =>
                 {
-                    if (update.Order == 0)
+                    if (order == 0)
                     {
                         Items.Remove(chat);
                     }
