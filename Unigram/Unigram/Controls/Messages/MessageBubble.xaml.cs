@@ -91,10 +91,14 @@ namespace Unigram.Controls.Messages
 
             if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
             {
-                ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, 4, 4);
+                if (!(message.Content is MessageSticker || message.Content is MessageVideoNote))
+                {
+                    ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, 4, 4);
+                }
+
                 Markup.CornerRadius = new CornerRadius(4, 4, bottomRight, bottomLeft);
             }
-            else
+            else if (!(message.Content is MessageSticker || message.Content is MessageVideoNote))
             {
                 ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
             }
@@ -417,7 +421,7 @@ namespace Unigram.Controls.Messages
             }
             else if (message.Content is MessageSticker || message.Content is MessageVideoNote)
             {
-                Media.Margin = new Thickness(-8, -4, -10, -6);
+                Media.Margin = new Thickness(-10, -4, -10, -6);
                 Placeholder.Visibility = Visibility.Collapsed;
                 FooterToLightMedia(message.IsOutgoing);
                 Grid.SetRow(Footer, 3);
