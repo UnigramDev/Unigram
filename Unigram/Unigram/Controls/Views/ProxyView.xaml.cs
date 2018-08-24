@@ -53,6 +53,12 @@ namespace Unigram.Controls.Views
                     FieldSecret.Text = proto.Secret;
                     TypeProto.IsChecked = true;
                     break;
+                case ProxyTypeHttp http:
+                    FieldUsername.Text = http.Username;
+                    FieldPassword.Password = http.Password;
+                    FieldTransparent.IsChecked = !http.HttpOnly;
+                    TypeHttp.IsChecked = true;
+                    break;
             }
         }
 
@@ -84,6 +90,10 @@ namespace Unigram.Controls.Views
                 else if (TypeProto.IsChecked == true)
                 {
                     return new ProxyTypeMtproto(FieldSecret.Text ?? string.Empty);
+                }
+                else if (TypeHttp.IsChecked == true)
+                {
+                    return new ProxyTypeHttp(FieldUsername.Text ?? string.Empty, FieldPassword.Password ?? string.Empty, FieldTransparent.IsChecked == false);
                 }
 
                 return null;
@@ -156,12 +166,19 @@ namespace Unigram.Controls.Views
                 TypeProtoPanel.Visibility = TypeProto.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
             }
 
+            if (TypeHttpPanel != null)
+            {
+                TypeHttpPanel.Visibility = TypeHttp.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            }
+
             if (Info != null)
             {
                 Info.Text = TypeSocks.IsChecked == true
                     ? Strings.Resources.UseProxyInfo
                     : TypeProto.IsChecked == true
                     ? Strings.Resources.UseProxyTelegramInfo + Environment.NewLine + Environment.NewLine + Strings.Resources.UseProxyTelegramInfo2
+                    : TypeHttp.IsChecked == true
+                    ? "Enable if server supports transparent TCP connections via HTTP CONNECT method." + Environment.NewLine + Environment.NewLine + "When supported, it may improve connection speed dramatically. Try changing this option if this proxy doesn't work."
                     : String.Empty;
             }
         }

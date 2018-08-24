@@ -42,6 +42,7 @@ namespace Unigram.Views.Settings
             var proxy = element.DataContext as ProxyViewModel;
 
             CreateFlyoutItem(ref flyout, ViewModel.ShareCommand, proxy, Strings.Resources.ShareFile);
+            CreateFlyoutItem(ref flyout, ViewModel.EditCommand, proxy, Strings.Resources.Edit);
             CreateFlyoutItem(ref flyout, ViewModel.RemoveCommand, proxy, Strings.Resources.Delete);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
