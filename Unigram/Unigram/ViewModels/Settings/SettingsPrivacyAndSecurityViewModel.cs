@@ -33,6 +33,7 @@ namespace Unigram.ViewModels.Settings
             _allowChatInvitesRules = chatInvite;
 
             PasswordCommand = new RelayCommand(PasswordExecute);
+            ClearDraftsCommand = new RelayCommand(ClearDraftsExecute);
             ClearContactsCommand = new RelayCommand(ClearContactsExecute);
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
             AccountTTLCommand = new RelayCommand(AccountTTLExecute);
@@ -205,6 +206,22 @@ namespace Unigram.ViewModels.Settings
             //{
             //    // TODO
             //}
+        }
+
+        public RelayCommand ClearDraftsCommand { get; }
+        private async void ClearDraftsExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearDrafts, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var clear = await ProtoService.SendAsync(new ClearAllDraftMessages(true));
+            if (clear is Error)
+            {
+                // TODO
+            }
         }
 
         public RelayCommand ClearContactsCommand { get; }

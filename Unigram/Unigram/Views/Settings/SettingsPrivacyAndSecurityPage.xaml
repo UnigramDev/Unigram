@@ -86,9 +86,13 @@
                 </StackPanel>
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource DeleteAccountTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PrivacyAdvanced}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <Button
+                        Tag="{CustomResource PrivacyDeleteCloudDrafts}"
+                        Command="{x:Bind ViewModel.ClearDraftsCommand}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
                     <controls:BadgeButton
-                        Content="{CustomResource DeleteAccountIfAwayFor}"
+                        Content="{CustomResource DeleteAccountIfAwayFor2}"
                         Badge="{x:Bind ConvertTtl(ViewModel.AccountTTL), Mode=OneWay}"
                         Command="{x:Bind ViewModel.AccountTTLCommand}"/>
 
