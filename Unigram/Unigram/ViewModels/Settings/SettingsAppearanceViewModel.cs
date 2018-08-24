@@ -43,16 +43,53 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public TelegramTheme GetRawTheme()
+        {
+            var theme = Settings.Appearance.RequestedTheme;
+            if (theme.HasFlag(TelegramTheme.Brand))
+            {
+                return theme & ~TelegramTheme.Brand;
+            }
+
+            return theme;
+        }
+
+        public ElementTheme GetElementTheme()
+        {
+            var theme = Settings.Appearance.RequestedTheme;
+            return theme.HasFlag(TelegramTheme.Default)
+                ? ElementTheme.Default
+                : theme.HasFlag(TelegramTheme.Dark)
+                ? ElementTheme.Dark
+                : ElementTheme.Light;
+        }
+
         public int RequestedTheme
         {
             get
             {
-                return (int)Settings.RequestedTheme;
+                return (int)GetRawTheme();
             }
             set
             {
-                Settings.RequestedTheme = (ElementTheme)value;
+                Settings.Appearance.RequestedTheme = IsSystemTheme ? (TelegramTheme)value : ((TelegramTheme)value | TelegramTheme.Brand);
                 RaisePropertyChanged();
+                RaisePropertyChanged(() => IsSystemTheme);
+                RaisePropertyChanged(() => IsThemeChanged);
+            }
+        }
+
+        public bool IsSystemTheme
+        {
+            get
+            {
+                return !Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Brand);
+            }
+            set
+            {
+                Settings.Appearance.RequestedTheme = value ? GetRawTheme() : (GetRawTheme() | TelegramTheme.Brand);
+                RaisePropertyChanged();
+                RaisePropertyChanged(() => RequestedTheme);
                 RaisePropertyChanged(() => IsThemeChanged);
             }
         }
@@ -61,7 +98,7 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return Settings.CurrentTheme != Settings.RequestedTheme;
+                return Settings.Appearance.CurrentTheme != Settings.Appearance.RequestedTheme;
             }
         }
     }

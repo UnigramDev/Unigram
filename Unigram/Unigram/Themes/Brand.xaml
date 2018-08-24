@@ -1,64 +1,120 @@
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.ThemeDictionaries>
-        <!-- From -->
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#effdde"/>
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="#403ac347"/>
-            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#6CC264"/>
-            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#64BC54"/>
+            <Color x:Key="HistoryTextInFg">#F5F5F5</Color>
+            <Color x:Key="HistoryTextOutFg">#E5EDF2</Color>
 
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#3a8e26"/>
-            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#5dc452"/>
+            <Color x:Key="MsgInBg">#33393F</Color>
+            <Color x:Key="MsgOutBg">#2A2F33</Color>
 
-            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#6aad60"/>
-            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#d4f1c2"/>
+            <Color x:Key="MsgInShadow">#00748EA2</Color>
+            <Color x:Key="MsgOutShadow">#00000000</Color>
 
-            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
+            <Color x:Key="MsgInDateFg">#828D94</Color>
+            <Color x:Key="MsgOutDateFg">#737F87</Color>
 
-            <!--<Thickness x:Key="MessageContentPadding">12,6</Thickness>-->
-            <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
-            <Thickness x:Key="MessageContentMargin">40,2,0,2</Thickness>
+            <Color x:Key="DialogsSentIconFg">#1FEEDA</Color>
 
-            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
+            <Color x:Key="MsgInServiceFg">#4BE1C3</Color>
+            <Color x:Key="MsgOutServiceFg">#60E5CB</Color>
+
+            <Color x:Key="MsgInReplyBarColor">#32CEB7</Color>
+            <Color x:Key="MsgOutReplyBarColor">#32CEB7</Color>
+
+            <Color x:Key="HistoryFileInIconFg">#33393F</Color>
+            <Color x:Key="HistoryFileOutIconFg">#33393F</Color>
+
+            <Color x:Key="MsgFileInBg">#50D4C3</Color>
+            <Color x:Key="MsgFileOutBg">#10BFAB</Color>
+
+            <Color x:Key="HistoryLinkInFg">#36E1CB</Color>
+            <Color x:Key="HistoryLinkOutFg">#36E1CB</Color>
+
+            <Color x:Key="MsgDateImgBg">#54000000</Color>
+
+            <Color x:Key="CallArrowFg">#2BC7B8</Color>
+
+            <Color x:Key="CallArrowMissedFg">#DD5849</Color>
         </ResourceDictionary>
-
-        <!-- To -->
         <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#ffffff"/>
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="#29748ea2"/>
-            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
-            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
+            <Color x:Key="HistoryTextInFg">#000000</Color>
+            <Color x:Key="HistoryTextOutFg">#000000</Color>
 
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
-            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
+            <Color x:Key="MsgInBg">#FFFFFF</Color>
+            <Color x:Key="MsgOutBg">#F0FDDF</Color>
 
-            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#999999"/>
-            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#f2f2f2"/>
+            <Color x:Key="MsgInShadow">#29748EA2</Color>
+            <Color x:Key="MsgOutShadow">#403AC345</Color>
 
-            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#0f7dc7"/>
+            <Color x:Key="MsgInDateFg">#A1ADB6</Color>
+            <Color x:Key="MsgOutDateFg">#6DC264</Color>
 
-            <!--<Thickness x:Key="MessageContentPadding">12,6</Thickness>-->
-            <Thickness x:Key="MessageContentPadding">8,4,12,6</Thickness>
-            <Thickness x:Key="MessageContentMargin">0,2,40,2</Thickness>
+            <Color x:Key="DialogsSentIconFg">#5DC452</Color>
 
-            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
+            <Color x:Key="MsgInServiceFg">#158DCD</Color>
+            <Color x:Key="MsgOutServiceFg">#3A8E26</Color>
+
+            <Color x:Key="MsgInReplyBarColor">#37A4DE</Color>
+            <Color x:Key="MsgOutReplyBarColor">#5DC452</Color>
+
+            <Color x:Key="HistoryFileInIconFg">#FFFFFF</Color>
+            <Color x:Key="HistoryFileOutIconFg">#F0FDDF</Color>
+
+            <Color x:Key="MsgFileInBg">#40A7E3</Color>
+            <Color x:Key="MsgFileOutBg">#78C67F</Color>
+
+            <Color x:Key="HistoryLinkInFg">#158DCD</Color>
+            <Color x:Key="HistoryLinkOutFg">#158DCD</Color>
+
+            <Color x:Key="MsgDateImgBg">#54000000</Color>
+
+            <Color x:Key="CallArrowFg">#2AB32A</Color>
+
+            <Color x:Key="CallArrowMissedFg">#DD5849</Color>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
-    <CornerRadius x:Key="MessageCornerRadius">4</CornerRadius>
+    <SolidColorBrush x:Key="MessageForegroundBrush" Color="{ThemeResource HistoryTextInFg}" />
+    <SolidColorBrush x:Key="MessageForegroundOutBrush" Color="{ThemeResource HistoryTextOutFg}" />
 
-    <SolidColorBrush x:Key="TelegramDialogStateBrush" Color="#64BC54"/>
-    <SolidColorBrush x:Key="TelegramDialogLabelFromBrush" Color="#4981AF"/>
-    <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>
-    <SolidColorBrush x:Key="TelegramDialogUnreadBadgeBrush" Color="#009CE6"/>
-    <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#BBBBBB"/>
-    <SolidColorBrush x:Key="TelegramDialogUnreadLabelBrush" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="TelegramDialogVerifiedForegroundBrush" Color="#33A8E6"/>
-    <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource MsgInBg}" />
+    <SolidColorBrush x:Key="MessageBackgroundOutBrush" Color="{ThemeResource MsgOutBg}" />
+
+    <SolidColorBrush x:Key="MessageBorderBrush" Color="{ThemeResource MsgInShadow}" />
+    <SolidColorBrush x:Key="MessageBorderOutBrush" Color="{ThemeResource MsgOutShadow}" />
+
+    <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource MsgInDateFg}" />
+    <SolidColorBrush x:Key="MessageSubtleLabelOutBrush" Color="{ThemeResource MsgOutDateFg}" />
+
+    <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource MsgInDateFg}" />
+    <SolidColorBrush x:Key="MessageSubtleGlyphOutBrush" Color="{ThemeResource DialogsSentIconFg}" />
+
+    <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="{ThemeResource MsgInDateFg}" />
+    <SolidColorBrush x:Key="MessageSubtleForegroundOutBrush" Color="{ThemeResource MsgOutDateFg}" />
+
+    <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource MsgInServiceFg}" />
+    <SolidColorBrush x:Key="MessageHeaderForegroundOutBrush" Color="{ThemeResource MsgOutServiceFg}" />
+
+    <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource MsgInReplyBarColor}" />
+    <SolidColorBrush x:Key="MessageHeaderBorderOutBrush" Color="{ThemeResource MsgOutReplyBarColor}" />
+
+    <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource HistoryFileInIconFg}" />
+    <SolidColorBrush x:Key="MessageMediaForegroundOutBrush" Color="{ThemeResource HistoryFileOutIconFg}" />
+
+    <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource MsgFileInBg}" />
+    <SolidColorBrush x:Key="MessageMediaBackgroundOutBrush" Color="{ThemeResource MsgFileOutBg}" />
+
+    <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="{ThemeResource HistoryLinkInFg}" />
+    <SolidColorBrush x:Key="MessageHyperlinkForegroundOutBrush" Color="{ThemeResource HistoryLinkOutFg}" />
+
+    <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="{ThemeResource MsgDateImgBg}" />
+    <SolidColorBrush x:Key="MessageOverlayBackgroundOutBrush" Color="{ThemeResource MsgDateImgBg}" />
+
+    <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="{ThemeResource CallArrowFg}" />
+    <SolidColorBrush x:Key="MessageCallForegroundOutBrush" Color="{ThemeResource CallArrowFg}" />
+
+    <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="{ThemeResource CallArrowMissedFg}" />
+    <SolidColorBrush x:Key="MessageCallMissedForegroundOutBrush" Color="{ThemeResource CallArrowMissedFg}" />
 
 </ResourceDictionary>

@@ -107,9 +107,9 @@ namespace Unigram
         /// </summary>
         public App(int session)
         {
-            if (ApplicationSettings.Current.RequestedTheme != ElementTheme.Default)
+            if (!ApplicationSettings.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
             {
-                RequestedTheme = ApplicationSettings.Current.RequestedTheme == ElementTheme.Dark ? ApplicationTheme.Dark : ApplicationTheme.Light;
+                RequestedTheme = ApplicationSettings.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) ? ApplicationTheme.Dark : ApplicationTheme.Light;
             }
 
 #if DEBUG
@@ -463,11 +463,9 @@ namespace Unigram
                 Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
                 WindowContext.GetForCurrentView().UpdateTitleBar();
-                ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
                 Theme.Current.Update();
-                NotifyThemeChanged();
+                //NotifyThemeChanged();
             }
 
             return base.OnInitializeAsync(args);
@@ -500,7 +498,7 @@ namespace Unigram
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Theme.Current.Update();
-            NotifyThemeChanged();
+            //NotifyThemeChanged();
 
             var dispatcher = Window.Current.Dispatcher;
             Task.Run(() => OnStartSync(dispatcher));
@@ -624,8 +622,8 @@ namespace Unigram
             var current = App.Current as App;
             var theme = current.UISettings.GetColorValue(UIColorType.Background);
 
-            frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark || (ApplicationSettings.Current.CurrentTheme == ElementTheme.Default && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
-            frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme;
+            frame.RequestedTheme = ApplicationSettings.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Dark) || (ApplicationSettings.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
+            //frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme;
 
             //var dark = (bool)App.Current.Resources["IsDarkTheme"];
 

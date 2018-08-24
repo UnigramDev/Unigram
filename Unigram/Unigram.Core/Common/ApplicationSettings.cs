@@ -15,9 +15,7 @@ namespace Unigram.Services
 
         NotificationsSettings Notifications { get; }
         StickersSettings Stickers { get; }
-
-        ElementTheme CurrentTheme { get; }
-        ElementTheme RequestedTheme { get; set; }
+        AppearanceSettings Appearance { get; }
 
         bool IsWorkModeVisible { get; set; }
         bool IsWorkModeEnabled { get; set; }
@@ -139,8 +137,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 1615900;
-        public const string CurrentChangelog = "New in version 1.6.1590:\r\n- Messages bubbles design has been improved.";
+        public const int CurrentVersion = 1715940;
+        public const string CurrentChangelog = "New in version 1.7.1594:\r\n- You can now change the app theme to use Telegram colors from Settings > Appearance.\r\n- If you click on a chat while holding Shift key, it will open up in a new window.";
 
         public int Session => _session;
 
@@ -186,35 +184,12 @@ namespace Unigram.Common
             }
         }
 
-        private ElementTheme? _currentTheme;
-        public ElementTheme CurrentTheme
+        private AppearanceSettings _appearance;
+        public AppearanceSettings Appearance
         {
             get
             {
-                if (_currentTheme == null)
-                    _currentTheme = RequestedTheme;
-
-                return _currentTheme ?? ElementTheme.Default;
-            }
-        }
-
-        private ElementTheme? _requestedTheme;
-        public ElementTheme RequestedTheme
-        {
-            get
-            {
-                if (_requestedTheme == null)
-                {
-                    _requestedTheme = (ElementTheme)GetValueOrDefault(ApplicationData.Current.LocalSettings, "RequestedTheme", (int)ElementTheme.Default);
-                    _currentTheme = _requestedTheme;
-                }
-
-                return _requestedTheme ?? ElementTheme.Default;
-            }
-            set
-            {
-                _requestedTheme = value;
-                AddOrUpdateValue(ApplicationData.Current.LocalSettings, "RequestedTheme", (int)value);
+                return _appearance = _appearance ?? new AppearanceSettings();
             }
         }
 
@@ -581,6 +556,48 @@ namespace Unigram.Common
         }
     }
 
+    public class AppearanceSettings : ApplicationSettingsBase
+    {
+        public AppearanceSettings()
+            : base(ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always))
+        {
+
+        }
+
+        private TelegramTheme? _currentTheme;
+        public TelegramTheme CurrentTheme
+        {
+            get
+            {
+                if (_currentTheme == null)
+                    _currentTheme = RequestedTheme;
+
+                return _currentTheme ?? (TelegramTheme.Default | TelegramTheme.Brand);
+            }
+        }
+
+        private TelegramTheme? _requestedTheme;
+        public TelegramTheme RequestedTheme
+        {
+            get
+            {
+                if (_requestedTheme == null)
+                {
+                    _requestedTheme = (TelegramTheme)GetValueOrDefault(_container, "Theme", (int)(TelegramTheme.Default | TelegramTheme.Brand));
+                    _currentTheme = _requestedTheme;
+                }
+
+                return _requestedTheme ?? (TelegramTheme.Default | TelegramTheme.Brand);
+            }
+            set
+            {
+                _requestedTheme = value;
+                AddOrUpdateValue(_container, "Theme", (int)value);
+            }
+        }
+
+    }
+
     public class StickersSettings : ApplicationSettingsBase
     {
         public StickersSettings(ApplicationDataContainer container)
@@ -612,5 +629,16 @@ namespace Unigram.Common
         All,
         Installed,
         None
+    }
+
+    [Flags]
+    public enum TelegramTheme
+    {
+        Default = 1 << 0,
+        Light = 1 << 1,
+        Dark = 1 << 2,
+
+        Brand = 1 << 3,
+        Custom = 1 << 4,
     }
 }

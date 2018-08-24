@@ -38,6 +38,8 @@ namespace Unigram.Views.Settings
 
             Message1.Mockup("Ahh you kids today with techno music! Enjoy the classics, like Hasselhoff!", "Lucio", "Reinhardt, we need to find you some new tunes.", false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup("I can't take you seriously right now. Sorry..", true, DateTime.Now);
+
+            UpdatePreview(true);
         }
 
         private void Wallpaper_Click(object sender, RoutedEventArgs e)
@@ -142,6 +144,10 @@ namespace Unigram.Views.Settings
             {
                 UpdatePreview(false);
             }
+            else if (e.PropertyName.Equals("IsSystemTheme"))
+            {
+                UpdatePreview(true);
+            }
         }
 
         private void UpdatePreview(bool extended)
@@ -151,12 +157,19 @@ namespace Unigram.Views.Settings
 
             if (extended)
             {
+                Preview.Resources.MergedDictionaries.Clear();
+
+                if (ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Brand))
+                {
+                    Preview.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Brand.xaml") });
+                }
+
                 Message2.Resources.MergedDictionaries.Clear();
-                Message2.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/AccentOut.xaml") });
+                Message2.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/AccentOut.xaml?nocache=xxxxxxxx") });
             }
 
-            Preview.RequestedTheme = ViewModel.Settings.RequestedTheme == ElementTheme.Dark || (ViewModel.Settings.RequestedTheme == ElementTheme.Default && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
-            Preview.RequestedTheme = ViewModel.Settings.RequestedTheme;
+            Preview.RequestedTheme = ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) || (ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
+            Preview.RequestedTheme = ViewModel.GetElementTheme();
         }
     }
 }
