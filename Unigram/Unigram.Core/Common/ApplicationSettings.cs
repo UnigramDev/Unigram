@@ -20,6 +20,7 @@ namespace Unigram.Services
         bool IsWorkModeVisible { get; set; }
         bool IsWorkModeEnabled { get; set; }
 
+        string FilesDirectory { get; set; }
         int FilesTtl { get; set; }
 
         int VerbosityLevel { get; }
@@ -224,6 +225,23 @@ namespace Unigram.Common
             {
                 _isWorkModeEnabled = value;
                 AddOrUpdateValue("IsWorkModeEnabled", value);
+            }
+        }
+
+        private string _filesDirectory;
+        public string FilesDirectory
+        {
+            get
+            {
+                if (_filesDirectory == null)
+                    _filesDirectory = GetValueOrDefault("FilesDirectory", null as string);
+
+                return _filesDirectory;
+            }
+            set
+            {
+                _filesDirectory = value;
+                AddOrUpdateValue("FilesDirectory", value);
             }
         }
 

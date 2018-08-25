@@ -127,6 +127,11 @@
                         IsOn="{x:Bind ViewModel.AutoDownloadEnabled, Mode=TwoWay}"
                         Header="{CustomResource AutoDownloadMedia}"
                         Style="{ThemeResource CheckButtonStyle}"/>
+                    <!--<Button
+                        Command="{x:Bind ViewModel.DownloadLocationCommand}"
+                        Tag="Download location"
+                        Content="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
+                        Style="{StaticResource HyperVerticalDetailButtonStyle}"/>-->
 
                     <Button
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"

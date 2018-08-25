@@ -134,6 +134,11 @@ namespace Unigram.Services
                 UseTestDc = false
             };
 
+            if (_settings.FilesDirectory != null)
+            {
+                parameters.FilesDirectory = _settings.FilesDirectory;
+            }
+
 #if MOCKUP
             ProfilePhoto ProfilePhoto(string name)
             {

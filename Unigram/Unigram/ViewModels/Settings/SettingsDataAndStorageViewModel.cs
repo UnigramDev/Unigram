@@ -15,6 +15,8 @@ using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
 using Unigram.Views.Settings;
 using Telegram.Td.Api;
+using Windows.Storage.Pickers;
+using Windows.Storage.AccessCache;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -25,6 +27,7 @@ namespace Unigram.ViewModels.Settings
         {
             AutoDownloadCommand = new RelayCommand<AutoDownloadType>(AutoDownloadExecute);
             ResetAutoDownloadCommand = new RelayCommand(ResetAutoDownloadExecute);
+            DownloadLocationCommand = new RelayCommand(DownloadLocationExecute);
             UseLessDataCommand = new RelayCommand(UseLessDataExecute);
         }
 
@@ -64,6 +67,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public string FilesDirectory
+        {
+            get
+            {
+                return Settings.FilesDirectory;
+            }
+            set
+            {
+                Settings.FilesDirectory = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public RelayCommand UseLessDataCommand { get; }
         private async void UseLessDataExecute()
         {
@@ -93,6 +109,65 @@ namespace Unigram.ViewModels.Settings
                 }
 
                 UseLessData = (libtgvoip.DataSavingMode)mode;
+            }
+        }
+
+        public RelayCommand DownloadLocationCommand { get; }
+        private async void DownloadLocationExecute()
+        {
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var stack = new StackPanel();
+            stack.Margin = new Thickness(12, 16, 12, 0);
+            stack.Children.Add(new RadioButton { Tag = 1, Content = "Temp folder, cleared on logout or uninstall", IsChecked = FilesDirectory == null });
+            stack.Children.Add(new RadioButton { Tag = 2, Content = "Custom folder, cleared only manually", IsChecked = FilesDirectory != null });
+
+            dialog.Title = "Choose download location";
+            dialog.Content = stack;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var mode = 1;
+                var path = FilesDirectory + string.Empty;
+                foreach (RadioButton current in stack.Children)
+                {
+                    if (current.IsChecked == true)
+                    {
+                        mode = (int)current.Tag;
+                        break;
+                    }
+                }
+
+                switch (mode)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        FilesDirectory = null;
+                        break;
+                    case 2:
+                        var picker = new FolderPicker();
+                        picker.SuggestedStartLocation = PickerLocationId.Downloads;
+                        picker.FileTypeFilter.Add("*");
+
+                        var folder = await picker.PickSingleFolderAsync();
+                        if (folder != null)
+                        {
+                            StorageApplicationPermissions.FutureAccessList.AddOrReplace("FilesDirectory", folder);
+                            FilesDirectory = folder.Path;
+                        }
+
+                        break;
+                }
+
+                if (string.Equals(path, FilesDirectory, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                ProtoService.Send(new Close());
             }
         }
 

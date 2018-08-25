@@ -47,6 +47,16 @@ namespace Unigram.Views.Settings
 
         #region Binding
 
+        private string ConvertFilesDirectory(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return "Default folder";
+            }
+
+            return path;
+        }
+
         private string ConvertUseLessData(DataSavingMode value)
         {
             switch (value)
