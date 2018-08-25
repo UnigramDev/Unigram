@@ -780,7 +780,7 @@ namespace Unigram.ViewModels
                 {
                     if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
                     {
-                        await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, ProtoService.GetMyId(), new ChatMemberStatusLeft()));
+                        await ProtoService.SendAsync(new LeaveChat(chat.Id));
                     }
 
                     ProtoService.Send(new DeleteChatHistory(chat.Id, true));

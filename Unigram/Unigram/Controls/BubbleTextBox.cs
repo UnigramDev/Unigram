@@ -699,7 +699,7 @@ namespace Unigram.Controls
 
                     if (_members)
                     {
-                        var response = await _protoService.SendAsync(new SearchChatMembers(_chatId, _query, 20));
+                        var response = await _protoService.SendAsync(new SearchChatMembers(_chatId, _query, 20, null));
                         if (response is ChatMembers members)
                         {
                             foreach (var member in members.Members)

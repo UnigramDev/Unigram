@@ -1925,8 +1925,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var myid = ProtoService.GetOption<OptionValueInteger>("my_id");
-            ProtoService.Send(new AddChatMember(chat.Id, myid.Value, 0));
+            ProtoService.Send(new JoinChat(chat.Id));
         }
 
         #endregion
@@ -2055,7 +2054,7 @@ namespace Unigram.ViewModels
 
                 if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
                 {
-                    ProtoService.Send(new SetChatMemberStatus(chat.Id, ProtoService.GetMyId(), new ChatMemberStatusLeft()));
+                    ProtoService.Send(new LeaveChat(chat.Id));
                 }
                 else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
                 {
@@ -2113,7 +2112,7 @@ namespace Unigram.ViewModels
                 }
                 else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
                 {
-                    await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, ProtoService.GetMyId(), new ChatMemberStatusLeft()));
+                    await ProtoService.SendAsync(new LeaveChat(chat.Id));
                 }
 
                 ProtoService.Send(new DeleteChatHistory(chat.Id, true));

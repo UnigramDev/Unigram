@@ -24,7 +24,7 @@ namespace Unigram.ViewModels
 
         public void LoadContacts()
         {
-            ProtoService.Send(new SearchContacts(string.Empty, int.MaxValue), async result =>
+            ProtoService.Send(new GetContacts(), async result =>
             {
                 if (result is Telegram.Td.Api.Users users)
                 {

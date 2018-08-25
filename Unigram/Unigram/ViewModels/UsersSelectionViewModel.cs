@@ -50,7 +50,7 @@ namespace Unigram.ViewModels
         {
             Items.Clear();
 
-            ProtoService.Send(new SearchContacts(string.Empty, int.MaxValue), result =>
+            ProtoService.Send(new GetContacts(), result =>
             {
                 if (result is Telegram.Td.Api.Users users)
                 {

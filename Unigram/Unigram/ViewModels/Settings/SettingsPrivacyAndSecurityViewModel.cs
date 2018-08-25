@@ -241,7 +241,7 @@ namespace Unigram.ViewModels.Settings
                 // TODO
             }
 
-            var contacts = await ProtoService.SendAsync(new SearchContacts(string.Empty, int.MaxValue));
+            var contacts = await ProtoService.SendAsync(new GetContacts());
             if (contacts is Telegram.Td.Api.Users users)
             {
                 var delete = await ProtoService.SendAsync(new RemoveContacts(users.UserIds));
