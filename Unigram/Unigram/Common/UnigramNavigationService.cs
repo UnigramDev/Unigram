@@ -9,6 +9,7 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Common
 {
@@ -73,6 +74,10 @@ namespace Unigram.Common
                 if (message != null)
                 {
                     await page.ViewModel.LoadMessageSliceAsync(null, message.Value);
+                }
+                else
+                {
+                    await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, SnapPointsAlignment.Far, 8);
                 }
             }
             else
