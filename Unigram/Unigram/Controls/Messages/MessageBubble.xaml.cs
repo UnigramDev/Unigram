@@ -98,7 +98,11 @@ namespace Unigram.Controls.Messages
 
                 Markup.CornerRadius = new CornerRadius(4, 4, bottomRight, bottomLeft);
             }
-            else if (!(message.Content is MessageSticker || message.Content is MessageVideoNote))
+            else if (message.Content is MessageSticker || message.Content is MessageVideoNote)
+            {
+                ContentPanel.CornerRadius = new CornerRadius();
+            }
+            else
             {
                 ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
             }
@@ -845,9 +849,7 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            var sticker = message.Content is MessageSticker;
-            var round = message.Content is MessageVideoNote;
-            var target = sticker || round ? Media : (FrameworkElement)ContentPanel;
+            var target = Media.Content is IContentWithMask ? Media : (FrameworkElement)ContentPanel;
 
             var overlay = ElementCompositionPreview.GetElementChildVisual(target) as SpriteVisual;
             if (overlay == null)
@@ -860,33 +862,17 @@ namespace Unigram.Controls.Messages
             var fill = overlay.Compositor.CreateColorBrush(settings.GetColorValue(UIColorType.Accent));
             var brush = (CompositionBrush)fill;
 
-            if (sticker || round)
+            if (Media.Content is IContentWithMask withMask)
             {
-                //ImageLoader.Initialize(overlay.Compositor);
-                //ManagedSurface surface = null;
+                var alpha = withMask.GetAlphaMask();
+                if (alpha != null)
+                {
+                    var mask = overlay.Compositor.CreateMaskBrush();
+                    mask.Source = brush;
+                    mask.Mask = alpha;
 
-                //if (sticker)
-                //{
-                //    var document = message.GetDocument();
-                //    var fileName = document.GetFileName();
-                //    if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                //    {
-                //        var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
-                //        surface = ImageLoader.Instance.LoadFromStream(decoded);
-                //    }
-                //}
-                //else
-                //{
-                //    surface = ImageLoader.Instance.LoadCircle(100, Windows.UI.Colors.White);
-                //}
-
-                //if (surface != null)
-                //{
-                //    var mask = overlay.Compositor.CreateMaskBrush();
-                //    mask.Mask = surface.Brush;
-                //    mask.Source = fill;
-                //    brush = mask;
-                //}
+                    brush = mask;
+                }
             }
 
             overlay.Size = new System.Numerics.Vector2((float)target.ActualWidth, (float)target.ActualHeight);
@@ -930,6 +916,9 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(string message, bool outgoing, DateTime date)
         {
+            ContentPanel.CornerRadius = new CornerRadius(15);
+            Margin = new Thickness(0, 2, 0, 2);
+
             Header.Visibility = Visibility.Collapsed;
 
             Footer.Mockup(outgoing, date);

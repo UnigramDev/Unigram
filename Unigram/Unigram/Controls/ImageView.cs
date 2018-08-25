@@ -15,7 +15,7 @@ namespace Unigram.Controls
 {
     public class ImageView : HyperlinkButton
     {
-        private FrameworkElement Holder;
+        protected FrameworkElement Holder;
 
         public ImageView()
         {

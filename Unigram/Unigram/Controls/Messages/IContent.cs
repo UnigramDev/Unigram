@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.ViewModels;
+using Windows.UI.Composition;
 
 namespace Unigram.Controls.Messages
 {
@@ -19,5 +20,10 @@ namespace Unigram.Controls.Messages
     {
         void UpdateMessageContentOpened(MessageViewModel message);
         void UpdateFile(MessageViewModel message, File file);
+    }
+
+    public interface IContentWithMask
+    {
+        CompositionBrush GetAlphaMask();
     }
 }

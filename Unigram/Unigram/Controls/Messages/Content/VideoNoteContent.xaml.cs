@@ -10,6 +10,7 @@ using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Streams;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -18,12 +19,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
+using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class VideoNoteContent : AspectView, IContentWithFile
+    public sealed partial class VideoNoteContent : AspectView, IContentWithFile, IContentWithMask
     {
         private MessageViewModel _message;
 
@@ -162,6 +162,16 @@ namespace Unigram.Controls.Messages.Content
             else if (content is MessageText text && text.WebPage != null)
             {
                 return text.WebPage.VideoNote;
+            }
+
+            return null;
+        }
+
+        public CompositionBrush GetAlphaMask()
+        {
+            if (Holder is Shape shape)
+            {
+                return shape.GetAlphaMask();
             }
 
             return null;
