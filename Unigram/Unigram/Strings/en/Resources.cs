@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/27/2018 15:32:38
+// 	Generated: 08/24/2018 20:43:25
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -1754,6 +1754,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AreYouSureBlockContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete all cloud drafts?"
+        /// </summary>
+        public static string AreYouSureClearDrafts
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureClearDrafts");
             }
         }
         
@@ -4590,6 +4601,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Choose Map Preview Provider"
+        /// </summary>
+        public static string ChooseMapPreviewProvider
+        {
+            get
+            {
+                return resourceLoader.GetString("ChooseMapPreviewProvider");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "CHOOSE STICKER SET"
         /// </summary>
         public static string ChooseStickerSet
@@ -5050,6 +5072,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ConnectingToProxyTapToDisable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Birthday"
+        /// </summary>
+        public static string ContactBirthday
+        {
+            get
+            {
+                return resourceLoader.GetString("ContactBirthday");
             }
         }
         
@@ -5936,6 +5969,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Delete my account if away for"
+        /// </summary>
+        public static string DeleteAccountIfAwayFor2
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteAccountIfAwayFor2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Account self-destructs"
         /// </summary>
         public static string DeleteAccountTitle
@@ -6625,6 +6669,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EditedMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Email copied to clipboard"
+        /// </summary>
+        public static string EmailCopied
+        {
+            get
+            {
+                return resourceLoader.GetString("EmailCopied");
             }
         }
         
@@ -10517,6 +10572,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "LATER"
+        /// </summary>
+        public static string Later
+        {
+            get
+            {
+                return resourceLoader.GetString("Later");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Leave Channel"
         /// </summary>
         public static string LeaveChannel
@@ -11043,6 +11109,61 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Map");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Map Preview Provider"
+        /// </summary>
+        public static string MapPreviewProvider
+        {
+            get
+            {
+                return resourceLoader.GetString("MapPreviewProvider");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Google"
+        /// </summary>
+        public static string MapPreviewProviderGoogle
+        {
+            get
+            {
+                return resourceLoader.GetString("MapPreviewProviderGoogle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Nobody"
+        /// </summary>
+        public static string MapPreviewProviderNobody
+        {
+            get
+            {
+                return resourceLoader.GetString("MapPreviewProviderNobody");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram"
+        /// </summary>
+        public static string MapPreviewProviderTelegram
+        {
+            get
+            {
+                return resourceLoader.GetString("MapPreviewProviderTelegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Yandex"
+        /// </summary>
+        public static string MapPreviewProviderYandex
+        {
+            get
+            {
+                return resourceLoader.GetString("MapPreviewProviderYandex");
             }
         }
         
@@ -11725,6 +11846,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MobileUsage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mono"
+        /// </summary>
+        public static string Mono
+        {
+            get
+            {
+                return resourceLoader.GetString("Mono");
             }
         }
         
@@ -12444,6 +12576,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NoSharedLinksSecret");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share voice messages in this chat and access them on any of your devices."
+        /// </summary>
+        public static string NoSharedVoice
+        {
+            get
+            {
+                return resourceLoader.GetString("NoSharedVoice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Voice messages from this chat will be shown here."
+        /// </summary>
+        public static string NoSharedVoiceSecret
+        {
+            get
+            {
+                return resourceLoader.GetString("NoSharedVoiceSecret");
             }
         }
         
@@ -13504,6 +13658,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Default (Off)"
+        /// </summary>
+        public static string NotificationsDefaultOff
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationsDefaultOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Default (On)"
+        /// </summary>
+        public static string NotificationsDefaultOn
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationsDefaultOn");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Enable Custom Notifications"
         /// </summary>
         public static string NotificationsEnableCustom
@@ -14489,6 +14665,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Tap to correct errors."
+        /// </summary>
+        public static string PassportCorrectErrors
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportCorrectErrors");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Country"
         /// </summary>
         public static string PassportCountry
@@ -14661,17 +14848,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PassportDiscardChanges");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Document Details"
-        /// </summary>
-        public static string PassportDocumentDetails
-        {
-            get
-            {
-                return resourceLoader.GetString("PassportDocumentDetails");
             }
         }
         
@@ -14852,17 +15028,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PassportInfoTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Issued"
-        /// </summary>
-        public static string PassportIssued
-        {
-            get
-            {
-                return resourceLoader.GetString("PassportIssued");
             }
         }
         
@@ -15120,7 +15285,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} requests access to your personal data to sign you up for their services."
+        /// Localized resource similar to "**{0}** requests access to your personal data to sign you up for their services."
         /// </summary>
         public static string PassportRequest
         {
@@ -15204,6 +15369,61 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PassportReverseSideInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel"
+        /// </summary>
+        public static string PassportSDKCancel
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSDKCancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You need Telegram to log in to **{0}**. Would you like to install it now?"
+        /// </summary>
+        public static string PassportSDKDownloadTelegram
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSDKDownloadTelegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Log in with Telegram"
+        /// </summary>
+        public static string PassportSDKLogInWithTelegram
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSDKLogInWithTelegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open Google Play"
+        /// </summary>
+        public static string PassportSDKOpenGooglePlay
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSDKOpenGooglePlay");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram Passport"
+        /// </summary>
+        public static string PassportSDKTelegramPassport
+        {
+            get
+            {
+                return resourceLoader.GetString("PassportSDKTelegramPassport");
             }
         }
         
@@ -16277,6 +16497,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Phone copied to clipboard"
+        /// </summary>
+        public static string PhoneCopied
+        {
+            get
+            {
+                return resourceLoader.GetString("PhoneCopied");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Home"
         /// </summary>
         public static string PhoneHome
@@ -16587,6 +16818,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Please log in to your Telegram account to use Telegram Passport."
+        /// </summary>
+        public static string PleaseLoginPassport
+        {
+            get
+            {
+                return resourceLoader.GetString("PleaseLoginPassport");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Please re-enter your password"
         /// </summary>
         public static string PleaseReEnterPassword
@@ -16730,6 +16972,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Advanced"
+        /// </summary>
+        public static string PrivacyAdvanced
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyAdvanced");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Bots and websites"
         /// </summary>
         public static string PrivacyBots
@@ -16792,6 +17045,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PrivacyClearShipping");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete All Cloud Drafts"
+        /// </summary>
+        public static string PrivacyDeleteCloudDrafts
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyDeleteCloudDrafts");
             }
         }
         
@@ -19087,6 +19351,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "FILES"
+        /// </summary>
+        public static string SharedFilesTab
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedFilesTab");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "LINKS"
+        /// </summary>
+        public static string SharedLinksTab
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedLinksTab");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Shared Media"
         /// </summary>
         public static string SharedMedia
@@ -19094,6 +19380,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SharedMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "MEDIA"
+        /// </summary>
+        public static string SharedMediaTab
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedMediaTab");
             }
         }
         
@@ -19109,6 +19406,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "AUDIO"
+        /// </summary>
+        public static string SharedMusicTab
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedMusicTab");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Place"
         /// </summary>
         public static string SharedPlace
@@ -19116,6 +19424,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SharedPlace");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "VOICE"
+        /// </summary>
+        public static string SharedVoiceTab
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedVoiceTab");
             }
         }
         
@@ -19714,7 +20033,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This will delete all data about the people you message frequently as well the inline bots you are likely to use."
+        /// Localized resource similar to "This will delete all data about the people you message frequently as well as the inline bots you are likely to use."
         /// </summary>
         public static string SuggestContactsAlert
         {
@@ -20024,7 +20343,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Delete Passport"
+        /// Localized resource similar to "Delete Telegram Passport"
         /// </summary>
         public static string TelegramPassportDelete
         {
@@ -20351,6 +20670,18 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TodayAtFormatted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Too many tries.
+        ///Please try again in {0}."
+        /// </summary>
+        public static string TooManyTries
+        {
+            get
+            {
+                return resourceLoader.GetString("TooManyTries");
             }
         }
         
@@ -20682,6 +21013,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "UPDATE"
+        /// </summary>
+        public static string Update
+        {
+            get
+            {
+                return resourceLoader.GetString("Update");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Update app"
         /// </summary>
         public static string UpdateApp
@@ -20722,6 +21064,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UpdateContactsTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "UPDATE NOW"
+        /// </summary>
+        public static string UpdateNow
+        {
+            get
+            {
+                return resourceLoader.GetString("UpdateNow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Update Telegram"
+        /// </summary>
+        public static string UpdateTelegram
+        {
+            get
+            {
+                return resourceLoader.GetString("UpdateTelegram");
             }
         }
         

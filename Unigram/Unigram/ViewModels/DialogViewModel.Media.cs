@@ -28,6 +28,7 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -454,13 +455,14 @@ namespace Unigram.ViewModels
         private async void SendContactExecute()
         {
             var picker = new ContactPicker();
-            picker.SelectionMode = ContactSelectionMode.Fields;
-            picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.PhoneNumber);
+            //picker.SelectionMode = ContactSelectionMode.Fields;
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.PhoneNumber);
 
             var picked = await picker.PickContactAsync();
             if (picked != null)
             {
                 Telegram.Td.Api.Contact contact = null;
+                string vcard = string.Empty;
 
                 var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
                 var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
@@ -480,7 +482,7 @@ namespace Unigram.ViewModels
                                 var user = ProtoService.GetUser(userId);
                                 if (user != null)
                                 {
-                                    contact = new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id);
+                                    contact = new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, vcard, user.Id);
                                 }
                             }
                         }
@@ -497,7 +499,7 @@ namespace Unigram.ViewModels
                         return;
                     }
 
-                    contact = new Telegram.Td.Api.Contact(phone.Number, picked.FirstName, picked.LastName, string.Empty, 0);
+                    contact = new Telegram.Td.Api.Contact(phone.Number, picked.FirstName, picked.LastName, vcard, 0);
                 }
 
                 if (contact != null)

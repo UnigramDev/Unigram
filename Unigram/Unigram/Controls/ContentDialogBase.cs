@@ -14,7 +14,6 @@ using LinqToVisualTree;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls.Primitives;
 using Template10.Common;
-using Unigram.Helpers;
 using Windows.UI;
 using Windows.Foundation.Metadata;
 using Template10.Services.NavigationService;

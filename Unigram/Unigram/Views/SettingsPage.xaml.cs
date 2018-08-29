@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Media;
 using Telegram.Td.Api;
 using Windows.Media.Capture;
 using Unigram.ViewModels.Delegates;
+using Windows.ApplicationModel;
 
 namespace Unigram.Views
 {
@@ -37,7 +38,15 @@ namespace Unigram.Views
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            Diagnostics.Text = $"Unigram X {AboutViewModel.GetVersion()}";
+            Diagnostics.Text = $"Unigram X {GetVersion()}";
+        }
+
+        private string GetVersion()
+        {
+            Package package = Package.Current;
+            PackageId packageId = package.Id;
+            PackageVersion version = packageId.Version;
+            return string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build, version.Revision);
         }
 
         public MasterDetailView MasterDetail { get; set; }

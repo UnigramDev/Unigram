@@ -11,7 +11,6 @@ using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Common;
-using Unigram.Helpers;
 using Unigram.Services;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;

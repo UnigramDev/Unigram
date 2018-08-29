@@ -7,7 +7,6 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
-using Unigram.Helpers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;

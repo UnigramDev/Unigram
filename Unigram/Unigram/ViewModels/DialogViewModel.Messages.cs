@@ -14,7 +14,6 @@ using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Services;
-using Unigram.Helpers;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.Views;

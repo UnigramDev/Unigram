@@ -523,6 +523,9 @@
   <data name="AreYouSureBlockContact" xml:space="preserve">
     <value>Are you sure you want to block this contact?</value>
   </data>
+  <data name="AreYouSureClearDrafts" xml:space="preserve">
+    <value>Are you sure you want to delete all cloud drafts?</value>
+  </data>
   <data name="AreYouSureClearHistory" xml:space="preserve">
     <value>Are you sure you want to clear history?</value>
   </data>
@@ -1307,6 +1310,9 @@ If you're not interested, we suggest creating a private channel instead.</value>
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>Choose from your stickers</value>
   </data>
+  <data name="ChooseMapPreviewProvider" xml:space="preserve">
+    <value>Choose Map Preview Provider</value>
+  </data>
   <data name="ChooseStickerSet" xml:space="preserve">
     <value>CHOOSE STICKER SET</value>
   </data>
@@ -1434,6 +1440,9 @@ Once {1} updates Telegram, photos with timers for 1 minute or less will start wo
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
     <value>Tap here to disable proxy...</value>
+  </data>
+  <data name="ContactBirthday" xml:space="preserve">
+    <value>Birthday</value>
   </data>
   <data name="ContactJob" xml:space="preserve">
     <value>Job</value>
@@ -1685,6 +1694,9 @@ To go over the limit and get additional features, upgrade to a supergroup:
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>If you're away for</value>
   </data>
+  <data name="DeleteAccountIfAwayFor2" xml:space="preserve">
+    <value>Delete my account if away for</value>
+  </data>
   <data name="DeleteAccountTitle" xml:space="preserve">
     <value>Account self-destructs</value>
   </data>
@@ -1873,6 +1885,9 @@ To go over the limit and get additional features, upgrade to a supergroup:
   </data>
   <data name="EditedMessage" xml:space="preserve">
     <value>edited</value>
+  </data>
+  <data name="EmailCopied" xml:space="preserve">
+    <value>Email copied to clipboard</value>
   </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Please follow these steps to complete Two-Step Verification Setup:
@@ -2954,6 +2969,9 @@ All media will stay in the Telegram cloud and can be re-downloaded if you need i
   <data name="Lately" xml:space="preserve">
     <value>last seen recently</value>
   </data>
+  <data name="Later" xml:space="preserve">
+    <value>LATER</value>
+  </data>
   <data name="LeaveChannel" xml:space="preserve">
     <value>Leave Channel</value>
   </data>
@@ -3099,6 +3117,21 @@ This operation can take a few minutes to complete.</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Map</value>
+  </data>
+  <data name="MapPreviewProvider" xml:space="preserve">
+    <value>Map Preview Provider</value>
+  </data>
+  <data name="MapPreviewProviderGoogle" xml:space="preserve">
+    <value>Google</value>
+  </data>
+  <data name="MapPreviewProviderNobody" xml:space="preserve">
+    <value>Nobody</value>
+  </data>
+  <data name="MapPreviewProviderTelegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="MapPreviewProviderYandex" xml:space="preserve">
+    <value>Yandex</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
     <value>Mark as read</value>
@@ -3285,6 +3318,9 @@ This operation can take a few minutes to complete.</value>
   </data>
   <data name="MobileUsage" xml:space="preserve">
     <value>Mobile Data Usage</value>
+  </data>
+  <data name="Mono" xml:space="preserve">
+    <value>Mono</value>
   </data>
   <data name="MonthsZero" xml:space="preserve">
     <value/>
@@ -3484,6 +3520,12 @@ or tap the menu button for more options.</value>
   </data>
   <data name="NoSharedLinksSecret" xml:space="preserve">
     <value>Shared links from this chat will be shown here.</value>
+  </data>
+  <data name="NoSharedVoice" xml:space="preserve">
+    <value>Share voice messages in this chat and access them on any of your devices.</value>
+  </data>
+  <data name="NoSharedVoiceSecret" xml:space="preserve">
+    <value>Voice messages from this chat will be shown here.</value>
   </data>
   <data name="NoSound" xml:space="preserve">
     <value>No sound</value>
@@ -3781,6 +3823,12 @@ The Telegram Team</value>
   <data name="NotificationsCustomize" xml:space="preserve">
     <value>Customize</value>
   </data>
+  <data name="NotificationsDefaultOff" xml:space="preserve">
+    <value>Default (Off)</value>
+  </data>
+  <data name="NotificationsDefaultOn" xml:space="preserve">
+    <value>Default (On)</value>
+  </data>
   <data name="NotificationsEnableCustom" xml:space="preserve">
     <value>Enable Custom Notifications</value>
   </data>
@@ -4054,6 +4102,9 @@ from multiple devices.</value>
   <data name="PassportCity" xml:space="preserve">
     <value>City</value>
   </data>
+  <data name="PassportCorrectErrors" xml:space="preserve">
+    <value>Tap to correct errors.</value>
+  </data>
   <data name="PassportCountry" xml:space="preserve">
     <value>Country</value>
   </data>
@@ -4101,9 +4152,6 @@ from multiple devices.</value>
   </data>
   <data name="PassportDiscardChanges" xml:space="preserve">
     <value>Are you sure you want to discard all information you've entered?</value>
-  </data>
-  <data name="PassportDocumentDetails" xml:space="preserve">
-    <value>Document Details</value>
   </data>
   <data name="PassportDocumentNumber" xml:space="preserve">
     <value>Document Number</value>
@@ -4156,9 +4204,6 @@ You can visit our FAQ to learn more.</value>
   </data>
   <data name="PassportInfoTitle" xml:space="preserve">
     <value>What is Telegram Passport?</value>
-  </data>
-  <data name="PassportIssued" xml:space="preserve">
-    <value>Issued</value>
   </data>
   <data name="PassportMainPage" xml:space="preserve">
     <value>Main Page</value>
@@ -4230,7 +4275,7 @@ You can visit our FAQ to learn more.</value>
     <value>Provided Information</value>
   </data>
   <data name="PassportRequest" xml:space="preserve">
-    <value>{0} requests access to your personal data to sign you up for their services.</value>
+    <value>**{0}** requests access to your personal data to sign you up for their services.</value>
   </data>
   <data name="PassportRequestPasswordInfo" xml:space="preserve">
     <value>Please enter your Telegram Password to decrypt your data.</value>
@@ -4252,6 +4297,21 @@ You can visit our FAQ to learn more.</value>
   </data>
   <data name="PassportReverseSideInfo" xml:space="preserve">
     <value>Upload a photo of the reverse side of the document</value>
+  </data>
+  <data name="PassportSDKCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="PassportSDKDownloadTelegram" xml:space="preserve">
+    <value>You need Telegram to log in to **{0}**. Would you like to install it now?</value>
+  </data>
+  <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
+    <value>Log in with Telegram</value>
+  </data>
+  <data name="PassportSDKOpenGooglePlay" xml:space="preserve">
+    <value>Open Google Play</value>
+  </data>
+  <data name="PassportSDKTelegramPassport" xml:space="preserve">
+    <value>Telegram Passport</value>
   </data>
   <data name="PassportScanPassport" xml:space="preserve">
     <value>Scan Your Passport</value>
@@ -4546,6 +4606,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="Phone" xml:space="preserve">
     <value>Phone</value>
   </data>
+  <data name="PhoneCopied" xml:space="preserve">
+    <value>Phone copied to clipboard</value>
+  </data>
   <data name="PhoneHome" xml:space="preserve">
     <value>Home</value>
   </data>
@@ -4632,6 +4695,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Please enter your new password</value>
   </data>
+  <data name="PleaseLoginPassport" xml:space="preserve">
+    <value>Please log in to your Telegram account to use Telegram Passport.</value>
+  </data>
   <data name="PleaseReEnterPassword" xml:space="preserve">
     <value>Please re-enter your password</value>
   </data>
@@ -4671,6 +4737,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PriorityInfo" xml:space="preserve">
     <value>Higher priority notifications will work even if your phone is in Do Not Disturb mode.</value>
   </data>
+  <data name="PrivacyAdvanced" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
   <data name="PrivacyBots" xml:space="preserve">
     <value>Bots and websites</value>
   </data>
@@ -4688,6 +4757,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PrivacyClearShipping" xml:space="preserve">
     <value>Shipping info</value>
+  </data>
+  <data name="PrivacyDeleteCloudDrafts" xml:space="preserve">
+    <value>Delete All Cloud Drafts</value>
   </data>
   <data name="PrivacyFloodControlError" xml:space="preserve">
     <value>Sorry, too many requests. Unable to change privacy settings now, please wait.</value>
@@ -5324,14 +5396,29 @@ Don't accept the call, Telegram will process everything automatically.</value>
   <data name="ShareYouPhoneNumberTitle" xml:space="preserve">
     <value>Share your phone number?</value>
   </data>
+  <data name="SharedFilesTab" xml:space="preserve">
+    <value>FILES</value>
+  </data>
+  <data name="SharedLinksTab" xml:space="preserve">
+    <value>LINKS</value>
+  </data>
   <data name="SharedMedia" xml:space="preserve">
     <value>Shared Media</value>
+  </data>
+  <data name="SharedMediaTab" xml:space="preserve">
+    <value>MEDIA</value>
   </data>
   <data name="SharedMediaTitle" xml:space="preserve">
     <value>Shared Media</value>
   </data>
+  <data name="SharedMusicTab" xml:space="preserve">
+    <value>AUDIO</value>
+  </data>
   <data name="SharedPlace" xml:space="preserve">
     <value>Place</value>
+  </data>
+  <data name="SharedVoiceTab" xml:space="preserve">
+    <value>VOICE</value>
   </data>
   <data name="SharingLiveLocationTitle" xml:space="preserve">
     <value>You are sharing your Live Location with {0}</value>
@@ -5496,7 +5583,7 @@ Don't accept the call, Telegram will process everything automatically.</value>
     <value>Suggest Frequent Contacts</value>
   </data>
   <data name="SuggestContactsAlert" xml:space="preserve">
-    <value>This will delete all data about the people you message frequently as well the inline bots you are likely to use.</value>
+    <value>This will delete all data about the people you message frequently as well as the inline bots you are likely to use.</value>
   </data>
   <data name="SuggestContactsInfo" xml:space="preserve">
     <value>Display people you message frequently at the top of the search section for quick access.</value>
@@ -5582,7 +5669,7 @@ Don't accept the call, Telegram will process everything automatically.</value>
 This password will also be required whenever you log in to Telegram on a new device.</value>
   </data>
   <data name="TelegramPassportDelete" xml:space="preserve">
-    <value>Delete Passport</value>
+    <value>Delete Telegram Passport</value>
   </data>
   <data name="TelegramPassportDeleteAlert" xml:space="preserve">
     <value>Are you sure you want to delete your Telegram Passport?</value>
@@ -5671,6 +5758,10 @@ you agree to the *Terms of Service*.</value>
   </data>
   <data name="TodayAtFormatted" xml:space="preserve">
     <value>at {0}</value>
+  </data>
+  <data name="TooManyTries" xml:space="preserve">
+    <value>Too many tries.
+Please try again in {0}.</value>
   </data>
   <data name="TosAgeText" xml:space="preserve">
     <value>Tap Agree to confirm that you are {0} or over.</value>
@@ -5767,6 +5858,9 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   <data name="UnsupportedMedia" xml:space="preserve">
     <value>This message is not supported on your version of Telegram. Update the app to view: https://telegram.org/update</value>
   </data>
+  <data name="Update" xml:space="preserve">
+    <value>UPDATE</value>
+  </data>
   <data name="UpdateApp" xml:space="preserve">
     <value>Update app</value>
   </data>
@@ -5778,6 +5872,12 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   </data>
   <data name="UpdateContactsTitle" xml:space="preserve">
     <value>Update contacts?</value>
+  </data>
+  <data name="UpdateNow" xml:space="preserve">
+    <value>UPDATE NOW</value>
+  </data>
+  <data name="UpdateTelegram" xml:space="preserve">
+    <value>Update Telegram</value>
   </data>
   <data name="UpdatedMinutesZero" xml:space="preserve">
     <value/>
