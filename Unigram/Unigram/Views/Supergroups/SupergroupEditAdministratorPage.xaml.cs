@@ -30,7 +30,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditAdministratorPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SupergroupEditAdministratorViewModel, IMemberDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SupergroupEditAdministratorViewModel, IMemberDelegate>(this);
         }
 
         public void UpdateChat(Chat chat)

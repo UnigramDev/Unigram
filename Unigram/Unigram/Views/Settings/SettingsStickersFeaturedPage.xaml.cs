@@ -29,7 +29,7 @@ namespace Unigram.Views.Settings
         public SettingsStickersFeaturedPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsStickersTrendingViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsStickersTrendingViewModel>();
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)

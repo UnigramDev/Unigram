@@ -29,7 +29,7 @@ namespace Unigram.Views.Users
         public UserCommonChatsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<UserCommonChatsViewModel>();
+            DataContext = TLContainer.Current.Resolve<UserCommonChatsViewModel>();
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)

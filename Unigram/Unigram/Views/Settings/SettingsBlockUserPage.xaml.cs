@@ -22,7 +22,7 @@ namespace Unigram.Views.Settings
         public SettingsBlockUserPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsBlockUserViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsBlockUserViewModel>();
             View.Attach();
         }
     }

@@ -33,7 +33,7 @@ namespace Unigram.Views
         public SettingsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsViewModel, IUserDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SettingsViewModel, IUserDelegate>(this);
 
             NavigationCacheMode = NavigationCacheMode.Required;
 

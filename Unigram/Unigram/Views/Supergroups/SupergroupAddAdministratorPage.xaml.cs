@@ -35,7 +35,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupAddAdministratorPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SupergroupAddAdministratorViewModel>();
+            DataContext = TLContainer.Current.Resolve<SupergroupAddAdministratorViewModel>();
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(async x =>

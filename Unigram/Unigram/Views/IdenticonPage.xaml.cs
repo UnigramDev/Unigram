@@ -31,7 +31,7 @@ namespace Unigram.Views.Users
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var service = UnigramContainer.Current.Resolve<IProtoService>();
+            var service = TLContainer.Current.Resolve<IProtoService>();
             var data = TLSerializationService.Current.Deserialize<long>((string)e.Parameter);
 
             var chat = service.GetChat(data);

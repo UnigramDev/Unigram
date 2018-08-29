@@ -35,7 +35,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupAddRestrictedPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SupergroupAddRestrictedViewModel>();
+            DataContext = TLContainer.Current.Resolve<SupergroupAddRestrictedViewModel>();
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(async x =>

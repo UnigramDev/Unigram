@@ -21,7 +21,7 @@ namespace Unigram.Views.Settings.Privacy
         public SettingsPrivacyNeverAllowChatInvitesPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsPrivacyNeverAllowChatInvitesViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsPrivacyNeverAllowChatInvitesViewModel>();
             View.Attach();
         }
     }

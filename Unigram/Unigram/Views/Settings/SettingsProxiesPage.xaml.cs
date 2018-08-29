@@ -24,7 +24,7 @@ namespace Unigram.Views.Settings
         public SettingsProxiesPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsProxiesViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsProxiesViewModel>();
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)

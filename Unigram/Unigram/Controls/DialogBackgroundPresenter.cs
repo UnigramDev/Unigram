@@ -23,7 +23,7 @@ namespace Unigram.Controls
         public DialogBackgroundPresenter()
         {
             Reload();
-            UnigramContainer.Current.Resolve<IEventAggregator>().Subscribe(this);
+            TLContainer.Current.Resolve<IEventAggregator>().Subscribe(this);
         }
 
         public void Handle(string message)

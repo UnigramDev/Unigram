@@ -31,7 +31,7 @@ namespace Unigram.Views.Settings
         public SettingsStickersPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsStickersViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsStickersViewModel>();
         }
 
         private void FeaturedStickers_Click(object sender, RoutedEventArgs e)

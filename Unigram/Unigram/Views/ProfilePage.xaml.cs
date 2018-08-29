@@ -40,7 +40,7 @@ namespace Unigram.Views
         public ProfilePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<ProfileViewModel, IProfileDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<ProfileViewModel, IProfileDelegate>(this);
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)

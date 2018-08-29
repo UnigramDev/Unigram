@@ -53,7 +53,7 @@ namespace Unigram.Views
         public InstantPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<InstantViewModel>();
+            DataContext = TLContainer.Current.Resolve<InstantViewModel>();
 
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = System.IO.File.ReadAllText(jsPath);
@@ -1216,7 +1216,7 @@ namespace Unigram.Views
 
         private async void Hyperlink_Click(RichTextUrl urlText)
         {
-            if (urlText.Url == _webpageId.ToString())
+            if (true)
             {
                 var fragmentStart = urlText.Url.IndexOf('#');
                 if (fragmentStart > 0)
@@ -1230,23 +1230,12 @@ namespace Unigram.Views
             }
             else if (urlText.Url != null)
             {
-                //var protoService = (MTProtoService)MTProtoService.Current;
-                //protoService.SendInformativeMessage<TLWebPageBase>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
-                //    result =>
-                //    {
-                //        this.BeginOnUIThread(() =>
-                //        {
-                //            ViewModel.NavigationService.Navigate(typeof(InstantPage), result);
-                //        });
-                //    },
-                //    fault =>
-                //    {
-                //        Debugger.Break();
-                //    });
-            }
-            else
-            {
-                if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
+                var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(urlText.Url, false));
+                if (response is WebPageInstantView instantView)
+                {
+                    ViewModel.NavigationService.Navigate(typeof(InstantPage), urlText.Url);
+                }
+                else if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
                 {
                     if (MessageHelper.IsTelegramUrl(uri))
                     {

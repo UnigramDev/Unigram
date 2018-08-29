@@ -34,7 +34,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SupergroupEditViewModel, ISupergroupDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SupergroupEditViewModel, ISupergroupDelegate>(this);
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>

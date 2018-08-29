@@ -28,7 +28,7 @@ namespace Unigram.Views.Settings
         public SettingsSecurityEnterPasswordPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsSecurityEnterPasswordViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsSecurityEnterPasswordViewModel>();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

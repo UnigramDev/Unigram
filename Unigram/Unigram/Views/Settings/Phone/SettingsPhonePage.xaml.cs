@@ -30,7 +30,7 @@ namespace Unigram.Views.Settings
         public SettingsPhonePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsPhoneViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsPhoneViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }

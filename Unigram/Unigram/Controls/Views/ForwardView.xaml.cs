@@ -35,7 +35,7 @@ namespace Unigram.Controls.Views
         private ForwardView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<ForwardViewModel>();
+            DataContext = TLContainer.Current.Resolve<ForwardViewModel>();
 
             Loaded += OnLoaded;
         }

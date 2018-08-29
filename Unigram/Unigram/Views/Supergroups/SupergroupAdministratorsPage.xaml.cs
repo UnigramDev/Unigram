@@ -34,7 +34,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupAdministratorsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SupergroupAdministratorsViewModel, ISupergroupDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SupergroupAdministratorsViewModel, ISupergroupDelegate>(this);
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
