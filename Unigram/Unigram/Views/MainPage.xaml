@@ -246,6 +246,9 @@
     </Page.Resources>
 
     <controls:NavigationView x:Name="Navigation" ItemClick="NavigationView_ItemClick">
+        <controls:NavigationView.PaneHeader>
+            <controls:NavigationViewHeader DataContext="{x:Bind ViewModel}"/>
+        </controls:NavigationView.PaneHeader>
         <controls:NavigationView.MenuItems>
             <controls:NavigationViewItem
                 x:Name="NavigationNewChat"

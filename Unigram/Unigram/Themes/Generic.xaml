@@ -35,6 +35,7 @@
                                     </Grid.RowDefinitions>
                                     <Grid.Children>
                                         <Grid x:Name="ContentPaneTopPadding" />
+                                        <Border x:Name="HeaderContentBorder" Grid.Row="2" Child="{TemplateBinding PaneHeader}"/>
                                         <ListView x:Name="MenuItemsHost" Grid.Row="3" Margin="0,0,0,20" SelectionMode="Single" IsItemClickEnabled="True"/>
 
                                         <Border x:Name="FooterContentBorder" Grid.Row="4" Child="{TemplateBinding PaneFooter}"/>

@@ -87,6 +87,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region PaneHeader
+
+        public object PaneHeader
+        {
+            get { return (object)GetValue(PaneHeaderProperty); }
+            set { SetValue(PaneHeaderProperty, value); }
+        }
+
+        public static readonly DependencyProperty PaneHeaderProperty =
+            DependencyProperty.Register("PaneHeader", typeof(object), typeof(NavigationView), new PropertyMetadata(null));
+
+        #endregion
+
         #region PaneFooter
 
         public object PaneFooter

@@ -334,12 +334,12 @@ namespace Unigram.Controls
         }
 
         #region Initialize
-        public void Initialize(string key, Frame parent)
+        public void Initialize(string key, Frame parent, int session)
         {
-            var service = WindowWrapper.Current().NavigationServices.GetByFrameId(key) as NavigationService;
+            var service = WindowWrapper.Current().NavigationServices.GetByFrameId(key + session) as NavigationService;
             if (service == null)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session) as NavigationService;
                 service.SerializationService = TLSerializationService.Current;
                 service.Frame.DataContext = new object();
                 service.FrameFacade.FrameId = key;

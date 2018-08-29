@@ -116,7 +116,7 @@ namespace Unigram
             Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en";
 #endif
 
-            Locator.Configure(session);
+            Locator.Configure(/*session*/);
 
             InitializeComponent();
 
@@ -155,7 +155,7 @@ namespace Unigram
         public override INavigable ResolveForPage(Page page, INavigationService navigationService)
         {
             var id = navigationService is UnigramNavigationService ex ? ex.SessionId : 0;
-            var container = UnigramContainer.Current;
+            var container = TLContainer.Current;
 
             switch (page)
             {
@@ -321,7 +321,7 @@ namespace Unigram
         {
             Execute.BeginOnUIThread(() =>
             {
-                var passcode = UnigramContainer.Current.Resolve<IPasscodeService>();
+                var passcode = TLContainer.Current.Resolve<IPasscodeService>();
                 if (passcode != null && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
                 {
                     passcode.Lock();
@@ -360,7 +360,7 @@ namespace Unigram
             IsVisible = e.Visible;
             HandleActivated(e.Visible);
 
-            var passcode = UnigramContainer.Current.Resolve<IPasscodeService>();
+            var passcode = TLContainer.Current.Resolve<IPasscodeService>();
             if (passcode != null)
             {
                 if (e.Visible && passcode.IsLockscreenRequired)
@@ -394,10 +394,10 @@ namespace Unigram
 
         private void HandleActivated(bool active)
         {
-            var aggregator = UnigramContainer.Current.Resolve<IEventAggregator>();
+            var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
             aggregator.Publish(active ? "Window_Activated" : "Window_Deactivated");
 
-            var protoService = UnigramContainer.Current.Resolve<IProtoService>();
+            var protoService = TLContainer.Current.Resolve<IProtoService>();
             protoService.Send(new SetOption("online", new OptionValueBoolean(active)));
         }
 
@@ -430,15 +430,16 @@ namespace Unigram
         public override UIElement CreateRootElement(IActivatedEventArgs e)
         {
             var navigationFrame = new Frame();
-            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame) as NavigationService;
+            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, 0) as NavigationService;
             navigationService.SerializationService = TLSerializationService.Current;
+            navigationService.FrameFacade.FrameId = 0.ToString();
 
             return navigationFrame;
         }
 
-        protected override INavigationService CreateNavigationService(Frame frame)
+        protected override INavigationService CreateNavigationService(Frame frame, int session)
         {
-            return new UnigramNavigationService(UnigramContainer.Current.Resolve<IProtoService>(), frame);
+            return new UnigramNavigationService(TLContainer.Current.Resolve<IProtoService>(session), frame);
         }
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
@@ -446,7 +447,7 @@ namespace Unigram
             //Locator.Configure();
             //UnigramContainer.Current.ResolveType<IGenerationService>();
 
-            var passcode = UnigramContainer.Current.Resolve<IPasscodeService>();
+            var passcode = TLContainer.Current.Resolve<IPasscodeService>();
             if (passcode != null && passcode.IsEnabled)
             {
                 passcode.Lock();
@@ -473,7 +474,7 @@ namespace Unigram
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            var service = UnigramContainer.Current.Resolve<IProtoService>();
+            var service = TLContainer.Current.Resolve<IProtoService>();
 
             var state = service.GetAuthorizationState();
             if (state == null)
@@ -481,11 +482,6 @@ namespace Unigram
                 return;
             }
 
-            CustomXamlResourceLoader.Current = new XamlResourceLoader();
-
-            //var service = UnigramContainer.Current.ResolveType<IProtoService>();
-            //var response = await service.SendAsync(new GetAuthorizationState());
-            //if (response is AuthorizationStateReady)
             WindowContext.GetForCurrentView().SetActivatedArgs(args, NavigationService);
             WindowContext.GetForCurrentView().UpdateTitleBar();
 

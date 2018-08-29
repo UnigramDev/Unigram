@@ -242,6 +242,9 @@
     </Compile>
     <Compile Include="Controls\MosaicRow.cs" />
     <Compile Include="Controls\NavigationView.cs" />
+    <Compile Include="Controls\NavigationViewHeader.xaml.cs">
+      <DependentUpon>NavigationViewHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
@@ -452,6 +455,7 @@
     <Compile Include="ViewModels\Delegates\IProfileDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IUserDelegate.cs" />
+    <Compile Include="ViewModels\LifecycleViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep2ViewModel.cs" />
@@ -1536,6 +1540,10 @@
     <Page Include="Controls\Messages\InvoiceFooter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\NavigationViewHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PlaybackHeader.xaml">
       <SubType>Designer</SubType>

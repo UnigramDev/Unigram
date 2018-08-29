@@ -9,6 +9,7 @@ using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Controls;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -30,21 +31,21 @@ namespace Unigram.Common
 {
     public class WindowContext : IHandle<UpdateAuthorizationState>, IHandle<UpdateConnectionState>
     {
-        private readonly IProtoService _protoService;
-        private readonly IEventAggregator _aggregator;
-
         private readonly Window _window;
+        private readonly int _id;
 
-        public WindowContext(IProtoService protoService, IEventAggregator aggregator)
+        private readonly LifecycleViewModel _lifecycle;
+
+        public WindowContext(int id)
         {
-            _protoService = protoService;
-            _aggregator = aggregator;
-
-            _aggregator.Subscribe(this);
+            _id = id;
 
             _window = Window.Current;
             _window.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
             _window.Activated += OnActivated;
+
+            _lifecycle = TLContainer.Current.Lifecycle;
+            _lifecycle.Subscribe(this);
 
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -62,7 +63,7 @@ namespace Unigram.Common
                 }
                 catch { }
 
-                _aggregator.Unsubscribe(this);
+                _lifecycle.Unsubscribe(this);
             };
             _window.Closed += (s, e) =>
             {
@@ -72,9 +73,11 @@ namespace Unigram.Common
                 }
                 catch { }
 
-                _aggregator.Unsubscribe(this);
+                _lifecycle.Unsubscribe(this);
             };
         }
+
+        public int Id => _id;
 
         #region UI
 
@@ -190,9 +193,9 @@ namespace Unigram.Common
         public void SetActivatedArgs(IActivatedEventArgs args, INavigationService service)
         {
             _args = args;
-            _service = service = WindowWrapper.Current().NavigationServices.FirstOrDefault();
+            _service = service = WindowWrapper.Current().NavigationServices.GetByFrameId(_lifecycle.SelectedItem.Id.ToString());
 
-            UseActivatedArgs(args, service, _protoService.GetAuthorizationState());
+            UseActivatedArgs(args, service, _lifecycle.SelectedItem.ProtoService.GetAuthorizationState());
         }
 
         private async void UseActivatedArgs(IActivatedEventArgs args, INavigationService service, AuthorizationState state)
@@ -335,7 +338,7 @@ namespace Unigram.Common
                                 var remote = first.RemoteId;
                                 if (int.TryParse(remote.Substring(1), out int userId))
                                 {
-                                    var response = await _protoService.SendAsync(new CreatePrivateChat(userId, false));
+                                    var response = await _lifecycle.SelectedItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
                                     if (response is Chat chat)
                                     {
                                         service.NavigateToChat(chat);
@@ -497,10 +500,18 @@ namespace Unigram.Common
                 return value;
             }
 
-            var context = new WindowContext(UnigramContainer.Current.Resolve<IProtoService>(), UnigramContainer.Current.Resolve<IEventAggregator>());
+            var context = new WindowContext(id);
             _windowContext[id] = context;
 
             return context;
+        }
+
+        public static void Subscribe(SessionViewModel session)
+        {
+            foreach (var item in _windowContext.Values)
+            {
+                session.Subscribe(item);
+            }
         }
     }
 }

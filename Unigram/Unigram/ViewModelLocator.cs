@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using System.IO;
 using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Services;
@@ -16,23 +17,43 @@ using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
 using Unigram.Views;
 using Windows.Foundation.Metadata;
+using Windows.Storage;
 
 namespace Unigram
 {
     public class ViewModelLocator
     {
-        private UnigramContainer container;
+        private TLContainer _container;
 
         public ViewModelLocator()
         {
-            container = UnigramContainer.Current;
+            _container = TLContainer.Current;
         }
 
-        public IHardwareService HardwareService => container.Resolve<IHardwareService>();
-
-        public void Configure(int id)
+        public void Configure()
         {
-            container.Build(id, (builder, session) =>
+            var fail = true;
+            var dirs = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
+            foreach (var dir in dirs)
+            {
+                if (int.TryParse(Path.GetFileName(dir), out int session))
+                {
+                    fail = false;
+                    Configure(session);
+                }
+            }
+
+            if (fail)
+            {
+                Configure(0);
+            }
+
+            _container.Lifecycle.Update();
+        }
+
+        public IContainer Configure(int id)
+        {
+            return _container.Build(id, (builder, session) =>
             {
                 builder.RegisterType<ProtoService>().WithParameter("session", session).As<IProtoService, ICacheService>().SingleInstance();
                 builder.RegisterType<ApplicationSettings>().WithParameter("session", session).As<ISettingsService>().SingleInstance();
@@ -68,6 +89,8 @@ namespace Unigram
                 {
                     builder.RegisterType<FakeVibrationService>().As<IVibrationService>().SingleInstance();
                 }
+
+                builder.RegisterType<SessionViewModel>().WithParameter("selected", session == 0).SingleInstance();
 
                 // ViewModels
                 builder.RegisterType<SignInViewModel>();
@@ -146,7 +169,6 @@ namespace Unigram
                 builder.RegisterType<SettingsLanguageViewModel>().SingleInstance();
                 builder.RegisterType<AttachedStickersViewModel>();
                 builder.RegisterType<ViewModels.StickerSetViewModel>();
-                builder.RegisterType<AboutViewModel>().SingleInstance();
                 builder.RegisterType<PaymentFormStep1ViewModel>();
                 builder.RegisterType<PaymentFormStep2ViewModel>();
                 builder.RegisterType<PaymentFormStep3ViewModel>();

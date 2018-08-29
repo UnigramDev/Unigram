@@ -375,7 +375,7 @@ namespace Unigram.Views
 
             if (MasterDetail.NavigationService == null)
             {
-                MasterDetail.Initialize("Main", Frame);
+                MasterDetail.Initialize("Main", Frame, ViewModel.ProtoService.SessionId);
                 MasterDetail.NavigationService.Frame.Navigated += OnNavigated;
             }
             else
@@ -411,8 +411,9 @@ namespace Unigram.Views
             }
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            Navigation.IsPaneOpen = false;
             Initialize();
             //await SettingsView.ViewModel.OnNavigatedToAsync(null, e.NavigationMode, null);
         }
@@ -771,12 +772,6 @@ namespace Unigram.Views
                 await Task.Delay(500);
                 UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
             }
-        }
-
-        private void About_Click(object sender, RoutedEventArgs e)
-        {
-            Navigation.IsPaneOpen = false;
-            MasterDetail.NavigationService.Navigate(typeof(AboutPage));
         }
 
         private void WorkMode_Click(object sender, RoutedEventArgs e)
