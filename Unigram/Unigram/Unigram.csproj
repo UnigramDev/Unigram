@@ -164,6 +164,7 @@
     <Compile Include="Controls\ImageCropper.cs" />
     <Compile Include="Controls\ItemSwipeEventArgs.cs" />
     <Compile Include="Controls\ItemSwipeEventHandler.cs" />
+    <Compile Include="Controls\MasterDetailPanel.cs" />
     <Compile Include="Controls\Messages\Content\AudioContent.xaml.cs">
       <DependentUpon>AudioContent.xaml</DependentUpon>
     </Compile>

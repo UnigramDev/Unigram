@@ -21,19 +21,15 @@ using System.Numerics;
 using System.Collections.Generic;
 using Unigram.Common;
 
-// The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
-
 namespace Unigram.Controls
 {
     public sealed class MasterDetailView : ContentControl
     {
+        private MasterDetailPanel AdaptivePanel;
         private Frame DetailFrame;
         private ContentPresenter MasterPresenter;
         private Grid DetailPresenter;
-        private VisualStateGroup AdaptiveStates;
         private bool IsMasterHidden;
-        private const string NarrowState = "NarrowState";
-        private const string CompactState = "CompactState";
 
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
@@ -178,8 +174,8 @@ namespace Unigram.Controls
 
             MasterPresenter = (ContentPresenter)GetTemplateChild("MasterFrame");
             DetailPresenter = (Grid)GetTemplateChild("DetailPresenter");
-            AdaptiveStates = (VisualStateGroup)GetTemplateChild("AdaptiveStates");
-            AdaptiveStates.CurrentStateChanged += OnCurrentStateChanged;
+            AdaptivePanel = (MasterDetailPanel)GetTemplateChild("AdaptivePanel");
+            AdaptivePanel.ViewStateChanged += OnViewStateChanged;
 
             MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
 
@@ -225,7 +221,7 @@ namespace Unigram.Controls
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
-            if (AdaptiveStates.CurrentState == null)
+            if (AdaptivePanel == null)
             {
                 return;
             }
@@ -394,7 +390,7 @@ namespace Unigram.Controls
         }
         #endregion
 
-        private void OnCurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        private void OnViewStateChanged(object sender, EventArgs e)
         {
             ViewStateChanged?.Invoke(this, EventArgs.Empty);
 
@@ -440,16 +436,12 @@ namespace Unigram.Controls
         {
             get
             {
-                if (AdaptiveStates == null)
+                if (AdaptivePanel == null)
                 {
                     return MasterDetailState.Expanded;
                 }
 
-                return AdaptiveStates.CurrentState.Name == NarrowState
-                    ? MasterDetailState.Minimal
-                    : AdaptiveStates.CurrentState.Name == CompactState
-                    ? MasterDetailState.Compact
-                    : MasterDetailState.Expanded;
+                return AdaptivePanel.CurrentState;
             }
         }
 
@@ -473,12 +465,18 @@ namespace Unigram.Controls
 
         public bool AllowCompact
         {
-            get { return (bool)GetValue(AllowCompactProperty); }
-            set { SetValue(AllowCompactProperty, value); }
+            get
+            {
+                return AdaptivePanel?.AllowCompact ?? true;
+            }
+            set
+            {
+                if (AdaptivePanel != null)
+                {
+                    AdaptivePanel.AllowCompact = value;
+                }
+            }
         }
-
-        public static readonly DependencyProperty AllowCompactProperty =
-            DependencyProperty.Register("AllowCompact", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(true));
 
         #endregion
     }

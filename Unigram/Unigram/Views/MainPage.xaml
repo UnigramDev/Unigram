@@ -7,6 +7,7 @@
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:cells="using:Unigram.Controls.Cells"
     xmlns:messages="using:Unigram.Controls.Messages"
+    xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:triggers="using:Unigram.Triggers"
@@ -102,58 +103,10 @@
 
         <Style TargetType="controls:MasterDetailView">
             <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}"/>
-            <!--<Setter Property="Background">
-                 <Setter.Value>
-                 <ImageBrush ImageSource="{ThemeResource DefaultBackgroundBrush}" Stretch="UniformToFill"/>
-                 </Setter.Value>
-                 </Setter>-->
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:MasterDetailView">
-                        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="AdaptiveStates">
-                                    <VisualState x:Name="ExpandedState">
-                                        <VisualState.StateTriggers>
-                                            <AdaptiveTrigger MinWindowWidth="820"/>
-                                        </VisualState.StateTriggers>
-                                        <VisualState.Setters>
-                                            <Setter Target="MasterColumn.Width" Value="260*" />
-                                            <Setter Target="DetailColumn.Width" Value="540*" />
-                                            <!--<Setter Target="MasterColumn.MinWidth" Value="260" />-->
-                                            <Setter Target="MasterColumn.MinWidth" Value="72" />
-                                            <Setter Target="MasterColumn.MaxWidth" Value="540" />
-                                            <Setter Target="DetailPresenter.(Grid.Column)" Value="1" />
-
-                                            <Setter Target="DetailPresenter.(Canvas.ZIndex)" Value="1" />
-                                            <Setter Target="MasterFrame.(Canvas.ZIndex)" Value="-1" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="CompactState">
-                                        <VisualState.StateTriggers>
-                                            <!--<AdaptiveTrigger MinWindowWidth="501"/>-->
-                                            <triggers:CompactTrigger Allow="{Binding AllowCompact, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
-                                        </VisualState.StateTriggers>
-                                        <VisualState.Setters>
-                                            <Setter Target="MasterColumn.Width" Value="72" />
-                                            <Setter Target="DetailColumn.Width" Value="*" />
-                                            <Setter Target="DetailPresenter.(Grid.Column)" Value="1" />
-
-                                            <Setter Target="DetailPresenter.(Canvas.ZIndex)" Value="1" />
-                                            <Setter Target="MasterFrame.(Canvas.ZIndex)" Value="-1" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="NarrowState">
-                                        <VisualState.StateTriggers>
-                                            <AdaptiveTrigger MinWindowWidth="0"/>
-                                        </VisualState.StateTriggers>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition x:Name="MasterColumn"/>
-                                <ColumnDefinition x:Name="DetailColumn" Width="0"/>
-                            </Grid.ColumnDefinitions>
+                        <controls:MasterDetailPanel x:Name="AdaptivePanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                             <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}">
                                 <!--<Border x:Name="DropShadow" Loaded="DropShadow_Loaded"/>-->
                                 <controls:DialogBackgroundPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
@@ -166,14 +119,21 @@
                                               HorizontalContentAlignment="Stretch"
                                               VerticalContentAlignment="Stretch"/>
 
-                            <!--<toolkit:GridSplitter
-                                 Background="Transparent"
-                                 HorizontalAlignment="Left"
-                                 Grid.Column="1"
-                                 ResizeDirection="Auto"
-                                 ResizeBehavior="BasedOnAlignment"
-                                 CursorBehavior="ChangeOnSplitterHover"/>-->
-                        </Grid>
+                            <UserControl Canvas.ZIndex="2">
+                                <Border x:Name="Grip" extensions:Mouse.Cursor="SizeWestEast" Width="12" Background="Transparent" BorderBrush="Transparent" BorderThickness="0,0,6,0">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup>
+                                            <VisualState x:Name="Normal"/>
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <Setter Target="Grip.Background" Value="{ThemeResource ScrollBarThumbBackground}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </Border>
+                            </UserControl>
+                        </controls:MasterDetailPanel>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
