@@ -1251,10 +1251,16 @@ namespace Unigram.ViewModels
             Chat = chat;
             SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
 
-#pragma warning disable CS4014
-            if (SessionState.TryGet("message_id", out long navigation))
+            if (state.TryGet("access_token", out string accessToken))
             {
-                SessionState.Remove("message_id");
+                state.Remove("access_token");
+                AccessToken = accessToken;
+            }
+
+#pragma warning disable CS4014
+            if (state.TryGet("message_id", out long navigation))
+            {
+                state.Remove("message_id");
                 LoadMessageSliceAsync(null, navigation);
             }
             else
@@ -1394,6 +1400,7 @@ namespace Unigram.ViewModels
 
             ShowReplyMarkup(chat);
             ShowDraftMessage(chat);
+            ShowSwitchInline(state);
 
             ProtoService.Send(new GetChatReportSpamState(chat.Id), result =>
             {
@@ -1467,6 +1474,24 @@ namespace Unigram.ViewModels
             }
 
             return Task.CompletedTask;
+        }
+
+        private void ShowSwitchInline(IDictionary<string, object> state)
+        {
+            if (state.TryGet("switch_query", out string query) && state.TryGet("switch_bot", out int userId))
+            {
+                state.Remove("switch_query");
+                state.Remove("switch_bot");
+
+                var bot = CacheService.GetUser(userId);
+                if (bot == null)
+                {
+                    return;
+                }
+
+                SetText(string.Format("@{0} {1}", bot.Username, query), focus: true);
+                ResolveInlineBot(bot.Username, query);
+            }
         }
 
         private async void ShowReplyMarkup(Chat chat)
@@ -2229,13 +2254,22 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (confirm != ContentDialogResult.Primary)
+            var user = CacheService.GetUser(privata.UserId);
+            if (user.Type is UserTypeBot)
             {
-                return;
+                await ProtoService.SendAsync(new UnblockUser(user.Id));
+                StartExecute();
             }
+            else
+            {
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
 
-            ProtoService.Send(new UnblockUser(privata.UserId));
+                ProtoService.Send(new UnblockUser(privata.UserId));
+            }
         }
 
         #endregion
@@ -2437,6 +2471,17 @@ namespace Unigram.ViewModels
 
         private User GetStartingBot()
         {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return null;
+            }
+
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                return CacheService.GetUser(privata.UserId);
+            }
+
             //var user = _with as TLUser;
             //if (user != null && user.IsBot)
             //{
@@ -2650,6 +2695,10 @@ namespace Unigram.ViewModels
                 if (fullInfo.IsBlocked)
                 {
                     UnblockExecute();
+                }
+                else if (fullInfo.BotInfo != null)
+                {
+                    StartExecute();
                 }
             }
             else if (chat.Type is ChatTypeSupergroup super)

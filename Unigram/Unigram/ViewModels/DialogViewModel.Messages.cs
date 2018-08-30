@@ -976,24 +976,21 @@ namespace Unigram.ViewModels
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeSwitchInline switchInline)
                 {
-                    //var bot = GetBot(message);
-                    //if (bot != null)
-                    //{
-                    //    if (switchInline.InCurrentChat)
-                    //    {
-                    //        SetText(string.Format("@{0} {1}", bot.Username, switchInline.Query), focus: true);
-                    //        ResolveInlineBot(bot.Username, switchInline.Query);
+                    var bot = GetBot(message);
+                    if (bot == null)
+                    {
+                        return;
+                    }
 
-                    //        //if (With is TLChatBase)
-                    //        //{
-                    //        //    Reply = message;
-                    //        //}
-                    //    }
-                    //    else
-                    //    {
-                    //        await ForwardView.Current.ShowAsync(switchInline, bot);
-                    //    }
-                    //}
+                    if (switchInline.InCurrentChat)
+                    {
+                        SetText(string.Format("@{0} {1}", bot.Username, switchInline.Query), focus: true);
+                        ResolveInlineBot(bot.Username, switchInline.Query);
+                    }
+                    else
+                    {
+                        await ShareView.GetForCurrentView().ShowAsync(switchInline, bot);
+                    }
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)
                 {

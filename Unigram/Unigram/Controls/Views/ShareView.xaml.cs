@@ -131,17 +131,62 @@ namespace Unigram.Controls.Views
             return context;
         }
 
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
+        {
+            List.SelectionMode = ListViewSelectionMode.Single;
+
+            ViewModel.SwitchInline = switchInline;
+            ViewModel.SwitchInlineBot = bot;
+
+            ViewModel.SendMessage = null;
+            ViewModel.SendMessageUrl = false;
+            ViewModel.Comment = null;
+            ViewModel.ShareLink = null;
+            ViewModel.ShareTitle = null;
+            ViewModel.Messages = null;
+            ViewModel.InviteBot = null;
+            ViewModel.InputMedia = null;
+            ViewModel.IsWithMyScore = false;
+
+            return ShowAsync();
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(string message, bool hasUrl)
+        {
+            List.SelectionMode = ListViewSelectionMode.Single;
+
+            ViewModel.SendMessage = message;
+            ViewModel.SendMessageUrl = hasUrl;
+
+            ViewModel.SwitchInline = null;
+            ViewModel.SwitchInlineBot = null;
+            ViewModel.Comment = null;
+            ViewModel.ShareLink = null;
+            ViewModel.ShareTitle = null;
+            ViewModel.Messages = null;
+            ViewModel.InviteBot = null;
+            ViewModel.InputMedia = null;
+            ViewModel.IsWithMyScore = false;
+
+            return ShowAsync();
+        }
+
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(Message message, bool withMyScore = false)
         {
             List.SelectionMode = ListViewSelectionMode.Multiple;
 
+            ViewModel.Messages = new[] { message };
+            ViewModel.IsWithMyScore = withMyScore;
+
+            ViewModel.SwitchInline = null;
+            ViewModel.SwitchInlineBot = null;
+            ViewModel.SendMessage = null;
+            ViewModel.SendMessageUrl = false;
             ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
-            ViewModel.Messages = new[] { message };
             ViewModel.InviteBot = null;
             ViewModel.InputMedia = null;
-            ViewModel.IsWithMyScore = withMyScore;
 
             var chat = ViewModel.ProtoService.GetChat(message.ChatId);
             if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel && ViewModel.ProtoService.GetSupergroup(super.SupergroupId) is Supergroup supergroup && supergroup.Username.Length > 0)
@@ -183,13 +228,18 @@ namespace Unigram.Controls.Views
         {
             List.SelectionMode = ListViewSelectionMode.Multiple;
 
+            ViewModel.Messages = messages;
+            ViewModel.IsWithMyScore = withMyScore;
+
+            ViewModel.SwitchInline = null;
+            ViewModel.SwitchInlineBot = null;
+            ViewModel.SendMessage = null;
+            ViewModel.SendMessageUrl = false;
             ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
-            ViewModel.Messages = messages;
             ViewModel.InviteBot = null;
             ViewModel.InputMedia = null;
-            ViewModel.IsWithMyScore = withMyScore;
 
             return ShowAsync();
         }
@@ -198,9 +248,14 @@ namespace Unigram.Controls.Views
         {
             List.SelectionMode = ListViewSelectionMode.Multiple;
 
-            ViewModel.Comment = null;
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
+
+            ViewModel.SwitchInline = null;
+            ViewModel.SwitchInlineBot = null;
+            ViewModel.SendMessage = null;
+            ViewModel.SendMessageUrl = false;
+            ViewModel.Comment = null;
             ViewModel.Messages = null;
             ViewModel.InviteBot = null;
             ViewModel.InputMedia = null;
@@ -213,12 +268,17 @@ namespace Unigram.Controls.Views
         {
             List.SelectionMode = ListViewSelectionMode.Multiple;
 
+            ViewModel.InputMedia = inputMedia;
+
+            ViewModel.SwitchInline = null;
+            ViewModel.SwitchInlineBot = null;
+            ViewModel.SendMessage = null;
+            ViewModel.SendMessageUrl = false;
             ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
             ViewModel.Messages = null;
             ViewModel.InviteBot = null;
-            ViewModel.InputMedia = inputMedia;
             ViewModel.IsWithMyScore = false;
 
             //if (inputMedia is TLInputMediaGame gameMedia && gameMedia.Id is TLInputGameShortName shortName)
@@ -233,11 +293,16 @@ namespace Unigram.Controls.Views
         {
             List.SelectionMode = ListViewSelectionMode.Single;
 
+            ViewModel.InviteBot = bot;
+
+            ViewModel.SwitchInline = null;
+            ViewModel.SwitchInlineBot = null;
+            ViewModel.SendMessage = null;
+            ViewModel.SendMessageUrl = false;
             ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
             ViewModel.Messages = null;
-            ViewModel.InviteBot = bot;
             ViewModel.IsWithMyScore = false;
 
             return ShowAsync();

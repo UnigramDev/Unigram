@@ -32,22 +32,23 @@ namespace Unigram
 
         public void Configure()
         {
-            var fail = true;
-            var dirs = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
-            foreach (var dir in dirs)
-            {
-                if (int.TryParse(Path.GetFileName(dir), out int session))
-                {
-                    fail = false;
-                    Configure(session);
-                }
-            }
+            //var fail = true;
+            //var dirs = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
+            //foreach (var dir in dirs)
+            //{
+            //    if (int.TryParse(Path.GetFileName(dir), out int session))
+            //    {
+            //        fail = false;
+            //        Configure(session);
+            //    }
+            //}
 
-            if (fail)
-            {
-                Configure(0);
-            }
+            //if (fail)
+            //{
+            //    Configure(0);
+            //}
 
+            Configure(0);
             _container.Lifecycle.Update();
         }
 
@@ -100,7 +101,6 @@ namespace Unigram
                 builder.RegisterType<MainViewModel>().SingleInstance();
                 builder.RegisterType<PlaybackViewModel>().SingleInstance();
                 builder.RegisterType<ShareViewModel>().SingleInstance();
-                builder.RegisterType<ForwardViewModel>().SingleInstance();
                 builder.RegisterType<DialogShareLocationViewModel>().SingleInstance();
                 builder.RegisterType<ChatsViewModel>().SingleInstance();
                 builder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);

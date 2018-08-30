@@ -517,22 +517,22 @@ namespace Unigram.Controls
             throw new NotImplementedException();
         }
 
-        public void Navigate(Type page, object parameter = null, NavigationTransitionInfo infoOverride = null)
+        public void Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
         {
             throw new NotImplementedException();
         }
 
-        public void Navigate<T>(T key, object parameter = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
+        public void Navigate<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> NavigateAsync(Type page, object parameter = null, NavigationTransitionInfo infoOverride = null)
+        public Task<bool> NavigateAsync(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> NavigateAsync<T>(T key, object parameter = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
+        public Task<bool> NavigateAsync<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
         {
             throw new NotImplementedException();
         }

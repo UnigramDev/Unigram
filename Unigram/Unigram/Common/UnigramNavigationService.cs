@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Telegram.Td.Api;
 using Template10.Services.NavigationService;
 using Template10.Services.ViewService;
@@ -43,7 +44,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null)
+        public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
         {
             if (chat == null)
             {
@@ -97,13 +98,20 @@ namespace Unigram.Common
                 //};
 
                 //Frame.Navigated += handler;
-                if (message != null)
+
+                if (message != null || accessToken != null)
                 {
-                    App.Current.SessionState["message_id"] = message.Value;
-                }
-                else
-                {
-                    App.Current.SessionState.Remove("message_id");
+                    state = state ?? new Dictionary<string, object>();
+
+                    if (message != null)
+                    {
+                        state["message_id"] = message.Value;
+                    }
+
+                    if (accessToken != null)
+                    {
+                        state["access_token"] = accessToken;
+                    }
                 }
 
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
@@ -113,12 +121,12 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    await NavigateAsync(typeof(ChatPage), chat.Id);
+                    await NavigateAsync(typeof(ChatPage), chat.Id, state);
                 }
             }
         }
 
-        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null)
+        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
         {
             var chat = _protoService.GetChat(chatId);
             if (chat == null)

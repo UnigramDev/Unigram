@@ -321,7 +321,7 @@ namespace Unigram.Common
 
         public static async void NavigateToShare(string text, bool hasUrl)
         {
-            await ForwardView.GetForCurrentView().ShowAsync(text, hasUrl);
+            //await ShareView.GetForCurrentView().ShowAsync(text, hasUrl);
         }
 
         public static async void NavigateToProxy(IProtoService protoService, string server, int port, string username, string password, string secret)

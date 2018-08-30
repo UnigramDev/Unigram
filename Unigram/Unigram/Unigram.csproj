@@ -338,9 +338,6 @@
     <Compile Include="Controls\Views\SendMediaView.xaml.cs">
       <DependentUpon>SendMediaView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\ForwardView.xaml.cs">
-      <DependentUpon>ForwardView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Views\SettingsSecurityPasscodeConfirmView.xaml.cs">
       <DependentUpon>SettingsSecurityPasscodeConfirmView.xaml</DependentUpon>
     </Compile>
@@ -495,7 +492,6 @@
     <Compile Include="ViewModels\Settings\SettingsStickersTrendingViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWallPaperViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSecurityEnterPasswordViewModel.cs" />
-    <Compile Include="ViewModels\ForwardViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
@@ -1650,10 +1646,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\SendMediaView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Views\ForwardView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

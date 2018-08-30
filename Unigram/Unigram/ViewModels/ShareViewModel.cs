@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Services;
@@ -197,6 +198,25 @@ namespace Unigram.ViewModels
             }
         }
 
+        private InlineKeyboardButtonTypeSwitchInline _switchInline;
+        public InlineKeyboardButtonTypeSwitchInline SwitchInline
+        {
+            get { return _switchInline; }
+            set { _switchInline = value; }
+        }
+
+        private User _switchInlineBot;
+        public User SwitchInlineBot
+        {
+            get { return _switchInlineBot; }
+            set { _switchInlineBot = value; }
+        }
+
+        public string SendMessage { get; set; }
+        public bool SendMessageUrl { get; set; }
+
+
+
         public MvxObservableCollection<Chat> Items { get; private set; }
 
 
@@ -268,6 +288,26 @@ namespace Unigram.ViewModels
                 if (response is Ok)
                 {
                     NavigationService.GoBack();
+                }
+            }
+            else if (_switchInline != null && _switchInlineBot != null)
+            {
+                var chat = chats.FirstOrDefault();
+                if (chat == null)
+                {
+                    return;
+                }
+
+                var state = new Dictionary<string, object>();
+                state["switch_query"] = _switchInline.Query;
+                state["switch_bot"] = _switchInlineBot.Id;
+
+                NavigationService.GoBack();
+
+                var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                if (service != null)
+                {
+                    service.NavigateToChat(chat, state: state);
                 }
             }
 
