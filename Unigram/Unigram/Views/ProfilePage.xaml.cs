@@ -159,7 +159,7 @@ namespace Unigram.Views
             Members.Visibility = Visibility.Collapsed;
         }
 
-        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret)
+        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
             if (user.Type is UserTypeBot)
             {

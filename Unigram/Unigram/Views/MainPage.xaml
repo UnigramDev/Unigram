@@ -246,52 +246,61 @@
     </Page.Resources>
 
     <controls:NavigationView x:Name="Navigation" ItemClick="NavigationView_ItemClick">
-        <controls:NavigationView.PaneHeader>
+        <!--<controls:NavigationView.PaneHeader>
             <controls:NavigationViewHeader DataContext="{x:Bind ViewModel}"/>
-        </controls:NavigationView.PaneHeader>
+        </controls:NavigationView.PaneHeader>-->
         <controls:NavigationView.MenuItems>
             <controls:NavigationViewItem
                 x:Name="NavigationNewChat"
-                Content="{CustomResource NewGroup}"
+                Text="{CustomResource NewGroup}"
+                Content="&#xE125;"
                 Glyph="&#xE125;" />
             <controls:NavigationViewItem
                 x:Name="NavigationNewSecretChat"
-                Content="{CustomResource NewSecretChat}"
+                Text="{CustomResource NewSecretChat}"
+                Content="&#xE1F6;"
                 Glyph="&#xE1F6;" />
             <controls:NavigationViewItem
                 x:Name="NavigationNewChannel"
-                Content="{CustomResource NewChannel}"
+                Text="{CustomResource NewChannel}"
+                Content="&#xE789;"
                 Glyph="&#xE789;" />
             <controls:NavigationViewItemSeparator/>
 
             <controls:NavigationViewItem
                 x:Name="NavigationChats"
-                Content="Chats"
+                Text="Chats"
                 IsChecked="True"
+                Content="&#xE8BD;"
                 Glyph="&#xE8BD;" />
             <controls:NavigationViewItem
                 x:Name="NavigationContacts"
-                Content="{CustomResource Contacts}"
+                Text="{CustomResource Contacts}"
+                Content="&#xE8D4;"
                 Glyph="&#xE8D4;" />
             <controls:NavigationViewItem
                 x:Name="NavigationCalls"
-                Content="{CustomResource Calls}"
+                Text="{CustomResource Calls}"
+                Content="&#xE717;"
                 Glyph="&#xE717;" />
             <!--<controls:NavigationViewItem Text="{CustomResource InviteFriends}" Glyph="&#xE789;" />-->
             <controls:NavigationViewItem
                 x:Name="NavigationSettings"
-                Content="{CustomResource Settings}"
+                Text="{CustomResource Settings}"
+                Content="&#xE115;"
                 Glyph="&#xE115;" />
             <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
             <controls:NavigationViewItemSeparator/>
             <controls:NavigationViewItem
                 x:Name="NavigationSavedMessages"
-                Content="{CustomResource SavedMessages}"
+                Text="{CustomResource SavedMessages}"
+                Content="&#xE907;"
                 Glyph="&#xE907;"
                 FontFamily="{StaticResource TelegramThemeFontFamily}" />
             <controls:NavigationViewItem
                 x:Name="NavigationNews"
-                Content="News"
+                Text="News"
+                Content="&#xE789;"
                 Glyph="&#xE789;" />
         </controls:NavigationView.MenuItems>
         <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Grid.Row="1">

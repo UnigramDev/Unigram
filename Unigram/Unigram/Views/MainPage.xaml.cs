@@ -76,9 +76,9 @@ namespace Unigram.Views
 
             TabChats.Header = Strings.Additional.Chats;
 
-            NavigationChats.Content = Strings.Additional.Chats;
+            NavigationChats.Text = Strings.Additional.Chats;
             //NavigationAbout.Content = Strings.Additional.About;
-            NavigationNews.Content = Strings.Additional.News;
+            NavigationNews.Text = Strings.Additional.News;
 
             #endregion
 

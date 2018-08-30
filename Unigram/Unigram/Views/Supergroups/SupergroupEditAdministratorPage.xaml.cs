@@ -54,7 +54,7 @@ namespace Unigram.Views.Supergroups
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret)
+        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
         }
 

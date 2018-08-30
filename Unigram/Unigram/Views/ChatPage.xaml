@@ -410,8 +410,12 @@
                                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                                        Style="{StaticResource CaptionTextBlockStyle}"
                                                        Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}"
+                                                       TextWrapping="NoWrap"
+                                                       TextTrimming="CharacterEllipsis"
                                                        Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
                                             <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
+                                                       TextWrapping="NoWrap"
+                                                       TextTrimming="CharacterEllipsis"
                                                        Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                        Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                                                        Style="{StaticResource CaptionTextBlockStyle}"/>

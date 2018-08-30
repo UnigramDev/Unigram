@@ -22,6 +22,19 @@ namespace Unigram.Controls
             VisualStateManager.GoToState(this, IsChecked ? "Checked" : "Unchecked", false);
         }
 
+        #region Text
+
+        public string Text
+        {
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(NavigationViewItem), new PropertyMetadata(null));
+
+        #endregion
+
         #region Glyph
 
         public string Glyph

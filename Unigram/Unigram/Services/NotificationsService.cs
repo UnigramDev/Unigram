@@ -189,7 +189,7 @@ namespace Unigram.Services
 
                 Execute.BeginOnUIThread(() =>
                 {
-                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main" + _protoService.SessionId);
                     if (service == null)
                     {
                         return;

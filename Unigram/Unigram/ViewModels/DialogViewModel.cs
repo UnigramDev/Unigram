@@ -1344,7 +1344,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    Delegate?.UpdateUserFullInfo(chat, item, cache, false);
+                    Delegate?.UpdateUserFullInfo(chat, item, cache, false, _accessToken != null);
                 }
             }
             else if (chat.Type is ChatTypeSecret secretType)
@@ -1362,7 +1362,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    Delegate?.UpdateUserFullInfo(chat, item, cache, true);
+                    Delegate?.UpdateUserFullInfo(chat, item, cache, true, false);
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup basic)

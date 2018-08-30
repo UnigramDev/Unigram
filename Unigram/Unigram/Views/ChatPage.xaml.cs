@@ -2314,11 +2314,15 @@ namespace Unigram.Views
             ViewModel.LastSeen = LastSeenConverter.GetLabel(user, true);
         }
 
-        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret)
+        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
             if (fullInfo.IsBlocked)
             {
-                ShowAction(Strings.Resources.Unblock, true);
+                ShowAction(user.Type is UserTypeBot ? Strings.Resources.BotUnblock : Strings.Resources.Unblock, true);
+            }
+            else if (accessToken)
+            {
+                ShowAction(Strings.Resources.BotStart, true);
             }
             else if (!secret)
             {

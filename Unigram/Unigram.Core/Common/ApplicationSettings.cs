@@ -138,8 +138,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 1715940;
-        public const string CurrentChangelog = "New in version 1.7.1594:\r\n- You can now change the app theme to use Telegram colors from Settings > Appearance.\r\n- If you click on a chat while holding Shift key, it will open up in a new window.";
+        public const int CurrentVersion = 1816050;
+        public const string CurrentChangelog = "New in version 1.8.1605:\r\n- You can now resize chats list width by dragging it with your mouse.\r\n- It is now possible to setup HTTP proxies.";
 
         public int Session => _session;
 

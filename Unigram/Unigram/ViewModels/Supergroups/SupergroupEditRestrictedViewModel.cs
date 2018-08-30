@@ -86,7 +86,7 @@ namespace Unigram.ViewModels.Supergroups
                 }
                 else
                 {
-                    Delegate?.UpdateUserFullInfo(chat, item, cache, false);
+                    Delegate?.UpdateUserFullInfo(chat, item, cache, false, false);
                 }
 
                 Member = member;

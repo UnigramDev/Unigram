@@ -86,7 +86,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    result = dialogsWidthRatio > 0 ? countDialogsWidthFromRatio(availableSize.Width, dialogsWidthRatio) : columnMinimalWidthLeft;
+                    result = dialogsWidthRatio > 0 ? CountDialogsWidthFromRatio(availableSize.Width, dialogsWidthRatio) : columnMinimalWidthLeft;
                 }
 
                 master.Measure(new Size(result, availableSize.Height));
@@ -127,7 +127,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    result = dialogsWidthRatio > 0 ? countDialogsWidthFromRatio(finalSize.Width, dialogsWidthRatio) : columnMinimalWidthLeft;
+                    result = dialogsWidthRatio > 0 ? CountDialogsWidthFromRatio(finalSize.Width, dialogsWidthRatio) : columnMinimalWidthLeft;
                     CurrentState = MasterDetailState.Expanded;
                 }
 
@@ -142,7 +142,7 @@ namespace Unigram.Controls
             return base.ArrangeOverride(finalSize);
         }
 
-        private double countDialogsWidthFromRatio(double width, double ratio)
+        private double CountDialogsWidthFromRatio(double width, double ratio)
         {
             var result = Math.Round(width * ratio);
             result = Math.Max(result, columnMinimalWidthLeft);
@@ -173,7 +173,7 @@ namespace Unigram.Controls
             }
             else
             {
-                newWidth = countDialogsWidthFromRatio(ActualWidth, newRatio);
+                newWidth = CountDialogsWidthFromRatio(ActualWidth, newRatio);
             }
 
             grip.Arrange(new Rect(newWidth, 0, 12, ActualHeight));

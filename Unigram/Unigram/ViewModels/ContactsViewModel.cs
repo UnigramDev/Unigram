@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -10,7 +11,7 @@ using Unigram.ViewModels.Supergroups;
 
 namespace Unigram.ViewModels
 {
-    public class ContactsViewModel : TLViewModelBase
+    public class ContactsViewModel : TLViewModelBase, IHandle<UpdateUserStatus>
     {
         private IContactsService _contactsService;
 
@@ -18,6 +19,7 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
+            aggregator.Subscribe(this);
 
             Items = new SortedObservableCollection<User>(new UserComparer(true));
         }
@@ -64,31 +66,31 @@ namespace Unigram.ViewModels
 
         #region Handle
 
-        //public void Handle(TLUpdateUserStatus message)
-        //{
-        //    BeginOnUIThread(() =>
-        //    {
-        //        //var first = Items.FirstOrDefault(x => x != null && x.Id == message.UserId);
-        //        //if (first != null)
-        //        //{
-        //        //    Items.Remove(first);
-        //        //}
+        public void Handle(UpdateUserStatus update)
+        {
+            BeginOnUIThread(() =>
+            {
+                var first = Items.FirstOrDefault(x => x != null && x.Id == update.UserId);
+                if (first != null)
+                {
+                    Items.Remove(first);
+                }
 
-        //        //var user = CacheService.GetUser(message.UserId) as TLUser;
-        //        //if (user != null && user.IsContact && user.IsSelf == false)
-        //        //{
-        //        //    //var status = LastSeenHelper.GetLastSeen(user);
-        //        //    //var listItem = new UsersPanelListItem(user as TLUser);
-        //        //    //listItem.fullName = user.FullName;
-        //        //    //listItem.LastSeen = status.Item1;
-        //        //    //listItem.LastSeenEpoch = status.Item2;
-        //        //    //listItem.Photo = listItem._parent.Photo;
-        //        //    //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
+                var user = CacheService.GetUser(update.UserId);
+                if (user != null && user.OutgoingLink is LinkStateIsContact)
+                {
+                    //var status = LastSeenHelper.GetLastSeen(user);
+                    //var listItem = new UsersPanelListItem(user as TLUser);
+                    //listItem.fullName = user.FullName;
+                    //listItem.LastSeen = status.Item1;
+                    //listItem.LastSeenEpoch = status.Item2;
+                    //listItem.Photo = listItem._parent.Photo;
+                    //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
 
-        //        //    Items.Add(user);
-        //        //}
-        //    });
-        //}
+                    Items.Add(user);
+                }
+            });
+        }
 
         //public void Handle(TLUpdateContactLink update)
         //{
