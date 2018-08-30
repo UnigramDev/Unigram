@@ -18,13 +18,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views.Settings
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class SettingsLanguagePage : Page
     {
         public SettingsLanguageViewModel ViewModel => DataContext as SettingsLanguageViewModel;
@@ -37,12 +32,7 @@ namespace Unigram.Views.Settings
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            //ApplicationLanguages.PrimaryLanguageOverride = lang.LangCode;
-            //ResourceContext.GetForCurrentView().Reset();
-            //ResourceContext.GetForViewIndependentUse().Reset();
-
-            //WindowWrapper.Current().NavigationServices.Remove(ViewModel.NavigationService);
-            //BootStrapper.Current.NavigationService.Reset();
+            ViewModel.ChangeCommand.Execute(e.ClickedItem);
         }
     }
 }
