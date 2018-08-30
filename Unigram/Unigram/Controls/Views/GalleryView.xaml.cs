@@ -82,6 +82,8 @@ namespace Unigram.Controls.Views
 
             Initialize();
 
+            Transport.Focus(FocusState.Programmatic);
+
             if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
             {
                 var easing = ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction;
