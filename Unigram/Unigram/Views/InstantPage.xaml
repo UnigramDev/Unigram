@@ -143,7 +143,35 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Command="{x:Bind ViewModel.ShareCommand}" Glyph="&#xE72D;"/>
+        <controls:ContentPageHeader>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <controls:GlyphButton
+                     Glyph="&#xE72D;"
+                     Command="{x:Bind ViewModel.ShareCommand}"
+                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                     Grid.Column="1"/>
+                <Button Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="2">
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInBrowser}"/>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                    <FontIcon x:Name="EllipsisIcon"
+                              VerticalAlignment="Center"
+                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              FontSize="16"
+                              Glyph="&#xE10C;"
+                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                </Button>
+            </Grid>
+        </controls:ContentPageHeader>
+
 
         <ListView x:Name="ScrollingHost"
                   Background="{ThemeResource TelegramTitleBarBackgroundBrush}"
