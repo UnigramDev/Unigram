@@ -32,7 +32,7 @@ namespace Unigram.Views
             if (e.NavigationMode == NavigationMode.Back && Frame.ForwardStack.Any(x => x.SourcePageType == typeof(SignInPage)))
             {
                 var lifecycle = TLContainer.Current.Lifecycle;
-                var session = lifecycle.RemoveSession(lifecycle.SelectedItem);
+                var session = lifecycle.Remove(lifecycle.ActiveItem);
 
                 var service = WindowWrapper.Current().NavigationServices.GetByFrameId(session.Id.ToString()) as NavigationService;
                 if (service == null)

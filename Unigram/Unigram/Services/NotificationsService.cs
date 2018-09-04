@@ -187,6 +187,8 @@ namespace Unigram.Services
                 var date = BindConvert.Current.DateTime(update.Message.Date).ToString("o");
                 var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
 
+                var user = _protoService.GetUser(_protoService.GetMyId());
+
                 Execute.BeginOnUIThread(() =>
                 {
                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main" + _protoService.SessionId);
@@ -200,7 +202,7 @@ namespace Unigram.Services
                         return;
                     }
 
-                    NotificationTask.UpdateToast(caption, content, sound, launch, tag, group, picture, date, loc_key);
+                    NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, date, loc_key);
                     NotificationTask.UpdatePrimaryTile(caption, content, picture);
                 });
             }, TimeSpan.FromSeconds(3));

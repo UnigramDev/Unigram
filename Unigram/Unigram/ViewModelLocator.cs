@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using System.IO;
+using Telegram.Td;
 using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Services;
@@ -32,23 +33,37 @@ namespace Unigram
 
         public void Configure()
         {
-            //var fail = true;
-            //var dirs = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
-            //foreach (var dir in dirs)
-            //{
-            //    if (int.TryParse(Path.GetFileName(dir), out int session))
-            //    {
-            //        fail = false;
-            //        Configure(session);
-            //    }
-            //}
+            //ApplicationSettings.Current.SelectedAccount = 0;
 
-            //if (fail)
-            //{
-            //    Configure(0);
-            //}
+            Log.SetVerbosityLevel(ApplicationSettings.Current.VerbosityLevel);
+            Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"));
 
-            Configure(0);
+            var fail = true;
+            var ensure = true;
+            var dirs = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
+            foreach (var dir in dirs)
+            {
+                if (int.TryParse(Path.GetFileName(dir), out int session))
+                {
+                    if (session == ApplicationSettings.Current.SelectedAccount)
+                    {
+                        ensure = false;
+                    }
+
+                    fail = false;
+                    Configure(session);
+                }
+            }
+
+            if (ensure)
+            {
+                Configure(ApplicationSettings.Current.SelectedAccount);
+            }
+            else if (fail)
+            {
+                Configure(0);
+            }
+
             _container.Lifecycle.Update();
         }
 
@@ -91,7 +106,7 @@ namespace Unigram
                     builder.RegisterType<FakeVibrationService>().As<IVibrationService>().SingleInstance();
                 }
 
-                builder.RegisterType<SessionViewModel>().WithParameter("selected", session == 0).SingleInstance();
+                builder.RegisterType<SessionService>().As<ISessionService>().WithParameter("selected", session == ApplicationSettings.Current.SelectedAccount).SingleInstance();
 
                 // ViewModels
                 builder.RegisterType<SignInViewModel>();

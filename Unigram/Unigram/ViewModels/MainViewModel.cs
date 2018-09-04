@@ -17,20 +17,21 @@ using Telegram.Td.Api;
 
 namespace Unigram.ViewModels
 {
-    public class MainViewModel : TLMultipleViewModelBase, IHandle<UpdateServiceNotification>
+    public class MainViewModel : TLMultipleViewModelBase, IHandle<UpdateServiceNotification>, IHandle<UpdateUnreadMessageCount>
     {
         private readonly INotificationsService _pushService;
         private readonly IVibrationService _vibrationService;
         private readonly ILiveLocationService _liveLocationService;
         private readonly IPasscodeService _passcodeService;
-        private readonly LifecycleViewModel _lifecycleService;
+        private readonly ILifecycleService _lifecycleService;
+        private readonly ISessionService _sessionService;
 
         private readonly ConcurrentDictionary<int, InputTypingManager> _typingManagers;
         private readonly ConcurrentDictionary<int, InputTypingManager> _chatTypingManagers;
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IContactsService contactsService, IPasscodeService passcodeService, LifecycleViewModel lifecycle)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IContactsService contactsService, IPasscodeService passcodeService, ILifecycleService lifecycle, ISessionService session)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
@@ -38,6 +39,7 @@ namespace Unigram.ViewModels
             _liveLocationService = liveLocationService;
             _passcodeService = passcodeService;
             _lifecycleService = lifecycle;
+            _sessionService = session;
 
             _typingManagers = new ConcurrentDictionary<int, InputTypingManager>();
             _chatTypingManagers = new ConcurrentDictionary<int, InputTypingManager>();
@@ -59,7 +61,8 @@ namespace Unigram.ViewModels
             StopLiveLocationCommand = new RelayCommand(StopLiveLocationExecute);
         }
 
-        public LifecycleViewModel Lifecycle => _lifecycleService;
+        public ILifecycleService Lifecycle => _lifecycleService;
+        public ISessionService Session => _sessionService;
 
         public ILiveLocationService LiveLocation => _liveLocationService;
         public IPasscodeService Passcode => _passcodeService;
@@ -196,6 +199,15 @@ namespace Unigram.ViewModels
         public void Handle(UpdateServiceNotification update)
         {
 
+        }
+
+        public void Handle(UpdateUnreadMessageCount update)
+        {
+            BeginOnUIThread(() =>
+            {
+                UnreadUnmutedCount = update.UnreadUnmutedCount;
+                UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
+            });
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)

@@ -14,7 +14,6 @@ namespace Unigram.Controls
     {
         private Button TogglePaneButton;
         private SplitView RootSplitView;
-        private ListView MenuItemsHost;
 
         public NavigationView()
         {
@@ -25,31 +24,13 @@ namespace Unigram.Controls
         {
             TogglePaneButton = GetTemplateChild("TogglePaneButton") as Button;
             RootSplitView = GetTemplateChild("RootSplitView") as SplitView;
-            MenuItemsHost = GetTemplateChild("MenuItemsHost") as ListView;
 
             TogglePaneButton.Click += Toggle_Click;
-
-            MenuItemsHost.ItemClick += Host_ItemClick;
-
-            foreach (var items in MenuItems)
-            {
-                MenuItemsHost.Items.Add(items);
-            }
         }
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
             IsPaneOpen = !IsPaneOpen;
-        }
-
-        private void Host_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            var item = MenuItems.FirstOrDefault(x => (string)x.Content == (string)e.ClickedItem) as NavigationViewItem;
-            if (item != null)
-            {
-                ItemClick?.Invoke(this, new NavigationViewItemClickEventArgs(item));
-                IsPaneOpen = false;
-            }
         }
 
         #region IsPaneOpen
@@ -62,28 +43,6 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty IsPaneOpenProperty =
             DependencyProperty.Register("IsPaneOpen", typeof(bool), typeof(NavigationView), new PropertyMetadata(false));
-
-        #endregion
-
-        #region MenuItems
-
-        public MenuItemsCollection MenuItems
-        {
-            get
-            {
-                var value = (MenuItemsCollection)GetValue(MenuItemsProperty);
-                if (value == null)
-                {
-                    value = new MenuItemsCollection();
-                    SetValue(MenuItemsProperty, value);
-                }
-
-                return value;
-            }
-        }
-
-        public static readonly DependencyProperty MenuItemsProperty =
-            DependencyProperty.Register("MenuItems", typeof(IObservableVector<object>), typeof(Nullable), new PropertyMetadata(null));
 
         #endregion
 
@@ -125,24 +84,5 @@ namespace Unigram.Controls
             DependencyProperty.Register("PaneToggleButtonVisibility", typeof(Visibility), typeof(NavigationView), new PropertyMetadata(Visibility.Visible));
 
         #endregion
-
-        public event NavigationViewItemClickEventHandler ItemClick;
-    }
-
-    public delegate void NavigationViewItemClickEventHandler(object sender, NavigationViewItemClickEventArgs args);
-
-    public class NavigationViewItemClickEventArgs : EventArgs
-    {
-        public NavigationViewItem ClickedItem { get; private set; }
-
-        public NavigationViewItemClickEventArgs(NavigationViewItem item)
-        {
-            ClickedItem = item;
-        }
-    }
-
-    public class MenuItemsCollection : ObservableCollection<NavigationViewItemBase>
-    {
-
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 
@@ -17,14 +18,14 @@ namespace Unigram.Views
 
         //private Dictionary<int, IContainer> _containers = new Dictionary<int, IContainer>();
         private ConcurrentDictionary<int, IContainer> _containers = new ConcurrentDictionary<int, IContainer>();
-        private LifecycleViewModel _lifecycle;
+        private ILifecycleService _lifecycle;
 
         private TLContainer()
         {
-            _lifecycle = new LifecycleViewModel();
+            _lifecycle = new LifecycleService();
         }
 
-        public LifecycleViewModel Lifecycle => _lifecycle;
+        public ILifecycleService Lifecycle => _lifecycle;
 
         public static TLContainer Current
         {
@@ -34,13 +35,13 @@ namespace Unigram.Views
             }
         }
 
-        public IEnumerable<SessionViewModel> GetSessions()
+        public IEnumerable<ISessionService> GetSessions()
         {
             foreach (var container in _containers.Values)
             {
                 if (container != null)
                 {
-                    yield return container.Resolve<SessionViewModel>();
+                    yield return container.Resolve<ISessionService>();
                 }
             }
         }
@@ -58,7 +59,7 @@ namespace Unigram.Views
             //}
 
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(_lifecycle);
+            builder.RegisterInstance(_lifecycle).As<ILifecycleService>();
 
             return _containers[id] = factory(builder, id);
         }
@@ -67,7 +68,7 @@ namespace Unigram.Views
         {
             if (account == int.MaxValue)
             {
-                account = _lifecycle.SelectedItem?.Id ?? 0;
+                account = _lifecycle.ActiveItem?.Id ?? 0;
             }
 
             var result = default(TService);
@@ -86,7 +87,7 @@ namespace Unigram.Views
         {
             if (account == int.MaxValue)
             {
-                account = _lifecycle.SelectedItem?.Id ?? 0;
+                account = _lifecycle.ActiveItem?.Id ?? 0;
             }
 
             var result = default(TService);

@@ -158,13 +158,13 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST"))
 		{
-			UpdateToast(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
+			UpdateToast(caption, message, L"", L"0", sound, launch, L"phoneCall", group, picture, date, loc_key);
 			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
 		{
 			auto tag = GetTag(custom);
-			UpdateToast(caption, message, sound, launch, tag, group, picture, date, loc_key);
+			UpdateToast(caption, message, L"", L"0", sound, launch, tag, group, picture, date, loc_key);
 			UpdatePrimaryBadge(data->GetNamedNumber("badge"));
 
 			if (loc_key != L"DC_UPDATE")
@@ -615,7 +615,7 @@ void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, Strin
 //	updater->Update(notification);
 //}
 
-void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
+void NotificationTask::UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
 {
 	bool allow = false;
 	//auto settings = ApplicationData::Current->LocalSettings;
@@ -661,7 +661,11 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	xml += date->Data();
 	//xml += L"' hint-people='remoteid:";
 	//xml += group->Data();
-	xml += L"'><visual><binding template='ToastGeneric'>";
+	xml += L"'>";
+	//xml += L"<header id='";
+	//xml += account->Data();
+	//xml += L"' title='Camping!!' arguments='action = openConversation & amp; id = 6289'/>";
+	xml += L"<visual><binding template='ToastGeneric'>";
 
 	if (picture != nullptr)
 	{
@@ -675,6 +679,8 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	xml += L"]]></text><text><![CDATA[";
 	xml += message->Data();
 	//xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
+	xml += L"]]></text><text placement='attribution'><![CDATA[";
+	xml += attribution->Data();
 	xml += L"]]></text></binding></visual>";
 	xml += actions;
 	xml += audio;

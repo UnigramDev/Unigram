@@ -242,9 +242,6 @@
     </Compile>
     <Compile Include="Controls\MosaicRow.cs" />
     <Compile Include="Controls\NavigationView.cs" />
-    <Compile Include="Controls\NavigationViewHeader.xaml.cs">
-      <DependentUpon>NavigationViewHeader.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
@@ -404,11 +401,13 @@
     <Compile Include="Services\ContactsService.cs" />
     <Compile Include="Services\EventAggregator.cs" />
     <Compile Include="Services\GenerationService.cs" />
+    <Compile Include="Services\LifecycleService.cs" />
     <Compile Include="Services\LocaleService.cs" />
     <Compile Include="Services\NotificationsService.cs" />
     <Compile Include="Services\PasscodeService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\ProtoService.cs" />
+    <Compile Include="Services\SessionService.cs" />
     <Compile Include="Services\Updates\UpdateWorkMode.cs" />
     <Compile Include="Strings\en\Additional.cs">
       <AutoGen>True</AutoGen>
@@ -453,7 +452,6 @@
     <Compile Include="ViewModels\Delegates\IProfileDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IUserDelegate.cs" />
-    <Compile Include="ViewModels\LifecycleViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep2ViewModel.cs" />
@@ -601,6 +599,9 @@
     </Compile>
     <Compile Include="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RootPage.xaml.cs">
+      <DependentUpon>RootPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SecretChats\SecretChatCreatePage.xaml.cs">
       <DependentUpon>SecretChatCreatePage.xaml</DependentUpon>
@@ -1538,10 +1539,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\NavigationViewHeader.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\PlaybackHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1822,6 +1819,10 @@
     <Page Include="Views\ProfilePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RootPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SecretChats\SecretChatCreatePage.xaml">
       <SubType>Designer</SubType>

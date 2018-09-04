@@ -35,14 +35,14 @@ namespace Unigram.Views
 
             try
             {
-                var log = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log"));
+                var log = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"));
                 Log.Badge = FileSizeConverter.Convert(log.Length);
             }
             catch { }
 
             try
             {
-                var logold = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old"));
+                var logold = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old"));
                 LogOld.Badge = FileSizeConverter.Convert(logold.Length);
             }
             catch { }
@@ -99,14 +99,13 @@ namespace Unigram.Views
 
         private async void Log_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log")), null, null));
+            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log")), null, null));
         }
 
         private async void LogOld_Click(object sender, RoutedEventArgs e)
         {
-            if (System.IO.File.Exists(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old")))
+            if (System.IO.File.Exists(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old")))
             {
-                System.IO.File.Copy(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old"), System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old"), true);
                 await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old")), null, null));
             }
         }

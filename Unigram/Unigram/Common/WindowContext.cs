@@ -34,7 +34,7 @@ namespace Unigram.Common
         private readonly Window _window;
         private readonly int _id;
 
-        private readonly LifecycleViewModel _lifecycle;
+        private readonly ILifecycleService _lifecycle;
 
         public WindowContext(int id)
         {
@@ -193,9 +193,9 @@ namespace Unigram.Common
         public void SetActivatedArgs(IActivatedEventArgs args, INavigationService service)
         {
             _args = args;
-            _service = service = WindowWrapper.Current().NavigationServices.GetByFrameId(_lifecycle.SelectedItem.Id.ToString());
+            _service = service = WindowWrapper.Current().NavigationServices.GetByFrameId(_lifecycle.ActiveItem.Id.ToString());
 
-            UseActivatedArgs(args, service, _lifecycle.SelectedItem.ProtoService.GetAuthorizationState());
+            UseActivatedArgs(args, service, _lifecycle.ActiveItem.ProtoService.GetAuthorizationState());
         }
 
         private async void UseActivatedArgs(IActivatedEventArgs args, INavigationService service, AuthorizationState state)
@@ -210,7 +210,7 @@ namespace Unigram.Common
                         break;
                     case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
                         Execute.Initialize();
-                        service.Navigate(typeof(Views.IntroPage));
+                        service.Navigate(service.CurrentPageType != null ? typeof(Views.SignIn.SignInPage) : typeof(Views.IntroPage));
                         break;
                     case AuthorizationStateWaitCode waitCode:
                         service.Navigate(waitCode.IsRegistered ? typeof(Views.SignIn.SignInSentCodePage) : typeof(Views.SignIn.SignUpPage));
@@ -338,7 +338,7 @@ namespace Unigram.Common
                                 var remote = first.RemoteId;
                                 if (int.TryParse(remote.Substring(1), out int userId))
                                 {
-                                    var response = await _lifecycle.SelectedItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+                                    var response = await _lifecycle.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
                                     if (response is Chat chat)
                                     {
                                         service.NavigateToChat(chat);
@@ -438,6 +438,7 @@ namespace Unigram.Common
         {
             await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
+                _service = WindowWrapper.Current().NavigationServices.GetByFrameId(_lifecycle.ActiveItem.Id.ToString());
                 UseActivatedArgs(_args, _service, update.AuthorizationState);
             });
         }
@@ -506,7 +507,7 @@ namespace Unigram.Common
             return context;
         }
 
-        public static void Subscribe(SessionViewModel session)
+        public static void Subscribe(SessionService session)
         {
             foreach (var item in _windowContext.Values)
             {

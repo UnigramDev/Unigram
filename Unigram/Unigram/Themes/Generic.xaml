@@ -31,12 +31,13 @@
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="8" />
+                                        <!--<RowDefinition Height="8" />-->
                                     </Grid.RowDefinitions>
                                     <Grid.Children>
                                         <Grid x:Name="ContentPaneTopPadding" />
-                                        <Border x:Name="HeaderContentBorder" Grid.Row="2" Child="{TemplateBinding PaneHeader}"/>
-                                        <ListView x:Name="MenuItemsHost" Grid.Row="3" Margin="0,0,0,20" SelectionMode="Single" IsItemClickEnabled="True"/>
+                                        <!--<Border Background="{ThemeResource SystemControlAcrylicElementBrush}" Margin="0,0,0,-44" Grid.RowSpan="3"/>
+                                        <Border Background="{ThemeResource NavigationViewDefaultPaneBackground}" Margin="0,0,0,44" Grid.Row="3" Grid.RowSpan="3"/>-->
+                                        <Border x:Name="HeaderContentBorder" Grid.Row="3" Child="{TemplateBinding PaneHeader}"/>
 
                                         <Border x:Name="FooterContentBorder" Grid.Row="4" Child="{TemplateBinding PaneFooter}"/>
                                         <!--<local:NavigationViewItem x:Name="SettingsNavPaneItem" Glyph="&#xE115;" Grid.Row="5" />-->

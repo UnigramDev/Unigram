@@ -430,11 +430,11 @@ namespace Unigram
         public override UIElement CreateRootElement(IActivatedEventArgs e)
         {
             var navigationFrame = new Frame();
-            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, 0) as NavigationService;
+            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, TLContainer.Current.Lifecycle.ActiveItem.Id) as NavigationService;
             navigationService.SerializationService = TLSerializationService.Current;
-            navigationService.FrameFacade.FrameId = 0.ToString();
+            navigationService.FrameFacade.FrameId = TLContainer.Current.Lifecycle.ActiveItem.Id.ToString();
 
-            return navigationFrame;
+            return new RootPage(navigationService);
         }
 
         protected override INavigationService CreateNavigationService(Frame frame, int session)
