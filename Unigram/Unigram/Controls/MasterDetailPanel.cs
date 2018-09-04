@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,8 +19,8 @@ namespace Unigram.Controls
         private const double columnMinimalWidthMain = 380;
         private const double kDefaultDialogsWidthRatio = 5d / 14d;
 
-        private double gripWidthRatio = kDefaultDialogsWidthRatio;
-        private double dialogsWidthRatio = kDefaultDialogsWidthRatio;
+        private double gripWidthRatio = ApplicationSettings.Current.DialogsWidthRatio;
+        private double dialogsWidthRatio = ApplicationSettings.Current.DialogsWidthRatio;
 
         private MasterDetailState _currentState;
         public MasterDetailState CurrentState
@@ -185,6 +186,7 @@ namespace Unigram.Controls
             VisualStateManager.GoToState(Children[2] as UserControl, "Normal", false);
 
             dialogsWidthRatio = gripWidthRatio;
+            ApplicationSettings.Current.DialogsWidthRatio = gripWidthRatio;
 
             InvalidateMeasure();
             InvalidateArrange();

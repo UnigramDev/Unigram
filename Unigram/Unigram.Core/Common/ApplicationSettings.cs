@@ -285,6 +285,23 @@ namespace Unigram.Common
             }
         }
 
+        private double? _dialogsWidthRatio;
+        public double DialogsWidthRatio
+        {
+            get
+            {
+                if (_dialogsWidthRatio == null)
+                    _dialogsWidthRatio = GetValueOrDefault("DialogsWidthRatio", 5d / 14d);
+
+                return _dialogsWidthRatio ?? 5d / 14d;
+            }
+            set
+            {
+                _dialogsWidthRatio = value;
+                AddOrUpdateValue("DialogsWidthRatio", value);
+            }
+        }
+
         private bool? _isSendByEnterEnabled;
         public bool IsSendByEnterEnabled
         {
