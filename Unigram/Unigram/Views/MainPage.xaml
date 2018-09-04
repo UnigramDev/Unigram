@@ -3,11 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
+    xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:cells="using:Unigram.Controls.Cells"
     xmlns:messages="using:Unigram.Controls.Messages"
-    xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:triggers="using:Unigram.Triggers"
@@ -120,7 +120,7 @@
                                               VerticalContentAlignment="Stretch"/>
 
                             <UserControl Canvas.ZIndex="2">
-                                <Border x:Name="Grip" extensions:Mouse.Cursor="SizeWestEast" Width="12" Background="Transparent" BorderBrush="Transparent" BorderThickness="0,0,6,0">
+                                <Border x:Name="Grip" common:Mouse.Cursor="SizeWestEast" Width="12" Background="Transparent" BorderBrush="Transparent" BorderThickness="0,0,6,0">
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup>
                                             <VisualState x:Name="Normal"/>
