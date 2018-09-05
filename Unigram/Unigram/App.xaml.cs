@@ -73,8 +73,6 @@ namespace Unigram
 
         public static AppServiceConnection Connection { get; private set; }
 
-        public static AppInMemoryState InMemoryState { get; } = new AppInMemoryState();
-
         private readonly UISettings _uiSettings;
 
         public UISettings UISettings => _uiSettings;
@@ -107,9 +105,9 @@ namespace Unigram
         /// </summary>
         public App(int session)
         {
-            if (!ApplicationSettings.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
+            if (!SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
             {
-                RequestedTheme = ApplicationSettings.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) ? ApplicationTheme.Dark : ApplicationTheme.Light;
+                RequestedTheme = SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) ? ApplicationTheme.Dark : ApplicationTheme.Light;
             }
 
 #if DEBUG
@@ -154,7 +152,7 @@ namespace Unigram
 
         public override INavigable ResolveForPage(Page page, INavigationService navigationService)
         {
-            var id = navigationService is UnigramNavigationService ex ? ex.SessionId : 0;
+            var id = navigationService is TLNavigationService ex ? ex.SessionId : 0;
             var container = TLContainer.Current;
 
             switch (page)
@@ -313,8 +311,12 @@ namespace Unigram
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
         {
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
-            WindowContext.GetForCurrentView();
             base.OnWindowCreated(args);
+        }
+
+        protected override WindowContext CreateWindowWrapper(Window window)
+        {
+            return new TLWindowContext(window, 0);
         }
 
         private void Inactivity_Detected(object sender, EventArgs e)
@@ -395,10 +397,16 @@ namespace Unigram
         private void HandleActivated(bool active)
         {
             var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
-            aggregator.Publish(active ? "Window_Activated" : "Window_Deactivated");
+            if (aggregator != null)
+            {
+                aggregator.Publish(active ? "Window_Activated" : "Window_Deactivated");
+            }
 
             var protoService = TLContainer.Current.Resolve<IProtoService>();
-            protoService.Send(new SetOption("online", new OptionValueBoolean(active)));
+            if (protoService != null)
+            {
+                protoService.Send(new SetOption("online", new OptionValueBoolean(active)));
+            }
         }
 
         /////// <summary>
@@ -429,17 +437,23 @@ namespace Unigram
 
         public override UIElement CreateRootElement(IActivatedEventArgs e)
         {
+            var session = TLContainer.Current.Lifecycle.ActiveItem;
+
             var navigationFrame = new Frame();
-            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, TLContainer.Current.Lifecycle.ActiveItem.Id) as NavigationService;
+            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, session.Id, $"{session.Id}", true) as NavigationService;
             navigationService.SerializationService = TLSerializationService.Current;
-            navigationService.FrameFacade.FrameId = TLContainer.Current.Lifecycle.ActiveItem.Id.ToString();
 
             return new RootPage(navigationService);
         }
 
-        protected override INavigationService CreateNavigationService(Frame frame, int session)
+        protected override INavigationService CreateNavigationService(Frame frame, int session, string id, bool root)
         {
-            return new UnigramNavigationService(TLContainer.Current.Resolve<IProtoService>(session), frame);
+            if (root)
+            {
+                return new TLRootNavigationService(TLContainer.Current.Resolve<ISessionService>(session), frame, session, id);
+            }
+
+            return new TLNavigationService(TLContainer.Current.Resolve<IProtoService>(session), frame, session, id);
         }
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
@@ -463,7 +477,7 @@ namespace Unigram
                 Window.Current.VisibilityChanged -= Window_VisibilityChanged;
                 Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
-                WindowContext.GetForCurrentView().UpdateTitleBar();
+                TLWindowContext.GetForCurrentView().UpdateTitleBar();
 
                 Theme.Current.Update();
                 //NotifyThemeChanged();
@@ -482,8 +496,8 @@ namespace Unigram
                 return;
             }
 
-            WindowContext.GetForCurrentView().SetActivatedArgs(args, NavigationService);
-            WindowContext.GetForCurrentView().UpdateTitleBar();
+            TLWindowContext.GetForCurrentView().SetActivatedArgs(args, NavigationService);
+            TLWindowContext.GetForCurrentView().UpdateTitleBar();
 
             Window.Current.Activated -= Window_Activated;
             Window.Current.Activated += Window_Activated;
@@ -491,7 +505,7 @@ namespace Unigram
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Theme.Current.Update();
             //NotifyThemeChanged();
@@ -499,42 +513,6 @@ namespace Unigram
             var dispatcher = Window.Current.Dispatcher;
             Task.Run(() => OnStartSync(dispatcher));
             //return Task.CompletedTask;
-        }
-
-        private bool TryParseCommandLine(CommandLineActivatedEventArgs args, out int id, out bool test)
-        {
-#if !DEBUG
-            if (args.PreviousExecutionState != ApplicationExecutionState.Terminated)
-            {
-                id = 0;
-                test = false;
-                return false;
-            }
-#endif
-
-            try
-            {
-                var v_id = 0;
-                var v_test = false;
-
-                var p = new OptionSet()
-                {
-                    { "i|id=", (int v) => v_id = v },
-                    { "t|test", v => v_test = v != null },
-                };
-
-                var extra = p.Parse(args.Operation.Arguments.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
-
-                id = v_id;
-                test = v_test;
-                return true;
-            }
-            catch
-            {
-                id = 0;
-                test = false;
-                return false;
-            }
         }
 
         private async void OnStartSync(CoreDispatcher dispatcher)
@@ -618,7 +596,7 @@ namespace Unigram
             var current = App.Current as App;
             var theme = current.UISettings.GetColorValue(UIColorType.Background);
 
-            frame.RequestedTheme = ApplicationSettings.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Dark) || (ApplicationSettings.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
+            frame.RequestedTheme = SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Dark) || (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
             //frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme;
 
             //var dark = (bool)App.Current.Resources["IsDarkTheme"];
@@ -626,17 +604,5 @@ namespace Unigram
             //frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
             //frame.RequestedTheme = ElementTheme.Default;
         }
-    }
-
-    public class AppInMemoryState
-    {
-        public InlineKeyboardButtonTypeSwitchInline SwitchInline { get; set; }
-        public User SwitchInlineBot { get; set; }
-
-        public string SendMessage { get; set; }
-        public bool SendMessageUrl { get; set; }
-
-        public int? NavigateToMessage { get; set; }
-        public string NavigateToAccessToken { get; set; }
     }
 }

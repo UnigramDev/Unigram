@@ -64,16 +64,24 @@ namespace Unigram.Views
             return _containers[id] = factory(builder, id);
         }
 
-        public TService Resolve<TService>(int account = int.MaxValue)
+        public void Destroy(int id)
         {
-            if (account == int.MaxValue)
+            if (_containers.TryRemove(id, out IContainer container))
             {
-                account = _lifecycle.ActiveItem?.Id ?? 0;
+                container.Dispose();
+            }
+        }
+
+        public TService Resolve<TService>(int session = int.MaxValue)
+        {
+            if (session == int.MaxValue)
+            {
+                session = _lifecycle.ActiveItem?.Id ?? 0;
             }
 
             var result = default(TService);
             //if (_containers.TryGetValue(account, out IContainer container))
-            var container = _containers[account];
+            if (_containers.TryGetValue(session, out IContainer container))
             {
                 result = container.Resolve<TService>();
             }
@@ -81,18 +89,18 @@ namespace Unigram.Views
             return result;
         }
 
-        public TService Resolve<TService, TDelegate>(TDelegate delegato, int account = int.MaxValue)
+        public TService Resolve<TService, TDelegate>(TDelegate delegato, int session = int.MaxValue)
             where TService : IDelegable<TDelegate>
             where TDelegate : IViewModelDelegate
         {
-            if (account == int.MaxValue)
+            if (session == int.MaxValue)
             {
-                account = _lifecycle.ActiveItem?.Id ?? 0;
+                session = _lifecycle.ActiveItem?.Id ?? 0;
             }
 
             var result = default(TService);
             //if (_containers.TryGetValue(account, out IContainer container))
-            var container = _containers[account];
+            if (_containers.TryGetValue(session, out IContainer container))
             {
                 result = container.Resolve<TService>();
             }

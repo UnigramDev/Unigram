@@ -219,7 +219,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+            var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
             if (service != null)
             {
                 service.NavigateToChat(message.ChatId, message: message.Id);

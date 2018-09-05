@@ -39,6 +39,7 @@ using Unigram.Services;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Core.Common;
 using Unigram.Collections;
+using Template10.Common;
 
 namespace Unigram.Controls
 {

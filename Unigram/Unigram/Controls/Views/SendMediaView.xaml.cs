@@ -262,7 +262,7 @@ namespace Unigram.Controls.Views
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
-            IsGrouped = ApplicationSettings.Current.IsSendGrouped;
+            IsGrouped = SettingsService.Current.IsSendGrouped;
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
@@ -326,7 +326,7 @@ namespace Unigram.Controls.Views
 
             if (IsGroupingEnabled)
             {
-                ApplicationSettings.Current.IsSendGrouped = IsGrouped;
+                SettingsService.Current.IsSendGrouped = IsGrouped;
             }
 
             Hide(ContentDialogBaseResult.OK);

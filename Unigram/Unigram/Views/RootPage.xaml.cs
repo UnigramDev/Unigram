@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Common;
@@ -11,6 +12,7 @@ using Unigram.Core.Common;
 using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.Views.SignIn;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -20,8 +22,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Views
 {
@@ -50,43 +50,61 @@ namespace Unigram.Views
 
         public void Switch(ISessionService session)
         {
+            _lifecycle.ActiveItem = session;
+
             if (_navigationService != null)
             {
-                if (_navigationService?.Frame?.Content is IRootContentPage content)
-                {
-                    content.Root = null;
-                }
-
-                _navigationService.Frame.Navigating -= OnNavigating;
-                _navigationService.Frame.Navigated -= OnNavigated;
+                Destroy(_navigationService);
             }
 
-            var service = WindowWrapper.Current().NavigationServices.GetByFrameId(session.Id.ToString()) as NavigationService;
+            var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
             if (service == null)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id, $"{session.Id}", true) as NavigationService;
                 service.SerializationService = TLSerializationService.Current;
-                service.FrameFacade.FrameId = session.Id.ToString();
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
-                service.Navigate(typeof(MainPage));
-                //WindowContext.GetForCurrentView().Handle(new UpdateAuthorizationState(session.ProtoService.GetAuthorizationState()));
+
+                switch (session.ProtoService.GetAuthorizationState())
+                {
+                    case AuthorizationStateReady ready:
+                        service.Navigate(typeof(MainPage));
+                        break;
+                    case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
+                        service.Navigate(typeof(SignInPage));
+                        service.Frame.BackStack.Add(new PageStackEntry(typeof(BlankPage), null, null));
+                        break;
+                    case AuthorizationStateWaitCode waitCode:
+                        service.Navigate(waitCode.IsRegistered ? typeof(SignInSentCodePage) : typeof(SignUpPage));
+                        break;
+                    case AuthorizationStateWaitPassword waitPassword:
+                        service.Navigate(typeof(SignInPasswordPage));
+                        break;
+                }
+
+                //WindowContext.GetForCurrentView().Handle(session, new UpdateConnectionState(session.ProtoService.GetConnectionState()));
             }
             else
             {
-                if (service.Frame.Content is IRootContentPage content)
-                {
-                    content.Root = this;
-                    Navigation.PaneToggleButtonVisibility = content.EvalutatePaneToggleButtonVisibility();
-                    InitializeNavigation(service.Frame);
-                }
-
-                service.Frame.Navigating += OnNavigating;
-                service.Frame.Navigated += OnNavigated;
+                // TODO: This should actually __never__ happen.
             }
 
             _navigationService = service;
             Navigation.Content = service.Frame;
+        }
+
+        private void Destroy(NavigationService service)
+        {
+            if (service.Frame.Content is IRootContentPage content)
+            {
+                content.Root = null;
+            }
+
+            service.Frame.Navigating -= OnNavigating;
+            service.Frame.Navigated -= OnNavigated;
+
+            WindowContext.GetForCurrentView().NavigationServices.Remove(service);
+            WindowContext.GetForCurrentView().NavigationServices.RemoveByFrameId($"Main{service.FrameFacade.FrameId}");
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
@@ -147,8 +165,6 @@ namespace Unigram.Views
                 }
             }
 
-            return;
-
             if (viewModel != null)
             {
                 NavigationViewItems.Insert(0, viewModel);
@@ -192,6 +208,10 @@ namespace Unigram.Views
             }
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            if (content == null)
+            {
+                return;
+            }
 
             if (args.Item is ISessionService session)
             {
@@ -285,37 +305,7 @@ namespace Unigram.Views
 
                 if (e.ClickedItem as string == "NavigationAdd")
                 {
-                    if (_navigationService != null)
-                    {
-                        if (_navigationService?.Frame?.Content is IRootContentPage content)
-                        {
-                            content.Root = null;
-                        }
-
-                        _navigationService.Frame.Navigating -= OnNavigating;
-                        _navigationService.Frame.Navigated -= OnNavigated;
-                    }
-
-                    var session = _lifecycle.Create();
-                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId(session.Id.ToString()) as NavigationService;
-                    if (service == null)
-                    {
-                        service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id) as NavigationService;
-                        service.SerializationService = TLSerializationService.Current;
-                        service.FrameFacade.FrameId = session.Id.ToString();
-                        service.Frame.Navigating += OnNavigating;
-                        service.Frame.Navigated += OnNavigated;
-                        service.Navigate(typeof(SignIn.SignInPage));
-                        service.Frame.BackStack.Add(new PageStackEntry(typeof(BlankPage), null, null));
-                    }
-                    else
-                    {
-                        service.Frame.Navigating += OnNavigating;
-                        service.Frame.Navigated += OnNavigated;
-                    }
-
-                    _navigationService = service;
-                    Navigation.Content = service.Frame;
+                    Switch(_lifecycle.Create());
                 }
                 else if (e.ClickedItem is ISessionService session)
                 {
@@ -324,7 +314,6 @@ namespace Unigram.Views
                         return;
                     }
 
-                    _lifecycle.ActiveItem = session;
                     Switch(session);
                 }
                 else if (_navigationService?.Frame?.Content is IRootContentPage content)

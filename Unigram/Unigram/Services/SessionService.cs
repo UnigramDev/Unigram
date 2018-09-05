@@ -5,8 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.ViewModels;
+using Unigram.Views;
+using Windows.UI.Xaml;
 
 namespace Unigram.Services
 {
@@ -16,9 +19,6 @@ namespace Unigram.Services
         int UserId { get; }
 
         bool IsActive { get; set; }
-
-        void Subscribe(WindowContext window);
-        void Unsubscribe(WindowContext window);
 
         int UnreadCount { get; }
 
@@ -30,19 +30,22 @@ namespace Unigram.Services
 
     public class SessionService : TLViewModelBase, ISessionService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateAuthorizationState>, IHandle<UpdateConnectionState>
     {
-        private readonly Dictionary<long, WindowContext> _windows = new Dictionary<long, WindowContext>();
+        private readonly ILifecycleService _lifecycleService;
+        private readonly int _id;
 
-        public SessionService(bool selected, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public SessionService(int session, bool selected, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILifecycleService lifecycleService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            WindowContext.Subscribe(this);
+            _lifecycleService = lifecycleService;
+            _id = session;
+
             aggregator.Subscribe(this);
 
             IsActive = selected;
             UnreadCount = ProtoService.UnreadCount;
         }
 
-        public int Id => ProtoService.SessionId;
+        public int Id => _id;
         public int UserId => ProtoService.GetMyId();
 
         private int _unreadCount;
@@ -67,7 +70,8 @@ namespace Unigram.Services
             }
             set
             {
-                Set(ref _isActive, value);
+                //Set(ref _isActive, value);
+                _isActive = value;
             }
         }
 
@@ -78,35 +82,49 @@ namespace Unigram.Services
 
         #region Lifecycle
 
-        public void Subscribe(WindowContext window)
-        {
-            _windows[window.Id] = window;
-        }
-
-        public void Unsubscribe(WindowContext window)
-        {
-            _windows.Remove(window.Id);
-        }
-
         public void Handle(UpdateAuthorizationState update)
         {
-            if (_isActive)
-            {
-                foreach (var window in _windows.Values)
-                    window.Handle(update);
-            }
-            //else if (update.AuthorizationState is AuthorizationStateWaitPhoneNumber)
+            //if (update.AuthorizationState is AuthorizationStateClosed)
             //{
-            //    TLContainer.Current.Lifecycle.Remove(this);
+            //    var active = _isActive;
+            //    var session = _lifecycleService.Remove(this, null);
+            //    if (active)
+            //    {
+            //        BeginOnUIThread(() =>
+            //        {
+            //            if (Window.Current.Content is RootPage root)
+            //            {
+            //                root.Switch(session);
+            //            }
+            //        });
+            //    }
             //}
+
+            if (update.AuthorizationState is AuthorizationStateClosed)
+            {
+                _lifecycleService.Closed(this);
+            }
+
+            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+            {
+                window.Handle(this, update);
+            }
         }
 
         public void Handle(UpdateConnectionState update)
         {
             if (_isActive)
             {
-                foreach (var window in _windows.Values)
-                    window.Handle(update);
+                foreach (var window in WindowContext.ActiveWrappers)
+                {
+                    foreach (var service in window.NavigationServices)
+                    {
+                        if (service.SessionId == _id)
+                        {
+
+                        }
+                    }
+                }
             }
         }
 

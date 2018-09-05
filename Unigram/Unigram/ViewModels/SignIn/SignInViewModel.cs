@@ -171,12 +171,11 @@ namespace Unigram.ViewModels.SignIn
                     {
                         var active = _lifecycleService.Remove(session);
 
-                        var service = WindowWrapper.Current().NavigationServices.GetByFrameId(active.Id.ToString()) as NavigationService;
+                        var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(active.Id.ToString()) as NavigationService;
                         if (service == null)
                         {
-                            service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id) as NavigationService;
+                            service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id, $"{session.Id}", true) as NavigationService;
                             service.SerializationService = TLSerializationService.Current;
-                            service.FrameFacade.FrameId = active.Id.ToString();
                             service.Navigate(typeof(MainPage));
                         }
 

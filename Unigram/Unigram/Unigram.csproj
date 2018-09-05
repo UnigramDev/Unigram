@@ -18,11 +18,11 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>Unigram_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>CE7E95812C4B2B0C8A7D5EA3DB7D201C2F459116</PackageCertificateThumbprint>
-    <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
+    <!--<BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>-->
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
@@ -130,7 +130,8 @@
     <Compile Include="Common\TdExtensions.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\Theme.cs" />
-    <Compile Include="Common\UnigramNavigationService.cs" />
+    <Compile Include="Common\TLNavigationService.cs" />
+    <Compile Include="Common\TLRootNavigationService.cs" />
     <Compile Include="Common\UniqueList.cs" />
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\VisualUtilities.cs" />

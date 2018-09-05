@@ -17,6 +17,8 @@ namespace Unigram.Services
         StickersSettings Stickers { get; }
         AppearanceSettings Appearance { get; }
 
+        int UserId { get; set; }
+
         bool IsWorkModeVisible { get; set; }
         bool IsWorkModeEnabled { get; set; }
 
@@ -24,6 +26,7 @@ namespace Unigram.Services
         int FilesTtl { get; set; }
 
         int VerbosityLevel { get; }
+        bool UseTestDC { get; set; }
 
         bool IsSendByEnterEnabled { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
@@ -109,31 +112,35 @@ namespace Unigram.Common
         }
     }
 
-    public class ApplicationSettings : ApplicationSettingsBase, ISettingsService
+    public class SettingsService : ApplicationSettingsBase, ISettingsService
     {
-        private static ApplicationSettings _current;
-        public static ApplicationSettings Current
+        private static SettingsService _current;
+        public static SettingsService Current
         {
             get
             {
                 if (_current == null)
-                    _current = new ApplicationSettings();
+                    _current = new SettingsService();
 
                 return _current;
             }
         }
 
         private readonly int _session;
+        private readonly ApplicationDataContainer _local;
+        private readonly ApplicationDataContainer _own;
 
-        private ApplicationSettings()
+        private SettingsService()
         {
-
+            _local = ApplicationData.Current.LocalSettings;
         }
 
-        public ApplicationSettings(int session)
+        public SettingsService(int session)
             : base(session > 0 ? ApplicationData.Current.LocalSettings.CreateContainer(session.ToString(), ApplicationDataCreateDisposition.Always) : null)
         {
             _session = session;
+            _local = ApplicationData.Current.LocalSettings;
+            _own = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
         }
 
         #region App version
@@ -269,11 +276,11 @@ namespace Unigram.Common
             {
                 if (_verbosityLevel == null)
 #if DEBUG
-                    _verbosityLevel = GetValueOrDefault("VerbosityLevel", 5);
+                    _verbosityLevel = GetValueOrDefault(_local, "VerbosityLevel", 5);
 
                 return _verbosityLevel ?? 5;
 #else
-                    _verbosityLevel = GetValueOrDefault("VerbosityLevel", 0);
+                    _verbosityLevel = GetValueOrDefault(_local, "VerbosityLevel", 0);
 
                 return _verbosityLevel ?? 0;
 #endif
@@ -281,7 +288,41 @@ namespace Unigram.Common
             set
             {
                 _verbosityLevel = value;
-                AddOrUpdateValue("VerbosityLevel", value);
+                AddOrUpdateValue(_local, "VerbosityLevel", value);
+            }
+        }
+
+        private bool? _useTestDC;
+        public bool UseTestDC
+        {
+            get
+            {
+                if (_useTestDC == null)
+                    _useTestDC = GetValueOrDefault(_local, "UseTestDC", false);
+
+                return _useTestDC ?? false;
+            }
+            set
+            {
+                _useTestDC = value;
+                AddOrUpdateValue(_local, "UseTestDC", value);
+            }
+        }
+
+        private int? _userId;
+        public int UserId
+        {
+            get
+            {
+                if (_userId == null)
+                    _userId = GetValueOrDefault(_own, "UserId", 0);
+
+                return _userId ?? 0;
+            }
+            set
+            {
+                _userId = value;
+                AddOrUpdateValue(_own, "UserId", value);
             }
         }
 
@@ -291,14 +332,14 @@ namespace Unigram.Common
             get
             {
                 if (_dialogsWidthRatio == null)
-                    _dialogsWidthRatio = GetValueOrDefault("DialogsWidthRatio", 5d / 14d);
+                    _dialogsWidthRatio = GetValueOrDefault(_local, "DialogsWidthRatio", 5d / 14d);
 
                 return _dialogsWidthRatio ?? 5d / 14d;
             }
             set
             {
                 _dialogsWidthRatio = value;
-                AddOrUpdateValue("DialogsWidthRatio", value);
+                AddOrUpdateValue(_local, "DialogsWidthRatio", value);
             }
         }
 
@@ -404,20 +445,37 @@ namespace Unigram.Common
             }
         }
 
-        private int? _selectedAccount;
-        public int SelectedAccount
+        private int? _previousSession;
+        public int PreviousSession
         {
             get
             {
-                if (_selectedAccount == null)
-                    _selectedAccount = GetValueOrDefault("SelectedAccount", 0);
+                if (_previousSession == null)
+                    _previousSession = GetValueOrDefault(_local, "PreviousSession", 0);
 
-                return _selectedAccount ?? 0;
+                return _activeSession ?? 0;
             }
             set
             {
-                _selectedAccount = value;
-                AddOrUpdateValue("SelectedAccount", value);
+                _previousSession = value;
+                AddOrUpdateValue(_local, "PreviousSession", value);
+            }
+        }
+
+        private int? _activeSession;
+        public int ActiveSession
+        {
+            get
+            {
+                if (_activeSession == null)
+                    _activeSession = GetValueOrDefault(_local, "SelectedAccount", 0);
+
+                return _activeSession ?? 0;
+            }
+            set
+            {
+                _activeSession = value;
+                AddOrUpdateValue(_local, "SelectedAccount", value);
             }
         }
 
@@ -427,14 +485,14 @@ namespace Unigram.Common
             get
             {
                 if (_notificationsToken == null)
-                    _notificationsToken = GetValueOrDefault<string>("ChannelUri", null);
+                    _notificationsToken = GetValueOrDefault<string>(_local, "ChannelUri", null);
 
                 return _notificationsToken;
             }
             set
             {
                 _notificationsToken = value;
-                AddOrUpdateValue("ChannelUri", value);
+                AddOrUpdateValue(_local, "ChannelUri", value);
             }
         }
 

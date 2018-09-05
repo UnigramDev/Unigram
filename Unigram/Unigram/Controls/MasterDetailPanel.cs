@@ -19,8 +19,8 @@ namespace Unigram.Controls
         private const double columnMinimalWidthMain = 380;
         private const double kDefaultDialogsWidthRatio = 5d / 14d;
 
-        private double gripWidthRatio = ApplicationSettings.Current.DialogsWidthRatio;
-        private double dialogsWidthRatio = ApplicationSettings.Current.DialogsWidthRatio;
+        private double gripWidthRatio = SettingsService.Current.DialogsWidthRatio;
+        private double dialogsWidthRatio = SettingsService.Current.DialogsWidthRatio;
 
         private MasterDetailState _currentState;
         public MasterDetailState CurrentState
@@ -186,7 +186,7 @@ namespace Unigram.Controls
             VisualStateManager.GoToState(Children[2] as UserControl, "Normal", false);
 
             dialogsWidthRatio = gripWidthRatio;
-            ApplicationSettings.Current.DialogsWidthRatio = gripWidthRatio;
+            SettingsService.Current.DialogsWidthRatio = gripWidthRatio;
 
             InvalidateMeasure();
             InvalidateArrange();

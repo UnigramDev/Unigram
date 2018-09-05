@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Telegram.Intro;
+using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Services;
 using Unigram.Views.SignIn;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -9,6 +12,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
@@ -39,6 +43,14 @@ namespace Unigram.Views
             LayoutRoot.ManipulationCompleted += LayoutRoot_ManipulationCompleted;
 
             SetIndex(_selectedIndex = 0);
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.NavigationMode == NavigationMode.Back && Frame.ForwardStack.Any(x => x.SourcePageType == typeof(SignInPage)))
+            {
+                TLContainer.Current.Resolve<IProtoService>().Send(new Destroy());
+            }
         }
 
         private void SwapChain_Loaded(object sender, RoutedEventArgs e)

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Template10.Common;
 using Template10.Mvvm;
 using Unigram.Common;
 using Unigram.Core.Common;
@@ -25,12 +26,11 @@ namespace Unigram.ViewModels
         ISessionService Remove(ISessionService item);
         ISessionService Remove(ISessionService item, ISessionService active);
 
+        void Closed(ISessionService item);
+
         bool ShouldClose(ISessionService item);
 
         bool Contains(string phoneNumber);
-
-        void Subscribe(WindowContext window);
-        void Unsubscribe(WindowContext window);
 
         MvxObservableCollection<ISessionService> Items { get; }
         ISessionService ActiveItem { get; set; }
@@ -73,26 +73,45 @@ namespace Unigram.ViewModels
                 {
                     _activeItem.IsActive = false;
                     _previousItem = _activeItem;
+                    SettingsService.Current.PreviousSession = _activeItem.Id;
                 }
 
                 if (value != null)
                 {
                     value.IsActive = true;
-                    ApplicationSettings.Current.SelectedAccount = value.Id;
+                    SettingsService.Current.ActiveSession = value.Id;
                 }
 
-                Set(ref _activeItem, value);
+                //Set(ref _activeItem, value);
+                _activeItem = value;
             }
         }
 
         public ISessionService Create()
         {
             var app = App.Current as App;
-            var id = Items.Max(x => x.Id) + 1;
+            var sessions = TLContainer.Current.GetSessions().ToList();
+            var id = sessions.Count > 0 ? sessions.Max(x => x.Id) + 1 : 0;
             var container = app.Locator.Configure(id);
 
             var session = container.Resolve<ISessionService>();
             Update(session);
+
+            return session;
+        }
+
+        public ISessionService Create(bool update)
+        {
+            var app = App.Current as App;
+            var sessions = TLContainer.Current.GetSessions().ToList();
+            var id = sessions.Count > 0 ? sessions.Max(x => x.Id) + 1 : 0;
+            var container = app.Locator.Configure(id);
+
+            var session = container.Resolve<ISessionService>();
+            if (update)
+            {
+                Update(session);
+            }
 
             return session;
         }
@@ -104,12 +123,53 @@ namespace Unigram.ViewModels
 
         public ISessionService Remove(ISessionService item, ISessionService active)
         {
+            TLContainer.Current.Destroy(item.Id);
+            active = active ?? _previousItem ?? Create();
             Update(active);
 
             item.Aggregator.Unsubscribe(item);
-            item.ProtoService.Send(new Close());
+            //WindowContext.Unsubscribe(item);
+
+            WindowContext.GetForCurrentView().NavigationServices.RemoveByFrameId($"{item.Id}");
+            WindowContext.GetForCurrentView().NavigationServices.RemoveByFrameId($"Main{item.Id}");
 
             return active;
+        }
+
+        public void Closed(ISessionService item)
+        {
+            ISessionService replace = null;
+            if (item.IsActive)
+            {
+                ActiveItem = replace = _previousItem ?? Items.Where(x => x.Id != item.Id).FirstOrDefault() ?? Create(false);
+            }
+
+            TLContainer.Current.Destroy(item.Id);
+            Update();
+
+            item.Aggregator.Unsubscribe(item);
+            //WindowContext.Unsubscribe(item);
+
+            foreach (var window in WindowContext.ActiveWrappers)
+            {
+                if (window.Content is RootPage root && replace != null)
+                {
+                    window.Dispatcher.Dispatch(() =>
+                    {
+                        root.Switch(replace);
+                    });
+                }
+
+                if (window.IsInMainView)
+                {
+                    window.NavigationServices.RemoveByFrameId($"{item.Id}");
+                    window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
+                }
+                else
+                {
+                    window.Close();
+                }
+            }
         }
 
         public bool ShouldClose(ISessionService item)
@@ -134,22 +194,6 @@ namespace Unigram.ViewModels
             }
 
             return false;
-        }
-
-        public void Subscribe(WindowContext window)
-        {
-            foreach (var item in Items)
-            {
-                item.Subscribe(window);
-            }
-        }
-
-        public void Unsubscribe(WindowContext window)
-        {
-            foreach (var item in Items)
-            {
-                item.Unsubscribe(window);
-            }
         }
     }
 }

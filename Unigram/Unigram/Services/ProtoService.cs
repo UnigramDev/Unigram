@@ -27,6 +27,8 @@ namespace Unigram.Services
 
     public interface ICacheService
     {
+        int UserId { get; }
+
         int GetMyId();
         T GetOption<T>(string key) where T : OptionValue;
         bool TryGetOption<T>(string key, out T value) where T : OptionValue;
@@ -141,7 +143,7 @@ namespace Unigram.Services
                 DeviceModel = _deviceInfoService.DeviceModel,
                 SystemVersion = _deviceInfoService.SystemVersion,
                 ApplicationVersion = _deviceInfoService.AppVersion,
-                UseTestDc = false
+                UseTestDc = true
             };
 
             if (_settings.FilesDirectory != null)
@@ -254,12 +256,12 @@ namespace Unigram.Services
 
         private async void UpdateVersion()
         {
-            if (_settings.Version < ApplicationSettings.CurrentVersion)
+            if (_settings.Version < SettingsService.CurrentVersion)
             {
                 var response = await SendAsync(new CreatePrivateChat(777000, false));
                 if (response is Chat chat)
                 {
-                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(new FormattedText(ApplicationSettings.CurrentChangelog, new TextEntity[0]), true, false)));
+                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(new FormattedText(SettingsService.CurrentChangelog, new TextEntity[0]), true, false)));
                 }
             }
 
@@ -326,6 +328,19 @@ namespace Unigram.Services
 
 
         public int SessionId => _session;
+
+        private int? _userId;
+        public int UserId
+        {
+            get
+            {
+                return (_userId = _userId ?? _settings.UserId) ?? 0;
+            }
+            set
+            {
+                _userId = _settings.UserId = value;
+            }
+        }
 
         #region Cache
 
@@ -660,7 +675,7 @@ namespace Unigram.Services
                 {
                     case AuthorizationStateClosed closed:
                         CleanUp();
-                        Initialize();
+                        //Initialize();
                         break;
                     case AuthorizationStateReady ready:
                         UpdateVersion();
@@ -895,6 +910,11 @@ namespace Unigram.Services
             else if (update is UpdateOption updateOption)
             {
                 _options[updateOption.Name] = updateOption.Value;
+
+                if (updateOption.Name == "my_id" && updateOption.Value is OptionValueInteger myId)
+                {
+                    UserId = myId.Value;
+                }
             }
             else if (update is UpdateRecentStickers updateRecentStickers)
             {

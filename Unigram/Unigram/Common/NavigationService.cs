@@ -135,7 +135,7 @@ namespace Unigram.Common
 
         public static async void NavigateToChat(this INavigationService service, Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
         {
-            if (service is UnigramNavigationService serviceEx)
+            if (service is TLNavigationService serviceEx)
             {
                 serviceEx.NavigateToChat(chat, message, accessToken, state);
             }
@@ -143,7 +143,7 @@ namespace Unigram.Common
 
         public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
         {
-            if (service is UnigramNavigationService serviceEx)
+            if (service is TLNavigationService serviceEx)
             {
                 serviceEx.NavigateToChat(chatId, message, accessToken, state);
             }

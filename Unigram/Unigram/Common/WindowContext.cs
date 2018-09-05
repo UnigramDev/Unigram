@@ -29,25 +29,24 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Common
 {
-    public class WindowContext : IHandle<UpdateAuthorizationState>, IHandle<UpdateConnectionState>
+    public class TLWindowContext : WindowContext
     {
         private readonly Window _window;
         private readonly int _id;
 
         private readonly ILifecycleService _lifecycle;
 
-        public WindowContext(int id)
+        public TLWindowContext(Window window, int id)
+            : base(window)
         {
             _id = id;
 
-            _window = Window.Current;
-            _window.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+            _window = window;
             _window.Activated += OnActivated;
 
             _lifecycle = TLContainer.Current.Lifecycle;
-            _lifecycle.Subscribe(this);
 
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
+            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             UpdateTitleBar();
@@ -62,8 +61,6 @@ namespace Unigram.Common
                     app.UISettings.ColorValuesChanged -= UISettings_ColorValuesChanged;
                 }
                 catch { }
-
-                _lifecycle.Unsubscribe(this);
             };
             _window.Closed += (s, e) =>
             {
@@ -72,8 +69,6 @@ namespace Unigram.Common
                     app.UISettings.ColorValuesChanged -= UISettings_ColorValuesChanged;
                 }
                 catch { }
-
-                _lifecycle.Unsubscribe(this);
             };
         }
 
@@ -100,14 +95,14 @@ namespace Unigram.Common
             var current = app.UISettings.GetColorValue(UIColorType.Background);
 
             // Apply buttons feedback based on Light or Dark theme
-            if (ApplicationSettings.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Dark) || (ApplicationSettings.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && current == Colors.Black))
+            if (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Dark) || (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && current == Colors.Black))
             {
                 background = Color.FromArgb(255, 31, 31, 31);
                 foreground = Colors.White;
                 buttonHover = Color.FromArgb(255, 53, 53, 53);
                 buttonPressed = Color.FromArgb(255, 76, 76, 76);
             }
-            else if (ApplicationSettings.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Light) || (ApplicationSettings.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && current == Colors.White))
+            else if (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Light) || (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && current == Colors.White))
             {
                 background = Color.FromArgb(255, 230, 230, 230);
                 foreground = Colors.Black;
@@ -116,7 +111,7 @@ namespace Unigram.Common
             }
 
             // Desktop Title Bar
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
 
             // Background
@@ -162,24 +157,6 @@ namespace Unigram.Common
             return ContactPanel != null;
         }
 
-        public event TypedEventHandler<CoreDispatcher, AcceleratorKeyEventArgs> AcceleratorKeyActivated;
-
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
-        {
-            if (AcceleratorKeyActivated is MulticastDelegate multicast)
-            {
-                var list = multicast.GetInvocationList();
-                for (int i = list.Length - 1; i >= 0; i--)
-                {
-                    var result = list[i].DynamicInvoke(sender, args);
-                    if (args.Handled)
-                    {
-                        return;
-                    }
-                }
-            }
-        }
-
         private void OnActivated(object sender, WindowActivatedEventArgs e)
         {
             ActivationState = e.WindowActivationState;
@@ -193,7 +170,7 @@ namespace Unigram.Common
         public void SetActivatedArgs(IActivatedEventArgs args, INavigationService service)
         {
             _args = args;
-            _service = service = WindowWrapper.Current().NavigationServices.GetByFrameId(_lifecycle.ActiveItem.Id.ToString());
+            _service = service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(_lifecycle.ActiveItem.Id.ToString());
 
             UseActivatedArgs(args, service, _lifecycle.ActiveItem.ProtoService.GetAuthorizationState());
         }
@@ -232,7 +209,7 @@ namespace Unigram.Common
         {
             if (service == null)
             {
-                service = WindowWrapper.Current().NavigationServices.FirstOrDefault();
+                service = WindowContext.GetForCurrentView().NavigationServices.FirstOrDefault();
             }
 
             if (service == null || args == null)
@@ -434,43 +411,70 @@ namespace Unigram.Common
             service.Frame.Content = page;
         }
 
-        public async void Handle(UpdateAuthorizationState update)
+        public void Handle(ISessionService session, UpdateAuthorizationState update)
         {
-            await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            if (!session.IsActive)
             {
-                _service = WindowWrapper.Current().NavigationServices.GetByFrameId(_lifecycle.ActiveItem.Id.ToString());
-                UseActivatedArgs(_args, _service, update.AuthorizationState);
+                return;
+            }
+
+            Dispatcher.Dispatch(() =>
+            {
+                var root = NavigationServices.FirstOrDefault(x => x.SessionId == session.Id && x.FrameFacade.FrameId == $"{session.Id}") as IHandle<UpdateAuthorizationState>;
+                if (root != null)
+                {
+                    root.Handle(update);
+                }
             });
+
+            //await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //{
+            //    _service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"{session.Id}");
+            //    UseActivatedArgs(_args, _service, update.AuthorizationState);
+            //});
         }
 
-        public async void Handle(UpdateConnectionState update)
+        public void Handle(ISessionService session, UpdateConnectionState update)
         {
-            await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            if (!session.IsActive)
             {
-                switch (update.State)
+                return;
+            }
+
+            Dispatcher.Dispatch(() =>
+            {
+                foreach (var service in NavigationServices)
                 {
-                    case ConnectionStateWaitingForNetwork waitingForNetwork:
-                        ShowStatus(Strings.Resources.WaitingForNetwork);
+                    if ( service.SessionId == session.Id && service.IsInMainView)
+                    {
+                        switch (update.State)
+                        {
+                            case ConnectionStateWaitingForNetwork waitingForNetwork:
+                                ShowStatus(Strings.Resources.WaitingForNetwork);
+                                break;
+                            case ConnectionStateConnecting connecting:
+                                ShowStatus(Strings.Resources.Connecting);
+                                break;
+                            case ConnectionStateConnectingToProxy connectingToProxy:
+                                ShowStatus(Strings.Resources.ConnectingToProxy);
+                                break;
+                            case ConnectionStateUpdating updating:
+                                ShowStatus(Strings.Resources.Updating);
+                                break;
+                            case ConnectionStateReady ready:
+                                HideStatus();
+                                return;
+                        }
+
                         break;
-                    case ConnectionStateConnecting connecting:
-                        ShowStatus(Strings.Resources.Connecting);
-                        break;
-                    case ConnectionStateConnectingToProxy connectingToProxy:
-                        ShowStatus(Strings.Resources.ConnectingToProxy);
-                        break;
-                    case ConnectionStateUpdating updating:
-                        ShowStatus(Strings.Resources.Updating);
-                        break;
-                    case ConnectionStateReady ready:
-                        HideStatus();
-                        return;
+                    }
                 }
             });
         }
 
         private async void ShowStatus(string text)
         {
-            ApplicationView.GetForCurrentView().Title = text;
+            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().Title = text;
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
@@ -481,7 +485,7 @@ namespace Unigram.Common
 
         private async void HideStatus()
         {
-            ApplicationView.GetForCurrentView().Title = string.Empty;
+            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().Title = string.Empty;
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
@@ -492,27 +496,24 @@ namespace Unigram.Common
 
 
 
-        private static Dictionary<int, WindowContext> _windowContext = new Dictionary<int, WindowContext>();
-        public static WindowContext GetForCurrentView()
+        //private static Dictionary<int, WindowContext> _windowContext = new Dictionary<int, WindowContext>();
+        //public static WindowContext GetForCurrentView()
+        //{
+        //    var id = Windows.UI.ViewManagement.ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+        //    if (_windowContext.TryGetValue(id, out WindowContext value))
+        //    {
+        //        return value;
+        //    }
+
+        //    var context = new WindowContext(null, id);
+        //    _windowContext[id] = context;
+
+        //    return context;
+        //}
+
+        public static new TLWindowContext GetForCurrentView()
         {
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out WindowContext value))
-            {
-                return value;
-            }
-
-            var context = new WindowContext(id);
-            _windowContext[id] = context;
-
-            return context;
-        }
-
-        public static void Subscribe(SessionService session)
-        {
-            foreach (var item in _windowContext.Values)
-            {
-                session.Subscribe(item);
-            }
+            return WindowContext.GetForCurrentView() as TLWindowContext;
         }
     }
 }

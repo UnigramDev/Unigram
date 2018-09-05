@@ -33,28 +33,38 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                <TextBlock Text="TDLib Logs" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                <controls:BadgeButton
-                    x:Name="Verbosity"
-                    Content="Verbosity Level"
-                    Click="Verbosity_Click"
-                    Badge="{CustomResource SoundDefault}"/>
-                <controls:BadgeButton
-                    x:Name="Log"
-                    Content="log"
-                    Click="Log_Click"
-                    Badge="{CustomResource SoundDefault}"/>
-                <controls:BadgeButton
-                    x:Name="LogOld"
-                    Content="log.old"
-                    Click="LogOld_Click"
-                    Badge="{CustomResource SoundDefault}"/>
-                <TextBlock
-                    common:TextBlockHelper.Markdown="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well."
-                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
-                    Margin="12,8,12,0"/>
+            <StackPanel>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="TDLib Logs" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:BadgeButton
+                        x:Name="Verbosity"
+                        Content="Verbosity Level"
+                        Click="Verbosity_Click"
+                        Badge="{CustomResource SoundDefault}"/>
+                    <controls:BadgeButton
+                        x:Name="Log"
+                        Content="log"
+                        Click="Log_Click"
+                        Badge="{CustomResource SoundDefault}"/>
+                    <controls:BadgeButton
+                        x:Name="LogOld"
+                        Content="log.old"
+                        Click="LogOld_Click"
+                        Badge="{CustomResource SoundDefault}"/>
+                    <TextBlock
+                        common:TextBlockHelper.Markdown="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well."
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,24"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource PrivacyAdvanced}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        x:Name="UseTestDC"
+                        Header="Use test DC"
+                        Toggled="UseTestDC_Toggled"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

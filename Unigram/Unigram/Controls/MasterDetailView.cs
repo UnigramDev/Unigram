@@ -45,6 +45,64 @@ namespace Unigram.Controls
             SizeChanged += OnSizeChanged;
         }
 
+        #region Initialize
+
+        public void Initialize(string key, Frame parent, int session)
+        {
+            var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(key + session) as NavigationService;
+            if (service == null)
+            {
+                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, key + session, false) as NavigationService;
+                service.SerializationService = TLSerializationService.Current;
+                service.Frame.DataContext = new object();
+                service.FrameFacade.BackRequested += (s, args) =>
+                {
+                    //var type = BackStackType.Navigation;
+                    //if (_backStack.Count > 0)
+                    //{
+                    //    type = _backStack.Last.Value;
+                    //    _backStack.RemoveLast();
+                    //}
+
+                    if (DetailFrame.Content is IMasterDetailPage detailPage /*&& type == BackStackType.Navigation*/)
+                    {
+                        detailPage.OnBackRequested(args);
+                        if (args.Handled)
+                        {
+                            return;
+                        }
+                    }
+
+                    // TODO: maybe checking for the actual width is not the perfect way,
+                    // but if it is 0 it means that the control is not loaded, and the event shouldn't be handled
+                    if (CanGoBack && ActualWidth > 0 /*&& type == BackStackType.Navigation*/)
+                    {
+                        DetailFrame.GoBack();
+                        args.Handled = true;
+                    }
+                    else if (ParentFrame.Content is IMasterDetailPage masterPage /*&& type == BackStackType.Hamburger*/)
+                    {
+                        masterPage.OnBackRequested(args);
+                        if (args.Handled)
+                        {
+                            return;
+                        }
+                    }
+                    else if (ParentFrame.CanGoBack && ActualWidth > 0)
+                    {
+                        ParentFrame.GoBack();
+                        args.Handled = true;
+                    }
+                };
+            }
+
+            NavigationService = service;
+            DetailFrame = NavigationService.Frame;
+            ParentFrame = parent;
+        }
+
+        #endregion
+
         public void Push(bool hamburger)
         {
             //if (hamburger)
@@ -332,63 +390,6 @@ namespace Unigram.Controls
                 }
             }
         }
-
-        #region Initialize
-        public void Initialize(string key, Frame parent, int session)
-        {
-            var service = WindowWrapper.Current().NavigationServices.GetByFrameId(key + session) as NavigationService;
-            if (service == null)
-            {
-                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session) as NavigationService;
-                service.SerializationService = TLSerializationService.Current;
-                service.Frame.DataContext = new object();
-                service.FrameFacade.FrameId = key + session;
-                service.FrameFacade.BackRequested += (s, args) =>
-                {
-                    //var type = BackStackType.Navigation;
-                    //if (_backStack.Count > 0)
-                    //{
-                    //    type = _backStack.Last.Value;
-                    //    _backStack.RemoveLast();
-                    //}
-
-                    if (DetailFrame.Content is IMasterDetailPage detailPage /*&& type == BackStackType.Navigation*/)
-                    {
-                        detailPage.OnBackRequested(args);
-                        if (args.Handled)
-                        {
-                            return;
-                        }
-                    }
-
-                    // TODO: maybe checking for the actual width is not the perfect way,
-                    // but if it is 0 it means that the control is not loaded, and the event shouldn't be handled
-                    if (CanGoBack && ActualWidth > 0 /*&& type == BackStackType.Navigation*/)
-                    {
-                        DetailFrame.GoBack();
-                        args.Handled = true;
-                    }
-                    else if (ParentFrame.Content is IMasterDetailPage masterPage /*&& type == BackStackType.Hamburger*/)
-                    {
-                        masterPage.OnBackRequested(args);
-                        if (args.Handled)
-                        {
-                            return;
-                        }
-                    }
-                    else if (ParentFrame.CanGoBack && ActualWidth > 0)
-                    {
-                        ParentFrame.GoBack();
-                        args.Handled = true;
-                    }
-                };
-            }
-
-            NavigationService = service;
-            DetailFrame = NavigationService.Frame;
-            ParentFrame = parent;
-        }
-        #endregion
 
         private void OnViewStateChanged(object sender, EventArgs e)
         {

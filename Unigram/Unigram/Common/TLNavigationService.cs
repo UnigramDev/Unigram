@@ -14,14 +14,14 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Common
 {
-    public class UnigramNavigationService : NavigationService
+    public class TLNavigationService : NavigationService
     {
         private readonly IProtoService _protoService;
 
         private ViewLifetimeControl _instantLifetime;
 
-        public UnigramNavigationService(IProtoService protoService, Frame frame)
-            : base(frame)
+        public TLNavigationService(IProtoService protoService, Frame frame, int session, string id)
+            : base(frame, session, id)
         {
             _protoService = protoService;
         }

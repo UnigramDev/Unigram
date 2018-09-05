@@ -495,6 +495,8 @@ namespace Unigram.Controls
 
         public bool IsInMainView => throw new NotImplementedException();
 
+        public int SessionId => throw new NotImplementedException();
+
         public event TypedEventHandler<Type> AfterRestoreSavedNavigation;
 
         public void ClearCache(bool removeCachedPagesInBackStack = false)

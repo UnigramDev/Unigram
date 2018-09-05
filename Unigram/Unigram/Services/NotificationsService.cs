@@ -85,7 +85,7 @@ namespace Unigram.Services
             if (terms.ShowPopup)
             {
                 await Task.Delay(2000);
-                await WindowWrapper.Default().Dispatcher.Dispatch(async () =>
+                await WindowContext.Default().Dispatcher.Dispatch(async () =>
                 {
                     var confirm = await TLMessageDialog.ShowAsync(terms.Text, Strings.Resources.PrivacyPolicyAndTerms, Strings.Resources.Agree, Strings.Resources.Cancel);
                     if (confirm != ContentDialogResult.Primary)
@@ -123,7 +123,7 @@ namespace Unigram.Services
                 return;
             }
 
-            WindowWrapper.Default().Dispatcher.Dispatch(async () =>
+            WindowContext.Default().Dispatcher.Dispatch(async () =>
             {
                 await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
             });
@@ -191,13 +191,13 @@ namespace Unigram.Services
 
                 Execute.BeginOnUIThread(() =>
                 {
-                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main" + _protoService.SessionId);
+                    var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + _protoService.SessionId);
                     if (service == null)
                     {
                         return;
                     }
 
-                    if (WindowContext.GetForCurrentView().ActivationState != Windows.UI.Core.CoreWindowActivationState.Deactivated && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
+                    if (TLWindowContext.GetForCurrentView().ActivationState != Windows.UI.Core.CoreWindowActivationState.Deactivated && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
                     {
                         return;
                     }

@@ -1,5 +1,7 @@
 ﻿using Autofac;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Telegram.Td;
 using Unigram.Common;
 using Unigram.Core.Services;
@@ -35,36 +37,49 @@ namespace Unigram
         {
             //ApplicationSettings.Current.SelectedAccount = 0;
 
-            Log.SetVerbosityLevel(ApplicationSettings.Current.VerbosityLevel);
+            Log.SetVerbosityLevel(SettingsService.Current.VerbosityLevel);
             Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"));
 
             var fail = true;
-            var ensure = true;
-            var dirs = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
-            foreach (var dir in dirs)
+            var first = -1;
+
+            foreach (var session in GetSessions())
             {
-                if (int.TryParse(Path.GetFileName(dir), out int session))
+                if (first < 0 || session == SettingsService.Current.PreviousSession)
                 {
-                    if (session == ApplicationSettings.Current.SelectedAccount)
-                    {
-                        ensure = false;
-                    }
-
-                    fail = false;
-                    Configure(session);
+                    first = session;
                 }
+
+                fail = false;
+                Configure(session);
             }
 
-            if (ensure)
+            if (fail)
             {
-                Configure(ApplicationSettings.Current.SelectedAccount);
-            }
-            else if (fail)
-            {
-                Configure(0);
+                Configure(first);
             }
 
             _container.Lifecycle.Update();
+        }
+
+        private IEnumerable<int> GetSessions()
+        {
+            var folders = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
+            foreach (var folder in folders)
+            {
+                if (int.TryParse(Path.GetFileName(folder), out int session))
+                {
+                    var container = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
+                    if (container.Values.ContainsKey("UserId"))
+                    {
+                        yield return session;
+                    }
+                    else
+                    {
+                        Task.Factory.StartNew((path) => Directory.Delete((string)path, true), folder);
+                    }
+                }
+            }
         }
 
         public IContainer Configure(int id)
@@ -72,7 +87,7 @@ namespace Unigram
             return _container.Build(id, (builder, session) =>
             {
                 builder.RegisterType<ProtoService>().WithParameter("session", session).As<IProtoService, ICacheService>().SingleInstance();
-                builder.RegisterType<ApplicationSettings>().WithParameter("session", session).As<ISettingsService>().SingleInstance();
+                builder.RegisterType<SettingsService>().WithParameter("session", session).As<ISettingsService>().SingleInstance();
                 builder.RegisterType<NotificationsService>().As<INotificationsService>().SingleInstance().AutoActivate();
                 builder.RegisterType<GenerationService>().As<IGenerationService>().SingleInstance().AutoActivate();
 
@@ -106,7 +121,9 @@ namespace Unigram
                     builder.RegisterType<FakeVibrationService>().As<IVibrationService>().SingleInstance();
                 }
 
-                builder.RegisterType<SessionService>().As<ISessionService>().WithParameter("selected", session == ApplicationSettings.Current.SelectedAccount).SingleInstance();
+                builder.RegisterType<SessionService>().As<ISessionService>()
+                    .WithParameter("session", session)
+                    .WithParameter("selected", session == SettingsService.Current.ActiveSession).SingleInstance();
 
                 // ViewModels
                 builder.RegisterType<SignInViewModel>();

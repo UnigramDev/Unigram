@@ -38,8 +38,8 @@ namespace Unigram.Controls
         {
             try
             {
-                var selectedBackground = ApplicationSettings.Current.SelectedBackground;
-                var selectedColor = ApplicationSettings.Current.SelectedColor;
+                var selectedBackground = SettingsService.Current.SelectedBackground;
+                var selectedColor = SettingsService.Current.SelectedColor;
 
                 if (selectedColor == 0)
                 {

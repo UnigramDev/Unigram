@@ -31,7 +31,7 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)ApplicationSettings.Current.VerbosityLevel);
+            Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)SettingsService.Current.VerbosityLevel);
 
             try
             {
@@ -46,6 +46,8 @@ namespace Unigram.Views
                 LogOld.Badge = FileSizeConverter.Convert(logold.Length);
             }
             catch { }
+
+            UseTestDC.IsOn = SettingsService.Current.UseTestDC;
         }
 
         private enum VerbosityLevel
@@ -60,7 +62,7 @@ namespace Unigram.Views
 
         private async void Verbosity_Click(object sender, RoutedEventArgs e)
         {
-            var level = ApplicationSettings.Current.VerbosityLevel;
+            var level = SettingsService.Current.VerbosityLevel;
 
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
@@ -90,10 +92,10 @@ namespace Unigram.Views
                     }
                 }
 
-                ApplicationSettings.Current.VerbosityLevel = newLevel;
+                SettingsService.Current.VerbosityLevel = newLevel;
                 Telegram.Td.Log.SetVerbosityLevel(newLevel);
 
-                Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)ApplicationSettings.Current.VerbosityLevel);
+                Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)SettingsService.Current.VerbosityLevel);
             }
         }
 
@@ -108,6 +110,11 @@ namespace Unigram.Views
             {
                 await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old")), null, null));
             }
+        }
+
+        private void UseTestDC_Toggled(object sender, RoutedEventArgs e)
+        {
+            SettingsService.Current.UseTestDC = SettingsService.Current.UseTestDC;
         }
     }
 }

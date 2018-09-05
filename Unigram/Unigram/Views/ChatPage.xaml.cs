@@ -51,7 +51,7 @@ namespace Unigram.Views
         private DialogViewModel _viewModel;
         private double _lastKnownKeyboardHeight = 260;
 
-        private readonly WindowContext _windowContext;
+        private readonly TLWindowContext _windowContext;
 
         private bool _myPeople;
 
@@ -89,7 +89,7 @@ namespace Unigram.Views
             _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
 
-            _windowContext = WindowContext.GetForCurrentView();
+            _windowContext = TLWindowContext.GetForCurrentView();
 
             if (_windowContext.ContactPanel != null)
             {
