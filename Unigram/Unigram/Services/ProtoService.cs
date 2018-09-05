@@ -13,6 +13,8 @@ namespace Unigram.Services
 {
     public interface IProtoService : ICacheService
     {
+        bool TryInitialize();
+
         BaseObject Execute(Function function);
 
         void Send(Function function);
@@ -103,9 +105,6 @@ namespace Unigram.Services
 
         public ProtoService(int session, IDeviceInfoService deviceInfoService, ISettingsService settings, IEventAggregator aggregator)
         {
-            Log.SetVerbosityLevel(ApplicationSettings.Current.VerbosityLevel);
-            Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{session}", "log"));
-
             _session = session;
             _deviceInfoService = deviceInfoService;
             _settings = settings;
@@ -114,6 +113,17 @@ namespace Unigram.Services
             _preferences = new AutoDownloadPreferences(ApplicationData.Current.LocalSettings.CreateContainer("autoDownload", ApplicationDataCreateDisposition.Always));
 
             Initialize();
+        }
+
+        public bool TryInitialize()
+        {
+            if (_authorizationState == null)
+            {
+                Initialize();
+                return true;
+            }
+
+            return false;
         }
 
         private void Initialize()

@@ -73,16 +73,16 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<LanguageInfo> ChangeCommand { get; }
         private async void ChangeExecute(LanguageInfo info)
         {
-            var response = await ProtoService.SetLanguageAsync(info.Code, true);
-            if (response)
-            {
-                ApplicationLanguages.PrimaryLanguageOverride = info.Code;
-                ResourceContext.GetForCurrentView().Reset();
-                ResourceContext.GetForViewIndependentUse().Reset();
+            //var response = await ProtoService.SetLanguageAsync(info.Code, true);
+            //if (response)
+            //{
+            //    ApplicationLanguages.PrimaryLanguageOverride = info.Code;
+            //    ResourceContext.GetForCurrentView().Reset();
+            //    ResourceContext.GetForViewIndependentUse().Reset();
 
-                WindowWrapper.Current().NavigationServices.Remove(NavigationService);
-                BootStrapper.Current.NavigationService.Reset();
-            }
+            //    WindowWrapper.Current().NavigationServices.Remove(NavigationService);
+            //    BootStrapper.Current.NavigationService.Reset();
+            //}
         }
     }
 }

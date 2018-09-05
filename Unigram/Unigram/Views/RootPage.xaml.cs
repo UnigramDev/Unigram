@@ -143,9 +143,11 @@ namespace Unigram.Views
                 if (NavigationViewItems[i] is MainViewModel)
                 {
                     NavigationViewItems.RemoveAt(i);
-                    i++;
+                    i--;
                 }
             }
+
+            return;
 
             if (viewModel != null)
             {
