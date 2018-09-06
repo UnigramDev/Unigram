@@ -26,7 +26,7 @@ namespace Unigram.ViewModels
         ISessionService Remove(ISessionService item);
         ISessionService Remove(ISessionService item, ISessionService active);
 
-        void Closed(ISessionService item);
+        void Destroy(ISessionService item);
 
         bool ShouldClose(ISessionService item);
 
@@ -69,6 +69,11 @@ namespace Unigram.ViewModels
             }
             set
             {
+                if (_activeItem == value)
+                {
+                    return;
+                }
+
                 if (_activeItem != null)
                 {
                     _activeItem.IsActive = false;
@@ -136,7 +141,7 @@ namespace Unigram.ViewModels
             return active;
         }
 
-        public void Closed(ISessionService item)
+        public void Destroy(ISessionService item)
         {
             ISessionService replace = null;
             if (item.IsActive)
@@ -170,6 +175,15 @@ namespace Unigram.ViewModels
                     window.Close();
                 }
             }
+
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    Directory.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{item.Id}"), true);
+                }
+                catch { }
+            });
         }
 
         public bool ShouldClose(ISessionService item)

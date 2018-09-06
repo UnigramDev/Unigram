@@ -274,6 +274,8 @@ namespace Unigram.Services
 
         public void CleanUp()
         {
+            _settings.Clear();
+
             _options.Clear();
 
             _chats.Clear();

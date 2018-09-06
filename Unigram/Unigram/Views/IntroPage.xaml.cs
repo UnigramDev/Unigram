@@ -45,14 +45,6 @@ namespace Unigram.Views
             SetIndex(_selectedIndex = 0);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            if (e.NavigationMode == NavigationMode.Back && Frame.ForwardStack.Any(x => x.SourcePageType == typeof(SignInPage)))
-            {
-                TLContainer.Current.Resolve<IProtoService>().Send(new Destroy());
-            }
-        }
-
         private void SwapChain_Loaded(object sender, RoutedEventArgs e)
         {
             //if (_renderer == null)

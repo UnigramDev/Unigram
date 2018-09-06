@@ -84,25 +84,13 @@ namespace Unigram.Services
 
         public void Handle(UpdateAuthorizationState update)
         {
-            //if (update.AuthorizationState is AuthorizationStateClosed)
-            //{
-            //    var active = _isActive;
-            //    var session = _lifecycleService.Remove(this, null);
-            //    if (active)
-            //    {
-            //        BeginOnUIThread(() =>
-            //        {
-            //            if (Window.Current.Content is RootPage root)
-            //            {
-            //                root.Switch(session);
-            //            }
-            //        });
-            //    }
-            //}
-
             if (update.AuthorizationState is AuthorizationStateClosed)
             {
-                _lifecycleService.Closed(this);
+                _lifecycleService.Destroy(this);
+            }
+            else if (update.AuthorizationState is AuthorizationStateWaitPhoneNumber && !_isActive && _lifecycleService.Items.Count > 1)
+            {
+                ProtoService.Send(new Destroy());
             }
 
             foreach (TLWindowContext window in WindowContext.ActiveWrappers)

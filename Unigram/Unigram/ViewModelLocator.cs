@@ -35,17 +35,15 @@ namespace Unigram
 
         public void Configure()
         {
-            //ApplicationSettings.Current.SelectedAccount = 0;
-
             Log.SetVerbosityLevel(SettingsService.Current.VerbosityLevel);
             Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"));
 
             var fail = true;
-            var first = -1;
+            var first = 0;
 
             foreach (var session in GetSessions())
             {
-                if (first < 0 || session == SettingsService.Current.PreviousSession)
+                if (first < 1 || session == SettingsService.Current.PreviousSession)
                 {
                     first = session;
                 }

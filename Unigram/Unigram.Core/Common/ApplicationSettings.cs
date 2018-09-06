@@ -42,6 +42,8 @@ namespace Unigram.Services
 
         int PeerToPeerMode { get; set; }
         libtgvoip.DataSavingMode UseLessData { get; set; }
+
+        void Clear();
     }
 }
 
@@ -569,6 +571,16 @@ namespace Unigram.Common
             // Here should be cleaned up all the settings that are shared with background tasks.
             _peerToPeerMode = null;
             _useLessData = null;
+        }
+
+        public new void Clear()
+        {
+            _container.Values.Clear();
+
+            if (_own != null)
+            {
+                _own.Values.Clear();
+            }
         }
     }
 
