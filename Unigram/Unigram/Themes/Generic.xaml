@@ -21,7 +21,7 @@
                             <Grid x:Name="TogglePaneTopPadding" />
                             <local:GlyphButton x:Name="TogglePaneButton" Grid.Row="1" AutomationProperties.LandmarkType="Navigation"/>
                         </Grid>
-                        <SplitView x:Name="RootSplitView" OpenPaneLength="240" PaneBackground="{ThemeResource NavigationViewDefaultPaneBackground}" IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                        <SplitView x:Name="RootSplitView" OpenPaneLength="240" IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                             <SplitView.Pane>
                                 <Grid x:Name="PaneContentGrid">
                                     <Grid.RowDefinitions>
@@ -35,8 +35,8 @@
                                     </Grid.RowDefinitions>
                                     <Grid.Children>
                                         <Grid x:Name="ContentPaneTopPadding" />
-                                        <!--<Border Background="{ThemeResource SystemControlAcrylicElementBrush}" Margin="0,0,0,-44" Grid.RowSpan="3"/>
-                                        <Border Background="{ThemeResource NavigationViewDefaultPaneBackground}" Margin="0,0,0,44" Grid.Row="3" Grid.RowSpan="3"/>-->
+                                        <Border Background="{ThemeResource NavigationViewAccentPaneBackground}" Margin="0,0,0,-52" Grid.RowSpan="3"/>
+                                        <Border Background="{ThemeResource NavigationViewDefaultPaneBackground}" Margin="0,52,0,0" Grid.Row="3" Grid.RowSpan="3"/>
                                         <Border x:Name="HeaderContentBorder" Grid.Row="3" Child="{TemplateBinding PaneHeader}"/>
 
                                         <Border x:Name="FooterContentBorder" Grid.Row="4" Child="{TemplateBinding PaneFooter}"/>
