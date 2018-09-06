@@ -77,7 +77,14 @@ namespace Unigram.Services
 
         public void Handle(UpdateUnreadMessageCount update)
         {
-            Execute.BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
+            if (Settings.Notifications.IncludeMutedChats)
+            {
+                Execute.BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
+            }
+            else
+            {
+                Execute.BeginOnUIThread(() => UnreadCount = update.UnreadUnmutedCount, () => _unreadCount = update.UnreadUnmutedCount);
+            }
         }
 
         #region Lifecycle
