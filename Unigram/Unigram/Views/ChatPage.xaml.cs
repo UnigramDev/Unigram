@@ -2214,6 +2214,9 @@ namespace Unigram.Views
 
             Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
             ReportSpam.Text = chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret ? Strings.Resources.ReportSpam : Strings.Resources.ReportSpamAndLeave;
+
+            ButtonSilent.Visibility = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+            ButtonSilent.IsChecked = chat.DefaultDisableNotification;
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -2224,6 +2227,18 @@ namespace Unigram.Views
         public void UpdateChatPhoto(Chat chat)
         {
             Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36, 36);
+        }
+
+        public void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification)
+        {
+            if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            {
+                ButtonSilent.IsChecked = defaultDisableNotification;
+
+                TextField.PlaceholderText = chat.DefaultDisableNotification
+                    ? Strings.Resources.ChannelSilentBroadcast
+                    : Strings.Resources.ChannelBroadcast;
+            }
         }
 
 
@@ -2457,7 +2472,11 @@ namespace Unigram.Views
             HeaderPanel.Visibility = Visibility.Visible;
             SavedMessages.Visibility = Visibility.Collapsed;
 
-            TextField.PlaceholderText = group.IsChannel ? Strings.Resources.ChannelBroadcast : Strings.Resources.TypeMessage;
+            TextField.PlaceholderText = group.IsChannel
+                ? chat.DefaultDisableNotification
+                ? Strings.Resources.ChannelSilentBroadcast
+                : Strings.Resources.ChannelBroadcast
+                : Strings.Resources.TypeMessage;
             ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
 
             var response = await ViewModel.ProtoService.SendAsync(new GetSupergroupMembers(group.Id, new SupergroupMembersFilterBots(), 0, 200));
