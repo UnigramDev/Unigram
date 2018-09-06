@@ -9,38 +9,44 @@ namespace Unigram.Core.Managers
 {
     public class BackgroundTaskManager
     {
-        public static async Task<bool> RegisterAsync(string name, string entryPoint, IBackgroundTrigger trigger, Action onCompleted = null)
+        public static bool Register(string name, string entryPoint, IBackgroundTrigger trigger, Action onCompleted = null)
         {
             //var access = await BackgroundExecutionManager.RequestAccessAsync();
             //if (access == BackgroundAccessStatus.DeniedByUser || access == BackgroundAccessStatus.DeniedBySystemPolicy)
             //{
             //    return false;
             //}
-
-            foreach (var t in BackgroundTaskRegistration.AllTasks)
+            try
             {
-                if (t.Value.Name == name)
+                foreach (var t in BackgroundTaskRegistration.AllTasks)
                 {
-                    //t.Value.Unregister(false);
-                    return false;
+                    if (t.Value.Name == name)
+                    {
+                        //t.Value.Unregister(false);
+                        return false;
+                    }
                 }
-            }
 
-            var builder = new BackgroundTaskBuilder();
-            builder.Name = name;
-            builder.TaskEntryPoint = entryPoint;
-            builder.SetTrigger(trigger);
+                var builder = new BackgroundTaskBuilder();
+                builder.Name = name;
+                builder.TaskEntryPoint = entryPoint;
+                builder.SetTrigger(trigger);
 
-            var registration = builder.Register();
-            if (onCompleted != null)
-            {
-                registration.Completed += (s, a) =>
+                var registration = builder.Register();
+                if (onCompleted != null)
                 {
-                    onCompleted();
-                };
-            }
+                    registration.Completed += (s, a) =>
+                    {
+                        onCompleted();
+                    };
+                }
 
-            return true;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
