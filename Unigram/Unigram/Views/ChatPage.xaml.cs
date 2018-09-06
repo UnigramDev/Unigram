@@ -2479,6 +2479,11 @@ namespace Unigram.Views
                 : Strings.Resources.TypeMessage;
             ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
 
+            if (group.IsChannel)
+            {
+                return;
+            }
+
             var response = await ViewModel.ProtoService.SendAsync(new GetSupergroupMembers(group.Id, new SupergroupMembersFilterBots(), 0, 200));
             if (response is ChatMembers members)
             {
