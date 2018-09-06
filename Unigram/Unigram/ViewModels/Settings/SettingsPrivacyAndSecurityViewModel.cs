@@ -404,10 +404,13 @@ namespace Unigram.ViewModels.Settings
             {
                 if (IsContactsSyncEnabled)
                 {
-                    //var contacts = CacheService.GetContacts();
-                    //var response = new TLContactsContacts { Users = new TLVector<TLUserBase>(contacts) };
-
-                    //await _contactsService.ExportAsync(response);
+                    ProtoService.Send(new GetContacts(), async result =>
+                    {
+                        if (result is Telegram.Td.Api.Users users)
+                        {
+                            await _contactsService.SyncAsync(users);
+                        }
+                    });
                 }
                 else
                 {

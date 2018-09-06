@@ -44,8 +44,7 @@ namespace Unigram.ViewModels
 
                     if (Settings.IsContactsSyncEnabled)
                     {
-                        await _contactsService.ExportAsync(users);
-                        await _contactsService.ImportAsync();
+                        await _contactsService.SyncAsync(users);
                     }
                 }
             });

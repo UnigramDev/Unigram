@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Core.Common;
@@ -15,8 +16,10 @@ namespace Unigram.Services
 {
     public interface IContactsService
     {
-        Task<Telegram.Td.Api.BaseObject> ImportAsync();
-        Task ExportAsync(Telegram.Td.Api.Users result);
+        Task SyncAsync(Telegram.Td.Api.Users result);
+
+        //Task<Telegram.Td.Api.BaseObject> ImportAsync();
+        //Task ExportAsync(Telegram.Td.Api.Users result);
 
         Task RemoveAsync();
     }
@@ -29,6 +32,8 @@ namespace Unigram.Services
         private readonly DisposableMutex _syncLock;
         private readonly object _importedPhonesRoot;
 
+        private CancellationTokenSource _syncToken;
+
         public ContactsService(IProtoService protoService, IEventAggregator aggregator)
         {
             _protoService = protoService;
@@ -38,24 +43,47 @@ namespace Unigram.Services
             _importedPhonesRoot = new object();
         }
 
+        public async Task SyncAsync(Telegram.Td.Api.Users result)
+        {
+            try
+            {
+                if (_syncToken == null)
+                {
+                    _syncToken = new CancellationTokenSource();
+                }
+
+                using (await _syncLock.WaitAsync(_syncToken.Token))
+                {
+                    await ExportAsync(result);
+                    await ImportAsync();
+                }
+            }
+            catch
+            {
+                Logs.Log.Write("Sync contacts canceled");
+                Debug.WriteLine("» Sync contacts canceled");
+            }
+        }
+
         #region Import
 
         public async Task<Telegram.Td.Api.BaseObject> ImportAsync()
         {
-            using (await _syncLock.WaitAsync())
+            Telegram.Td.Api.BaseObject result = null;
+
+            Logs.Log.Write("Importing contacts");
+            Debug.WriteLine("» Importing contacts");
+
+            var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
+            if (store != null)
             {
-                Debug.WriteLine("» Importing contacts");
-
-                var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
-                if (store != null)
-                {
-                    return await ImportAsync(store);
-                }
-
-                Debug.WriteLine("» Importing contacts completed");
+                result = await ImportAsync(store);
             }
 
-            return null;
+            Logs.Log.Write("Importing contacts completed");
+            Debug.WriteLine("» Importing contacts completed");
+
+            return result;
         }
 
         private async Task<Telegram.Td.Api.BaseObject> ImportAsync(ContactStore store)
@@ -111,26 +139,25 @@ namespace Unigram.Services
 
         public async Task ExportAsync(Telegram.Td.Api.Users result)
         {
-            using (await _syncLock.WaitAsync())
+            Logs.Log.Write("Exporting contacts");
+            Debug.WriteLine("» Exporting contacts");
+
+            var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
+            if (store == null)
             {
-                Debug.WriteLine("» Exporting contacts");
-
-                var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
-                if (store == null)
-                {
-                    return;
-                }
-
-                var contactList = await GetContactListAsync(store);
-                var annotationList = await GetAnnotationListAsync();
-
-                if (contactList != null && annotationList != null)
-                {
-                    await ExportAsync(contactList, annotationList, result);
-                }
-
-                Debug.WriteLine("» Exporting contacts completed");
+                return;
             }
+
+            var contactList = await GetContactListAsync(store);
+            var annotationList = await GetAnnotationListAsync();
+
+            if (contactList != null && annotationList != null)
+            {
+                await ExportAsync(contactList, annotationList, result);
+            }
+
+            Logs.Log.Write("Exporting contacts completed");
+            Debug.WriteLine("» Exporting contacts completed");
         }
 
         private async Task ExportAsync(ContactList contactList, ContactAnnotationList annotationList, Telegram.Td.Api.Users result)
@@ -257,6 +284,12 @@ namespace Unigram.Services
 
         public async Task RemoveAsync()
         {
+            if (_syncToken != null)
+            {
+                _syncToken.Cancel();
+                _syncToken = null;
+            }
+
             using (await _syncLock.WaitAsync())
             {
                 Debug.WriteLine("UNSYNCING CONTACTS");
