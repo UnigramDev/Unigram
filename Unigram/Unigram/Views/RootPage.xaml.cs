@@ -25,7 +25,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class RootPage : UserControl
+    public sealed partial class RootPage : Page
     {
         private ILifecycleService _lifecycle;
         private NavigationService _navigationService;
