@@ -106,7 +106,7 @@ namespace Unigram.Tasks
             }
         }
 
-        public string AppVersion
+        public string ApplicationVersion
         {
             get
             {
@@ -128,6 +128,8 @@ namespace Unigram.Tasks
                 return $"{major}.{minor}.{build}.{revision}";
             }
         }
+
+        public string SystemLanguageCode => throw new System.NotImplementedException();
 
         private static string GetShortModel(string phoneCode)
         {

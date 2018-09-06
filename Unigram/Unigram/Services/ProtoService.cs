@@ -139,11 +139,15 @@ namespace Unigram.Services
                 UseMessageDatabase = true,
                 ApiId = Constants.ApiId,
                 ApiHash = Constants.ApiHash,
-                SystemLanguageCode = "en",
-                DeviceModel = _deviceInfoService.DeviceModel,
+                ApplicationVersion = _deviceInfoService.ApplicationVersion,
                 SystemVersion = _deviceInfoService.SystemVersion,
-                ApplicationVersion = _deviceInfoService.AppVersion,
-                UseTestDc = true
+                SystemLanguageCode = _deviceInfoService.SystemLanguageCode,
+                DeviceModel = _deviceInfoService.DeviceModel,
+#if DEBUG
+                UseTestDc = false
+#else
+                UseTestDc = false
+#endif
             };
 
             if (_settings.FilesDirectory != null)
