@@ -26,11 +26,24 @@ namespace Unigram.Controls
             RootSplitView = GetTemplateChild("RootSplitView") as SplitView;
 
             TogglePaneButton.Click += Toggle_Click;
+
+            RootSplitView.PaneOpening += OnPaneOpening;
+            RootSplitView.PaneClosing += OnPaneClosing;
         }
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
             IsPaneOpen = !IsPaneOpen;
+        }
+
+        private void OnPaneOpening(SplitView sender, object args)
+        {
+            TogglePaneButton.RequestedTheme = ElementTheme.Dark;
+        }
+
+        private void OnPaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
+        {
+            TogglePaneButton.RequestedTheme = ElementTheme.Default;
         }
 
         #region IsPaneOpen
