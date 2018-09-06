@@ -21,6 +21,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatReadOutbox>,
         IHandle<UpdateChatReadInbox>,
         IHandle<UpdateChatDraftMessage>,
+        IHandle<UpdateChatDefaultDisableNotification>,
 
         IHandle<UpdateUserChatAction>,
 
@@ -299,6 +300,14 @@ namespace Unigram.ViewModels
             if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => ShowDraftMessage(_chat));
+            }
+        }
+
+        public void Handle(UpdateChatDefaultDisableNotification update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatDefaultDisableNotification(_chat, update.DefaultDisableNotification));
             }
         }
 

@@ -1977,57 +1977,15 @@ namespace Unigram.ViewModels
         #region Toggle silent
 
         public RelayCommand ToggleSilentCommand { get; }
-        private async void ToggleSilentExecute()
+        private void ToggleSilentExecute()
         {
-            //var channel = With as TLChannel;
-            //if (channel != null && _dialog != null)
-            //{
-            //    var notifySettings = _dialog.NotifySettings as TLPeerNotifySettings;
-            //    if (notifySettings != null)
-            //    {
-            //        var silent = !notifySettings.IsSilent;
-            //        var settings = new TLInputPeerNotifySettings
-            //        {
-            //            MuteUntil = notifySettings.MuteUntil,
-            //            IsShowPreviews = notifySettings.IsShowPreviews,
-            //            IsSilent = silent,
-            //            Sound = notifySettings.Sound
-            //        };
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
 
-            //        var response = await LegacyService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = Peer }, settings);
-            //        if (response.IsSucceeded)
-            //        {
-            //            notifySettings.IsSilent = silent;
-            //            channel.RaisePropertyChanged(() => _dialog.NotifySettings);
-
-            //            var dialog = CacheService.GetDialog(Peer.ToPeer());
-            //            if (dialog != null)
-            //            {
-            //                dialog.NotifySettings = _dialog.NotifySettings;
-            //                dialog.RaisePropertyChanged(() => dialog.NotifySettings);
-            //                dialog.RaisePropertyChanged(() => dialog.IsMuted);
-            //                dialog.RaisePropertyChanged(() => dialog.Self);
-
-            //                var chatFull = CacheService.GetFullChat(channel.Id);
-            //                if (chatFull != null)
-            //                {
-            //                    chatFull.NotifySettings = _dialog.NotifySettings;
-            //                    chatFull.RaisePropertyChanged(() => chatFull.NotifySettings);
-            //                }
-
-            //                // TODO: 06/05/2017
-            //                //var dialogChannel = dialog.With as TLChannel;
-            //                //if (dialogChannel != null)
-            //                //{
-            //                //    dialogChannel.NotifySettings = channel.NotifySettings;
-            //                //}
-            //            }
-
-            //            CacheService.Commit();
-            //            RaisePropertyChanged(() => With);
-            //        }
-            //    }
-            //}
+            ProtoService.Send(new ToggleChatDefaultDisableNotification(chat.Id, !chat.DefaultDisableNotification));
         }
 
         #endregion

@@ -346,7 +346,7 @@ namespace Unigram.Services
             }
         }
 
-        #region Cache
+#region Cache
 
         public int UnreadCount { get; private set; }
         public int UnreadUnmutedCount { get; private set; }
@@ -667,7 +667,7 @@ namespace Unigram.Services
             return false;
         }
 
-        #endregion
+#endregion
 
 
 
@@ -699,6 +699,13 @@ namespace Unigram.Services
             else if (update is UpdateCall updateCall)
             {
 
+            }
+            else if (update is UpdateChatDefaultDisableNotification updateChatDefaultDisableNotification)
+            {
+                if (_chats.TryGetValue(updateChatDefaultDisableNotification.ChatId, out Chat value))
+                {
+                    value.DefaultDisableNotification = updateChatDefaultDisableNotification.DefaultDisableNotification;
+                }
             }
             else if (update is UpdateChatDraftMessage updateChatDraftMessage)
             {

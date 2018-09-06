@@ -1015,9 +1015,7 @@
                                                 UncheckedGlyph="&#xE609;"
                                                 CheckedGlyph="&#xE60A;"
                                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                                IsChecked="{Binding Full.NotifySettings.IsSilent}"
                                                 Command="{x:Bind ViewModel.ToggleSilentCommand}"
-                                                Visibility="{x:Bind (Visibility)ViewModel.IsSilentVisible, Mode=OneWay}"
                                                 VerticalAlignment="Bottom"/>
 
                     <Border x:Name="btnCommands" Grid.Column="1">
