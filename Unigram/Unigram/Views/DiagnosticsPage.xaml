@@ -61,7 +61,7 @@
                     <TextBlock Text="{CustomResource PrivacyAdvanced}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <ToggleSwitch
                         x:Name="UseTestDC"
-                        Header="Use test DC"
+                        Header="Use test data centers"
                         Toggled="UseTestDC_Toggled"
                         Style="{StaticResource CheckButtonStyle}"/>
                 </StackPanel>

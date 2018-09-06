@@ -1307,6 +1307,8 @@
     <PRIResource Include="Strings\uk\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>
+    <Content Include="Assets\Mockup\sticker0.webp" />
+    <Content Include="Assets\Mockup\sticker1.webp" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1394,6 +1396,22 @@
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-400.png" />
+    <Content Include="Assets\Mockup\a0.png" />
+    <Content Include="Assets\Mockup\a1.png" />
+    <Content Include="Assets\Mockup\a10.png" />
+    <Content Include="Assets\Mockup\a11.png" />
+    <Content Include="Assets\Mockup\a12.png" />
+    <Content Include="Assets\Mockup\a13.png" />
+    <Content Include="Assets\Mockup\a14.png" />
+    <Content Include="Assets\Mockup\a2.png" />
+    <Content Include="Assets\Mockup\a3.png" />
+    <Content Include="Assets\Mockup\a4.png" />
+    <Content Include="Assets\Mockup\a5.png" />
+    <Content Include="Assets\Mockup\a6.png" />
+    <Content Include="Assets\Mockup\a7.png" />
+    <Content Include="Assets\Mockup\a8.png" />
+    <Content Include="Assets\Mockup\a9.png" />
+    <Content Include="Assets\Mockup\hot.png" />
     <Content Include="Assets\Noise.jpg" />
     <Content Include="Assets\Sounds\Default.wav" />
     <Content Include="Assets\Sounds\Sound1.wav" />
