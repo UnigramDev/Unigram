@@ -32,6 +32,7 @@ using Unigram.Views.Chats;
 using Unigram.Core.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace Unigram.ViewModels
 {
@@ -64,6 +65,8 @@ namespace Unigram.ViewModels
             UnblockCommand = new RelayCommand(UnblockExecute);
             ReportCommand = new RelayCommand(ReportExecute);
             CallCommand = new RelayCommand(CallExecute);
+            CopyPhoneCommand = new RelayCommand(CopyPhoneExecute);
+            CopyUsernameCommand = new RelayCommand(CopyUsernameExecute);
             AddCommand = new RelayCommand(AddExecute);
             EditCommand = new RelayCommand(EditExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
@@ -537,6 +540,65 @@ namespace Unigram.ViewModels
             //        }
             //    }
             //}
+        }
+
+        public RelayCommand CopyPhoneCommand { get; }
+        private async void CopyPhoneExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var user = CacheService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            var dataPackage = new DataPackage();
+            dataPackage.SetText($"+{user.PhoneNumber}");
+            ClipboardEx.TrySetContent(dataPackage);
+
+            await TLMessageDialog.ShowAsync(Strings.Resources.PhoneCopied, Strings.Resources.AppName, Strings.Resources.OK);
+        }
+
+        public RelayCommand CopyUsernameCommand { get; }
+        private async void CopyUsernameExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup super)
+            {
+                var supergroup = CacheService.GetSupergroup(super.SupergroupId);
+                if (supergroup == null)
+                {
+                    return;
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText($"@{supergroup.Username}");
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+            else
+            {
+                var user = CacheService.GetUser(chat);
+                if (user == null)
+                {
+                    return;
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText($"@{user.Username}");
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+
+            await TLMessageDialog.ShowAsync(Strings.Resources.TextCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
 
         public RelayCommand SecretChatCommand { get; }

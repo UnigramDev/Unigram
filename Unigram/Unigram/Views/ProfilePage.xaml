@@ -108,7 +108,13 @@
                                 Visibility="Collapsed"
                                 Tag="{CustomResource PhoneMobile}"
                                 Command="{x:Bind ViewModel.CallCommand}"
-                                Style="{StaticResource SubtitleButtonStyle}"/>
+                                Style="{StaticResource SubtitleButtonStyle}">
+                            <Button.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyPhoneCommand}"/>
+                                </MenuFlyout>
+                            </Button.ContextFlyout>
+                        </Button>
 
                         <StackPanel x:Name="DescriptionPanel" Visibility="Collapsed">
                             <TextBlock x:Name="DescriptionTitle" Visibility="Collapsed" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
@@ -127,7 +133,13 @@
                         <Button x:Name="Username"
                                 Visibility="Collapsed"
                                 Tag="{CustomResource Username}"
-                                Style="{StaticResource SubtitleButtonStyle}"/>
+                                Style="{StaticResource SubtitleButtonStyle}">
+                            <Button.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}"/>
+                                </MenuFlyout>
+                            </Button.ContextFlyout>
+                        </Button>
 
                     </StackPanel>
 
