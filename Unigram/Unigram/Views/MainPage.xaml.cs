@@ -60,7 +60,8 @@ namespace Unigram.Views
         IHandle<UpdateSecretChat>,
         IHandle<UpdateChatNotificationSettings>,
         IHandle<UpdateWorkMode>,
-        IHandle<UpdateFile>
+        IHandle<UpdateFile>,
+        IHandle<UpdateConnectionState>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
         public RootPage Root { get; set; }
@@ -84,6 +85,8 @@ namespace Unigram.Views
 
             InitializeLocalization();
             InitializeSearch();
+
+            Handle(new UpdateConnectionState(ViewModel.CacheService.GetConnectionState()));
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
 
@@ -230,6 +233,23 @@ namespace Unigram.Views
                 }
 
                 SettingsView.UpdateFile(update.File);
+            });
+        }
+
+        public void Handle(UpdateConnectionState update)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                switch (update.State)
+                {
+                    case ConnectionStateConnecting connecting:
+                    case ConnectionStateConnectingToProxy connectingToProxy:
+                        Proxy.Visibility = Visibility.Visible;
+                        break;
+                    default:
+                        Proxy.Visibility = Visibility.Collapsed;
+                        break;
+                }
             });
         }
 
@@ -1587,10 +1607,6 @@ namespace Unigram.Views
             {
                 rpMasterTitlebar.SelectedIndex = 3;
             }
-            else if (destination == RootDestination.Proxy)
-            {
-                MasterDetail.NavigationService.Navigate(typeof(SettingsProxiesPage));
-            }
             else if (destination == RootDestination.SavedMessages)
             {
                 var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.ProtoService.GetMyId(), false));
@@ -1603,6 +1619,11 @@ namespace Unigram.Views
             {
                 MessageHelper.NavigateToUsername(ViewModel.ProtoService, MasterDetail.NavigationService, "unigram", null, null, null);
             }
+        }
+
+        private void Proxy_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsProxiesPage));
         }
     }
 

@@ -145,7 +145,6 @@ namespace Unigram.Views
             if (frame?.Content is MainPage main)
             {
                 InitializeUser(main.ViewModel);
-                Handle(main.ViewModel.Session, new UpdateConnectionState(main.ViewModel.CacheService.GetConnectionState()));
             }
 
             InitializeSessions(_showSessions, _lifecycle.Items);
@@ -369,10 +368,6 @@ namespace Unigram.Views
                     {
                         content.NavigationView_ItemClick(RootDestination.Settings);
                     }
-                    else if (e.ClickedItem as string == NavigationProxy.Name)
-                    {
-                        content.NavigationView_ItemClick(RootDestination.Proxy);
-                    }
                     else if (e.ClickedItem as string == NavigationSavedMessages.Name)
                     {
                         content.NavigationView_ItemClick(RootDestination.SavedMessages);
@@ -400,27 +395,6 @@ namespace Unigram.Views
             NavigationSettings.IsChecked = value == 3;
         }
 
-        public void Handle(ISessionService session, UpdateConnectionState update)
-        {
-            if (!session.IsActive)
-            {
-                return;
-            }
-
-            switch (update.State)
-            {
-                case ConnectionStateConnecting connecting:
-                case ConnectionStateConnectingToProxy connectingToProxy:
-                    NavigationProxy.Visibility = Visibility.Visible;
-                    NavigationProxySeparator.Visibility = Visibility.Visible;
-                    break;
-                default:
-                    NavigationProxy.Visibility = Visibility.Collapsed;
-                    NavigationProxySeparator.Visibility = Visibility.Collapsed;
-                    break;
-            }
-        }
-
         #endregion
     }
 
@@ -445,8 +419,6 @@ namespace Unigram.Views
         Contacts,
         Calls,
         Settings,
-
-        Proxy,
 
         SavedMessages,
         News

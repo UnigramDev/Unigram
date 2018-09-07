@@ -443,11 +443,6 @@ namespace Unigram.Common
 
             Dispatcher.Dispatch(() =>
             {
-                if (Content is RootPage root)
-                {
-                    root.Handle(session, update);
-                }
-
                 foreach (var service in NavigationServices)
                 {
                     if (service.SessionId == session.Id && service.IsInMainView)

@@ -187,14 +187,10 @@
                                 </Button.Flyout>
                             </Button>
                         </StackPanel>
-                        <StackPanel x:Name="ChatsOptions" Orientation="Horizontal" Grid.Column="1">
-                            <controls:GlyphToggleButton
-                                x:Name="Lock"
-                                Visibility="{x:Bind ViewModel.Passcode.IsEnabled, Mode=OneWay}"
-                                IsChecked="{x:Bind ViewModel.Passcode.IsLocked, Mode=OneWay}"
-                                UncheckedGlyph="&#xE1F7;"
-                                CheckedGlyph="&#xE1F6;"
-                                Click="Lock_Click"
+                        <StackPanel x:Name="ContactsOptions" Orientation="Horizontal" Grid.Column="1">
+                            <controls:GlyphButton
+                                Glyph="&#xE109;"
+                                Click="NewContact_Click"
                                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                             <controls:GlyphButton
                                 Glyph="&#xE11A;"
@@ -202,10 +198,20 @@
                                 FontSize="18"
                                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                         </StackPanel>
-                        <StackPanel x:Name="ContactsOptions" Orientation="Horizontal" Grid.Column="1">
+                        <StackPanel x:Name="ChatsOptions" Orientation="Horizontal" Grid.Column="1">
                             <controls:GlyphButton
-                                Glyph="&#xE109;"
-                                Click="NewContact_Click"
+                                x:Name="Proxy"
+                                Glyph="&#xE730;"
+                                Click="Proxy_Click"
+                                Visibility="Collapsed"
+                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                            <controls:GlyphToggleButton
+                                x:Name="Lock"
+                                Visibility="{x:Bind ViewModel.Passcode.IsEnabled, Mode=OneWay}"
+                                IsChecked="{x:Bind ViewModel.Passcode.IsLocked, Mode=OneWay}"
+                                UncheckedGlyph="&#xE1F7;"
+                                CheckedGlyph="&#xE1F6;"
+                                Click="Lock_Click"
                                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                             <controls:GlyphButton
                                 Glyph="&#xE11A;"

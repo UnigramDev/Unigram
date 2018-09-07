@@ -112,11 +112,6 @@
                             Text="{CustomResource Settings}"
                             Glyph="&#xE115;" />
                         <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
-                        <controls:NavigationViewItemSeparator x:Name="NavigationProxySeparator"/>
-                        <controls:NavigationViewItem
-                            x:Name="NavigationProxy"
-                            Text="{CustomResource ProxySettings}"
-                            Glyph="&#xE730;" />
                         <controls:NavigationViewItemSeparator/>
                         <controls:NavigationViewItem
                             x:Name="NavigationSavedMessages"
