@@ -445,7 +445,7 @@ namespace Unigram.Common
             {
                 foreach (var service in NavigationServices)
                 {
-                    if ( service.SessionId == session.Id && service.IsInMainView)
+                    if (service.SessionId == session.Id && service.IsInMainView)
                     {
                         switch (update.State)
                         {

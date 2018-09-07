@@ -108,18 +108,9 @@ namespace Unigram.Services
 
         public void Handle(UpdateConnectionState update)
         {
-            if (_isActive)
+            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
             {
-                foreach (var window in WindowContext.ActiveWrappers)
-                {
-                    foreach (var service in window.NavigationServices)
-                    {
-                        if (service.SessionId == _id)
-                        {
-
-                        }
-                    }
-                }
+                window.Handle(this, update);
             }
         }
 
