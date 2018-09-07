@@ -1621,7 +1621,25 @@ namespace Unigram.Views
                     return SessionTemplate;
             }
 
-            return base.SelectTemplateCore(item, container);
+            return null;
+            //return base.SelectTemplateCore(item, container);
+        }
+    }
+
+    public class NavigationViewStyleSelector : StyleSelector
+    {
+        public Style UserStyle { get; set; }
+        public Style ItemContainerStyle { get; set; }
+
+        protected override Style SelectStyleCore(object item, DependencyObject container)
+        {
+            switch (item)
+            {
+                case MainViewModel user:
+                    return UserStyle;
+            }
+
+            return ItemContainerStyle;
         }
     }
 }
