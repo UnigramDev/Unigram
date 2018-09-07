@@ -139,7 +139,21 @@ namespace Unigram.Controls.Views
         {
             if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
-                ViewModel.SingleCommand.Execute(e.ClickedItem as User);
+                if (e.ClickedItem is SearchResult result)
+                {
+                    if (result.User != null)
+                    {
+                        ViewModel.SingleCommand.Execute(result.User);
+                    }
+                    else if (result.Chat != null)
+                    {
+                        ViewModel.SingleCommand.Execute(ViewModel.ProtoService.GetUser(result.Chat));
+                    }
+                }
+                else
+                {
+                    ViewModel.SingleCommand.Execute(e.ClickedItem as User);
+                }
             }
         }
 
