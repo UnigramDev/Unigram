@@ -86,6 +86,7 @@ namespace Unigram.Views
                 }
 
                 //WindowContext.GetForCurrentView().Handle(session, new UpdateConnectionState(session.ProtoService.GetConnectionState()));
+                session.Aggregator.Publish(new UpdateConnectionState(session.ProtoService.GetConnectionState()));
             }
             else
             {
@@ -144,6 +145,7 @@ namespace Unigram.Views
             if (frame?.Content is MainPage main)
             {
                 InitializeUser(main.ViewModel);
+                Handle(main.ViewModel.Session, new UpdateConnectionState(main.ViewModel.CacheService.GetConnectionState()));
             }
 
             InitializeSessions(_showSessions, _lifecycle.Items);
@@ -367,6 +369,10 @@ namespace Unigram.Views
                     {
                         content.NavigationView_ItemClick(RootDestination.Settings);
                     }
+                    else if (e.ClickedItem as string == NavigationProxy.Name)
+                    {
+                        content.NavigationView_ItemClick(RootDestination.Proxy);
+                    }
                     else if (e.ClickedItem as string == NavigationSavedMessages.Name)
                     {
                         content.NavigationView_ItemClick(RootDestination.SavedMessages);
@@ -379,7 +385,7 @@ namespace Unigram.Views
             }
         }
 
-#region Exposed
+        #region Exposed
 
         public void SetPaneToggleButtonVisibility(Visibility value)
         {
@@ -394,7 +400,28 @@ namespace Unigram.Views
             NavigationSettings.IsChecked = value == 3;
         }
 
-#endregion
+        public void Handle(ISessionService session, UpdateConnectionState update)
+        {
+            if (!session.IsActive)
+            {
+                return;
+            }
+
+            switch (update.State)
+            {
+                case ConnectionStateConnecting connecting:
+                case ConnectionStateConnectingToProxy connectingToProxy:
+                    NavigationProxy.Visibility = Visibility.Visible;
+                    NavigationProxySeparator.Visibility = Visibility.Visible;
+                    break;
+                default:
+                    NavigationProxy.Visibility = Visibility.Collapsed;
+                    NavigationProxySeparator.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
+
+        #endregion
     }
 
     public interface IRootContentPage
@@ -418,6 +445,8 @@ namespace Unigram.Views
         Contacts,
         Calls,
         Settings,
+
+        Proxy,
 
         SavedMessages,
         News

@@ -23,6 +23,7 @@ using Unigram.ViewModels;
 using Unigram.Views.Channels;
 using Unigram.Views.Chats;
 using Unigram.Views.SecretChats;
+using Unigram.Views.Settings;
 using Unigram.Views.Users;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
@@ -1585,6 +1586,10 @@ namespace Unigram.Views
             else if (destination == RootDestination.Settings)
             {
                 rpMasterTitlebar.SelectedIndex = 3;
+            }
+            else if (destination == RootDestination.Proxy)
+            {
+                MasterDetail.NavigationService.Navigate(typeof(SettingsProxiesPage));
             }
             else if (destination == RootDestination.SavedMessages)
             {
