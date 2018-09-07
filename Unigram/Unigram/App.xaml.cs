@@ -439,11 +439,22 @@ namespace Unigram
         {
             var session = TLContainer.Current.Lifecycle.ActiveItem;
 
-            var navigationFrame = new Frame();
-            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, session.Id, $"{session.Id}", true) as NavigationService;
-            navigationService.SerializationService = TLSerializationService.Current;
+            if (e is ContactPanelActivatedEventArgs)
+            {
+                var navigationFrame = new Frame();
+                var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, session.Id, $"Main{session.Id}", false) as NavigationService;
+                navigationService.SerializationService = TLSerializationService.Current;
 
-            return new RootPage(navigationService);
+                return navigationFrame;
+            }
+            else
+            {
+                var navigationFrame = new Frame();
+                var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, session.Id, $"{session.Id}", true) as NavigationService;
+                navigationService.SerializationService = TLSerializationService.Current;
+
+                return new RootPage(navigationService);
+            }
         }
 
         protected override INavigationService CreateNavigationService(Frame frame, int session, string id, bool root)
