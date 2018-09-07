@@ -534,6 +534,8 @@ namespace Unigram.Views
                 btnMarkup.Visibility = Visibility.Visible;
                 btnStickers.Visibility = Visibility.Visible;
                 btnVoiceMessage.Visibility = Visibility.Visible;
+
+                ViewModel.DisableWebPagePreview = false;
             }
             else
             {
@@ -544,13 +546,7 @@ namespace Unigram.Views
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
             }
 
-            var chat = ViewModel.Chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            if (chat.Type is ChatTypeSecret && !ViewModel.Settings.IsSecretPreviewsEnabled)
+            if (ViewModel.DisableWebPagePreview)
             {
                 return;
             }

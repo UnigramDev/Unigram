@@ -1809,6 +1809,31 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool _disableWebPagePreview;
+        public bool DisableWebPagePreview
+        {
+            get
+            {
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return false;
+                }
+
+                // Force disable if needed
+                if (chat.Type is ChatTypeSecret && !Settings.IsSecretPreviewsEnabled)
+                {
+                    return true;
+                }
+
+                return _disableWebPagePreview;
+            }
+            set
+            {
+                Set(ref _disableWebPagePreview, value);
+            }
+        }
+
         public RelayCommand ClearReplyCommand { get; }
         private void ClearReplyExecute()
         {
@@ -1816,6 +1841,10 @@ namespace Unigram.ViewModels
             {
                 SetText(null, false);
                 //Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
+            }
+            else if (_embedData != null && _embedData.WebPagePreview != null)
+            {
+                DisableWebPagePreview = true;
             }
 
             EmbedData = null;
@@ -1864,11 +1893,8 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var disablePreview = false;
-            if (chat.Type is ChatTypeSecret)
-            {
-                disablePreview = !Settings.IsSecretPreviewsEnabled;
-            }
+            var disablePreview = DisableWebPagePreview;
+            DisableWebPagePreview = false;
 
             var embedded = EmbedData;
             if (embedded != null && embedded.EditingMessage != null)
