@@ -32,6 +32,9 @@ namespace Unigram.Views
 
         private bool _showSessions;
 
+        private const string NavigationAdd = "NavigationAdd";
+        private const string NavigationAddSeparator = "NavigationAddSeparator";
+
         public RootPage(NavigationService service)
         {
             InitializeComponent();
@@ -180,7 +183,12 @@ namespace Unigram.Views
                     NavigationViewItems.RemoveAt(i);
                     i--;
                 }
-                else if (NavigationViewItems[i] is Controls.NavigationViewItem viewItem && string.Equals(viewItem.Name, "NavigationAdd"))
+                else if (NavigationViewItems[i] is Controls.NavigationViewItem viewItem && string.Equals(viewItem.Name, NavigationAdd))
+                {
+                    NavigationViewItems.RemoveAt(i);
+                    i--;
+                }
+                else if (NavigationViewItems[i] is Controls.NavigationViewItemSeparator viewItemSeparator && string.Equals(viewItemSeparator.Name, NavigationAddSeparator))
                 {
                     NavigationViewItems.RemoveAt(i);
                     i--;
@@ -189,7 +197,8 @@ namespace Unigram.Views
 
             if (show && items != null)
             {
-                NavigationViewItems.Insert(1, new Controls.NavigationViewItem { Name = "NavigationAdd", Content = "NavigationAdd", Text = Strings.Resources.AddAccount, Glyph = "\uE109" });
+                NavigationViewItems.Insert(1, new Controls.NavigationViewItemSeparator { Name = NavigationAddSeparator });
+                NavigationViewItems.Insert(1, new Controls.NavigationViewItem { Name = NavigationAdd, Content = NavigationAdd, Text = Strings.Resources.AddAccount, Glyph = "\uE109" });
 
                 for (int k = items.Count - 1; k >= 0; k--)
                 {
@@ -215,6 +224,8 @@ namespace Unigram.Views
 
             if (args.Item is ISessionService session)
             {
+                args.ItemContainer.RequestedTheme = ElementTheme.Default;
+
                 var user = session.ProtoService.GetUser(session.UserId);
                 if (user == null)
                 {
@@ -239,6 +250,8 @@ namespace Unigram.Views
             }
             else if (args.Item is MainViewModel viewModel)
             {
+                args.ItemContainer.RequestedTheme = ElementTheme.Dark;
+
                 var user = viewModel.ProtoService.GetUser(viewModel.ProtoService.GetMyId());
                 if (user == null)
                 {
@@ -252,9 +265,17 @@ namespace Unigram.Views
                     var check = content.Children[2] as CheckBox;
 
                     title.Text = user.GetFullName();
+#if DEBUG
+                    phoneNumber.Text = "+39 --- --- ----";
+#else
                     phoneNumber.Text = Telegram.Helpers.PhoneNumber.Format(user.PhoneNumber);
+#endif
                     check.IsChecked = _showSessions;
                 }
+            }
+            else
+            {
+                args.ItemContainer.RequestedTheme = ElementTheme.Default;
             }
         }
 
@@ -358,7 +379,7 @@ namespace Unigram.Views
             }
         }
 
-        #region Exposed
+#region Exposed
 
         public void SetPaneToggleButtonVisibility(Visibility value)
         {
@@ -373,7 +394,7 @@ namespace Unigram.Views
             NavigationSettings.IsChecked = value == 3;
         }
 
-        #endregion
+#endregion
     }
 
     public interface IRootContentPage

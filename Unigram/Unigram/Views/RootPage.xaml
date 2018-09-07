@@ -18,7 +18,7 @@
             <Setter Property="BorderBrush" Value="{ThemeResource CheckBoxBorderBrushUnchecked}" />
             <Setter Property="Padding" Value="0" />
             <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
             <Setter Property="HorizontalContentAlignment" Value="Left" />
             <Setter Property="VerticalContentAlignment" Value="Top" />
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -54,9 +54,11 @@
                             </VisualStateManager.VisualStateGroups>
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                       Glyph="&#xE0E5;"
-                                      FontSize="16"
+                                      FontSize="12"
                                       Foreground="{ThemeResource CheckBoxForegroundUnchecked}"
-                                      RenderTransformOrigin="0.5,0.5">
+                                      RenderTransformOrigin="0.5,0.5"
+                                      VerticalAlignment="Bottom"
+                                      Margin="0,0,0,2">
                                 <FontIcon.RenderTransform>
                                     <RotateTransform x:Name="CheckGlyphRotation" />
                                 </FontIcon.RenderTransform>
@@ -77,7 +79,7 @@
                       ContainerContentChanging="OnContainerContentChanging">
                 <ListView.ItemsSource>
                     <local:AnyCollection x:Name="NavigationViewItems">
-                        <controls:NavigationViewItemSeparator/>
+                        <controls:NavigationViewItemSeparator Height="0"/>
                         <controls:NavigationViewItem
                             x:Name="NavigationNewChat"
                             Text="{CustomResource NewGroup}"
@@ -133,7 +135,7 @@
                     <local:NavigationViewTemplateSelector>
                         <local:NavigationViewTemplateSelector.UserTemplate>
                             <DataTemplate>
-                                <Grid Padding="12,4">
+                                <Grid Padding="12,8">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
@@ -142,16 +144,15 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock x:Name="FullName" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
-                                    <TextBlock x:Name="PhoneNumber"
-                                               VerticalAlignment="Top"
+                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
+                                    <TextBlock VerticalAlignment="Top"
                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="NoWrap"
                                                Grid.Row="1"
                                                MaxLines="1"/>
-                                    <CheckBox MinWidth="0" IsEnabled="False" Grid.Column="1" Grid.RowSpan="2" Style="{StaticResource NavigationViewExpanderStyle}"/>
+                                    <CheckBox MinWidth="0" IsEnabled="False" Style="{StaticResource NavigationViewExpanderStyle}" Grid.Column="1" Grid.RowSpan="2"/>
                                 </Grid>
                             </DataTemplate>
                         </local:NavigationViewTemplateSelector.UserTemplate>
