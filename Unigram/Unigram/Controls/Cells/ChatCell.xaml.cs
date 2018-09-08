@@ -110,10 +110,19 @@ namespace Unigram.Controls.Cells
         {
             if (chat.Type is ChatTypePrivate privata && privata.UserId == _protoService.GetMyId())
             {
-                Photo.Source = PlaceholderHelper.GetChat(null, chat, 48, 48);
+                if (SavedMessages == null)
+                    FindName(nameof(SavedMessages));
+
+                SavedMessages.Visibility = Visibility.Visible;
+                SavedMessages.Background = PlaceholderHelper.GetBrush(privata.UserId);
             }
             else
             {
+                if (SavedMessages != null)
+                {
+                    SavedMessages.Visibility = Visibility.Collapsed;
+                }
+
                 Photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 48, 48);
             }
         }
