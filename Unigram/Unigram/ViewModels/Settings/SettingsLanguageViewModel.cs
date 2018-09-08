@@ -19,9 +19,9 @@ namespace Unigram.ViewModels.Settings
         public SettingsLanguageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<LanguageInfo>();
+            Items = new MvxObservableCollection<LanguagePackInfo>();
 
-            ChangeCommand = new RelayCommand<LanguageInfo>(ChangeExecute);
+            ChangeCommand = new RelayCommand<LanguagePackInfo>(ChangeExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -31,10 +31,10 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetLanguagePackInfo());
-            if (response is LanguagePack pack)
+            var response = await ProtoService.SendAsync(new GetLocalizationTargetInfo(false));
+            if (response is LocalizationTargetInfo pack)
             {
-                Items.ReplaceWith(pack.Languages.OrderBy(x => x.NativeName));
+                Items.ReplaceWith(pack.LanguagePacks.OrderBy(x => x.NativeName));
             }
 
             //var response = await LegacyService.GetLanguagesAsync();
@@ -55,7 +55,7 @@ namespace Unigram.ViewModels.Settings
             //}
         }
 
-        public MvxObservableCollection<LanguageInfo> Items { get; private set; }
+        public MvxObservableCollection<LanguagePackInfo> Items { get; private set; }
 
         private object _selectedItem;
         public object SelectedItem
@@ -70,8 +70,8 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<LanguageInfo> ChangeCommand { get; }
-        private async void ChangeExecute(LanguageInfo info)
+        public RelayCommand<LanguagePackInfo> ChangeCommand { get; }
+        private async void ChangeExecute(LanguagePackInfo info)
         {
             //var response = await ProtoService.SetLanguageAsync(info.Code, true);
             //if (response)

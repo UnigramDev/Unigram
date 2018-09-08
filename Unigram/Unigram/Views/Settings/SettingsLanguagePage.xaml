@@ -22,7 +22,7 @@
                   SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                   Grid.Row="1">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="td:LanguageInfo">
+                <DataTemplate x:DataType="td:LanguagePackInfo">
                     <Grid Margin="0,6" Background="Transparent">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>

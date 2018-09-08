@@ -79,7 +79,7 @@ namespace Unigram.Services
 
         public void Handle(UpdateLanguagePackStrings update)
         {
-            var values = GetLanguagePack(update.LanguageCode);
+            var values = GetLanguagePack(update.LanguagePackId);
 
             foreach (var value in update.Strings)
             {
