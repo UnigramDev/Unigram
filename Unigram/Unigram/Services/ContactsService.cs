@@ -9,6 +9,7 @@ using Unigram.Common;
 using Unigram.Core.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
+using Windows.ApplicationModel.UserDataAccounts;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 
@@ -27,6 +28,7 @@ namespace Unigram.Services
     public class ContactsService : IContactsService
     {
         private readonly IProtoService _protoService;
+        private readonly ICacheService _cacheService;
         private readonly IEventAggregator _aggregator;
 
         private readonly DisposableMutex _syncLock;
@@ -34,9 +36,10 @@ namespace Unigram.Services
 
         private CancellationTokenSource _syncToken;
 
-        public ContactsService(IProtoService protoService, IEventAggregator aggregator)
+        public ContactsService(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
         {
             _protoService = protoService;
+            _cacheService = cacheService;
             _aggregator = aggregator;
 
             _syncLock = new DisposableMutex();
@@ -148,8 +151,10 @@ namespace Unigram.Services
                 return;
             }
 
-            var contactList = await GetContactListAsync(store);
-            var annotationList = await GetAnnotationListAsync();
+            var userDataAccount = await GetUserDataAccountAsync();
+
+            var contactList = await GetContactListAsync(userDataAccount, store);
+            var annotationList = await GetAnnotationListAsync(userDataAccount);
 
             if (contactList != null && annotationList != null)
             {
@@ -234,31 +239,52 @@ namespace Unigram.Services
             }
         }
 
-        private async Task<ContactList> GetContactListAsync(ContactStore store)
+        private async Task<UserDataAccount> GetUserDataAccountAsync()
         {
-            ContactList contactList;
-            var contactsList = await store.FindContactListsAsync();
-            if (contactsList.Count == 0)
-            {
-                contactList = await store.CreateContactListAsync("Unigram");
-                contactList.OtherAppWriteAccess = ContactListOtherAppWriteAccess.None;
-                await contactList.SaveAsync();
-            }
-            else
-            {
-                contactList = contactsList[0];
+            var store = await UserDataAccountManager.RequestStoreAsync(UserDataAccountStoreAccessType.AppAccountsReadWrite);
 
-                if (contactList.OtherAppWriteAccess != ContactListOtherAppWriteAccess.None)
-                {
-                    contactList.OtherAppWriteAccess = ContactListOtherAppWriteAccess.None;
-                    await contactList.SaveAsync();
-                }
+            UserDataAccount userDataAccount = null;
+            var id = _cacheService.GetOption<Telegram.Td.Api.OptionValueString>("x_user_data_account");
+            if (id != null)
+            {
+                userDataAccount = await store.GetAccountAsync(id.Value);
             }
+            
+            if (userDataAccount == null)
+            {
+                userDataAccount = await store.CreateAccountAsync($"{_cacheService.GetMyId()}");
+                await _protoService.SendAsync(new Telegram.Td.Api.SetOption("x_user_data_account", new Telegram.Td.Api.OptionValueString(userDataAccount.Id)));
+            }
+
+            return userDataAccount;
+        }
+
+        private async Task<ContactList> GetContactListAsync(UserDataAccount userDataAccount, ContactStore store)
+        {
+            var user = _cacheService.GetUser(_cacheService.GetMyId());
+            var displayName = user?.GetFullName() ?? "Unigram";
+
+            ContactList contactList = null;
+            var id = _cacheService.GetOption<Telegram.Td.Api.OptionValueString>("x_contact_list");
+            if (id != null)
+            {
+                contactList = await store.GetContactListAsync(id.Value);
+            }
+            
+            if (contactList == null)
+            {
+                contactList = await store.CreateContactListAsync(displayName, userDataAccount.Id);
+                await _protoService.SendAsync(new Telegram.Td.Api.SetOption("x_contact_list", new Telegram.Td.Api.OptionValueString(contactList.Id)));
+            }
+
+            contactList.DisplayName = displayName;
+            contactList.OtherAppWriteAccess = ContactListOtherAppWriteAccess.None;
+            await contactList.SaveAsync();
 
             return contactList;
         }
 
-        private async Task<ContactAnnotationList> GetAnnotationListAsync()
+        private async Task<ContactAnnotationList> GetAnnotationListAsync(UserDataAccount userDataAccount)
         {
             var store = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
             if (store == null)
@@ -266,15 +292,17 @@ namespace Unigram.Services
                 return null;
             }
 
-            ContactAnnotationList contactList;
-            var contactsList = await store.FindAnnotationListsAsync();
-            if (contactsList.Count == 0)
+            ContactAnnotationList contactList = null;
+            var id = _cacheService.GetOption<Telegram.Td.Api.OptionValueString>("x_annotation_list");
+            if (id != null)
             {
-                contactList = await store.CreateAnnotationListAsync();
+                contactList = await store.GetAnnotationListAsync(id.Value);
             }
-            else
+            
+            if (contactList == null)
             {
-                contactList = contactsList[0];
+                contactList = await store.CreateAnnotationListAsync(userDataAccount.Id);
+                await _protoService.SendAsync(new Telegram.Td.Api.SetOption("x_annotation_list", new Telegram.Td.Api.OptionValueString(contactList.Id)));
             }
 
             return contactList;
@@ -294,17 +322,12 @@ namespace Unigram.Services
             {
                 Debug.WriteLine("UNSYNCING CONTACTS");
 
-                var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
-                if (store == null)
-                {
-                    return;
-                }
+                var userDataAccount = await GetUserDataAccountAsync();
+                await userDataAccount.DeleteAsync();
 
-                var contactList = await GetContactListAsync(store);
-                var annotationList = await GetAnnotationListAsync();
-
-                await contactList.DeleteAsync();
-                await annotationList.DeleteAsync();
+                await _protoService.SendAsync(new Telegram.Td.Api.SetOption("x_user_data_account", new Telegram.Td.Api.OptionValueEmpty()));
+                await _protoService.SendAsync(new Telegram.Td.Api.SetOption("x_contact_list", new Telegram.Td.Api.OptionValueEmpty()));
+                await _protoService.SendAsync(new Telegram.Td.Api.SetOption("x_annotation_list", new Telegram.Td.Api.OptionValueEmpty()));
 
                 Debug.WriteLine("UNSYNCED CONTACTS");
             }
