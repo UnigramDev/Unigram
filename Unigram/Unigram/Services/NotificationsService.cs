@@ -125,7 +125,18 @@ namespace Unigram.Services
 
             WindowContext.Default().Dispatcher.Dispatch(async () =>
             {
-                await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
+                if (update.Type.StartsWith("AUTH_KEY_DROP_"))
+                {
+                    var confirm = await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.LogOut, Strings.Resources.Cancel);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        _protoService.Send(new Destroy());
+                    }
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
+                }
             });
         }
 
