@@ -32,6 +32,7 @@ namespace Unigram.Services
         bool IsSendByEnterEnabled { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
+        bool IsContactsSyncRequested { get; set; }
         bool IsSecretPreviewsEnabled { get; set; }
         bool IsAutoPlayEnabled { get; set; }
         bool IsSendGrouped { get; set; }
@@ -398,13 +399,30 @@ namespace Unigram.Common
             }
         }
 
+        private bool? _isContactsSyncRequested;
+        public bool IsContactsSyncRequested
+        {
+            get
+            {
+                if (_isContactsSyncRequested == null)
+                    _isContactsSyncRequested = GetValueOrDefault("IsContactsSyncRequested", false);
+
+                return _isContactsSyncRequested ?? true;
+            }
+            set
+            {
+                _isContactsSyncRequested = value;
+                AddOrUpdateValue("IsContactsSyncRequested", value);
+            }
+        }
+
         private bool? _isSecretPreviewsEnabled;
         public bool IsSecretPreviewsEnabled
         {
             get
             {
                 if (_isSecretPreviewsEnabled == null)
-                    _isSecretPreviewsEnabled = GetValueOrDefault("IsSecretPreviewsEnabled", true);
+                    _isSecretPreviewsEnabled = GetValueOrDefault("IsSecretPreviewsEnabled", false);
 
                 return _isSecretPreviewsEnabled ?? true;
             }

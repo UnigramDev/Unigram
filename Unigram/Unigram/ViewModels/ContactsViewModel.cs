@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels.Supergroups;
@@ -26,11 +27,11 @@ namespace Unigram.ViewModels
 
         public void LoadContacts()
         {
-            ProtoService.Send(new GetContacts(), async result =>
+            ProtoService.Send(new GetContacts(), result =>
             {
                 if (result is Telegram.Td.Api.Users users)
                 {
-                    BeginOnUIThread(() =>
+                    BeginOnUIThread(async () =>
                     {
                         foreach (var id in users.UserIds)
                         {
@@ -40,12 +41,24 @@ namespace Unigram.ViewModels
                                 Items.Add(user);
                             }
                         }
-                    });
 
-                    if (Settings.IsContactsSyncEnabled)
-                    {
-                        await _contactsService.SyncAsync(users);
-                    }
+                        if (!Settings.IsContactsSyncRequested)
+                        {
+                            Settings.IsContactsSyncRequested = true;
+
+                            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ContactsPermissionAlert, Strings.Resources.AppName, Strings.Resources.ContactsPermissionAlertContinue, Strings.Resources.ContactsPermissionAlertNotNow);
+                            if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+                            {
+                                Settings.IsContactsSyncEnabled = false;
+                                await _contactsService.RemoveAsync();
+                            }
+                        }
+
+                        if (Settings.IsContactsSyncEnabled)
+                        {
+                            await _contactsService.SyncAsync(users);
+                        }
+                    });
                 }
             });
         }
