@@ -76,7 +76,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            _message.Delegate.Call(_message);
         }
     }
 }

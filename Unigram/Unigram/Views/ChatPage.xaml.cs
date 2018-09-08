@@ -2213,6 +2213,9 @@ namespace Unigram.Views
 
             ButtonSilent.Visibility = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.IsChecked = chat.DefaultDisableNotification;
+
+            Call.Visibility = Visibility.Collapsed;
+            CallPlaceholder.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -2345,6 +2348,9 @@ namespace Unigram.Views
                 ViewModel.BotCommands = fullInfo.BotInfo.Commands.Select(x => new UserCommand(user.Id, x)).ToList();
                 ViewModel.HasBotCommands = fullInfo.BotInfo.Commands.Count > 0;
             }
+
+            Call.Visibility = fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
+            CallPlaceholder.Visibility = fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateUserStatus(Chat chat, User user)

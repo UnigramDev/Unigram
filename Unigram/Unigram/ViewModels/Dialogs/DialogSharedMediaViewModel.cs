@@ -520,6 +520,11 @@ namespace Unigram.ViewModels.Dialogs
             return false;
         }
 
+        public void Call(MessageViewModel message)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

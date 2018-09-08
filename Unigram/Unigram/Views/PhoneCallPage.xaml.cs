@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas.Effects;
+﻿using libtgvoip;
+using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,11 +7,13 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Entities;
+using Unigram.Services;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -32,13 +35,8 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class PhoneCallPage : Page, IDisposable
     {
         private Visual _descriptionVisual;
@@ -49,8 +47,14 @@ namespace Unigram.Views
 
         private bool _collapsed = true;
 
-        private PhoneCallState _state;
-        private string[] _emojis;
+        private readonly IProtoService _protoService;
+        private readonly ICacheService _cacheService;
+
+        private VoIPControllerWrapper _controller;
+        private Call _call;
+
+        private libtgvoip.CallState _state;
+        private IList<string> _emojis;
         private DateTime _started;
 
         private int _debugTapped;
@@ -63,9 +67,12 @@ namespace Unigram.Views
 
         public ContentDialogBase Dialog { get; set; }
 
-        public PhoneCallPage(bool extend)
+        public PhoneCallPage(IProtoService protoService, ICacheService cacheService, bool extend)
         {
             this.InitializeComponent();
+
+            _protoService = protoService;
+            _cacheService = cacheService;
 
             _durationTimer = new DispatcherTimer();
             _durationTimer.Interval = TimeSpan.FromMilliseconds(500);
@@ -141,7 +148,7 @@ namespace Unigram.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("Unloaded");
-            
+
             if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
             {
                 AudioRoutingManager.GetDefault().AudioEndpointChanged -= AudioEndpointChanged;
@@ -154,10 +161,24 @@ namespace Unigram.Views
             _debugTimer.Stop();
             _durationTimer.Stop();
 
+            if (_controller != null)
+            {
+                _controller.CallStateChanged -= OnCallStateChanged;
+                _controller.SignalBarsChanged -= OnSignalBarsChanged;
+                _controller = null;
+            }
+
             if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
             {
                 AudioRoutingManager.GetDefault().AudioEndpointChanged -= AudioEndpointChanged;
             }
+        }
+
+        public void Connect(VoIPControllerWrapper controller)
+        {
+            _controller = controller;
+            _controller.CallStateChanged += OnCallStateChanged;
+            _controller.SignalBarsChanged += OnSignalBarsChanged;
         }
 
         //private void CoreBar_IsVisibleChanged(CoreApplicationViewTitleBar sender, object args)
@@ -184,64 +205,127 @@ namespace Unigram.Views
             }
         }
 
-        //public void SetCall(TLTuple<TLPhoneCallState, TLPhoneCallBase, TLUserBase, string> tuple)
-        //{
-        //    if (_disposed)
-        //    {
-        //        return;
-        //    }
+        public void Update(Call call)
+        {
+            if (_disposed)
+            {
+                return;
+            }
 
-        //    if (_state != tuple.Item1)
-        //    {
-        //        Debug.WriteLine("[{0:HH:mm:ss.fff}] State changed in app: " + tuple.Item1, DateTime.Now);
+            _call = call;
 
-        //        _state = tuple.Item1;
-        //        StateLabel.Content = StateToLabel(tuple.Item1);
+            //if (_state != call.State)
+            //{
+            //    Debug.WriteLine("[{0:HH:mm:ss.fff}] State changed in app: " + tuple.Item1, DateTime.Now);
 
-        //        if (tuple.Item1 == TLPhoneCallState.Established)
-        //        {
-        //            SignalBarsLabel.Visibility = Visibility.Visible;
-        //            StartUpdatingCallDuration();
+            //    _state = tuple.Item1;
+            //    StateLabel.Content = StateToLabel(tuple.Item1);
 
-        //            if (_emojis != null)
-        //            {
-        //                for (int i = 0; i < _emojis.Length; i++)
-        //                {
-        //                    var imageLarge = FindName($"LargeEmoji{i}") as Image;
-        //                    var source = Emoji.BuildUri(_emojis[i]);
+            //    if (tuple.Item1 == TLPhoneCallState.Established)
+            //    {
+            //        SignalBarsLabel.Visibility = Visibility.Visible;
+            //        StartUpdatingCallDuration();
 
-        //                    imageLarge.Source = new BitmapImage(new Uri(source));
-        //                }
-        //            }
-        //        }
-        //    }
+            //        if (_emojis != null)
+            //        {
+            //            for (int i = 0; i < _emojis.Length; i++)
+            //            {
+            //                var imageLarge = FindName($"LargeEmoji{i}") as Image;
+            //                var source = Emoji.BuildUri(_emojis[i]);
 
-        //    //if (tuple.Item2 is TLPhoneCallRequested call)
-        //    //{
-        //    //}
+            //                imageLarge.Source = new BitmapImage(new Uri(source));
+            //            }
+            //        }
+            //    }
+            //}
 
-        //    if (tuple.Item3 is TLUser user)
-        //    {
-        //        //if (user.HasPhoto && user.Photo is TLUserProfilePhoto)
-        //        //{
-        //        //    Image.Source = DefaultPhotoConverter.Convert(user, true) as ImageSource;
-        //        //    GrabPanel.Background = new SolidColorBrush(Colors.Transparent);
-        //        //}
-        //        //else
-        //        {
-        //            Image.Source = null;
-        //            GrabPanel.Background = PlaceholderHelper.GetBrush(user.Id);
-        //        }
+            //if (tuple.Item2 is TLPhoneCallRequested call)
+            //{
+            //}
 
-        //        FromLabel.Text = user.FullName;
-        //        DescriptionLabel.Text = string.Format(Strings.Resources.CallEmojiKeyTooltip, user.FirstName);
-        //    }
+            var user = _cacheService.GetUser(call.UserId);
+            if (user != null)
+            {
+                //if (user.HasPhoto && user.Photo is TLUserProfilePhoto)
+                //{
+                //    Image.Source = DefaultPhotoConverter.Convert(user, true) as ImageSource;
+                //    GrabPanel.Background = new SolidColorBrush(Colors.Transparent);
+                //}
+                //else
+                {
+                    Image.Source = null;
+                    GrabPanel.Background = PlaceholderHelper.GetBrush(user.Id);
+                }
 
-        //    if (tuple.Item4.Length > 0)
-        //    {
-        //        _emojis = tuple.Item4.Split(' ');
-        //    }
-        //}
+                FromLabel.Text = user.GetFullName();
+                DescriptionLabel.Text = string.Format(Strings.Resources.CallEmojiKeyTooltip, user.FirstName);
+            }
+
+            if (call.State is CallStateReady ready)
+            {
+                _emojis = ready.Emojis;
+
+                for (int i = 0; i < ready.Emojis.Count; i++)
+                {
+                    var imageLarge = FindName($"LargeEmoji{i}") as Image;
+                    var source = Emoji.BuildUri(_emojis[i]);
+
+                    imageLarge.Source = new BitmapImage(new Uri(source));
+                }
+            }
+
+            switch (call.State)
+            {
+                case CallStatePending pending:
+                    StateLabel.Content = call.IsOutgoing
+                        ? pending.IsReceived
+                        ? Strings.Resources.VoipRinging
+                        : pending.IsCreated
+                        ? Strings.Resources.VoipWaiting
+                        : Strings.Resources.VoipRequesting
+                        : Strings.Resources.VoipIncoming;
+                    break;
+                case CallStateExchangingKeys exchangingKeys:
+                    StateLabel.Content = Strings.Resources.VoipExchangingKeys;
+                    break;
+                case CallStateHangingUp hangingUp:
+                    StateLabel.Content = Strings.Resources.VoipHangingUp;
+                    break;
+            }
+        }
+
+        private void OnCallStateChanged(VoIPControllerWrapper sender, libtgvoip.CallState newState)
+        {
+            _state = newState;
+
+            this.BeginOnUIThread(() =>
+            {
+                switch (newState)
+                {
+                    case libtgvoip.CallState.WaitInit:
+                    case libtgvoip.CallState.WaitInitAck:
+                        StateLabel.Content = Strings.Resources.VoipConnecting;
+                        break;
+                    case libtgvoip.CallState.Established:
+                        StateLabel.Content = "00:00";
+
+                        SignalBarsLabel.Visibility = Visibility.Visible;
+                        StartUpdatingCallDuration();
+                        break;
+                    case libtgvoip.CallState.Failed:
+                        StateLabel.Content = Strings.Resources.VoipFailed;
+                        break;
+                }
+            });
+        }
+
+        private void OnSignalBarsChanged(VoIPControllerWrapper sender, int newCount)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                SetSignalBars(newCount);
+            });
+        }
 
         public void SetSignalBars(int count)
         {
@@ -249,38 +333,6 @@ namespace Unigram.Views
             {
                 ((Rectangle)FindName($"Signal{i}")).Fill = Resources[count >= i ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
             }
-        }
-
-        private string StateToLabel(PhoneCallState state)
-        {
-            switch (state)
-            {
-                case PhoneCallState.WaitingIncoming:
-                    return Strings.Resources.VoipIncoming;
-                case PhoneCallState.WaitInit:
-                case PhoneCallState.WaitInitAck:
-                    return Strings.Resources.VoipConnecting;
-                case PhoneCallState.ExchangingKeys:
-                    return Strings.Resources.VoipExchangingKeys;
-                case PhoneCallState.Waiting:
-                    return Strings.Resources.VoipWaiting;
-                case PhoneCallState.Ringing:
-                    return Strings.Resources.VoipRinging;
-                case PhoneCallState.Requesting:
-                    return Strings.Resources.VoipRequesting;
-                case PhoneCallState.HangingUp:
-                    return Strings.Resources.VoipHangingUp;
-                case PhoneCallState.Ended:
-                    return Strings.Resources.VoipCallEnded;
-                case PhoneCallState.Busy:
-                    return Strings.Resources.VoipBusy;
-                case PhoneCallState.Failed:
-                    return Strings.Resources.VoipFailed;
-                case PhoneCallState.Established:
-                    return "00:00";
-            }
-
-            return null;
         }
 
         private void StartUpdatingCallDuration()
@@ -297,7 +349,7 @@ namespace Unigram.Views
                 StateLabel.Opacity = 0;
             }
 
-            if (_state == PhoneCallState.Established)
+            if (_state == libtgvoip.CallState.Established)
             {
                 var duration = DateTime.Now - _started;
                 DurationLabel.Text = duration.ToString(duration.TotalHours >= 1 ? "hh\\:mm\\:ss" : "mm\\:ss");
@@ -350,10 +402,17 @@ namespace Unigram.Views
             //}
         }
 
-        private async void Hangup_Click(object sender, RoutedEventArgs e)
+        private void Hangup_Click(object sender, RoutedEventArgs e)
         {
-            var duration = _state == PhoneCallState.Established ? DateTime.Now - _started : TimeSpan.Zero;
-            await VoIPConnection.Current.SendRequestAsync("phone.DiscardCall", Tuple.Create(duration.TotalSeconds));
+            var call = _call;
+            if (call == null)
+            {
+                return;
+            }
+
+            var duration = _state == libtgvoip.CallState.Established ? DateTime.Now - _started : TimeSpan.Zero;
+            _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, 0));
+            //await VoIPConnection.Current.SendRequestAsync("phone.DiscardCall", Tuple.Create(duration.TotalSeconds));
         }
 
         private void LargeEmojiLabel_Tapped(object sender, TappedRoutedEventArgs e)

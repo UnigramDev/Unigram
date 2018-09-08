@@ -422,15 +422,16 @@
                                         </Grid>
                                     </StackPanel>
 
-                                    <Border Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable,Mode=OneWay}" Width="48" Grid.Column="2"/>
+                                    <Border x:Name="CallPlaceholder" Visibility="Collapsed" Width="48" Grid.Column="2"/>
                                 </Grid>
                             </Grid>
                         </Button.Content>
                     </Button>
 
                     <controls:GlyphButton
+                        x:Name="Call"
+                        Visibility="Collapsed"
                         Command="{x:Bind ViewModel.CallCommand}"
-                        Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable, Mode=OneWay}"
                         Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                         Glyph="&#xE13A;"
                         Grid.Column="1"/>

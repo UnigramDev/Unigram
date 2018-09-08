@@ -740,6 +740,11 @@ namespace Unigram.ViewModels.Supergroups
             return false;
         }
 
+        public void Call(MessageViewModel message)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

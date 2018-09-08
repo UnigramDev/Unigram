@@ -1374,6 +1374,11 @@ namespace Unigram.Views
             return false;
         }
 
+        public void Call(MessageViewModel message)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

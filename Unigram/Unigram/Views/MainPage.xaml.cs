@@ -61,7 +61,8 @@ namespace Unigram.Views
         IHandle<UpdateChatNotificationSettings>,
         IHandle<UpdateWorkMode>,
         IHandle<UpdateFile>,
-        IHandle<UpdateConnectionState>
+        IHandle<UpdateConnectionState>,
+        IHandle<UpdateCall>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
         public RootPage Root { get; set; }
@@ -248,6 +249,23 @@ namespace Unigram.Views
                         break;
                     default:
                         Proxy.Visibility = Visibility.Collapsed;
+                        break;
+                }
+            });
+        }
+
+        public void Handle(UpdateCall update)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                switch (update.Call.State)
+                {
+                    case CallStateDiscarded discarded:
+                    case CallStateError error:
+                        CallBanner.Visibility = Visibility.Collapsed;
+                        break;
+                    default:
+                        CallBanner.Visibility = Visibility.Visible;
                         break;
                 }
             });

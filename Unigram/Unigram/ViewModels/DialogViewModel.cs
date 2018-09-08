@@ -355,19 +355,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        private bool _isPhoneCallsAvailable;
-        public bool IsPhoneCallsAvailable
-        {
-            get
-            {
-                return _isPhoneCallsAvailable;
-            }
-            set
-            {
-                Set(ref _isPhoneCallsAvailable, value);
-            }
-        }
-
         private bool _canPinChat;
         public bool CanPinChat
         {
@@ -2174,6 +2161,31 @@ namespace Unigram.ViewModels
             //{
             //    await TLMessageDialog.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
             //}
+
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var user = CacheService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            var fullInfo = CacheService.GetUserFull(user.Id);
+            if (fullInfo != null)
+            {
+                await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.VoipFailed, Strings.Resources.OK);
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 65, 65)));
+            if (response is CallId call)
+            {
+
+            }
         }
 
         #endregion

@@ -272,6 +272,10 @@ namespace Unigram.ViewModels
             KeyboardButtonExecute(message, button);
         }
 
+        public void Call(MessageViewModel message)
+        {
+            CallCommand.Execute();
+        }
 
 
         public async void OpenUsername(string username)
