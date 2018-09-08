@@ -131,6 +131,17 @@ namespace Unigram.Controls.Views
                     {
                         ViewModel.SelectedItems.Add(user);
                     }
+                    else if (item is SearchResult result)
+                    {
+                        if (result.User != null)
+                        {
+                            ViewModel.SelectedItems.Add(result.User);
+                        }
+                        else if (result.Chat != null)
+                        {
+                            ViewModel.SelectedItems.Add(ViewModel.ProtoService.GetUser(result.Chat));
+                        }
+                    }
                 }
             }
         }
