@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Unigram.Common;
 using Unigram.Services;
 using Windows.Storage;
@@ -36,6 +37,7 @@ namespace Unigram.Services
         bool IsSendGrouped { get; set; }
 
         string NotificationsToken { get; set; }
+        int[] NotificationsIds { get; set; }
 
         int SelectedBackground { get; set; }
         int SelectedColor { get; set; }
@@ -495,6 +497,33 @@ namespace Unigram.Common
             {
                 _notificationsToken = value;
                 AddOrUpdateValue(_local, "ChannelUri", value);
+            }
+        }
+
+        private int[] _notificationsIds;
+        public int[] NotificationsIds
+        {
+            get
+            {
+                if (_notificationsIds == null)
+                {
+                    var value = GetValueOrDefault<string>(_local, "NotificationsIds", null);
+                    if (value == null)
+                    {
+                        _notificationsIds = new int[0];
+                    }
+                    else
+                    {
+                        _notificationsIds = value.Split(',').Select(x => int.Parse(x)).ToArray();
+                    }
+                }
+
+                return _notificationsIds;
+            }
+            set
+            {
+                _notificationsIds = value;
+                AddOrUpdateValue(_local, "NotificationsIds", null);
             }
         }
 

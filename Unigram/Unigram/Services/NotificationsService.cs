@@ -263,19 +263,29 @@ namespace Unigram.Services
         {
             using (await _registrationLock.WaitAsync())
             {
+                var userId = _protoService.GetMyId();
+                if (userId == 0)
+                {
+                    return;
+                }
+
                 if (_alreadyRegistered) return;
                 _alreadyRegistered = true;
 
                 try
                 {
                     var oldUri = _settings.NotificationsToken;
-
+                    var ids = _settings.NotificationsIds.ToList();
                     var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                    if (channel.Uri != oldUri)
+                    if (channel.Uri != oldUri || !ids.Contains(userId))
                     {
-                        var result = await _protoService.SendAsync(new RegisterDevice(new DeviceTokenWindowsPush(channel.Uri), new int[0]));
+                        ids.Remove(userId);
+
+                        var result = await _protoService.SendAsync(new RegisterDevice(new DeviceTokenWindowsPush(channel.Uri), ids));
                         if (result is Ok)
                         {
+                            ids.Add(userId);
+                            _settings.NotificationsIds = ids.ToArray();
                             _settings.NotificationsToken = channel.Uri;
                         }
                         else
