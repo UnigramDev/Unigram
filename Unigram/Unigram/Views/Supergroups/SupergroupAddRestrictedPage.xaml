@@ -11,7 +11,7 @@
     <Page.Resources>
         <CollectionViewSource x:Name="SearchResults" Source="{x:Bind ViewModel.Search, Mode=OneWay}" IsSourceGrouped="True"/>
 
-        <DataTemplate x:Key="ParticipantTemplate">
+        <DataTemplate x:Key="MemberTemplate">
             <Grid Margin="0,6" Background="Transparent">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -77,7 +77,7 @@
         </controls:ContentPageHeader>
 
         <ListView ItemsSource="{x:Bind SearchResults.View, Mode=OneWay}"
-                  ItemTemplate="{StaticResource ParticipantTemplate}"
+                  ItemTemplate="{StaticResource MemberTemplate}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   ContainerContentChanging="Search_ContainerContentChanging"
@@ -136,7 +136,7 @@
         <Grid x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="1">
             <ListView x:Name="ScrollingHost"
                       ItemsSource="{x:Bind ViewModel.Members}"
-                      ItemTemplate="{StaticResource ParticipantTemplate}"
+                      ItemTemplate="{StaticResource MemberTemplate}"
                       ItemClick="ListView_ItemClick"
                       IsItemClickEnabled="True"
                       ContainerContentChanging="OnContainerContentChanging"

@@ -42,7 +42,7 @@ namespace Unigram.Views.Supergroups
             {
                 if (string.IsNullOrWhiteSpace(SearchField.Text))
                 {
-                    ViewModel.Search.Clear();
+                    ViewModel.Search?.Clear();
                 }
                 else
                 {
@@ -80,7 +80,7 @@ namespace Unigram.Views.Supergroups
 
         #region Context menu
 
-        private void Participant_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
         }
 

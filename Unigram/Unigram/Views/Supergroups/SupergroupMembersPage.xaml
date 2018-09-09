@@ -9,8 +9,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="ParticipantTemplate">
-            <Grid Margin="0,6" Background="Transparent" ContextRequested="Participant_ContextRequested">
+        <DataTemplate x:Key="MemberTemplate">
+            <Grid Margin="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -48,7 +48,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock
-                        Text="{CustomResource ChannelMembers}"
+                        Text="{CustomResource ChannelSubscribers}"
                         Style="{StaticResource BaseTextBlockStyle}"
                         VerticalAlignment="Center"
                         Margin="12,0"/>
@@ -82,7 +82,7 @@
         </controls:ContentPageHeader>
 
         <ListView ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
-                  ItemTemplate="{StaticResource ParticipantTemplate}"
+                  ItemTemplate="{StaticResource MemberTemplate}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   ContainerContentChanging="OnContainerContentChanging"
@@ -98,7 +98,7 @@
         <Grid x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="1">
             <ListView x:Name="ScrollingHost"
                       ItemsSource="{x:Bind ViewModel.Members}"
-                      ItemTemplate="{StaticResource ParticipantTemplate}"
+                      ItemTemplate="{StaticResource MemberTemplate}"
                       ItemClick="ListView_ItemClick"
                       IsItemClickEnabled="True"
                       ContainerContentChanging="OnContainerContentChanging"

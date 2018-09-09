@@ -30,6 +30,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Text;
 using Unigram.ViewModels.Delegates;
+using System.Reactive.Linq;
 
 namespace Unigram.Views
 {
@@ -41,6 +42,19 @@ namespace Unigram.Views
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ProfileViewModel, IProfileDelegate>(this);
+
+            var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            {
+                if (string.IsNullOrWhiteSpace(SearchField.Text))
+                {
+                    ViewModel.Search?.Clear();
+                }
+                else
+                {
+                    ViewModel.Find(SearchField.Text);
+                }
+            });
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
@@ -441,13 +455,13 @@ namespace Unigram.Views
 
                 if (!supergroup.IsChannel)
                 {
-                    //CreateFlyoutItem(ref flyout, new RelayCommand(async () =>
-                    //{
-                    //    await Task.Delay(100);
-                    //    Search_Click(null, null);
-                    //}), Strings.Resources.SearchMembers);
-
-                    CreateFlyoutItem(ref flyout, null, Strings.Resources.SearchMembers);
+                    CreateFlyoutItem(ref flyout, new RelayCommand(() =>
+                    {
+                        flyout.Closed += (s, args) =>
+                        {
+                            Search_Click(null, null);
+                        };
+                    }), Strings.Resources.SearchMembers);
 
                     if (!(supergroup.Status is ChatMemberStatusCreator) && !(supergroup.Status is ChatMemberStatusLeft) && !(supergroup.Status is ChatMemberStatusBanned))
                     {
@@ -486,63 +500,6 @@ namespace Unigram.Views
 
                 CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Resources.DeleteAndExit);
             }
-            //else if (chat.Type is ChatTypeBasicGroup basic)
-            //{
-            //    item = menu.addItem(10, R.drawable.ic_ab_other);
-            //    item.addSubItem(edit_name, LocaleController.getString("EditName", R.string.EditName));
-            //}
-
-            //var user = ViewModel.Item as TLUser;
-            //var full = ViewModel.Full as TLUserFull;
-            //if (full == null || user == null)
-            //{
-            //    return;
-            //}
-
-            //if (user.IsSelf)
-            //{
-            //    CreateFlyoutItem(ref flyout, null, Strings.Resources.ShareContact);
-            //}
-            //else
-            //{
-            //    if (user.IsContact)
-            //    {
-            //        CreateFlyoutItem(ref flyout, null, Strings.Resources.ShareContact);
-            //        CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Resources.BlockContact : Strings.Resources.Unblock);
-            //        CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Resources.EditContact);
-            //        CreateFlyoutItem(ref flyout, ViewModel.DeleteCommand, Strings.Resources.DeleteContact);
-            //    }
-            //    else
-            //    {
-            //        if (user.IsBot)
-            //        {
-            //            if (!user.IsBotNochats)
-            //            {
-            //                CreateFlyoutItem(ref flyout, null, Strings.Resources.BotInvite);
-            //            }
-
-            //            CreateFlyoutItem(ref flyout, null, Strings.Resources.BotShare);
-            //        }
-
-            //        if (user.Phone != null && user.Phone.Length > 0)
-            //        {
-            //            CreateFlyoutItem(ref flyout, ViewModel.AddCommand, Strings.Resources.AddContact);
-            //            CreateFlyoutItem(ref flyout, null, Strings.Resources.ShareContact);
-            //            CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Resources.BlockContact : Strings.Resources.Unblock);
-            //        }
-            //        else
-            //        {
-            //            if (user.IsBot)
-            //            {
-            //                CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Resources.BotStop : Strings.Resources.BotRestart);
-            //            }
-            //            else
-            //            {
-            //                CreateFlyoutItem(ref flyout, !full.IsBlocked ? ViewModel.BlockCommand : ViewModel.UnblockCommand, !full.IsBlocked ? Strings.Resources.BlockContact : Strings.Resources.Unblock);
-            //            }
-            //        }
-            //    }
-            //}
 
             CreateFlyoutItem(ref flyout, null, Strings.Resources.AddShortcut);
 
@@ -865,6 +822,37 @@ namespace Unigram.Views
                 {
                     ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
                 }
+            }
+        }
+
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            MainHeader.Visibility = Visibility.Collapsed;
+            SearchField.Visibility = Visibility.Visible;
+
+            SearchField.Focus(FocusState.Keyboard);
+        }
+
+        private void Search_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(SearchField.Text))
+            {
+                MainHeader.Visibility = Visibility.Visible;
+                SearchField.Visibility = Visibility.Collapsed;
+
+                Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void Search_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(SearchField.Text))
+            {
+                ContentPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ContentPanel.Visibility = Visibility.Collapsed;
             }
         }
     }

@@ -961,6 +961,33 @@ namespace Unigram.ViewModels
             return new ChatMemberCollection(ProtoService, supergroupId, new SupergroupMembersFilterRecent());
         }
 
+        public void Find(string query)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                Search = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, new SupergroupMembersFilterSearch(query));
+            }
+        }
+
+        private ChatMemberCollection _search;
+        public ChatMemberCollection Search
+        {
+            get
+            {
+                return _search;
+            }
+            set
+            {
+                Set(ref _search, value);
+            }
+        }
+
         #endregion
 
         #region Context menu

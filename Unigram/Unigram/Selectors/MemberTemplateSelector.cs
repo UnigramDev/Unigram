@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Selectors
 {
-    public class ParticipantTemplateSelector : DataTemplateSelector
+    public class MemberTemplateSelector : DataTemplateSelector
     {
         public DataTemplate ItemTemplate { get; set; }
         public DataTemplate AdminTemplate { get; set; }

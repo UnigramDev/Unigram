@@ -380,7 +380,6 @@
     <Compile Include="Entities\Country.cs" />
     <Compile Include="Entities\ErrorCode.cs" />
     <Compile Include="Entities\ErrorType.cs" />
-    <Compile Include="Entities\PhoneCallState.cs" />
     <Compile Include="Entities\StorageDocument.cs" />
     <Compile Include="Entities\StorageMedia.cs" />
     <Compile Include="Entities\StoragePhoto.cs" />
@@ -393,7 +392,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
     <Compile Include="Selectors\ConnectionTemplateSelector.cs" />
-    <Compile Include="Selectors\ParticipantTemplateSelector.cs" />
+    <Compile Include="Selectors\MemberTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />

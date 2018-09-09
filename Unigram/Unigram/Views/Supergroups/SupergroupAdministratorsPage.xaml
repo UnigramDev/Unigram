@@ -34,7 +34,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="0,6" Background="Transparent" ContextRequested="Participant_ContextRequested">
+                    <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
