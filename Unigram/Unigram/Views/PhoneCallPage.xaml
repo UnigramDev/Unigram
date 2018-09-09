@@ -264,7 +264,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <controls:GlyphToggleButton Click="Mute_Click" CheckedGlyph="&#xE610;" FontFamily="{StaticResource TelegramThemeFontFamily}" HorizontalAlignment="Right" Margin="0,0,12,0"/>
+            <controls:GlyphToggleButton IsChecked="{x:Bind IsMuted, Mode=TwoWay}" IsOneWay="False" CheckedGlyph="&#xE610;" FontFamily="{StaticResource TelegramThemeFontFamily}" HorizontalAlignment="Right" Margin="0,0,12,0"/>
             
             <Border Background="#E33A32" CornerRadius="24" Grid.Column="1">
                 <controls:GlyphButton Click="Hangup_Click" Glyph="&#xE60F;" FontFamily="{StaticResource TelegramThemeFontFamily}" FontSize="24" Padding="0,0,0,2" CornerRadius="24"/>

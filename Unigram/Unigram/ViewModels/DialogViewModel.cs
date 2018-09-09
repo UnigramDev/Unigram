@@ -2175,16 +2175,23 @@ namespace Unigram.ViewModels
             }
 
             var fullInfo = CacheService.GetUserFull(user.Id);
-            if (fullInfo != null)
+            if (fullInfo != null && fullInfo.HasPrivateCalls)
             {
                 await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.VoipFailed, Strings.Resources.OK);
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 65, 65)));
-            if (response is CallId call)
+            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 65, 74)));
+            if (response is Error error)
             {
-
+                if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.VoipPeerOutdated, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                }
+                else if(error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                }
             }
         }
 

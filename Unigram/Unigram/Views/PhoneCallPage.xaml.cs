@@ -161,12 +161,12 @@ namespace Unigram.Views
             _debugTimer.Stop();
             _durationTimer.Stop();
 
-            if (_controller != null)
-            {
-                _controller.CallStateChanged -= OnCallStateChanged;
-                _controller.SignalBarsChanged -= OnSignalBarsChanged;
-                _controller = null;
-            }
+            //if (_controller != null)
+            //{
+            //    _controller.CallStateChanged -= OnCallStateChanged;
+            //    _controller.SignalBarsChanged -= OnSignalBarsChanged;
+            //    _controller = null;
+            //}
 
             if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
             {
@@ -179,6 +179,8 @@ namespace Unigram.Views
             _controller = controller;
             _controller.CallStateChanged += OnCallStateChanged;
             _controller.SignalBarsChanged += OnSignalBarsChanged;
+
+            _controller.SetMicMute(_isMuted);
         }
 
         //private void CoreBar_IsVisibleChanged(CoreApplicationViewTitleBar sender, object args)
@@ -296,24 +298,32 @@ namespace Unigram.Views
 
         private void OnCallStateChanged(VoIPControllerWrapper sender, libtgvoip.CallState newState)
         {
-            _state = newState;
-
             this.BeginOnUIThread(() =>
             {
                 switch (newState)
                 {
                     case libtgvoip.CallState.WaitInit:
                     case libtgvoip.CallState.WaitInitAck:
+                        _state = newState;
                         StateLabel.Content = Strings.Resources.VoipConnecting;
                         break;
                     case libtgvoip.CallState.Established:
+                        _state = newState;
                         StateLabel.Content = "00:00";
 
                         SignalBarsLabel.Visibility = Visibility.Visible;
                         StartUpdatingCallDuration();
                         break;
                     case libtgvoip.CallState.Failed:
-                        StateLabel.Content = Strings.Resources.VoipFailed;
+                        switch (sender.GetLastError())
+                        {
+                            case libtgvoip.Error.Incompatible:
+                            case libtgvoip.Error.Timeout:
+                            case libtgvoip.Error.Unknown:
+                                _state = newState;
+                                StateLabel.Content = Strings.Resources.VoipFailed;
+                                break;
+                        }
                         break;
                 }
             });
@@ -402,19 +412,6 @@ namespace Unigram.Views
             //}
         }
 
-        private void Hangup_Click(object sender, RoutedEventArgs e)
-        {
-            var call = _call;
-            if (call == null)
-            {
-                return;
-            }
-
-            var duration = _state == libtgvoip.CallState.Established ? DateTime.Now - _started : TimeSpan.Zero;
-            _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, 0));
-            //await VoIPConnection.Current.SendRequestAsync("phone.DiscardCall", Tuple.Create(duration.TotalSeconds));
-        }
-
         private void LargeEmojiLabel_Tapped(object sender, TappedRoutedEventArgs e)
         {
             if (_descriptionVisual.Opacity == 0)
@@ -451,11 +448,22 @@ namespace Unigram.Views
             batch.End();
         }
 
-        private async void Mute_Click(object sender, RoutedEventArgs e)
+        private void Hangup_Click(object sender, RoutedEventArgs e)
         {
-            var toggle = sender as ToggleButton;
-            toggle.IsChecked = !toggle.IsChecked;
-            await VoIPConnection.Current.SendRequestAsync(toggle.IsChecked.Value ? "phone.mute" : "phone.unmute");
+            var call = _call;
+            if (call == null)
+            {
+                return;
+            }
+
+            var relay = 0L;
+            if (_controller != null)
+            {
+                relay = _controller.GetPreferredRelayID();
+            }
+
+            var duration = _state == libtgvoip.CallState.Established ? DateTime.Now - _started : TimeSpan.Zero;
+            _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, relay));
         }
 
         private void Routing_Click(object sender, RoutedEventArgs e)
@@ -478,6 +486,24 @@ namespace Unigram.Views
                 else if (routingManager.AvailableAudioEndpoints.HasFlag(AvailableAudioRoutingEndpoints.Earpiece))
                 {
                     routingManager.SetAudioEndpoint(AudioRoutingEndpoint.Earpiece);
+                }
+            }
+        }
+
+        private bool _isMuted;
+        public bool IsMuted
+        {
+            get
+            {
+                return _isMuted;
+            }
+            set
+            {
+                _isMuted = value;
+
+                if (_controller != null)
+                {
+                    _controller.SetMicMute(value);
                 }
             }
         }
@@ -511,51 +537,51 @@ namespace Unigram.Views
 
         private async void ShowDebugString()
         {
-            var result = await VoIPConnection.Current.GetDebugStringAsync();
-            if (result != null && result.Item1 != null)
+            if (_controller == null)
             {
-                var text = new TextBlock();
-                text.Text = result.Item1;
-                text.Margin = new Thickness(12, 16, 12, 0);
-                text.Style = Application.Current.Resources["BodyTextBlockStyle"] as Style;
-
-                var scroll = new ScrollViewer();
-                scroll.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-                scroll.VerticalScrollMode = ScrollMode.Auto;
-                scroll.Content = text;
-
-                var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
-                dialog.Title = $"libtgvoip v{result.Item2}";
-                dialog.Content = scroll;
-                dialog.PrimaryButtonText = "OK";
-                dialog.Closed += (s, args) =>
-                {
-                    _debugDialog = null;
-                    _debugTimer.Stop();
-                };
-
-                _debugDialog = dialog;
-                _debugTimer.Start();
-
-                await dialog.ShowQueuedAsync();
+                return;
             }
+
+            var debug = _controller.GetDebugString();
+            var version = VoIPControllerWrapper.GetVersion();
+
+            var text = new TextBlock();
+            text.Text = debug;
+            text.Margin = new Thickness(12, 16, 12, 0);
+            text.Style = Application.Current.Resources["BodyTextBlockStyle"] as Style;
+
+            var scroll = new ScrollViewer();
+            scroll.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            scroll.VerticalScrollMode = ScrollMode.Auto;
+            scroll.Content = text;
+
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            dialog.Title = $"libtgvoip v{version}";
+            dialog.Content = scroll;
+            dialog.PrimaryButtonText = "OK";
+            dialog.Closed += (s, args) =>
+            {
+                _debugDialog = null;
+                _debugTimer.Stop();
+            };
+
+            _debugDialog = dialog;
+            _debugTimer.Start();
+
+            await dialog.ShowQueuedAsync();
         }
 
-        private async void DebugTimer_Tick(object sender, object e)
+        private void DebugTimer_Tick(object sender, object e)
         {
-            if (_debugDialog == null)
+            if (_debugDialog == null || _controller == null)
             {
                 _debugTimer.Stop();
                 return;
             }
 
-            var result = await VoIPConnection.Current.GetDebugStringAsync();
-            if (result != null)
+            if (_debugDialog.Content is ScrollViewer scroll && scroll.Content is TextBlock text)
             {
-                if (_debugDialog.Content is ScrollViewer scroll && scroll.Content is TextBlock text)
-                {
-                    text.Text = result.Item1;
-                }
+                text.Text = _controller.GetDebugString();
             }
         }
     }

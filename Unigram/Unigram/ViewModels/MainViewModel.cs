@@ -249,7 +249,7 @@ namespace Unigram.ViewModels
                 }
 
                 _controller.SetEncryptionKey(ready.EncryptionKey.ToArray(), update.Call.IsOutgoing);
-                _controller.SetPublicEndpoints(endpoints, ready.Protocol.UdpP2p && p2p);
+                _controller.SetPublicEndpoints(endpoints, ready.Protocol.UdpP2p && p2p, 74);
                 _controller.Start();
                 _controller.Connect();
             }

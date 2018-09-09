@@ -42,10 +42,30 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region IsOneWay
+
+        public bool IsOneWay
+        {
+            get { return (bool)GetValue(IsOneWayProperty); }
+            set { SetValue(IsOneWayProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsOneWayProperty =
+            DependencyProperty.Register("IsOneWay", typeof(bool), typeof(GlyphToggleButton), new PropertyMetadata(true));
+
+        #endregion
+
         protected override void OnToggle()
         {
-            var binding = GetBindingExpression(IsCheckedProperty);
-            if (binding != null && binding.ParentBinding.Mode == BindingMode.TwoWay)
+            if (IsOneWay)
+            {
+                var binding = GetBindingExpression(IsCheckedProperty);
+                if (binding != null && binding.ParentBinding.Mode == BindingMode.TwoWay)
+                {
+                    base.OnToggle();
+                }
+            }
+            else
             {
                 base.OnToggle();
             }
