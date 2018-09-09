@@ -402,7 +402,7 @@
     <Compile Include="Services\ContactsService.cs" />
     <Compile Include="Services\EventAggregator.cs" />
     <Compile Include="Services\GenerationService.cs" />
-    <Compile Include="Services\LifecycleService.cs" />
+    <Compile Include="Services\LifetimeService.cs" />
     <Compile Include="Services\LocaleService.cs" />
     <Compile Include="Services\NotificationsService.cs" />
     <Compile Include="Services\PasscodeService.cs" />

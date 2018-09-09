@@ -18,7 +18,7 @@ using Windows.Storage;
 
 namespace Unigram.ViewModels
 {
-    public interface ILifecycleService
+    public interface ILifetimeService
     {
         void Update();
 
@@ -36,9 +36,9 @@ namespace Unigram.ViewModels
         ISessionService ActiveItem { get; set; }
     }
 
-    public class LifecycleService : ViewModelBase, ILifecycleService
+    public class LifetimeService : ViewModelBase, ILifetimeService
     {
-        public LifecycleService()
+        public LifetimeService()
         {
             Items = new MvxObservableCollection<ISessionService>();
         }

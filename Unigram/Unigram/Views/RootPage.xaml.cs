@@ -27,7 +27,7 @@ namespace Unigram.Views
 {
     public sealed partial class RootPage : Page
     {
-        private ILifecycleService _lifecycle;
+        private ILifetimeService _lifetime;
         private NavigationService _navigationService;
 
         private bool _showSessions;
@@ -39,7 +39,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            _lifecycle = TLContainer.Current.Lifecycle;
+            _lifetime = TLContainer.Current.Lifetime;
 
             service.Frame.Navigating += OnNavigating;
             service.Frame.Navigated += OnNavigated;
@@ -53,7 +53,7 @@ namespace Unigram.Views
 
         public void Switch(ISessionService session)
         {
-            _lifecycle.ActiveItem = session;
+            _lifetime.ActiveItem = session;
 
             if (_navigationService != null)
             {
@@ -147,7 +147,7 @@ namespace Unigram.Views
                 InitializeUser(main.ViewModel);
             }
 
-            InitializeSessions(_showSessions, _lifecycle.Items);
+            InitializeSessions(_showSessions, _lifetime.Items);
 
             foreach (var item in NavigationViewItems)
             {
@@ -300,7 +300,7 @@ namespace Unigram.Views
 
                 _showSessions = !_showSessions;
 
-                InitializeSessions(_showSessions, _lifecycle.Items);
+                InitializeSessions(_showSessions, _lifetime.Items);
 
                 var check = content.Children[2] as CheckBox;
                 check.IsChecked = _showSessions;
@@ -327,7 +327,7 @@ namespace Unigram.Views
 
                 if (e.ClickedItem as string == "NavigationAdd")
                 {
-                    Switch(_lifecycle.Create());
+                    Switch(_lifetime.Create());
                 }
                 else if (e.ClickedItem is ISessionService session)
                 {

@@ -17,13 +17,13 @@ namespace Unigram.Common
 {
     public class TLRootNavigationService : NavigationService, IHandle<UpdateAuthorizationState>
     {
-        private readonly ILifecycleService _lifecycleService;
+        private readonly ILifetimeService _lifetimeService;
         private readonly ISessionService _sessionService;
 
         public TLRootNavigationService(ISessionService sessionService, Frame frame, int session, string id)
             : base(frame, session, id)
         {
-            _lifecycleService = TLContainer.Current.Lifecycle;
+            _lifetimeService = TLContainer.Current.Lifetime;
             _sessionService = sessionService;
         }
 
@@ -37,7 +37,7 @@ namespace Unigram.Common
                 case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
                     Execute.Initialize();
 
-                    if (_lifecycleService.Items.Count > 1)
+                    if (_lifetimeService.Items.Count > 1)
                     {
                         Navigate(typeof(SignInPage));
                         Frame.BackStack.Add(new PageStackEntry(typeof(BlankPage), null, null));

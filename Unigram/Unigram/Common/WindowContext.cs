@@ -34,7 +34,7 @@ namespace Unigram.Common
         private readonly Window _window;
         private readonly int _id;
 
-        private readonly ILifecycleService _lifecycle;
+        private readonly ILifetimeService _lifetime;
 
         public TLWindowContext(Window window, int id)
             : base(window)
@@ -44,7 +44,7 @@ namespace Unigram.Common
             _window = window;
             _window.Activated += OnActivated;
 
-            _lifecycle = TLContainer.Current.Lifecycle;
+            _lifetime = TLContainer.Current.Lifetime;
 
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -170,9 +170,9 @@ namespace Unigram.Common
         public void SetActivatedArgs(IActivatedEventArgs args, INavigationService service)
         {
             _args = args;
-            _service = service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(_lifecycle.ActiveItem.Id.ToString());
+            _service = service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(_lifetime.ActiveItem.Id.ToString());
 
-            UseActivatedArgs(args, service, _lifecycle.ActiveItem.ProtoService.GetAuthorizationState());
+            UseActivatedArgs(args, service, _lifetime.ActiveItem.ProtoService.GetAuthorizationState());
         }
 
         private async void UseActivatedArgs(IActivatedEventArgs args, INavigationService service, AuthorizationState state)
@@ -315,7 +315,7 @@ namespace Unigram.Common
                                 var remote = first.RemoteId;
                                 if (int.TryParse(remote.Substring(1), out int userId))
                                 {
-                                    var response = await _lifecycle.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+                                    var response = await _lifetime.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
                                     if (response is Chat chat)
                                     {
                                         service.NavigateToChat(chat);

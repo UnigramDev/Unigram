@@ -28,7 +28,7 @@ namespace Unigram.ViewModels
         private readonly IVibrationService _vibrationService;
         private readonly ILiveLocationService _liveLocationService;
         private readonly IPasscodeService _passcodeService;
-        private readonly ILifecycleService _lifecycleService;
+        private readonly ILifetimeService _lifetimeService;
         private readonly ISessionService _sessionService;
 
         private readonly ConcurrentDictionary<int, InputTypingManager> _typingManagers;
@@ -36,14 +36,14 @@ namespace Unigram.ViewModels
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IContactsService contactsService, IPasscodeService passcodeService, ILifecycleService lifecycle, ISessionService session)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
             _vibrationService = vibrationService;
             _liveLocationService = liveLocationService;
             _passcodeService = passcodeService;
-            _lifecycleService = lifecycle;
+            _lifetimeService = lifecycle;
             _sessionService = session;
 
             _typingManagers = new ConcurrentDictionary<int, InputTypingManager>();
@@ -68,7 +68,7 @@ namespace Unigram.ViewModels
             ReturnToCallCommand = new RelayCommand(ReturnToCallExecute);
         }
 
-        public ILifecycleService Lifecycle => _lifecycleService;
+        public ILifetimeService Lifetime => _lifetimeService;
         public ISessionService Session => _sessionService;
 
         public ILiveLocationService LiveLocation => _liveLocationService;

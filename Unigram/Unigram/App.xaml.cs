@@ -437,7 +437,7 @@ namespace Unigram
 
         public override UIElement CreateRootElement(IActivatedEventArgs e)
         {
-            var session = TLContainer.Current.Lifecycle.ActiveItem;
+            var session = TLContainer.Current.Lifetime.ActiveItem;
 
             if (e is ContactPanelActivatedEventArgs)
             {

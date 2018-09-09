@@ -22,13 +22,13 @@ namespace Unigram.ViewModels.SignIn
 {
     public class SignInViewModel : TLViewModelBase
     {
-        private readonly ILifecycleService _lifecycleService;
+        private readonly ILifetimeService _lifetimeService;
         private readonly INotificationsService _notificationsService;
 
-        public SignInViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILifecycleService lifecycleService, INotificationsService notificationsService)
+        public SignInViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILifetimeService lifecycleService, INotificationsService notificationsService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _lifecycleService = lifecycleService;
+            _lifetimeService = lifecycleService;
             _notificationsService = notificationsService;
 
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -156,7 +156,7 @@ namespace Unigram.ViewModels.SignIn
 
             var phoneNumber = (_phoneCode + _phoneNumber).Replace(" ", string.Empty);
 
-            foreach (var session in _lifecycleService.Items)
+            foreach (var session in _lifetimeService.Items)
             {
                 var user = session.ProtoService.GetUser(session.UserId);
                 if (user == null)
@@ -169,7 +169,7 @@ namespace Unigram.ViewModels.SignIn
                     var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AccountAlreadyLoggedIn, Strings.Resources.AppName, Strings.Resources.AccountSwitch, Strings.Resources.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        var active = _lifecycleService.Remove(session);
+                        var active = _lifetimeService.Remove(session);
 
                         var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(active.Id.ToString()) as NavigationService;
                         if (service == null)

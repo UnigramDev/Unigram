@@ -30,13 +30,13 @@ namespace Unigram.Services
 
     public class SessionService : TLViewModelBase, ISessionService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateAuthorizationState>, IHandle<UpdateConnectionState>
     {
-        private readonly ILifecycleService _lifecycleService;
+        private readonly ILifetimeService _lifetimeService;
         private readonly int _id;
 
-        public SessionService(int session, bool selected, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILifecycleService lifecycleService)
+        public SessionService(int session, bool selected, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILifetimeService lifecycleService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _lifecycleService = lifecycleService;
+            _lifetimeService = lifecycleService;
             _id = session;
 
             aggregator.Subscribe(this);
@@ -93,9 +93,9 @@ namespace Unigram.Services
         {
             if (update.AuthorizationState is AuthorizationStateClosed)
             {
-                _lifecycleService.Destroy(this);
+                _lifetimeService.Destroy(this);
             }
-            else if (update.AuthorizationState is AuthorizationStateWaitPhoneNumber && !_isActive && _lifecycleService.Items.Count > 1)
+            else if (update.AuthorizationState is AuthorizationStateWaitPhoneNumber && !_isActive && _lifetimeService.Items.Count > 1)
             {
                 ProtoService.Send(new Destroy());
             }

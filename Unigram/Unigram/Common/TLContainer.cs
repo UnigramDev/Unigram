@@ -18,14 +18,14 @@ namespace Unigram.Views
 
         //private Dictionary<int, IContainer> _containers = new Dictionary<int, IContainer>();
         private ConcurrentDictionary<int, IContainer> _containers = new ConcurrentDictionary<int, IContainer>();
-        private ILifecycleService _lifecycle;
+        private ILifetimeService _lifetime;
 
         private TLContainer()
         {
-            _lifecycle = new LifecycleService();
+            _lifetime = new LifetimeService();
         }
 
-        public ILifecycleService Lifecycle => _lifecycle;
+        public ILifetimeService Lifetime => _lifetime;
 
         public static TLContainer Current
         {
@@ -59,7 +59,7 @@ namespace Unigram.Views
             //}
 
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(_lifecycle).As<ILifecycleService>();
+            builder.RegisterInstance(_lifetime).As<ILifetimeService>();
 
             return _containers[id] = factory(builder, id);
         }
@@ -76,7 +76,7 @@ namespace Unigram.Views
         {
             if (session == int.MaxValue)
             {
-                session = _lifecycle.ActiveItem?.Id ?? 0;
+                session = _lifetime.ActiveItem?.Id ?? 0;
             }
 
             var result = default(TService);
@@ -95,7 +95,7 @@ namespace Unigram.Views
         {
             if (session == int.MaxValue)
             {
-                session = _lifecycle.ActiveItem?.Id ?? 0;
+                session = _lifetime.ActiveItem?.Id ?? 0;
             }
 
             var result = default(TService);

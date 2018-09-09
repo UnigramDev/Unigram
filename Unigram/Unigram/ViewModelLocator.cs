@@ -57,7 +57,7 @@ namespace Unigram
                 Configure(first);
             }
 
-            _container.Lifecycle.Update();
+            _container.Lifetime.Update();
         }
 
         private IEnumerable<int> GetSessions()
