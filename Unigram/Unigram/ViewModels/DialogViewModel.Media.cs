@@ -627,6 +627,59 @@ namespace Unigram.ViewModels
                     //{
                     //    operations.Add(op);
                     //}
+
+                    var file = video.File;
+                    var profile = await video.GetEncodingAsync();
+                    var transform = video.GetTransform();
+
+                    var basicProps = await file.GetBasicPropertiesAsync();
+                    var videoProps = await file.Properties.GetVideoPropertiesAsync();
+
+                    //var thumbnail = await ImageHelper.GetVideoThumbnailAsync(file, videoProps, transform);
+
+                    var videoWidth = (int)videoProps.GetWidth();
+                    var videoHeight = (int)videoProps.GetHeight();
+
+                    if (profile != null)
+                    {
+                        videoWidth = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Width : (int)profile.Video.Height;
+                        videoHeight = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Height : (int)profile.Video.Width;
+                    }
+
+                    var conversion = new VideoConversion();
+                    if (profile != null)
+                    {
+                        conversion.Transcode = true;
+                        conversion.Mute = profile.Audio == null;
+                        conversion.Width = profile.Video.Width;
+                        conversion.Height = profile.Video.Height;
+                        conversion.Bitrate = profile.Video.Bitrate;
+
+                        if (transform != null)
+                        {
+                            conversion.Transform = true;
+                            conversion.Rotation = transform.Rotation;
+                            conversion.OutputSize = transform.OutputSize;
+                            conversion.Mirror = transform.Mirror;
+                            conversion.CropRectangle = transform.CropRectangle;
+                        }
+                    }
+
+                    var generated = await file.ToGeneratedAsync("transcode#" + JsonConvert.SerializeObject(conversion));
+                    var thumbnail = await file.ToThumbnailAsync(conversion, "thumbnail_transcode#" + JsonConvert.SerializeObject(conversion));
+
+                    if (profile != null && profile.Audio == null)
+                    {
+                        var input = new InputMessageAnimation(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, GetFormattedText(video.Caption));
+
+                        operations.Add(input);
+                    }
+                    else
+                    {
+                        var input = new InputMessageVideo(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, true, GetFormattedText(video.Caption), video.Ttl ?? 0);
+
+                        operations.Add(input);
+                    }
                 }
             }
 
