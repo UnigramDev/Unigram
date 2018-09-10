@@ -141,7 +141,7 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return ProtoService.GetOption<OptionValueBoolean>("disable_top_chats")?.Value ?? true;
+                return !ProtoService.GetOption<OptionValueBoolean>("disable_top_chats")?.Value ?? true;
             }
             set
             {
@@ -184,7 +184,7 @@ namespace Unigram.ViewModels.Settings
                 }
             }
 
-            ProtoService.Send(new SetOption("disable_top_chats", new OptionValueBoolean(value)));
+            ProtoService.Send(new SetOption("disable_top_chats", new OptionValueBoolean(!value)));
         }
 
         public RelayCommand PasswordCommand { get; }
