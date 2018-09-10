@@ -100,18 +100,20 @@ namespace Unigram.ViewModels
         private readonly ILiveLocationService _liveLocationService;
         private readonly INotificationsService _pushService;
         private readonly IPlaybackService _playbackService;
+        private readonly IVoIPService _voipService;
 
         //private UserActivitySession _timelineSession;
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService)
+        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService, IVoIPService voipService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _locationService = locationService;
             _liveLocationService = liveLocationService;
             _pushService = pushService;
             _playbackService = playbackService;
+            _voipService = voipService;
 
             _stickers = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
 
@@ -2171,6 +2173,26 @@ namespace Unigram.ViewModels
             var user = CacheService.GetUser(chat);
             if (user == null)
             {
+                return;
+            }
+
+            var call = _voipService.ActiveCall;
+            if (call != null)
+            {
+                var callUser = CacheService.GetUser(call.UserId);
+                if (callUser != null && callUser.Id != user.Id)
+                {
+                    var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+
+                    }
+                }
+                else
+                {
+                    _voipService.Show();
+                }
+
                 return;
             }
 

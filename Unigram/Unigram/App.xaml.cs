@@ -529,7 +529,7 @@ namespace Unigram
         private async void OnStartSync(CoreDispatcher dispatcher)
         {
             //#if DEBUG
-            await VoIPConnection.Current.ConnectAsync();
+            //await VoIPConnection.Current.ConnectAsync();
             //#endif
 
             await Toast.RegisterBackgroundTasks();
@@ -577,7 +577,7 @@ namespace Unigram
             Logs.Log.Write("OnResuming");
 
             //#if DEBUG
-            await VoIPConnection.Current.ConnectAsync();
+            //await VoIPConnection.Current.ConnectAsync();
             //#endif
 
             base.OnResuming(s, e, previousExecutionState);

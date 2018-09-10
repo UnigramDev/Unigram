@@ -135,7 +135,6 @@
     <Compile Include="Common\UniqueList.cs" />
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
-    <Compile Include="Common\VoIPConnection.cs" />
     <Compile Include="Common\WindowContext.cs" />
     <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Constants.Secret.cs" />
@@ -410,6 +409,7 @@
     <Compile Include="Services\ProtoService.cs" />
     <Compile Include="Services\SessionService.cs" />
     <Compile Include="Services\Updates\UpdateWorkMode.cs" />
+    <Compile Include="Services\VoIPService.cs" />
     <Compile Include="Strings\en\Additional.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

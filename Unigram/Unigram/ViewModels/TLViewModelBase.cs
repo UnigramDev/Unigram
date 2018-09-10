@@ -50,6 +50,8 @@ namespace Unigram.ViewModels
 
         public IEventAggregator Aggregator => _aggregator;
 
+        public int SessionId => _protoService.SessionId;
+
         private bool _isLoading;
         public virtual bool IsLoading
         {

@@ -89,6 +89,8 @@ namespace Unigram
                 builder.RegisterType<NotificationsService>().As<INotificationsService>().SingleInstance().AutoActivate();
                 builder.RegisterType<GenerationService>().As<IGenerationService>().SingleInstance().AutoActivate();
 
+                builder.RegisterType<VoIPService>().As<IVoIPService>().SingleInstance();
+
                 //builder.RegisterType<MTProtoService>().WithParameter("account", account).As<IMTProtoService>().SingleInstance();
                 builder.RegisterType<DeviceInfoService>().As<IDeviceInfoService>().SingleInstance();
                 builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance();

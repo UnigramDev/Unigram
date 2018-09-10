@@ -49,6 +49,7 @@ namespace Unigram.Views
 
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
+        private readonly IEventAggregator _aggregator;
 
         private VoIPControllerWrapper _controller;
         private Call _call;
@@ -67,12 +68,13 @@ namespace Unigram.Views
 
         public ContentDialogBase Dialog { get; set; }
 
-        public PhoneCallPage(IProtoService protoService, ICacheService cacheService, bool extend)
+        public PhoneCallPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, bool extend)
         {
             this.InitializeComponent();
 
             _protoService = protoService;
             _cacheService = cacheService;
+            _aggregator = aggregator;
 
             _durationTimer = new DispatcherTimer();
             _durationTimer.Interval = TimeSpan.FromMilliseconds(500);
@@ -177,7 +179,12 @@ namespace Unigram.Views
         public void Connect(VoIPControllerWrapper controller)
         {
             _controller = controller;
+
+            // Let's avoid duplicated events
+            _controller.CallStateChanged -= OnCallStateChanged;
             _controller.CallStateChanged += OnCallStateChanged;
+
+            _controller.SignalBarsChanged -= OnSignalBarsChanged;
             _controller.SignalBarsChanged += OnSignalBarsChanged;
 
             _controller.SetMicMute(_isMuted);
@@ -279,6 +286,47 @@ namespace Unigram.Views
             switch (call.State)
             {
                 case CallStatePending pending:
+                    if (call.IsOutgoing)
+                    {
+                        ResetUI();
+                    }
+                    else
+                    {
+                        Mute.Visibility = Visibility.Collapsed;
+
+                        Close.Visibility = Visibility.Collapsed;
+                        Close.Margin = new Thickness();
+
+                        Accept.Margin = new Thickness(0, 0, 6, 0);
+                        Accept.Visibility = Visibility.Visible;
+
+                        Discard.Margin = new Thickness(6, 0, 0, 0);
+                        Discard.Visibility = Visibility.Visible;
+                    }
+                    break;
+                case CallStateDiscarded discarded:
+                    if (call.IsOutgoing && discarded.Reason is CallDiscardReasonDeclined)
+                    {
+                        Mute.Visibility = Visibility.Collapsed;
+
+                        Close.Margin = new Thickness(0, 0, 6, 0);
+                        Close.Visibility = Visibility.Visible;
+
+                        Accept.Margin = new Thickness(6, 0, 0, 0);
+                        Accept.Visibility = Visibility.Visible;
+
+                        Discard.Visibility = Visibility.Collapsed;
+                        Discard.Margin = new Thickness();
+                    }
+                    break;
+                default:
+                    ResetUI();
+                    break;
+            }
+
+            switch (call.State)
+            {
+                case CallStatePending pending:
                     StateLabel.Content = call.IsOutgoing
                         ? pending.IsReceived
                         ? Strings.Resources.VoipRinging
@@ -293,7 +341,26 @@ namespace Unigram.Views
                 case CallStateHangingUp hangingUp:
                     StateLabel.Content = Strings.Resources.VoipHangingUp;
                     break;
+                case CallStateDiscarded discarded:
+                    StateLabel.Content = discarded.Reason is CallDiscardReasonDeclined
+                        ? Strings.Resources.VoipBusy
+                        : Strings.Resources.VoipCallEnded;
+                    break;
             }
+        }
+
+        private void ResetUI()
+        {
+            Mute.Visibility = Visibility.Visible;
+
+            Close.Visibility = Visibility.Collapsed;
+            Close.Margin = new Thickness();
+
+            Accept.Visibility = Visibility.Collapsed;
+            Accept.Margin = new Thickness();
+
+            Discard.Margin = new Thickness();
+            Discard.Visibility = Visibility.Visible;
         }
 
         private void OnCallStateChanged(VoIPControllerWrapper sender, libtgvoip.CallState newState)
@@ -446,6 +513,23 @@ namespace Unigram.Views
             _collapsed = true;
 
             batch.End();
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            _aggregator.Publish(new UpdateCall(new Call { State = new CallStateDiscarded { Reason = new CallDiscardReasonEmpty() } }));
+        }
+
+        private void Accept_Click(object sender, RoutedEventArgs e)
+        {
+            if (_call.IsOutgoing && _call.State is CallStateDiscarded discarded && discarded.Reason is CallDiscardReasonDeclined)
+            {
+                _protoService.Send(new CreateCall(_call.UserId, new CallProtocol(true, true, 65, 74)));
+            }
+            else
+            {
+                _protoService.Send(new AcceptCall(_call.Id, new CallProtocol(true, true, 65, 74)));
+            }
         }
 
         private void Hangup_Click(object sender, RoutedEventArgs e)
