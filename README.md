@@ -45,7 +45,7 @@ The following tools and SDKs are mandatory for the project development:
     * NuGet package manager
     * Universal Windows Platform tools
     * Windows 10 SDK 17134
-	* TDLib 1.3.0 for Universal Windows Platform
+    * [TDLib for Universal Windows Platform](https://github.com/tdlib/td/)
 
 ## Dependencies
 The app uses the following NuGet packages to work:
