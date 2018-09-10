@@ -143,13 +143,14 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ContentPageHeader>
+        <controls:ContentPageHeader IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+                <ProgressBar x:Name="Reading" VerticalAlignment="Stretch" Background="Transparent" Foreground="{ThemeResource SystemControlBackgroundBaseLowBrush}" Grid.ColumnSpan="3"/>
 
                 <controls:GlyphButton
                      Glyph="&#xE72D;"
