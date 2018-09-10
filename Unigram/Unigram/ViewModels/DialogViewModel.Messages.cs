@@ -738,14 +738,18 @@ namespace Unigram.ViewModels
         {
             Search = null;
             CurrentInlineBot = null;
-            EmbedData = new MessageEmbedData { EditingMessage = message };
 
+            var container = new MessageEmbedData { EditingMessage = message };
             var input = message.Content.GetCaption();
+
             if (message.Content is MessageText text)
             {
                 input = text.Text;
+                container.WebPagePreview = text.WebPage;
+                container.WebPageUrl = text.WebPage?.Url;
             }
 
+            EmbedData = container;
             SetText(input);
 
             //if (message?.Media is TLMessageMediaGroup groupMedia)

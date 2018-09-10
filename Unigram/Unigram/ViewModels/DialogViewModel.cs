@@ -1838,22 +1838,21 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (container.IsEmpty)
-            {
-                EmbedData = null;
-            }
-            else if (container.WebPagePreview != null)
+            if (container.WebPagePreview != null)
             {
                 EmbedData = new MessageEmbedData { EditingMessage = container.EditingMessage, ReplyToMessage = container.ReplyToMessage, WebPagePreview = null };
+                DisableWebPagePreview = true;
             }
-
-            if (container.EditingMessage != null)
+            else
             {
-                SetText(null, false);
-                //Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
-            }
+                if (container.EditingMessage != null)
+                {
+                    SetText(null, false);
+                    //Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
+                }
 
-            DisableWebPagePreview = true;
+                EmbedData = null;
+            }
         }
 
         private long GetReply(bool clean)
