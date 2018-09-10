@@ -44,8 +44,8 @@ The following tools and SDKs are mandatory for the project development:
     * .NET Framework 4.7 SDK
     * NuGet package manager
     * Universal Windows Platform tools
-    * Windows 10 SDK 16299
-	* TDLib for Universal Windows Platform
+    * Windows 10 SDK 17134
+	* TDLib 1.3.0 for Universal Windows Platform
 
 ## Dependencies
 The app uses the following NuGet packages to work:
@@ -55,7 +55,6 @@ The app uses the following NuGet packages to work:
 * [Microsoft.Xaml.Behaviors.Uwp.Managed](https://www.nuget.org/packages/Microsoft.Xaml.Behaviors.Uwp.Managed/)
 * [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/)
 * [System.Reactive](https://www.nuget.org/packages/System.Reactive/)
-* [Template10](https://www.nuget.org/packages/Template10/)
 * [Win2D.uwp](https://www.nuget.org/packages/Win2D.uwp/)
 
 The project also relies on `libogg`, `libopus`, `libopusfile`, `libwebp` and `libtgvoip` that are included in the repository.
