@@ -348,16 +348,16 @@ namespace Unigram.Controls
                     if (/*e.SourcePageType == typeof(AboutPage) ||*/ e.SourcePageType == typeof(SettingsPage))
                     {
                         // The user opened first a chat, then the userinfo. Remove them from backstack.
-                        if (DetailFrame.BackStackDepth == 3)
-                        {
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        }
-                        // Simple case of about or settings page
-                        else
-                        {
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        }
+                        //if (DetailFrame.BackStackDepth == 3)
+                        //{
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        //}
+                        //// Simple case of about or settings page
+                        //else
+                        //{
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        //}
                         UpdateVisualState();
 
                     }
@@ -365,16 +365,16 @@ namespace Unigram.Controls
                     else if (e.SourcePageType == typeof(ChatPage))
                     {
                         // The user opened first a chat, then the userinfo. Remove them from backstack.
-                        if (DetailFrame.BackStackDepth == 3)
-                        {
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        }
-                        // Simple case of consecutive chats open
-                        else
-                        {
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        }
+                        //if (DetailFrame.BackStackDepth == 3)
+                        //{
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        //}
+                        //// Simple case of consecutive chats open
+                        //else
+                        //{
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        //}
                         UpdateVisualState();
                     }
                     // When the new page is user info show the back button in titlebar.

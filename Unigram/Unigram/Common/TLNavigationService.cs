@@ -143,7 +143,7 @@ namespace Unigram.Common
                 return;
             }
 
-            NavigateToChat(chat, message, accessToken);
+            NavigateToChat(chat, message, accessToken, state);
         }
     }
 }

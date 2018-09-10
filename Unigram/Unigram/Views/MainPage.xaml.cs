@@ -812,6 +812,7 @@ namespace Unigram.Views
             if (item is Chat chat)
             {
                 MasterDetail.NavigationService.NavigateToChat(chat);
+                MasterDetail.NavigationService.GoBackAt(0, false);
             }
         }
 

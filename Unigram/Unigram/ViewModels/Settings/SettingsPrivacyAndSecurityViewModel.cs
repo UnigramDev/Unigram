@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPrivacyAndSecurityViewModel : TLViewModelBase, IHandle<UpdateOption>
+    public class SettingsPrivacyAndSecurityViewModel : TLMultipleViewModelBase, IHandle<UpdateOption>
     {
         private readonly IContactsService _contactsService;
 
@@ -39,6 +39,10 @@ namespace Unigram.ViewModels.Settings
             AccountTTLCommand = new RelayCommand(AccountTTLExecute);
             PeerToPeerCommand = new RelayCommand(PeerToPeerExecute);
 
+            ChildViewModels.Add(_showStatusRules);
+            ChildViewModels.Add(_allowCallsRules);
+            ChildViewModels.Add(_allowChatInvitesRules);
+
             aggregator.Subscribe(this);
         }
 
@@ -60,11 +64,7 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            BeginOnUIThread(() => _showStatusRules.OnNavigatedToAsync(parameter, mode, state));
-            BeginOnUIThread(() => _allowCallsRules.OnNavigatedToAsync(parameter, mode, state));
-            BeginOnUIThread(() => _allowChatInvitesRules.OnNavigatedToAsync(parameter, mode, state));
-
-            return Task.CompletedTask;
+            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         public override IDispatcherWrapper Dispatcher
