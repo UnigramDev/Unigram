@@ -1832,17 +1832,28 @@ namespace Unigram.ViewModels
         public RelayCommand ClearReplyCommand { get; }
         private void ClearReplyExecute()
         {
-            if (_embedData != null && _embedData.EditingMessage != null)
+            var container = _embedData;
+            if (container == null)
+            {
+                return;
+            }
+
+            if (container.IsEmpty)
+            {
+                EmbedData = null;
+            }
+            else if (container.WebPagePreview != null)
+            {
+                EmbedData = new MessageEmbedData { EditingMessage = container.EditingMessage, ReplyToMessage = container.ReplyToMessage, WebPagePreview = null };
+            }
+
+            if (container.EditingMessage != null)
             {
                 SetText(null, false);
                 //Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
             }
-            else if (_embedData != null && _embedData.WebPagePreview != null)
-            {
-                DisableWebPagePreview = true;
-            }
 
-            EmbedData = null;
+            DisableWebPagePreview = true;
         }
 
         private long GetReply(bool clean)
