@@ -461,6 +461,7 @@ namespace Unigram.Views
                         {
                             Search_Click(null, null);
                         };
+
                     }), Strings.Resources.SearchMembers);
 
                     if (!(supergroup.Status is ChatMemberStatusCreator) && !(supergroup.Status is ChatMemberStatusLeft) && !(supergroup.Status is ChatMemberStatusBanned))
@@ -491,7 +492,14 @@ namespace Unigram.Views
                     CreateFlyoutItem(ref flyout, ViewModel.EditCommand, Strings.Resources.ChannelEdit);
                 }
 
-                CreateFlyoutItem(ref flyout, null, Strings.Resources.SearchMembers);
+                CreateFlyoutItem(ref flyout, new RelayCommand(() =>
+                {
+                    flyout.Closed += (s, args) =>
+                    {
+                        Search_Click(null, null);
+                    };
+
+                }), Strings.Resources.SearchMembers);
 
                 if (basicGroup.Status is ChatMemberStatusCreator && basicGroup.MemberCount > 0)
                 {

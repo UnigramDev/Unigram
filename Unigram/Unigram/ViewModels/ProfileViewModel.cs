@@ -973,6 +973,10 @@ namespace Unigram.ViewModels
             {
                 Search = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, new SupergroupMembersFilterSearch(query));
             }
+            else if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                Search = new ChatMemberCollection(ProtoService, chat.Id, query, new ChatMembersFilterMembers());
+            }
         }
 
         private ChatMemberCollection _search;
@@ -1126,10 +1130,23 @@ namespace Unigram.ViewModels
     public class ChatMemberCollection : IncrementalCollection<ChatMember>
     {
         private readonly IProtoService _protoService;
+        private readonly long _chatId;
+        private readonly ChatMembersFilter _filter2;
+        private readonly string _query;
+
         private readonly int _supergroupId;
         private readonly SupergroupMembersFilter _filter;
 
         private bool _hasMore;
+
+        public ChatMemberCollection(IProtoService protoService, long chatId, string query, ChatMembersFilter filter)
+        {
+            _protoService = protoService;
+            _chatId = chatId;
+            _filter2 = filter;
+            _query = query;
+            _hasMore = true;
+        }
 
         public ChatMemberCollection(IProtoService protoService, int supergroupId, SupergroupMembersFilter filter)
         {
@@ -1141,20 +1158,33 @@ namespace Unigram.ViewModels
 
         public override async Task<IList<ChatMember>> LoadDataAsync()
         {
-            var response = await _protoService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, Count, 200));
-            if (response is ChatMembers members)
+            if (_filter2 != null)
             {
-                if (members.Members.Count < 200)
+                var response = await _protoService.SendAsync(new SearchChatMembers(_chatId, _query, 200, _filter2));
+                if (response is ChatMembers members)
                 {
                     _hasMore = false;
-                }
 
-                if (_filter == null && members.TotalCount <= 200)
+                    return members.Members;
+                }
+            }
+            else
+            {
+                var response = await _protoService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, Count, 200));
+                if (response is ChatMembers members)
                 {
-                    return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToList();
-                }
+                    if (members.Members.Count < 200)
+                    {
+                        _hasMore = false;
+                    }
 
-                return members.Members;
+                    if (_filter == null && members.TotalCount <= 200)
+                    {
+                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToList();
+                    }
+
+                    return members.Members;
+                }
             }
 
             return new ChatMember[0];
