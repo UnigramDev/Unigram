@@ -1513,6 +1513,12 @@ namespace Unigram.ViewModels
             {
                 Delegate?.UpdatePinnedMessage(chat, null, true);
 
+                var pinned = Settings.GetChatPinnedMessage(chat.Id);
+                if (pinned == fullInfo.PinnedMessageId)
+                {
+                    return;
+                }
+
                 var response = await ProtoService.SendAsync(new GetMessage(chat.Id, fullInfo.PinnedMessageId));
                 if (response is Message message)
                 {
@@ -2253,6 +2259,13 @@ namespace Unigram.ViewModels
             }
             else
             {
+                var fullInfo = CacheService.GetSupergroupFull(supergroup.Id);
+                if (fullInfo == null)
+                {
+                    return;
+                }
+
+                Settings.SetChatPinnedMessage(chat.Id, fullInfo.PinnedMessageId);
                 Delegate?.UpdatePinnedMessage(chat, null, false);
 
                 //var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);

@@ -46,6 +46,9 @@ namespace Unigram.Services
         int PeerToPeerMode { get; set; }
         libtgvoip.DataSavingMode UseLessData { get; set; }
 
+        void SetChatPinnedMessage(long chatId, long messageId);
+        long GetChatPinnedMessage(long chatId);
+
         void Clear();
     }
 }
@@ -611,6 +614,18 @@ namespace Unigram.Common
                 _useLessData = value;
                 AddOrUpdateValue("UseLessData", (int)value);
             }
+        }
+
+        public void SetChatPinnedMessage(long chatId, long messageId)
+        {
+            var container = _own.CreateContainer("PinnedMessages", ApplicationDataCreateDisposition.Always);
+            AddOrUpdateValue(container, $"{chatId}", messageId);
+        }
+
+        public long GetChatPinnedMessage(long chatId)
+        {
+            var container = _own.CreateContainer("PinnedMessages", ApplicationDataCreateDisposition.Always);
+            return GetValueOrDefault(container, $"{chatId}", 0L);
         }
 
         public void CleanUp()
