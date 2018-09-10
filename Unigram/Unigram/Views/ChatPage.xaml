@@ -261,14 +261,14 @@
                 </Grid.ColumnDefinitions>
                 <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" DoubleTapped="Message_DoubleTapped"/>
 
-                <!--<Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
-                     Background="{ThemeResource MessageServiceBackgroundBrush}"
-                     VerticalAlignment="Bottom"
-                     CornerRadius="14"
-                     Margin="8,0,0,4"
-                     Grid.Column="1">
-                     <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
-                     </Border>-->
+                <Border x:Name="Action"
+                        Background="{ThemeResource MessageServiceBackgroundBrush}"
+                        VerticalAlignment="Bottom"
+                        CornerRadius="14"
+                        Margin="8,0,0,2"
+                        Grid.Column="2">
+                    <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                </Border>
             </Grid>
         </DataTemplate>
 
@@ -284,22 +284,14 @@
                                          Style="{StaticResource MessageBubbleProfilePictureStyle}"/>
                 <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" DoubleTapped="Message_DoubleTapped" Grid.Column="1"/>
 
-                <!--<Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
-                     Background="{ThemeResource MessageServiceBackgroundBrush}"
-                     VerticalAlignment="Bottom"
-                     CornerRadius="14"
-                     Margin="8,0,0,4"
-                     Grid.Column="2">
-                     <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
-                     </Border>
-                     <Border Visibility="{x:Bind FwdFrom.HasSavedFromMsgId, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
-                     Background="{ThemeResource MessageServiceBackgroundBrush}"
-                     VerticalAlignment="Bottom"
-                     CornerRadius="14"
-                     Margin="8,0,0,4"
-                     Grid.Column="2">
-                     <controls:GlyphButton Click="View_Click" Glyph="&#xE90B;" FontFamily="{StaticResource TelegramThemeFontFamily}" Padding="0,2,0,0" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
-                     </Border>-->
+                <Border x:Name="Action"
+                        Background="{ThemeResource MessageServiceBackgroundBrush}"
+                        VerticalAlignment="Bottom"
+                        CornerRadius="14"
+                        Margin="8,0,0,2"
+                        Grid.Column="2">
+                    <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                </Border>
             </Grid>
         </DataTemplate>
     </Page.Resources>

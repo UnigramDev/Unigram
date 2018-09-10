@@ -1007,26 +1007,31 @@ namespace Unigram.Views
             }
         }
 
-        private void View_Click(object sender, RoutedEventArgs e)
+        private void Action_Click(object sender, RoutedEventArgs e)
         {
-            //var button = sender as Button;
-            //var message = button.DataContext as TLMessage;
+            var button = sender as Button;
+            var message = button.Tag as MessageViewModel;
 
-            //if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasSavedFromPeer && message.FwdFrom.SavedFromPeer != null && message.FwdFrom.HasSavedFromMsgId && message.FwdFrom.SavedFromMsgId != null)
-            //{
-            //    ITLDialogWith with = null;
-            //    if (message.FwdFrom.SavedFromPeer is TLPeerUser user)
-            //        with = InMemoryCacheService.Current.GetUser(user.UserId);
-            //    else if (message.FwdFrom.SavedFromPeer is TLPeerChat chat)
-            //        with = InMemoryCacheService.Current.GetChat(chat.ChatId);
-            //    else if (message.FwdFrom.SavedFromPeer is TLPeerChannel channel)
-            //        with = InMemoryCacheService.Current.GetChat(channel.ChannelId);
+            if (message == null)
+            {
+                return;
+            }
 
-            //    if (with != null)
-            //    {
-            //        ViewModel.NavigationService.NavigateToDialog(with, message: message.FwdFrom.SavedFromMsgId);
-            //    }
-            //}
+            if (message.IsSaved())
+            {
+                if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                {
+                    ViewModel.NavigationService.NavigateToChat(fromUser.ForwardedFromChatId, fromUser.ForwardedFromMessageId);
+                }
+                else if (message.ForwardInfo is MessageForwardedPost post)
+                {
+                    ViewModel.NavigationService.NavigateToChat(post.ForwardedFromChatId, post.ForwardedFromMessageId);
+                }
+            }
+            else
+            {
+                ViewModel.MessageShareCommand.Execute(message);
+            }
         }
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)

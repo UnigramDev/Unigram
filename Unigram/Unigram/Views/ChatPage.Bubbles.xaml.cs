@@ -490,6 +490,28 @@ namespace Unigram.Views
                     }
                 }
 
+                var action = grid.FindName("Action") as Border;
+                if (action != null)
+                {
+                    var button = action.Child as GlyphButton;
+                    button.Tag = message;
+
+                    if (message.IsSaved())
+                    {
+                        button.Glyph = "\uE72A";
+                        action.Visibility = Visibility.Visible;
+                    }
+                    else if (message.IsShareable())
+                    {
+                        button.Glyph = "\uEE35";
+                        action.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        action.Visibility = Visibility.Collapsed;
+                    }
+                }
+
                 content = grid.FindName("Bubble") as FrameworkElement;
             }
             else if (content is StackPanel panel && !(content is MessageBubble))

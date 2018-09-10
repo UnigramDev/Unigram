@@ -21,6 +21,8 @@ namespace Unigram.Controls
             if (container != null && message != null)
             {
                 var chat = message.GetChat();
+                var action = message.IsSaved() || message.IsShareable();
+
                 if (message.IsService())
                 {
                     container.Padding = new Thickness(12, 0, 12, 0);
@@ -51,7 +53,7 @@ namespace Unigram.Controls
                         }
                         else
                         {
-                            container.Padding = new Thickness(50, 0, false ? 12 : 50, 0);
+                            container.Padding = new Thickness(50, 0, action ? 14 : 50, 0);
                         }
                     }
                 }
@@ -69,7 +71,7 @@ namespace Unigram.Controls
                         }
                         else
                         {
-                            container.Padding = new Thickness(12, 0, false ? 12 : 50, 0);
+                            container.Padding = new Thickness(12, 0, action ? 14 : 50, 0);
                         }
                     }
                 }
