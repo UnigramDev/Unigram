@@ -1982,21 +1982,7 @@ namespace Unigram.Views
 
         private void UnmaskTitleAndStatusBar()
         {
-            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
-            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
-
-            titlebar.BackgroundColor = backgroundBrush.Color;
-            titlebar.ForegroundColor = foregroundBrush.Color;
-            titlebar.ButtonBackgroundColor = backgroundBrush.Color;
-            titlebar.ButtonForegroundColor = foregroundBrush.Color;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = backgroundBrush.Color;
-                statusBar.ForegroundColor = foregroundBrush.Color;
-            }
+            TLWindowContext.GetForCurrentView().UpdateTitleBar();
         }
 
         private void Autocomplete_Loaded(object sender, RoutedEventArgs e)
@@ -2330,7 +2316,7 @@ namespace Unigram.Views
             SavedMessages.Visibility = user.Id == ViewModel.ProtoService.GetMyId() ? Visibility.Visible : Visibility.Collapsed;
 
             TextField.PlaceholderText = Strings.Resources.TypeMessage;
-            ViewModel.LastSeen = LastSeenConverter.GetLabel(user, true);
+            UpdateUserStatus(chat, user);
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)

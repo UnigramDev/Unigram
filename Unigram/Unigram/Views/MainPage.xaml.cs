@@ -25,6 +25,7 @@ using Unigram.Views.Chats;
 using Unigram.Views.SecretChats;
 using Unigram.Views.Settings;
 using Unigram.Views.Users;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI;
@@ -84,6 +85,7 @@ namespace Unigram.Views
 
             NavigationCacheMode = NavigationCacheMode.Enabled;
 
+            InitializeTitleBar();
             InitializeLocalization();
             InitializeSearch();
 
@@ -98,6 +100,24 @@ namespace Unigram.Views
             {
                 visual.Size = new Vector2(20, (float)args.NewSize.Height);
             };
+        }
+
+        private void InitializeTitleBar()
+        {
+            var sender = CoreApplication.GetCurrentView().TitleBar;
+
+            PageHeader.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+            MasterDetail.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+
+            sender.ExtendViewIntoTitleBar = true;
+            sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
+            sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+        }
+
+        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            PageHeader.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+            MasterDetail.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
         }
 
         private void InitializeLocalization()
@@ -655,10 +675,12 @@ namespace Unigram.Views
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
                 Root?.SetPaneToggleButtonVisibility(e.SourcePageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
+                SetTitleBarVisibility(Visibility.Visible);
             }
             else
             {
                 Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
+                SetTitleBarVisibility(e.SourcePageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
             }
 
             if (e.SourcePageType == typeof(ChatPage))
@@ -670,6 +692,36 @@ namespace Unigram.Views
             {
                 UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
             }
+        }
+
+        private void OnStateChanged(object sender, EventArgs e)
+        {
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
+            {
+                ChatsList.SelectionMode = ListViewSelectionMode.None;
+                ChatsList.SelectedItem = null;
+
+                Separator.BorderThickness = new Thickness(0);
+                Separator.Visibility = Visibility.Collapsed;
+
+                Root?.SetPaneToggleButtonVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
+                SetTitleBarVisibility(Visibility.Visible);
+                Header.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ChatsList.SelectionMode = ListViewSelectionMode.Single;
+                ChatsList.SelectedItem = _lastSelected;
+
+                Separator.BorderThickness = new Thickness(0, 0, 1, 0);
+                Separator.Visibility = Visibility.Visible;
+
+                Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
+                SetTitleBarVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
+                Header.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            ChatsList.UpdateViewState(MasterDetail.CurrentState);
         }
 
         private void UpdateListViewsSelectedItem(long chatId)
@@ -695,32 +747,9 @@ namespace Unigram.Views
             }
         }
 
-        private void OnStateChanged(object sender, EventArgs e)
+        private void SetTitleBarVisibility(Visibility visibility)
         {
-            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
-            {
-                ChatsList.SelectionMode = ListViewSelectionMode.None;
-                ChatsList.SelectedItem = null;
-
-                Separator.BorderThickness = new Thickness(0);
-                Separator.Visibility = Visibility.Collapsed;
-
-                Root?.SetPaneToggleButtonVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
-                Header.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                ChatsList.SelectionMode = ListViewSelectionMode.Single;
-                ChatsList.SelectedItem = _lastSelected;
-
-                Separator.BorderThickness = new Thickness(0, 0, 1, 0);
-                Separator.Visibility = Visibility.Visible;
-
-                Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
-                Header.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
-            }
-
-            ChatsList.UpdateViewState(MasterDetail.CurrentState);
+            VisualStateManager.GoToState(this, visibility == Visibility.Collapsed ? "Normal" : "TitleBar", false);
         }
 
         public Visibility EvalutatePaneToggleButtonVisibility()
@@ -1268,7 +1297,7 @@ namespace Unigram.Views
                 rpMasterTitlebar.Focus(FocusState.Programmatic);
             }
 
-            Search_TextChanged(null, null);
+            //Search_TextChanged(null, null);
         }
 
         private void Lock_Click(object sender, RoutedEventArgs e)

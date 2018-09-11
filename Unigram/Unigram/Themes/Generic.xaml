@@ -18,7 +18,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <Grid x:Name="TogglePaneTopPadding" />
+                            <Grid x:Name="TogglePaneTopPadding" Padding="{TemplateBinding Padding}" />
                             <local:GlyphButton x:Name="TogglePaneButton" Grid.Row="1" AutomationProperties.LandmarkType="Navigation"/>
                         </Grid>
                         <SplitView x:Name="RootSplitView" OpenPaneLength="240" IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
@@ -34,7 +34,7 @@
                                         <!--<RowDefinition Height="8" />-->
                                     </Grid.RowDefinitions>
                                     <Grid.Children>
-                                        <Grid x:Name="ContentPaneTopPadding" />
+                                        <Grid x:Name="ContentPaneTopPadding" Padding="{TemplateBinding Padding}"/>
                                         <Border Background="{ThemeResource NavigationViewAccentPaneBackground}" Margin="0,0,0,-52" Grid.RowSpan="3"/>
                                         <Border Background="{ThemeResource NavigationViewDefaultPaneBackground}" Margin="0,52,0,0" Grid.Row="3" Grid.RowSpan="3"/>
                                         <Border x:Name="HeaderContentBorder" Grid.Row="3" Child="{TemplateBinding PaneHeader}"/>
@@ -1157,8 +1157,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ButtonPageHeader">
-                    <StackPanel>
-                        <Grid Background="{TemplateBinding Background}" Height="{ThemeResource AppBarThemeCompactHeight}">
+                    <Border Background="{TemplateBinding Background}">
+                        <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
@@ -1171,11 +1171,11 @@
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
                              <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
-                             <TextBlock Text="Return to call" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
+                             <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
                              </Button>
                              <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
                              </Grid>-->
-                    </StackPanel>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1187,8 +1187,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentPageHeader">
-                    <StackPanel>
-                        <Grid Background="{TemplateBinding Background}" Height="{ThemeResource AppBarThemeCompactHeight}">
+                    <Border Background="{TemplateBinding Background}">
+                        <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                             <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
                             <Border BorderThickness="0,0,0,1" BorderBrush="{TemplateBinding BorderBrush}" IsHitTestVisible="False"/>
@@ -1196,11 +1196,11 @@
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
                              <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
-                             <TextBlock Text="Return to call" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
+                             <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
                              </Button>
                              <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
                              </Grid>-->
-                    </StackPanel>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1211,8 +1211,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PageHeader">
-                    <StackPanel>
-                        <Grid Background="{TemplateBinding Background}" Height="{ThemeResource AppBarThemeCompactHeight}">
+                    <Border Background="{TemplateBinding Background}">
+                        <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
                             <TextBlock Text="{TemplateBinding Text}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
                             <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False"/>
@@ -1220,11 +1220,11 @@
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
                              <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
-                             <TextBlock Text="Return to call" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
+                             <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
                              </Button>
                              <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
                              </Grid>-->
-                    </StackPanel>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1577,7 +1577,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentDialogBase">
-                    <Border x:Name="Container" Background="{TemplateBinding OverlayBrush}" Margin="{TemplateBinding Padding}">
+                    <Border x:Name="Container" Background="{TemplateBinding OverlayBrush}" Padding="{TemplateBinding Padding}">
                         <Border x:Name="BackgroundElement"
                                 Background="{TemplateBinding Background}"
                                 FlowDirection="{TemplateBinding FlowDirection}"

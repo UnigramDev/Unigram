@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Input;
 using Unigram.Core.Helpers;
 using Windows.System;
 using Unigram.Common;
+using Windows.ApplicationModel.Core;
 
 namespace Unigram.Controls
 {
@@ -101,21 +102,7 @@ namespace Unigram.Controls
 
         protected void UnmaskTitleAndStatusBar()
         {
-            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
-            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
-
-            titlebar.BackgroundColor = backgroundBrush.Color;
-            titlebar.ForegroundColor = foregroundBrush.Color;
-            titlebar.ButtonBackgroundColor = backgroundBrush.Color;
-            titlebar.ButtonForegroundColor = foregroundBrush.Color;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = backgroundBrush.Color;
-                statusBar.ForegroundColor = foregroundBrush.Color;
-            }
+            TLWindowContext.GetForCurrentView().UpdateTitleBar();
         }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
@@ -168,6 +155,8 @@ namespace Unigram.Controls
 
                 _applicationView = ApplicationView.GetForCurrentView();
                 OnVisibleBoundsChanged(_applicationView, null);
+
+                Padding = new Thickness(0, CoreApplication.GetCurrentView().TitleBar.Height, 0, 0);
 
                 if (_popupHost == null)
                 {
@@ -322,7 +311,7 @@ namespace Unigram.Controls
 
         private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
-            UpdateViewBase();
+            //UpdateViewBase();
         }
 
         private void OnLoading(FrameworkElement sender, object args)
@@ -373,8 +362,12 @@ namespace Unigram.Controls
 
             if (IsFullScreenMode(bounds))
             {
-                BackgroundElement.MinWidth = bounds.Width;
-                BackgroundElement.MinHeight = bounds.Height;
+                //BackgroundElement.MinWidth = bounds.Width;
+                //BackgroundElement.MinHeight = bounds.Height;
+                BackgroundElement.MaxWidth = double.PositiveInfinity;
+                BackgroundElement.MaxHeight = double.PositiveInfinity;
+                BackgroundElement.HorizontalAlignment = HorizontalAlignment.Stretch;
+                BackgroundElement.VerticalAlignment = VerticalAlignment.Stretch;
                 BackgroundElement.BorderThickness = new Thickness(0);
             }
             else

@@ -13,6 +13,7 @@ using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.Views.SignIn;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -45,10 +46,36 @@ namespace Unigram.Views
             service.Frame.Navigated += OnNavigated;
             _navigationService = service;
 
+            InitializeTitleBar();
             InitializeNavigation(service.Frame);
             InitializeLocalization();
 
             Navigation.Content = _navigationService.Frame;
+        }
+
+        private void InitializeTitleBar()
+        {
+            var sender = CoreApplication.GetCurrentView().TitleBar;
+
+            Navigation.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+
+            sender.ExtendViewIntoTitleBar = true;
+            sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
+            sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+        }
+
+        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            Navigation.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+
+            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+            foreach (var popup in popups)
+            {
+                if (popup.Child is ContentDialogBase contentDialog)
+                {
+                    contentDialog.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+                }
+            }
         }
 
         public void Switch(ISessionService session)

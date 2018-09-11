@@ -107,9 +107,10 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:MasterDetailView">
                         <controls:MasterDetailPanel x:Name="AdaptivePanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                            <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}">
+                            <Grid Background="{TemplateBinding Background}">
                                 <!--<Border x:Name="DropShadow" Loaded="DropShadow_Loaded"/>-->
                                 <controls:DialogBackgroundPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                                <Grid x:Name="DetailPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}"/>
                             </Grid>
                             <ContentPresenter x:Name="MasterFrame"
                                               Content="{TemplateBinding Content}"
@@ -141,6 +142,16 @@
     </Page.Resources>
 
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Normal"/>
+                <VisualState x:Name="TitleBar">
+                    <VisualState.Setters>
+                        <Setter Target="MasterDetail.BorderBrush" Value="{ThemeResource TelegramTitleBarBackgroundBrush}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <!--<controls:NavigationView.PaneFooter>
                 <StackPanel>
                 <controls:GlyphButton x:Name="NavigationAbout" Click="About_Click" Content="About" Glyph="&#xE946;" Style="{StaticResource NavigationGlyphButtonStyle}"/>
@@ -153,7 +164,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <controls:ContentPageHeader>
+            <controls:ContentPageHeader x:Name="PageHeader">
                 <Grid x:Name="Header">
                     <Grid x:Name="MainHeader">
                         <Grid.ColumnDefinitions>
@@ -656,7 +667,7 @@
                 </PivotItem>
             </Pivot>
 
-            <Border x:Name="Separator" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="3" Grid.Row="1"/>
+            <Border x:Name="Separator" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="3" Grid.Row="0"/>
         </Grid>
     </controls:MasterDetailView>
 </Page>

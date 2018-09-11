@@ -112,7 +112,7 @@ namespace Unigram.Common
 
             // Desktop Title Bar
             var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 
             // Background
             titleBar.BackgroundColor = background;
@@ -124,7 +124,8 @@ namespace Unigram.Common
             titleBar.ButtonHoverForegroundColor = foreground;
 
             // Buttons
-            titleBar.ButtonBackgroundColor = background;
+            //titleBar.ButtonBackgroundColor = background;
+            titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = background;
 
             // Buttons feedback
