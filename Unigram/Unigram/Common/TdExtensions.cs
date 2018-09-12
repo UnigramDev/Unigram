@@ -535,6 +535,11 @@ namespace Unigram.Common
             return string.IsNullOrEmpty(user.LastName) ? user.FirstName : $"{user.FirstName} {user.LastName}";
         }
 
+        public static string GetFullName(this Contact user)
+        {
+            return string.IsNullOrEmpty(user.LastName) ? user.FirstName : $"{user.FirstName} {user.LastName}";
+        }
+
         public static PhotoSize GetSize(this Wallpaper wallpaper, bool thumbnail)
         {
             return thumbnail ? wallpaper.GetSmall() : wallpaper.GetBig();

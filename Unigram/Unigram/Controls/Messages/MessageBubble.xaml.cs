@@ -431,7 +431,7 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, 3);
                 Grid.SetRow(Message, 2);
             }
-            else if ((message.Content is MessageText webPage && webPage.WebPage != null) || message.Content is MessageGame || message.Content is MessageContact)
+            else if ((message.Content is MessageText webPage && webPage.WebPage != null) || message.Content is MessageGame || (message.Content is MessageContact contact && !string.IsNullOrEmpty(contact.Contact.Vcard)))
             {
                 Media.Margin = new Thickness(0);
                 Placeholder.Visibility = Visibility.Collapsed;

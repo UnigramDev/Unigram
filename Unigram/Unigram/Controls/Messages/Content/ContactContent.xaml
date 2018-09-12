@@ -20,7 +20,7 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
-    <controls:ProfilePicture x:Name="Photo" Click="Button_Click" Width="48" Height="48"/>
+    <controls:ProfilePicture x:Name="Photo" Click="Photo_Click" Width="48" Height="48"/>
 
     <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
         <TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>

@@ -456,7 +456,15 @@ namespace Unigram.ViewModels
         {
             var picker = new ContactPicker();
             //picker.SelectionMode = ContactSelectionMode.Fields;
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Address);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.ConnectedServiceAccount);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Email);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.ImportantDate);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.JobInfo);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Notes);
             //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.PhoneNumber);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.SignificantOther);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Website);
 
             var picked = await picker.PickContactAsync();
             if (picked != null)
@@ -473,6 +481,16 @@ namespace Unigram.ViewModels
                     {
                         var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
 
+                        //var vcardStream = await ContactManager.ConvertContactToVCardAsync(full, 2000);
+                        //using (var stream = await vcardStream.OpenReadAsync())
+                        //{
+                        //    using (var dataReader = new DataReader(stream.GetInputStreamAt(0)))
+                        //    {
+                        //        await dataReader.LoadAsync((uint)stream.Size);
+                        //        vcard = dataReader.ReadString(dataReader.UnconsumedBufferLength);
+                        //    }
+                        //}
+
                         var first = annotations.FirstOrDefault();
                         if (first != null)
                         {
@@ -488,18 +506,18 @@ namespace Unigram.ViewModels
                         }
 
                         //contact = full;
-                    }
-                }
 
-                if (contact == null)
-                {
-                    var phone = picked.Phones.FirstOrDefault();
-                    if (phone == null)
-                    {
-                        return;
-                    }
+                        if (contact == null)
+                        {
+                            var phone = full.Phones.FirstOrDefault();
+                            if (phone == null)
+                            {
+                                return;
+                            }
 
-                    contact = new Telegram.Td.Api.Contact(phone.Number, picked.FirstName, picked.LastName, vcard, 0);
+                            contact = new Telegram.Td.Api.Contact(phone.Number, picked.FirstName, picked.LastName, vcard, 0);
+                        }
+                    }
                 }
 
                 if (contact != null)
