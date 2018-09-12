@@ -3,39 +3,38 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
             <Color x:Key="HistoryTextInFg">#F5F5F5</Color>
-            <Color x:Key="HistoryTextOutFg">#E5EDF2</Color>
+            <Color x:Key="HistoryTextOutFg">#E4ECF2</Color>
 
-            <Color x:Key="MsgInBg">#33393F</Color>
-            <Color x:Key="MsgOutBg">#2A2F33</Color>
+            <Color x:Key="MsgInBg">#182533</Color>
+            <Color x:Key="MsgOutBg">#2B5278</Color>
 
             <Color x:Key="MsgInShadow">#00748EA2</Color>
             <Color x:Key="MsgOutShadow">#00000000</Color>
 
-            <Color x:Key="MsgInDateFg">#828D94</Color>
-            <Color x:Key="MsgOutDateFg">#737F87</Color>
+            <Color x:Key="MsgInDateFg">#6D7F8F</Color>
+            <Color x:Key="MsgOutDateFg">#7DA8D3</Color>
 
-            <Color x:Key="DialogsSentIconFg">#1FEEDA</Color>
+            <Color x:Key="DialogsSentIconFg">#72BCFD</Color>
 
-            <Color x:Key="MsgInServiceFg">#4BE1C3</Color>
-            <Color x:Key="MsgOutServiceFg">#60E5CB</Color>
+            <Color x:Key="MsgInServiceFg">#71BAFA</Color>
+            <Color x:Key="MsgOutServiceFg">#90CAFF</Color>
 
-            <Color x:Key="MsgInReplyBarColor">#32CEB7</Color>
-            <Color x:Key="MsgOutReplyBarColor">#32CEB7</Color>
+            <Color x:Key="MsgInReplyBarColor">#429BDB</Color>
+            <Color x:Key="MsgOutReplyBarColor">#65B9F4</Color>
 
-            <Color x:Key="HistoryFileInIconFg">#33393F</Color>
-            <Color x:Key="HistoryFileOutIconFg">#33393F</Color>
+            <Color x:Key="HistoryFileInIconFg">#FFFFFF</Color>
+            <Color x:Key="HistoryFileOutIconFg">#FFFFFF</Color>
 
-            <Color x:Key="MsgFileInBg">#50D4C3</Color>
-            <Color x:Key="MsgFileOutBg">#10BFAB</Color>
+            <Color x:Key="MsgFileInBg">#3F96D0</Color>
+            <Color x:Key="MsgFileOutBg">#4C9CE2</Color>
 
-            <Color x:Key="HistoryLinkInFg">#36E1CB</Color>
-            <Color x:Key="HistoryLinkOutFg">#36E1CB</Color>
+            <Color x:Key="HistoryLinkInFg">#70BAF5</Color>
+            <Color x:Key="HistoryLinkOutFg">#83CAFF</Color>
 
             <Color x:Key="MsgDateImgBg">#54000000</Color>
 
-            <Color x:Key="CallArrowFg">#2BC7B8</Color>
-
-            <Color x:Key="CallArrowMissedFg">#DD5849</Color>
+            <Color x:Key="CallArrowFg">#49A2F0</Color>
+            <Color x:Key="CallArrowMissedFg">#ED5050</Color>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <Color x:Key="HistoryTextInFg">#000000</Color>
@@ -70,7 +69,6 @@
             <Color x:Key="MsgDateImgBg">#54000000</Color>
 
             <Color x:Key="CallArrowFg">#2AB32A</Color>
-
             <Color x:Key="CallArrowMissedFg">#DD5849</Color>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
