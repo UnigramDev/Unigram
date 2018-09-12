@@ -132,7 +132,7 @@ namespace Unigram.Controls.Messages.Content
                     Button.Opacity = 1;
                     Overlay.Opacity = 1;
 
-                    Subtitle.Text = Locale.FormatTTLString(message.Ttl, true);
+                    Subtitle.Text = Locale.FormatTtl(message.Ttl, true);
                 }
                 else
                 {

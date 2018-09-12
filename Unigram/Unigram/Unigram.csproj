@@ -293,6 +293,9 @@
     <Compile Include="Controls\Views\ChannelAdminLogFilterContentView.xaml.cs">
       <DependentUpon>ChannelAdminLogFilterContentView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\ChatTtlView.xaml.cs">
+      <DependentUpon>ChatTtlView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\EditUserNameView.xaml.cs">
       <DependentUpon>EditUserNameView.xaml</DependentUpon>
     </Compile>
@@ -301,6 +304,9 @@
     </Compile>
     <Compile Include="Controls\Views\LiveLocationsView.xaml.cs">
       <DependentUpon>LiveLocationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\MessageTtlView.xaml.cs">
+      <DependentUpon>MessageTtlView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\PhoneCallRatingView.xaml.cs">
       <DependentUpon>PhoneCallRatingView.xaml</DependentUpon>
@@ -329,9 +335,6 @@
     </Compile>
     <Compile Include="Controls\Views\SelectLivePeriodView.xaml.cs">
       <DependentUpon>SelectLivePeriodView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Views\SelectTTLSecondsView.xaml.cs">
-      <DependentUpon>SelectTTLSecondsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\SendMediaView.xaml.cs">
       <DependentUpon>SendMediaView.xaml</DependentUpon>
@@ -366,10 +369,11 @@
     </Compile>
     <Compile Include="Converters\BooleanNegationConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
+    <Compile Include="Converters\ChatTtlConverter.cs" />
     <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\FileTypeToStringConverter.cs" />
     <Compile Include="Converters\GeoLivePeriodConverter.cs" />
-    <Compile Include="Converters\MessageTTLConverter.cs" />
+    <Compile Include="Converters\MessageTtlConverter.cs" />
     <Compile Include="Converters\MeUrlPrefixConverter.cs" />
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\ProportionsToLabelConverter.cs" />
@@ -1582,6 +1586,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\ChatTtlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\EditYourAboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1609,6 +1617,10 @@
     <Page Include="Controls\Views\LiveLocationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\MessageTtlView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\PhoneCallRatingView.xaml">
       <SubType>Designer</SubType>
@@ -1655,10 +1667,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\SelectLivePeriodView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Views\SelectTTLSecondsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

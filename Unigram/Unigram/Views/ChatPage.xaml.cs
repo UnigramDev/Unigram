@@ -1054,7 +1054,8 @@ namespace Unigram.Views
                 return;
             }
 
-            var user = chat.Type is ChatTypePrivate privata ? ViewModel.ProtoService.GetUser(privata.UserId) : null;
+            //var user = chat.Type is ChatTypePrivate privata ? ViewModel.ProtoService.GetUser(privata.UserId) : null;
+            var user = ViewModel.CacheService.GetUser(chat);
             var secret = chat.Type is ChatTypeSecret;
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ProtoService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId) : null;
@@ -1688,6 +1689,7 @@ namespace Unigram.Views
         {
             AttachTextAreaExpression(ButtonAttach);
             AttachTextAreaExpression(ButtonSilent);
+            AttachTextAreaExpression(ButtonTimer);
             AttachTextAreaExpression(btnCommands);
             AttachTextAreaExpression(btnStickers);
             AttachTextAreaExpression(btnEditMessage);
@@ -1709,6 +1711,7 @@ namespace Unigram.Views
         {
             DetachTextAreaExpression(ButtonAttach);
             DetachTextAreaExpression(ButtonSilent);
+            DetachTextAreaExpression(ButtonTimer);
             DetachTextAreaExpression(btnCommands);
             DetachTextAreaExpression(btnStickers);
             DetachTextAreaExpression(btnEditMessage);
@@ -2202,6 +2205,7 @@ namespace Unigram.Views
             Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
             ReportSpam.Text = chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret ? Strings.Resources.ReportSpam : Strings.Resources.ReportSpamAndLeave;
 
+            ButtonTimer.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.Visibility = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.IsChecked = chat.DefaultDisableNotification;
 
@@ -2340,8 +2344,8 @@ namespace Unigram.Views
                 ViewModel.HasBotCommands = fullInfo.BotInfo.Commands.Count > 0;
             }
 
-            Call.Visibility = fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
-            CallPlaceholder.Visibility = fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
+            Call.Visibility = !secret && fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
+            CallPlaceholder.Visibility = !secret && fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateUserStatus(Chat chat, User user)

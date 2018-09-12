@@ -48,6 +48,7 @@ namespace Unigram.Services
         bool TryGetChatFromSecret(int secretId, out Chat chat);
 
         SecretChat GetSecretChat(int id);
+        SecretChat GetSecretChat(Chat chat);
         SecretChat GetSecretChatForUser(int id);
 
         User GetUser(Chat chat);
@@ -563,6 +564,16 @@ namespace Unigram.Services
             if (_secretChats.TryGetValue(id, out SecretChat value))
             {
                 return value;
+            }
+
+            return null;
+        }
+
+        public SecretChat GetSecretChat(Chat chat)
+        {
+            if (chat?.Type is ChatTypeSecret secret)
+            {
+                return GetSecretChat(secret.SecretChatId);
             }
 
             return null;

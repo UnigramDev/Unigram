@@ -409,13 +409,13 @@ namespace Unigram.Controls.Views
 
         private async void TTLSeconds_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new SelectTTLSecondsView(SelectedItem.IsPhoto);
-            dialog.TTLSeconds = SelectedItem.Ttl;
+            var dialog = new MessageTtlView(SelectedItem.IsPhoto);
+            dialog.Value = SelectedItem.Ttl;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                SelectedItem.Ttl = dialog.TTLSeconds;
+                SelectedItem.Ttl = dialog.Value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
             }
         }

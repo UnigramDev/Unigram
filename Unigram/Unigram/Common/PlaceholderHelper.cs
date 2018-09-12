@@ -32,12 +32,12 @@ namespace Unigram.Common
             return new SolidColorBrush(_colors[Math.Abs(i % _colors.Length)]);
         }
 
-        public static ImageSource GetIdenticon(IList<byte> hash)
+        public static ImageSource GetIdenticon(IList<byte> hash, int side)
         {
             var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
-                PlaceholderImageHelper.GetForCurrentView().DrawIdenticon(hash, stream);
+                PlaceholderImageHelper.GetForCurrentView().DrawIdenticon(hash, side, stream);
                 try
                 {
                     bitmap.SetSource(stream);

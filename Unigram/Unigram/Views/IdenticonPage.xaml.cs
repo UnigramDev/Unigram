@@ -76,7 +76,7 @@ namespace Unigram.Views.Users
                     builder.Append("\n");
                 }
 
-                Texture.Source = PlaceholderHelper.GetIdenticon(hash);
+                Texture.Source = PlaceholderHelper.GetIdenticon(hash, 192);
                 Hash.Text = builder.ToString();
 
                 TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.EncryptionKeyDescription, user.FirstName, user.FirstName));

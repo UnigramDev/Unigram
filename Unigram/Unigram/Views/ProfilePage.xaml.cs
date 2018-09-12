@@ -200,8 +200,19 @@ namespace Unigram.Views
 
         public void UpdateSecretChat(Chat chat, SecretChat secretChat)
         {
-            SecretLifetime.Visibility = secretChat.State is SecretChatStateReady ? Visibility.Visible : Visibility.Collapsed;
-            SecretHashKey.Visibility = secretChat.State is SecretChatStateReady ? Visibility.Visible : Visibility.Collapsed;
+            if (secretChat.State is SecretChatStateReady ready)
+            {
+                SecretLifetime.Badge = Locale.FormatTtl(secretChat.Ttl);
+                //SecretIdenticon.Source = PlaceholderHelper.GetIdenticon(secretChat.KeyHash, 24);
+
+                SecretLifetime.Visibility = Visibility.Visible;
+                SecretHashKey.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SecretLifetime.Visibility = Visibility.Collapsed;
+                SecretHashKey.Visibility = Visibility.Collapsed;
+            }
         }
 
 

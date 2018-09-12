@@ -1010,6 +1010,11 @@
                                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                 Command="{x:Bind ViewModel.ToggleSilentCommand}"
                                                 VerticalAlignment="Bottom"/>
+                    <controls:GlyphButton x:Name="ButtonTimer"
+                                          Glyph="&#xE899;"
+                                          FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                          Command="{x:Bind ViewModel.SetTimerCommand}"
+                                          VerticalAlignment="Bottom"/>
 
                     <Border x:Name="btnCommands" Grid.Column="1">
                         <controls:GlyphButton x:Name="ButtonCommands"

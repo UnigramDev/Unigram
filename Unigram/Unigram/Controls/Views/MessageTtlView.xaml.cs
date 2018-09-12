@@ -13,13 +13,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SelectTTLSecondsView : ContentDialog
+    public sealed partial class MessageTtlView : ContentDialog
     {
-        public SelectTTLSecondsView(bool photo)
+        public MessageTtlView(bool photo)
         {
             this.InitializeComponent();
 
@@ -39,7 +37,7 @@ namespace Unigram.Controls.Views
             FieldSeconds.ItemsSource = seconds;
         }
 
-        public int? TTLSeconds { get; set; }
+        public int? Value { get; set; }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {

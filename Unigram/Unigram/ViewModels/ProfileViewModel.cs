@@ -72,6 +72,7 @@ namespace Unigram.ViewModels
             DeleteCommand = new RelayCommand(DeleteExecute);
             ShareCommand = new RelayCommand(ShareExecute);
             SecretChatCommand = new RelayCommand(SecretChatExecute);
+            SetTimerCommand = new RelayCommand(SetTimerExecute);
             IdenticonCommand = new RelayCommand(IdenticonExecute);
             MigrateCommand = new RelayCommand(MigrateExecute);
             InviteCommand = new RelayCommand(InviteExecute);
@@ -893,6 +894,37 @@ namespace Unigram.ViewModels
             //    }
             //}
         }
+
+        #region Set timer
+
+        public RelayCommand SetTimerCommand { get; }
+        private async void SetTimerExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var secretChat = CacheService.GetSecretChat(chat);
+            if (secretChat == null)
+            {
+                return;
+            }
+
+            var dialog = new ChatTtlView();
+            dialog.Value = secretChat.Ttl;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            ProtoService.Send(new SendChatSetTtlMessage(chat.Id, dialog.Value));
+        }
+
+        #endregion
 
         #region Supergroup
 

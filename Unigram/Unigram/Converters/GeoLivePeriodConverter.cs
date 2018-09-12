@@ -12,7 +12,7 @@ namespace Unigram.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return Locale.FormatTTLString(System.Convert.ToInt32(value));
+            return Locale.FormatTtl(System.Convert.ToInt32(value));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -205,7 +205,7 @@ namespace Unigram.Common
             }
         }
 
-        public static string FormatTTLString(int ttl, bool shorter = false)
+        public static string FormatTtl(int ttl, bool shorter = false)
         {
             if (shorter)
             {

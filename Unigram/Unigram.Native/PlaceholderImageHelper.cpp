@@ -33,9 +33,9 @@ PlaceholderImageHelper^ PlaceholderImageHelper::GetForCurrentView()
 	return instance;
 }
 
-void PlaceholderImageHelper::DrawIdenticon(IVector<uint8>^ hash, IRandomAccessStream^ randomAccessStream)
+void PlaceholderImageHelper::DrawIdenticon(IVector<uint8>^ hash, int side, IRandomAccessStream^ randomAccessStream)
 {
-	ThrowIfFailed(InternalDrawIdenticon(hash, randomAccessStream));
+	ThrowIfFailed(InternalDrawIdenticon(hash, side, randomAccessStream));
 }
 
 void PlaceholderImageHelper::DrawProfilePlaceholder(Color clear, Platform::String^ text, IRandomAccessStream^ randomAccessStream)
@@ -48,7 +48,7 @@ void PlaceholderImageHelper::DrawThumbnailPlaceholder(Platform::String^ fileName
 	ThrowIfFailed(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
 }
 
-HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, IRandomAccessStream^ randomAccessStream)
+HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, int side, IRandomAccessStream^ randomAccessStream)
 {
 	auto lock = m_criticalSection.Lock();
 
@@ -57,8 +57,8 @@ HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, IRan
 	m_d2dContext->SetTarget(m_targetBitmap.Get());
 	m_d2dContext->BeginDraw();
 
-	auto width = 192;
-	auto height = 192;
+	auto width = side;
+	auto height = side;
 
 	if (hash->Size == 16)
 	{
@@ -100,7 +100,7 @@ HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, IRan
 	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 	{
 		ReturnIfFailed(result, CreateDeviceResources());
-		return InternalDrawIdenticon(hash, randomAccessStream);
+		return InternalDrawIdenticon(hash, side, randomAccessStream);
 	}
 
 	return SaveImageToStream(m_targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);

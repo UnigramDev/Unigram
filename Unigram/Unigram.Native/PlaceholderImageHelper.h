@@ -24,7 +24,7 @@ namespace Unigram
 		public:
 			static PlaceholderImageHelper^ GetForCurrentView();
 
-			void DrawIdenticon(_In_ IVector<uint8>^ hash, _In_ IRandomAccessStream^ randomAccessStream);
+			void DrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
 			void DrawProfilePlaceholder(Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
 			void DrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
 
@@ -32,7 +32,7 @@ namespace Unigram
 			PlaceholderImageHelper();
 
 		private:
-			HRESULT InternalDrawIdenticon(_In_ IVector<uint8>^ hash, _In_ IRandomAccessStream^ randomAccessStream);
+			HRESULT InternalDrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawProfilePlaceholder(Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);

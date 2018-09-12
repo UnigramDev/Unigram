@@ -2704,7 +2704,14 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var dialog = new SelectTTLSecondsView(false);
+            var secretChat = CacheService.GetSecretChat(chat);
+            if (secretChat == null)
+            {
+                return;
+            }
+
+            var dialog = new ChatTtlView();
+            dialog.Value = secretChat.Ttl;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -2712,11 +2719,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new SendChatSetTtlMessage(chat.Id, dialog.TTLSeconds ?? 0));
-            if (response is Message message)
-            {
-                //Items.Add(GetMessage(message));
-            }
+            ProtoService.Send(new SendChatSetTtlMessage(chat.Id, dialog.Value));
         }
 
         #endregion

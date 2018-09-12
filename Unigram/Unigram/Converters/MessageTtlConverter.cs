@@ -8,14 +8,14 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
 {
-    public class MessageTTLConverter : IValueConverter
+    public class MessageTtlConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var seconds = (int?)value;
             if (seconds == 0 || seconds == null)
             {
-                return parameter == null ? (object)seconds ?? 0 : "Off";
+                return parameter == null ? (object)seconds ?? 0 : Strings.Resources.ShortMessageLifetimeForever;
             }
             else if (seconds >= 1 && seconds < 21)
             {
@@ -44,10 +44,10 @@ namespace Unigram.Converters
 
             if (seconds >= 1 && seconds < 21)
             {
-                return Locale.FormatTTLString(seconds);
+                return Locale.FormatTtl(seconds);
             }
 
-            return Locale.FormatTTLString((seconds - 16) * 5);
+            return Locale.FormatTtl((seconds - 16) * 5);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

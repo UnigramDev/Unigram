@@ -116,7 +116,7 @@ namespace Unigram.Controls.Messages.Content
                     Button.Glyph = "\uE60D";
                     Button.Progress = 1;
 
-                    Subtitle.Text = Locale.FormatTTLString(Math.Max(message.Ttl, video.Duration), true);
+                    Subtitle.Text = Locale.FormatTtl(Math.Max(message.Ttl, video.Duration), true);
                 }
                 else
                 {

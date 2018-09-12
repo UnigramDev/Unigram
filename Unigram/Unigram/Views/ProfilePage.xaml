@@ -211,15 +211,19 @@
 
                             <controls:BadgeButton x:Name="SecretLifetime"
                                                   Visibility="Collapsed"
+                                                  Command="{x:Bind ViewModel.SetTimerCommand}"
                                                   Content="{CustomResource MessageLifetime}"
-                                                  Badge="{CustomResource ShortMessageLifetimeForever}"
                                                   Style="{StaticResource BadgeButtonStyle}"/>
 
                             <controls:BadgeButton x:Name="SecretHashKey"
                                                   Visibility="Collapsed"
                                                   Content="{CustomResource EncryptionKey}"
                                                   Command="{x:Bind ViewModel.IdenticonCommand}"
-                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                                                  Style="{StaticResource BadgeButtonStyle}">
+                                <!--<controls:BadgeButton.Badge>
+                                    <Image x:Name="SecretIdenticon" Width="24" Height="24"/>
+                                </controls:BadgeButton.Badge>-->
+                            </controls:BadgeButton>
 
                             <controls:BadgeButton x:Name="UserCommonChats"
                                                   Visibility="Collapsed"
