@@ -106,6 +106,8 @@ namespace Unigram.Views
             UpdateChatPhoto(chat);
 
             Notifications.IsOn = chat.NotificationSettings.MuteFor == 0;
+
+            Call.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -189,6 +191,8 @@ namespace Unigram.Views
 
             UserCommonChats.Badge = fullInfo.GroupInCommonCount;
             UserCommonChats.Visibility = fullInfo.GroupInCommonCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            Call.Visibility = fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateUserStatus(Chat chat, User user)

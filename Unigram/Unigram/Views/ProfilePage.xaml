@@ -60,12 +60,13 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="{CustomResource Info}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
 
-                    <!--<controls:GlyphButton
-                         Glyph="&#xE13A;"
-                         Command="{x:Bind ViewModel.CallCommand}"
-                         Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable, Mode=OneWay}"
-                         Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                         Grid.Column="1"/>-->
+                    <controls:GlyphButton
+                        x:Name="Call"
+                        Glyph="&#xE13A;"
+                        Visibility="Collapsed"
+                        Command="{x:Bind ViewModel.CallCommand}"
+                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                        Grid.Column="1"/>
                     <!--<controls:GlyphButton
                          x:Name="SendMessage"
                          Glyph="&#xE8BD;"
@@ -221,8 +222,8 @@
                                                   Command="{x:Bind ViewModel.IdenticonCommand}"
                                                   Style="{StaticResource BadgeButtonStyle}">
                                 <!--<controls:BadgeButton.Badge>
-                                    <Image x:Name="SecretIdenticon" Width="24" Height="24"/>
-                                </controls:BadgeButton.Badge>-->
+                                     <Image x:Name="SecretIdenticon" Width="24" Height="24"/>
+                                     </controls:BadgeButton.Badge>-->
                             </controls:BadgeButton>
 
                             <controls:BadgeButton x:Name="UserCommonChats"
