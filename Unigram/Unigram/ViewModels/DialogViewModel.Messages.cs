@@ -499,6 +499,12 @@ namespace Unigram.ViewModels
                         builder.AppendLine(venue.Venue.Address);
                         builder.Append(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", venue.Venue.Location.Latitude, venue.Venue.Location.Longitude));
                     }
+                    else if (message.Content is MessageContact contact)
+                    {
+                        builder.AppendLine($"[{Strings.Resources.AttachContact}]");
+                        builder.AppendLine(contact.Contact.GetFullName());
+                        builder.AppendLine(PhoneNumber.Format(contact.Contact.PhoneNumber));
+                    }
                     else if (message.Content is MessageText text)
                     {
                         builder.Append(text.Text.Text);
@@ -644,16 +650,20 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var input = message.Content.GetCaption();
+            var input = message.Content.GetCaption()?.Text;
             if (message.Content is MessageText text)
             {
-                input = text.Text;
+                input = text.Text?.Text;
+            }
+            else if (message.Content is MessageContact contact)
+            {
+                input = PhoneNumber.Format(contact.Contact.PhoneNumber);
             }
 
             if (input != null)
             {
                 var dataPackage = new DataPackage();
-                dataPackage.SetText(input.Text);
+                dataPackage.SetText(input);
                 ClipboardEx.TrySetContent(dataPackage);
             }
         }

@@ -1309,6 +1309,10 @@ namespace Unigram.Views
             {
                 return string.IsNullOrEmpty(text.Text.Text) ? Visibility.Collapsed : Visibility.Visible;
             }
+            else if (message.Content is MessageContact)
+            {
+                return Visibility.Visible;
+            }
 
             return message.Content.HasCaption() ? Visibility.Visible : Visibility.Collapsed;
         }
