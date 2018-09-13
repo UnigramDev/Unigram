@@ -107,6 +107,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Collections\SearchChatsCollection.cs" />
+    <Compile Include="Collections\SearchMembersAndUsersCollection.cs" />
     <Compile Include="Collections\SearchStickersCollection.cs" />
     <Compile Include="Collections\SearchUsersCollection.cs" />
     <Compile Include="Common\Mouse.cs" />

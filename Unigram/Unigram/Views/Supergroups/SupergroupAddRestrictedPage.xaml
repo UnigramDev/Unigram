@@ -49,7 +49,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock
-                        Text="{CustomResource ChannelAddAdmin}"
+                        Text="{CustomResource ChannelBlockUser}"
                         Style="{StaticResource BaseTextBlockStyle}"
                         VerticalAlignment="Center"
                         Margin="12,0"/>

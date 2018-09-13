@@ -14,24 +14,31 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {
-    public class SearchUsersCollection : ObservableCollection<KeyedList<string, object>>, ISupportIncrementalLoading
+    public class SearchMembersAndUsersCollection : ObservableCollection<KeyedList<string, object>>, ISupportIncrementalLoading
     {
         private readonly IProtoService _protoService;
+        private readonly long _chatId;
+        private readonly ChatMembersFilter _filter;
         private readonly string _query;
 
         private readonly List<int> _users = new List<int>();
 
+        private KeyedList<string, object> _chat;
         private KeyedList<string, object> _local;
         private KeyedList<string, object> _remote;
 
-        public SearchUsersCollection(IProtoService protoService, string query)
+        public SearchMembersAndUsersCollection(IProtoService protoService, long chatId, ChatMembersFilter filter, string query)
         {
             _protoService = protoService;
+            _chatId = chatId;
+            _filter = filter;
             _query = query;
 
-            _local = new KeyedList<string, object>(null as string);
+            _chat = new KeyedList<string, object>(null as string);
+            _local = new KeyedList<string, object>(Strings.Resources.Contacts.ToUpper());
             _remote = new KeyedList<string, object>(Strings.Resources.GlobalSearch);
 
+            Add(_chat);
             Add(_local);
             Add(_remote);
         }
@@ -44,11 +51,32 @@ namespace Unigram.Collections
             {
                 if (phase == 0)
                 {
+                    var response = await _protoService.SendAsync(new SearchChatMembers(_chatId, _query, 100, _filter));
+                    if (response is ChatMembers members)
+                    {
+                        foreach (var member in members.Members)
+                        {
+                            var user = _protoService.GetUser(member.UserId);
+                            if (user != null)
+                            {
+                                _users.Add(member.UserId);
+                                _chat.Add(new SearchResult(user, _query, false));
+                            }
+                        }
+                    }
+                }
+                else if (phase == 1)
+                {
                     var response = await _protoService.SendAsync(new SearchContacts(_query, 100));
                     if (response is Users users)
                     {
                         foreach (var id in users.UserIds)
                         {
+                            if (_users.Contains(id))
+                            {
+                                continue;
+                            }
+
                             var user = _protoService.GetUser(id);
                             if (user != null)
                             {
@@ -58,10 +86,10 @@ namespace Unigram.Collections
                         }
                     }
                 }
-                else if (phase == 1)
+                else if (phase == 2)
                 {
                     var response = await _protoService.SendAsync(new SearchChatsOnServer(_query, 100));
-                    if (response is Chats chats && _local != null)
+                    if (response is Chats chats)
                     {
                         foreach (var id in chats.ChatIds)
                         {
@@ -79,7 +107,7 @@ namespace Unigram.Collections
                         }
                     }
                 }
-                else if (phase == 2)
+                else if (phase == 3)
                 {
                     var response = await _protoService.SendAsync(new SearchPublicChats(_query));
                     if (response is Chats chats)
