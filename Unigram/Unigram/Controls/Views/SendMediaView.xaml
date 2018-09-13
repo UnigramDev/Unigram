@@ -781,6 +781,7 @@
                     View="{x:Bind}"
                     Autocomplete="{x:Bind ListAutocomplete}"
                     DataContext="{x:Bind ViewModel}"
+                    Paste="OnPaste"
                     MaxLength="200"
                     InputScope="Chat"
                     PlaceholderText="{CustomResource AddCaption}"
