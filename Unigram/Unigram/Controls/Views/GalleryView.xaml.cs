@@ -68,6 +68,7 @@ namespace Unigram.Controls.Views
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
             {
+                FlyoutCopy.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.C, ScopeOwner = this });
                 FlyoutSaveAs.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.S, ScopeOwner = this });
             }
 
@@ -918,7 +919,8 @@ namespace Unigram.Controls.Views
             }
 
             CreateFlyoutItem(ref flyout, item.CanView, ViewModel.ViewCommand, item, Strings.Resources.ShowInChat);
-            CreateFlyoutItem(ref flyout, ViewModel.CanSave, ViewModel.SaveCommand, item, Strings.Additional.SaveAs);
+            CreateFlyoutItem(ref flyout, item.CanCopy, ViewModel.CopyCommand, item, Strings.Resources.Copy, Windows.System.VirtualKey.C);
+            CreateFlyoutItem(ref flyout, ViewModel.CanSave, ViewModel.SaveCommand, item, Strings.Additional.SaveAs, Windows.System.VirtualKey.S);
             CreateFlyoutItem(ref flyout, ViewModel.CanOpenWith, ViewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp);
             CreateFlyoutItem(ref flyout, ViewModel.CanDelete, ViewModel.DeleteCommand, item, Strings.Resources.Delete);
 
@@ -933,7 +935,7 @@ namespace Unigram.Controls.Views
             }
         }
 
-        private void CreateFlyoutItem(ref MenuFlyout flyout, bool create, ICommand command, object parameter, string text)
+        private void CreateFlyoutItem(ref MenuFlyout flyout, bool create, ICommand command, object parameter, string text, Windows.System.VirtualKey? key = null)
         {
             if (create)
             {
@@ -942,6 +944,11 @@ namespace Unigram.Controls.Views
                 flyoutItem.Command = command;
                 flyoutItem.CommandParameter = parameter;
                 flyoutItem.Text = text;
+
+                if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
+                {
+                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = key.Value, ScopeOwner = this });
+                }
 
                 flyout.Items.Add(flyoutItem);
             }

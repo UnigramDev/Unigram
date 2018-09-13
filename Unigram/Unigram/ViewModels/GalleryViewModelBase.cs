@@ -15,8 +15,10 @@ using Unigram.Services;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.System;
 
 namespace Unigram.ViewModels
@@ -31,6 +33,7 @@ namespace Unigram.ViewModels
             StickersCommand = new RelayCommand(StickersExecute);
             ViewCommand = new RelayCommand(ViewExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
+            CopyCommand = new RelayCommand(CopyExecute);
             SaveCommand = new RelayCommand(SaveExecute);
             OpenWithCommand = new RelayCommand(OpenWithExecute);
 
@@ -109,6 +112,8 @@ namespace Unigram.ViewModels
                 OnSelectedItemChanged(value);
                 //RaisePropertyChanged(() => SelectedIndex);
                 RaisePropertyChanged(() => Position);
+                RaisePropertyChanged(() => CanCopy);
+                RaisePropertyChanged(() => CanSave);
             }
         }
 
@@ -153,6 +158,14 @@ namespace Unigram.ViewModels
             get
             {
                 return false;
+            }
+        }
+
+        public virtual bool CanCopy
+        {
+            get
+            {
+                return SelectedItem.IsPhoto;
             }
         }
 
@@ -229,6 +242,31 @@ namespace Unigram.ViewModels
         public RelayCommand DeleteCommand { get; }
         protected virtual void DeleteExecute()
         {
+        }
+
+        public RelayCommand CopyCommand { get; }
+        protected async void CopyExecute()
+        {
+            var item = _selectedItem;
+            if (item == null)
+            {
+                return;
+            }
+
+            var file = item.GetFile();
+
+            if (file.Local.IsDownloadingCompleted)
+            {
+                try
+                {
+                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+
+                    var dataPackage = new DataPackage();
+                    dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(temp));
+                    ClipboardEx.TrySetContent(dataPackage);
+                }
+                catch { }
+            }
         }
 
         public RelayCommand SaveCommand { get; }
@@ -351,6 +389,8 @@ namespace Unigram.ViewModels
 
         public virtual bool CanView { get; private set; }
 
+        public virtual bool CanCopy { get; private set; }
+
         public virtual void Share()
         {
             throw new NotImplementedException();
@@ -472,6 +512,7 @@ namespace Unigram.ViewModels
 
 
         public override bool CanView => true;
+        public override bool CanCopy => IsPhoto;
     }
 
     public class GalleryProfilePhotoItem : GalleryItem
@@ -535,6 +576,8 @@ namespace Unigram.ViewModels
         public override object Constraint => new PhotoSize(string.Empty, null, 600, 600);
 
         public override string Caption => _caption;
+
+        public override bool CanCopy => true;
     }
 
     public class GalleryPhotoItem : GalleryItem
@@ -588,6 +631,8 @@ namespace Unigram.ViewModels
         public override string Caption => _caption;
 
         public override bool HasStickers => _photo.HasStickers;
+
+        public override bool CanCopy => true;
     }
 
     public class GalleryVideoItem : GalleryItem

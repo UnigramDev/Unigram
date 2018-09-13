@@ -403,6 +403,10 @@
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanView, Mode=OneWay}"
                                             Text="{CustomResource ShowInChat}"/>
+                            <MenuFlyoutItem x:Name="FlyoutCopy"
+                                            Command="{x:Bind ViewModel.CopyCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanCopy}"
+                                            Text="{CustomResource Copy}"/>
                             <MenuFlyoutItem x:Name="FlyoutSaveAs"
                                             Command="{x:Bind ViewModel.SaveCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
