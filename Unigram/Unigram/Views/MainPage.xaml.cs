@@ -89,7 +89,12 @@ namespace Unigram.Views
             InitializeLocalization();
             InitializeSearch();
 
-            Handle(new UpdateConnectionState(ViewModel.CacheService.GetConnectionState()));
+            var update = new UpdateConnectionState(ViewModel.CacheService.GetConnectionState());
+            if (update.State != null)
+            {
+                Handle(update);
+                ViewModel.Aggregator.Publish(update);
+            }
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
 
@@ -106,7 +111,11 @@ namespace Unigram.Views
         {
             var sender = CoreApplication.GetCurrentView().TitleBar;
 
-            PageHeader.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+            TitleBarrr.Visibility = sender.IsVisible ? Visibility.Visible : Visibility.Collapsed;
+            TitleBarrr.Height = sender.Height;
+            TitleBarrr.ColumnDefinitions[0].Width = new GridLength(sender.SystemOverlayLeftInset, GridUnitType.Pixel);
+
+            //PageHeader.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
             MasterDetail.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
 
             sender.ExtendViewIntoTitleBar = true;
@@ -116,7 +125,11 @@ namespace Unigram.Views
 
         private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            PageHeader.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+            TitleBarrr.Visibility = sender.IsVisible ? Visibility.Visible : Visibility.Collapsed;
+            TitleBarrr.Height = sender.Height;
+            TitleBarrr.ColumnDefinitions[0].Width = new GridLength(sender.SystemOverlayLeftInset, GridUnitType.Pixel);
+
+            //PageHeader.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
             MasterDetail.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
         }
 
@@ -271,7 +284,38 @@ namespace Unigram.Views
                         Proxy.Visibility = Visibility.Collapsed;
                         break;
                 }
+
+                switch (update.State)
+                {
+                    case ConnectionStateWaitingForNetwork waitingForNetwork:
+                        ShowStatus(Strings.Resources.WaitingForNetwork);
+                        break;
+                    case ConnectionStateConnecting connecting:
+                        ShowStatus(Strings.Resources.Connecting);
+                        break;
+                    case ConnectionStateConnectingToProxy connectingToProxy:
+                        ShowStatus(Strings.Resources.ConnectingToProxy);
+                        break;
+                    case ConnectionStateUpdating updating:
+                        ShowStatus(Strings.Resources.Updating);
+                        break;
+                    case ConnectionStateReady ready:
+                        HideStatus();
+                        return;
+                }
             });
+        }
+
+        private void ShowStatus(string text)
+        {
+            Status.IsIndeterminate = true;
+            StatusLabel.Text = text;
+        }
+
+        private void HideStatus()
+        {
+            Status.IsIndeterminate = false;
+            StatusLabel.Text = "Unigram";
         }
 
         public void Handle(UpdateCall update)

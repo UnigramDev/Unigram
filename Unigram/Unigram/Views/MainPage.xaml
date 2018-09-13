@@ -162,9 +162,18 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <controls:ContentPageHeader x:Name="PageHeader">
+            <Grid x:Name="TitleBarrr" Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
+                <TextBlock x:Name="StatusLabel" VerticalAlignment="Center" TextLineBounds="TrimToCapHeight" Margin="12,0,0,0" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
+            </Grid>
+            <controls:ContentPageHeader x:Name="PageHeader" Grid.Row="1">
                 <Grid x:Name="Header">
                     <Grid x:Name="MainHeader">
                         <Grid.ColumnDefinitions>
@@ -248,7 +257,7 @@
                 </Grid>
             </controls:ContentPageHeader>
 
-            <Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="1">
+            <Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="48"/>
@@ -266,14 +275,14 @@
                 <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
             </Grid>
 
-            <Grid x:Name="CallBanner" Visibility="Collapsed" Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}" Grid.Row="1">
+            <Grid x:Name="CallBanner" Visibility="Collapsed" Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}" Grid.Row="2">
                 <Button Command="{x:Bind ViewModel.ReturnToCallCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
                     <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </Button>
                 <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
             </Grid>
 
-            <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="2">
+            <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="3">
                 <PivotItem x:Name="TabChats" Header="Chats">
                     <Grid>
                         <ListView x:Name="DialogsSearchListView"
@@ -667,7 +676,7 @@
                 </PivotItem>
             </Pivot>
 
-            <Border x:Name="Separator" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="3" Grid.Row="0"/>
+            <Border x:Name="Separator" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="4" Grid.Row="0"/>
         </Grid>
     </controls:MasterDetailView>
 </Page>
