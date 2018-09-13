@@ -450,7 +450,7 @@ namespace Unigram.Controls.Cells
             }
             else if (message.Content is MessageVenue vanue)
             {
-                return result + $"{Strings.Resources.AttachLocation}, ";
+                return result + Strings.Resources.AttachLocation;
             }
             else if (message.Content is MessagePhoto photo)
             {

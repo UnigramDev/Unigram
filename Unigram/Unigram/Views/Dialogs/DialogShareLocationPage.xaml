@@ -11,7 +11,12 @@
       mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListView x:Name="NearbyList" ItemsSource="{Binding Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="NearbyList_ItemClick">
+        <ListView x:Name="NearbyList"
+                  ItemsSource="{Binding Items}"
+                  SelectionMode="None"
+                  IsItemClickEnabled="True"
+                  ItemClick="NearbyList_ItemClick"
+                  ContainerContentChanging="OnContainerContentChanging">
             <ListView.Header>
                 <StackPanel>
                     <Grid x:Name="MapPresenter" Background="Red">
@@ -124,17 +129,22 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="td:Venue">
-                    <StackPanel Height="48" Orientation="Horizontal">
+                    <Grid Height="48">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
                         <Border Height="40" Width="40" CornerRadius="20" Margin="0,0,12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-                            <!--<BitmapIcon UriSource="{x:Bind VenueType, Converter={StaticResource VenueToGlyphConverter}}" Margin="4"/>-->
+                            <BitmapIcon Margin="4"/>
                         </Border>
                         <StackPanel Orientation="Vertical"
                                     HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center">
+                                    VerticalAlignment="Center"
+                                    Grid.Column="1">
                             <TextBlock Text="{x:Bind Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
                             <TextBlock Text="{x:Bind Address}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                         </StackPanel>
-                    </StackPanel>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>

@@ -39,7 +39,7 @@ namespace Unigram.ViewModels.Dialogs
 
             Location = location;
 
-            var venues = await _locationService.GetVenuesAsync(location.Point.Position.Latitude, location.Point.Position.Longitude);
+            var venues = await _locationService.GetVenuesAsync(0, location.Point.Position.Latitude, location.Point.Position.Longitude);
             Items.ReplaceWith(venues);
         }
 

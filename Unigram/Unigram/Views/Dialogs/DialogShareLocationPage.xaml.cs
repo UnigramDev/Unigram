@@ -238,6 +238,26 @@ namespace Unigram.Views.Dialogs
                 Dialog.Hide(ContentDialogBaseResult.OK);
             }
         }
+
+        #region Recycle
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var venue = args.Item as Venue;
+
+            var border = content.Children[0] as Border;
+            var bitmap = border.Child as BitmapIcon;
+
+            bitmap.UriSource = new Uri(string.Format("https://ss3.4sqi.net/img/categories_v2/{0}_88.png", venue.Type));
+        }
+
+        #endregion
     }
 
     public class Poi

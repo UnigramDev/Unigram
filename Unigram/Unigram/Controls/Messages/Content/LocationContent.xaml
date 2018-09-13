@@ -8,10 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="320">
 
     <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-        <controls:ImageView x:Name="Texture" Click="Button_Click" MaxWidth="320" MaxHeight="240"/>
+        <controls:ImageView x:Name="Texture" Click="Button_Click" MaxWidth="320" MaxHeight="200"/>
         <Canvas Width="40" Height="47.691" Margin="0,-48,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
             <Path Width="40" Height="47.691" Data="F1M20,47.691C20,47.691 0,33.847 0,20 0,8.955 8.955,0 20,0 31.044,0 40,8.955 40,20 40,33.847 20,47.691 20,47.691" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
             <Border Height="40" Width="40">

@@ -35,17 +35,19 @@ namespace Unigram.Services
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
+        private readonly ISessionService _sessionService;
         private readonly ISettingsService _settings;
         private readonly IEventAggregator _aggregator;
 
         private readonly DisposableMutex _registrationLock;
         private bool _alreadyRegistered;
 
-        public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, ISessionService sessionService, IEventAggregator aggregator)
         {
             _protoService = protoService;
             _cacheService = cacheService;
             _settings = settingsService;
+            _sessionService = sessionService;
             _aggregator = aggregator;
 
             _registrationLock = new DisposableMutex();
@@ -200,7 +202,19 @@ namespace Unigram.Services
 
                 var user = _protoService.GetUser(_protoService.GetMyId());
 
-                Execute.BeginOnUIThread(() =>
+                Update(chat, () =>
+                {
+                    NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, date, loc_key);
+                    NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
+                });
+            }, TimeSpan.FromSeconds(3));
+        }
+
+        private void Update(Chat chat, Action action)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                if (_sessionService.IsActive)
                 {
                     var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + _protoService.SessionId);
                     if (service == null)
@@ -212,11 +226,10 @@ namespace Unigram.Services
                     {
                         return;
                     }
+                }
 
-                    NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, date, loc_key);
-                    NotificationTask.UpdatePrimaryTile(caption, content, picture);
-                });
-            }, TimeSpan.FromSeconds(3));
+                action();
+            });
         }
 
         private string GetTag(Message message)
@@ -267,7 +280,7 @@ namespace Unigram.Services
                 launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", basicGroup.BasicGroupId);
             }
 
-            return launch;
+            return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _protoService.SessionId);
         }
 
         public async Task RegisterAsync()
@@ -562,7 +575,7 @@ namespace Unigram.Services
             }
             else if (message.Content is MessageVenue vanue)
             {
-                return result + $"{Strings.Resources.AttachLocation}, ";
+                return result + Strings.Resources.AttachLocation;
             }
             else if (message.Content is MessagePhoto photo)
             {

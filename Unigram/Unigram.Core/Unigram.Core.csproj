@@ -130,7 +130,6 @@
     <Compile Include="Services\HardwareService.cs" />
     <Compile Include="Services\HockeyAppUpdateService.cs" />
     <Compile Include="Services\LiveLocationService.cs" />
-    <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
     <Compile Include="Services\VibrationService.cs" />

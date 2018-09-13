@@ -205,7 +205,7 @@ namespace Unigram.Controls
             else if (constraint is Location location)
             {
                 width = 320;
-                height = 240;
+                height = 200;
             }
             else if (constraint is Photo photo)
             {
@@ -227,7 +227,7 @@ namespace Unigram.Controls
             else if (constraint is Venue venue)
             {
                 width = 320;
-                height = 240;
+                height = 200;
             }
             else if (constraint is Video video)
             {

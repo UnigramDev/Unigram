@@ -108,6 +108,8 @@ namespace Unigram.Controls.Messages
             }
 
             Margin = new Thickness(0, message.IsFirst ? 2 : 1, 0, message.IsLast ? 2 : 1);
+
+            //UpdateMessageContent(message, true);
         }
 
         public void UpdateMessageReply(MessageViewModel message)
@@ -362,7 +364,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        public void UpdateMessageContent(MessageViewModel message)
+        public void UpdateMessageContent(MessageViewModel message, bool padding = false)
         {
             MaybeUseInner(ref message);
 
@@ -487,6 +489,11 @@ namespace Unigram.Controls.Messages
             //        Footer.HorizontalAlignment = HorizontalAlignment.Right;
             //    }
             //}
+
+            if (padding)
+            {
+                return;
+            }
 
             UpdateMessageText(message);
 
@@ -1030,7 +1037,7 @@ namespace Unigram.Controls.Messages
             else if (constraint is Location location)
             {
                 width = 320;
-                height = 240;
+                height = 200;
 
                 goto Calculate;
             }
@@ -1059,7 +1066,7 @@ namespace Unigram.Controls.Messages
             else if (constraint is Venue venue)
             {
                 width = 320;
-                height = 240;
+                height = 200;
 
                 goto Calculate;
             }

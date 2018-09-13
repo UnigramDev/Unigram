@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Converters;
 using Windows.ApplicationModel.Resources;
 using Windows.Globalization.NumberFormatting;
 using Windows.System.UserProfile;
@@ -247,6 +248,57 @@ namespace Unigram.Common
                     return string.Format("{0} {1}", Declension("Weeks", days / 7), Declension("Days", days % 7));
                 }
             }
+        }
+
+        public static string FormatLocationUpdateDate(long date)
+        {
+            try
+            {
+                var rightNow = DateTime.Now;
+                var day = rightNow.DayOfYear;
+                var year = rightNow.Year;
+
+                var online = Utils.UnixTimestampToDateTime(date);
+                int dateDay = online.DayOfYear;
+                int dateYear = online.Year;
+
+                if (dateDay == day && year == dateYear)
+                {
+                    //int diff = (int)(ConnectionsManager.getInstance(UserConfig.selectedAccount).getCurrentTime() - date / 1000) / 60;
+                    var diff = (int)(DateTime.Now.ToTimestamp() / 1000 - date) / 60;
+                    if (diff < 1)
+                    {
+                        return Strings.Resources.LocationUpdatedJustNow;
+                    }
+                    else if (diff < 60)
+                    {
+                        return Declension("UpdatedMinutes", diff);
+                    }
+
+                    var format = string.Format(Strings.Resources.TodayAtFormatted, BindConvert.Current.ShortTime.Format(online)); //getInstance().formatterDay.format(new Date(date)));
+                    return string.Format(Strings.Resources.LocationUpdatedFormatted, format);
+                }
+                else if (dateDay + 1 == day && year == dateYear)
+                {
+                    var format = string.Format(Strings.Resources.YesterdayAtFormatted, BindConvert.Current.ShortTime.Format(online)); //getInstance().formatterDay.format(new Date(date)));
+                    return string.Format(Strings.Resources.LocationUpdatedFormatted, format);
+                }
+                else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
+                {
+                    var format = string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online)); //getInstance().formatterMonth.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
+                    return string.Format(Strings.Resources.LocationUpdatedFormatted, format);
+                }
+                else
+                {
+                    var format = string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online)); //getInstance().formatterYear.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
+                    return string.Format(Strings.Resources.LocationUpdatedFormatted, format);
+                }
+            }
+            catch (Exception e)
+            {
+                //FileLog.e(e);
+            }
+            return "LOC_ERR";
         }
 
         public static string FormatAutoLock(int timeout)
