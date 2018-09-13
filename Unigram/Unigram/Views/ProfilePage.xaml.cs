@@ -679,7 +679,15 @@ namespace Unigram.Views
                 photo.Source = null;
 
                 var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
+                if (title.Inlines.Count > 0)
+                {
+                    var label = title.Inlines[0] as Run;
+                    label.Text = user.GetFullName();
+                }
+                else
+                {
+                    title.Text = user.GetFullName();
+                }
             }
             else if (args.Phase == 1)
             {
