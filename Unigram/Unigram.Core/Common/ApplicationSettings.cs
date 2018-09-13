@@ -24,7 +24,6 @@ namespace Unigram.Services
         bool IsWorkModeEnabled { get; set; }
 
         string FilesDirectory { get; set; }
-        int FilesTtl { get; set; }
 
         int VerbosityLevel { get; }
         bool UseTestDC { get; set; }
@@ -257,23 +256,6 @@ namespace Unigram.Common
             {
                 _filesDirectory = value;
                 AddOrUpdateValue("FilesDirectory", value);
-            }
-        }
-
-        private int? _filesTtl;
-        public int FilesTtl
-        {
-            get
-            {
-                if (_filesTtl == null)
-                    _filesTtl = GetValueOrDefault("FilesTtl", 0);
-
-                return _filesTtl ?? 0;
-            }
-            set
-            {
-                _filesTtl = value;
-                AddOrUpdateValue("FilesTtl", value);
             }
         }
 

@@ -58,13 +58,16 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return Settings.FilesTtl;
+                var enabled = CacheService.GetOption<OptionValueBoolean>("use_storage_optimizer")?.Value ?? false;
+                var ttl = CacheService.GetOption<OptionValueInteger>("storage_max_time_from_last_access")?.Value ?? 0;
+
+                return enabled ? ttl / 60 / 60 / 24 : 0;
             }
-            set
-            {
-                Settings.FilesTtl = value;
-                RaisePropertyChanged();
-            }
+            //set
+            //{
+            //    Settings.FilesTtl = value;
+            //    RaisePropertyChanged();
+            //}
         }
 
         private StorageStatisticsFast _statisticsFast;
@@ -211,13 +214,16 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ChangeTtlCommand { get; }
         private async void ChangeTtlExecute()
         {
+            var enabled = CacheService.GetOption<OptionValueBoolean>("use_storage_optimizer")?.Value ?? false;
+            var ttl = CacheService.GetOption<OptionValueInteger>("storage_max_time_from_last_access")?.Value ?? 0;
+
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 3, Content = Locale.Declension("Days", 3), IsChecked = FilesTtl == 3 });
-            stack.Children.Add(new RadioButton { Tag = 7, Content = Locale.Declension("Weeks", 1), IsChecked = FilesTtl == 7 });
-            stack.Children.Add(new RadioButton { Tag = 30, Content = Locale.Declension("Months", 1), IsChecked = FilesTtl == 30 });
-            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Resources.KeepMediaForever, IsChecked = FilesTtl == 0 });
+            stack.Children.Add(new RadioButton { Tag = 3, Content = Locale.Declension("Days", 3), IsChecked = enabled && ttl == 3 * 60 * 60 * 24 });
+            stack.Children.Add(new RadioButton { Tag = 7, Content = Locale.Declension("Weeks", 1), IsChecked = enabled && ttl == 7 * 60 * 60 * 24 });
+            stack.Children.Add(new RadioButton { Tag = 30, Content = Locale.Declension("Months", 1), IsChecked = enabled && ttl == 30 * 60 * 60 * 24 });
+            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Resources.KeepMediaForever, IsChecked = !enabled });
 
             dialog.Title = Strings.Resources.KeepMedia;
             dialog.Content = stack;
@@ -227,7 +233,7 @@ namespace Unigram.ViewModels.Settings
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                var mode = 1;
+                var mode = 0;
                 foreach (RadioButton current in stack.Children)
                 {
                     if (current.IsChecked == true)
@@ -237,7 +243,10 @@ namespace Unigram.ViewModels.Settings
                     }
                 }
 
-                FilesTtl = mode;
+                ProtoService.Send(new SetOption("storage_max_time_from_last_access", new OptionValueInteger(mode * 60 * 60 * 24)));
+                ProtoService.Send(new SetOption("use_storage_optimizer", new OptionValueBoolean(mode > 0)));
+
+                RaisePropertyChanged(() => FilesTtl);
             }
         }
     }

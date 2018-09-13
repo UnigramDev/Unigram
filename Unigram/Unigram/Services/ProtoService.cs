@@ -250,12 +250,6 @@ namespace Unigram.Services
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
                 _client.Run();
-
-                var ttl = _settings.FilesTtl;
-                if (ttl > 0)
-                {
-                    _client.Send(new OptimizeStorage(long.MaxValue, ttl * 60 * 60 * 24, int.MaxValue, 0, new FileType[0], new long[0], new long[0], 0));
-                }
             });
         }
 
