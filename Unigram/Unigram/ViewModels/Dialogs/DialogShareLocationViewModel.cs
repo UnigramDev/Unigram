@@ -57,5 +57,34 @@ namespace Unigram.ViewModels.Dialogs
                 Set(ref _location, value);
             }
         }
+
+        #region Search
+
+        public async void Find(string query)
+        {
+            var location = _location;
+            if (location == null)
+            {
+                return;
+            }
+
+            var venues = await _locationService.GetVenuesAsync(0, location.Point.Position.Latitude, location.Point.Position.Longitude, query);
+            Search = new MvxObservableCollection<Telegram.Td.Api.Venue>(venues);
+        }
+
+        private MvxObservableCollection<Telegram.Td.Api.Venue> _search;
+        public MvxObservableCollection<Telegram.Td.Api.Venue> Search
+        {
+            get
+            {
+                return _search;
+            }
+            set
+            {
+                Set(ref _search, value);
+            }
+        }
+
+        #endregion
     }
 }
