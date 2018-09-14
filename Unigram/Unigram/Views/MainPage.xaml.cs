@@ -835,6 +835,11 @@ namespace Unigram.Views
 
             _lastSelected = item;
 
+            if (item is TLCallGroup callGroup)
+            {
+                item = callGroup.Message;
+            }
+
             if (item is Message message)
             {
                 MasterDetail.NavigationService.NavigateToChat(message.ChatId, message: message.Id);
