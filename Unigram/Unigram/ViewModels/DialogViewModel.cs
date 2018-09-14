@@ -800,8 +800,10 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                await LoadMessageSliceAsync(null, long.MaxValue, SnapPointsAlignment.Near);
+                await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, SnapPointsAlignment.Far, 8);
             }
+
+            TextField?.FocusMaybe(FocusState.Keyboard);
         }
 
         public async Task LoadMessageSliceAsync(long? previousId, long maxId, SnapPointsAlignment alignment = SnapPointsAlignment.Center, double? pixel = null, bool second = false)
