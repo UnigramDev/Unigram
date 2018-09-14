@@ -56,11 +56,6 @@
 
         <controls:ProfilePicture x:Name="Photo" Width="48" Height="48" VerticalAlignment="Top" IsHitTestVisible="False" Grid.RowSpan="2" />
 
-        <!-- Background="{ThemeResource SystemControlBackgroundAccentBrush}" -->
-        <Border x:Name="SavedMessages" x:DeferLoadStrategy="Lazy" Visibility="Collapsed" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top" Grid.RowSpan="2">
-            <FontIcon Glyph="&#xE907;" Foreground="White" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-        </Border>
-
         <Grid VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="1" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>

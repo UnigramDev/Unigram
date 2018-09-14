@@ -41,6 +41,7 @@ namespace Unigram.Services
         IList<Chat> GetChats(IList<long> ids);
         IList<Chat> GetChats(int count);
 
+        bool IsUserSavedMessages(User user);
         bool IsChatSavedMessages(Chat chat);
         bool IsChatSponsored(Chat chat);
 
@@ -477,6 +478,16 @@ namespace Unigram.Services
             }
 
             return null;
+        }
+
+        public bool IsUserSavedMessages(User user)
+        {
+            if (user.Id == GetMyId())
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public bool IsChatSavedMessages(Chat chat)

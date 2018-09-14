@@ -108,23 +108,7 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatPhoto(Chat chat)
         {
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == _protoService.GetMyId())
-            {
-                if (SavedMessages == null)
-                    FindName(nameof(SavedMessages));
-
-                SavedMessages.Visibility = Visibility.Visible;
-                SavedMessages.Background = PlaceholderHelper.GetBrush(privata.UserId);
-            }
-            else
-            {
-                if (SavedMessages != null)
-                {
-                    SavedMessages.Visibility = Visibility.Collapsed;
-                }
-
-                Photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 48, 48);
-            }
+            Photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 48, 48);
         }
 
         public void UpdateFile(Chat chat, File file)

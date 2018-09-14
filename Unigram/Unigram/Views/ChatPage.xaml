@@ -381,41 +381,37 @@
                             Grid.ColumnSpan="3">
                         <Button.Content>
                             <Grid>
-                                <TextBlock x:Name="SavedMessages" Visibility="Collapsed" Text="{CustomResource SavedMessages}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <controls:ProfilePicture x:Name="Photo" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
 
-                                <Grid x:Name="HeaderPanel">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <controls:ProfilePicture x:Name="Photo" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
+                                    <TextBlock x:Name="Title"
+                                                Style="{StaticResource BaseTextBlockStyle}"
+                                                TextWrapping="NoWrap"
+                                                TextTrimming="CharacterEllipsis"
+                                                MaxLines="1"/>
+                                    <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                                        <TextBlock x:Name="Subtitle"
+                                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}"
+                                                    TextWrapping="NoWrap"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
+                                        <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
+                                                    TextWrapping="NoWrap"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                    Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"/>
+                                    </Grid>
+                                </StackPanel>
 
-                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
-                                        <TextBlock x:Name="Title"
-                                                   Style="{StaticResource BaseTextBlockStyle}"
-                                                   TextWrapping="NoWrap"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   MaxLines="1"/>
-                                        <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                                            <TextBlock x:Name="Subtitle"
-                                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                                       Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}"
-                                                       TextWrapping="NoWrap"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
-                                            <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
-                                                       TextWrapping="NoWrap"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                       Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
-                                                       Style="{StaticResource CaptionTextBlockStyle}"/>
-                                        </Grid>
-                                    </StackPanel>
-
-                                    <Border x:Name="CallPlaceholder" Visibility="Collapsed" Width="48" Grid.Column="2"/>
-                                </Grid>
+                                <Border x:Name="CallPlaceholder" Visibility="Collapsed" Width="48" Grid.Column="2"/>
                             </Grid>
                         </Button.Content>
                     </Button>

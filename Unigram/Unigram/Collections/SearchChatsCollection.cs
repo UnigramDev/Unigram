@@ -55,6 +55,16 @@ namespace Unigram.Collections
 
                 if (phase == 0)
                 {
+                    if (Strings.Resources.SavedMessages.StartsWith(_query, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var savedMessages = await _protoService.SendAsync(new CreatePrivateChat(_protoService.GetMyId(), false));
+                        if (savedMessages is Chat chat)
+                        {
+                            _chats.Add(chat.Id);
+                            _local.Add(new SearchResult(chat, _query, false));
+                        }
+                    }
+
                     var response = await _protoService.SendAsync(new SearchChats(_query, 100));
                     if (response is Chats chats)
                     {

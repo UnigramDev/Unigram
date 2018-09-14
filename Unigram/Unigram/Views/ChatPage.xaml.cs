@@ -2219,7 +2219,7 @@ namespace Unigram.Views
 
         public void UpdateChatTitle(Chat chat)
         {
-            Title.Text = ViewModel.ProtoService.GetTitle(chat);
+            Title.Text = ViewModel.CacheService.GetTitle(chat);
         }
 
         public void UpdateChatPhoto(Chat chat)
@@ -2320,9 +2320,6 @@ namespace Unigram.Views
 
             ViewModel.ShowPinnedMessage(chat, null);
 
-            HeaderPanel.Visibility = user.Id == ViewModel.ProtoService.GetMyId() ? Visibility.Collapsed : Visibility.Visible;
-            SavedMessages.Visibility = user.Id == ViewModel.ProtoService.GetMyId() ? Visibility.Visible : Visibility.Collapsed;
-
             TextField.PlaceholderText = Strings.Resources.TypeMessage;
             UpdateUserStatus(chat, user);
         }
@@ -2354,7 +2351,14 @@ namespace Unigram.Views
 
         public void UpdateUserStatus(Chat chat, User user)
         {
-            ViewModel.LastSeen = LastSeenConverter.GetLabel(user, true);
+            if (ViewModel.CacheService.IsUserSavedMessages(user))
+            {
+                ViewModel.LastSeen = null;
+            }
+            else
+            {
+                ViewModel.LastSeen = LastSeenConverter.GetLabel(user, true);
+            }
         }
 
 
@@ -2382,9 +2386,6 @@ namespace Unigram.Views
             ViewModel.ShowPinnedMessage(chat, null);
 
             ShowArea();
-
-            HeaderPanel.Visibility = Visibility.Visible;
-            SavedMessages.Visibility = Visibility.Collapsed;
 
             TextField.PlaceholderText = Strings.Resources.TypeMessage;
             ViewModel.LastSeen = Locale.Declension("Members", group.MemberCount);
@@ -2469,9 +2470,6 @@ namespace Unigram.Views
                     ShowArea();
                 }
             }
-
-            HeaderPanel.Visibility = Visibility.Visible;
-            SavedMessages.Visibility = Visibility.Collapsed;
 
             TextField.PlaceholderText = group.IsChannel
                 ? chat.DefaultDisableNotification

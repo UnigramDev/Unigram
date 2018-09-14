@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Controls;
+using Unigram.Native;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.Views;
@@ -36,6 +37,8 @@ namespace Unigram.Common
 
         private readonly ILifetimeService _lifetime;
 
+        private PlaceholderImageHelper _placeholderHelper;
+
         public TLWindowContext(Window window, int id)
             : base(window)
         {
@@ -45,6 +48,8 @@ namespace Unigram.Common
             _window.Activated += OnActivated;
 
             _lifetime = TLContainer.Current.Lifetime;
+
+            _placeholderHelper = PlaceholderImageHelper.GetForCurrentView();
 
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -58,6 +63,7 @@ namespace Unigram.Common
             {
                 try
                 {
+                    _placeholderHelper = null;
                     app.UISettings.ColorValuesChanged -= UISettings_ColorValuesChanged;
                 }
                 catch { }
@@ -66,6 +72,7 @@ namespace Unigram.Common
             {
                 try
                 {
+                    _placeholderHelper = null;
                     app.UISettings.ColorValuesChanged -= UISettings_ColorValuesChanged;
                 }
                 catch { }
