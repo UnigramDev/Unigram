@@ -168,6 +168,10 @@ namespace Unigram.Controls
                     constraint = photo.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
                 }
             }
+            else if (constraint is UserProfilePhoto userProfilePhoto)
+            {
+                constraint = userProfilePhoto.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
+            }
             else if (constraint is Sticker sticker)
             {
                 width = sticker.Width;

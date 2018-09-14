@@ -290,9 +290,9 @@ namespace Unigram.Controls.Views
         protected override void MaskTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            titlebar.BackgroundColor = Colors.Black;
+            //titlebar.BackgroundColor = Colors.Black;
             titlebar.ForegroundColor = Colors.White;
-            titlebar.ButtonBackgroundColor = Colors.Black;
+            //titlebar.ButtonBackgroundColor = Colors.Black;
             titlebar.ButtonForegroundColor = Colors.White;
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))

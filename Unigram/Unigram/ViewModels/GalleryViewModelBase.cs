@@ -515,15 +515,78 @@ namespace Unigram.ViewModels
         public override bool CanCopy => IsPhoto;
     }
 
-    public class GalleryProfilePhotoItem : GalleryItem
+    public class GalleryUserProfilePhotoItem : GalleryItem
     {
-        private readonly ProfilePhoto _photo;
+        private readonly Telegram.Td.Api.User _user;
+        private readonly UserProfilePhoto _photo;
         private readonly string _caption;
 
-        public GalleryProfilePhotoItem(IProtoService protoService, ProfilePhoto photo)
+        public GalleryUserProfilePhotoItem(IProtoService protoService, Telegram.Td.Api.User user, UserProfilePhoto photo)
             : base(protoService)
         {
+            _user = user;
             _photo = photo;
+        }
+
+        public GalleryUserProfilePhotoItem(IProtoService protoService, Telegram.Td.Api.User user, UserProfilePhoto photo, string caption)
+            : base(protoService)
+        {
+            _user = user;
+            _photo = photo;
+            _caption = caption;
+        }
+
+        public long Id => _photo.Id;
+
+        public override File GetFile()
+        {
+            return _photo?.GetBig()?.Photo;
+        }
+
+        public override File GetThumbnail()
+        {
+            return _photo?.GetSmall().Photo;
+        }
+
+        public override (File File, string FileName) GetFileAndName()
+        {
+            var big = _photo.GetBig();
+            if (big != null)
+            {
+                return (big.Photo, null);
+            }
+
+            return (null, null);
+        }
+
+        public override bool UpdateFile(File file)
+        {
+            return _photo.UpdateFile(file);
+        }
+
+        public override object From => _user;
+
+        public override object Constraint => _photo;
+
+        public override string Caption => _caption;
+
+        public override int Date => _photo.AddedDate;
+
+        public override bool CanCopy => true;
+    }
+
+    public class GalleryProfilePhotoItem : GalleryItem
+    {
+        private readonly Telegram.Td.Api.User _user;
+        private readonly ProfilePhoto _photo;
+        private readonly string _caption;
+        private int _date;
+
+        public GalleryProfilePhotoItem(IProtoService protoService, Telegram.Td.Api.User user)
+            : base(protoService)
+        {
+            _user = user;
+            _photo = user.ProfilePhoto;
         }
 
         public GalleryProfilePhotoItem(IProtoService protoService, ProfilePhoto photo, string caption)
@@ -573,11 +636,21 @@ namespace Unigram.ViewModels
             return false;
         }
 
+        public override object From => _user;
+
         public override object Constraint => new PhotoSize(string.Empty, null, 600, 600);
 
         public override string Caption => _caption;
 
         public override bool CanCopy => true;
+
+        public override int Date => _date;
+
+        public void SetDate(int date)
+        {
+            _date = date;
+            RaisePropertyChanged(() => Date);
+        }
     }
 
     public class GalleryPhotoItem : GalleryItem
@@ -597,8 +670,6 @@ namespace Unigram.ViewModels
             _photo = photo;
             _caption = caption;
         }
-
-        public long Id => _photo.Id;
 
         public override File GetFile()
         {

@@ -273,7 +273,7 @@ namespace Unigram.Common
 
         public static Photo ToPhoto(this ChatPhoto chatPhoto)
         {
-            return new Photo(0, false, new PhotoSize[] { new PhotoSize("t", chatPhoto.Small, 160, 160), new PhotoSize("i", chatPhoto.Big, 640, 640) });
+            return new Photo(false, new PhotoSize[] { new PhotoSize("t", chatPhoto.Small, 160, 160), new PhotoSize("i", chatPhoto.Big, 640, 640) });
         }
 
         public static bool IsSimple(this WebPage webPage)
@@ -718,6 +718,96 @@ namespace Unigram.Common
             return full;
         }
 
+        public static PhotoSize GetSmall(this UserProfilePhoto photo)
+        {
+            var local = photo.Sizes.FirstOrDefault(x => string.Equals(x.Type, "t"));
+            if (local != null)
+            {
+                return local;
+            }
+
+            return photo.Sizes.OrderBy(x => x.Width).FirstOrDefault();
+
+            PhotoSize thumb = null;
+            int thumbLevel = -1;
+
+            foreach (var i in photo.Sizes)
+            {
+                var size = i.Type.Length > 0 ? i.Type[0] : 'z';
+                int newThumbLevel = -1;
+
+                switch (size)
+                {
+                    case 's': newThumbLevel = 0; break; // box 100x100
+                    case 'm': newThumbLevel = 2; break; // box 320x320
+                    case 'x': newThumbLevel = 5; break; // box 800x800
+                    case 'y': newThumbLevel = 6; break; // box 1280x1280
+                    case 'w': newThumbLevel = 8; break; // box 2560x2560
+                    case 'a': newThumbLevel = 1; break; // crop 160x160
+                    case 'b': newThumbLevel = 3; break; // crop 320x320
+                    case 'c': newThumbLevel = 4; break; // crop 640x640
+                    case 'd': newThumbLevel = 7; break; // crop 1280x1280
+                }
+
+                if (newThumbLevel < 0)
+                {
+                    continue;
+                }
+                if (thumbLevel < 0 || newThumbLevel < thumbLevel)
+                {
+                    thumbLevel = newThumbLevel;
+                    thumb = i;
+                }
+            }
+
+            return thumb;
+        }
+
+        public static PhotoSize GetBig(this UserProfilePhoto photo)
+        {
+            var local = photo.Sizes.FirstOrDefault(x => string.Equals(x.Type, "i"));
+            if (local != null)
+            {
+                return local;
+            }
+
+            return photo.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
+
+            PhotoSize full = null;
+            int fullLevel = -1;
+
+            foreach (var i in photo.Sizes)
+            {
+                var size = i.Type.Length > 0 ? i.Type[0] : 'z';
+                int newFullLevel = -1;
+
+                switch (size)
+                {
+                    case 's': newFullLevel = 4; break; // box 100x100
+                    case 'm': newFullLevel = 3; break; // box 320x320
+                    case 'x': newFullLevel = 1; break; // box 800x800
+                    case 'y': newFullLevel = 0; break; // box 1280x1280
+                    case 'w': newFullLevel = 2; break; // box 2560x2560
+                    case 'a': newFullLevel = 8; break; // crop 160x160
+                    case 'b': newFullLevel = 7; break; // crop 320x320
+                    case 'c': newFullLevel = 6; break; // crop 640x640
+                    case 'd': newFullLevel = 5; break; // crop 1280x1280
+                }
+
+                if (newFullLevel < 0)
+                {
+                    continue;
+                }
+                if (fullLevel < 0 || newFullLevel < fullLevel)
+                {
+                    fullLevel = newFullLevel;
+                    full = i;
+                }
+            }
+
+            return full;
+        }
+
         public static string GetDuration(this Video video)
         {
             var duration = TimeSpan.FromSeconds(video.Duration);
@@ -1093,6 +1183,25 @@ namespace Unigram.Common
 
             return any;
         }
+
+
+
+
+        public static bool UpdateFile(this UserProfilePhoto photo, File file)
+        {
+            var any = false;
+            foreach (var size in photo.Sizes)
+            {
+                if (size.Photo.Id == file.Id)
+                {
+                    size.Photo = file;
+                    any = true;
+                }
+            }
+
+            return any;
+        }
+
 
 
 
