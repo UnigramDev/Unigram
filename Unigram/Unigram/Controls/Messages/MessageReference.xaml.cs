@@ -353,15 +353,22 @@ namespace Unigram.Controls.Messages
             UpdateMessageReply(message);
         }
 
-        private void UpdateThumbnail(MessageViewModel message, File file)
+        private void UpdateThumbnail(MessageViewModel message, PhotoSize photoSize)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (photoSize.Photo.Local.IsDownloadingCompleted)
             {
-                ThumbImage.ImageSource = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = 36, DecodePixelHeight = 36, DecodePixelType = DecodePixelType.Logical };
+                double ratioX = (double)36 / photoSize.Width;
+                double ratioY = (double)36 / photoSize.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(photoSize.Width * ratio);
+                var height = (int)(photoSize.Height * ratio);
+
+                ThumbImage.ImageSource = new BitmapImage(new Uri("file:///" + photoSize.Photo.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else if (photoSize.Photo.Local.CanBeDownloaded && !photoSize.Photo.Local.IsDownloadingActive)
             {
-                message.ProtoService.Send(new DownloadFile(file.Id, 1));
+                message.ProtoService.Send(new DownloadFile(photoSize.Photo.Id, 1));
             }
         }
 
@@ -556,7 +563,7 @@ namespace Unigram.Controls.Messages
                 var small = photo.Photo.GetSmall();
                 if (small != null)
                 {
-                    UpdateThumbnail(message, small.Photo);
+                    UpdateThumbnail(message, small);
                 }
             }
 
@@ -759,7 +766,7 @@ namespace Unigram.Controls.Messages
 
                 if (video.Video.Thumbnail != null)
                 {
-                    UpdateThumbnail(message, video.Video.Thumbnail.Photo);
+                    UpdateThumbnail(message, video.Video.Thumbnail);
                 }
             }
 
@@ -788,7 +795,7 @@ namespace Unigram.Controls.Messages
 
             if (videoNote.VideoNote.Thumbnail != null)
             {
-                UpdateThumbnail(message, videoNote.VideoNote.Thumbnail.Photo);
+                UpdateThumbnail(message, videoNote.VideoNote.Thumbnail);
             }
 
             return true;
@@ -816,7 +823,7 @@ namespace Unigram.Controls.Messages
 
             if (animation.Animation.Thumbnail != null)
             {
-                UpdateThumbnail(message, animation.Animation.Thumbnail.Photo);
+                UpdateThumbnail(message, animation.Animation.Thumbnail);
             }
 
             return true;
