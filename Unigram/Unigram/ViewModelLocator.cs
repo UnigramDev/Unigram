@@ -140,7 +140,6 @@ namespace Unigram
                 builder.RegisterType<UserCommonChatsViewModel>();
                 builder.RegisterType<UserCreateViewModel>();
                 builder.RegisterType<SupergroupEventLogViewModel>();
-                builder.RegisterType<SupergroupEventLogFilterViewModel>();
                 builder.RegisterType<SupergroupEditViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupEditStickerSetViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupEditAdministratorViewModel>();

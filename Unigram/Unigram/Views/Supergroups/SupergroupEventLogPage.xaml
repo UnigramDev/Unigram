@@ -183,9 +183,9 @@
                            TextWrapping="NoWrap"
                            MaxLines="1"/>
                 <TextBlock x:Name="Subtitle"
+                           Text="{x:Bind ConvertSubtitle(ViewModel.Filters, ViewModel.UserIds), Mode=OneWay}"
                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           Text="{CustomResource EventLogAllEvents}"/>
+                           Style="{StaticResource CaptionTextBlockStyle}"/>
             </StackPanel>
 
             <!--<controls:GlyphButton Glyph="&#xE11A;" Grid.Column="2"/>-->
@@ -195,7 +195,7 @@
 
         <controls:PaddedListView
             x:Name="Messages"
-            ItemsSource="{x:Bind ViewModel.Items}"
+            ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
             ChoosingItemContainer="OnChoosingItemContainer"
             ContainerContentChanging="OnContainerContentChanging"
             SelectionMode="None"
@@ -321,8 +321,8 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <!--<Button Click="Settings_Click" Content="FILTER" Style="{StaticResource SendButtonStyle}" Grid.ColumnSpan="2"/>-->
-            <controls:GlyphButton Click="Help_Click" Glyph="&#xE11B;" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Grid.Column="1"/>
+            <Button Command="{x:Bind ViewModel.FiltersCommand}" Content="{CustomResource Settings}" Style="{StaticResource SendButtonStyle}" Grid.ColumnSpan="2"/>
+            <controls:GlyphButton Command="{x:Bind ViewModel.HelpCommand}" Glyph="&#xE946;" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Grid.Column="1"/>
 
             <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>

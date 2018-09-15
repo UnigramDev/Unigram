@@ -5,21 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Strings;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupEventLogViewModel : TLViewModelBase, IMessageDelegate
+    public class SupergroupEventLogViewModel : TLViewModelBase, IDelegable<IChatDelegate>, IMessageDelegate
     {
         public SupergroupEventLogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            FiltersCommand = new RelayCommand(FiltersExecute);
+            HelpCommand = new RelayCommand(HelpExecute);
         }
+
+        public IChatDelegate Delegate { get; set; }
 
         protected Chat _chat;
         public Chat Chat
@@ -31,6 +38,32 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _chat, value);
+            }
+        }
+
+        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true);
+        public ChatEventLogFilters Filters
+        {
+            get
+            {
+                return _filters;
+            }
+            set
+            {
+                Set(ref _filters, value);
+            }
+        }
+
+        private IList<int> _userIds = new int[0];
+        public IList<int> UserIds
+        {
+            get
+            {
+                return _userIds;
+            }
+            set
+            {
+                Set(ref _userIds, value);
             }
         }
 
@@ -72,12 +105,54 @@ namespace Unigram.ViewModels.Supergroups
                 return Task.CompletedTask;
             }
 
-            Items = new ItemsCollection(ProtoService, this, chat.Id, chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel);
+            Delegate?.UpdateChat(chat);
+
+            Items = new ItemsCollection(ProtoService, this, chat.Id, chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel, _filters, _userIds);
             Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
 
             RaisePropertyChanged(() => Items);
 
             return Task.CompletedTask;
+        }
+
+        public RelayCommand FiltersCommand { get; }
+        private async void FiltersExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var supergroup = CacheService.GetSupergroup(chat);
+            if (supergroup == null)
+            {
+                return;
+            }
+
+            var dialog = new SupergroupEventLogFiltersView();
+
+            var confirm = await dialog.ShowAsync(ProtoService, supergroup.Id, _filters, _userIds);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                Filters = dialog.Filters;
+                UserIds = dialog.UserIds;
+                Items = new ItemsCollection(ProtoService, this, chat.Id, supergroup.IsChannel, dialog.Filters, dialog.UserIds);
+
+                RaisePropertyChanged(() => Items);
+            }
+        }
+
+        public RelayCommand HelpCommand { get; }
+        private async void HelpExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            await TLMessageDialog.ShowAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.Resources.EventLogInfoDetailChannel : Strings.Resources.EventLogInfoDetail, Strings.Resources.EventLogInfoTitle, Strings.Resources.OK);
         }
 
         public ItemsCollection Items { get; protected set; }
@@ -88,20 +163,21 @@ namespace Unigram.ViewModels.Supergroups
             private readonly IMessageDelegate _delegate;
             private readonly long _chatId;
             private readonly bool _channel;
-            //private readonly TLChannelParticipantsFilterBase _filter;
+            private readonly ChatEventLogFilters _filters;
+            private readonly IList<int> _userIds;
 
             private long _minEventId = long.MaxValue;
             private bool _hasMore;
 
-            public ItemsCollection(IProtoService protoService, IMessageDelegate delegato, long chatId, bool channel)
+            public ItemsCollection(IProtoService protoService, IMessageDelegate delegato, long chatId, bool channel, ChatEventLogFilters filters, IList<int> userIds)
             {
                 _protoService = protoService;
                 _delegate = delegato;
                 _chatId = chatId;
                 _channel = channel;
-                //_inputChannel = channel.ToInputChannel();
-                //_channel = channel;
-                //_filter = filter;
+                _filters = filters;
+                _userIds = userIds;
+
                 _hasMore = true;
             }
 
@@ -121,7 +197,7 @@ namespace Unigram.ViewModels.Supergroups
 
                 var maxId = Count > 0 ? _minEventId : 0;
 
-                var response = await _protoService.SendAsync(new GetChatEventLog(_chatId, string.Empty, 0, 50, null, new int[0]));
+                var response = await _protoService.SendAsync(new GetChatEventLog(_chatId, string.Empty, 0, 50, _filters, _userIds));
                 if (response is ChatEvents events)
                 {
                     var result = new List<MessageViewModel>();
