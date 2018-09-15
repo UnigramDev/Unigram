@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Common;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Services;
@@ -25,6 +26,32 @@ namespace Unigram.ViewModels
             SelectedItems = new MvxObservableCollection<Chat>();
 
             SendCommand = new RelayCommand(SendExecute, () => SelectedItems?.Count > 0);
+        }
+
+        private SearchChatsCollection _search;
+        public SearchChatsCollection Search
+        {
+            get
+            {
+                return _search;
+            }
+            set
+            {
+                Set(ref _search, value);
+            }
+        }
+
+        private TopChatsCollection _topChats;
+        public TopChatsCollection TopChats
+        {
+            get
+            {
+                return _topChats;
+            }
+            set
+            {
+                Set(ref _topChats, value);
+            }
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -89,7 +116,10 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        Items.Add(chat);
+                        if (CacheService.CanPostMessages(chat))
+                        {
+                            Items.Add(chat);
+                        }
                     }
                 }
             }
@@ -254,7 +284,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                NavigationService.GoBack();
+                //NavigationService.GoBack();
             }
             else if (_inputMedia != null)
             {
@@ -263,7 +293,7 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, false, false, null, _inputMedia));
                 }
 
-                NavigationService.GoBack();
+                //NavigationService.GoBack();
             }
             else if (_shareLink != null)
             {
@@ -274,7 +304,7 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, false, false, null, new InputMessageText(formatted, false, false)));
                 }
 
-                NavigationService.GoBack();
+                //NavigationService.GoBack();
             }
             else if (_inviteBot != null)
             {
@@ -287,7 +317,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, _inviteBot.Id, new ChatMemberStatusMember()));
                 if (response is Ok)
                 {
-                    NavigationService.GoBack();
+                    //NavigationService.GoBack();
                 }
             }
             else if (_switchInline != null && _switchInlineBot != null)
@@ -302,7 +332,7 @@ namespace Unigram.ViewModels
                 state["switch_query"] = _switchInline.Query;
                 state["switch_bot"] = _switchInlineBot.Id;
 
-                NavigationService.GoBack();
+                //NavigationService.GoBack();
 
                 var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
                 if (service != null)
@@ -350,7 +380,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async void Search(string text)
+        public async void Find(string text)
         {
             var results = await SearchLocalAsync(text);
             if (results != null)

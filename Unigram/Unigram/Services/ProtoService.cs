@@ -45,6 +45,8 @@ namespace Unigram.Services
         bool IsChatSavedMessages(Chat chat);
         bool IsChatSponsored(Chat chat);
 
+        bool CanPostMessages(Chat chat);
+
         bool TryGetChatFromUser(int userId, out Chat chat);
         bool TryGetChatFromSecret(int secretId, out Chat chat);
 
@@ -58,9 +60,16 @@ namespace Unigram.Services
         IList<User> GetUsers(IList<int> ids);
 
         BasicGroup GetBasicGroup(int id);
+        BasicGroup GetBasicGroup(Chat chat);
+
         BasicGroupFullInfo GetBasicGroupFull(int id);
+        BasicGroupFullInfo GetBasicGroupFull(Chat chat);
+
         Supergroup GetSupergroup(int id);
+        Supergroup GetSupergroup(Chat chat);
+
         SupergroupFullInfo GetSupergroupFull(int id);
+        SupergroupFullInfo GetSupergroupFull(Chat chat);
 
         bool IsStickerFavorite(int id);
         bool IsStickerSetInstalled(long id);
@@ -514,6 +523,34 @@ namespace Unigram.Services
             return false;
         }
 
+        public bool CanPostMessages(Chat chat)
+        {
+            if (chat.Type is ChatTypeSupergroup super)
+            {
+                var supergroup = GetSupergroup(super.SupergroupId);
+                if (supergroup != null && supergroup.CanPostMessages())
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            else if (chat.Type is ChatTypeBasicGroup basic)
+            {
+                var basicGroup = GetBasicGroup(basic.BasicGroupId);
+                if (basicGroup != null && basicGroup.CanPostMessages())
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            // TODO: secret chats maybe?
+
+            return true;
+        }
+
         public bool TryGetChatFromUser(int userId, out Chat chat)
         {
             chat = _chats.Values.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == userId);
@@ -623,6 +660,22 @@ namespace Unigram.Services
             return null;
         }
 
+        public UserFullInfo GetUserFull(Chat chat)
+        {
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                return GetUserFull(privata.UserId);
+            }
+            else if (chat.Type is ChatTypeSecret secret)
+            {
+                return GetUserFull(secret.UserId);
+            }
+
+            return null;
+        }
+
+
+
         public BasicGroup GetBasicGroup(int id)
         {
             if (_basicGroups.TryGetValue(id, out BasicGroup value))
@@ -632,6 +685,18 @@ namespace Unigram.Services
 
             return null;
         }
+
+        public BasicGroup GetBasicGroup(Chat chat)
+        {
+            if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                return GetBasicGroup(basicGroup.BasicGroupId);
+            }
+
+            return null;
+        }
+
+
 
         public BasicGroupFullInfo GetBasicGroupFull(int id)
         {
@@ -643,6 +708,18 @@ namespace Unigram.Services
             return null;
         }
 
+        public BasicGroupFullInfo GetBasicGroupFull(Chat chat)
+        {
+            if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                return GetBasicGroupFull(basicGroup.BasicGroupId);
+            }
+
+            return null;
+        }
+
+
+
         public Supergroup GetSupergroup(int id)
         {
             if (_supergroups.TryGetValue(id, out Supergroup value))
@@ -653,11 +730,33 @@ namespace Unigram.Services
             return null;
         }
 
+        public Supergroup GetSupergroup(Chat chat)
+        {
+            if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                return GetSupergroup(supergroup.SupergroupId);
+            }
+
+            return null;
+        }
+
+
+
         public SupergroupFullInfo GetSupergroupFull(int id)
         {
             if (_supergroupsFull.TryGetValue(id, out SupergroupFullInfo value))
             {
                 return value;
+            }
+
+            return null;
+        }
+        
+        public SupergroupFullInfo GetSupergroupFull(Chat chat)
+        {
+            if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                return GetSupergroupFull(supergroup.SupergroupId);
             }
 
             return null;

@@ -895,7 +895,14 @@ namespace Unigram.Common
                 return false;
             }
 
-            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages;
+            if (supergroup.IsChannel)
+            {
+                return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages;
+            }
+            else
+            {
+                return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages || supergroup.Status is ChatMemberStatusMember;
+            }
         }
 
         public static bool CanRestrictMembers(this Supergroup supergroup)
@@ -953,7 +960,15 @@ namespace Unigram.Common
             return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers;
         }
 
+        public static bool CanPostMessages(this BasicGroup basicGroup)
+        {
+            if (basicGroup.Status == null)
+            {
+                return false;
+            }
 
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages || basicGroup.Status is ChatMemberStatusMember;
+        }
 
 
 

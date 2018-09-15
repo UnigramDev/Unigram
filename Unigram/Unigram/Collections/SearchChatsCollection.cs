@@ -18,6 +18,7 @@ namespace Unigram.Collections
     {
         private readonly IProtoService _protoService;
         private readonly string _query;
+        private readonly bool _postOnly;
 
         private readonly List<long> _chats = new List<long>();
         private readonly List<int> _users = new List<int>();
@@ -26,10 +27,11 @@ namespace Unigram.Collections
         private KeyedList<string, object> _remote;
         private KeyedList<string, object> _messages;
 
-        public SearchChatsCollection(IProtoService protoService, string query)
+        public SearchChatsCollection(IProtoService protoService, string query, bool postOnly = false)
         {
             _protoService = protoService;
             _query = query;
+            _postOnly = postOnly;
 
             _local = new KeyedList<string, object>(null as string);
             _remote = new KeyedList<string, object>(Strings.Resources.GlobalSearch);
@@ -73,6 +75,11 @@ namespace Unigram.Collections
                             var chat = _protoService.GetChat(id);
                             if (chat != null)
                             {
+                                if (_postOnly && !_protoService.CanPostMessages(chat))
+                                {
+                                    continue;
+                                }
+
                                 if (chat.Type is ChatTypePrivate privata)
                                 {
                                     _users.Add(privata.UserId);
@@ -120,6 +127,11 @@ namespace Unigram.Collections
                             var chat = _protoService.GetChat(id);
                             if (chat != null)
                             {
+                                if (_postOnly && !_protoService.CanPostMessages(chat))
+                                {
+                                    continue;
+                                }
+
                                 if (chat.Type is ChatTypePrivate privata && _users.Contains(privata.UserId))
                                 {
                                     continue;
@@ -140,6 +152,11 @@ namespace Unigram.Collections
                             var chat = _protoService.GetChat(id);
                             if (chat != null)
                             {
+                                if (_postOnly && !_protoService.CanPostMessages(chat))
+                                {
+                                    continue;
+                                }
+
                                 _remote.Add(new SearchResult(chat, _query, true));
                             }
                         }
