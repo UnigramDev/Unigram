@@ -2612,7 +2612,7 @@ namespace Unigram.ViewModels
         #region Read mentions
 
         public RelayCommand ReadMentionsCommand { get; }
-        private async void ReadMentionsExecute()
+        private void ReadMentionsExecute()
         {
             var chat = _chat;
             if (chat == null)

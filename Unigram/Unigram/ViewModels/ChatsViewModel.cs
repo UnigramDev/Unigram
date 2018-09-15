@@ -101,6 +101,11 @@ namespace Unigram.ViewModels
             if (chat.UnreadCount > 0)
             {
                 ProtoService.Send(new ViewMessages(chat.Id, new[] { chat.LastMessage.Id }, true));
+
+                if (chat.UnreadMentionCount > 0)
+                {
+                    ProtoService.Send(new ReadAllChatMentions(chat.Id));
+                }
             }
             else
             {
