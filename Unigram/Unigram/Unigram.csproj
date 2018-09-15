@@ -291,9 +291,6 @@
     <Compile Include="Controls\Views\CalendarView.xaml.cs">
       <DependentUpon>CalendarView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\ChannelAdminLogFilterContentView.xaml.cs">
-      <DependentUpon>ChannelAdminLogFilterContentView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Views\ChatTtlView.xaml.cs">
       <DependentUpon>ChatTtlView.xaml</DependentUpon>
     </Compile>
@@ -349,11 +346,11 @@
     <Compile Include="Controls\Views\ShareView.xaml.cs">
       <DependentUpon>ShareView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\ChannelAdminLogFilterView.xaml.cs">
-      <DependentUpon>ChannelAdminLogFilterView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Views\StickerSetView.xaml.cs">
       <DependentUpon>StickerSetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\SupergroupEventLogFiltersView.xaml.cs">
+      <DependentUpon>SupergroupEventLogFiltersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\UsersSelectionView.xaml.cs">
       <DependentUpon>UsersSelectionView.xaml</DependentUpon>
@@ -521,7 +518,6 @@
     <Compile Include="ViewModels\Supergroups\SupergroupEditRestrictedViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditStickerSetViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditViewModel.cs" />
-    <Compile Include="ViewModels\Supergroups\SupergroupEventLogFilterViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEventLogViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModelBase.cs" />
@@ -1584,10 +1580,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\ChannelAdminLogFilterContentView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\Views\ChatTtlView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1688,15 +1680,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\ChannelAdminLogFilterView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Controls\Views\StickerSetView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\StickersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SupergroupEventLogFiltersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
