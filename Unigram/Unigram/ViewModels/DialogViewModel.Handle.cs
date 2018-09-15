@@ -368,6 +368,8 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
+                var supergroup = CacheService.GetSupergroupFull(_chat);
+
                 Handle(update.MessageId, message =>
                 {
                     message.Content = update.NewContent;
@@ -381,6 +383,11 @@ namespace Unigram.ViewModels
                     else
                     {
                         bubble.UpdateMessageContent(message);
+
+                        if (supergroup != null && supergroup.PinnedMessageId == message.Id)
+                        {
+                            Delegate?.UpdatePinnedMessage(_chat, message, false);
+                        }
                     }
                 });
             }
