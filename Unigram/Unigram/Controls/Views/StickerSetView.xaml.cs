@@ -38,7 +38,7 @@ namespace Unigram.Controls.Views
         private StickerSetView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<StickerSetViewModel>();
+            DataContext = TLContainer.Current.Resolve<StickerSetViewModel>();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

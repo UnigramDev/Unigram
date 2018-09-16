@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Services;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
@@ -80,6 +81,10 @@ namespace Unigram.Converters
 
                 return bot.CanReadAllGroupMessages ? Strings.Resources.BotStatusRead : Strings.Resources.BotStatusCantRead;
             }
+            //else if (cacheService.IsUserSavedMessages(user))
+            //{
+            //    return Strings.Resources.ChatYourSelf;
+            //}
             //else if (user.IsSelf && details)
             //{
             //    return Strings.Resources.ChatYourSelf;

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Telegram.Intro;
+using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Services;
 using Unigram.Views.SignIn;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -9,6 +12,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {

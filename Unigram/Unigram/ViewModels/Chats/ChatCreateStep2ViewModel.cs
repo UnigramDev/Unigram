@@ -35,19 +35,12 @@ namespace Unigram.ViewModels.Chats
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var buffer = parameter as byte[];
-            if (buffer == null)
+            if (parameter is ChatCreateStep2Tuple tuple)
             {
-                return Task.CompletedTask;
+                _title = tuple.Item1;
+                //_photo = tuple.Item2;
             }
 
-            //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
-            //{
-            //    var tuple = new ChatCreateStep2Tuple(from);
-
-            //    _title = tuple.Item1;
-            //    _photo = tuple.Item2;
-            //}
 
             RaisePropertyChanged(() => Title);
             return base.OnNavigatedToAsync(parameter, mode, state);
@@ -69,6 +62,10 @@ namespace Unigram.ViewModels.Chats
                     NavigationService.NavigateToChat(chat);
                     NavigationService.RemoveLast();
                     NavigationService.RemoveLast();
+                }
+                else if (response is Error error)
+                {
+                    AlertsService.ShowAddUserAlert(Dispatcher, error.Message, false);
                 }
             }
             else

@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsSecurityPasscodeViewModel : UnigramViewModelBase
+    public class SettingsSecurityPasscodeViewModel : TLViewModelBase
     {
         private readonly IPasscodeService _passcodeService;
 

@@ -30,7 +30,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditAdministratorPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SupergroupEditAdministratorViewModel, IMemberDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SupergroupEditAdministratorViewModel, IMemberDelegate>(this);
         }
 
         public void UpdateChat(Chat chat)
@@ -54,7 +54,7 @@ namespace Unigram.Views.Supergroups
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret)
+        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
         }
 

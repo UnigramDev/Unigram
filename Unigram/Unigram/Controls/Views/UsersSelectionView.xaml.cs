@@ -131,6 +131,17 @@ namespace Unigram.Controls.Views
                     {
                         ViewModel.SelectedItems.Add(user);
                     }
+                    else if (item is SearchResult result)
+                    {
+                        if (result.User != null)
+                        {
+                            ViewModel.SelectedItems.Add(result.User);
+                        }
+                        else if (result.Chat != null)
+                        {
+                            ViewModel.SelectedItems.Add(ViewModel.ProtoService.GetUser(result.Chat));
+                        }
+                    }
                 }
             }
         }
@@ -139,7 +150,21 @@ namespace Unigram.Controls.Views
         {
             if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
-                ViewModel.SingleCommand.Execute(e.ClickedItem as User);
+                if (e.ClickedItem is SearchResult result)
+                {
+                    if (result.User != null)
+                    {
+                        ViewModel.SingleCommand.Execute(result.User);
+                    }
+                    else if (result.Chat != null)
+                    {
+                        ViewModel.SingleCommand.Execute(ViewModel.ProtoService.GetUser(result.Chat));
+                    }
+                }
+                else
+                {
+                    ViewModel.SingleCommand.Execute(e.ClickedItem as User);
+                }
             }
         }
 

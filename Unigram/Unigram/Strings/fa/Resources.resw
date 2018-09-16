@@ -64,6 +64,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>لغو راه‌اندازی تأیید دو مرحله‌ای</value>
   </data>
+  <data name="Accept" xml:space="preserve">
+    <value>پذیرفتن</value>
+  </data>
   <data name="AccessError" xml:space="preserve">
     <value>خطای دسترسی</value>
   </data>
@@ -97,6 +100,48 @@
   <data name="ActionBotAllowed" xml:space="preserve">
     <value>⁧شما به این ربات اجازه دادید تا هرگاه در ⁨{0}⁩ وارد حساب کاربری خود شدید، به شما پیام ارسال کند.
 ⁩</value>
+  </data>
+  <data name="ActionBotDocumentAddress" xml:space="preserve">
+    <value>آدرس</value>
+  </data>
+  <data name="ActionBotDocumentBankStatement" xml:space="preserve">
+    <value>صورت‌حساب بانکی</value>
+  </data>
+  <data name="ActionBotDocumentDriverLicence" xml:space="preserve">
+    <value>گواهینامه رانندگی</value>
+  </data>
+  <data name="ActionBotDocumentEmail" xml:space="preserve">
+    <value>آدرس ایمیل</value>
+  </data>
+  <data name="ActionBotDocumentIdentity" xml:space="preserve">
+    <value>جزئیات شخصی</value>
+  </data>
+  <data name="ActionBotDocumentIdentityCard" xml:space="preserve">
+    <value>کارت شناسایی</value>
+  </data>
+  <data name="ActionBotDocumentInternalPassport" xml:space="preserve">
+    <value>گذرنامه داخلی</value>
+  </data>
+  <data name="ActionBotDocumentPassport" xml:space="preserve">
+    <value>گذرنامه</value>
+  </data>
+  <data name="ActionBotDocumentPassportRegistration" xml:space="preserve">
+    <value>ثبت نام گذرنامه</value>
+  </data>
+  <data name="ActionBotDocumentPhone" xml:space="preserve">
+    <value>شماره تلفن</value>
+  </data>
+  <data name="ActionBotDocumentRentalAgreement" xml:space="preserve">
+    <value>توافق‌نامه اجاره</value>
+  </data>
+  <data name="ActionBotDocumentTemporaryRegistration" xml:space="preserve">
+    <value>ثبت نام موقت</value>
+  </data>
+  <data name="ActionBotDocumentUtilityBill" xml:space="preserve">
+    <value>قبض خدمات شهری</value>
+  </data>
+  <data name="ActionBotDocuments" xml:space="preserve">
+    <value>⁧⁨{0}⁩ سند مقابل را دریافت کرد: ⁨{1}⁩⁩</value>
   </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>⁧⁨un1⁩ عکس گروه را تغییر داد⁩</value>
@@ -313,6 +358,9 @@
   </data>
   <data name="AddedToFavorites" xml:space="preserve">
     <value>استیکر به علاقه‌مندی‌ها اضافه شد</value>
+  </data>
+  <data name="Agree" xml:space="preserve">
+    <value>پذیرفتن</value>
   </data>
   <data name="Alert" xml:space="preserve">
     <value>هشدار</value>
@@ -556,6 +604,12 @@
   <data name="AttachContact" xml:space="preserve">
     <value>مخاطب</value>
   </data>
+  <data name="AttachDestructingPhoto" xml:space="preserve">
+    <value>عکس نابود شونده</value>
+  </data>
+  <data name="AttachDestructingVideo" xml:space="preserve">
+    <value>ویدئوی نابود شونده</value>
+  </data>
   <data name="AttachDocument" xml:space="preserve">
     <value>فایل</value>
   </data>
@@ -711,6 +765,9 @@
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>⁧در انتظار آنلاین شدن ⁨{0}⁩...⁩</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>قبلی</value>
   </data>
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>داده‌های پس‌زمینه محدود شد.</value>
@@ -884,6 +941,9 @@
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>لغو ثبت نام</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>لغو ارسال</value>
   </data>
   <data name="CantPlayVideo" xml:space="preserve">
     <value>برنامه قادر به پخش این ویدئو نبود. با پخش کننده خارجی امتحان می‌کنید؟</value>
@@ -1375,7 +1435,7 @@
     <value>مخاطبین</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>تلگرام نیازمند دسترسی به مخازبین شما است تا بتوانید در تمامی دستگاه‌هایتان با دوستانتان ارتباط برقرار کنید. مخاطبین شما به طور مداوم با سرورهای ابری و رمزگذاری شده تلگرام همگام‌سازی خواهند شد.</value>
+    <value>تلگرام نیازمند دسترسی به مخاطبین شما است تا بتوانید در تمامی دستگاه‌هایتان با دوستانتان ارتباط برقرار کنید. مخاطبین شما به طور مداوم با سرورهای ابری و رمزگذاری شده تلگرام همگام‌سازی خواهند شد.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>ادامه</value>
@@ -1440,6 +1500,9 @@
   </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>متأسفانه به دلیل تنظیمات حریم خصوصی این کاربران شما نمی‌توانید با آن‌ها گروهی ایجاد کنید.</value>
+  </data>
+  <data name="CreateLink" xml:space="preserve">
+    <value>ایجاد لینک</value>
   </data>
   <data name="CreateNewTheme" xml:space="preserve">
     <value>ایجاد قالب جدید</value>
@@ -1540,6 +1603,9 @@
   <data name="DaysBoldOther" xml:space="preserve">
     <value>⁧**⁨{0}⁩** روز⁩</value>
   </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>حذف همین الان</value>
+  </data>
   <data name="DebugClearLogs" xml:space="preserve">
     <value>پاک کردن گزارشات</value>
   </data>
@@ -1575,6 +1641,12 @@
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>ارسال گزارشات</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>رد</value>
+  </data>
+  <data name="DeclineDeactivate" xml:space="preserve">
+    <value>رد و غیرفعال‌سازی</value>
   </data>
   <data name="Default" xml:space="preserve">
     <value>پیش‌فرض</value>
@@ -1762,8 +1834,14 @@
   <data name="EditContact" xml:space="preserve">
     <value>ویرایش</value>
   </data>
+  <data name="EditMessage" xml:space="preserve">
+    <value>ویرایش پیام</value>
+  </data>
   <data name="EditMessageError" xml:space="preserve">
     <value>متأسفانه شما نمی‌توانید این پیام را ویرایش کنید.</value>
+  </data>
+  <data name="EditMessageMedia" xml:space="preserve">
+    <value>برای ویرایش رسانه لمس کنید</value>
   </data>
   <data name="EditName" xml:space="preserve">
     <value>ویرایش نام</value>
@@ -2152,6 +2230,24 @@
   </data>
   <data name="FileUploadLimit" xml:space="preserve">
     <value>⁧حجم فایل نباید بیش از ⁨{0}⁩ باشد⁩</value>
+  </data>
+  <data name="FilesZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesOne" xml:space="preserve">
+    <value>⁧⁨{0}⁩ فایل⁩</value>
+  </data>
+  <data name="FilesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesOther" xml:space="preserve">
+    <value>⁧⁨{0}⁩ فایل⁩</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>فایل‌ها</value>
@@ -2910,6 +3006,12 @@
   </data>
   <data name="Map" xml:space="preserve">
     <value>نقشه</value>
+  </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>علامت زدن به عنوان خوانده شده</value>
+  </data>
+  <data name="MarkAsUnread" xml:space="preserve">
+    <value>علامت زدن به عنوان خوانده نشده</value>
   </data>
   <data name="Masks" xml:space="preserve">
     <value>ماسک‌ها</value>
@@ -3786,6 +3888,9 @@
   </data>
   <data name="PasscodePassword" xml:space="preserve">
     <value>گذرواژه</value>
+  </data>
+  <data name="PassportPhoneUseSameEmailInfo" xml:space="preserve">
+    <value>استفاده از آدرس ایمیل استفاده شده در تلگرام</value>
   </data>
   <data name="PasswordAsHintError" xml:space="preserve">
     <value>راهنما باید با گذرواژه شما متفاوت باشد</value>

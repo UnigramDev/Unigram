@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Media;
 using Telegram.Td.Api;
 using Windows.Media.Capture;
 using Unigram.ViewModels.Delegates;
+using Windows.ApplicationModel;
 
 namespace Unigram.Views
 {
@@ -33,11 +34,19 @@ namespace Unigram.Views
         public SettingsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsViewModel, IUserDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SettingsViewModel, IUserDelegate>(this);
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            Diagnostics.Text = $"Unigram X {AboutViewModel.GetVersion()}";
+            Diagnostics.Text = $"Unigram X {GetVersion()}";
+        }
+
+        private string GetVersion()
+        {
+            Package package = Package.Current;
+            PackageId packageId = package.Id;
+            PackageVersion version = packageId.Version;
+            return string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build, version.Revision);
         }
 
         public MasterDetailView MasterDetail { get; set; }
@@ -265,7 +274,7 @@ namespace Unigram.Views
             Username.Content = string.IsNullOrEmpty(user.Username) ? Strings.Resources.UsernameEmpty : $"@{user.Username}";
         }
 
-        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret)
+        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
             Bio.Content = string.IsNullOrEmpty(fullInfo.Bio) ? Strings.Resources.UserBioEmpty : fullInfo.Bio;
         }

@@ -1,4 +1,9 @@
 ﻿using Autofac;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Telegram.Td;
+using Template10.Services.ViewService;
 using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Services;
@@ -16,28 +21,76 @@ using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
 using Unigram.Views;
 using Windows.Foundation.Metadata;
+using Windows.Storage;
 
 namespace Unigram
 {
     public class ViewModelLocator
     {
-        private UnigramContainer container;
+        private TLContainer _container;
 
         public ViewModelLocator()
         {
-            container = UnigramContainer.Current;
+            _container = TLContainer.Current;
         }
 
-        public IHardwareService HardwareService => container.Resolve<IHardwareService>();
-
-        public void Configure(int id)
+        public void Configure()
         {
-            container.Build(id, (builder, session) =>
+            Log.SetVerbosityLevel(SettingsService.Current.VerbosityLevel);
+            Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"));
+
+            var fail = true;
+            var first = 0;
+
+            foreach (var session in GetSessions())
+            {
+                if (first < 1 || session == SettingsService.Current.PreviousSession)
+                {
+                    first = session;
+                }
+
+                fail = false;
+                Configure(session);
+            }
+
+            if (fail)
+            {
+                Configure(first);
+            }
+
+            _container.Lifetime.Update();
+        }
+
+        private IEnumerable<int> GetSessions()
+        {
+            var folders = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
+            foreach (var folder in folders)
+            {
+                if (int.TryParse(Path.GetFileName(folder), out int session))
+                {
+                    var container = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
+                    if (container.Values.ContainsKey("UserId"))
+                    {
+                        yield return session;
+                    }
+                    else
+                    {
+                        Task.Factory.StartNew((path) => Directory.Delete((string)path, true), folder);
+                    }
+                }
+            }
+        }
+
+        public IContainer Configure(int id)
+        {
+            return _container.Build(id, (builder, session) =>
             {
                 builder.RegisterType<ProtoService>().WithParameter("session", session).As<IProtoService, ICacheService>().SingleInstance();
-                builder.RegisterType<ApplicationSettings>().WithParameter("session", session).As<ISettingsService>().SingleInstance();
+                builder.RegisterType<SettingsService>().WithParameter("session", session).As<ISettingsService>().SingleInstance();
                 builder.RegisterType<NotificationsService>().As<INotificationsService>().SingleInstance().AutoActivate();
                 builder.RegisterType<GenerationService>().As<IGenerationService>().SingleInstance().AutoActivate();
+
+                builder.RegisterType<VoIPService>().As<IVoIPService>().SingleInstance();
 
                 //builder.RegisterType<MTProtoService>().WithParameter("account", account).As<IMTProtoService>().SingleInstance();
                 builder.RegisterType<DeviceInfoService>().As<IDeviceInfoService>().SingleInstance();
@@ -69,6 +122,12 @@ namespace Unigram
                     builder.RegisterType<FakeVibrationService>().As<IVibrationService>().SingleInstance();
                 }
 
+                builder.RegisterType<SessionService>().As<ISessionService>()
+                    .WithParameter("session", session)
+                    .WithParameter("selected", session == SettingsService.Current.ActiveSession).SingleInstance();
+
+                builder.RegisterType<ViewService>().As<IViewService>();
+
                 // ViewModels
                 builder.RegisterType<SignInViewModel>();
                 builder.RegisterType<SignUpViewModel>();
@@ -77,7 +136,6 @@ namespace Unigram
                 builder.RegisterType<MainViewModel>().SingleInstance();
                 builder.RegisterType<PlaybackViewModel>().SingleInstance();
                 builder.RegisterType<ShareViewModel>().SingleInstance();
-                builder.RegisterType<ForwardViewModel>().SingleInstance();
                 builder.RegisterType<DialogShareLocationViewModel>().SingleInstance();
                 builder.RegisterType<ChatsViewModel>().SingleInstance();
                 builder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
@@ -85,7 +143,6 @@ namespace Unigram
                 builder.RegisterType<UserCommonChatsViewModel>();
                 builder.RegisterType<UserCreateViewModel>();
                 builder.RegisterType<SupergroupEventLogViewModel>();
-                builder.RegisterType<SupergroupEventLogFilterViewModel>();
                 builder.RegisterType<SupergroupEditViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupEditStickerSetViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupEditAdministratorViewModel>();
@@ -146,13 +203,13 @@ namespace Unigram
                 builder.RegisterType<SettingsLanguageViewModel>().SingleInstance();
                 builder.RegisterType<AttachedStickersViewModel>();
                 builder.RegisterType<ViewModels.StickerSetViewModel>();
-                builder.RegisterType<AboutViewModel>().SingleInstance();
                 builder.RegisterType<PaymentFormStep1ViewModel>();
                 builder.RegisterType<PaymentFormStep2ViewModel>();
                 builder.RegisterType<PaymentFormStep3ViewModel>();
                 builder.RegisterType<PaymentFormStep4ViewModel>();
                 builder.RegisterType<PaymentFormStep5ViewModel>();
                 builder.RegisterType<PaymentReceiptViewModel>();
+                builder.RegisterType<InviteViewModel>();
 
                 return builder.Build();
             });

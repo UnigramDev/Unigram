@@ -20,7 +20,7 @@ using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels
 {
-   public class SettingsViewModel : UnigramViewModelBase,
+   public class SettingsViewModel : TLViewModelBase,
         IDelegable<IUserDelegate>,
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>
@@ -77,7 +77,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        Delegate?.UpdateUserFullInfo(chat, item, cache, false);
+                        Delegate?.UpdateUserFullInfo(chat, item, cache, false, false);
                     }
                 }
             }
@@ -112,7 +112,7 @@ namespace Unigram.ViewModels
 
             if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false));
+                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false, false));
             }
         }
 

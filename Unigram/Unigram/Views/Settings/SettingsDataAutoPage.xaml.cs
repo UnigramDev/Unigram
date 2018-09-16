@@ -28,7 +28,7 @@ namespace Unigram.Views.Settings
         public SettingsDataAutoPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsDataAutoViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsDataAutoViewModel>();
         }
     }
 }

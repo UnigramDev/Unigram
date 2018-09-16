@@ -36,6 +36,7 @@
                     <StaticResource x:Key="NavigationViewItemBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBorderBrushCheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
+                    <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlForegroundAccentBrush" />
                     <StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
                     <StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
@@ -83,6 +84,7 @@
                     <StaticResource x:Key="NavigationViewItemBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBorderBrushCheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
+                    <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlForegroundAccentBrush" />
                     <StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
                     <StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
@@ -150,7 +152,8 @@
             <converters:MeUrlPrefixConverter x:Key="MeUrlPrefixConverter"/>
             <converters:GeoLivePeriodConverter x:Key="GeoLivePeriodConverter"/>
             <converters:CompressionToGlyphConverter x:Key="CompressionToGlyphConverter"/>
-            <converters:MessageTTLConverter x:Key="MessageTTLConverter"/>
+            <converters:ChatTtlConverter x:Key="ChatTtlConverter"/>
+            <converters:MessageTtlConverter x:Key="MessageTtlConverter"/>
             <converters:PrivacyRuleToUsersConverter x:Key="PrivacyRuleToUsersConverter"/>
             <converters:StickerToEmojiConverter x:Key="StickerToEmojiConverter"/>
             <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>

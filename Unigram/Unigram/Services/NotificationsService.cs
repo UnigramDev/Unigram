@@ -35,17 +35,19 @@ namespace Unigram.Services
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
+        private readonly ISessionService _sessionService;
         private readonly ISettingsService _settings;
         private readonly IEventAggregator _aggregator;
 
         private readonly DisposableMutex _registrationLock;
         private bool _alreadyRegistered;
 
-        public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, ISessionService sessionService, IEventAggregator aggregator)
         {
             _protoService = protoService;
             _cacheService = cacheService;
             _settings = settingsService;
+            _sessionService = sessionService;
             _aggregator = aggregator;
 
             _registrationLock = new DisposableMutex();
@@ -85,7 +87,7 @@ namespace Unigram.Services
             if (terms.ShowPopup)
             {
                 await Task.Delay(2000);
-                await WindowWrapper.Default().Dispatcher.Dispatch(async () =>
+                await WindowContext.Default().Dispatcher.Dispatch(async () =>
                 {
                     var confirm = await TLMessageDialog.ShowAsync(terms.Text, Strings.Resources.PrivacyPolicyAndTerms, Strings.Resources.Agree, Strings.Resources.Cancel);
                     if (confirm != ContentDialogResult.Primary)
@@ -123,9 +125,20 @@ namespace Unigram.Services
                 return;
             }
 
-            WindowWrapper.Default().Dispatcher.Dispatch(async () =>
+            WindowContext.Default().Dispatcher.Dispatch(async () =>
             {
-                await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
+                if (update.Type.StartsWith("AUTH_KEY_DROP_"))
+                {
+                    var confirm = await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.LogOut, Strings.Resources.Cancel);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        _protoService.Send(new Destroy());
+                    }
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
+                }
             });
         }
 
@@ -187,23 +200,36 @@ namespace Unigram.Services
                 var date = BindConvert.Current.DateTime(update.Message.Date).ToString("o");
                 var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
 
-                Execute.BeginOnUIThread(() =>
+                var user = _protoService.GetUser(_protoService.GetMyId());
+
+                Update(chat, () =>
                 {
-                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                    NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, date, loc_key);
+                    NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
+                });
+            }, TimeSpan.FromSeconds(3));
+        }
+
+        private void Update(Chat chat, Action action)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                if (_sessionService.IsActive)
+                {
+                    var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + _protoService.SessionId);
                     if (service == null)
                     {
                         return;
                     }
 
-                    if (WindowContext.GetForCurrentView().ActivationState != Windows.UI.Core.CoreWindowActivationState.Deactivated && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
+                    if (TLWindowContext.GetForCurrentView().ActivationState != Windows.UI.Core.CoreWindowActivationState.Deactivated && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
                     {
                         return;
                     }
+                }
 
-                    NotificationTask.UpdateToast(caption, content, sound, launch, tag, group, picture, date, loc_key);
-                    NotificationTask.UpdatePrimaryTile(caption, content, picture);
-                });
-            }, TimeSpan.FromSeconds(3));
+                action();
+            });
         }
 
         private string GetTag(Message message)
@@ -254,26 +280,36 @@ namespace Unigram.Services
                 launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", basicGroup.BasicGroupId);
             }
 
-            return launch;
+            return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _protoService.SessionId);
         }
 
         public async Task RegisterAsync()
         {
             using (await _registrationLock.WaitAsync())
             {
+                var userId = _protoService.GetMyId();
+                if (userId == 0)
+                {
+                    return;
+                }
+
                 if (_alreadyRegistered) return;
                 _alreadyRegistered = true;
 
                 try
                 {
                     var oldUri = _settings.NotificationsToken;
-
+                    var ids = _settings.NotificationsIds.ToList();
                     var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                    if (channel.Uri != oldUri)
+                    if (channel.Uri != oldUri || !ids.Contains(userId))
                     {
-                        var result = await _protoService.SendAsync(new RegisterDevice(new DeviceTokenWindowsPush(channel.Uri), new int[0]));
+                        ids.Remove(userId);
+
+                        var result = await _protoService.SendAsync(new RegisterDevice(new DeviceTokenWindowsPush(channel.Uri), ids));
                         if (result is Ok)
                         {
+                            ids.Add(userId);
+                            _settings.NotificationsIds = ids.ToArray();
                             _settings.NotificationsToken = channel.Uri;
                         }
                         else
@@ -539,7 +575,7 @@ namespace Unigram.Services
             }
             else if (message.Content is MessageVenue vanue)
             {
-                return result + $"{Strings.Resources.AttachLocation}, ";
+                return result + Strings.Resources.AttachLocation;
             }
             else if (message.Content is MessagePhoto photo)
             {
@@ -549,6 +585,13 @@ namespace Unigram.Services
                 }
 
                 return result + $"{Strings.Resources.AttachPhoto}, ";
+            }
+            else if (message.Content is MessageCall call)
+            {
+                var outgoing = message.IsOutgoing;
+                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+
+                return result + (missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming));
             }
             else if (message.Content is MessageUnsupported)
             {

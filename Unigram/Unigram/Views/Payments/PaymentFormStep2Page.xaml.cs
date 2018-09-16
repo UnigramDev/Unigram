@@ -25,7 +25,7 @@ namespace Unigram.Views.Payments
         public PaymentFormStep2Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<PaymentFormStep2ViewModel>();
+            DataContext = TLContainer.Current.Resolve<PaymentFormStep2ViewModel>();
         }
     }
 

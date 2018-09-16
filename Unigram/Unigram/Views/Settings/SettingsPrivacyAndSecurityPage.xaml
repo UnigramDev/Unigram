@@ -86,9 +86,13 @@
                 </StackPanel>
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource DeleteAccountTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PrivacyAdvanced}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <Button
+                        Tag="{CustomResource PrivacyDeleteCloudDrafts}"
+                        Command="{x:Bind ViewModel.ClearDraftsCommand}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
                     <controls:BadgeButton
-                        Content="{CustomResource DeleteAccountIfAwayFor}"
+                        Content="{CustomResource DeleteAccountIfAwayFor2}"
                         Badge="{x:Bind ConvertTtl(ViewModel.AccountTTL), Mode=OneWay}"
                         Command="{x:Bind ViewModel.AccountTTLCommand}"/>
 
@@ -119,13 +123,21 @@
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource Contacts}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <Button
+                        Command="{x:Bind ViewModel.ClearContactsCommand}"
+                        Tag="{CustomResource SyncContactsDelete}"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                         Header="{CustomResource SyncContacts}"
                         Style="{ThemeResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsContactsSuggestEnabled, Mode=TwoWay}"
+                        Header="{CustomResource SuggestContacts}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
 
                     <TextBlock
-                        Text="{x:Bind ConvertSync(ViewModel.IsContactsSyncEnabled), Mode=OneWay}"
+                        Text="{CustomResource SuggestContactsInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,0"/>
@@ -140,6 +152,20 @@
 
                     <TextBlock
                         Text="{CustomResource PrivacyCallsP2PHelp}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,0"/>
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource SecretChat}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsSecretPreviewsEnabled, Mode=TwoWay}"
+                        Header="{CustomResource SecretWebPage}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+
+                    <TextBlock
+                        Text="{CustomResource SecretWebPageInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,0"/>

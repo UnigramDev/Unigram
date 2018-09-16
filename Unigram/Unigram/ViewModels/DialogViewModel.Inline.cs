@@ -53,6 +53,16 @@ namespace Unigram.ViewModels
 
         public async void ResolveInlineBot(string text, string command = null)
         {
+            var chat = Chat;
+            if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel)
+            {
+                var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                if (supergroup != null && !supergroup.CanPostMessages())
+                {
+                    return;
+                }
+            }
+
             var username = text.TrimStart('@');
             //var cached = CacheService.GetUsers();
 
@@ -78,7 +88,7 @@ namespace Unigram.ViewModels
             //}
 
             var response = await ProtoService.SendAsync(new SearchPublicChat(username));
-            if (response is Chat chat && chat.Type is ChatTypePrivate privata)
+            if (response is Chat result && result.Type is ChatTypePrivate privata)
             {
                 CurrentInlineBot = ProtoService.GetUser(privata.UserId);
                 GetInlineBotResults(command ?? string.Empty);
@@ -173,6 +183,23 @@ namespace Unigram.ViewModels
             var reply = GetReply(true);
 
             var response = await ProtoService.SendAsync(new SendInlineQueryResultMessage(chat.Id, reply, false, false, queryId, queryResult.GetId()));
+        }
+
+        private User GetBot(MessageViewModel message)
+        {
+            var via = message.GetViaBotUser();
+            if (via != null)
+            {
+                return via;
+            }
+
+            var sender = message.GetSenderUser();
+            if (sender.Type is UserTypeBot)
+            {
+                return sender;
+            }
+
+            return null;
         }
     }
 

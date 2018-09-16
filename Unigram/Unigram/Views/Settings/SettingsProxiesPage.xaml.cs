@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
+using Telegram.Td.Api;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -24,7 +25,7 @@ namespace Unigram.Views.Settings
         public SettingsProxiesPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsProxiesViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsProxiesViewModel>();
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
@@ -41,7 +42,12 @@ namespace Unigram.Views.Settings
             var element = sender as FrameworkElement;
             var proxy = element.DataContext as ProxyViewModel;
 
-            CreateFlyoutItem(ref flyout, ViewModel.ShareCommand, proxy, Strings.Resources.ShareFile);
+            if (proxy.Type is ProxyTypeMtproto || proxy.Type is ProxyTypeSocks5)
+            {
+                CreateFlyoutItem(ref flyout, ViewModel.ShareCommand, proxy, Strings.Resources.ShareFile);
+            }
+
+            CreateFlyoutItem(ref flyout, ViewModel.EditCommand, proxy, Strings.Resources.Edit);
             CreateFlyoutItem(ref flyout, ViewModel.RemoveCommand, proxy, Strings.Resources.Delete);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))

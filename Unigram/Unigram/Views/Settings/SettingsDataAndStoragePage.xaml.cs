@@ -27,7 +27,7 @@ namespace Unigram.Views.Settings
         public SettingsDataAndStoragePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsDataAndStorageViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsDataAndStorageViewModel>();
         }
 
         private void Storage_Click(object sender, RoutedEventArgs e)
@@ -46,6 +46,16 @@ namespace Unigram.Views.Settings
         }
 
         #region Binding
+
+        private string ConvertFilesDirectory(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return "Default folder";
+            }
+
+            return path;
+        }
 
         private string ConvertUseLessData(DataSavingMode value)
         {

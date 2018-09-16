@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Services.NavigationService;
 using Template10.Services.ViewService;
 using Unigram.Services;
 using Unigram.Views;
+using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Common
 {
-    public class UnigramNavigationService : NavigationService
+    public class TLNavigationService : NavigationService
     {
         private readonly IProtoService _protoService;
 
         private ViewLifetimeControl _instantLifetime;
 
-        public UnigramNavigationService(IProtoService protoService, Frame frame)
-            : base(frame)
+        public TLNavigationService(IProtoService protoService, Frame frame, int session, string id)
+            : base(frame, session, id)
         {
             _protoService = protoService;
         }
@@ -45,7 +44,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null)
+        public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
         {
             if (chat == null)
             {
@@ -77,6 +76,12 @@ namespace Unigram.Common
                 {
                     await page.ViewModel.LoadMessageSliceAsync(null, message.Value);
                 }
+                else
+                {
+                    await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, SnapPointsAlignment.Far, 8);
+                }
+
+                page.ViewModel.TextField?.FocusMaybe(FocusState.Keyboard);
             }
             else
             {
@@ -95,21 +100,35 @@ namespace Unigram.Common
                 //};
 
                 //Frame.Navigated += handler;
-                if (message != null)
+
+                if (message != null || accessToken != null)
                 {
-                    App.Current.SessionState["message_id"] = message.Value;
+                    state = state ?? new Dictionary<string, object>();
+
+                    if (message != null)
+                    {
+                        state["message_id"] = message.Value;
+                    }
+
+                    if (accessToken != null)
+                    {
+                        state["access_token"] = accessToken;
+                    }
+                }
+
+                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+                if (shift)
+                {
+                    await OpenAsync(typeof(ChatPage), chat.Id);
                 }
                 else
                 {
-                    App.Current.SessionState.Remove("message_id");
+                    await NavigateAsync(typeof(ChatPage), chat.Id, state);
                 }
-
-
-                Navigate(typeof(ChatPage), chat.Id);
             }
         }
 
-        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null)
+        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
         {
             var chat = _protoService.GetChat(chatId);
             if (chat == null)
@@ -126,7 +145,7 @@ namespace Unigram.Common
                 return;
             }
 
-            NavigateToChat(chat, message, accessToken);
+            NavigateToChat(chat, message, accessToken, state);
         }
     }
 }

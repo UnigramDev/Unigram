@@ -22,6 +22,12 @@ namespace Unigram.Common
             return this;
         }
 
+        public async Task<IDisposable> WaitAsync(CancellationToken cancellationToken)
+        {
+            await _semaphore.WaitAsync(cancellationToken);
+            return this;
+        }
+
         private readonly SemaphoreSlim _semaphore;
     }
 }

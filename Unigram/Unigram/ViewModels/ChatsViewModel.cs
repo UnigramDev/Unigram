@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Template10.Mvvm;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
@@ -19,7 +20,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {
-    public class ChatsViewModel : UnigramViewModelBase, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
+    public class ChatsViewModel : TLViewModelBase, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatIsSponsored>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
     {
         private readonly Dictionary<long, ChatViewModel> _viewModels = new Dictionary<long, ChatViewModel>();
 
@@ -28,11 +29,12 @@ namespace Unigram.ViewModels
         {
             Items = new ItemsCollection(protoService, aggregator, this);
 
-            DialogPinCommand = new RelayCommand<Chat>(DialogPinExecute);
-            DialogNotifyCommand = new RelayCommand<Chat>(DialogNotifyExecute);
-            DialogDeleteCommand = new RelayCommand<Chat>(DialogDeleteExecute);
-            DialogClearCommand = new RelayCommand<Chat>(DialogClearExecute);
-            DialogDeleteAndStopCommand = new RelayCommand<Chat>(DialogDeleteAndStopExecute);
+            ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
+            ChatMarkCommand = new RelayCommand<Chat>(ChatMarkExecute);
+            ChatNotifyCommand = new RelayCommand<Chat>(ChatNotifyExecute);
+            ChatDeleteCommand = new RelayCommand<Chat>(ChatDeleteExecute);
+            ChatClearCommand = new RelayCommand<Chat>(ChatClearExecute);
+            ChatDeleteAndStopCommand = new RelayCommand<Chat>(ChatDeleteAndStopExecute);
 
             aggregator.Subscribe(this);
             protoService.Send(new GetChats(long.MaxValue, 0, 20));
@@ -72,22 +74,53 @@ namespace Unigram.ViewModels
             }
         }
 
+        private TopChatsCollection _topChats;
+        public TopChatsCollection TopChats
+        {
+            get
+            {
+                return _topChats;
+            }
+            set
+            {
+                Set(ref _topChats, value);
+            }
+        }
+
         #region Commands
 
-        public RelayCommand<Chat> DialogPinCommand { get; }
-        private void DialogPinExecute(Chat chat)
+        public RelayCommand<Chat> ChatPinCommand { get; }
+        private void ChatPinExecute(Chat chat)
         {
             ProtoService.Send(new ToggleChatIsPinned(chat.Id, !chat.IsPinned));
         }
 
-        public RelayCommand<Chat> DialogNotifyCommand { get; }
-        private void DialogNotifyExecute(Chat chat)
+        public RelayCommand<Chat> ChatMarkCommand { get; }
+        private void ChatMarkExecute(Chat chat)
+        {
+            if (chat.UnreadCount > 0)
+            {
+                ProtoService.Send(new ViewMessages(chat.Id, new[] { chat.LastMessage.Id }, true));
+
+                if (chat.UnreadMentionCount > 0)
+                {
+                    ProtoService.Send(new ReadAllChatMentions(chat.Id));
+                }
+            }
+            else
+            {
+                ProtoService.Send(new ToggleChatIsMarkedAsUnread(chat.Id, !chat.IsMarkedAsUnread));
+            }
+        }
+
+        public RelayCommand<Chat> ChatNotifyCommand { get; }
+        private void ChatNotifyExecute(Chat chat)
         {
             ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(false, chat.NotificationSettings.MuteFor > 0 ? 0 : 632053052, false, chat.NotificationSettings.Sound, false, chat.NotificationSettings.ShowPreview)));
         }
 
-        public RelayCommand<Chat> DialogDeleteCommand { get; }
-        private async void DialogDeleteExecute(Chat chat)
+        public RelayCommand<Chat> ChatDeleteCommand { get; }
+        private async void ChatDeleteExecute(Chat chat)
         {
             var message = Strings.Resources.AreYouSureDeleteAndExit;
             if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
@@ -108,15 +141,15 @@ namespace Unigram.ViewModels
                 }
                 else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
                 {
-                    await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, ProtoService.GetMyId(), new ChatMemberStatusLeft()));
+                    await ProtoService.SendAsync(new LeaveChat(chat.Id));
                 }
 
                 ProtoService.Send(new DeleteChatHistory(chat.Id, true));
             }
         }
 
-        public RelayCommand<Chat> DialogClearCommand { get; }
-        private async void DialogClearExecute(Chat chat)
+        public RelayCommand<Chat> ChatClearCommand { get; }
+        private async void ChatClearExecute(Chat chat)
         {
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistory, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
@@ -125,8 +158,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<Chat> DialogDeleteAndStopCommand { get; }
-        private async void DialogDeleteAndStopExecute(Chat chat)
+        public RelayCommand<Chat> ChatDeleteAndStopCommand { get; }
+        private async void ChatDeleteAndStopExecute(Chat chat)
         {
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureDeleteThisChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary && chat.Type is ChatTypePrivate privata)
@@ -147,90 +180,37 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateChatOrder update)
         {
-            var chat = GetChat(update.ChatId);
-            if (chat != null)
-            {
-                BeginOnUIThread(() =>
-                {
-                    if (update.Order == 0)
-                    {
-                        Items.Remove(chat);
-                    }
-                    else
-                    {
-                        var index = Items.IndexOf(chat);
-                        var next = Items.NextIndexOf(chat);
-
-                        if (next >= 0 && index != next)
-                        {
-                            Items.Remove(chat);
-                            Items.Add(chat);
-                        }
-                    }
-                });
-            }
+            Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatLastMessage update)
         {
-            var chat = GetChat(update.ChatId);
-            if (chat != null)
-            {
-                BeginOnUIThread(() =>
-                {
-                    if (update.Order == 0)
-                    {
-                        Items.Remove(chat);
-                    }
-                    else
-                    {
-                        var index = Items.IndexOf(chat);
-                        var next = Items.NextIndexOf(chat);
-
-                        if (next >= 0 && index != next)
-                        {
-                            Items.Remove(chat);
-                            Items.Add(chat);
-                        }
-                    }
-                });
-            }
+            Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatIsPinned update)
         {
-            var chat = GetChat(update.ChatId);
-            if (chat != null)
-            {
-                BeginOnUIThread(() =>
-                {
-                    if (update.Order == 0)
-                    {
-                        Items.Remove(chat);
-                    }
-                    else
-                    {
-                        var index = Items.IndexOf(chat);
-                        var next = Items.NextIndexOf(chat);
+            Handle(update.ChatId, update.Order);
+        }
 
-                        if (next >= 0 && index != next)
-                        {
-                            Items.Remove(chat);
-                            Items.Add(chat);
-                        }
-                    }
-                });
-            }
+        public void Handle(UpdateChatIsSponsored update)
+        {
+            Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatDraftMessage update)
         {
-            var chat = GetChat(update.ChatId);
+            Handle(update.ChatId, update.Order);
+        }
+
+        private void Handle(long chatId, long order)
+        {
+            var chat = GetChat(chatId);
             if (chat != null)
             {
                 BeginOnUIThread(() =>
                 {
-                    if (update.Order == 0)
+                    if (order == 0)
                     {
                         Items.Remove(chat);
                     }
@@ -358,5 +338,47 @@ namespace Unigram.ViewModels
             Query = query;
             IsPublic = pub;
         }
+    }
+
+    public class TopChatsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
+    {
+        private readonly IProtoService _protoService;
+        private readonly TopChatCategory _category;
+        private readonly int _limit;
+
+        private bool _hasMore = false;
+
+        public TopChatsCollection(IProtoService protoService, TopChatCategory category, int limit)
+        {
+            _protoService = protoService;
+            _category = category;
+            _limit = limit;
+        }
+
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        {
+            return AsyncInfo.Run(async token =>
+            {
+                count = 0;
+
+                var response = await _protoService.SendAsync(new GetTopChats(_category, _limit));
+                if (response is Telegram.Td.Api.Chats chats)
+                {
+                    foreach (var id in chats.ChatIds)
+                    {
+                        var chat = _protoService.GetChat(id);
+                        if (chat != null)
+                        {
+                            Add(chat);
+                            count++;
+                        }
+                    }
+                }
+
+                return new LoadMoreItemsResult { Count = count };
+            });
+        }
+
+        public bool HasMoreItems => _hasMore;
     }
 }

@@ -25,16 +25,16 @@ namespace Unigram.Core.Services
     public class LiveLocationService : ILiveLocationService
     {
         //private readonly IProtoService _protoService;
-        private readonly ILocationService _locationService;
+        //private readonly ILocationService _locationService;
 
         //private readonly IEventAggregator _aggregator;
 
         private Geolocator _locator;
 
-        public LiveLocationService(/*IProtoService protoService,*/ ILocationService locationService/*, IEventAggregator aggregator*/)
+        public LiveLocationService(/*IProtoService protoService, ILocationService locationService, IEventAggregator aggregator*/)
         {
             //_protoService = protoService;
-            _locationService = locationService;
+            //_locationService = locationService;
             //_aggregator = aggregator;
 
             //_aggregator.Subscribe(this);
@@ -95,9 +95,9 @@ namespace Unigram.Core.Services
 
             if (_locator == null)
             {
-                _locator = await _locationService.StartTrackingAsync();
-                _locator.PositionChanged -= OnPositionChanged;
-                _locator.PositionChanged += OnPositionChanged;
+                //_locator = await _locationService.StartTrackingAsync();
+                //_locator.PositionChanged -= OnPositionChanged;
+                //_locator.PositionChanged += OnPositionChanged;
             }
         }
 

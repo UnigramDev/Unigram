@@ -571,11 +571,11 @@ namespace Unigram.Controls.Messages
             {
                 if (message.IsOutgoing)
                 {
-                    content = string.Format(Strings.Resources.MessageLifetimeChangedOutgoing, Locale.FormatTTLString(chatSetTtl.Ttl));
+                    content = string.Format(Strings.Resources.MessageLifetimeChangedOutgoing, Locale.FormatTtl(chatSetTtl.Ttl));
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.MessageLifetimeChanged, "un1", Locale.FormatTTLString(chatSetTtl.Ttl)), "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.MessageLifetimeChanged, "un1", Locale.FormatTtl(chatSetTtl.Ttl)), "un1", message.GetSenderUser(), ref entities);
                 }
             }
             else

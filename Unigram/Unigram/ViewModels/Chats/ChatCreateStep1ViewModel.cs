@@ -12,7 +12,7 @@ using ChatCreateStep2Tuple = System.Tuple<string, object>;
 
 namespace Unigram.ViewModels.Chats
 {
-    public class ChatCreateStep1ViewModel : UnigramViewModelBase
+    public class ChatCreateStep1ViewModel : TLViewModelBase
     {
         private bool _uploadingPhoto;
         private Action _uploadingCallback;

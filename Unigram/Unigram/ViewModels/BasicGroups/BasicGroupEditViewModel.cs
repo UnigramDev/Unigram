@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.BasicGroups
 {
-    public class BasicGroupEditViewModel : UnigramViewModelBase,
+    public class BasicGroupEditViewModel : TLViewModelBase,
         IDelegable<IBasicGroupDelegate>,
         IHandle<UpdateBasicGroup>,
         IHandle<UpdateBasicGroupFullInfo>,
@@ -204,7 +204,7 @@ namespace Unigram.ViewModels.BasicGroups
                 var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, ProtoService.GetMyId(), new ChatMemberStatusLeft()));
+                    await ProtoService.SendAsync(new LeaveChat(chat.Id));
 
                     var response = await ProtoService.SendAsync(new DeleteChatHistory(chat.Id, true));
                     if (response is Ok)

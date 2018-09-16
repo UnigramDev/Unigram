@@ -15,7 +15,7 @@ namespace Unigram.Controls
 {
     public class ImageView : HyperlinkButton
     {
-        private FrameworkElement Holder;
+        protected FrameworkElement Holder;
 
         public ImageView()
         {
@@ -205,7 +205,7 @@ namespace Unigram.Controls
             else if (constraint is Location location)
             {
                 width = 320;
-                height = 240;
+                height = 200;
             }
             else if (constraint is Photo photo)
             {
@@ -219,6 +219,10 @@ namespace Unigram.Controls
                     constraint = photo.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
                 }
             }
+            else if (constraint is UserProfilePhoto userProfilePhoto)
+            {
+                constraint = userProfilePhoto.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
+            }
             else if (constraint is Sticker sticker)
             {
                 width = sticker.Width;
@@ -227,7 +231,7 @@ namespace Unigram.Controls
             else if (constraint is Venue venue)
             {
                 width = 320;
-                height = 240;
+                height = 200;
             }
             else if (constraint is Video video)
             {

@@ -14,7 +14,6 @@ using LinqToVisualTree;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls.Primitives;
 using Template10.Common;
-using Unigram.Helpers;
 using Windows.UI;
 using Windows.Foundation.Metadata;
 using Template10.Services.NavigationService;
@@ -24,6 +23,7 @@ using Windows.UI.Xaml.Input;
 using Unigram.Core.Helpers;
 using Windows.System;
 using Unigram.Common;
+using Windows.ApplicationModel.Core;
 
 namespace Unigram.Controls
 {
@@ -88,7 +88,7 @@ namespace Unigram.Controls
 
                 titlebar.BackgroundColor = maskBackground;
                 titlebar.ForegroundColor = maskForeground;
-                titlebar.ButtonBackgroundColor = maskBackground;
+                //titlebar.ButtonBackgroundColor = maskBackground;
                 titlebar.ButtonForegroundColor = maskForeground;
 
                 if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
@@ -102,21 +102,7 @@ namespace Unigram.Controls
 
         protected void UnmaskTitleAndStatusBar()
         {
-            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
-            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
-
-            titlebar.BackgroundColor = backgroundBrush.Color;
-            titlebar.ForegroundColor = foregroundBrush.Color;
-            titlebar.ButtonBackgroundColor = backgroundBrush.Color;
-            titlebar.ButtonForegroundColor = foregroundBrush.Color;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = backgroundBrush.Color;
-                statusBar.ForegroundColor = foregroundBrush.Color;
-            }
+            TLWindowContext.GetForCurrentView().UpdateTitleBar();
         }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
@@ -169,6 +155,8 @@ namespace Unigram.Controls
 
                 _applicationView = ApplicationView.GetForCurrentView();
                 OnVisibleBoundsChanged(_applicationView, null);
+
+                Padding = new Thickness(0, CoreApplication.GetCurrentView().TitleBar.Height, 0, 0);
 
                 if (_popupHost == null)
                 {
@@ -323,7 +311,7 @@ namespace Unigram.Controls
 
         private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
-            UpdateViewBase();
+            //UpdateViewBase();
         }
 
         private void OnLoading(FrameworkElement sender, object args)
@@ -374,8 +362,12 @@ namespace Unigram.Controls
 
             if (IsFullScreenMode(bounds))
             {
-                BackgroundElement.MinWidth = bounds.Width;
-                BackgroundElement.MinHeight = bounds.Height;
+                //BackgroundElement.MinWidth = bounds.Width;
+                //BackgroundElement.MinHeight = bounds.Height;
+                BackgroundElement.MaxWidth = double.PositiveInfinity;
+                BackgroundElement.MaxHeight = double.PositiveInfinity;
+                BackgroundElement.HorizontalAlignment = HorizontalAlignment.Stretch;
+                BackgroundElement.VerticalAlignment = VerticalAlignment.Stretch;
                 BackgroundElement.BorderThickness = new Thickness(0);
             }
             else
@@ -496,6 +488,8 @@ namespace Unigram.Controls
 
         public bool IsInMainView => throw new NotImplementedException();
 
+        public int SessionId => throw new NotImplementedException();
+
         public event TypedEventHandler<Type> AfterRestoreSavedNavigation;
 
         public void ClearCache(bool removeCachedPagesInBackStack = false)
@@ -518,22 +512,22 @@ namespace Unigram.Controls
             throw new NotImplementedException();
         }
 
-        public void Navigate(Type page, object parameter = null, NavigationTransitionInfo infoOverride = null)
+        public void Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
         {
             throw new NotImplementedException();
         }
 
-        public void Navigate<T>(T key, object parameter = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
+        public void Navigate<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> NavigateAsync(Type page, object parameter = null, NavigationTransitionInfo infoOverride = null)
+        public Task<bool> NavigateAsync(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> NavigateAsync<T>(T key, object parameter = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
+        public Task<bool> NavigateAsync<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
         {
             throw new NotImplementedException();
         }

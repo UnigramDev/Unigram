@@ -709,6 +709,9 @@
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>{0} 님을 기다리고 있습니다...</value>
   </data>
+  <data name="Back" xml:space="preserve">
+    <value>뒤로</value>
+  </data>
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>백그라운드 데이터가 제한되었습니다.</value>
   </data>
@@ -1438,6 +1441,9 @@
   </data>
   <data name="CreateGroupError" xml:space="preserve">
     <value>죄송합니다. 이 사용자들의 개인 설정으로 인해 함께 그룹을 만드실 수 없습니다.</value>
+  </data>
+  <data name="CreateLink" xml:space="preserve">
+    <value>링크 만들기</value>
   </data>
   <data name="CreateNewTheme" xml:space="preserve">
     <value>새로운 테마 만들기</value>
@@ -2723,7 +2729,7 @@
     <value>{0} 님이 입력 중...</value>
   </data>
   <data name="Italic" xml:space="preserve">
-    <value>기울림</value>
+    <value>기울임꼴</value>
   </data>
   <data name="JoinGroup" xml:space="preserve">
     <value>그룹 들어가기</value>
@@ -2968,6 +2974,12 @@
   </data>
   <data name="Map" xml:space="preserve">
     <value>지도</value>
+  </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>읽음으로 표시</value>
+  </data>
+  <data name="MarkAsUnread" xml:space="preserve">
+    <value>읽지 않음으로 표시</value>
   </data>
   <data name="Masks" xml:space="preserve">
     <value>마스크</value>
@@ -3841,6 +3853,9 @@
   </data>
   <data name="PasscodePassword" xml:space="preserve">
     <value>암호</value>
+  </data>
+  <data name="PassportDeleteSelfie" xml:space="preserve">
+    <value>셀카를 삭제할까요?</value>
   </data>
   <data name="PasswordAsHintError" xml:space="preserve">
     <value>힌트는 비밀번호와 다르게 설정해주세요.</value>
@@ -5029,6 +5044,9 @@
   <data name="SyncContactsAdded" xml:space="preserve">
     <value>사용중인 계정에 기기에 있는 연락처가 추가되었습니다.</value>
   </data>
+  <data name="SyncContactsDelete" xml:space="preserve">
+    <value>동기화된 연락처 삭제</value>
+  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
     <value>사용중인 계정에 기기에 있는 연락처를 가져오려면 허용을 해주세요.</value>
   </data>
@@ -5094,6 +5112,9 @@
   </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>{0} 차단</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>이용 약관</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>클립보드로 텍스트가 복사되었습니다.</value>
@@ -5166,6 +5187,9 @@
   </data>
   <data name="Typing" xml:space="preserve">
     <value>입력 중...</value>
+  </data>
+  <data name="URL" xml:space="preserve">
+    <value>URL</value>
   </data>
   <data name="Unavailable" xml:space="preserve">
     <value>사용 불가능</value>

@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.SignIn
 {
-    public class SignUpViewModel : UnigramViewModelBase
+    public class SignUpViewModel : TLViewModelBase
     {
         public SignUpViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

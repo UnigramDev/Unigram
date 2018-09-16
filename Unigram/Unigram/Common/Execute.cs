@@ -102,6 +102,59 @@ namespace Unigram.Common
             });
         }
 
+        public static void BeginOnUIThread(Action action, Action fallback)
+        {
+            if (_dispatcher == null)
+            {
+                //try
+                //{
+                //    action?.Invoke();
+                //}
+                //catch (Exception e)
+                //{
+                //    TLUtils.WriteException(e);
+                //}
+
+                try
+                {
+                    fallback?.Invoke();
+                }
+                catch
+                {
+
+                }
+                return;
+            }
+
+            //CoreWindow forCurrentThread = CoreWindow.GetForCurrentThread();
+            //if (forCurrentThread == null)
+            //{
+            //    return;
+            //}
+            //CoreDispatcher dispatcher = forCurrentThread.Dispatcher;
+            //if (dispatcher == null)
+            //{
+            //    return;
+            //}
+            //CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(0, delegate
+
+
+
+
+            //CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(0, delegate
+            _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                try
+                {
+                    action?.Invoke();
+                }
+                catch (Exception e)
+                {
+
+                }
+            });
+        }
+
         private static bool CheckAccess()
         {
             if (_dispatcher == null)

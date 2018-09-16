@@ -14,7 +14,7 @@
     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
     MaxHeight="{ThemeResource TelegramMediaMaxHeight}">
 
-    <Ellipse>
+    <Ellipse x:Name="Holder">
         <Ellipse.Fill>
             <ImageBrush x:Name="Texture" Stretch="UniformToFill"/>
         </Ellipse.Fill>

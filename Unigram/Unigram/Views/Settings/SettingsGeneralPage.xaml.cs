@@ -15,7 +15,7 @@ namespace Unigram.Views.Settings
         public SettingsGeneralPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsGeneralViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsGeneralViewModel>();
         }
     }
 }

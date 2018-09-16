@@ -26,7 +26,7 @@ namespace Unigram.Controls.Views
         public LiveLocationsView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<MainViewModel>();
+            DataContext = TLContainer.Current.Resolve<MainViewModel>();
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

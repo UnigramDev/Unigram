@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels.Settings.Privacy;
 using Unigram.Views.Settings;
@@ -14,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPrivacyAndSecurityViewModel : UnigramViewModelBase
+    public class SettingsPrivacyAndSecurityViewModel : TLMultipleViewModelBase, IHandle<UpdateOption>
     {
         private readonly IContactsService _contactsService;
 
@@ -32,9 +33,17 @@ namespace Unigram.ViewModels.Settings
             _allowChatInvitesRules = chatInvite;
 
             PasswordCommand = new RelayCommand(PasswordExecute);
+            ClearDraftsCommand = new RelayCommand(ClearDraftsExecute);
+            ClearContactsCommand = new RelayCommand(ClearContactsExecute);
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
             AccountTTLCommand = new RelayCommand(AccountTTLExecute);
             PeerToPeerCommand = new RelayCommand(PeerToPeerExecute);
+
+            ChildViewModels.Add(_showStatusRules);
+            ChildViewModels.Add(_allowCallsRules);
+            ChildViewModels.Add(_allowChatInvitesRules);
+
+            aggregator.Subscribe(this);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -55,11 +64,7 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            BeginOnUIThread(() => _showStatusRules.OnNavigatedToAsync(parameter, mode, state));
-            BeginOnUIThread(() => _allowCallsRules.OnNavigatedToAsync(parameter, mode, state));
-            BeginOnUIThread(() => _allowChatInvitesRules.OnNavigatedToAsync(parameter, mode, state));
-
-            return Task.CompletedTask;
+            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         public override IDispatcherWrapper Dispatcher
@@ -132,7 +137,55 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsContactsSuggestEnabled
+        {
+            get
+            {
+                return !ProtoService.GetOption<OptionValueBoolean>("disable_top_chats")?.Value ?? true;
+            }
+            set
+            {
+                SetSuggestContacts(value);
+            }
+        }
+
+        public bool IsSecretPreviewsEnabled
+        {
+            get
+            {
+                return Settings.IsSecretPreviewsEnabled;
+            }
+            set
+            {
+                Settings.IsSecretPreviewsEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion
+
+        public void Handle(UpdateOption update)
+        {
+            if (update.Name.Equals("disable_top_chats"))
+            {
+                BeginOnUIThread(() => RaisePropertyChanged(() => IsContactsSuggestEnabled));
+            }
+        }
+
+        private async void SetSuggestContacts(bool value)
+        {
+            if (!value)
+            {
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.SuggestContactsAlert, Strings.Resources.AppName, Strings.Resources.MuteDisable, Strings.Resources.Cancel);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    RaisePropertyChanged(() => IsContactsSuggestEnabled);
+                    return;
+                }
+            }
+
+            ProtoService.Send(new SetOption("disable_top_chats", new OptionValueBoolean(!value)));
+        }
 
         public RelayCommand PasswordCommand { get; }
         private async void PasswordExecute()
@@ -153,6 +206,50 @@ namespace Unigram.ViewModels.Settings
             //{
             //    // TODO
             //}
+        }
+
+        public RelayCommand ClearDraftsCommand { get; }
+        private async void ClearDraftsExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearDrafts, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var clear = await ProtoService.SendAsync(new ClearAllDraftMessages(true));
+            if (clear is Error)
+            {
+                // TODO
+            }
+        }
+
+        public RelayCommand ClearContactsCommand { get; }
+        private async void ClearContactsExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.SyncContactsDeleteInfo, Strings.Resources.Contacts, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            IsContactsSyncEnabled = false;
+
+            var clear = await ProtoService.SendAsync(new ClearImportedContacts());
+            if (clear is Error)
+            {
+                // TODO
+            }
+
+            var contacts = await ProtoService.SendAsync(new GetContacts());
+            if (contacts is Telegram.Td.Api.Users users)
+            {
+                var delete = await ProtoService.SendAsync(new RemoveContacts(users.UserIds));
+                if (delete is Error)
+                {
+                    // TODO
+                }
+            }
         }
 
         public RelayCommand ClearPaymentsCommand { get; }
@@ -307,10 +404,13 @@ namespace Unigram.ViewModels.Settings
             {
                 if (IsContactsSyncEnabled)
                 {
-                    //var contacts = CacheService.GetContacts();
-                    //var response = new TLContactsContacts { Users = new TLVector<TLUserBase>(contacts) };
-
-                    //await _contactsService.ExportAsync(response);
+                    ProtoService.Send(new GetContacts(), async result =>
+                    {
+                        if (result is Telegram.Td.Api.Users users)
+                        {
+                            await _contactsService.SyncAsync(users);
+                        }
+                    });
                 }
                 else
                 {

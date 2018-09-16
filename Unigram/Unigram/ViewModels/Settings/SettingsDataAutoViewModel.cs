@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsDataAutoViewModel : UnigramViewModelBase
+    public class SettingsDataAutoViewModel : TLViewModelBase
     {
         private AutoDownloadType _type;
 

@@ -20,7 +20,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPhoneViewModel : UnigramViewModelBase
+    public class SettingsPhoneViewModel : TLViewModelBase
     {
         public SettingsPhoneViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

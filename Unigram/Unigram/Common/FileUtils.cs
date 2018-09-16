@@ -21,7 +21,7 @@ namespace Unigram.Common
     {
         public static string GetFileName(string fileName)
         {
-            return Path.Combine(ApplicationData.Current.LocalFolder.Path, ApplicationSettings.Current.SelectedAccount.ToString(), fileName);
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsService.Current.ActiveSession.ToString(), fileName);
         }
 
         public static string GetTempFileName(string fileName)
@@ -36,12 +36,12 @@ namespace Unigram.Common
 
         public static string GetFilePath(string fileName)
         {
-            return $"{ApplicationSettings.Current.SelectedAccount}\\{fileName}";
+            return $"{SettingsService.Current.ActiveSession}\\{fileName}";
         }
 
         public static IAsyncOperation<StorageFile> CreateFileAsync(string fileName, CreationCollisionOption options = CreationCollisionOption.ReplaceExisting)
         {
-            return ApplicationData.Current.LocalFolder.CreateFileAsync($"{ApplicationSettings.Current.SelectedAccount}\\{fileName}", options);
+            return ApplicationData.Current.LocalFolder.CreateFileAsync($"{SettingsService.Current.ActiveSession}\\{fileName}", options);
         }
 
         public static IAsyncOperation<StorageFile> CreateTempFileAsync(string fileName, CreationCollisionOption options = CreationCollisionOption.ReplaceExisting)
@@ -51,7 +51,7 @@ namespace Unigram.Common
 
         public static IAsyncOperation<IStorageItem> TryGetItemAsync(string fileName)
         {
-            return ApplicationData.Current.LocalFolder.TryGetItemAsync($"{ApplicationSettings.Current.SelectedAccount}\\{fileName}");
+            return ApplicationData.Current.LocalFolder.TryGetItemAsync($"{SettingsService.Current.ActiveSession}\\{fileName}");
         }
 
         public static bool Delete(object syncRoot, string fileName)

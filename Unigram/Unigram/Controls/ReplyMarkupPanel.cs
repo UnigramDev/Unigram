@@ -175,6 +175,26 @@ namespace Unigram.Controls
 
                         panel.ColumnDefinitions.Add(new ColumnDefinition());
                         panel.Children.Add(button);
+
+                        var topLeft = 4d;
+                        var topRight = 4d;
+                        var bottomRight = 4d;
+                        var bottomLeft = 4d;
+
+                        if (j == rows.Count - 1)
+                        {
+                            if (i == 0)
+                            {
+                                bottomLeft = CornerRadius.BottomLeft;
+                            }
+
+                            if (i == row.Count - 1)
+                            {
+                                bottomRight = CornerRadius.BottomRight;
+                            }
+                        }
+
+                        button.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
                     }
 
                     SetRow(panel, j);

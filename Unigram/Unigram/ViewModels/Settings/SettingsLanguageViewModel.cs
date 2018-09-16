@@ -7,15 +7,21 @@ using Unigram.Core.Common;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
+using Telegram.Td.Api;
+using Unigram.Common;
+using Windows.Globalization;
+using Template10.Common;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsLanguageViewModel : UnigramViewModelBase
+    public class SettingsLanguageViewModel : TLViewModelBase
     {
         public SettingsLanguageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<object>();
+            Items = new MvxObservableCollection<LanguagePackInfo>();
+
+            ChangeCommand = new RelayCommand<LanguagePackInfo>(ChangeExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -23,6 +29,12 @@ namespace Unigram.ViewModels.Settings
             if (Items.Count > 0 && SelectedItem != null)
             {
                 return;
+            }
+
+            var response = await ProtoService.SendAsync(new GetLocalizationTargetInfo(false));
+            if (response is LocalizationTargetInfo pack)
+            {
+                Items.ReplaceWith(pack.LanguagePacks.OrderBy(x => x.NativeName));
             }
 
             //var response = await LegacyService.GetLanguagesAsync();
@@ -43,7 +55,7 @@ namespace Unigram.ViewModels.Settings
             //}
         }
 
-        public MvxObservableCollection<object> Items { get; private set; }
+        public MvxObservableCollection<LanguagePackInfo> Items { get; private set; }
 
         private object _selectedItem;
         public object SelectedItem
@@ -56,6 +68,21 @@ namespace Unigram.ViewModels.Settings
             {
                 Set(ref _selectedItem, value);
             }
+        }
+
+        public RelayCommand<LanguagePackInfo> ChangeCommand { get; }
+        private async void ChangeExecute(LanguagePackInfo info)
+        {
+            //var response = await ProtoService.SetLanguageAsync(info.Code, true);
+            //if (response)
+            //{
+            //    ApplicationLanguages.PrimaryLanguageOverride = info.Code;
+            //    ResourceContext.GetForCurrentView().Reset();
+            //    ResourceContext.GetForViewIndependentUse().Reset();
+
+            //    WindowWrapper.Current().NavigationServices.Remove(NavigationService);
+            //    BootStrapper.Current.NavigationService.Reset();
+            //}
         }
     }
 }

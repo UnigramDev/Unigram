@@ -24,7 +24,7 @@ namespace Unigram.Views.Settings
         public SettingsStatsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsNetworkViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsNetworkViewModel>();
         }
 
         #region Binding

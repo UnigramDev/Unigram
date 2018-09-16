@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Unigram.Common;
 using Unigram.Services;
 using Windows.Storage;
@@ -9,34 +10,45 @@ namespace Unigram.Services
     public interface ISettingsService
     {
         int Session { get; }
-        int Version { get; set; }
+        int Version { get; }
+
+        void UpdateVersion();
 
         NotificationsSettings Notifications { get; }
         StickersSettings Stickers { get; }
+        AppearanceSettings Appearance { get; }
 
-        ElementTheme CurrentTheme { get; }
-        ElementTheme RequestedTheme { get; set; }
+        int UserId { get; set; }
 
         bool IsWorkModeVisible { get; set; }
         bool IsWorkModeEnabled { get; set; }
 
-        int FilesTtl { get; set; }
+        string FilesDirectory { get; set; }
 
         int VerbosityLevel { get; }
+        bool UseTestDC { get; set; }
 
         bool IsSendByEnterEnabled { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
+        bool IsContactsSyncRequested { get; set; }
+        bool IsSecretPreviewsEnabled { get; set; }
         bool IsAutoPlayEnabled { get; set; }
         bool IsSendGrouped { get; set; }
 
         string NotificationsToken { get; set; }
+        int[] NotificationsIds { get; set; }
 
         int SelectedBackground { get; set; }
         int SelectedColor { get; set; }
 
         int PeerToPeerMode { get; set; }
         libtgvoip.DataSavingMode UseLessData { get; set; }
+
+        void SetChatPinnedMessage(long chatId, long messageId);
+        long GetChatPinnedMessage(long chatId);
+
+        void Clear();
     }
 }
 
@@ -107,55 +119,64 @@ namespace Unigram.Common
         }
     }
 
-    public class ApplicationSettings : ApplicationSettingsBase, ISettingsService
+    public class SettingsService : ApplicationSettingsBase, ISettingsService
     {
-        private static ApplicationSettings _current;
-        public static ApplicationSettings Current
+        private static SettingsService _current;
+        public static SettingsService Current
         {
             get
             {
                 if (_current == null)
-                    _current = new ApplicationSettings();
+                    _current = new SettingsService();
 
                 return _current;
             }
         }
 
         private readonly int _session;
+        private readonly ApplicationDataContainer _local;
+        private readonly ApplicationDataContainer _own;
 
-        private ApplicationSettings()
+        private SettingsService()
         {
-
+            _local = ApplicationData.Current.LocalSettings;
         }
 
-        public ApplicationSettings(int session)
+        public SettingsService(int session)
             : base(session > 0 ? ApplicationData.Current.LocalSettings.CreateContainer(session.ToString(), ApplicationDataCreateDisposition.Always) : null)
         {
             _session = session;
+            _local = ApplicationData.Current.LocalSettings;
+            _own = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
         }
 
         #region App version
 
-        public const int CurrentVersion = 1215620;
-        public const string CurrentChangelog = "- Work mode: hide muted chats to focus on important conversations.\r\n- Compact mode: the app will now show just profile pictures in chats list if the window isn't wide enough.\r\n- Zoom photos and videos: when you open a media full screen you can now zoom it using touch or mouse wheel.";
+        public const int CurrentVersion = 1816050;
+        public const string CurrentChangelog = "New in version 1.8.1605:\r\n- You can now resize chats list width by dragging it with your mouse.\r\n- It is now possible to setup HTTP proxies.";
 
         public int Session => _session;
 
-        private int? _appVersion;
+        private int? _version;
         public int Version
         {
             get
             {
-                if (_appVersion == null)
-                    _appVersion = GetValueOrDefault("AppVersion", 0);
+                if (_version == null)
+                    _version = GetValueOrDefault("AppVersion", 0);
 
-                return _appVersion ?? 0;
+                return _version ?? 0;
             }
-            set
+            private set
             {
-                _appVersion = value;
+                _version = value;
                 AddOrUpdateValue("AppVersion", value);
             }
+        }
+
+        public void UpdateVersion()
+        {
+            Version = CurrentVersion;
         }
 
         #endregion
@@ -178,35 +199,12 @@ namespace Unigram.Common
             }
         }
 
-        private ElementTheme? _currentTheme;
-        public ElementTheme CurrentTheme
+        private AppearanceSettings _appearance;
+        public AppearanceSettings Appearance
         {
             get
             {
-                if (_currentTheme == null)
-                    _currentTheme = RequestedTheme;
-
-                return _currentTheme ?? ElementTheme.Default;
-            }
-        }
-
-        private ElementTheme? _requestedTheme;
-        public ElementTheme RequestedTheme
-        {
-            get
-            {
-                if (_requestedTheme == null)
-                {
-                    _requestedTheme = (ElementTheme)GetValueOrDefault(ApplicationData.Current.LocalSettings, "RequestedTheme", (int)ElementTheme.Default);
-                    _currentTheme = _requestedTheme;
-                }
-
-                return _requestedTheme ?? ElementTheme.Default;
-            }
-            set
-            {
-                _requestedTheme = value;
-                AddOrUpdateValue(ApplicationData.Current.LocalSettings, "RequestedTheme", (int)value);
+                return _appearance = _appearance ?? new AppearanceSettings();
             }
         }
 
@@ -244,20 +242,20 @@ namespace Unigram.Common
             }
         }
 
-        private int? _filesTtl;
-        public int FilesTtl
+        private string _filesDirectory;
+        public string FilesDirectory
         {
             get
             {
-                if (_filesTtl == null)
-                    _filesTtl = GetValueOrDefault("FilesTtl", 0);
+                if (_filesDirectory == null)
+                    _filesDirectory = GetValueOrDefault("FilesDirectory", null as string);
 
-                return _filesTtl ?? 0;
+                return _filesDirectory;
             }
             set
             {
-                _filesTtl = value;
-                AddOrUpdateValue("FilesTtl", value);
+                _filesDirectory = value;
+                AddOrUpdateValue("FilesDirectory", value);
             }
         }
 
@@ -268,11 +266,11 @@ namespace Unigram.Common
             {
                 if (_verbosityLevel == null)
 #if DEBUG
-                    _verbosityLevel = GetValueOrDefault("VerbosityLevel", 5);
+                    _verbosityLevel = GetValueOrDefault(_local, "VerbosityLevel", 5);
 
                 return _verbosityLevel ?? 5;
 #else
-                    _verbosityLevel = GetValueOrDefault("VerbosityLevel", 0);
+                    _verbosityLevel = GetValueOrDefault(_local, "VerbosityLevel", 0);
 
                 return _verbosityLevel ?? 0;
 #endif
@@ -280,7 +278,58 @@ namespace Unigram.Common
             set
             {
                 _verbosityLevel = value;
-                AddOrUpdateValue("VerbosityLevel", value);
+                AddOrUpdateValue(_local, "VerbosityLevel", value);
+            }
+        }
+
+        private bool? _useTestDC;
+        public bool UseTestDC
+        {
+            get
+            {
+                if (_useTestDC == null)
+                    _useTestDC = GetValueOrDefault(_local, "UseTestDC", false);
+
+                return _useTestDC ?? false;
+            }
+            set
+            {
+                _useTestDC = value;
+                AddOrUpdateValue(_local, "UseTestDC", value);
+            }
+        }
+
+        private int? _userId;
+        public int UserId
+        {
+            get
+            {
+                if (_userId == null)
+                    _userId = GetValueOrDefault(_own, "UserId", 0);
+
+                return _userId ?? 0;
+            }
+            set
+            {
+                _userId = value;
+                AddOrUpdateValue(_own, "UserId", value);
+            }
+        }
+
+        private double? _dialogsWidthRatio;
+        public double DialogsWidthRatio
+        {
+            get
+            {
+                if (_dialogsWidthRatio == null)
+                    _dialogsWidthRatio = GetValueOrDefault(_local, "DialogsWidthRatio", 5d / 14d);
+
+                return _dialogsWidthRatio ?? 5d / 14d;
+            }
+            set
+            {
+                _dialogsWidthRatio = value;
+                AddOrUpdateValue(_local, "DialogsWidthRatio", value);
             }
         }
 
@@ -335,6 +384,40 @@ namespace Unigram.Common
             }
         }
 
+        private bool? _isContactsSyncRequested;
+        public bool IsContactsSyncRequested
+        {
+            get
+            {
+                if (_isContactsSyncRequested == null)
+                    _isContactsSyncRequested = GetValueOrDefault("IsContactsSyncRequested", false);
+
+                return _isContactsSyncRequested ?? true;
+            }
+            set
+            {
+                _isContactsSyncRequested = value;
+                AddOrUpdateValue("IsContactsSyncRequested", value);
+            }
+        }
+
+        private bool? _isSecretPreviewsEnabled;
+        public bool IsSecretPreviewsEnabled
+        {
+            get
+            {
+                if (_isSecretPreviewsEnabled == null)
+                    _isSecretPreviewsEnabled = GetValueOrDefault("IsSecretPreviewsEnabled", false);
+
+                return _isSecretPreviewsEnabled ?? true;
+            }
+            set
+            {
+                _isSecretPreviewsEnabled = value;
+                AddOrUpdateValue("IsSecretPreviewsEnabled", value);
+            }
+        }
+
         private bool? _isAutoPlayEnabled;
         public bool IsAutoPlayEnabled
         {
@@ -369,20 +452,37 @@ namespace Unigram.Common
             }
         }
 
-        private int? _selectedAccount;
-        public int SelectedAccount
+        private int? _previousSession;
+        public int PreviousSession
         {
             get
             {
-                if (_selectedAccount == null)
-                    _selectedAccount = GetValueOrDefault("SelectedAccount", 0);
+                if (_previousSession == null)
+                    _previousSession = GetValueOrDefault(_local, "PreviousSession", 0);
 
-                return _selectedAccount ?? 0;
+                return _activeSession ?? 0;
             }
             set
             {
-                _selectedAccount = value;
-                AddOrUpdateValue("SelectedAccount", value);
+                _previousSession = value;
+                AddOrUpdateValue(_local, "PreviousSession", value);
+            }
+        }
+
+        private int? _activeSession;
+        public int ActiveSession
+        {
+            get
+            {
+                if (_activeSession == null)
+                    _activeSession = GetValueOrDefault(_local, "SelectedAccount", 0);
+
+                return _activeSession ?? 0;
+            }
+            set
+            {
+                _activeSession = value;
+                AddOrUpdateValue(_local, "SelectedAccount", value);
             }
         }
 
@@ -392,14 +492,41 @@ namespace Unigram.Common
             get
             {
                 if (_notificationsToken == null)
-                    _notificationsToken = GetValueOrDefault<string>("ChannelUri", null);
+                    _notificationsToken = GetValueOrDefault<string>(_local, "ChannelUri", null);
 
                 return _notificationsToken;
             }
             set
             {
                 _notificationsToken = value;
-                AddOrUpdateValue("ChannelUri", value);
+                AddOrUpdateValue(_local, "ChannelUri", value);
+            }
+        }
+
+        private int[] _notificationsIds;
+        public int[] NotificationsIds
+        {
+            get
+            {
+                if (_notificationsIds == null)
+                {
+                    var value = GetValueOrDefault<string>(_local, "NotificationsIds", null);
+                    if (value == null)
+                    {
+                        _notificationsIds = new int[0];
+                    }
+                    else
+                    {
+                        _notificationsIds = value.Split(',').Select(x => int.Parse(x)).ToArray();
+                    }
+                }
+
+                return _notificationsIds;
+            }
+            set
+            {
+                _notificationsIds = value;
+                AddOrUpdateValue(_local, "NotificationsIds", null);
             }
         }
 
@@ -471,11 +598,33 @@ namespace Unigram.Common
             }
         }
 
+        public void SetChatPinnedMessage(long chatId, long messageId)
+        {
+            var container = _own.CreateContainer("PinnedMessages", ApplicationDataCreateDisposition.Always);
+            AddOrUpdateValue(container, $"{chatId}", messageId);
+        }
+
+        public long GetChatPinnedMessage(long chatId)
+        {
+            var container = _own.CreateContainer("PinnedMessages", ApplicationDataCreateDisposition.Always);
+            return GetValueOrDefault(container, $"{chatId}", 0L);
+        }
+
         public void CleanUp()
         {
             // Here should be cleaned up all the settings that are shared with background tasks.
             _peerToPeerMode = null;
             _useLessData = null;
+        }
+
+        public new void Clear()
+        {
+            _container.Values.Clear();
+
+            if (_own != null)
+            {
+                _own.Values.Clear();
+            }
         }
     }
 
@@ -556,6 +705,48 @@ namespace Unigram.Common
         }
     }
 
+    public class AppearanceSettings : ApplicationSettingsBase
+    {
+        public AppearanceSettings()
+            : base(ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always))
+        {
+
+        }
+
+        private TelegramTheme? _currentTheme;
+        public TelegramTheme CurrentTheme
+        {
+            get
+            {
+                if (_currentTheme == null)
+                    _currentTheme = RequestedTheme;
+
+                return _currentTheme ?? (TelegramTheme.Default | TelegramTheme.Brand);
+            }
+        }
+
+        private TelegramTheme? _requestedTheme;
+        public TelegramTheme RequestedTheme
+        {
+            get
+            {
+                if (_requestedTheme == null)
+                {
+                    _requestedTheme = (TelegramTheme)GetValueOrDefault(_container, "Theme", (int)(TelegramTheme.Default | TelegramTheme.Brand));
+                    _currentTheme = _requestedTheme;
+                }
+
+                return _requestedTheme ?? (TelegramTheme.Default | TelegramTheme.Brand);
+            }
+            set
+            {
+                _requestedTheme = value;
+                AddOrUpdateValue(_container, "Theme", (int)value);
+            }
+        }
+
+    }
+
     public class StickersSettings : ApplicationSettingsBase
     {
         public StickersSettings(ApplicationDataContainer container)
@@ -587,5 +778,16 @@ namespace Unigram.Common
         All,
         Installed,
         None
+    }
+
+    [Flags]
+    public enum TelegramTheme
+    {
+        Default = 1 << 0,
+        Light = 1 << 1,
+        Dark = 1 << 2,
+
+        Brand = 1 << 3,
+        Custom = 1 << 4,
     }
 }

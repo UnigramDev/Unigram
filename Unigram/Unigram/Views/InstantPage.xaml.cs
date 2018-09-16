@@ -53,7 +53,7 @@ namespace Unigram.Views
         public InstantPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<InstantViewModel>();
+            DataContext = TLContainer.Current.Resolve<InstantViewModel>();
 
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = System.IO.File.ReadAllText(jsPath);
@@ -62,11 +62,25 @@ namespace Unigram.Views
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Subscribe(this);
+
+            var scroll = ScrollingHost.GetScrollViewer();
+            if (scroll != null)
+            {
+                scroll.ViewChanged += OnViewChanged;
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Unsubscribe(this);
+        }
+
+        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (sender is ScrollViewer scroll)
+            {
+                Reading.Value = scroll.VerticalOffset / scroll.ScrollableHeight * 100;
+            }
         }
 
         public void Handle(UpdateFile update)
@@ -115,16 +129,24 @@ namespace Unigram.Views
                 return;
             }
 
+            ViewModel.IsLoading = true;
+
             var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(url, false));
             if (response is WebPageInstantView instantView)
             {
+                UpdateView(instantView);
+                ViewModel.IsLoading = false;
+
                 if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                 {
                     ViewModel.ShareLink = uri;
                     ViewModel.ShareTitle = url;
-                }
 
-                UpdateView(instantView);
+                    //if (uri.Fragment.Length > 0 && _anchors.TryGetValue(uri.Fragment.Substring(1), out Border anchor))
+                    //{
+                    //    await ScrollingHost.ScrollToItem(anchor, SnapPointsAlignment.Near, false);
+                    //}
+                }
             }
 
             //if (url.StartsWith("http") == false)
@@ -1216,38 +1238,27 @@ namespace Unigram.Views
 
         private async void Hyperlink_Click(RichTextUrl urlText)
         {
-            if (urlText.Url == _webpageId.ToString())
+            if (IsCurrentPage(ViewModel.ShareLink, urlText.Url, out string fragment))
             {
-                var fragmentStart = urlText.Url.IndexOf('#');
-                if (fragmentStart > 0)
+                if (_anchors.TryGetValue(fragment, out Border anchor))
                 {
-                    var name = urlText.Url.Substring(fragmentStart + 1);
-                    if (_anchors.TryGetValue(name, out Border anchor))
-                    {
-                        ScrollingHost.ScrollIntoView(anchor);
-                    }
+                    await ScrollingHost.ScrollToItem(anchor, SnapPointsAlignment.Near, false);
                 }
-            }
-            else if (urlText.Url != null)
-            {
-                //var protoService = (MTProtoService)MTProtoService.Current;
-                //protoService.SendInformativeMessage<TLWebPageBase>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
-                //    result =>
-                //    {
-                //        this.BeginOnUIThread(() =>
-                //        {
-                //            ViewModel.NavigationService.Navigate(typeof(InstantPage), result);
-                //        });
-                //    },
-                //    fault =>
-                //    {
-                //        Debugger.Break();
-                //    });
             }
             else
             {
-                if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
+                ViewModel.IsLoading = true;
+
+                var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(urlText.Url, false));
+                if (response is WebPageInstantView instantView)
                 {
+                    ViewModel.IsLoading = false;
+                    ViewModel.NavigationService.Navigate(typeof(InstantPage), urlText.Url);
+                }
+                else if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
+                {
+                    ViewModel.IsLoading = false;
+
                     if (MessageHelper.IsTelegramUrl(uri))
                     {
                         MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, ViewModel.NavigationService, urlText.Url);
@@ -1258,6 +1269,18 @@ namespace Unigram.Views
                     }
                 }
             }
+        }
+
+        private bool IsCurrentPage(Uri current, string url, out string fragment)
+        {
+            if (Uri.TryCreate(url, UriKind.Absolute, out Uri result))
+            {
+                fragment = result.Fragment.Length > 0 ? result.Fragment?.Substring(1) : null;
+                return Uri.Compare(current, result, UriComponents.Host | UriComponents.PathAndQuery, UriFormat.SafeUnescaped, StringComparison.OrdinalIgnoreCase) == 0;
+            }
+
+            fragment = null;
+            return false;
         }
 
         private async void OnWebViewNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
@@ -1383,6 +1406,11 @@ namespace Unigram.Views
         public bool IsAdmin(int userId)
         {
             return false;
+        }
+
+        public void Call(MessageViewModel message)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

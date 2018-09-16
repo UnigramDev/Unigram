@@ -31,7 +31,7 @@ namespace Unigram.Views.Users
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var service = UnigramContainer.Current.Resolve<IProtoService>();
+            var service = TLContainer.Current.Resolve<IProtoService>();
             var data = TLSerializationService.Current.Deserialize<long>((string)e.Parameter);
 
             var chat = service.GetChat(data);
@@ -76,7 +76,7 @@ namespace Unigram.Views.Users
                     builder.Append("\n");
                 }
 
-                Texture.Source = PlaceholderHelper.GetIdenticon(hash);
+                Texture.Source = PlaceholderHelper.GetIdenticon(hash, 192);
                 Hash.Text = builder.ToString();
 
                 TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.EncryptionKeyDescription, user.FirstName, user.FirstName));

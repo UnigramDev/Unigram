@@ -7,10 +7,11 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Services;
+using Windows.System;
 
 namespace Unigram.ViewModels
 {
-    public class InstantViewModel : UnigramViewModelBase
+    public class InstantViewModel : TLViewModelBase
     {
         public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator)
@@ -19,6 +20,7 @@ namespace Unigram.ViewModels
 
             ShareCommand = new RelayCommand(ShareExecute);
             FeedbackCommand = new RelayCommand(FeedbackExecute);
+            BrowserCommand = new RelayCommand(BrowserExecute);
         }
 
         public Uri ShareLink { get; set; }
@@ -54,6 +56,12 @@ namespace Unigram.ViewModels
             {
                 NavigationService.NavigateToChat(chat);
             }
+        }
+
+        public RelayCommand BrowserCommand { get; }
+        private async void BrowserExecute()
+        {
+            await Launcher.LaunchUriAsync(ShareLink);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Unigram.Views.SignIn
         public SignInPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SignInViewModel>();
+            DataContext = TLContainer.Current.Resolve<SignInViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }

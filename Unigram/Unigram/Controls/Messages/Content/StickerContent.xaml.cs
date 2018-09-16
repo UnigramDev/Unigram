@@ -9,6 +9,7 @@ using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -18,11 +19,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class StickerContent : ImageView, IContentWithFile
+    public sealed partial class StickerContent : ImageView, IContentWithFile, IContentWithMask
     {
         private MessageViewModel _message;
 
@@ -125,6 +124,16 @@ namespace Unigram.Controls.Messages.Content
             else if (content is MessageText text && text.WebPage != null)
             {
                 return text.WebPage.Sticker;
+            }
+
+            return null;
+        }
+
+        public CompositionBrush GetAlphaMask()
+        {
+            if (Holder is Image image)
+            {
+                return image.GetAlphaMask();
             }
 
             return null;

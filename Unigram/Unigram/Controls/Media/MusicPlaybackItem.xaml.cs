@@ -25,7 +25,7 @@ namespace Unigram.Controls.Media
     public sealed partial class MusicPlaybackItem : UserControl
     {
         public MessageViewModel ViewModel => DataContext as MessageViewModel;
-        public IPlaybackService Playback { get; } = UnigramContainer.Current.Resolve<IPlaybackService>();
+        public IPlaybackService Playback { get; } = TLContainer.Current.Resolve<IPlaybackService>();
 
         public MusicPlaybackItem()
         {

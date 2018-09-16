@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsProxiesViewModel : UnigramViewModelBase, IHandle<UpdateConnectionState>
+    public class SettingsProxiesViewModel : TLViewModelBase, IHandle<UpdateConnectionState>
     {
         public SettingsProxiesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -25,6 +25,7 @@ namespace Unigram.ViewModels.Settings
 
             AddCommand = new RelayCommand(AddExecute);
             EnableCommand = new RelayCommand<ConnectionViewModel>(EnableExecute);
+            EditCommand = new RelayCommand<ConnectionViewModel>(EditExecute);
             RemoveCommand = new RelayCommand<ProxyViewModel>(RemoveExecute);
             ShareCommand = new RelayCommand<ProxyViewModel>(ShareExecute);
 
@@ -47,25 +48,37 @@ namespace Unigram.ViewModels.Settings
                     _selectedItem.IsEnabled = true;
                 }
 
-                Parallel.ForEach(items, async proxy =>
+                IEnumerable<List<T>> splitList<T>(List<T> locations, int nSize = 30)
                 {
-                    var status = await ProtoService.SendAsync(new PingProxy(proxy.Id));
-                    BeginOnUIThread(() =>
+                    for (int i = 0; i < locations.Count; i += nSize)
                     {
-                        if (status is Seconds seconds)
-                        {
-                            proxy.Seconds = seconds.SecondsValue;
-                            proxy.Error = null;
-                            proxy.Status = new ConnectionStatusReady(proxy.IsEnabled, seconds.SecondsValue);
-                        }
-                        else if (status is Error error)
-                        {
-                            proxy.Seconds = 0;
-                            proxy.Error = error;
-                            proxy.Status = new ConnectionStatusError(error);
-                        }
-                    });
-                });
+                        yield return locations.GetRange(i, Math.Min(nSize, locations.Count - i));
+                    }
+                }
+
+                var lists = splitList(items.Select<ConnectionViewModel, Func<Task>>(x => () => UpdateAsync(x)).ToList(), 5);
+
+                foreach (var tiny in lists)
+                {
+                    await Task.WhenAll(tiny.Select(x => x()));
+                }
+            }
+        }
+
+        private async Task UpdateAsync(ConnectionViewModel proxy)
+        {
+            var status = await ProtoService.SendAsync(new PingProxy(proxy.Id));
+            if (status is Seconds seconds)
+            {
+                proxy.Seconds = seconds.SecondsValue;
+                proxy.Error = null;
+                proxy.Status = new ConnectionStatusReady(proxy.IsEnabled, seconds.SecondsValue);
+            }
+            else if (status is Error error)
+            {
+                proxy.Seconds = 0;
+                proxy.Error = error;
+                proxy.Status = new ConnectionStatusError(error);
             }
         }
 
@@ -137,7 +150,9 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.SendAsync(new AddProxy(dialog.Server, dialog.Port, false, dialog.Type));
             if (response is Proxy proxy)
             {
-                Items.Add(new ProxyViewModel(proxy));
+                var connection = new ProxyViewModel(proxy);
+                Items.Add(connection);
+                await UpdateAsync(connection);
             }
         }
 
@@ -153,6 +168,30 @@ namespace Unigram.ViewModels.Settings
             else
             {
                 await ProtoService.SendAsync(new DisableProxy());
+            }
+
+            Handle(ProtoService.GetConnectionState());
+        }
+
+        public RelayCommand<ConnectionViewModel> EditCommand { get; }
+        private async void EditExecute(ConnectionViewModel connection)
+        {
+            var dialog = new ProxyView(connection as ProxyViewModel);
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new EditProxy(connection.Id, dialog.Server, dialog.Port, false, dialog.Type));
+            if (response is Proxy proxy)
+            {
+                var index = Items.IndexOf(connection);
+                Items.Remove(connection);
+
+                var edited = new ProxyViewModel(proxy);
+                Items.Insert(index, edited);
+                await UpdateAsync(edited);
             }
 
             Handle(ProtoService.GetConnectionState());

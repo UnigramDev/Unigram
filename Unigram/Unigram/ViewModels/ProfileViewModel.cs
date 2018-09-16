@@ -32,10 +32,11 @@ using Unigram.Views.Chats;
 using Unigram.Core.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace Unigram.ViewModels
 {
-    public class ProfileViewModel : UnigramViewModelBase,
+    public class ProfileViewModel : TLViewModelBase,
         IDelegable<IProfileDelegate>,
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>,
@@ -64,11 +65,14 @@ namespace Unigram.ViewModels
             UnblockCommand = new RelayCommand(UnblockExecute);
             ReportCommand = new RelayCommand(ReportExecute);
             CallCommand = new RelayCommand(CallExecute);
+            CopyPhoneCommand = new RelayCommand(CopyPhoneExecute);
+            CopyUsernameCommand = new RelayCommand(CopyUsernameExecute);
             AddCommand = new RelayCommand(AddExecute);
             EditCommand = new RelayCommand(EditExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
             ShareCommand = new RelayCommand(ShareExecute);
             SecretChatCommand = new RelayCommand(SecretChatExecute);
+            SetTimerCommand = new RelayCommand(SetTimerExecute);
             IdenticonCommand = new RelayCommand(IdenticonExecute);
             MigrateCommand = new RelayCommand(MigrateExecute);
             InviteCommand = new RelayCommand(InviteExecute);
@@ -138,7 +142,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    Delegate?.UpdateUserFullInfo(chat, item, cache, false);
+                    Delegate?.UpdateUserFullInfo(chat, item, cache, false, false);
                 }
             }
             else if (chat.Type is ChatTypeSecret secretType)
@@ -156,7 +160,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    Delegate?.UpdateUserFullInfo(chat, item, cache, true);
+                    Delegate?.UpdateUserFullInfo(chat, item, cache, true, false);
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup basic)
@@ -231,11 +235,11 @@ namespace Unigram.ViewModels
 
             if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false));
+                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false, false));
             }
             else if (chat.Type is ChatTypeSecret secret && secret.UserId == update.UserId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, true));
+                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, true, false));
             }
         }
 
@@ -468,7 +472,7 @@ namespace Unigram.ViewModels
                 var user = ProtoService.GetUser(chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0);
                 if (user != null)
                 {
-                    await ShareView.GetForCurrentView().ShowAsync(new InputMessageContact(new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, user.Id)));
+                    await ShareView.GetForCurrentView().ShowAsync(new InputMessageContact(new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
                 }
             }
         }
@@ -537,6 +541,65 @@ namespace Unigram.ViewModels
             //        }
             //    }
             //}
+        }
+
+        public RelayCommand CopyPhoneCommand { get; }
+        private async void CopyPhoneExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var user = CacheService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            var dataPackage = new DataPackage();
+            dataPackage.SetText($"+{user.PhoneNumber}");
+            ClipboardEx.TrySetContent(dataPackage);
+
+            await TLMessageDialog.ShowAsync(Strings.Resources.PhoneCopied, Strings.Resources.AppName, Strings.Resources.OK);
+        }
+
+        public RelayCommand CopyUsernameCommand { get; }
+        private async void CopyUsernameExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup super)
+            {
+                var supergroup = CacheService.GetSupergroup(super.SupergroupId);
+                if (supergroup == null)
+                {
+                    return;
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText($"@{supergroup.Username}");
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+            else
+            {
+                var user = CacheService.GetUser(chat);
+                if (user == null)
+                {
+                    return;
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText($"@{user.Username}");
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+
+            await TLMessageDialog.ShowAsync(Strings.Resources.TextCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
 
         public RelayCommand SecretChatCommand { get; }
@@ -706,7 +769,7 @@ namespace Unigram.ViewModels
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ProtoService.Send(new ImportContacts(new[] { new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, user.Id) }));
+                    ProtoService.Send(new ImportContacts(new[] { new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id) }));
                 }
             }
         }
@@ -741,7 +804,7 @@ namespace Unigram.ViewModels
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ProtoService.Send(new ImportContacts(new[] { new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, user.Id) }));
+                    ProtoService.Send(new ImportContacts(new[] { new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id) }));
                 }
             }
         }
@@ -780,7 +843,7 @@ namespace Unigram.ViewModels
                 {
                     if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
                     {
-                        await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, ProtoService.GetMyId(), new ChatMemberStatusLeft()));
+                        await ProtoService.SendAsync(new LeaveChat(chat.Id));
                     }
 
                     ProtoService.Send(new DeleteChatHistory(chat.Id, true));
@@ -831,6 +894,37 @@ namespace Unigram.ViewModels
             //    }
             //}
         }
+
+        #region Set timer
+
+        public RelayCommand SetTimerCommand { get; }
+        private async void SetTimerExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var secretChat = CacheService.GetSecretChat(chat);
+            if (secretChat == null)
+            {
+                return;
+            }
+
+            var dialog = new ChatTtlView();
+            dialog.Value = secretChat.Ttl;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            ProtoService.Send(new SendChatSetTtlMessage(chat.Id, dialog.Value));
+        }
+
+        #endregion
 
         #region Supergroup
 
@@ -897,6 +991,37 @@ namespace Unigram.ViewModels
         public virtual ChatMemberCollection CreateMembers(int supergroupId)
         {
             return new ChatMemberCollection(ProtoService, supergroupId, new SupergroupMembersFilterRecent());
+        }
+
+        public void Find(string query)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                Search = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, new SupergroupMembersFilterSearch(query));
+            }
+            else if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                Search = new ChatMemberCollection(ProtoService, chat.Id, query, new ChatMembersFilterMembers());
+            }
+        }
+
+        private ChatMemberCollection _search;
+        public ChatMemberCollection Search
+        {
+            get
+            {
+                return _search;
+            }
+            set
+            {
+                Set(ref _search, value);
+            }
         }
 
         #endregion
@@ -1037,10 +1162,23 @@ namespace Unigram.ViewModels
     public class ChatMemberCollection : IncrementalCollection<ChatMember>
     {
         private readonly IProtoService _protoService;
+        private readonly long _chatId;
+        private readonly ChatMembersFilter _filter2;
+        private readonly string _query;
+
         private readonly int _supergroupId;
         private readonly SupergroupMembersFilter _filter;
 
         private bool _hasMore;
+
+        public ChatMemberCollection(IProtoService protoService, long chatId, string query, ChatMembersFilter filter)
+        {
+            _protoService = protoService;
+            _chatId = chatId;
+            _filter2 = filter;
+            _query = query;
+            _hasMore = true;
+        }
 
         public ChatMemberCollection(IProtoService protoService, int supergroupId, SupergroupMembersFilter filter)
         {
@@ -1052,20 +1190,33 @@ namespace Unigram.ViewModels
 
         public override async Task<IList<ChatMember>> LoadDataAsync()
         {
-            var response = await _protoService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, Count, 200));
-            if (response is ChatMembers members)
+            if (_filter2 != null)
             {
-                if (members.Members.Count < 200)
+                var response = await _protoService.SendAsync(new SearchChatMembers(_chatId, _query, 200, _filter2));
+                if (response is ChatMembers members)
                 {
                     _hasMore = false;
-                }
 
-                if (_filter == null && members.TotalCount <= 200)
+                    return members.Members;
+                }
+            }
+            else
+            {
+                var response = await _protoService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, Count, 200));
+                if (response is ChatMembers members)
                 {
-                    return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToList();
-                }
+                    if (members.Members.Count < 200)
+                    {
+                        _hasMore = false;
+                    }
 
-                return members.Members;
+                    if (_filter == null && members.TotalCount <= 200)
+                    {
+                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToList();
+                    }
+
+                    return members.Members;
+                }
             }
 
             return new ChatMember[0];

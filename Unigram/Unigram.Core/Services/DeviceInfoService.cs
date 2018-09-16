@@ -8,14 +8,16 @@ using Windows.Networking.Connectivity;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.System;
 using Windows.System.Profile;
+using Windows.System.UserProfile;
 
 namespace Unigram.Services
 {
     public interface IDeviceInfoService
     {
         string DeviceModel { get; }
-        string AppVersion { get; }
+        string ApplicationVersion { get; }
         string SystemVersion { get; }
+        string SystemLanguageCode { get; }
         bool IsBackground { get; }
         string BackgroundTaskName { get; }
         int BackgroundTaskId { get; }
@@ -70,7 +72,15 @@ namespace Unigram.Services
             }
         }
 
-        public string AppVersion
+        public string SystemLanguageCode
+        {
+            get
+            {
+                return GlobalizationPreferences.Languages.Count > 0 ? GlobalizationPreferences.Languages[0] : "en";
+            }
+        }
+
+        public string ApplicationVersion
         {
             get
             {

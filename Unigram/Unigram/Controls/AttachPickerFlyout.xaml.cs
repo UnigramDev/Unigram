@@ -66,9 +66,9 @@ namespace Unigram.Controls
             var capture = new CameraCaptureUI();
             capture.PhotoSettings.AllowCropping = true;
             capture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
-            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.MediumXga;
+            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.HighestAvailable;
             capture.VideoSettings.Format = CameraCaptureUIVideoFormat.Mp4;
-            capture.VideoSettings.MaxResolution = CameraCaptureUIMaxVideoResolution.StandardDefinition;
+            capture.VideoSettings.MaxResolution = CameraCaptureUIMaxVideoResolution.HighestAvailable;
 
             var file = await capture.CaptureFileAsync(CameraCaptureUIMode.PhotoOrVideo);
             if (file != null)

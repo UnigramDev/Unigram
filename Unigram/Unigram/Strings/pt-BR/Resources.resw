@@ -97,6 +97,9 @@
   <data name="ActionBotAllowed" xml:space="preserve">
     <value>Você permitiu que o bot te envie mensagens ao logar em {0}.</value>
   </data>
+  <data name="ActionBotDocumentAddress" xml:space="preserve">
+    <value>Endereço</value>
+  </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>un1 alterou a foto do grupo</value>
   </data>
@@ -711,6 +714,9 @@ Nascer do Sol: {1}</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
     <value>Esperando {0} se conectar...</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Voltar</value>
   </data>
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>Dados em segundo plano restringidos.</value>

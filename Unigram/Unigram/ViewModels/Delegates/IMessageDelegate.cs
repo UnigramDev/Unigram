@@ -18,6 +18,8 @@ namespace Unigram.ViewModels.Delegates
         void OpenMedia(MessageViewModel message, FrameworkElement target);
         void PlayMessage(MessageViewModel message);
 
+        void Call(MessageViewModel message);
+
         void OpenUsername(string username);
         void OpenUser(int userId);
         void OpenChat(long chatId);

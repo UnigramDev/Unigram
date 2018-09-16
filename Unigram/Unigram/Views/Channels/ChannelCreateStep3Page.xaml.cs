@@ -8,7 +8,7 @@ namespace Unigram.Views.Channels
         public ChannelCreateStep3Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<ChannelCreateStep3ViewModel>();
+            DataContext = TLContainer.Current.Resolve<ChannelCreateStep3ViewModel>();
             View.Attach();
         }
     }

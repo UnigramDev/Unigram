@@ -28,7 +28,7 @@ namespace Unigram.Views.Settings
         public SettingsStoragePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsStorageViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsStorageViewModel>();
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

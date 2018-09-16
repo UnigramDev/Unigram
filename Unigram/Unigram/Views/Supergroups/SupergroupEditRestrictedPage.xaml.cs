@@ -30,7 +30,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupEditRestrictedPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SupergroupEditRestrictedViewModel, IMemberDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SupergroupEditRestrictedViewModel, IMemberDelegate>(this);
         }
 
         public void UpdateChat(Chat chat)
@@ -59,7 +59,7 @@ namespace Unigram.Views.Supergroups
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
         }
 
-        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret)
+        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
         }
 

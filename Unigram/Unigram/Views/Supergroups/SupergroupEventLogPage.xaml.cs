@@ -25,22 +25,18 @@ using System.Diagnostics;
 using Telegram.Td.Api;
 using Unigram.ViewModels;
 using Unigram.Controls.Messages;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views.Supergroups
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class SupergroupEventLogPage : Page
+    public sealed partial class SupergroupEventLogPage : Page, IChatDelegate
     {
         public SupergroupEventLogViewModel ViewModel => DataContext as SupergroupEventLogViewModel;
 
         public SupergroupEventLogPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SupergroupEventLogViewModel>();
+            DataContext = TLContainer.Current.Resolve<SupergroupEventLogViewModel, IChatDelegate>(this);
 
             _typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
@@ -71,28 +67,6 @@ namespace Unigram.Views.Supergroups
             //}
         }
 
-        private async void Help_Click(object sender, RoutedEventArgs e)
-        {
-            //var channel = ViewModel.Item as TLChannel;
-            //if (channel == null)
-            //{
-            //    return;
-            //}
-
-            //await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? Strings.Resources.EventLogInfoDetail : Strings.Resources.EventLogInfoDetailChannel, Strings.Resources.EventLogInfoTitle, Strings.Resources.OK);
-        }
-
-        private async void Settings_Click(object sender, RoutedEventArgs e)
-        {
-            //var channel = ViewModel.Item as TLChannel;
-            //if (channel == null)
-            //{
-            //    return;
-            //}
-
-            //await ChannelAdminLogFilterView.Current.ShowAsync(channel.ToPeer());
-        }
-
         #region Binding
 
         private string ConvertType(string broadcast, string mega)
@@ -103,6 +77,26 @@ namespace Unigram.Views.Supergroups
             //}
 
             return null;
+        }
+
+        private string ConvertSubtitle(ChatEventLogFilters filters, IList<int> userIds)
+        {
+            if (filters.InfoChanges &&
+                filters.MemberInvites &&
+                filters.MemberJoins &&
+                filters.MemberLeaves &&
+                filters.MemberPromotions &&
+                filters.MemberRestrictions &&
+                filters.MessageDeletions &&
+                filters.MessageEdits &&
+                filters.MessagePins &&
+                filters.SettingChanges &&
+                userIds.IsEmpty())
+            {
+                return Strings.Resources.EventLogAllEvents;
+            }
+
+            return Strings.Resources.EventLogSelectedEvents;
         }
 
         #endregion
@@ -288,5 +282,25 @@ namespace Unigram.Views.Supergroups
         {
 
         }
+
+        #region Delegate
+
+        public void UpdateChat(Chat chat)
+        {
+            UpdateChatTitle(chat);
+            UpdateChatPhoto(chat);
+        }
+
+        public void UpdateChatTitle(Chat chat)
+        {
+            Title.Text = ViewModel.CacheService.GetTitle(chat);
+        }
+
+        public void UpdateChatPhoto(Chat chat)
+        {
+            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36, 36);
+        }
+
+        #endregion
     }
 }

@@ -33,7 +33,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            _passcodeService = UnigramContainer.Current.Resolve<IPasscodeService>();
+            _passcodeService = TLContainer.Current.Resolve<IPasscodeService>();
 
             _applicationView = ApplicationView.GetForCurrentView();
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;

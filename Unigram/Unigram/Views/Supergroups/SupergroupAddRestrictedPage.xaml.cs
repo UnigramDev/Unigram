@@ -35,7 +35,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupAddRestrictedPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SupergroupAddRestrictedViewModel>();
+            DataContext = TLContainer.Current.Resolve<SupergroupAddRestrictedViewModel>();
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(async x =>
@@ -43,8 +43,10 @@ namespace Unigram.Views.Supergroups
                 var items = ViewModel.Search;
                 if (items != null && string.Equals(SearchField.Text, items.Query))
                 {
+                    await items.LoadMoreItemsAsync(0);
                     await items.LoadMoreItemsAsync(1);
                     await items.LoadMoreItemsAsync(2);
+                    await items.LoadMoreItemsAsync(3);
                 }
             });
         }
@@ -220,20 +222,17 @@ namespace Unigram.Views.Supergroups
             }
         }
 
-        private async void Search_TextChanged(object sender, TextChangedEventArgs e)
+        private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrEmpty(SearchField.Text))
             {
                 ContentPanel.Visibility = Visibility.Visible;
-
                 ViewModel.Search = null;
             }
             else
             {
                 ContentPanel.Visibility = Visibility.Collapsed;
-
-                var items = ViewModel.Search = new SearchUsersCollection(ViewModel.ProtoService, SearchField.Text);
-                await items.LoadMoreItemsAsync(0);
+                ViewModel.Search = new SearchMembersAndUsersCollection(ViewModel.ProtoService, ViewModel.Chat.Id, new ChatMembersFilterMembers(), SearchField.Text);
             }
         }
     }

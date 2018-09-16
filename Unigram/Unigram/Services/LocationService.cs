@@ -12,7 +12,7 @@ using Unigram.Core.Models;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Devices.Geolocation;
 
-namespace Unigram.Core.Services
+namespace Unigram.Services
 {
     public interface ILocationService
     {
@@ -21,11 +21,20 @@ namespace Unigram.Core.Services
 
         Task<Geocoordinate> GetPositionAsync();
 
-        Task<List<Telegram.Td.Api.Venue>> GetVenuesAsync(double latitude, double longitute, string query = null);
+        Task<List<Telegram.Td.Api.Venue>> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null);
     }
 
     public class LocationService : ILocationService
     {
+        private readonly IProtoService _protoService;
+        private readonly ICacheService _cacheService;
+
+        public LocationService(IProtoService protoService, ICacheService cacheService)
+        {
+            _protoService = protoService;
+            _cacheService = cacheService;
+        }
+
         private Geolocator _locator;
         private ExtendedExecutionSession _session;
 
@@ -94,8 +103,10 @@ namespace Unigram.Core.Services
             return null;
         }
 
-        public async Task<List<Telegram.Td.Api.Venue>> GetVenuesAsync(double latitude, double longitute, string query = null)
+        public async Task<List<Telegram.Td.Api.Venue>> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null)
         {
+#if USE_FOURSQUARE
+
             var builder = new StringBuilder("https://api.foursquare.com/v2/venues/search/?");
             if (string.IsNullOrEmpty(query) == false)
             {
@@ -151,6 +162,45 @@ namespace Unigram.Core.Services
             catch { }
 
             return new List<Telegram.Td.Api.Venue>();
+
+#else
+
+            var results = new List<Telegram.Td.Api.Venue>();
+
+            var option = _cacheService.GetOption<OptionValueString>("venue_search_bot_username");
+            if (option == null)
+            {
+                // TODO: use hardcoded bot?
+                return results;
+            }
+
+            var chat = await _protoService.SendAsync(new SearchPublicChat(option.Value)) as Chat;
+            if (chat == null)
+            {
+                return results;
+            }
+
+
+            var user = _cacheService.GetUser(chat);
+            if (user == null)
+            {
+                return results;
+            }
+
+            var response = await _protoService.SendAsync(new GetInlineQueryResults(user.Id, chatId, new Telegram.Td.Api.Location(latitude, longitude), query ?? string.Empty, string.Empty));
+            if (response is InlineQueryResults inlineResults)
+            {
+                foreach (var item in inlineResults.Results)
+                {
+                    if (item is InlineQueryResultVenue venue)
+                    {
+                        results.Add(venue.Venue);
+                    }
+                }
+            }
+
+            return results;
+#endif
         }
     }
 }

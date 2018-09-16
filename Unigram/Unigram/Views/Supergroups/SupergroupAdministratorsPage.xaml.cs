@@ -34,7 +34,7 @@ namespace Unigram.Views.Supergroups
         public SupergroupAdministratorsPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SupergroupAdministratorsViewModel, ISupergroupDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SupergroupAdministratorsViewModel, ISupergroupDelegate>(this);
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -56,7 +56,7 @@ namespace Unigram.Views.Supergroups
 
         #region Context menu
 
-        private void Participant_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
 
         }
@@ -112,6 +112,7 @@ namespace Unigram.Views.Supergroups
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
             AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
+            Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
             Footer.Text = group.IsChannel ? Strings.Resources.ChannelAdminsInfo : Strings.Resources.MegaAdminsInfo;
         }
 

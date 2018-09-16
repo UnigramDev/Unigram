@@ -14,7 +14,6 @@ using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Services;
-using Unigram.Helpers;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.Views;
@@ -500,6 +499,12 @@ namespace Unigram.ViewModels
                         builder.AppendLine(venue.Venue.Address);
                         builder.Append(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", venue.Venue.Location.Latitude, venue.Venue.Location.Longitude));
                     }
+                    else if (message.Content is MessageContact contact)
+                    {
+                        builder.AppendLine($"[{Strings.Resources.AttachContact}]");
+                        builder.AppendLine(contact.Contact.GetFullName());
+                        builder.AppendLine(PhoneNumber.Format(contact.Contact.PhoneNumber));
+                    }
                     else if (message.Content is MessageText text)
                     {
                         builder.Append(text.Text.Text);
@@ -645,16 +650,20 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var input = message.Content.GetCaption();
+            var input = message.Content.GetCaption()?.Text;
             if (message.Content is MessageText text)
             {
-                input = text.Text;
+                input = text.Text?.Text;
+            }
+            else if (message.Content is MessageContact contact)
+            {
+                input = PhoneNumber.Format(contact.Contact.PhoneNumber);
             }
 
             if (input != null)
             {
                 var dataPackage = new DataPackage();
-                dataPackage.SetText(input.Text);
+                dataPackage.SetText(input);
                 ClipboardEx.TrySetContent(dataPackage);
             }
         }
@@ -739,14 +748,18 @@ namespace Unigram.ViewModels
         {
             Search = null;
             CurrentInlineBot = null;
-            EmbedData = new MessageEmbedData { EditingMessage = message };
 
+            var container = new MessageEmbedData { EditingMessage = message };
             var input = message.Content.GetCaption();
+
             if (message.Content is MessageText text)
             {
                 input = text.Text;
+                container.WebPagePreview = text.WebPage;
+                container.WebPageUrl = text.WebPage?.Url;
             }
 
+            EmbedData = container;
             SetText(input);
 
             //if (message?.Media is TLMessageMediaGroup groupMedia)
@@ -824,7 +837,7 @@ namespace Unigram.ViewModels
                     var confirm = await dialog.ShowQueuedAsync();
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        ProtoService.Send(new PinSupergroupMessage(supergroup.SupergroupId, message.Id, dialog.IsChecked == true));
+                        ProtoService.Send(new PinSupergroupMessage(supergroup.SupergroupId, message.Id, dialog.IsChecked == false));
                     }
                 }
             }
@@ -977,24 +990,21 @@ namespace Unigram.ViewModels
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeSwitchInline switchInline)
                 {
-                    //var bot = GetBot(message);
-                    //if (bot != null)
-                    //{
-                    //    if (switchInline.InCurrentChat)
-                    //    {
-                    //        SetText(string.Format("@{0} {1}", bot.Username, switchInline.Query), focus: true);
-                    //        ResolveInlineBot(bot.Username, switchInline.Query);
+                    var bot = GetBot(message);
+                    if (bot == null)
+                    {
+                        return;
+                    }
 
-                    //        //if (With is TLChatBase)
-                    //        //{
-                    //        //    Reply = message;
-                    //        //}
-                    //    }
-                    //    else
-                    //    {
-                    //        await ForwardView.Current.ShowAsync(switchInline, bot);
-                    //    }
-                    //}
+                    if (switchInline.InCurrentChat)
+                    {
+                        SetText(string.Format("@{0} {1}", bot.Username, switchInline.Query), focus: true);
+                        ResolveInlineBot(bot.Username, switchInline.Query);
+                    }
+                    else
+                    {
+                        await ShareView.GetForCurrentView().ShowAsync(switchInline, bot);
+                    }
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)
                 {
@@ -1119,7 +1129,7 @@ namespace Unigram.ViewModels
                         var confirm = await TLMessageDialog.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
-                            await SendContactAsync(new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, cached.Id));
+                            await SendContactAsync(new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id));
                         }
                     }
                 }
@@ -1300,7 +1310,7 @@ namespace Unigram.ViewModels
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new ImportContacts(new[] { new Contact(contact.Contact.PhoneNumber, dialog.FirstName, dialog.LastName, contact.Contact.UserId) }));
+                ProtoService.Send(new ImportContacts(new[] { new Contact(contact.Contact.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, contact.Contact.UserId) }));
             }
         }
 

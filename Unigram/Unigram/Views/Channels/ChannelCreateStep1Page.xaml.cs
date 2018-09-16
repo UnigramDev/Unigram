@@ -28,7 +28,7 @@ namespace Unigram.Views.Channels
         public ChannelCreateStep1Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<ChannelCreateStep1ViewModel>();
+            DataContext = TLContainer.Current.Resolve<ChannelCreateStep1ViewModel>();
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)

@@ -26,7 +26,7 @@ namespace Unigram.Views.SignIn
         public SignUpPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SignUpViewModel>();
+            DataContext = TLContainer.Current.Resolve<SignUpViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }

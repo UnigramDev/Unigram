@@ -17,7 +17,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsSecurityEnterPasswordViewModel : UnigramViewModelBase
+    public class SettingsSecurityEnterPasswordViewModel : TLViewModelBase
     {
         //private TLAccountPassword _passwordBase;
 

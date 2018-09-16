@@ -31,21 +31,23 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)ApplicationSettings.Current.VerbosityLevel);
+            Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)SettingsService.Current.VerbosityLevel);
 
             try
             {
-                var log = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log"));
+                var log = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"));
                 Log.Badge = FileSizeConverter.Convert(log.Length);
             }
             catch { }
 
             try
             {
-                var logold = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old"));
+                var logold = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old"));
                 LogOld.Badge = FileSizeConverter.Convert(logold.Length);
             }
             catch { }
+
+            UseTestDC.IsOn = SettingsService.Current.UseTestDC;
         }
 
         private enum VerbosityLevel
@@ -60,7 +62,7 @@ namespace Unigram.Views
 
         private async void Verbosity_Click(object sender, RoutedEventArgs e)
         {
-            var level = ApplicationSettings.Current.VerbosityLevel;
+            var level = SettingsService.Current.VerbosityLevel;
 
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
@@ -90,25 +92,29 @@ namespace Unigram.Views
                     }
                 }
 
-                ApplicationSettings.Current.VerbosityLevel = newLevel;
+                SettingsService.Current.VerbosityLevel = newLevel;
                 Telegram.Td.Log.SetVerbosityLevel(newLevel);
 
-                Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)ApplicationSettings.Current.VerbosityLevel);
+                Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)SettingsService.Current.VerbosityLevel);
             }
         }
 
         private async void Log_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log")), null, null));
+            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log")), null, null));
         }
 
         private async void LogOld_Click(object sender, RoutedEventArgs e)
         {
-            if (System.IO.File.Exists(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old")))
+            if (System.IO.File.Exists(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old")))
             {
-                System.IO.File.Copy(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "0", "log.old"), System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old"), true);
                 await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old")), null, null));
             }
+        }
+
+        private void UseTestDC_Toggled(object sender, RoutedEventArgs e)
+        {
+            SettingsService.Current.UseTestDC = SettingsService.Current.UseTestDC;
         }
     }
 }

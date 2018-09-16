@@ -256,7 +256,7 @@
     <controls:GalleryTransportControls x:Name="Transport" RequestedTheme="Dark">
         <controls:GalleryTransportControls.Content>
             <Grid>
-                <Border x:Name="Layer" Background="Black" Grid.RowSpan="3"/>
+                <Border x:Name="Layer" Margin="0,-32,0,0" Background="Black" Grid.RowSpan="3"/>
 
                 <Grid x:Name="LayoutRoot">
                     <Grid.ColumnDefinitions>
@@ -403,6 +403,10 @@
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanView, Mode=OneWay}"
                                             Text="{CustomResource ShowInChat}"/>
+                            <MenuFlyoutItem x:Name="FlyoutCopy"
+                                            Command="{x:Bind ViewModel.CopyCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanCopy}"
+                                            Text="{CustomResource Copy}"/>
                             <MenuFlyoutItem x:Name="FlyoutSaveAs"
                                             Command="{x:Bind ViewModel.SaveCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanSave}"

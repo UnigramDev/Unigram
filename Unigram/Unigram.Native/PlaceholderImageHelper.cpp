@@ -4,6 +4,7 @@
 
 using namespace D2D1;
 using namespace Platform;
+using namespace Windows::ApplicationModel;
 using namespace Windows::Foundation::Collections;
 using namespace Windows::UI::ViewManagement;
 using namespace Windows::UI::Xaml;
@@ -11,6 +12,66 @@ using namespace Windows::Storage;
 using namespace Unigram::Native;
 
 std::map<int, WeakReference> PlaceholderImageHelper::s_windowContext;
+
+class CustomFontFileEnumerator
+	: public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteFontFileEnumerator>
+{
+	ComPtr<IDWriteFactory> m_factory;
+	std::wstring m_filename;
+	ComPtr<IDWriteFontFile> m_theFile;
+
+public:
+	CustomFontFileEnumerator(IDWriteFactory* factory, void const* collectionKey, uint32_t collectionKeySize)
+		: m_factory(factory)
+		, m_filename(static_cast<wchar_t const*>(collectionKey), collectionKeySize / 2)
+	{
+	}
+
+	IFACEMETHODIMP MoveNext(BOOL* hasCurrentFile) override
+	{
+		if (m_theFile)
+		{
+			*hasCurrentFile = FALSE;
+		}
+		else if (SUCCEEDED(m_factory->CreateFontFileReference(m_filename.c_str(), nullptr, &m_theFile)))
+		{
+			*hasCurrentFile = TRUE;
+		}
+		else
+		{
+			*hasCurrentFile = FALSE;
+		}
+
+		return S_OK;
+	}
+
+	IFACEMETHODIMP GetCurrentFontFile(IDWriteFontFile** fontFile) override
+	{
+		return m_theFile.CopyTo(fontFile);
+	}
+};
+
+
+
+class CustomFontLoader
+	: public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteFontCollectionLoader>
+{
+public:
+	IFACEMETHODIMP CreateEnumeratorFromKey(
+		IDWriteFactory* factory,
+		void const* collectionKey,
+		uint32_t collectionKeySize,
+		IDWriteFontFileEnumerator** fontFileEnumerator) override
+	{
+		return ExceptionBoundary(
+			[=]
+		{
+			auto enumerator = Make<CustomFontFileEnumerator>(factory, collectionKey, collectionKeySize);
+			CheckMakeResult(enumerator);
+			ThrowIfFailed(enumerator.CopyTo(fontFileEnumerator));
+		});
+	}
+};
 
 PlaceholderImageHelper^ PlaceholderImageHelper::GetForCurrentView()
 {
@@ -33,9 +94,14 @@ PlaceholderImageHelper^ PlaceholderImageHelper::GetForCurrentView()
 	return instance;
 }
 
-void PlaceholderImageHelper::DrawIdenticon(IVector<uint8>^ hash, IRandomAccessStream^ randomAccessStream)
+void PlaceholderImageHelper::DrawIdenticon(IVector<uint8>^ hash, int side, IRandomAccessStream^ randomAccessStream)
 {
-	ThrowIfFailed(InternalDrawIdenticon(hash, randomAccessStream));
+	ThrowIfFailed(InternalDrawIdenticon(hash, side, randomAccessStream));
+}
+
+void PlaceholderImageHelper::DrawSavedMessages(Color clear, IRandomAccessStream^ randomAccessStream)
+{
+	ThrowIfFailed(InternalDrawSavedMessages(clear, randomAccessStream));
 }
 
 void PlaceholderImageHelper::DrawProfilePlaceholder(Color clear, Platform::String^ text, IRandomAccessStream^ randomAccessStream)
@@ -48,7 +114,7 @@ void PlaceholderImageHelper::DrawThumbnailPlaceholder(Platform::String^ fileName
 	ThrowIfFailed(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
 }
 
-HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, IRandomAccessStream^ randomAccessStream)
+HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, int side, IRandomAccessStream^ randomAccessStream)
 {
 	auto lock = m_criticalSection.Lock();
 
@@ -57,8 +123,8 @@ HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, IRan
 	m_d2dContext->SetTarget(m_targetBitmap.Get());
 	m_d2dContext->BeginDraw();
 
-	auto width = 192;
-	auto height = 192;
+	auto width = side;
+	auto height = side;
 
 	if (hash->Size == 16)
 	{
@@ -100,7 +166,33 @@ HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, IRan
 	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 	{
 		ReturnIfFailed(result, CreateDeviceResources());
-		return InternalDrawIdenticon(hash, randomAccessStream);
+		return InternalDrawIdenticon(hash, side, randomAccessStream);
+	}
+
+	return SaveImageToStream(m_targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
+}
+
+HRESULT PlaceholderImageHelper::InternalDrawSavedMessages(Color clear, IRandomAccessStream^ randomAccessStream)
+{
+	auto lock = m_criticalSection.Lock();
+	auto text = L"\uE907";
+
+	HRESULT result;
+	DWRITE_TEXT_METRICS textMetrics;
+	ReturnIfFailed(result, MeasureText(text, m_symbolFormat.Get(), &textMetrics));
+
+	m_d2dContext->SetTarget(m_targetBitmap.Get());
+	m_d2dContext->BeginDraw();
+	//m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+	m_d2dContext->Clear(D2D1::ColorF(clear.R / 255.0f, clear.G / 255.0f, clear.B / 255.0f, clear.A / 255.0f));
+
+	D2D1_RECT_F layoutRect = { (192.0f - textMetrics.width) / 2.0f, (192.0f - textMetrics.height) / 2.0f, 192.0f, 192.0f };
+	m_d2dContext->DrawText(text, 1, m_symbolFormat.Get(), &layoutRect, m_textBrush.Get());
+
+	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
+	{
+		ReturnIfFailed(result, CreateDeviceResources());
+		return InternalDrawSavedMessages(clear, randomAccessStream);
 	}
 
 	return SaveImageToStream(m_targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
@@ -112,7 +204,7 @@ HRESULT PlaceholderImageHelper::InternalDrawProfilePlaceholder(Color clear, Plat
 
 	HRESULT result;
 	DWRITE_TEXT_METRICS textMetrics;
-	ReturnIfFailed(result, MeasureText(text, &textMetrics));
+	ReturnIfFailed(result, MeasureText(text->Data(), m_textFormat.Get(), &textMetrics));
 
 	m_d2dContext->SetTarget(m_targetBitmap.Get());
 	m_d2dContext->BeginDraw();
@@ -194,6 +286,36 @@ HRESULT PlaceholderImageHelper::CreateDeviceIndependentResources()
 	ReturnIfFailed(result, D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), &options, &m_d2dFactory));
 	ReturnIfFailed(result, CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_wicFactory)));
 	ReturnIfFailed(result, DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &m_dwriteFactory));
+
+
+
+	String^ path = String::Concat(Package::Current->InstalledLocation->Path, L"\\Assets\\Fonts\\Telegram.ttf");
+	auto pathBegin = begin(path);
+	auto pathEnd = end(path);
+
+	//assert(pathBegin && pathEnd);
+
+	void const* key = pathBegin;
+	uint32_t keySize = static_cast<uint32_t>(std::distance(pathBegin, pathEnd) * sizeof(wchar_t));
+
+	m_customLoader = Make<CustomFontLoader>();
+
+	ReturnIfFailed(result, m_dwriteFactory->RegisterFontCollectionLoader(m_customLoader.Get()));
+	ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.Get(), key, keySize, &m_fontCollection));
+	ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
+		L"Telegram",							// font family name
+		m_fontCollection.Get(),					// system font collection
+		DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+		DWRITE_FONT_STYLE_NORMAL,				// font style
+		DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+		82.0f,									// font size
+		L"",									// locale name
+		&m_symbolFormat
+	));
+	ReturnIfFailed(result, m_symbolFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+	ReturnIfFailed(result, m_symbolFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+
+
 
 	ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
 		L"Segoe UI",							// font family name
@@ -278,17 +400,17 @@ HRESULT PlaceholderImageHelper::CreateDeviceResources()
 	return m_wicFactory->CreateImageEncoder(m_d2dDevice.Get(), &m_imageEncoder);
 }
 
-HRESULT PlaceholderImageHelper::MeasureText(Platform::String^ text, DWRITE_TEXT_METRICS* textMetrics)
+HRESULT PlaceholderImageHelper::MeasureText(const wchar_t* text, IDWriteTextFormat* format, DWRITE_TEXT_METRICS* textMetrics)
 {
 	HRESULT result;
 	ComPtr<IDWriteTextLayout> textLayout;
 	ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
-		text->Data(),							// The string to be laid out and formatted.
-		text->Length(),							// The length of the string.
-		m_textFormat.Get(),						// The text format to apply to the string (contains font information, etc).
-		192.0f,									// The width of the layout box.
-		192.0f,									// The height of the layout box.
-		&textLayout								// The IDWriteTextLayout interface pointer.
+		text,							// The string to be laid out and formatted.
+		wcslen(text),					// The length of the string.
+		format,							// The text format to apply to the string (contains font information, etc).
+		192.0f,							// The width of the layout box.
+		192.0f,							// The height of the layout box.
+		&textLayout						// The IDWriteTextLayout interface pointer.
 	));
 
 	return textLayout->GetMetrics(textMetrics);

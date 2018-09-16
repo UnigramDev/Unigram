@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -14,7 +15,6 @@ namespace Unigram.Controls
     {
         private Button TogglePaneButton;
         private SplitView RootSplitView;
-        private ListView MenuItemsHost;
 
         public NavigationView()
         {
@@ -25,15 +25,17 @@ namespace Unigram.Controls
         {
             TogglePaneButton = GetTemplateChild("TogglePaneButton") as Button;
             RootSplitView = GetTemplateChild("RootSplitView") as SplitView;
-            MenuItemsHost = GetTemplateChild("MenuItemsHost") as ListView;
 
             TogglePaneButton.Click += Toggle_Click;
 
-            MenuItemsHost.ItemClick += Host_ItemClick;
-
-            foreach (var items in MenuItems)
+            if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Controls.SplitView", "PaneOpening"))
             {
-                MenuItemsHost.Items.Add(items);
+                RootSplitView.PaneOpening += OnPaneOpening;
+                RootSplitView.PaneClosing += OnPaneClosing;
+            }
+            else
+            {
+                RootSplitView.RegisterPropertyChangedCallback(SplitView.IsPaneOpenProperty, OnPaneOpenChanged);
             }
         }
 
@@ -42,14 +44,19 @@ namespace Unigram.Controls
             IsPaneOpen = !IsPaneOpen;
         }
 
-        private void Host_ItemClick(object sender, ItemClickEventArgs e)
+        private void OnPaneOpening(SplitView sender, object args)
         {
-            var item = MenuItems.FirstOrDefault(x => (string)x.Content == (string)e.ClickedItem) as NavigationViewItem;
-            if (item != null)
-            {
-                ItemClick?.Invoke(this, new NavigationViewItemClickEventArgs(item));
-                IsPaneOpen = false;
-            }
+            TogglePaneButton.RequestedTheme = ElementTheme.Dark;
+        }
+
+        private void OnPaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
+        {
+            TogglePaneButton.RequestedTheme = ElementTheme.Default;
+        }
+
+        private void OnPaneOpenChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            TogglePaneButton.RequestedTheme = RootSplitView.IsPaneOpen ? ElementTheme.Dark : ElementTheme.Default;
         }
 
         #region IsPaneOpen
@@ -65,25 +72,16 @@ namespace Unigram.Controls
 
         #endregion
 
-        #region MenuItems
+        #region PaneHeader
 
-        public MenuItemsCollection MenuItems
+        public object PaneHeader
         {
-            get
-            {
-                var value = (MenuItemsCollection)GetValue(MenuItemsProperty);
-                if (value == null)
-                {
-                    value = new MenuItemsCollection();
-                    SetValue(MenuItemsProperty, value);
-                }
-
-                return value;
-            }
+            get { return (object)GetValue(PaneHeaderProperty); }
+            set { SetValue(PaneHeaderProperty, value); }
         }
 
-        public static readonly DependencyProperty MenuItemsProperty =
-            DependencyProperty.Register("MenuItems", typeof(IObservableVector<object>), typeof(Nullable), new PropertyMetadata(null));
+        public static readonly DependencyProperty PaneHeaderProperty =
+            DependencyProperty.Register("PaneHeader", typeof(object), typeof(NavigationView), new PropertyMetadata(null));
 
         #endregion
 
@@ -112,24 +110,5 @@ namespace Unigram.Controls
             DependencyProperty.Register("PaneToggleButtonVisibility", typeof(Visibility), typeof(NavigationView), new PropertyMetadata(Visibility.Visible));
 
         #endregion
-
-        public event NavigationViewItemClickEventHandler ItemClick;
-    }
-
-    public delegate void NavigationViewItemClickEventHandler(object sender, NavigationViewItemClickEventArgs args);
-
-    public class NavigationViewItemClickEventArgs : EventArgs
-    {
-        public NavigationViewItem ClickedItem { get; private set; }
-
-        public NavigationViewItemClickEventArgs(NavigationViewItem item)
-        {
-            ClickedItem = item;
-        }
-    }
-
-    public class MenuItemsCollection : ObservableCollection<NavigationViewItemBase>
-    {
-
     }
 }

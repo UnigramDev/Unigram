@@ -19,7 +19,9 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatReplyMarkup>,
         IHandle<UpdateChatUnreadMentionCount>,
         IHandle<UpdateChatReadOutbox>,
+        IHandle<UpdateChatReadInbox>,
         IHandle<UpdateChatDraftMessage>,
+        IHandle<UpdateChatDefaultDisableNotification>,
 
         IHandle<UpdateUserChatAction>,
 
@@ -94,11 +96,11 @@ namespace Unigram.ViewModels
 
             if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false));
+                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false, _accessToken != null));
             }
             else if (chat.Type is ChatTypeSecret secret && secret.UserId == update.UserId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, true));
+                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, true, false));
             }
         }
 
@@ -282,11 +284,30 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void Handle(UpdateChatReadInbox update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() =>
+                {
+                    RaisePropertyChanged(() => UnreadCount);
+                });
+            }
+        }
+
         public void Handle(UpdateChatDraftMessage update)
         {
             if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => ShowDraftMessage(_chat));
+            }
+        }
+
+        public void Handle(UpdateChatDefaultDisableNotification update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatDefaultDisableNotification(_chat, update.DefaultDisableNotification));
             }
         }
 
@@ -347,6 +368,8 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
+                var supergroup = CacheService.GetSupergroupFull(_chat);
+
                 Handle(update.MessageId, message =>
                 {
                     message.Content = update.NewContent;
@@ -360,6 +383,11 @@ namespace Unigram.ViewModels
                     else
                     {
                         bubble.UpdateMessageContent(message);
+
+                        if (supergroup != null && supergroup.PinnedMessageId == message.Id)
+                        {
+                            Delegate?.UpdatePinnedMessage(_chat, message, false);
+                        }
                     }
                 });
             }

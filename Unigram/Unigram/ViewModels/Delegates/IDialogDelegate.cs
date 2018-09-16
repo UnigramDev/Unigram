@@ -6,6 +6,7 @@ namespace Unigram.ViewModels.Delegates
     {
         void UpdateChatReplyMarkup(Chat chat, MessageViewModel message);
         void UpdateChatUnreadMentionCount(Chat chat, int unreadMentionCount);
+        void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification);
 
         void UpdatePinnedMessage(Chat chat, MessageViewModel message, bool loading);
 

@@ -35,14 +35,14 @@ namespace Unigram.Views.Supergroups
         public SupergroupBannedPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SupergroupBannedViewModel, ISupergroupDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SupergroupBannedViewModel, ISupergroupDelegate>(this);
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
                 if (string.IsNullOrWhiteSpace(SearchField.Text))
                 {
-                    ViewModel.Search.Clear();
+                    ViewModel.Search?.Clear();
                 }
                 else
                 {
@@ -80,7 +80,7 @@ namespace Unigram.Views.Supergroups
 
         #region Context menu
 
-        private void Participant_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
         }
 

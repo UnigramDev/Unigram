@@ -68,7 +68,7 @@ namespace Unigram.Views.Dialogs
         public DialogShareLocationPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<DialogShareLocationViewModel>();
+            DataContext = TLContainer.Current.Resolve<DialogShareLocationViewModel>();
 
             Loaded += OnLoaded;
 
@@ -76,6 +76,19 @@ namespace Unigram.Views.Dialogs
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(async x =>
             {
                 await UpdateLocationAsync(mMap.Center);
+            });
+
+            var observable1 = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
+            var throttled1 = observable1.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            {
+                if (string.IsNullOrWhiteSpace(SearchField.Text))
+                {
+                    ViewModel.Search = null;
+                }
+                else
+                {
+                    ViewModel.Find(SearchField.Text);
+                }
             });
         }
 
@@ -238,6 +251,111 @@ namespace Unigram.Views.Dialogs
                 Dialog.Hide(ContentDialogBaseResult.OK);
             }
         }
+
+        #region Search
+
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            MainHeader.Visibility = Visibility.Collapsed;
+            SearchField.Visibility = Visibility.Visible;
+
+            SearchField.Focus(FocusState.Keyboard);
+        }
+
+        private void Search_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Search_TextChanged(null, null);
+        }
+
+        private void Search_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(SearchField.Text))
+            {
+                MainHeader.Visibility = Visibility.Visible;
+                SearchField.Visibility = Visibility.Collapsed;
+
+                NearbyList.Focus(FocusState.Programmatic);
+            }
+
+            Search_TextChanged(null, null);
+        }
+
+        private async void Search_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrEmpty(SearchField.Text))
+            {
+                NearbyList.Visibility = Visibility.Visible;
+
+                ViewModel.Search = null;
+            }
+            else if (SearchField.FocusState != FocusState.Unfocused)
+            {
+                NearbyList.Visibility = Visibility.Collapsed;
+
+                //var items = ViewModel.Contacts.Search = new SearchUsersCollection(ViewModel.ProtoService, SearchField.Text);
+                //await items.LoadMoreItemsAsync(0);
+            }
+        }
+
+        private void Search_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            //var activePanel = rpMasterTitlebar.SelectedIndex == 0 ? DialogsPanel : ContactsPanel;
+            //var activeList = rpMasterTitlebar.SelectedIndex == 0 ? DialogsSearchListView : ContactsSearchListView;
+            //var activeResults = rpMasterTitlebar.SelectedIndex == 0 ? ChatsResults : ContactsResults;
+
+            //if (activePanel.Visibility == Visibility.Visible)
+            //{
+            //    return;
+            //}
+
+            //if (e.Key == Windows.System.VirtualKey.Up || e.Key == Windows.System.VirtualKey.Down)
+            //{
+            //    var index = e.Key == Windows.System.VirtualKey.Up ? -1 : 1;
+            //    var next = activeList.SelectedIndex + index;
+            //    if (next >= 0 && next < activeResults.View.Count)
+            //    {
+            //        activeList.SelectedIndex = next;
+            //        activeList.ScrollIntoView(activeList.SelectedItem);
+            //    }
+
+            //    e.Handled = true;
+            //}
+            //else if (e.Key == Windows.System.VirtualKey.Enter)
+            //{
+            //    var index = Math.Max(activeList.SelectedIndex, 0);
+            //    var container = activeList.ContainerFromIndex(index) as ListViewItem;
+            //    if (container != null)
+            //    {
+            //        var peer = new ListViewItemAutomationPeer(container);
+            //        var invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+            //        invokeProv.Invoke();
+            //    }
+
+            //    e.Handled = true;
+            //}
+        }
+
+        #endregion
+
+        #region Recycle
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var venue = args.Item as Venue;
+
+            var border = content.Children[0] as Border;
+            var bitmap = border.Child as BitmapIcon;
+
+            bitmap.UriSource = new Uri(string.Format("https://ss3.4sqi.net/img/categories_v2/{0}_88.png", venue.Type));
+        }
+
+        #endregion
     }
 
     public class Poi
@@ -245,55 +363,5 @@ namespace Unigram.Views.Dialogs
         public string Name { get; set; }
         public string Address { get; set; }
         public Poi() { }
-    }
-
-    public class OpacityMask : Control
-    {
-        private Compositor _compositor;
-        private SpriteVisual _visual;
-
-        public OpacityMask()
-        {
-            var mask = ElementCompositionPreview.GetElementVisual(this);
-
-            _compositor = mask.Compositor;
-            _visual = _compositor.CreateSpriteVisual();
-            _visual.Size = new Vector2(32, 32);
-
-            ElementCompositionPreview.SetElementChildVisual(this, _visual);
-        }
-
-        #region Source
-
-        public Uri Source
-        {
-            get { return (Uri)GetValue(SourceProperty); }
-            set { SetValue(SourceProperty, value); }
-        }
-
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(Uri), typeof(OpacityMask), new PropertyMetadata(null, OnSourceChanged));
-
-        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((OpacityMask)d).OnSourceChanged((Uri)e.NewValue);
-        }
-
-        private async void OnSourceChanged(Uri newValue)
-        {
-            var surface = await ImageLoader.Instance.LoadFromUriAsync(newValue);
-            if (surface != null)
-            {
-                var mask = _compositor.CreateMaskBrush();
-                var overlay = _compositor.CreateColorBrush(Colors.Red);
-
-                mask.Mask = overlay;
-                mask.Source = surface.Brush;
-
-                _visual.Brush = mask;
-            }
-        }
-
-        #endregion
     }
 }

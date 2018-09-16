@@ -16,9 +16,12 @@ using Unigram.Core.Models;
 using Unigram.Entities;
 using Unigram.Native;
 using Unigram.ViewModels;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -262,7 +265,7 @@ namespace Unigram.Controls.Views
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
-            IsGrouped = ApplicationSettings.Current.IsSendGrouped;
+            IsGrouped = SettingsService.Current.IsSendGrouped;
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
@@ -326,7 +329,7 @@ namespace Unigram.Controls.Views
 
             if (IsGroupingEnabled)
             {
-                ApplicationSettings.Current.IsSendGrouped = IsGrouped;
+                SettingsService.Current.IsSendGrouped = IsGrouped;
             }
 
             Hide(ContentDialogBaseResult.OK);
@@ -409,13 +412,13 @@ namespace Unigram.Controls.Views
 
         private async void TTLSeconds_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new SelectTTLSecondsView(SelectedItem.IsPhoto);
-            dialog.TTLSeconds = SelectedItem.Ttl;
+            var dialog = new MessageTtlView(SelectedItem.IsPhoto);
+            dialog.Value = SelectedItem.Ttl;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                SelectedItem.Ttl = dialog.TTLSeconds;
+                SelectedItem.Ttl = dialog.Value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
             }
         }
@@ -618,6 +621,93 @@ namespace Unigram.Controls.Views
         private void Select_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Select_Click(null, null);
+        }
+
+        private async void OnPaste(object sender, TextControlPasteEventArgs e)
+        {
+            var package = Clipboard.GetContent();
+            if (package.Contains(StandardDataFormats.Bitmap))
+            {
+                e.Handled = true;
+
+                var bitmap = await package.GetBitmapAsync();
+                var media = new ObservableCollection<StorageMedia>();
+                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = new byte[(int)stream.Size];
+                    reader.ReadBytes(buffer);
+                    await FileIO.WriteBytesAsync(cache, buffer);
+
+                    var photo = await StoragePhoto.CreateAsync(cache, true) as StorageMedia;
+                    if (photo == null)
+                    {
+                        photo = await StorageVideo.CreateAsync(cache, true);
+                    }
+
+                    if (photo == null)
+                    {
+                        return;
+                    }
+
+                    media.Add(photo);
+                }
+
+                if (package.Contains(StandardDataFormats.Text))
+                {
+                    media[0].Caption = await package.GetTextAsync();
+                }
+
+                foreach (var item in media)
+                {
+                    Items.Add(item);
+                }
+
+                SelectedItem = media[0];
+            }
+            else if (package.Contains(StandardDataFormats.StorageItems))
+            {
+                e.Handled = true;
+
+                var items = await package.GetStorageItemsAsync();
+                var media = new ObservableCollection<StorageMedia>();
+                var files = new List<StorageFile>(items.Count);
+
+                foreach (StorageFile file in items)
+                {
+                    if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
+                    {
+                        media.Add(await StoragePhoto.CreateAsync(file, true));
+                    }
+                    else if (file.ContentType == "video/mp4")
+                    {
+                        media.Add(await StorageVideo.CreateAsync(file, true));
+                    }
+
+                    files.Add(file);
+                }
+
+                // Send compressed __only__ if user is dropping photos and videos only
+                if (media.Count > 0 && media.Count == files.Count)
+                {
+                    foreach (var item in media)
+                    {
+                        Items.Add(item);
+                    }
+
+                    SelectedItem = media[0];
+                }
+                else if (files.Count > 0)
+                {
+                    // Not supported here!
+                }
+            }
         }
     }
 

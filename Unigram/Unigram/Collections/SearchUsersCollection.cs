@@ -73,6 +73,7 @@ namespace Unigram.Collections
                                     continue;
                                 }
 
+                                _users.Add(privata.UserId);
                                 _local.Add(new SearchResult(chat, _query, false));
                             }
                         }
@@ -86,8 +87,13 @@ namespace Unigram.Collections
                         foreach (var id in chats.ChatIds)
                         {
                             var chat = _protoService.GetChat(id);
-                            if (chat != null && chat.Type is ChatTypePrivate)
+                            if (chat != null && chat.Type is ChatTypePrivate privata)
                             {
+                                if (_users.Contains(privata.UserId))
+                                {
+                                    continue;
+                                }
+
                                 _remote.Add(new SearchResult(chat, _query, true));
                             }
                         }

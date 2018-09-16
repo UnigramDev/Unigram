@@ -27,7 +27,7 @@ namespace Unigram.Views.Settings
         public SettingsPhoneSentCodePage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsPhoneSentCodeViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsPhoneSentCodeViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }

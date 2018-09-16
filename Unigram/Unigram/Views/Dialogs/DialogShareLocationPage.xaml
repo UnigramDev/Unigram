@@ -2,16 +2,94 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Unigram.Views"
+      xmlns:controls="using:Unigram.Controls"
       xmlns:td="using:Telegram.Td.Api"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
-      xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
       xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
       mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListView x:Name="NearbyList" ItemsSource="{Binding Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="NearbyList_ItemClick">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:ContentPageHeader>
+            <Grid x:Name="Header">
+                <Grid x:Name="MainHeader">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{CustomResource AttachLocation}" VerticalAlignment="Center" Margin="12,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+
+                    <controls:GlyphButton
+                        Glyph="&#xE11A;"
+                        Click="Search_Click"
+                        FontSize="18"
+                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                        Grid.Column="1"/>
+                </Grid>
+
+                <controls:SearchTextBox x:Name="SearchField"
+                                        Padding="12,4,6,4"
+                                        Background="{x:Null}"
+                                        BorderBrush="{x:Null}"
+                                        Style="{StaticResource SearchTextBoxStyle}"
+                                        PlaceholderText="{CustomResource Search}"
+                                        PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                        Visibility="Collapsed"
+                                        Clean="Search_LostFocus"
+                                        GotFocus="Search_GotFocus"
+                                        LostFocus="Search_LostFocus"
+                                        TextChanged="Search_TextChanged"
+                                        KeyDown="Search_KeyDown"
+                                        Canvas.ZIndex="1"/>
+            </Grid>
+        </controls:ContentPageHeader>
+
+        <ListView ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
+                  SelectionMode="None"
+                  IsItemClickEnabled="True"
+                  ItemClick="NearbyList_ItemClick"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="td:Venue">
+                    <Grid Height="48">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Border Height="40" Width="40" CornerRadius="20" Margin="0,0,12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                            <BitmapIcon Margin="4"/>
+                        </Border>
+                        <StackPanel Orientation="Vertical"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    Grid.Column="1">
+                            <TextBlock Text="{x:Bind Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind Address}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                    <Setter Property="Padding" Value="12,8"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <ListView x:Name="NearbyList"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  ItemsSource="{Binding Items}"
+                  SelectionMode="None"
+                  IsItemClickEnabled="True"
+                  ItemClick="NearbyList_ItemClick"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
                     <Grid x:Name="MapPresenter" Background="Red">
@@ -114,27 +192,31 @@
                             </Button.Content>
                         </Button>
 
-
                         <!-- Nearby header -->
-                        <Border Height="32" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-                            <TextBlock Text="{CustomResource NearbyPlaces}" Margin="12,5,0,0"/>
+                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                            <TextBlock Text="{CustomResource NearbyPlaces}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </Border>
                     </StackPanel>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="td:Venue">
-                    <StackPanel Height="48" Orientation="Horizontal">
+                    <Grid Height="48">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
                         <Border Height="40" Width="40" CornerRadius="20" Margin="0,0,12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-                            <!--<BitmapIcon UriSource="{x:Bind VenueType, Converter={StaticResource VenueToGlyphConverter}}" Margin="4"/>-->
+                            <BitmapIcon Margin="4"/>
                         </Border>
                         <StackPanel Orientation="Vertical"
                                     HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center">
+                                    VerticalAlignment="Center"
+                                    Grid.Column="1">
                             <TextBlock Text="{x:Bind Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
                             <TextBlock Text="{x:Bind Address}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                         </StackPanel>
-                    </StackPanel>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>

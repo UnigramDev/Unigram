@@ -18,8 +18,8 @@
               Padding="{ThemeResource MessageContentPadding}"
               CornerRadius="{ThemeResource MessageCornerRadius}"
               Background="{ThemeResource MessageBackgroundBrush}"
-              BorderBrush="{ThemeResource MessageBorderBrush}"
-              BorderThickness="0,0,0,2">
+              BorderBrush="{ThemeResource MessageBackgroundBrush}"
+              BorderThickness="0,0,0,0">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="Normal"/>
@@ -161,6 +161,6 @@
         </Grid>
     </UserControl>
 
-    <controls:ReplyMarkupPanel x:Name="Markup" InlineButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2"/>
+    <controls:ReplyMarkupPanel x:Name="Markup" InlineButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,0"/>
 
 </local:MessageBubbleBase>

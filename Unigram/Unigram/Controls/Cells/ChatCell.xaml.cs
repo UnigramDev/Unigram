@@ -73,14 +73,19 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatReadInbox(Chat chat)
         {
-            PinnedIcon.Visibility = chat.UnreadCount == 0 && chat.IsPinned ? Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Visibility = chat.UnreadCount > 0 ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
-            UnreadLabel.Text = chat.UnreadCount.ToString();
+            PinnedIcon.Visibility = (chat.UnreadCount == 0 && !chat.IsMarkedAsUnread) && chat.IsPinned ? Visibility.Visible : Visibility.Collapsed;
+            UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
+            UnreadLabel.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
         }
 
         public void UpdateChatReadOutbox(Chat chat)
         {
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
+        }
+
+        public void UpdateChatIsMarkedAsUnread(Chat chat)
+        {
+
         }
 
         public void UpdateChatUnreadMentionCount(Chat chat)
@@ -103,14 +108,7 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatPhoto(Chat chat)
         {
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == _protoService.GetMyId())
-            {
-                Photo.Source = PlaceholderHelper.GetChat(null, chat, 48, 48);
-            }
-            else
-            {
-                Photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 48, 48);
-            }
+            Photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 48, 48);
         }
 
         public void UpdateFile(Chat chat, File file)
@@ -436,7 +434,7 @@ namespace Unigram.Controls.Cells
             }
             else if (message.Content is MessageVenue vanue)
             {
-                return result + $"{Strings.Resources.AttachLocation}, ";
+                return result + Strings.Resources.AttachLocation;
             }
             else if (message.Content is MessagePhoto photo)
             {
@@ -446,6 +444,13 @@ namespace Unigram.Controls.Cells
                 }
 
                 return result + $"{Strings.Resources.AttachPhoto}, ";
+            }
+            else if (message.Content is MessageCall call)
+            {
+                var outgoing = message.IsOutgoing;
+                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+
+                return result + (missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming));
             }
             else if (message.Content is MessageUnsupported)
             {
@@ -516,7 +521,7 @@ namespace Unigram.Controls.Cells
 
         private string UpdateTimeLabel(Chat chat)
         {
-            if (_protoService != null && _protoService.IsChatPromoted(chat))
+            if (_protoService != null && _protoService.IsChatSponsored(chat))
             {
                 return Strings.Resources.UseProxySponsor;
             }
@@ -549,6 +554,14 @@ namespace Unigram.Controls.Cells
             {
                 return "\uE1F6";
             }
+            //else if (chat.Type is ChatTypePrivate privata && _protoService != null)
+            //{
+            //    var user = _protoService.GetUser(privata.UserId);
+            //    if (user != null && user.Type is UserTypeBot)
+            //    {
+            //        return "\uE99A";
+            //    }
+            //}
 
             return string.Empty;
         }

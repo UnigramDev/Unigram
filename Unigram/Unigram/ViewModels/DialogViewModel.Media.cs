@@ -28,6 +28,7 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -454,13 +455,22 @@ namespace Unigram.ViewModels
         private async void SendContactExecute()
         {
             var picker = new ContactPicker();
-            picker.SelectionMode = ContactSelectionMode.Fields;
-            picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.PhoneNumber);
+            //picker.SelectionMode = ContactSelectionMode.Fields;
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Address);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.ConnectedServiceAccount);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Email);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.ImportantDate);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.JobInfo);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Notes);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.PhoneNumber);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.SignificantOther);
+            //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Website);
 
             var picked = await picker.PickContactAsync();
             if (picked != null)
             {
                 Telegram.Td.Api.Contact contact = null;
+                string vcard = string.Empty;
 
                 var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
                 var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
@@ -471,6 +481,16 @@ namespace Unigram.ViewModels
                     {
                         var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
 
+                        //var vcardStream = await ContactManager.ConvertContactToVCardAsync(full, 2000);
+                        //using (var stream = await vcardStream.OpenReadAsync())
+                        //{
+                        //    using (var dataReader = new DataReader(stream.GetInputStreamAt(0)))
+                        //    {
+                        //        await dataReader.LoadAsync((uint)stream.Size);
+                        //        vcard = dataReader.ReadString(dataReader.UnconsumedBufferLength);
+                        //    }
+                        //}
+
                         var first = annotations.FirstOrDefault();
                         if (first != null)
                         {
@@ -480,24 +500,24 @@ namespace Unigram.ViewModels
                                 var user = ProtoService.GetUser(userId);
                                 if (user != null)
                                 {
-                                    contact = new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LanguageCode, user.Id);
+                                    contact = new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, vcard, user.Id);
                                 }
                             }
                         }
 
                         //contact = full;
-                    }
-                }
 
-                if (contact == null)
-                {
-                    var phone = picked.Phones.FirstOrDefault();
-                    if (phone == null)
-                    {
-                        return;
-                    }
+                        if (contact == null)
+                        {
+                            var phone = full.Phones.FirstOrDefault();
+                            if (phone == null)
+                            {
+                                return;
+                            }
 
-                    contact = new Telegram.Td.Api.Contact(phone.Number, picked.FirstName, picked.LastName, 0);
+                            contact = new Telegram.Td.Api.Contact(phone.Number, picked.FirstName, picked.LastName, vcard, 0);
+                        }
+                    }
                 }
 
                 if (contact != null)
@@ -625,6 +645,59 @@ namespace Unigram.ViewModels
                     //{
                     //    operations.Add(op);
                     //}
+
+                    var file = video.File;
+                    var profile = await video.GetEncodingAsync();
+                    var transform = video.GetTransform();
+
+                    var basicProps = await file.GetBasicPropertiesAsync();
+                    var videoProps = await file.Properties.GetVideoPropertiesAsync();
+
+                    //var thumbnail = await ImageHelper.GetVideoThumbnailAsync(file, videoProps, transform);
+
+                    var videoWidth = (int)videoProps.GetWidth();
+                    var videoHeight = (int)videoProps.GetHeight();
+
+                    if (profile != null)
+                    {
+                        videoWidth = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Width : (int)profile.Video.Height;
+                        videoHeight = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Height : (int)profile.Video.Width;
+                    }
+
+                    var conversion = new VideoConversion();
+                    if (profile != null)
+                    {
+                        conversion.Transcode = true;
+                        conversion.Mute = profile.Audio == null;
+                        conversion.Width = profile.Video.Width;
+                        conversion.Height = profile.Video.Height;
+                        conversion.Bitrate = profile.Video.Bitrate;
+
+                        if (transform != null)
+                        {
+                            conversion.Transform = true;
+                            conversion.Rotation = transform.Rotation;
+                            conversion.OutputSize = transform.OutputSize;
+                            conversion.Mirror = transform.Mirror;
+                            conversion.CropRectangle = transform.CropRectangle;
+                        }
+                    }
+
+                    var generated = await file.ToGeneratedAsync("transcode#" + JsonConvert.SerializeObject(conversion));
+                    var thumbnail = await file.ToThumbnailAsync(conversion, "thumbnail_transcode#" + JsonConvert.SerializeObject(conversion));
+
+                    if (profile != null && profile.Audio == null)
+                    {
+                        var input = new InputMessageAnimation(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, GetFormattedText(video.Caption));
+
+                        operations.Add(input);
+                    }
+                    else
+                    {
+                        var input = new InputMessageVideo(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, true, GetFormattedText(video.Caption), video.Ttl ?? 0);
+
+                        operations.Add(input);
+                    }
                 }
             }
 

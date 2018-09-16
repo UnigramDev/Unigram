@@ -14,7 +14,7 @@ namespace Unigram.Controls
 {
     public class ChatListView : GroupedListView
     {
-        public UnigramViewModelBase ViewModel => DataContext as UnigramViewModelBase;
+        public TLViewModelBase ViewModel => DataContext as TLViewModelBase;
 
         public MasterDetailState _viewState;
         public ChatFilterMode _filterMode;

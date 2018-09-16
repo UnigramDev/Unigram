@@ -18,6 +18,32 @@
         </TransitionCollection>
     </Page.Transitions>
 
+    <Page.Resources>
+        <DataTemplate x:Key="MemberTemplate">
+            <Grid Margin="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                           VerticalAlignment="Top"
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="NoWrap"
+                           Grid.Column="1"
+                           Grid.Row="1"
+                           MaxLines="1"/>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -25,255 +51,327 @@
         </Grid.RowDefinitions>
         <controls:ContentPageHeader>
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{CustomResource Info}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                <Grid x:Name="MainHeader">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{CustomResource Info}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
 
-                <!--<controls:GlyphButton
-                     Glyph="&#xE13A;"
-                     Command="{x:Bind ViewModel.CallCommand}"
-                     Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable, Mode=OneWay}"
-                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                     Grid.Column="1"/>-->
-                <!--<controls:GlyphButton
-                     x:Name="SendMessage"
-                     Glyph="&#xE8BD;"
-                     Command="{x:Bind ViewModel.SendMessageCommand}"
-                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                     Grid.Column="2"/>-->
-                <Button Click="Menu_ContextRequested" Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="3">
-                    <FontIcon x:Name="EllipsisIcon"
-                              VerticalAlignment="Center"
-                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                              FontSize="16"
-                              Glyph="&#xE10C;"
-                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                </Button>
+                    <controls:GlyphButton
+                        x:Name="Call"
+                        Glyph="&#xE13A;"
+                        Visibility="Collapsed"
+                        Command="{x:Bind ViewModel.CallCommand}"
+                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                        Grid.Column="1"/>
+                    <!--<controls:GlyphButton
+                         x:Name="SendMessage"
+                         Glyph="&#xE8BD;"
+                         Command="{x:Bind ViewModel.SendMessageCommand}"
+                         Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                         Grid.Column="2"/>-->
+                    <Button Click="Menu_ContextRequested" Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="3">
+                        <FontIcon x:Name="EllipsisIcon"
+                                  VerticalAlignment="Center"
+                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                  FontSize="16"
+                                  Glyph="&#xE10C;"
+                                  Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                    </Button>
+                </Grid>
+
+                <controls:SearchTextBox x:Name="SearchField"
+                                        Padding="12,4,6,4"
+                                        Background="{x:Null}"
+                                        BorderBrush="{x:Null}"
+                                        Style="{StaticResource SearchTextBoxStyle}"
+                                        PlaceholderText="{CustomResource Search}"
+                                        PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                        Clean="Search_LostFocus"
+                                        LostFocus="Search_LostFocus"
+                                        TextChanged="Search_TextChanged"
+                                        Visibility="Collapsed"
+                                        Canvas.ZIndex="1"/>
             </Grid>
         </controls:ContentPageHeader>
 
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
-        <ListView x:Name="ScrollingHost"
-                  ItemsSource="{x:Bind ViewModel.Members, Mode=OneWay}"
+        <ListView ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
+                  ItemTemplate="{StaticResource MemberTemplate}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
                   Grid.Row="1">
-            <ListView.Header>
-                <StackPanel Margin="0,0,0,24">
-                    <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <controls:ProfilePicture x:Name="Photo" Click="Photo_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
-
-                        <Grid x:Name="LabelTitle" VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                            <Grid x:Name="Verified" Visibility="Collapsed" Margin="4,0,0,-2" Grid.Column="2">
-                                <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
-                                <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
-                            </Grid>
-                        </Grid>
-                        <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
-
-                        <Border VerticalAlignment="Center" Width="36" Height="36" CornerRadius="18" Margin="8,12,12,12" Grid.Column="2" Grid.RowSpan="2">
-                            <Border.Background>
-                                <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
-                            </Border.Background>
-                            <controls:GlyphButton Glyph="&#xE8BD;" Command="{x:Bind ViewModel.SendMessageCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Width="36" Height="36" CornerRadius="18" Padding="0,0,0,-2" FontSize="16"/>
-                        </Border>
-                    </Grid>
-
-                    <StackPanel>
-                        <Button x:Name="UserPhone"
-                                Visibility="Collapsed"
-                                Tag="{CustomResource PhoneMobile}"
-                                Command="{x:Bind ViewModel.CallCommand}"
-                                Style="{StaticResource SubtitleButtonStyle}"/>
-
-                        <StackPanel x:Name="DescriptionPanel" Visibility="Collapsed">
-                            <TextBlock x:Name="DescriptionTitle" Visibility="Collapsed" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
-                            <RichTextBlock x:Name="DescriptionLabel"
-                                           ContextRequested="About_ContextRequested"
-                                           ContextMenuOpening="About_ContextMenuOpening"
-                                           Padding="12,0,12,12"
-                                           Style="{StaticResource BodyRichTextBlockStyle}">
-                                <Paragraph>
-                                    <Span x:Name="DescriptionSpan"/>
-                                </Paragraph>
-                            </RichTextBlock>
-                            <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
-                        </StackPanel>
-
-                        <Button x:Name="Username"
-                                Visibility="Collapsed"
-                                Tag="{CustomResource Username}"
-                                Style="{StaticResource SubtitleButtonStyle}"/>
-
-                    </StackPanel>
-
-                    <StackPanel Margin="0,24,0,0">
-                        <ToggleSwitch x:Name="Notifications"
-                                      Header="{CustomResource Notifications}"
-                                      Style="{ThemeResource CheckButtonStyle}"
-                                      Toggled="Notifications_Toggled"/>
-
-                        <controls:BadgeButton Content="{CustomResource SharedMedia}"
-                                              Command="{x:Bind ViewModel.MediaCommand}"
-                                              Style="{StaticResource BadgeButtonStyle}"/>
-
-                        <controls:BadgeButton x:Name="SecretLifetime"
-                                              Visibility="Collapsed"
-                                              Content="{CustomResource MessageLifetime}"
-                                              Badge="{CustomResource ShortMessageLifetimeForever}"
-                                              Style="{StaticResource BadgeButtonStyle}"/>
-
-                        <controls:BadgeButton x:Name="SecretHashKey"
-                                              Visibility="Collapsed"
-                                              Content="{CustomResource EncryptionKey}"
-                                              Command="{x:Bind ViewModel.IdenticonCommand}"
-                                              Style="{StaticResource BadgeButtonStyle}"/>
-
-                        <controls:BadgeButton x:Name="UserCommonChats"
-                                              Visibility="Collapsed"
-                                              Content="{CustomResource GroupsInCommon}"
-                                              Command="{x:Bind ViewModel.CommonChatsCommand}"
-                                              Style="{StaticResource BadgeButtonStyle}"/>
-
-                        <controls:BadgeButton x:Name="UserStartSecret"
-                                              Visibility="Collapsed"
-                                              Content="{CustomResource StartEncryptedChat}"
-                                              Command="{x:Bind ViewModel.SecretChatCommand}"
-                                              Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"
-                                              Style="{StaticResource BadgeButtonStyle}"/>
-
-                        <Button x:Name="GroupLeave"
-                                Content="{CustomResource LeaveChannel}"
-                                Command="{x:Bind ViewModel.DeleteCommand}"
-                                Style="{StaticResource HyperButtonStyle}"
-                                Foreground="Red"/>
-                        <Button x:Name="GroupInvite"
-                                Content="{CustomResource AddMember}"
-                                Command="{x:Bind ViewModel.InviteCommand}"
-                                Style="{StaticResource HyperButtonStyle}"
-                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-                    </StackPanel>
-
-                    <StackPanel Margin="0,24,0,18">
-                        <Button x:Name="EventLog"
-                                Visibility="Collapsed"
-                                Content="{CustomResource EventLog}"
-                                Command="{x:Bind ViewModel.AdminLogCommand}"
-                                Style="{StaticResource HyperButtonStyle}"
-                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-                        <controls:BadgeButton x:Name="Admins"
-                                              Visibility="Collapsed"
-                                              Content="{CustomResource ChannelAdministrators}"
-                                              Command="{x:Bind ViewModel.AdminsCommand}"
-                                              Style="{StaticResource BadgeButtonStyle}"/>
-                        <controls:BadgeButton x:Name="Restricted"
-                                              Visibility="Collapsed"
-                                              Content="{CustomResource ChannelRestrictedUsers}"
-                                              Command="{x:Bind ViewModel.KickedCommand}"
-                                              Style="{StaticResource BadgeButtonStyle}"/>
-                        <controls:BadgeButton x:Name="Banned"
-                                              Visibility="Collapsed"
-                                              Content="{CustomResource ChannelBlockedUsers}"
-                                              Command="{x:Bind ViewModel.BannedCommand}"
-                                              Style="{StaticResource BadgeButtonStyle}"/>
-                        <controls:BadgeButton x:Name="Members"
-                                              Visibility="Collapsed"
-                                              Content="{CustomResource ChannelSubscribers}"
-                                              Command="{x:Bind ViewModel.ParticipantsCommand}"
-                                              Style="{StaticResource BadgeButtonStyle}"/>
-                    </StackPanel>
-                </StackPanel>
-            </ListView.Header>
-            <ListView.ItemTemplateSelector>
-                <selectors:ParticipantTemplateSelector>
-                    <selectors:ParticipantTemplateSelector.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                                <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                                <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                           VerticalAlignment="Top"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap"
-                                           Grid.Column="1"
-                                           Grid.Row="1"
-                                           MaxLines="1"/>
-                            </Grid>
-                        </DataTemplate>
-                    </selectors:ParticipantTemplateSelector.ItemTemplate>
-                    <selectors:ParticipantTemplateSelector.AdminTemplate>
-                        <DataTemplate>
-                            <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                                <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                                <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                           VerticalAlignment="Top"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap"
-                                           Grid.Column="1"
-                                           Grid.Row="1"
-                                           MaxLines="1"/>
-
-                                <TextBlock Text="{CustomResource ChatAdmin}"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                           Grid.Column="2"
-                                           Grid.RowSpan="2"/>
-                            </Grid>
-                        </DataTemplate>
-                    </selectors:ParticipantTemplateSelector.AdminTemplate>
-                </selectors:ParticipantTemplateSelector>
-            </ListView.ItemTemplateSelector>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
+
+        <Grid x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="1">
+            <controls:ScrollViewerBackground 
+                Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                ScrollingHost="{x:Bind ScrollingHost}"
+                VerticalAlignment="Top"
+                Grid.Row="1"/>
+            <ListView x:Name="ScrollingHost"
+                      ItemsSource="{x:Bind ViewModel.Members, Mode=OneWay}"
+                      ItemClick="ListView_ItemClick"
+                      IsItemClickEnabled="True"
+                      ContainerContentChanging="OnContainerContentChanging"
+                      SelectionMode="None"
+                      Grid.Row="1">
+                <ListView.Header>
+                    <StackPanel Margin="0,0,0,24">
+                        <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <controls:ProfilePicture x:Name="Photo" Click="Photo_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
+
+                            <Grid x:Name="LabelTitle" VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <Grid x:Name="Verified" Visibility="Collapsed" Margin="4,0,0,-2" Grid.Column="2">
+                                    <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
+                                    <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
+                                </Grid>
+                            </Grid>
+                            <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+
+                            <Border VerticalAlignment="Center" Width="36" Height="36" CornerRadius="18" Margin="8,12,12,12" Grid.Column="2" Grid.RowSpan="2">
+                                <Border.Background>
+                                    <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
+                                </Border.Background>
+                                <controls:GlyphButton Glyph="&#xE8BD;" Command="{x:Bind ViewModel.SendMessageCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Width="36" Height="36" CornerRadius="18" Padding="0,0,0,-2" FontSize="16"/>
+                            </Border>
+                        </Grid>
+
+                        <StackPanel>
+                            <Button x:Name="UserPhone"
+                                    Visibility="Collapsed"
+                                    Tag="{CustomResource PhoneMobile}"
+                                    Command="{x:Bind ViewModel.CallCommand}"
+                                    Style="{StaticResource SubtitleButtonStyle}">
+                                <Button.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyPhoneCommand}"/>
+                                    </MenuFlyout>
+                                </Button.ContextFlyout>
+                            </Button>
+
+                            <StackPanel x:Name="DescriptionPanel" Visibility="Collapsed">
+                                <TextBlock x:Name="DescriptionTitle" Visibility="Collapsed" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
+                                <RichTextBlock x:Name="DescriptionLabel"
+                                               ContextRequested="About_ContextRequested"
+                                               ContextMenuOpening="About_ContextMenuOpening"
+                                               Padding="12,0,12,12"
+                                               Style="{StaticResource BodyRichTextBlockStyle}">
+                                    <Paragraph>
+                                        <Span x:Name="DescriptionSpan"/>
+                                    </Paragraph>
+                                </RichTextBlock>
+                                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
+                            </StackPanel>
+
+                            <Button x:Name="Username"
+                                    Visibility="Collapsed"
+                                    Tag="{CustomResource Username}"
+                                    Style="{StaticResource SubtitleButtonStyle}">
+                                <Button.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}"/>
+                                    </MenuFlyout>
+                                </Button.ContextFlyout>
+                            </Button>
+
+                        </StackPanel>
+
+                        <StackPanel Margin="0,24,0,0">
+                            <ToggleSwitch x:Name="Notifications"
+                                          Header="{CustomResource Notifications}"
+                                          Style="{ThemeResource CheckButtonStyle}"
+                                          Toggled="Notifications_Toggled"/>
+
+                            <controls:BadgeButton Content="{CustomResource SharedMedia}"
+                                                  Command="{x:Bind ViewModel.MediaCommand}"
+                                                  Style="{StaticResource BadgeButtonStyle}"/>
+
+                            <controls:BadgeButton x:Name="SecretLifetime"
+                                                  Visibility="Collapsed"
+                                                  Command="{x:Bind ViewModel.SetTimerCommand}"
+                                                  Content="{CustomResource MessageLifetime}"
+                                                  Style="{StaticResource BadgeButtonStyle}"/>
+
+                            <controls:BadgeButton x:Name="SecretHashKey"
+                                                  Visibility="Collapsed"
+                                                  Content="{CustomResource EncryptionKey}"
+                                                  Command="{x:Bind ViewModel.IdenticonCommand}"
+                                                  Style="{StaticResource BadgeButtonStyle}">
+                                <!--<controls:BadgeButton.Badge>
+                                     <Image x:Name="SecretIdenticon" Width="24" Height="24"/>
+                                     </controls:BadgeButton.Badge>-->
+                            </controls:BadgeButton>
+
+                            <controls:BadgeButton x:Name="UserCommonChats"
+                                                  Visibility="Collapsed"
+                                                  Content="{CustomResource GroupsInCommon}"
+                                                  Command="{x:Bind ViewModel.CommonChatsCommand}"
+                                                  Style="{StaticResource BadgeButtonStyle}"/>
+
+                            <controls:BadgeButton x:Name="UserStartSecret"
+                                                  Visibility="Collapsed"
+                                                  Content="{CustomResource StartEncryptedChat}"
+                                                  Command="{x:Bind ViewModel.SecretChatCommand}"
+                                                  Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"
+                                                  Style="{StaticResource BadgeButtonStyle}"/>
+
+                            <Button x:Name="GroupLeave"
+                                    Content="{CustomResource LeaveChannel}"
+                                    Command="{x:Bind ViewModel.DeleteCommand}"
+                                    Style="{StaticResource HyperButtonStyle}"
+                                    Foreground="Red"/>
+                            <Button x:Name="GroupInvite"
+                                    Content="{CustomResource AddMember}"
+                                    Command="{x:Bind ViewModel.InviteCommand}"
+                                    Style="{StaticResource HyperButtonStyle}"
+                                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,24,0,18">
+                            <Button x:Name="EventLog"
+                                    Visibility="Collapsed"
+                                    Content="{CustomResource EventLog}"
+                                    Command="{x:Bind ViewModel.AdminLogCommand}"
+                                    Style="{StaticResource HyperButtonStyle}"
+                                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                            <controls:BadgeButton x:Name="Admins"
+                                                  Visibility="Collapsed"
+                                                  Content="{CustomResource ChannelAdministrators}"
+                                                  Command="{x:Bind ViewModel.AdminsCommand}"
+                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                            <controls:BadgeButton x:Name="Restricted"
+                                                  Visibility="Collapsed"
+                                                  Content="{CustomResource ChannelRestrictedUsers}"
+                                                  Command="{x:Bind ViewModel.KickedCommand}"
+                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                            <controls:BadgeButton x:Name="Banned"
+                                                  Visibility="Collapsed"
+                                                  Content="{CustomResource ChannelBlockedUsers}"
+                                                  Command="{x:Bind ViewModel.BannedCommand}"
+                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                            <controls:BadgeButton x:Name="Members"
+                                                  Visibility="Collapsed"
+                                                  Content="{CustomResource ChannelSubscribers}"
+                                                  Command="{x:Bind ViewModel.ParticipantsCommand}"
+                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ListView.Header>
+                <ListView.ItemTemplateSelector>
+                    <selectors:MemberTemplateSelector>
+                        <selectors:MemberTemplateSelector.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               VerticalAlignment="Top"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               Grid.Column="1"
+                                               Grid.Row="1"
+                                               MaxLines="1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </selectors:MemberTemplateSelector.ItemTemplate>
+                        <selectors:MemberTemplateSelector.AdminTemplate>
+                            <DataTemplate>
+                                <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
+                                        <Run />
+                                        <Run Text="&#xE00A;" FontSize="12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                                    </TextBlock>
+                                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               VerticalAlignment="Top"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               Grid.Column="1"
+                                               Grid.Row="1"
+                                               MaxLines="1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </selectors:MemberTemplateSelector.AdminTemplate>
+                        <selectors:MemberTemplateSelector.CreatorTemplate>
+                            <DataTemplate>
+                                <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
+                                        <Run />
+                                        <Run Text="&#xE00A;" FontSize="12" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                                    </TextBlock>
+                                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               VerticalAlignment="Top"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               Grid.Column="1"
+                                               Grid.Row="1"
+                                               MaxLines="1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </selectors:MemberTemplateSelector.CreatorTemplate>
+                    </selectors:MemberTemplateSelector>
+                </ListView.ItemTemplateSelector>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Grid>
     </Grid>
 </Page>

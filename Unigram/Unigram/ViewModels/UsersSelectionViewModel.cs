@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public abstract class UsersSelectionViewModel : UnigramViewModelBase
+    public abstract class UsersSelectionViewModel : TLViewModelBase
     {
         public UsersSelectionViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator)
@@ -50,7 +50,7 @@ namespace Unigram.ViewModels
         {
             Items.Clear();
 
-            ProtoService.Send(new SearchContacts(string.Empty, int.MaxValue), result =>
+            ProtoService.Send(new GetContacts(), result =>
             {
                 if (result is Telegram.Td.Api.Users users)
                 {

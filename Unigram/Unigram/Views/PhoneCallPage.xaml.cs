@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas.Effects;
+﻿using libtgvoip;
+using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,11 +7,13 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Entities;
+using Unigram.Services;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -32,13 +35,8 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class PhoneCallPage : Page, IDisposable
     {
         private Visual _descriptionVisual;
@@ -49,8 +47,15 @@ namespace Unigram.Views
 
         private bool _collapsed = true;
 
-        private PhoneCallState _state;
-        private string[] _emojis;
+        private readonly IProtoService _protoService;
+        private readonly ICacheService _cacheService;
+        private readonly IEventAggregator _aggregator;
+
+        private VoIPControllerWrapper _controller;
+        private Call _call;
+
+        private libtgvoip.CallState _state;
+        private IList<string> _emojis;
         private DateTime _started;
 
         private int _debugTapped;
@@ -63,9 +68,13 @@ namespace Unigram.Views
 
         public ContentDialogBase Dialog { get; set; }
 
-        public PhoneCallPage(bool extend)
+        public PhoneCallPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, Call call, VoIPControllerWrapper controller)
         {
             this.InitializeComponent();
+
+            _protoService = protoService;
+            _cacheService = cacheService;
+            _aggregator = aggregator;
 
             _durationTimer = new DispatcherTimer();
             _durationTimer.Interval = TimeSpan.FromMilliseconds(500);
@@ -112,10 +121,6 @@ namespace Unigram.Views
 
             #endregion
 
-            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            //coreTitleBar.IsVisibleChanged += CoreBar_IsVisibleChanged;
-            coreTitleBar.ExtendViewIntoTitleBar = extend;
-
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonForegroundColor = Colors.White;
@@ -123,6 +128,16 @@ namespace Unigram.Views
             titleBar.ButtonInactiveForegroundColor = Colors.White;
 
             Window.Current.SetTitleBar(GrabPanel);
+
+            if (call != null)
+            {
+                Update(call);
+            }
+
+            if (controller != null)
+            {
+                Connect(controller);
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -141,7 +156,7 @@ namespace Unigram.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("Unloaded");
-            
+
             if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
             {
                 AudioRoutingManager.GetDefault().AudioEndpointChanged -= AudioEndpointChanged;
@@ -154,10 +169,34 @@ namespace Unigram.Views
             _debugTimer.Stop();
             _durationTimer.Stop();
 
+            if (_controller != null)
+            {
+                //_controller.CallStateChanged -= OnCallStateChanged;
+                //_controller.SignalBarsChanged -= OnSignalBarsChanged;
+                _controller = null;
+            }
+
             if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
             {
                 AudioRoutingManager.GetDefault().AudioEndpointChanged -= AudioEndpointChanged;
             }
+        }
+
+        public void Connect(VoIPControllerWrapper controller)
+        {
+            _controller = controller;
+
+            // Let's avoid duplicated events
+            _controller.CallStateChanged -= OnCallStateChanged;
+            _controller.CallStateChanged += OnCallStateChanged;
+
+            _controller.SignalBarsChanged -= OnSignalBarsChanged;
+            _controller.SignalBarsChanged += OnSignalBarsChanged;
+
+            _controller.SetMicMute(_isMuted);
+
+            OnCallStateChanged(controller, controller.GetConnectionState());
+            OnSignalBarsChanged(controller, controller.GetSignalBarsCount());
         }
 
         //private void CoreBar_IsVisibleChanged(CoreApplicationViewTitleBar sender, object args)
@@ -184,64 +223,195 @@ namespace Unigram.Views
             }
         }
 
-        //public void SetCall(TLTuple<TLPhoneCallState, TLPhoneCallBase, TLUserBase, string> tuple)
-        //{
-        //    if (_disposed)
-        //    {
-        //        return;
-        //    }
+        public void Update(Call call)
+        {
+            if (_disposed)
+            {
+                return;
+            }
 
-        //    if (_state != tuple.Item1)
-        //    {
-        //        Debug.WriteLine("[{0:HH:mm:ss.fff}] State changed in app: " + tuple.Item1, DateTime.Now);
+            _call = call;
 
-        //        _state = tuple.Item1;
-        //        StateLabel.Content = StateToLabel(tuple.Item1);
+            //if (_state != call.State)
+            //{
+            //    Debug.WriteLine("[{0:HH:mm:ss.fff}] State changed in app: " + tuple.Item1, DateTime.Now);
 
-        //        if (tuple.Item1 == TLPhoneCallState.Established)
-        //        {
-        //            SignalBarsLabel.Visibility = Visibility.Visible;
-        //            StartUpdatingCallDuration();
+            //    _state = tuple.Item1;
+            //    StateLabel.Content = StateToLabel(tuple.Item1);
 
-        //            if (_emojis != null)
-        //            {
-        //                for (int i = 0; i < _emojis.Length; i++)
-        //                {
-        //                    var imageLarge = FindName($"LargeEmoji{i}") as Image;
-        //                    var source = Emoji.BuildUri(_emojis[i]);
+            //    if (tuple.Item1 == TLPhoneCallState.Established)
+            //    {
+            //        SignalBarsLabel.Visibility = Visibility.Visible;
+            //        StartUpdatingCallDuration();
 
-        //                    imageLarge.Source = new BitmapImage(new Uri(source));
-        //                }
-        //            }
-        //        }
-        //    }
+            //        if (_emojis != null)
+            //        {
+            //            for (int i = 0; i < _emojis.Length; i++)
+            //            {
+            //                var imageLarge = FindName($"LargeEmoji{i}") as Image;
+            //                var source = Emoji.BuildUri(_emojis[i]);
 
-        //    //if (tuple.Item2 is TLPhoneCallRequested call)
-        //    //{
-        //    //}
+            //                imageLarge.Source = new BitmapImage(new Uri(source));
+            //            }
+            //        }
+            //    }
+            //}
 
-        //    if (tuple.Item3 is TLUser user)
-        //    {
-        //        //if (user.HasPhoto && user.Photo is TLUserProfilePhoto)
-        //        //{
-        //        //    Image.Source = DefaultPhotoConverter.Convert(user, true) as ImageSource;
-        //        //    GrabPanel.Background = new SolidColorBrush(Colors.Transparent);
-        //        //}
-        //        //else
-        //        {
-        //            Image.Source = null;
-        //            GrabPanel.Background = PlaceholderHelper.GetBrush(user.Id);
-        //        }
+            //if (tuple.Item2 is TLPhoneCallRequested call)
+            //{
+            //}
 
-        //        FromLabel.Text = user.FullName;
-        //        DescriptionLabel.Text = string.Format(Strings.Resources.CallEmojiKeyTooltip, user.FirstName);
-        //    }
+            var user = _cacheService.GetUser(call.UserId);
+            if (user != null)
+            {
+                //if (user.HasPhoto && user.Photo is TLUserProfilePhoto)
+                //{
+                //    Image.Source = DefaultPhotoConverter.Convert(user, true) as ImageSource;
+                //    GrabPanel.Background = new SolidColorBrush(Colors.Transparent);
+                //}
+                //else
+                {
+                    Image.Source = null;
+                    GrabPanel.Background = PlaceholderHelper.GetBrush(user.Id);
+                }
 
-        //    if (tuple.Item4.Length > 0)
-        //    {
-        //        _emojis = tuple.Item4.Split(' ');
-        //    }
-        //}
+                FromLabel.Text = user.GetFullName();
+                DescriptionLabel.Text = string.Format(Strings.Resources.CallEmojiKeyTooltip, user.FirstName);
+            }
+
+            if (call.State is CallStateReady ready)
+            {
+                _emojis = ready.Emojis;
+
+                for (int i = 0; i < ready.Emojis.Count; i++)
+                {
+                    var imageLarge = FindName($"LargeEmoji{i}") as Image;
+                    var source = Emoji.BuildUri(_emojis[i]);
+
+                    imageLarge.Source = new BitmapImage(new Uri(source));
+                }
+            }
+
+            switch (call.State)
+            {
+                case CallStatePending pending:
+                    if (call.IsOutgoing)
+                    {
+                        ResetUI();
+                    }
+                    else
+                    {
+                        Mute.Visibility = Visibility.Collapsed;
+
+                        Close.Visibility = Visibility.Collapsed;
+                        Close.Margin = new Thickness();
+
+                        Accept.Margin = new Thickness(0, 0, 6, 0);
+                        Accept.Visibility = Visibility.Visible;
+
+                        Discard.Margin = new Thickness(6, 0, 0, 0);
+                        Discard.Visibility = Visibility.Visible;
+                    }
+                    break;
+                case CallStateDiscarded discarded:
+                    if (call.IsOutgoing && discarded.Reason is CallDiscardReasonDeclined)
+                    {
+                        Mute.Visibility = Visibility.Collapsed;
+
+                        Close.Margin = new Thickness(0, 0, 6, 0);
+                        Close.Visibility = Visibility.Visible;
+
+                        Accept.Margin = new Thickness(6, 0, 0, 0);
+                        Accept.Visibility = Visibility.Visible;
+
+                        Discard.Visibility = Visibility.Collapsed;
+                        Discard.Margin = new Thickness();
+                    }
+                    break;
+                default:
+                    ResetUI();
+                    break;
+            }
+
+            switch (call.State)
+            {
+                case CallStatePending pending:
+                    StateLabel.Content = call.IsOutgoing
+                        ? pending.IsReceived
+                        ? Strings.Resources.VoipRinging
+                        : pending.IsCreated
+                        ? Strings.Resources.VoipWaiting
+                        : Strings.Resources.VoipRequesting
+                        : Strings.Resources.VoipIncoming;
+                    break;
+                case CallStateExchangingKeys exchangingKeys:
+                    StateLabel.Content = Strings.Resources.VoipExchangingKeys;
+                    break;
+                case CallStateHangingUp hangingUp:
+                    StateLabel.Content = Strings.Resources.VoipHangingUp;
+                    break;
+                case CallStateDiscarded discarded:
+                    StateLabel.Content = discarded.Reason is CallDiscardReasonDeclined
+                        ? Strings.Resources.VoipBusy
+                        : Strings.Resources.VoipCallEnded;
+                    break;
+            }
+        }
+
+        private void ResetUI()
+        {
+            Mute.Visibility = Visibility.Visible;
+
+            Close.Visibility = Visibility.Collapsed;
+            Close.Margin = new Thickness();
+
+            Accept.Visibility = Visibility.Collapsed;
+            Accept.Margin = new Thickness();
+
+            Discard.Margin = new Thickness();
+            Discard.Visibility = Visibility.Visible;
+        }
+
+        private void OnCallStateChanged(VoIPControllerWrapper sender, libtgvoip.CallState newState)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                switch (newState)
+                {
+                    case libtgvoip.CallState.WaitInit:
+                    case libtgvoip.CallState.WaitInitAck:
+                        _state = newState;
+                        StateLabel.Content = Strings.Resources.VoipConnecting;
+                        break;
+                    case libtgvoip.CallState.Established:
+                        _state = newState;
+                        StateLabel.Content = "00:00";
+
+                        SignalBarsLabel.Visibility = Visibility.Visible;
+                        StartUpdatingCallDuration();
+                        break;
+                    case libtgvoip.CallState.Failed:
+                        switch (sender.GetLastError())
+                        {
+                            case libtgvoip.Error.Incompatible:
+                            case libtgvoip.Error.Timeout:
+                            case libtgvoip.Error.Unknown:
+                                _state = newState;
+                                StateLabel.Content = Strings.Resources.VoipFailed;
+                                break;
+                        }
+                        break;
+                }
+            });
+        }
+
+        private void OnSignalBarsChanged(VoIPControllerWrapper sender, int newCount)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                SetSignalBars(newCount);
+            });
+        }
 
         public void SetSignalBars(int count)
         {
@@ -249,38 +419,6 @@ namespace Unigram.Views
             {
                 ((Rectangle)FindName($"Signal{i}")).Fill = Resources[count >= i ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
             }
-        }
-
-        private string StateToLabel(PhoneCallState state)
-        {
-            switch (state)
-            {
-                case PhoneCallState.WaitingIncoming:
-                    return Strings.Resources.VoipIncoming;
-                case PhoneCallState.WaitInit:
-                case PhoneCallState.WaitInitAck:
-                    return Strings.Resources.VoipConnecting;
-                case PhoneCallState.ExchangingKeys:
-                    return Strings.Resources.VoipExchangingKeys;
-                case PhoneCallState.Waiting:
-                    return Strings.Resources.VoipWaiting;
-                case PhoneCallState.Ringing:
-                    return Strings.Resources.VoipRinging;
-                case PhoneCallState.Requesting:
-                    return Strings.Resources.VoipRequesting;
-                case PhoneCallState.HangingUp:
-                    return Strings.Resources.VoipHangingUp;
-                case PhoneCallState.Ended:
-                    return Strings.Resources.VoipCallEnded;
-                case PhoneCallState.Busy:
-                    return Strings.Resources.VoipBusy;
-                case PhoneCallState.Failed:
-                    return Strings.Resources.VoipFailed;
-                case PhoneCallState.Established:
-                    return "00:00";
-            }
-
-            return null;
         }
 
         private void StartUpdatingCallDuration()
@@ -297,7 +435,7 @@ namespace Unigram.Views
                 StateLabel.Opacity = 0;
             }
 
-            if (_state == PhoneCallState.Established)
+            if (_state == libtgvoip.CallState.Established)
             {
                 var duration = DateTime.Now - _started;
                 DurationLabel.Text = duration.ToString(duration.TotalHours >= 1 ? "hh\\:mm\\:ss" : "mm\\:ss");
@@ -350,12 +488,6 @@ namespace Unigram.Views
             //}
         }
 
-        private async void Hangup_Click(object sender, RoutedEventArgs e)
-        {
-            var duration = _state == PhoneCallState.Established ? DateTime.Now - _started : TimeSpan.Zero;
-            await VoIPConnection.Current.SendRequestAsync("phone.DiscardCall", Tuple.Create(duration.TotalSeconds));
-        }
-
         private void LargeEmojiLabel_Tapped(object sender, TappedRoutedEventArgs e)
         {
             if (_descriptionVisual.Opacity == 0)
@@ -392,11 +524,39 @@ namespace Unigram.Views
             batch.End();
         }
 
-        private async void Mute_Click(object sender, RoutedEventArgs e)
+        private void Close_Click(object sender, RoutedEventArgs e)
         {
-            var toggle = sender as ToggleButton;
-            toggle.IsChecked = !toggle.IsChecked;
-            await VoIPConnection.Current.SendRequestAsync(toggle.IsChecked.Value ? "phone.mute" : "phone.unmute");
+            _aggregator.Publish(new UpdateCall(new Call { State = new CallStateDiscarded { Reason = new CallDiscardReasonEmpty() } }));
+        }
+
+        private void Accept_Click(object sender, RoutedEventArgs e)
+        {
+            if (_call.IsOutgoing && _call.State is CallStateDiscarded discarded && discarded.Reason is CallDiscardReasonDeclined)
+            {
+                _protoService.Send(new CreateCall(_call.UserId, new CallProtocol(true, true, 65, 74)));
+            }
+            else
+            {
+                _protoService.Send(new AcceptCall(_call.Id, new CallProtocol(true, true, 65, 74)));
+            }
+        }
+
+        private void Hangup_Click(object sender, RoutedEventArgs e)
+        {
+            var call = _call;
+            if (call == null)
+            {
+                return;
+            }
+
+            var relay = 0L;
+            if (_controller != null)
+            {
+                relay = _controller.GetPreferredRelayID();
+            }
+
+            var duration = _state == libtgvoip.CallState.Established ? DateTime.Now - _started : TimeSpan.Zero;
+            _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, relay));
         }
 
         private void Routing_Click(object sender, RoutedEventArgs e)
@@ -419,6 +579,24 @@ namespace Unigram.Views
                 else if (routingManager.AvailableAudioEndpoints.HasFlag(AvailableAudioRoutingEndpoints.Earpiece))
                 {
                     routingManager.SetAudioEndpoint(AudioRoutingEndpoint.Earpiece);
+                }
+            }
+        }
+
+        private bool _isMuted;
+        public bool IsMuted
+        {
+            get
+            {
+                return _isMuted;
+            }
+            set
+            {
+                _isMuted = value;
+
+                if (_controller != null)
+                {
+                    _controller.SetMicMute(value);
                 }
             }
         }
@@ -452,51 +630,51 @@ namespace Unigram.Views
 
         private async void ShowDebugString()
         {
-            var result = await VoIPConnection.Current.GetDebugStringAsync();
-            if (result != null && result.Item1 != null)
+            if (_controller == null)
             {
-                var text = new TextBlock();
-                text.Text = result.Item1;
-                text.Margin = new Thickness(12, 16, 12, 0);
-                text.Style = Application.Current.Resources["BodyTextBlockStyle"] as Style;
-
-                var scroll = new ScrollViewer();
-                scroll.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-                scroll.VerticalScrollMode = ScrollMode.Auto;
-                scroll.Content = text;
-
-                var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
-                dialog.Title = $"libtgvoip v{result.Item2}";
-                dialog.Content = scroll;
-                dialog.PrimaryButtonText = "OK";
-                dialog.Closed += (s, args) =>
-                {
-                    _debugDialog = null;
-                    _debugTimer.Stop();
-                };
-
-                _debugDialog = dialog;
-                _debugTimer.Start();
-
-                await dialog.ShowQueuedAsync();
+                return;
             }
+
+            var debug = _controller.GetDebugString();
+            var version = VoIPControllerWrapper.GetVersion();
+
+            var text = new TextBlock();
+            text.Text = debug;
+            text.Margin = new Thickness(12, 16, 12, 0);
+            text.Style = Application.Current.Resources["BodyTextBlockStyle"] as Style;
+
+            var scroll = new ScrollViewer();
+            scroll.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            scroll.VerticalScrollMode = ScrollMode.Auto;
+            scroll.Content = text;
+
+            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            dialog.Title = $"libtgvoip v{version}";
+            dialog.Content = scroll;
+            dialog.PrimaryButtonText = "OK";
+            dialog.Closed += (s, args) =>
+            {
+                _debugDialog = null;
+                _debugTimer.Stop();
+            };
+
+            _debugDialog = dialog;
+            _debugTimer.Start();
+
+            await dialog.ShowQueuedAsync();
         }
 
-        private async void DebugTimer_Tick(object sender, object e)
+        private void DebugTimer_Tick(object sender, object e)
         {
-            if (_debugDialog == null)
+            if (_debugDialog == null || _controller == null)
             {
                 _debugTimer.Stop();
                 return;
             }
 
-            var result = await VoIPConnection.Current.GetDebugStringAsync();
-            if (result != null)
+            if (_debugDialog.Content is ScrollViewer scroll && scroll.Content is TextBlock text)
             {
-                if (_debugDialog.Content is ScrollViewer scroll && scroll.Content is TextBlock text)
-                {
-                    text.Text = result.Item1;
-                }
+                text.Text = _controller.GetDebugString();
             }
         }
     }

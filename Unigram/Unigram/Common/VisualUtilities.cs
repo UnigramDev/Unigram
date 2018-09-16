@@ -38,7 +38,7 @@ namespace Unigram.Common
 
             if (vibrate)
             {
-                var service = UnigramContainer.Current.Resolve<IVibrationService>();
+                var service = TLContainer.Current.Resolve<IVibrationService>();
                 await service.VibrateAsync();
             }
         }

@@ -21,19 +21,15 @@ using System.Numerics;
 using System.Collections.Generic;
 using Unigram.Common;
 
-// The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
-
 namespace Unigram.Controls
 {
     public sealed class MasterDetailView : ContentControl
     {
+        private MasterDetailPanel AdaptivePanel;
         private Frame DetailFrame;
         private ContentPresenter MasterPresenter;
         private Grid DetailPresenter;
-        private VisualStateGroup AdaptiveStates;
         private bool IsMasterHidden;
-        private const string NarrowState = "NarrowState";
-        private const string CompactState = "CompactState";
 
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
@@ -48,6 +44,64 @@ namespace Unigram.Controls
             Unloaded += OnUnloaded;
             SizeChanged += OnSizeChanged;
         }
+
+        #region Initialize
+
+        public void Initialize(string key, Frame parent, int session)
+        {
+            var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(key + session) as NavigationService;
+            if (service == null)
+            {
+                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, key + session, false) as NavigationService;
+                service.SerializationService = TLSerializationService.Current;
+                service.Frame.DataContext = new object();
+                service.FrameFacade.BackRequested += (s, args) =>
+                {
+                    //var type = BackStackType.Navigation;
+                    //if (_backStack.Count > 0)
+                    //{
+                    //    type = _backStack.Last.Value;
+                    //    _backStack.RemoveLast();
+                    //}
+
+                    if (DetailFrame.Content is IMasterDetailPage detailPage /*&& type == BackStackType.Navigation*/)
+                    {
+                        detailPage.OnBackRequested(args);
+                        if (args.Handled)
+                        {
+                            return;
+                        }
+                    }
+
+                    // TODO: maybe checking for the actual width is not the perfect way,
+                    // but if it is 0 it means that the control is not loaded, and the event shouldn't be handled
+                    if (CanGoBack && ActualWidth > 0 /*&& type == BackStackType.Navigation*/)
+                    {
+                        DetailFrame.GoBack();
+                        args.Handled = true;
+                    }
+                    else if (ParentFrame.Content is IMasterDetailPage masterPage /*&& type == BackStackType.Hamburger*/)
+                    {
+                        masterPage.OnBackRequested(args);
+                        if (args.Handled)
+                        {
+                            return;
+                        }
+                    }
+                    else if (ParentFrame.CanGoBack && ActualWidth > 0)
+                    {
+                        ParentFrame.GoBack();
+                        args.Handled = true;
+                    }
+                };
+            }
+
+            NavigationService = service;
+            DetailFrame = NavigationService.Frame;
+            ParentFrame = parent;
+        }
+
+        #endregion
 
         public void Push(bool hamburger)
         {
@@ -178,8 +232,8 @@ namespace Unigram.Controls
 
             MasterPresenter = (ContentPresenter)GetTemplateChild("MasterFrame");
             DetailPresenter = (Grid)GetTemplateChild("DetailPresenter");
-            AdaptiveStates = (VisualStateGroup)GetTemplateChild("AdaptiveStates");
-            AdaptiveStates.CurrentStateChanged += OnCurrentStateChanged;
+            AdaptivePanel = (MasterDetailPanel)GetTemplateChild("AdaptivePanel");
+            AdaptivePanel.ViewStateChanged += OnViewStateChanged;
 
             MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
 
@@ -225,7 +279,7 @@ namespace Unigram.Controls
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
-            if (AdaptiveStates.CurrentState == null)
+            if (AdaptivePanel == null)
             {
                 return;
             }
@@ -294,16 +348,16 @@ namespace Unigram.Controls
                     if (/*e.SourcePageType == typeof(AboutPage) ||*/ e.SourcePageType == typeof(SettingsPage))
                     {
                         // The user opened first a chat, then the userinfo. Remove them from backstack.
-                        if (DetailFrame.BackStackDepth == 3)
-                        {
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        }
-                        // Simple case of about or settings page
-                        else
-                        {
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        }
+                        //if (DetailFrame.BackStackDepth == 3)
+                        //{
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        //}
+                        //// Simple case of about or settings page
+                        //else
+                        //{
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        //}
                         UpdateVisualState();
 
                     }
@@ -311,16 +365,16 @@ namespace Unigram.Controls
                     else if (e.SourcePageType == typeof(ChatPage))
                     {
                         // The user opened first a chat, then the userinfo. Remove them from backstack.
-                        if (DetailFrame.BackStackDepth == 3)
-                        {
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        }
-                        // Simple case of consecutive chats open
-                        else
-                        {
-                            DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
-                        }
+                        //if (DetailFrame.BackStackDepth == 3)
+                        //{
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 2);
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        //}
+                        //// Simple case of consecutive chats open
+                        //else
+                        //{
+                        //    DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+                        //}
                         UpdateVisualState();
                     }
                     // When the new page is user info show the back button in titlebar.
@@ -337,64 +391,7 @@ namespace Unigram.Controls
             }
         }
 
-        #region Initialize
-        public void Initialize(string key, Frame parent)
-        {
-            var service = WindowWrapper.Current().NavigationServices.GetByFrameId(key) as NavigationService;
-            if (service == null)
-            {
-                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude) as NavigationService;
-                service.SerializationService = TLSerializationService.Current;
-                service.Frame.DataContext = new object();
-                service.FrameFacade.FrameId = key;
-                service.FrameFacade.BackRequested += (s, args) =>
-                {
-                    //var type = BackStackType.Navigation;
-                    //if (_backStack.Count > 0)
-                    //{
-                    //    type = _backStack.Last.Value;
-                    //    _backStack.RemoveLast();
-                    //}
-
-                    if (DetailFrame.Content is IMasterDetailPage detailPage /*&& type == BackStackType.Navigation*/)
-                    {
-                        detailPage.OnBackRequested(args);
-                        if (args.Handled)
-                        {
-                            return;
-                        }
-                    }
-
-                    // TODO: maybe checking for the actual width is not the perfect way,
-                    // but if it is 0 it means that the control is not loaded, and the event shouldn't be handled
-                    if (CanGoBack && ActualWidth > 0 /*&& type == BackStackType.Navigation*/)
-                    {
-                        DetailFrame.GoBack();
-                        args.Handled = true;
-                    }
-                    else if (ParentFrame.Content is IMasterDetailPage masterPage /*&& type == BackStackType.Hamburger*/)
-                    {
-                        masterPage.OnBackRequested(args);
-                        if (args.Handled)
-                        {
-                            return;
-                        }
-                    }
-                    else if (ParentFrame.CanGoBack && ActualWidth > 0)
-                    {
-                        ParentFrame.GoBack();
-                        args.Handled = true;
-                    }
-                };
-            }
-
-            NavigationService = service;
-            DetailFrame = NavigationService.Frame;
-            ParentFrame = parent;
-        }
-        #endregion
-
-        private void OnCurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        private void OnViewStateChanged(object sender, EventArgs e)
         {
             ViewStateChanged?.Invoke(this, EventArgs.Empty);
 
@@ -440,16 +437,12 @@ namespace Unigram.Controls
         {
             get
             {
-                if (AdaptiveStates == null)
+                if (AdaptivePanel == null)
                 {
                     return MasterDetailState.Expanded;
                 }
 
-                return AdaptiveStates.CurrentState.Name == NarrowState
-                    ? MasterDetailState.Minimal
-                    : AdaptiveStates.CurrentState.Name == CompactState
-                    ? MasterDetailState.Compact
-                    : MasterDetailState.Expanded;
+                return AdaptivePanel.CurrentState;
             }
         }
 
@@ -473,12 +466,18 @@ namespace Unigram.Controls
 
         public bool AllowCompact
         {
-            get { return (bool)GetValue(AllowCompactProperty); }
-            set { SetValue(AllowCompactProperty, value); }
+            get
+            {
+                return AdaptivePanel?.AllowCompact ?? true;
+            }
+            set
+            {
+                if (AdaptivePanel != null)
+                {
+                    AdaptivePanel.AllowCompact = value;
+                }
+            }
         }
-
-        public static readonly DependencyProperty AllowCompactProperty =
-            DependencyProperty.Register("AllowCompact", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(true));
 
         #endregion
     }

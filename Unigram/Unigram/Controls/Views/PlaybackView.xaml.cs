@@ -34,7 +34,7 @@ namespace Unigram.Controls.Views
         private PlaybackView()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<PlaybackViewModel>();
+            DataContext = TLContainer.Current.Resolve<PlaybackViewModel>();
 
             Loaded += OnLoaded;
         }

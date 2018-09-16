@@ -39,7 +39,7 @@ namespace Unigram.Views.Dialogs
         public DialogSharedMediaPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<DialogSharedMediaViewModel, IFileDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<DialogSharedMediaViewModel, IFileDelegate>(this);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 

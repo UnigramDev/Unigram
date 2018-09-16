@@ -10,7 +10,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Padding="12,6" Background="Transparent">
+    <Grid Padding="12,8" Background="Transparent">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Normal"/>
@@ -55,10 +55,6 @@
         </Grid.RowDefinitions>
 
         <controls:ProfilePicture x:Name="Photo" Width="48" Height="48" VerticalAlignment="Top" IsHitTestVisible="False" Grid.RowSpan="2" />
-
-        <Border x:Name="SavedMessages" Visibility="Collapsed" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top" Grid.RowSpan="2">
-            <FontIcon Glyph="&#xE907;" Foreground="White" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-        </Border>
 
         <Grid VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="1" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>

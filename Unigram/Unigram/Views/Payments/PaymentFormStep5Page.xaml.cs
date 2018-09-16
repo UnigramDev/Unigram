@@ -28,7 +28,7 @@ namespace Unigram.Views.Payments
         public PaymentFormStep5Page()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<PaymentFormStep5ViewModel>();
+            DataContext = TLContainer.Current.Resolve<PaymentFormStep5ViewModel>();
         }
 
         private string ConvertTitle(bool test)

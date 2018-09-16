@@ -32,12 +32,12 @@ namespace Unigram.Common
             return new SolidColorBrush(_colors[Math.Abs(i % _colors.Length)]);
         }
 
-        public static ImageSource GetIdenticon(IList<byte> hash)
+        public static ImageSource GetIdenticon(IList<byte> hash, int side)
         {
             var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
-                PlaceholderImageHelper.GetForCurrentView().DrawIdenticon(hash, stream);
+                PlaceholderImageHelper.GetForCurrentView().DrawIdenticon(hash, side, stream);
                 try
                 {
                     bitmap.SetSource(stream);
@@ -114,8 +114,30 @@ namespace Unigram.Common
             return bitmap;
         }
 
+        public static ImageSource GetSavedMessages(int id, int width, int height)
+        {
+            var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                try
+                {
+                    PlaceholderImageHelper.GetForCurrentView().DrawSavedMessages(_colors[Math.Abs(id % _colors.Length)], stream);
+
+                    bitmap.SetSource(stream);
+                }
+                catch { }
+            }
+
+            return bitmap;
+        }
+
         public static ImageSource GetChat(IProtoService protoService, Chat chat, int width, int height)
         {
+            if (chat.Type is ChatTypePrivate privata && protoService != null && protoService.IsChatSavedMessages(chat))
+            {
+                return GetSavedMessages(privata.UserId, width, height);
+            }
+
             var file = chat.Photo?.Small;
             if (file != null)
             {

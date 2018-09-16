@@ -36,7 +36,7 @@ namespace Unigram.Controls.Messages
             _message = message;
             Tag = message;
 
-            //UpdatePosition(message.IsFirst, message.IsLast);
+            UpdateAttach(message);
             UpdateMessageHeader(message);
             UpdateMessageReply(message);
             UpdateMessageContent(message);
@@ -45,26 +45,73 @@ namespace Unigram.Controls.Messages
             Markup.Update(message, message.ReplyMarkup);
         }
 
-        public void UpdatePosition(bool first, bool last)
+        public void UpdateAttach(MessageViewModel message)
         {
-            ContentPanel.BorderThickness = new Thickness();
+            var topLeft = 15d;
+            var topRight = 15d;
+            var bottomRight = 15d;
+            var bottomLeft = 15d;
 
-            if (first && last)
+            if (message.IsOutgoing)
             {
-                ContentPanel.CornerRadius = new CornerRadius(6);
-            }
-            else if (first)
-            {
-                ContentPanel.CornerRadius = new CornerRadius(4, 4, 4, 0);
-            }
-            else if (last)
-            {
-                ContentPanel.CornerRadius = new CornerRadius(0, 4, 4, 4);
+                if (message.IsFirst && message.IsLast)
+                {
+                }
+                else if (message.IsFirst)
+                {
+                    bottomRight = 4;
+                }
+                else if (message.IsLast)
+                {
+                    topRight = 4;
+                }
+                else
+                {
+                    topRight = 4;
+                    bottomRight = 4;
+                }
             }
             else
             {
-                ContentPanel.CornerRadius = new CornerRadius(0, 4, 4, 0);
+                if (message.IsFirst && message.IsLast)
+                {
+                }
+                else if (message.IsFirst)
+                {
+                    bottomLeft = 4;
+                }
+                else if (message.IsLast)
+                {
+                    topLeft = 4;
+                }
+                else
+                {
+                    topLeft = 4;
+                    bottomLeft = 4;
+                }
             }
+
+            if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
+            {
+                if (!(message.Content is MessageSticker || message.Content is MessageVideoNote))
+                {
+                    ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, 4, 4);
+                }
+
+                Markup.CornerRadius = new CornerRadius(4, 4, bottomRight, bottomLeft);
+            }
+            else if (message.Content is MessageSticker || message.Content is MessageVideoNote)
+            {
+                ContentPanel.CornerRadius = new CornerRadius();
+            }
+            else
+            {
+                ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
+            }
+
+            Margin = new Thickness(0, message.IsFirst ? 2 : 1, 0, message.IsLast ? 2 : 1);
+
+            //UpdateMessageContent(message, true);
         }
 
         public void UpdateMessageReply(MessageViewModel message)
@@ -99,7 +146,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private void UpdateMessageHeader(MessageViewModel message)
+        public void UpdateMessageHeader(MessageViewModel message)
         {
             MaybeUseInner(ref message);
 
@@ -319,7 +366,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        public void UpdateMessageContent(MessageViewModel message)
+        public void UpdateMessageContent(MessageViewModel message, bool padding = false)
         {
             MaybeUseInner(ref message);
 
@@ -338,7 +385,7 @@ namespace Unigram.Controls.Messages
             }
             else if (IsFullMedia(message.Content))
             {
-                var left = -8;
+                var left = -10;
                 var top = -4;
                 var right = -10;
                 var bottom = -6;
@@ -382,13 +429,13 @@ namespace Unigram.Controls.Messages
             }
             else if (message.Content is MessageSticker || message.Content is MessageVideoNote)
             {
-                Media.Margin = new Thickness(-8, -4, -10, -6);
+                Media.Margin = new Thickness(-10, -4, -10, -6);
                 Placeholder.Visibility = Visibility.Collapsed;
                 FooterToLightMedia(message.IsOutgoing);
                 Grid.SetRow(Footer, 3);
                 Grid.SetRow(Message, 2);
             }
-            else if ((message.Content is MessageText webPage && webPage.WebPage != null) || message.Content is MessageGame)
+            else if ((message.Content is MessageText webPage && webPage.WebPage != null) || message.Content is MessageGame || (message.Content is MessageContact contact && !string.IsNullOrEmpty(contact.Contact.Vcard)))
             {
                 Media.Margin = new Thickness(0);
                 Placeholder.Visibility = Visibility.Collapsed;
@@ -444,6 +491,11 @@ namespace Unigram.Controls.Messages
             //        Footer.HorizontalAlignment = HorizontalAlignment.Right;
             //    }
             //}
+
+            if (padding)
+            {
+                return;
+            }
 
             UpdateMessageText(message);
 
@@ -1057,9 +1109,7 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            var sticker = message.Content is MessageSticker;
-            var round = message.Content is MessageVideoNote;
-            var target = sticker || round ? Media : (FrameworkElement)ContentPanel;
+            var target = Media.Content is IContentWithMask ? Media : (FrameworkElement)ContentPanel;
 
             var overlay = ElementCompositionPreview.GetElementChildVisual(target) as SpriteVisual;
             if (overlay == null)
@@ -1072,33 +1122,17 @@ namespace Unigram.Controls.Messages
             var fill = overlay.Compositor.CreateColorBrush(settings.GetColorValue(UIColorType.Accent));
             var brush = (CompositionBrush)fill;
 
-            if (sticker || round)
+            if (Media.Content is IContentWithMask withMask)
             {
-                //ImageLoader.Initialize(overlay.Compositor);
-                //ManagedSurface surface = null;
+                var alpha = withMask.GetAlphaMask();
+                if (alpha != null)
+                {
+                    var mask = overlay.Compositor.CreateMaskBrush();
+                    mask.Source = brush;
+                    mask.Mask = alpha;
 
-                //if (sticker)
-                //{
-                //    var document = message.GetDocument();
-                //    var fileName = document.GetFileName();
-                //    if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                //    {
-                //        var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
-                //        surface = ImageLoader.Instance.LoadFromStream(decoded);
-                //    }
-                //}
-                //else
-                //{
-                //    surface = ImageLoader.Instance.LoadCircle(100, Windows.UI.Colors.White);
-                //}
-
-                //if (surface != null)
-                //{
-                //    var mask = overlay.Compositor.CreateMaskBrush();
-                //    mask.Mask = surface.Brush;
-                //    mask.Source = fill;
-                //    brush = mask;
-                //}
+                    brush = mask;
+                }
             }
 
             overlay.Size = new System.Numerics.Vector2((float)target.ActualWidth, (float)target.ActualHeight);
@@ -1142,6 +1176,9 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(string message, bool outgoing, DateTime date)
         {
+            ContentPanel.CornerRadius = new CornerRadius(15);
+            Margin = new Thickness(0, 2, 0, 2);
+
             Header.Visibility = Visibility.Collapsed;
 
             Footer.Mockup(outgoing, date);
@@ -1158,6 +1195,9 @@ namespace Unigram.Controls.Messages
 
         public void Mockup(string message, string sender, string reply, bool outgoing, DateTime date)
         {
+            ContentPanel.CornerRadius = new CornerRadius(15);
+            Margin = new Thickness(0, 2, 0, 2);
+
             Header.Visibility = Visibility.Visible;
             HeaderLabel.Visibility = Visibility.Collapsed;
             AdminLabel.Visibility = Visibility.Collapsed;
@@ -1250,7 +1290,7 @@ namespace Unigram.Controls.Messages
             else if (constraint is Location location)
             {
                 width = 320;
-                height = 240;
+                height = 200;
 
                 goto Calculate;
             }
@@ -1279,7 +1319,7 @@ namespace Unigram.Controls.Messages
             else if (constraint is Venue venue)
             {
                 width = 320;
-                height = 240;
+                height = 200;
 
                 goto Calculate;
             }

@@ -73,7 +73,7 @@ namespace Unigram.Controls
 
                 titlebar.BackgroundColor = maskBackground;
                 titlebar.ForegroundColor = maskForeground;
-                titlebar.ButtonBackgroundColor = maskBackground;
+                //titlebar.ButtonBackgroundColor = maskBackground;
                 titlebar.ButtonForegroundColor = maskForeground;
 
                 if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
@@ -87,21 +87,7 @@ namespace Unigram.Controls
 
         private void UnmaskTitleAndStatusBar()
         {
-            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
-            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
-
-            titlebar.BackgroundColor = backgroundBrush.Color;
-            titlebar.ForegroundColor = foregroundBrush.Color;
-            titlebar.ButtonBackgroundColor = backgroundBrush.Color;
-            titlebar.ButtonForegroundColor = foregroundBrush.Color;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = backgroundBrush.Color;
-                statusBar.ForegroundColor = foregroundBrush.Color;
-            }
+            TLWindowContext.GetForCurrentView().UpdateTitleBar();
         }
 
         public string Message

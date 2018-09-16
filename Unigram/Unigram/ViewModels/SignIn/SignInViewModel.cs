@@ -3,25 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Template10.Common;
+using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
+using Unigram.Core.Services;
 using Unigram.Entities;
 using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Settings;
 using Unigram.Views.SignIn;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.SignIn
 {
-    public class SignInViewModel : UnigramViewModelBase
+    public class SignInViewModel : TLViewModelBase
     {
+        private readonly ILifetimeService _lifetimeService;
         private readonly INotificationsService _notificationsService;
 
-        public SignInViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService)
+        public SignInViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILifetimeService lifecycleService, INotificationsService notificationsService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _lifetimeService = lifecycleService;
             _notificationsService = notificationsService;
 
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -147,9 +154,39 @@ namespace Unigram.ViewModels.SignIn
                 return;
             }
 
-            IsLoading = true;
-
             var phoneNumber = (_phoneCode + _phoneNumber).Replace(" ", string.Empty);
+
+            foreach (var session in _lifetimeService.Items)
+            {
+                var user = session.ProtoService.GetUser(session.UserId);
+                if (user == null)
+                {
+                    continue;
+                }
+
+                if (user.PhoneNumber.Contains(phoneNumber) || phoneNumber.Contains(user.PhoneNumber))
+                {
+                    var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AccountAlreadyLoggedIn, Strings.Resources.AppName, Strings.Resources.AccountSwitch, Strings.Resources.OK);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        var active = _lifetimeService.Remove(session);
+
+                        var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(active.Id.ToString()) as NavigationService;
+                        if (service == null)
+                        {
+                            service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id, $"{session.Id}", true) as NavigationService;
+                            service.SerializationService = TLSerializationService.Current;
+                            service.Navigate(typeof(MainPage));
+                        }
+
+                        Window.Current.Content = service.Frame;
+                    }
+
+                    return;
+                }
+            }
+
+            IsLoading = true;
 
             await _notificationsService.CloseAsync();
 
@@ -190,42 +227,9 @@ namespace Unigram.ViewModels.SignIn
         }
 
         public RelayCommand ProxyCommand { get; }
-        private async void ProxyExecute()
+        private void ProxyExecute()
         {
-            //var proxy = Settings.Proxy;
-
-            //var dialog = new ProxyView();
-            ////dialog.Server = proxy.Server;
-            ////dialog.Port = proxy.Port.ToString();
-            ////dialog.Username = proxy.Username;
-            ////dialog.Password = proxy.Password;
-            ////dialog.IsProxyEnabled = proxy.IsEnabled;
-            ////dialog.IsCallsProxyEnabled = proxy.IsCallsEnabled;
-
-            //var enabled = proxy.IsEnabled == true;
-
-            //var confirm = await dialog.ShowQueuedAsync();
-            //if (confirm == ContentDialogResult.Primary)
-            //{
-            //    var server = proxy.Server = dialog.Server ?? string.Empty;
-            //    //var port = proxy.Port = Extensions.TryParseOrDefault(dialog.Port, 1080);
-            //    //var username = proxy.Username = dialog.Username ?? string.Empty;
-            //    //var password = proxy.Password = dialog.Password ?? string.Empty;
-            //    //var newValue = proxy.IsEnabled = dialog.IsProxyEnabled;
-            //    //proxy.IsCallsEnabled = dialog.IsCallsProxyEnabled;
-
-            //    //if (newValue || newValue != enabled)
-            //    //{
-            //    //    if (newValue)
-            //    //    {
-            //    //        //ProtoService.Send(new SetProxy(new ProxySocks5(server, port, username, password)));
-            //    //    }
-            //    //    else
-            //    //    {
-            //    //        //ProtoService.Send(new SetProxy(new ProxyEmpty()));
-            //    //    }
-            //    //}
-            //}
+            NavigationService.Navigate(typeof(SettingsProxiesPage));
         }
     }
 }

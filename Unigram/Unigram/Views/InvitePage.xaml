@@ -12,8 +12,12 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Invite Friends"/>
+        <controls:PageHeader Text="{CustomResource InviteFriends}"/>
 
+        <ListView Grid.Row="1">
+            
+        </ListView>
     </Grid>
 </Page>

@@ -7,7 +7,6 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
-using Unigram.Helpers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
@@ -20,7 +19,7 @@ using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels.Dialogs
 {
-    public class DialogSharedMediaViewModel : UnigramViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>
+    public class DialogSharedMediaViewModel : TLViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>
     {
         public IFileDelegate Delegate { get; set; }
 
@@ -519,6 +518,11 @@ namespace Unigram.ViewModels.Dialogs
         public bool IsAdmin(int userId)
         {
             return false;
+        }
+
+        public void Call(MessageViewModel message)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

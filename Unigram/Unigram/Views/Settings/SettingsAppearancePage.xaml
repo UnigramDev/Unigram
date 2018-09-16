@@ -258,9 +258,11 @@
 
                 <StackPanel Padding="12" Margin="0,18,0,0">
                     <TextBlock Text="{CustomResource Theme}" Margin="0,0,0,4" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:PivotRadioButton x:Uid="SettingsAppearance_Light" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="1" Content="Light"/>
-                    <controls:PivotRadioButton x:Uid="SettingsAppearance_Dark" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="2" Content="Dark"/>
-                    <controls:PivotRadioButton x:Uid="SettingsAppearance_UseSystemSettings" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="0" Content="Use system setting"/>
+                    <controls:PivotRadioButton x:Uid="SettingsAppearance_Light" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="2" Content="Light"/>
+                    <controls:PivotRadioButton x:Uid="SettingsAppearance_Dark" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="4" Content="Dark"/>
+                    <controls:PivotRadioButton x:Uid="SettingsAppearance_UseSystemSettings" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="1" Content="Use system setting"/>
+
+                    <CheckBox x:Uid="SettingsAppearance_TelegramColors" IsChecked="{x:Bind ViewModel.IsSystemTheme, Mode=TwoWay}" Content="Use system accent color" Margin="0,8,0,0"/>
                     <TextBlock x:Uid="SettingsAppearance_ThemeChangedLabel" Visibility="{x:Bind ViewModel.IsThemeChanged, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Text="You'll see your change the next time you start the app." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>

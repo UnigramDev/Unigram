@@ -18,6 +18,7 @@ namespace Unigram.Collections
     {
         private readonly IProtoService _protoService;
         private readonly string _query;
+        private readonly SearchChatsType _type;
 
         private readonly List<long> _chats = new List<long>();
         private readonly List<int> _users = new List<int>();
@@ -26,10 +27,11 @@ namespace Unigram.Collections
         private KeyedList<string, object> _remote;
         private KeyedList<string, object> _messages;
 
-        public SearchChatsCollection(IProtoService protoService, string query)
+        public SearchChatsCollection(IProtoService protoService, string query, SearchChatsType type = SearchChatsType.All)
         {
             _protoService = protoService;
             _query = query;
+            _type = type;
 
             _local = new KeyedList<string, object>(null as string);
             _remote = new KeyedList<string, object>(Strings.Resources.GlobalSearch);
@@ -46,8 +48,39 @@ namespace Unigram.Collections
         {
             return AsyncInfo.Run(async token =>
             {
+                // If the query string is empty we want to load recent chats only
+                var empty = string.IsNullOrEmpty(_query);
+                if (empty && phase > 0)
+                {
+                    return new LoadMoreItemsResult();
+                }
+
+                bool IsFiltered(Chat chat)
+                {
+                    if (_type == SearchChatsType.Post && !_protoService.CanPostMessages(chat))
+                    {
+                        return true;
+                    }
+                    else if (_type == SearchChatsType.BasicAndSupergroups && !(chat.Type is ChatTypeBasicGroup) && !(chat.Type is ChatTypeSupergroup))
+                    {
+                        return !_protoService.CanPostMessages(chat);
+                    }
+
+                    return false;
+                }
+
                 if (phase == 0)
                 {
+                    if (_type != SearchChatsType.BasicAndSupergroups && _query.Length > 0 && Strings.Resources.SavedMessages.StartsWith(_query, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var savedMessages = await _protoService.SendAsync(new CreatePrivateChat(_protoService.GetMyId(), false));
+                        if (savedMessages is Chat chat)
+                        {
+                            _chats.Add(chat.Id);
+                            _local.Add(new SearchResult(chat, _query, false));
+                        }
+                    }
+
                     var response = await _protoService.SendAsync(new SearchChats(_query, 100));
                     if (response is Chats chats)
                     {
@@ -56,8 +89,18 @@ namespace Unigram.Collections
                             var chat = _protoService.GetChat(id);
                             if (chat != null)
                             {
+                                if (IsFiltered(chat))
+                                {
+                                    continue;
+                                }
+
                                 if (chat.Type is ChatTypePrivate privata)
                                 {
+                                    if (_users.Contains(privata.UserId))
+                                    {
+                                        continue;
+                                    }
+
                                     _users.Add(privata.UserId);
                                 }
 
@@ -67,7 +110,7 @@ namespace Unigram.Collections
                         }
                     }
                 }
-                else if (phase == 1)
+                else if (phase == 1 && _type != SearchChatsType.BasicAndSupergroups)
                 {
                     var response = await _protoService.SendAsync(new SearchContacts(_query, 100));
                     if (response is Users users)
@@ -103,6 +146,11 @@ namespace Unigram.Collections
                             var chat = _protoService.GetChat(id);
                             if (chat != null)
                             {
+                                if (IsFiltered(chat))
+                                {
+                                    continue;
+                                }
+
                                 if (chat.Type is ChatTypePrivate privata && _users.Contains(privata.UserId))
                                 {
                                     continue;
@@ -123,6 +171,11 @@ namespace Unigram.Collections
                             var chat = _protoService.GetChat(id);
                             if (chat != null)
                             {
+                                if (IsFiltered(chat))
+                                {
+                                    continue;
+                                }
+
                                 _remote.Add(new SearchResult(chat, _query, true));
                             }
                         }
@@ -145,5 +198,12 @@ namespace Unigram.Collections
         }
 
         public bool HasMoreItems => false;
+    }
+
+    public enum SearchChatsType
+    {
+        All,
+        Post,
+        BasicAndSupergroups,
     }
 }

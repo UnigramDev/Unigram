@@ -10,6 +10,7 @@
     mc:Ignorable="d"
     d:DesignHeight="640"
     d:DesignWidth="360"
+    OverlayBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch">
 
@@ -613,7 +614,7 @@
         </Style>
     </controls:ContentDialogBase.Resources>
 
-    <Grid x:Name="LayoutRoot" Background="Black" RequestedTheme="Dark">
+    <Grid x:Name="LayoutRoot" RequestedTheme="Dark">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState>
@@ -780,6 +781,7 @@
                     View="{x:Bind}"
                     Autocomplete="{x:Bind ListAutocomplete}"
                     DataContext="{x:Bind ViewModel}"
+                    Paste="OnPaste"
                     MaxLength="200"
                     InputScope="Chat"
                     PlaceholderText="{CustomResource AddCaption}"

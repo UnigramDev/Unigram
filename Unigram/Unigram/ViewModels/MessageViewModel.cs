@@ -106,5 +106,76 @@ namespace Unigram.ViewModels
 
             return message;
         }
+
+        public bool IsShareable()
+        {
+            var message = this;
+            //if (currentPosition != null && !currentPosition.last)
+            //{
+            //    return false;
+            //}
+            //else if (messageObject.eventId != 0)
+            //{
+            //    return false;
+            //}
+            //else if (messageObject.messageOwner.fwd_from != null && !messageObject.isOutOwner() && messageObject.messageOwner.fwd_from.saved_from_peer != null && messageObject.getDialogId() == UserConfig.getInstance(currentAccount).getClientUserId())
+            //{
+            //    drwaShareGoIcon = true;
+            //    return true;
+            //}
+            //else 
+            if (message.Content is MessageSticker)
+            {
+                return false;
+            }
+            //else if (messageObject.messageOwner.fwd_from != null && messageObject.messageOwner.fwd_from.channel_id != 0 && !messageObject.isOutOwner())
+            //{
+            //    return true;
+            //}
+            else if (message.SenderUserId != 0)
+            {
+                if (message.Content is MessageText)
+                {
+                    return false;
+                }
+
+                var user = message.GetSenderUser();
+                if (user != null && user.Type is UserTypeBot)
+                {
+                    return true;
+                }
+                if (!message.IsOutgoing)
+                {
+                    if (message.Content is MessageGame || message.Content is MessageInvoice)
+                    {
+                        return true;
+                    }
+
+                    var chat = message.ProtoService.GetChat(message.ChatId);
+                    if (chat != null && chat.Type is ChatTypeSupergroup super && !super.IsChannel)
+                    {
+                        var supergroup = message.ProtoService.GetSupergroup(super.SupergroupId);
+                        return supergroup != null && supergroup.Username.Length > 0 && !(message.Content is MessageContact) && !(message.Content is MessageLocation);
+                    }
+                }
+            }
+            //else if (messageObject.messageOwner.from_id < 0 || messageObject.messageOwner.post)
+            //{
+            //    if (messageObject.messageOwner.to_id.channel_id != 0 && (messageObject.messageOwner.via_bot_id == 0 && messageObject.messageOwner.reply_to_msg_id == 0 || messageObject.type != 13))
+            //    {
+            //        return true;
+            //    }
+            //}
+            else if (message.IsChannelPost)
+            {
+                if (message.ViaBotUserId == 0 && message.ReplyToMessageId == 0 || !(message.Content is MessageSticker))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
     }
 }

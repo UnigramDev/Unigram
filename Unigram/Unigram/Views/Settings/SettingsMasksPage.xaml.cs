@@ -29,7 +29,7 @@ namespace Unigram.Views.Settings
         public SettingsMasksPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.Resolve<SettingsMasksViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsMasksViewModel>();
         }
 
         private void ArchivedStickers_Click(object sender, RoutedEventArgs e)

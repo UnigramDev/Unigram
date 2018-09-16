@@ -1,0 +1,213 @@
+﻿using Autofac;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Template10.Common;
+using Template10.Mvvm;
+using Unigram.Common;
+using Unigram.Core.Common;
+using Unigram.Services;
+using Unigram.Views;
+using Windows.Storage;
+
+namespace Unigram.ViewModels
+{
+    public interface ILifetimeService
+    {
+        void Update();
+
+        ISessionService Create();
+        ISessionService Remove(ISessionService item);
+        ISessionService Remove(ISessionService item, ISessionService active);
+
+        void Destroy(ISessionService item);
+
+        bool ShouldClose(ISessionService item);
+
+        bool Contains(string phoneNumber);
+
+        MvxObservableCollection<ISessionService> Items { get; }
+        ISessionService ActiveItem { get; set; }
+    }
+
+    public class LifetimeService : ViewModelBase, ILifetimeService
+    {
+        public LifetimeService()
+        {
+            Items = new MvxObservableCollection<ISessionService>();
+        }
+
+        public void Update()
+        {
+            Items.ReplaceWith(TLContainer.Current.GetSessions());
+            ActiveItem = Items.FirstOrDefault(x => x.IsActive) ?? Items.FirstOrDefault();
+        }
+
+        private void Update(ISessionService session)
+        {
+            Items.ReplaceWith(TLContainer.Current.GetSessions());
+            ActiveItem = session;
+        }
+
+        public MvxObservableCollection<ISessionService> Items { get; }
+
+        private ISessionService _previousItem;
+        public ISessionService PreviousItem => _previousItem;
+
+        private ISessionService _activeItem;
+        public ISessionService ActiveItem
+        {
+            get
+            {
+                return _activeItem;
+            }
+            set
+            {
+                if (_activeItem == value)
+                {
+                    return;
+                }
+
+                if (_activeItem != null)
+                {
+                    _activeItem.IsActive = false;
+                    _previousItem = _activeItem;
+                    SettingsService.Current.PreviousSession = _activeItem.Id;
+                }
+
+                if (value != null)
+                {
+                    value.IsActive = true;
+                    SettingsService.Current.ActiveSession = value.Id;
+                }
+
+                //Set(ref _activeItem, value);
+                _activeItem = value;
+            }
+        }
+
+        public ISessionService Create()
+        {
+            var app = App.Current as App;
+            var sessions = TLContainer.Current.GetSessions().ToList();
+            var id = sessions.Count > 0 ? sessions.Max(x => x.Id) + 1 : 0;
+            var container = app.Locator.Configure(id);
+
+            var session = container.Resolve<ISessionService>();
+            Update(session);
+
+            return session;
+        }
+
+        public ISessionService Create(bool update)
+        {
+            var app = App.Current as App;
+            var sessions = TLContainer.Current.GetSessions().ToList();
+            var id = sessions.Count > 0 ? sessions.Max(x => x.Id) + 1 : 0;
+            var container = app.Locator.Configure(id);
+
+            var session = container.Resolve<ISessionService>();
+            if (update)
+            {
+                Update(session);
+            }
+
+            return session;
+        }
+
+        public ISessionService Remove(ISessionService item)
+        {
+            return Remove(item, _previousItem ?? Create());
+        }
+
+        public ISessionService Remove(ISessionService item, ISessionService active)
+        {
+            TLContainer.Current.Destroy(item.Id);
+            active = active ?? _previousItem ?? Create();
+            Update(active);
+
+            item.Aggregator.Unsubscribe(item);
+            //WindowContext.Unsubscribe(item);
+
+            WindowContext.GetForCurrentView().NavigationServices.RemoveByFrameId($"{item.Id}");
+            WindowContext.GetForCurrentView().NavigationServices.RemoveByFrameId($"Main{item.Id}");
+
+            return active;
+        }
+
+        public void Destroy(ISessionService item)
+        {
+            ISessionService replace = null;
+            if (item.IsActive)
+            {
+                ActiveItem = replace = _previousItem ?? Items.Where(x => x.Id != item.Id).FirstOrDefault() ?? Create(false);
+            }
+
+            TLContainer.Current.Destroy(item.Id);
+            Update();
+
+            item.Aggregator.Unsubscribe(item);
+            //WindowContext.Unsubscribe(item);
+
+            foreach (var window in WindowContext.ActiveWrappers)
+            {
+                if (window.Content is RootPage root && replace != null)
+                {
+                    window.Dispatcher.Dispatch(() =>
+                    {
+                        root.Switch(replace);
+                    });
+                }
+
+                if (window.IsInMainView)
+                {
+                    window.NavigationServices.RemoveByFrameId($"{item.Id}");
+                    window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
+                }
+                else
+                {
+                    window.Close();
+                }
+            }
+
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    Directory.Delete(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{item.Id}"), true);
+                }
+                catch { }
+            });
+        }
+
+        public bool ShouldClose(ISessionService item)
+        {
+            return true;
+        }
+
+        public bool Contains(string phoneNumber)
+        {
+            foreach (var session in Items)
+            {
+                var user = session.ProtoService.GetUser(session.UserId);
+                if (user == null)
+                {
+                    continue;
+                }
+
+                if (user.PhoneNumber.Contains(phoneNumber) || phoneNumber.Contains(user.PhoneNumber))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+}

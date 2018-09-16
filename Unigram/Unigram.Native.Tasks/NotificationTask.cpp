@@ -158,18 +158,18 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST"))
 		{
-			UpdateToast(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
+			UpdateToast(caption, message, L"", L"0", sound, launch, L"phoneCall", group, picture, date, loc_key);
 			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
 		{
 			auto tag = GetTag(custom);
-			UpdateToast(caption, message, sound, launch, tag, group, picture, date, loc_key);
+			UpdateToast(caption, message, L"", L"0", sound, launch, tag, group, picture, date, loc_key);
 			UpdatePrimaryBadge(data->GetNamedNumber("badge"));
 
 			if (loc_key != L"DC_UPDATE")
 			{
-				UpdatePrimaryTile(caption, message, picture);
+				UpdatePrimaryTile(L"0", caption, message, picture);
 			}
 		}
 	}
@@ -362,19 +362,23 @@ String^ NotificationTask::GetDate(JsonObject^ notification)
 
 void NotificationTask::UpdatePrimaryBadge(int badgeNumber)
 {
-	auto updater = BadgeUpdateManager::CreateBadgeUpdaterForApplication(L"App");
-
-	if (badgeNumber == 0)
+	try
 	{
-		updater->Clear();
-		return;
+		auto updater = BadgeUpdateManager::CreateBadgeUpdaterForApplication(L"App");
+
+		if (badgeNumber == 0)
+		{
+			updater->Clear();
+			return;
+		}
+
+		auto document = BadgeUpdateManager::GetTemplateContent(BadgeTemplateType::BadgeNumber);
+		auto element = safe_cast<XmlElement^>(document->SelectSingleNode("/badge"));
+		element->SetAttribute("value", badgeNumber.ToString());
+
+		updater->Update(ref new BadgeNotification(document));
 	}
-
-	auto document = BadgeUpdateManager::GetTemplateContent(BadgeTemplateType::BadgeNumber);
-	auto element = safe_cast<XmlElement^>(document->SelectSingleNode("/badge"));
-	element->SetAttribute("value", badgeNumber.ToString());
-
-	updater->Update(ref new BadgeNotification(document));
+	catch (Exception^ e) { }
 }
 
 //void NotificationTask::UpdateSecondaryBadge(String^ group, bool resetBadge)
@@ -495,12 +499,13 @@ String^ NotificationTask::CreateTileMessageBodyWithCaption(String^ caption, Stri
 	return ref new String(body.c_str());
 }
 
-void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, String^ picture)
+void NotificationTask::UpdatePrimaryTile(String^ session, String^ caption, String^ message, String^ picture)
 {
 	auto body = NotificationTask::CreateTileMessageBodyWithCaption(caption, message);
 
-	std::wstring xml = L"<tile><visual>";
-	xml += L"<binding template='TileMedium' branding='name'>";
+	std::wstring xml = L"<tile><visual arguments='";
+	xml += session->Data();
+	xml += L"'><binding template='TileMedium' branding='name'>";
 	if (picture != nullptr)
 	{
 		xml += L"<image placement='peek' hint-crop='circle' src='";
@@ -541,14 +546,18 @@ void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, Strin
 	xml += L"</binding>";
 	xml += L"</visual></tile>";
 
-	auto updater = TileUpdateManager::CreateTileUpdaterForApplication(L"App");
+	try
+	{
+		auto updater = TileUpdateManager::CreateTileUpdaterForApplication(L"App");
 
-	auto document = ref new XmlDocument();
-	document->LoadXml(ref new String(xml.c_str()));
+		auto document = ref new XmlDocument();
+		document->LoadXml(ref new String(xml.c_str()));
 
-	auto notification = ref new TileNotification(document);
+		auto notification = ref new TileNotification(document);
 
-	updater->Update(notification);
+		updater->Update(notification);
+	}
+	catch (Exception^ e) { }
 }
 
 //void NotificationTask::UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group)
@@ -615,7 +624,7 @@ void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, Strin
 //	updater->Update(notification);
 //}
 
-void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
+void NotificationTask::UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
 {
 	bool allow = false;
 	//auto settings = ApplicationData::Current->LocalSettings;
@@ -661,7 +670,11 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	xml += date->Data();
 	//xml += L"' hint-people='remoteid:";
 	//xml += group->Data();
-	xml += L"'><visual><binding template='ToastGeneric'>";
+	xml += L"'>";
+	//xml += L"<header id='";
+	//xml += account->Data();
+	//xml += L"' title='Camping!!' arguments='action = openConversation & amp; id = 6289'/>";
+	xml += L"<visual><binding template='ToastGeneric'>";
 
 	if (picture != nullptr)
 	{
@@ -675,37 +688,43 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	xml += L"]]></text><text><![CDATA[";
 	xml += message->Data();
 	//xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
+	xml += L"]]></text><text placement='attribution'><![CDATA[";
+	xml += attribution->Data();
 	xml += L"]]></text></binding></visual>";
 	xml += actions;
 	xml += audio;
 	xml += L"</toast>";
 
-	auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
-
-	auto document = ref new XmlDocument();
-	document->LoadXml(ref new String(xml.c_str()));
-
-	auto notification = ref new ToastNotification(document);
-
-	if (tag != nullptr)
+	try
 	{
-		notification->Tag = tag;
-		notification->RemoteId = tag;
-	}
+		auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
 
-	if (group != nullptr)
-	{
-		notification->Group = group;
+		auto document = ref new XmlDocument();
+		document->LoadXml(ref new String(xml.c_str()));
+
+		auto notification = ref new ToastNotification(document);
 
 		if (tag != nullptr)
 		{
-			notification->RemoteId += "_";
+			notification->Tag = tag;
+			notification->RemoteId = tag;
 		}
 
-		notification->RemoteId += group;
-	}
+		if (group != nullptr)
+		{
+			notification->Group = group;
 
-	notifier->Show(notification);
+			if (tag != nullptr)
+			{
+				notification->RemoteId += "_";
+			}
+
+			notification->RemoteId += group;
+		}
+
+		notifier->Show(notification);
+	}
+	catch (Exception^ e) { }
 }
 
 void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)

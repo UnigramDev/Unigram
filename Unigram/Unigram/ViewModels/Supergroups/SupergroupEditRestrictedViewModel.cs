@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupEditRestrictedViewModel : UnigramViewModelBase, IDelegable<IMemberDelegate>
+    public class SupergroupEditRestrictedViewModel : TLViewModelBase, IDelegable<IMemberDelegate>
     {
         public IMemberDelegate Delegate { get; set; }
 
@@ -86,7 +86,7 @@ namespace Unigram.ViewModels.Supergroups
                 }
                 else
                 {
-                    Delegate?.UpdateUserFullInfo(chat, item, cache, false);
+                    Delegate?.UpdateUserFullInfo(chat, item, cache, false, false);
                 }
 
                 Member = member;

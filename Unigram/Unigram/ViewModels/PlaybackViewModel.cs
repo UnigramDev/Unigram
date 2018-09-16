@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class PlaybackViewModel : UnigramViewModelBase
+    public class PlaybackViewModel : TLViewModelBase
     {
         private readonly IPlaybackService _playbackService;
 

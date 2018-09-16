@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Users
 {
-    public class UserCreateViewModel : UnigramViewModelBase
+    public class UserCreateViewModel : TLViewModelBase
     {
         public UserCreateViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -74,7 +74,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        private string _firstName;
+        private string _firstName = string.Empty;
         public string FirstName
         {
             get
@@ -88,7 +88,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        private string _lastName;
+        private string _lastName = string.Empty;
         public string LastName
         {
             get
@@ -101,7 +101,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        private string _phoneCode;
+        private string _phoneCode = string.Empty;
         public string PhoneCode
         {
             get
@@ -137,7 +137,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        private string _phoneNumber;
+        private string _phoneNumber = string.Empty;
         public string PhoneNumber
         {
             get
@@ -156,7 +156,7 @@ namespace Unigram.ViewModels.Users
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var response = await ProtoService.SendAsync(new ImportContacts(new[] { new Contact(_phoneCode + _phoneNumber, _firstName, _lastName, 0) }));
+            var response = await ProtoService.SendAsync(new ImportContacts(new[] { new Contact(_phoneCode + _phoneNumber, _firstName, _lastName, string.Empty, 0) }));
             if (response is ImportedContacts imported)
             {
                 if (imported.UserIds.Count > 0)
@@ -165,6 +165,10 @@ namespace Unigram.ViewModels.Users
                     if (create is Chat chat)
                     {
                         NavigationService.NavigateToChat(chat);
+                    }
+                    else
+                    {
+                        await TLMessageDialog.ShowAsync(Strings.Resources.ContactNotRegistered, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
                     }
                 }
                 else

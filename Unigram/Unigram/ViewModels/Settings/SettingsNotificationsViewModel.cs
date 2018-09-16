@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsNotificationsViewModel : UnigramViewModelBase, IHandle<UpdateScopeNotificationSettings>
+    public class SettingsNotificationsViewModel : TLViewModelBase, IHandle<UpdateScopeNotificationSettings>
     {
         private readonly IVibrationService _vibrationService;
 
@@ -260,11 +260,11 @@ namespace Unigram.ViewModels.Settings
         }
 
         public RelayCommand ResetCommand { get; }
-        private void ResetExecute()
+        private async void ResetExecute()
         {
-            //var confirm = await TLMessageDialog.ShowAsync(Strings.Additional.ResetNotificationsDialogBody, Strings.Additional.ResetNotificationsDialogTitle, Strings.Additional.OK, Strings.Additional.Cancel);
-            //if (confirm == ContentDialogResult.Primary)
-            //{
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetNotificationsAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
                 _suppressUpdating = true;
                 PrivateAlert = true;
                 PrivatePreview = true;
@@ -277,8 +277,8 @@ namespace Unigram.ViewModels.Settings
                 InAppVibrate = true;
                 _suppressUpdating = false;
 
-            ProtoService.Send(new ResetAllNotificationSettings());
-            //}
+                ProtoService.Send(new ResetAllNotificationSettings());
+            }
         }
     }
 }

@@ -118,7 +118,7 @@ namespace Unigram.Controls.Messages.Content
                     Button.Glyph = "\uE60D";
                     Button.Progress = 1;
 
-                    Subtitle.Text = Locale.FormatTTLString(Math.Max(message.Ttl, animation.Duration), true);
+                    Subtitle.Text = Locale.FormatTtl(Math.Max(message.Ttl, animation.Duration), true);
                     Overlay.Opacity = 1;
                 }
                 else

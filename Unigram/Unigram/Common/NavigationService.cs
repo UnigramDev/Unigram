@@ -15,7 +15,6 @@ using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.Views;
-using Unigram.Views;
 using Unigram.Views.Payments;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -60,7 +59,7 @@ namespace Unigram.Common
             }
         }
 
-        public static void Navigate<T>(this INavigationService service, Type page, object parameter = null, NavigationTransitionInfo infoOverride = null)
+        public static void Navigate<T>(this INavigationService service, Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
         {
             //NavigatedEventHandler handler = null;
             //handler = (s, args) =>
@@ -75,7 +74,7 @@ namespace Unigram.Common
             //};
 
             ViewModels.Enqueue(typeof(T));
-            service.Navigate(page, parameter, infoOverride);
+            service.Navigate(page, parameter, state, infoOverride);
         }
 
         //public static void SelectUsers<T>(this INavigationService service, object parameter = null, NavigationTransitionInfo infoOverride = null)
@@ -97,14 +96,14 @@ namespace Unigram.Common
             service.Frame.CacheSize = cacheSize;
         }
 
-        public static void GoBackAt(this INavigationService service, int index)
+        public static void GoBackAt(this INavigationService service, int index, bool back = true)
         {
             while (service.Frame.BackStackDepth > index + 1)
             {
                 service.Frame.BackStack.RemoveAt(index + 1);
             }
 
-            if (service.Frame.CanGoBack)
+            if (service.Frame.CanGoBack && back)
             {
                 service.Frame.GoBack();
             }
@@ -134,19 +133,19 @@ namespace Unigram.Common
             }
         }
 
-        public static async void NavigateToChat(this INavigationService service, Chat chat, long? message = null, string accessToken = null)
+        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
         {
-            if (service is UnigramNavigationService serviceEx)
+            if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToChat(chat, message, accessToken);
+                serviceEx.NavigateToChat(chat, message, accessToken, state);
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, string accessToken = null)
+        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
         {
-            if (service is UnigramNavigationService serviceEx)
+            if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToChat(chatId, message, accessToken);
+                serviceEx.NavigateToChat(chatId, message, accessToken, state);
             }
 
             //if (with == null)

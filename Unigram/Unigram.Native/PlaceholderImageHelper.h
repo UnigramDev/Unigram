@@ -24,20 +24,22 @@ namespace Unigram
 		public:
 			static PlaceholderImageHelper^ GetForCurrentView();
 
-			void DrawIdenticon(_In_ IVector<uint8>^ hash, _In_ IRandomAccessStream^ randomAccessStream);
-			void DrawProfilePlaceholder(Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
+			void DrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
+			void DrawSavedMessages(_In_ Color clear, IRandomAccessStream^ randomAccessStream);
+			void DrawProfilePlaceholder(_In_ Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
 			void DrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
 
 		internal:
 			PlaceholderImageHelper();
 
 		private:
-			HRESULT InternalDrawIdenticon(_In_ IVector<uint8>^ hash, _In_ IRandomAccessStream^ randomAccessStream);
+			HRESULT InternalDrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
+			HRESULT InternalDrawSavedMessages(Color clear, IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawProfilePlaceholder(Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT SaveImageToStream(_In_ ID2D1Image* image, _In_ REFGUID wicFormat, _In_ IRandomAccessStream^ randomAccessStream);
-			HRESULT MeasureText(_In_ Platform::String^ text, _Out_ DWRITE_TEXT_METRICS* textMetrics);
+			HRESULT MeasureText(_In_ const wchar_t* text, _In_ IDWriteTextFormat* format, _Out_ DWRITE_TEXT_METRICS* textMetrics);
 			HRESULT CreateDeviceIndependentResources();
 			HRESULT CreateDeviceResources();
 
@@ -51,6 +53,9 @@ namespace Unigram
 			ComPtr<IWICImagingFactory2> m_wicFactory;
 			ComPtr<IWICImageEncoder> m_imageEncoder;
 			ComPtr<IDWriteFactory1> m_dwriteFactory;
+			ComPtr<IDWriteFontCollectionLoader> m_customLoader;
+			ComPtr<IDWriteFontCollection> m_fontCollection;
+			ComPtr<IDWriteTextFormat> m_symbolFormat;
 			ComPtr<IDWriteTextFormat> m_textFormat;
 			ComPtr<ID2D1SolidColorBrush> m_textBrush;
 			std::vector<ComPtr<ID2D1SolidColorBrush>> m_identiconBrushes;

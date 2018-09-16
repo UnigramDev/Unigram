@@ -17,12 +17,12 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Messages.Content
 {
     public sealed partial class CallContent : UserControl, IContent
     {
+        private MessageViewModel _message;
+
         public CallContent(MessageViewModel message)
         {
             InitializeComponent();
@@ -31,6 +31,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessage(MessageViewModel message)
         {
+            _message = message;
             var call = message.Content as MessageCall;
             if (call == null)
             {
@@ -63,7 +64,19 @@ namespace Unigram.Controls.Messages.Content
 
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
         {
+            var tooltip = sender as ToolTip;
+            if (tooltip != null && _message != null)
+            {
+                var date = BindConvert.Current.DateTime(_message.Date);
+                var text = $"{BindConvert.Current.LongDate.Format(date)} {BindConvert.Current.LongTime.Format(date)}";
 
+                tooltip.Content = text;
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            _message.Delegate.Call(_message);
         }
     }
 }
