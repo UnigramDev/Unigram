@@ -2431,13 +2431,13 @@ namespace Unigram.Views
 
             if (group.IsChannel)
             {
-                if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages)
-                {
-                    ShowArea();
-                }
-                else if (group.Status is ChatMemberStatusLeft)
+                if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
                     ShowAction(Strings.Resources.ChannelJoin, true);
+                }
+                else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages)
+                {
+                    ShowArea();
                 }
                 else
                 {
@@ -2446,7 +2446,7 @@ namespace Unigram.Views
             }
             else
             {
-                if (group.Status is ChatMemberStatusLeft)
+                if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
                     ShowAction(Strings.Resources.ChannelJoin, true);
                 }

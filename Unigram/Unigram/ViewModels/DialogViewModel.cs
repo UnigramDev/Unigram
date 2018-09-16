@@ -2764,7 +2764,7 @@ namespace Unigram.ViewModels
 
                 if (group.IsChannel)
                 {
-                    if (group.Status is ChatMemberStatusLeft)
+                    if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                     {
                         JoinChannelExecute();
                     }
@@ -2775,7 +2775,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    if (group.Status is ChatMemberStatusLeft)
+                    if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                     {
                         JoinChannelExecute();
                     }
