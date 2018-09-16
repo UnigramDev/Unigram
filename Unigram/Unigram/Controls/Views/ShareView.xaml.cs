@@ -68,6 +68,8 @@ namespace Unigram.Controls.Views
         private static Dictionary<int, WeakReference<ShareView>> _windowContext = new Dictionary<int, WeakReference<ShareView>>();
         public static ShareView GetForCurrentView()
         {
+            return new ShareView();
+
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
             if (_windowContext.TryGetValue(id, out WeakReference<ShareView> reference) && reference.TryGetTarget(out ShareView value))
             {

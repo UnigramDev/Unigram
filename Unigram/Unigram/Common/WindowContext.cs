@@ -106,15 +106,15 @@ namespace Unigram.Common
             {
                 background = Color.FromArgb(255, 31, 31, 31);
                 foreground = Colors.White;
-                buttonHover = Color.FromArgb(255, 53, 53, 53);
-                buttonPressed = Color.FromArgb(255, 76, 76, 76);
+                buttonHover = Color.FromArgb(25, 255, 255, 255);
+                buttonPressed = Color.FromArgb(51, 255, 255, 255);
             }
             else if (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Light) || (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && current == Colors.White))
             {
                 background = Color.FromArgb(255, 230, 230, 230);
                 foreground = Colors.Black;
-                buttonHover = Color.FromArgb(255, 207, 207, 207);
-                buttonPressed = Color.FromArgb(255, 184, 184, 184);
+                buttonHover = Color.FromArgb(25, 0, 0, 0);
+                buttonPressed = Color.FromArgb(51, 0, 0, 0);
             }
 
             // Desktop Title Bar

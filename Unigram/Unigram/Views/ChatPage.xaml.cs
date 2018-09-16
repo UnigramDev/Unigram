@@ -1975,7 +1975,7 @@ namespace Unigram.Views
 
                 titlebar.BackgroundColor = maskBackground;
                 titlebar.ForegroundColor = maskForeground;
-                titlebar.ButtonBackgroundColor = maskBackground;
+                //titlebar.ButtonBackgroundColor = maskBackground;
                 titlebar.ButtonForegroundColor = maskForeground;
 
                 if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
