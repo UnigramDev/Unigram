@@ -23,7 +23,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Unigram.ViewModels.Dialogs
 {
-    public class DialogStickersViewModel : TLViewModelBase, IHandle<UpdateRecentStickers>
+    public class DialogStickersViewModel : TLViewModelBase, IHandle<UpdateRecentStickers>, IHandle<UpdateFavoriteStickers>, IHandle<UpdateInstalledStickerSets>
     {
         private StickerSetViewModel _recentSet;
         private StickerSetViewModel _favoriteSet;
@@ -95,6 +95,19 @@ namespace Unigram.ViewModels.Dialogs
                 {
                     BeginOnUIThread(() => _recentSet.Update(recent, true));
                 }
+            });
+        }
+
+        public void Handle(UpdateInstalledStickerSets update)
+        {
+            if (update.IsMasks)
+            {
+                return;
+            }
+
+            ProtoService.Send(new GetInstalledStickerSets(false), result =>
+            {
+
             });
         }
 
