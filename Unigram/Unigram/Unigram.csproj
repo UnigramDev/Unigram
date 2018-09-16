@@ -519,6 +519,7 @@
     <Compile Include="ViewModels\Supergroups\SupergroupEditRestrictedViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditStickerSetViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditViewModel.cs" />
+    <Compile Include="ViewModels\Supergroups\SupergroupEditViewModelBase.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEventLogViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModelBase.cs" />
