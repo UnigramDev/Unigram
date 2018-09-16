@@ -34,6 +34,7 @@ namespace Unigram.ViewModels
 
         MvxObservableCollection<ISessionService> Items { get; }
         ISessionService ActiveItem { get; set; }
+        ISessionService PreviousItem { get; set; }
     }
 
     public class LifetimeService : ViewModelBase, ILifetimeService
@@ -58,7 +59,11 @@ namespace Unigram.ViewModels
         public MvxObservableCollection<ISessionService> Items { get; }
 
         private ISessionService _previousItem;
-        public ISessionService PreviousItem => _previousItem;
+        public ISessionService PreviousItem
+        {
+            get { return _previousItem; }
+            set { _previousItem = value; }
+        }
 
         private ISessionService _activeItem;
         public ISessionService ActiveItem

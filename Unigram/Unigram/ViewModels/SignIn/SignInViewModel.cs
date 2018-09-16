@@ -169,17 +169,8 @@ namespace Unigram.ViewModels.SignIn
                     var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AccountAlreadyLoggedIn, Strings.Resources.AppName, Strings.Resources.AccountSwitch, Strings.Resources.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        var active = _lifetimeService.Remove(session);
-
-                        var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(active.Id.ToString()) as NavigationService;
-                        if (service == null)
-                        {
-                            service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id, $"{session.Id}", true) as NavigationService;
-                            service.SerializationService = TLSerializationService.Current;
-                            service.Navigate(typeof(MainPage));
-                        }
-
-                        Window.Current.Content = service.Frame;
+                        _lifetimeService.PreviousItem = session;
+                        ProtoService.Send(new Destroy());
                     }
 
                     return;
