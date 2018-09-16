@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Telegram.Td;
+using Template10.Services.ViewService;
 using Unigram.Common;
 using Unigram.Core.Services;
 using Unigram.Services;
@@ -124,6 +125,8 @@ namespace Unigram
                 builder.RegisterType<SessionService>().As<ISessionService>()
                     .WithParameter("session", session)
                     .WithParameter("selected", session == SettingsService.Current.ActiveSession).SingleInstance();
+
+                builder.RegisterType<ViewService>().As<IViewService>();
 
                 // ViewModels
                 builder.RegisterType<SignInViewModel>();
