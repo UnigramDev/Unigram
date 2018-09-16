@@ -435,38 +435,6 @@ namespace Unigram
         ////    }
         ////}
 
-        public override UIElement CreateRootElement(IActivatedEventArgs e)
-        {
-            var session = TLContainer.Current.Lifetime.ActiveItem;
-
-            if (e is ContactPanelActivatedEventArgs)
-            {
-                var navigationFrame = new Frame();
-                var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, session.Id, $"Main{session.Id}", false) as NavigationService;
-                navigationService.SerializationService = TLSerializationService.Current;
-
-                return navigationFrame;
-            }
-            else
-            {
-                var navigationFrame = new Frame();
-                var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, session.Id, $"{session.Id}", true) as NavigationService;
-                navigationService.SerializationService = TLSerializationService.Current;
-
-                return new RootPage(navigationService);
-            }
-        }
-
-        protected override INavigationService CreateNavigationService(Frame frame, int session, string id, bool root)
-        {
-            if (root)
-            {
-                return new TLRootNavigationService(TLContainer.Current.Resolve<ISessionService>(session), frame, session, id);
-            }
-
-            return new TLNavigationService(TLContainer.Current.Resolve<IProtoService>(session), frame, session, id);
-        }
-
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             //Locator.Configure();
@@ -499,6 +467,25 @@ namespace Unigram
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
+            if (startKind == StartKind.Activate)
+            {
+                var lifetime = TLContainer.Current.Lifetime;
+                var sessionId = lifetime.ActiveItem.Id;
+
+                var id = Toast.GetSession(args);
+                if (id != null)
+                {
+                    lifetime.ActiveItem = lifetime.Items.FirstOrDefault(x => x.Id == id.Value) ?? lifetime.ActiveItem;
+                }
+
+                if (sessionId != TLContainer.Current.Lifetime.ActiveItem.Id)
+                {
+                    var root = Window.Current.Content as RootPage;
+                    root.Switch(lifetime.ActiveItem);
+                }
+            }
+
+            var navService = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"{TLContainer.Current.Lifetime.ActiveItem.Id}");
             var service = TLContainer.Current.Resolve<IProtoService>();
 
             var state = service.GetAuthorizationState();
@@ -507,7 +494,7 @@ namespace Unigram
                 return;
             }
 
-            TLWindowContext.GetForCurrentView().SetActivatedArgs(args, NavigationService);
+            TLWindowContext.GetForCurrentView().SetActivatedArgs(args, navService);
             TLWindowContext.GetForCurrentView().UpdateTitleBar();
 
             Window.Current.Activated -= Window_Activated;
@@ -524,6 +511,44 @@ namespace Unigram
             var dispatcher = Window.Current.Dispatcher;
             Task.Run(() => OnStartSync(dispatcher));
             //return Task.CompletedTask;
+        }
+
+        public override UIElement CreateRootElement(IActivatedEventArgs e)
+        {
+            var id = Toast.GetSession(e);
+            if (id != null)
+            {
+                TLContainer.Current.Lifetime.ActiveItem = TLContainer.Current.Lifetime.Items.FirstOrDefault(x => x.Id == id.Value) ?? TLContainer.Current.Lifetime.ActiveItem;
+            }
+
+            var sessionId = TLContainer.Current.Lifetime.ActiveItem.Id;
+
+            if (e is ContactPanelActivatedEventArgs)
+            {
+                var navigationFrame = new Frame();
+                var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
+                navigationService.SerializationService = TLSerializationService.Current;
+
+                return navigationFrame;
+            }
+            else
+            {
+                var navigationFrame = new Frame();
+                var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
+                navigationService.SerializationService = TLSerializationService.Current;
+
+                return new RootPage(navigationService);
+            }
+        }
+
+        protected override INavigationService CreateNavigationService(Frame frame, int session, string id, bool root)
+        {
+            if (root)
+            {
+                return new TLRootNavigationService(TLContainer.Current.Resolve<ISessionService>(session), frame, session, id);
+            }
+
+            return new TLNavigationService(TLContainer.Current.Resolve<IProtoService>(session), frame, session, id);
         }
 
         private async void OnStartSync(CoreDispatcher dispatcher)
