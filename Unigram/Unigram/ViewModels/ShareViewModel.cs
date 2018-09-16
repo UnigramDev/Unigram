@@ -61,13 +61,13 @@ namespace Unigram.ViewModels
             //    _dialogs = null;
             //}
 
-            var response = await ProtoService.SendAsync(new GetChats(long.MaxValue, 0, 200));
+            var response = await ProtoService.SendAsync(new GetChats(long.MaxValue, 0, int.MaxValue));
             if (response is Telegram.Td.Api.Chats chats)
             {
                 var list = ProtoService.GetChats(chats.ChatIds);
                 Items.Clear();
 
-                if (_inviteBot == null)
+                if (_searchType != SearchChatsType.BasicAndSupergroups)
                 {
                     var myId = ProtoService.GetMyId();
                     var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);
@@ -85,7 +85,7 @@ namespace Unigram.ViewModels
 
                 foreach (var chat in list)
                 {
-                    if (_inviteBot != null)
+                    if (_searchType == SearchChatsType.BasicAndSupergroups)
                     {
                         if (chat.Type is ChatTypeBasicGroup basic)
                         {
@@ -225,6 +225,32 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _shareTitle, value);
+            }
+        }
+
+        private bool _isCommentEnabled;
+        public bool IsCommentEnabled
+        {
+            get
+            {
+                return _isCommentEnabled;
+            }
+            set
+            {
+                Set(ref _isCommentEnabled, value);
+            }
+        }
+
+        private SearchChatsType _searchType;
+        public SearchChatsType SearchType
+        {
+            get
+            {
+                return _searchType;
+            }
+            set
+            {
+                Set(ref _searchType, value);
             }
         }
 

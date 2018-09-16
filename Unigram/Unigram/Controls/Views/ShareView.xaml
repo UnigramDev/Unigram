@@ -11,7 +11,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Style="{StaticResource ModernContentDialogStyle}"
-    Title="Send to..."
+    TitleTemplate="{x:Null}"
     PrimaryButtonText="OK"
     PrimaryButtonCommand="{x:Bind ViewModel.SendCommand}"
     IsPrimaryButtonEnabled="False"
@@ -79,6 +79,10 @@
                                                              Storyboard.TargetProperty="Opacity"
                                                              Duration="0"
                                                              To="1" />
+                                            <DoubleAnimation Storyboard.TargetName="InnerBorderRectangle"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Duration="0"
+                                                             To="1" />
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderRectangle" Storyboard.TargetProperty="Stroke">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
@@ -97,6 +101,10 @@
                                     <VisualState x:Name="Pressed">
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetName="BorderRectangle"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Duration="0"
+                                                             To="1" />
+                                            <DoubleAnimation Storyboard.TargetName="InnerBorderRectangle"
                                                              Storyboard.TargetProperty="Opacity"
                                                              Duration="0"
                                                              To="1" />
@@ -122,6 +130,10 @@
                                                              Duration="0"
                                                              To="1" />
                                             <DoubleAnimation Storyboard.TargetName="BorderRectangle"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Duration="0"
+                                                             To="1" />
+                                            <DoubleAnimation Storyboard.TargetName="InnerBorderRectangle"
                                                              Storyboard.TargetProperty="Opacity"
                                                              Duration="0"
                                                              To="1" />
@@ -153,6 +165,10 @@
                                                              Storyboard.TargetProperty="Opacity"
                                                              Duration="0"
                                                              To="1" />
+                                            <DoubleAnimation Storyboard.TargetName="InnerBorderRectangle"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Duration="0"
+                                                             To="1" />
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderRectangle" Storyboard.TargetProperty="Stroke">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListAccentMediumBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
@@ -178,6 +194,10 @@
                                                              Duration="0"
                                                              To="1" />
                                             <DoubleAnimation Storyboard.TargetName="BorderRectangle"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Duration="0"
+                                                             To="1" />
+                                            <DoubleAnimation Storyboard.TargetName="InnerBorderRectangle"
                                                              Storyboard.TargetProperty="Opacity"
                                                              Duration="0"
                                                              To="1" />
@@ -387,6 +407,15 @@
                                        IsHitTestVisible="False"
                                        AutomationProperties.AccessibilityView="Raw" />
                             <Rectangle x:Name="PlaceholderRect" Visibility="Collapsed" Fill="{ThemeResource ListViewItemPlaceholderBackground}" />
+                            <Ellipse x:Name="InnerBorderRectangle"
+                                     IsHitTestVisible="False"
+                                     Stroke="{ThemeResource ContentDialogBackground}"
+                                     StrokeThickness="4"
+                                     Opacity="0"
+                                     VerticalAlignment="Top"
+                                     Width="48"
+                                     Height="48"
+                                     Margin="12"/>
                             <Ellipse x:Name="BorderRectangle"
                                      IsHitTestVisible="False"
                                      Stroke="{ThemeResource SystemControlHighlightListAccentLowBrush}"
@@ -396,14 +425,14 @@
                                      Width="48"
                                      Height="48"
                                      Margin="12"/>
-                            <Border VerticalAlignment="Top" Width="50" Height="51" Margin="10">
+                            <Border VerticalAlignment="Top" Width="52" Height="52" Margin="10">
                                 <Border x:Name="MultiSelectSquare"
                                         Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderBrush="White"
-                                        BorderThickness="1"
-                                        CornerRadius="10"
-                                        Width="20"
-                                        Height="20"
+                                        BorderBrush="{ThemeResource ContentDialogBackground}"
+                                        BorderThickness="2"
+                                        CornerRadius="11"
+                                        Width="22"
+                                        Height="22"
                                         VerticalAlignment="Bottom"
                                         HorizontalAlignment="Right"
                                         Opacity="0">
@@ -440,39 +469,35 @@
         </Style>
     </ContentControl.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <controls:ContentPageHeader x:Name="PageHeader">
-            <Grid x:Name="Header">
-                <Grid x:Name="MainHeader">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                        <TextBlock Text="{CustomResource ShareSendTo}" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <TextBlock x:Name="Subtitle"
+    <ContentDialog.Title>
+        <Grid x:Name="Header">
+            <Grid x:Name="MainHeader">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                    <TextBlock Text="{CustomResource ShareSendTo}" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock x:Name="Subtitle"
                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    TextWrapping="NoWrap"
                                    Visibility="Collapsed"
                                    TextTrimming="CharacterEllipsis"/>
 
-                    </StackPanel>
+                </StackPanel>
 
-                    <controls:GlyphButton
+                <controls:GlyphButton
                         Glyph="&#xE11A;"
                         Click="Search_Click"
                         FontSize="18"
                         Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                         Grid.Column="1"/>
-                </Grid>
 
-                <controls:SearchTextBox x:Name="SearchField"
+                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+            </Grid>
+
+            <controls:SearchTextBox x:Name="SearchField"
                                         Padding="12,4,6,4"
                                         Background="{x:Null}"
                                         BorderBrush="{x:Null}"
@@ -486,14 +511,21 @@
                                         KeyDown="Search_KeyDown"
                                         Visibility="Collapsed"
                                         Canvas.ZIndex="1"/>
-            </Grid>
-        </controls:ContentPageHeader>
-        <Grid MaxHeight="456" MaxWidth="400" Grid.Row="1">
+        </Grid>
+    </ContentDialog.Title>
+    
+    <Grid MaxWidth="380" MaxHeight="420">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid>
             <GridView
                 x:Name="ChatsPanel"
                 ItemsSource="{x:Bind ViewModel.Items}"
                 SelectionMode="Multiple"
                 Padding="12,0"
+                SizeChanged="List_SizeChanged"
                 SelectionChanged="List_SelectionChanged"
                 ContainerContentChanging="OnContainerContentChanging"
                 common:FluidGridView.OrientationOnly="True">
@@ -707,6 +739,14 @@
                     </GroupStyle>
                 </ListView.GroupStyle>
             </ListView>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Border x:Name="LineBottom" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+
+            <Border Visibility="{x:Bind ConvertCommentVisibility(ViewModel.SelectedItems.Count, ViewModel.IsCommentEnabled), Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8,12,0" Grid.ColumnSpan="2">
+                <TextBox Text="{x:Bind ViewModel.Comment, Mode=TwoWay}" PlaceholderText="{CustomResource ShareComment}"/>
+            </Border>
         </Grid>
     </Grid>
 </ContentDialog>

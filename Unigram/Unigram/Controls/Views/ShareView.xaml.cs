@@ -47,7 +47,7 @@ namespace Unigram.Controls.Views
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ShareViewModel>();
 
-            Title = Strings.Resources.ShareSendTo;
+            //Title = Strings.Resources.ShareSendTo;
             PrimaryButtonText = Strings.Resources.Send;
             SecondaryButtonText = Strings.Resources.Close;
 
@@ -83,6 +83,8 @@ namespace Unigram.Controls.Views
         public IAsyncOperation<ContentDialogResult> ShowAsync(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
+            ViewModel.SearchType = SearchChatsType.BasicAndSupergroups;
+            ViewModel.IsCommentEnabled = false;
 
             ViewModel.SwitchInline = switchInline;
             ViewModel.SwitchInlineBot = bot;
@@ -103,6 +105,8 @@ namespace Unigram.Controls.Views
         public IAsyncOperation<ContentDialogResult> ShowAsync(string message, bool hasUrl)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
+            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.IsCommentEnabled = true;
 
             ViewModel.SendMessage = message;
             ViewModel.SendMessageUrl = hasUrl;
@@ -123,6 +127,8 @@ namespace Unigram.Controls.Views
         public IAsyncOperation<ContentDialogResult> ShowAsync(Message message, bool withMyScore = false)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
+            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.IsCommentEnabled = true;
 
             ViewModel.Messages = new[] { message };
             ViewModel.IsWithMyScore = withMyScore;
@@ -176,6 +182,8 @@ namespace Unigram.Controls.Views
         public IAsyncOperation<ContentDialogResult> ShowAsync(IList<Message> messages, bool withMyScore = false)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
+            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.IsCommentEnabled = true;
 
             ViewModel.Messages = messages;
             ViewModel.IsWithMyScore = withMyScore;
@@ -196,6 +204,8 @@ namespace Unigram.Controls.Views
         public IAsyncOperation<ContentDialogResult> ShowAsync(Uri link, string title)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
+            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.IsCommentEnabled = true;
 
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
@@ -216,6 +226,8 @@ namespace Unigram.Controls.Views
         public IAsyncOperation<ContentDialogResult> ShowAsync(InputMessageContent inputMedia)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
+            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.IsCommentEnabled = true;
 
             ViewModel.InputMedia = inputMedia;
 
@@ -241,6 +253,8 @@ namespace Unigram.Controls.Views
         public IAsyncOperation<ContentDialogResult> ShowAsync(User bot)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
+            ViewModel.SearchType = SearchChatsType.BasicAndSupergroups;
+            ViewModel.IsCommentEnabled = false;
 
             ViewModel.InviteBot = bot;
 
@@ -502,7 +516,7 @@ namespace Unigram.Controls.Views
                     ViewModel.TopChats = null;
                 }
 
-                var items = ViewModel.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, true);
+                var items = ViewModel.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.SearchType);
                 await items.LoadMoreItemsAsync(0);
                 await items.LoadMoreItemsAsync(1);
             }
@@ -544,6 +558,15 @@ namespace Unigram.Controls.Views
 
                 e.Handled = true;
             }
+        }
+
+        #endregion
+
+        #region Comment
+
+        private Visibility ConvertCommentVisibility(int count, bool enabled)
+        {
+            return count > 0 && enabled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion
@@ -597,12 +620,26 @@ namespace Unigram.Controls.Views
             var index = items.IndexOf(chat);
             if (index > -1)
             {
-                items.Remove(chat);
+                if (index > 0)
+                {
+                    items.Remove(chat);
+                    items.Insert(1, chat);
+                }
+            }
+            else
+            {
+                items.Insert(1, chat);
             }
 
-            items.Insert(1, chat);
 
             ChatsPanel.SelectedItems.Add(chat);
+        }
+
+        private void List_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Header.Width = e.NewSize.Width;
+            DialogsSearchListView.Width = e.NewSize.Width;
+            DialogsSearchListView.Height = e.NewSize.Height;
         }
     }
 }
