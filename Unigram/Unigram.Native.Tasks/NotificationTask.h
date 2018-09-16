@@ -25,7 +25,7 @@ namespace Unigram
 				static void UpdatePrimaryBadge(int badgeNumber);
 				//static void UpdateSecondaryBadge(String^ group, bool resetBadge);
 				static void ResetSecondaryTile(String^ caption, String^ picture, String^ group);
-				static void UpdatePrimaryTile(String^ caption, String^ message, String^ picture);
+				static void UpdatePrimaryTile(String^ session, String^ caption, String^ message, String^ picture);
 				//static void UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group);
 				static void UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key); 
 

@@ -293,7 +293,7 @@ HRESULT PlaceholderImageHelper::CreateDeviceIndependentResources()
 	auto pathBegin = begin(path);
 	auto pathEnd = end(path);
 
-	assert(pathBegin && pathEnd);
+	//assert(pathBegin && pathEnd);
 
 	void const* key = pathBegin;
 	uint32_t keySize = static_cast<uint32_t>(std::distance(pathBegin, pathEnd) * sizeof(wchar_t));

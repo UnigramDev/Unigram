@@ -389,7 +389,7 @@ namespace Unigram.Views
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
             }
-            else if (!string.IsNullOrEmpty(SearchField.Text))
+            else if (SearchField.FocusState != FocusState.Unfocused || !string.IsNullOrEmpty(SearchField.Text))
             {
                 SearchField.Text = string.Empty;
                 args.Handled = true;

@@ -285,6 +285,7 @@
     <Compile Include="Controls\SwipeListDirection.cs" />
     <Compile Include="Controls\SwipeListViewItem.cs" />
     <Compile Include="Controls\TitleBarPlaceholder.cs" />
+    <Compile Include="Controls\TLContentDialog.cs" />
     <Compile Include="Controls\VideoTimelineControl.xaml.cs">
       <DependentUpon>VideoTimelineControl.xaml</DependentUpon>
     </Compile>

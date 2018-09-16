@@ -72,6 +72,7 @@ namespace Unigram.Services
             {
                 //Set(ref _isActive, value);
                 _isActive = value;
+                //ProtoService.Send(new SetOption("online", new OptionValueBoolean(value)));
             }
         }
 

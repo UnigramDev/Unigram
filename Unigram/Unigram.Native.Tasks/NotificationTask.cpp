@@ -169,7 +169,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 
 			if (loc_key != L"DC_UPDATE")
 			{
-				UpdatePrimaryTile(caption, message, picture);
+				UpdatePrimaryTile(L"0", caption, message, picture);
 			}
 		}
 	}
@@ -499,12 +499,13 @@ String^ NotificationTask::CreateTileMessageBodyWithCaption(String^ caption, Stri
 	return ref new String(body.c_str());
 }
 
-void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, String^ picture)
+void NotificationTask::UpdatePrimaryTile(String^ session, String^ caption, String^ message, String^ picture)
 {
 	auto body = NotificationTask::CreateTileMessageBodyWithCaption(caption, message);
 
-	std::wstring xml = L"<tile><visual>";
-	xml += L"<binding template='TileMedium' branding='name'>";
+	std::wstring xml = L"<tile><visual arguments='";
+	xml += session->Data();
+	xml += L"'><binding template='TileMedium' branding='name'>";
 	if (picture != nullptr)
 	{
 		xml += L"<image placement='peek' hint-crop='circle' src='";

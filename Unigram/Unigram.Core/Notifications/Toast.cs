@@ -39,6 +39,33 @@ namespace Unigram.Core.Notifications
             BackgroundTaskManager.Register("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
         }
 
+        public static int? GetSession(IActivatedEventArgs args)
+        {
+            string arguments = null;
+
+            switch (args)
+            {
+                case ToastNotificationActivatedEventArgs toastNotification:
+                    arguments = toastNotification.Argument;
+                    break;
+                case LaunchActivatedEventArgs launch:
+                    if (launch.TileActivatedInfo != null && launch.TileActivatedInfo.RecentlyShownNotifications.Count > 0)
+                    {
+                        arguments = launch.TileActivatedInfo.RecentlyShownNotifications[0].Arguments;
+                    }
+                    break;
+            }
+
+            var data = SplitArguments(arguments);
+            if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
+            {
+                // TODO: move additional checks here
+                return result;
+            }
+
+            return null;
+        }
+
         public static Dictionary<string, string> GetData(IActivatedEventArgs args)
         {
             if (args.Kind == ActivationKind.ToastNotification)
