@@ -35,6 +35,7 @@ using Windows.UI.Xaml.Automation.Provider;
 using Unigram.Controls.Cells;
 using System.Reactive.Linq;
 using Unigram.Core.Common;
+using System.Threading.Tasks;
 
 namespace Unigram.Controls.Views
 {
@@ -82,7 +83,7 @@ namespace Unigram.Controls.Views
             return context;
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
+        public Task<ContentDialogResult> ShowAsync(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.BasicAndSupergroups;
@@ -104,7 +105,7 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(string message, bool hasUrl)
+        public Task<ContentDialogResult> ShowAsync(string message, bool hasUrl)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.Post;
@@ -126,7 +127,7 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(Message message, bool withMyScore = false)
+        public Task<ContentDialogResult> ShowAsync(Message message, bool withMyScore = false)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
@@ -181,7 +182,7 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(IList<Message> messages, bool withMyScore = false)
+        public Task<ContentDialogResult> ShowAsync(IList<Message> messages, bool withMyScore = false)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
@@ -203,7 +204,7 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(Uri link, string title)
+        public Task<ContentDialogResult> ShowAsync(Uri link, string title)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
@@ -225,7 +226,7 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(InputMessageContent inputMedia)
+        public Task<ContentDialogResult> ShowAsync(InputMessageContent inputMedia)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
@@ -252,7 +253,7 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(User bot)
+        public Task<ContentDialogResult> ShowAsync(User bot)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.BasicAndSupergroups;
@@ -273,7 +274,7 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        private new IAsyncOperation<ContentDialogResult> ShowAsync()
+        private new Task<ContentDialogResult> ShowAsync()
         {
             ViewModel.Items.Clear();
 
@@ -285,7 +286,7 @@ namespace Unigram.Controls.Views
             });
 
             Loaded += handler;
-            return base.ShowAsync();
+            return this.ShowQueuedAsync();
         }
 
         #endregion
