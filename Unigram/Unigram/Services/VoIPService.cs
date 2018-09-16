@@ -6,14 +6,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Template10.Services.ViewService;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.ViewModels;
 using Unigram.Views;
+using Windows.ApplicationModel.Core;
+using Windows.Foundation.Metadata;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -28,6 +32,8 @@ namespace Unigram.Services
 
     public class VoIPService : TLViewModelBase, IVoIPService
     {
+        private readonly IViewService _viewService;
+
         private readonly MediaPlayer _mediaPlayer;
 
         private Call _call;
@@ -35,12 +41,13 @@ namespace Unigram.Services
 
         private PhoneCallPage _callPage;
         private ContentDialogBase _callDialog;
+        private ViewLifetimeControl _callLifetime;
 
-        private TaskCompletionSource<UpdateCall> _discardTask;
-
-        public VoIPService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public VoIPService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _viewService = viewService;
+
             _mediaPlayer = new MediaPlayer();
             _mediaPlayer.CommandManager.IsEnabled = false;
             _mediaPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Communications;
@@ -147,6 +154,7 @@ namespace Unigram.Services
 
                 _controller?.Dispose();
                 _controller = null;
+                _call = null;
             }
 
             BeginOnUIThread(() =>
@@ -187,7 +195,7 @@ namespace Unigram.Services
             }
         }
 
-        public void Show()
+        public async void Show()
         {
             Show(_call, _controller);
 
@@ -195,41 +203,69 @@ namespace Unigram.Services
             {
                 _callDialog.IsOpen = true;
             }
+            else if (_callLifetime != null)
+            {
+                _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new PhoneCallPage(ProtoService, CacheService, Aggregator, _call, _controller), 0);
+            }
         }
 
-        private void Show(Call call, VoIPControllerWrapper controller)
+        private async void Show(Call call, VoIPControllerWrapper controller)
         {
             if (_callPage == null)
             {
-                _callPage = new PhoneCallPage(ProtoService, CacheService, Aggregator, false);
+                if (ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
+                {
+                    _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new PhoneCallPage(ProtoService, CacheService, Aggregator, _call, _controller), 0);
+                    _callLifetime.Released += (s, args) =>
+                    {
+                        _callPage.Dispose();
+                        _callPage = null;
+                    };
+                }
+                else
+                {
+                    _callPage = new PhoneCallPage(ProtoService, CacheService, Aggregator, _call, _controller);
 
-                _callDialog = new ContentDialogBase();
-                _callDialog.HorizontalAlignment = HorizontalAlignment.Stretch;
-                _callDialog.VerticalAlignment = VerticalAlignment.Stretch;
-                _callDialog.Content = _callPage;
-                _callDialog.IsOpen = true;
+                    _callDialog = new ContentDialogBase();
+                    _callDialog.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    _callDialog.VerticalAlignment = VerticalAlignment.Stretch;
+                    _callDialog.Content = _callPage;
+                    _callDialog.IsOpen = true;
+                }
             }
 
-            if (controller != null)
+            _callPage.BeginOnUIThread(() =>
             {
-                _callPage.Connect(controller);
-            }
+                if (controller != null)
+                {
+                    _callPage.Connect(controller);
+                }
 
-            _callPage.Update(call);
+                _callPage.Update(call);
+            });
         }
 
         private void Hide()
         {
             if (_callPage != null)
             {
-                _callPage.Dispose();
-                _callPage = null;
-            }
+                _callPage.BeginOnUIThread(() =>
+                {
+                    if (_callDialog != null)
+                    {
+                        _callDialog.IsOpen = false;
+                        _callDialog = null;
+                    }
+                    else if (_callLifetime != null)
+                    {
+                        _callLifetime.StopViewInUse();
+                        _callLifetime.WindowWrapper.Window.Close();
+                        _callLifetime = null;
+                    }
 
-            if (_callDialog != null)
-            {
-                _callDialog.IsOpen = false;
-                _callDialog = null;
+                    _callPage.Dispose();
+                    _callPage = null;
+                });
             }
         }
     }

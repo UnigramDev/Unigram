@@ -68,7 +68,7 @@ namespace Unigram.Views
 
         public ContentDialogBase Dialog { get; set; }
 
-        public PhoneCallPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, bool extend)
+        public PhoneCallPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, Call call, VoIPControllerWrapper controller)
         {
             this.InitializeComponent();
 
@@ -121,10 +121,6 @@ namespace Unigram.Views
 
             #endregion
 
-            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            //coreTitleBar.IsVisibleChanged += CoreBar_IsVisibleChanged;
-            coreTitleBar.ExtendViewIntoTitleBar = extend;
-
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonForegroundColor = Colors.White;
@@ -132,6 +128,16 @@ namespace Unigram.Views
             titleBar.ButtonInactiveForegroundColor = Colors.White;
 
             Window.Current.SetTitleBar(GrabPanel);
+
+            if (call != null)
+            {
+                Update(call);
+            }
+
+            if (controller != null)
+            {
+                Connect(controller);
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -163,12 +169,12 @@ namespace Unigram.Views
             _debugTimer.Stop();
             _durationTimer.Stop();
 
-            //if (_controller != null)
-            //{
-            //    _controller.CallStateChanged -= OnCallStateChanged;
-            //    _controller.SignalBarsChanged -= OnSignalBarsChanged;
-            //    _controller = null;
-            //}
+            if (_controller != null)
+            {
+                //_controller.CallStateChanged -= OnCallStateChanged;
+                //_controller.SignalBarsChanged -= OnSignalBarsChanged;
+                _controller = null;
+            }
 
             if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
             {
@@ -188,6 +194,9 @@ namespace Unigram.Views
             _controller.SignalBarsChanged += OnSignalBarsChanged;
 
             _controller.SetMicMute(_isMuted);
+
+            OnCallStateChanged(controller, controller.GetConnectionState());
+            OnSignalBarsChanged(controller, controller.GetSignalBarsCount());
         }
 
         //private void CoreBar_IsVisibleChanged(CoreApplicationViewTitleBar sender, object args)
