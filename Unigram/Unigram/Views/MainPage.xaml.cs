@@ -63,6 +63,7 @@ namespace Unigram.Views
         IHandle<UpdateWorkMode>,
         IHandle<UpdateFile>,
         IHandle<UpdateConnectionState>,
+        IHandle<UpdateOption>,
         IHandle<UpdateCall>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
@@ -274,16 +275,8 @@ namespace Unigram.Views
         {
             this.BeginOnUIThread(() =>
             {
-                switch (update.State)
-                {
-                    case ConnectionStateConnecting connecting:
-                    case ConnectionStateConnectingToProxy connectingToProxy:
-                        Proxy.Visibility = Visibility.Visible;
-                        break;
-                    default:
-                        Proxy.Visibility = Visibility.Collapsed;
-                        break;
-                }
+                var expectBlocking = ViewModel.CacheService.GetOption<OptionValueBoolean>("expect_blocking")?.Value ?? false;
+                SetProxyVisibility(expectBlocking, update.State);
 
                 switch (update.State)
                 {
@@ -304,6 +297,35 @@ namespace Unigram.Views
                         return;
                 }
             });
+        }
+
+        public void Handle(UpdateOption update)
+        {
+            if (update.Name.Equals("expect_blocking") && update.Value is OptionValueBoolean expectBlocking)
+            {
+                SetProxyVisibility(expectBlocking.Value, ViewModel.CacheService.GetConnectionState());
+            }
+        }
+
+        private void SetProxyVisibility(bool expectBlocking, ConnectionState connectionState)
+        {
+            if (expectBlocking)
+            {
+                Proxy.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                switch (connectionState)
+                {
+                    case ConnectionStateConnecting connecting:
+                    case ConnectionStateConnectingToProxy connectingToProxy:
+                        Proxy.Visibility = Visibility.Visible;
+                        break;
+                    default:
+                        Proxy.Visibility = Visibility.Collapsed;
+                        break;
+                }
+            }
         }
 
         private void ShowStatus(string text)
@@ -1233,6 +1255,8 @@ namespace Unigram.Views
             }
         }
 
+        #region Search
+
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             MainHeader.Visibility = Visibility.Collapsed;
@@ -1348,6 +1372,8 @@ namespace Unigram.Views
                 e.Handled = true;
             }
         }
+
+        #endregion
 
         private void Lock_Click(object sender, RoutedEventArgs e)
         {

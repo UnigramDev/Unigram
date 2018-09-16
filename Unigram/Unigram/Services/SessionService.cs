@@ -101,6 +101,15 @@ namespace Unigram.Services
                 ProtoService.Send(new Destroy());
             }
 
+            //if (update.AuthorizationState is AuthorizationStateReady)
+            //{
+            //    _lifetimeService.Register(this);
+            //}
+            //else
+            //{
+            //    _lifetimeService.Unregister(this);
+            //}
+
             foreach (TLWindowContext window in WindowContext.ActiveWrappers)
             {
                 window.Handle(this, update);

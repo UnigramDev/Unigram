@@ -30,6 +30,10 @@
     </ContentDialog.Title>
 
     <Grid MaxWidth="380" MaxHeight="420">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <controls:ZoomableGridView
             x:Name="List"
             ItemsSource="{x:Bind ViewModel.Items}"
@@ -70,5 +74,7 @@
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </controls:ZoomableGridView>
+
+        <Border x:Name="LineBottom" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.Row="1"/>
     </Grid>
 </ContentDialog>

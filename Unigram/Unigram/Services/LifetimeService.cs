@@ -32,6 +32,9 @@ namespace Unigram.ViewModels
 
         bool Contains(string phoneNumber);
 
+        void Register(ISessionService item);
+        void Unregister(ISessionService item);
+
         MvxObservableCollection<ISessionService> Items { get; }
         ISessionService ActiveItem { get; set; }
         ISessionService PreviousItem { get; set; }
@@ -39,9 +42,21 @@ namespace Unigram.ViewModels
 
     public class LifetimeService : ViewModelBase, ILifetimeService
     {
+        private readonly Dictionary<int, ISessionService> _sessions = new Dictionary<int, ISessionService>();
+
         public LifetimeService()
         {
             Items = new MvxObservableCollection<ISessionService>();
+        }
+
+        public void Register(ISessionService item)
+        {
+            _sessions[item.Id] = item;
+        }
+
+        public void Unregister(ISessionService item)
+        {
+            _sessions[item.Id] = null;
         }
 
         public void Update()

@@ -151,7 +151,7 @@ namespace Unigram.ViewModels
 
         private AutoDownloadChat GetChatType(Chat chat)
         {
-            if (chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel || chat.Type is ChatTypePrivate)
+            if (chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel || chat.Type is ChatTypeBasicGroup)
             {
                 return AutoDownloadChat.Group;
             }

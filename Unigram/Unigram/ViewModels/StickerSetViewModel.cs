@@ -98,7 +98,7 @@ namespace Unigram.ViewModels
                 ProtoService.Send(new ChangeStickerSet(set.Id, true, false));
             }
 
-            NavigationService.GoBack();
+            //NavigationService.GoBack();
         }
     }
 }

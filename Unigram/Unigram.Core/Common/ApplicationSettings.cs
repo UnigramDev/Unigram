@@ -152,8 +152,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 1816050;
-        public const string CurrentChangelog = "New in version 1.8.1605:\r\n- You can now resize chats list width by dragging it with your mouse.\r\n- It is now possible to setup HTTP proxies.";
+        public const int CurrentVersion = 2016840;
+        public const string CurrentChangelog = "New in version 2.0.1684:\r\n- You can add multiple accounts with different phone numbers to your Telegram app, and then quickly switch between them from the side menu. Notifications will keep coming from all accounts, unless you change this in the Notification settings.\r\n- You can now finally search for chats while forwarding a message\r\n- Voice calls are finally back!\r\n- Search for near locations when sharing your position\r\n- More than 100 bug fixes and improvements since previous version";
 
         public int Session => _session;
 
