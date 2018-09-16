@@ -395,6 +395,10 @@ namespace Unigram.Views
                     {
                         content.NavigationView_ItemClick(RootDestination.Settings);
                     }
+                    //else if (e.ClickedItem as string == NavigationInviteFriends.Name)
+                    //{
+                    //    content.NavigationView_ItemClick(RootDestination.InviteFriends);
+                    //}
                     else if (e.ClickedItem as string == NavigationSavedMessages.Name)
                     {
                         content.NavigationView_ItemClick(RootDestination.SavedMessages);
@@ -446,6 +450,8 @@ namespace Unigram.Views
         Contacts,
         Calls,
         Settings,
+
+        InviteFriends,
 
         SavedMessages,
         News

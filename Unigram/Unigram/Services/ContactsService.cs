@@ -19,8 +19,8 @@ namespace Unigram.Services
     {
         Task SyncAsync(Telegram.Td.Api.Users result);
 
-        //Task<Telegram.Td.Api.BaseObject> ImportAsync();
-        //Task ExportAsync(Telegram.Td.Api.Users result);
+        Task<Telegram.Td.Api.BaseObject> ImportAsync();
+        Task ExportAsync(Telegram.Td.Api.Users result);
 
         Task RemoveAsync();
     }
@@ -57,8 +57,8 @@ namespace Unigram.Services
 
                 using (await _syncLock.WaitAsync(_syncToken.Token))
                 {
-                    await ExportAsync(result);
-                    await ImportAsync();
+                    await ExportAsyncInternal(result);
+                    await ImportAsyncInternal();
                 }
             }
             catch
@@ -71,6 +71,29 @@ namespace Unigram.Services
         #region Import
 
         public async Task<Telegram.Td.Api.BaseObject> ImportAsync()
+        {
+            try
+            {
+                if (_syncToken == null)
+                {
+                    _syncToken = new CancellationTokenSource();
+                }
+
+                using (await _syncLock.WaitAsync(_syncToken.Token))
+                {
+                    return await ImportAsyncInternal();
+                }
+            }
+            catch
+            {
+                Logs.Log.Write("Sync contacts canceled");
+                Debug.WriteLine("» Sync contacts canceled");
+            }
+
+            return null;
+        }
+
+        private async Task<Telegram.Td.Api.BaseObject> ImportAsyncInternal()
         {
             Telegram.Td.Api.BaseObject result = null;
 
@@ -141,6 +164,27 @@ namespace Unigram.Services
         #region Export
 
         public async Task ExportAsync(Telegram.Td.Api.Users result)
+        {
+            try
+            {
+                if (_syncToken == null)
+                {
+                    _syncToken = new CancellationTokenSource();
+                }
+
+                using (await _syncLock.WaitAsync(_syncToken.Token))
+                {
+                    await ExportAsyncInternal(result);
+                }
+            }
+            catch
+            {
+                Logs.Log.Write("Sync contacts canceled");
+                Debug.WriteLine("» Sync contacts canceled");
+            }
+        }
+
+        private async Task ExportAsyncInternal(Telegram.Td.Api.Users result)
         {
             Logs.Log.Write("Exporting contacts");
             Debug.WriteLine("» Exporting contacts");

@@ -457,6 +457,7 @@
     <Compile Include="ViewModels\Delegates\IProfileDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IUserDelegate.cs" />
+    <Compile Include="ViewModels\InviteViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep2ViewModel.cs" />

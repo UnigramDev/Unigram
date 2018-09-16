@@ -209,6 +209,7 @@ namespace Unigram
                 builder.RegisterType<PaymentFormStep4ViewModel>();
                 builder.RegisterType<PaymentFormStep5ViewModel>();
                 builder.RegisterType<PaymentReceiptViewModel>();
+                builder.RegisterType<InviteViewModel>();
 
                 return builder.Build();
             });

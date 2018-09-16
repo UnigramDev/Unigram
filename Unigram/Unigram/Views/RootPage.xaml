@@ -106,7 +106,10 @@
                             x:Name="NavigationCalls"
                             Text="{CustomResource Calls}"
                             Glyph="&#xE717;" />
-                        <!--<controls:NavigationViewItem Text="{CustomResource InviteFriends}" Glyph="&#xE789;" />-->
+                        <!--<controls:NavigationViewItem
+                            x:Name="NavigationInviteFriends"
+                            Text="{CustomResource InviteFriends}"
+                            Glyph="&#xE789;" />-->
                         <controls:NavigationViewItem
                             x:Name="NavigationSettings"
                             Text="{CustomResource Settings}"

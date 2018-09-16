@@ -1704,6 +1704,10 @@ namespace Unigram.Views
             {
                 rpMasterTitlebar.SelectedIndex = 3;
             }
+            else if (destination == RootDestination.InviteFriends)
+            {
+                MasterDetail.NavigationService.Navigate(typeof(InvitePage));
+            }
             else if (destination == RootDestination.SavedMessages)
             {
                 var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.ProtoService.GetMyId(), false));
