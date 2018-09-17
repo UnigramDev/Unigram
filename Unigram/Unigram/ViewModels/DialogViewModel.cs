@@ -1513,13 +1513,14 @@ namespace Unigram.ViewModels
             }
             else
             {
-                Delegate?.UpdatePinnedMessage(chat, null, true);
-
                 var pinned = Settings.GetChatPinnedMessage(chat.Id);
                 if (pinned == fullInfo.PinnedMessageId)
                 {
+                    Delegate?.UpdatePinnedMessage(chat, null, false);
                     return;
                 }
+
+                Delegate?.UpdatePinnedMessage(chat, null, true);
 
                 var response = await ProtoService.SendAsync(new GetMessage(chat.Id, fullInfo.PinnedMessageId));
                 if (response is Message message)
