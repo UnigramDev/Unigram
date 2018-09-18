@@ -125,7 +125,7 @@
     <value>Paspor</value>
   </data>
   <data name="ActionBotDocumentPassportRegistration" xml:space="preserve">
-    <value>Daftar Paspor</value>
+    <value>Pendaftaran Passport</value>
   </data>
   <data name="ActionBotDocumentPhone" xml:space="preserve">
     <value>Nomor Ponsel</value>
@@ -520,6 +520,9 @@
   <data name="AreYouSureBlockContact" xml:space="preserve">
     <value>Apakah Anda yakin ingin memblokir kontak ini?</value>
   </data>
+  <data name="AreYouSureClearDrafts" xml:space="preserve">
+    <value>Anda yakin ingin menghapus semua draf di penyimpanan awan?</value>
+  </data>
   <data name="AreYouSureClearHistory" xml:space="preserve">
     <value>Apakah Anda yakin ingin membersihkan riwayat?</value>
   </data>
@@ -700,7 +703,7 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
     <value>Batas kecerahan</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Ganti ke tema gelap saat kecerahan sekitar pada {0}%% atau kurang. </value>
+    <value>Ganti ke tema gelap saat kecerahan sekitar pada {0}% atau kurang. </value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Non aktif</value>
@@ -862,7 +865,7 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
     <value>Panggil Ulang</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>Jika emoji di layar {0} sama, maka panggilan ini 100%% aman.</value>
+    <value>Jika emoji di layar {0} sama, maka panggilan ini 100% aman.</value>
   </data>
   <data name="CallMessageIncoming" xml:space="preserve">
     <value>Panggilan Masuk</value>
@@ -1293,6 +1296,9 @@ Jika Anda tidak tertarik, kami sarankan untuk membuat channel privat.</value>
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>Pilih dari sticker Anda</value>
   </data>
+  <data name="ChooseMapPreviewProvider" xml:space="preserve">
+    <value>Pilih Penyedia Tampilan Peta</value>
+  </data>
   <data name="ChooseStickerSet" xml:space="preserve">
     <value>PILIH SET STICKER</value>
   </data>
@@ -1420,6 +1426,9 @@ Ketika Telegram {1} diperbarui, foto tampil dengan waktu 1 menit atau kurang dan
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
     <value>Tekan di sini untuk nonaktifkan proxy...</value>
+  </data>
+  <data name="ContactBirthday" xml:space="preserve">
+    <value>Tanggal Lahir</value>
   </data>
   <data name="ContactJob" xml:space="preserve">
     <value>Pekerjaan</value>
@@ -1671,6 +1680,9 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergroup:
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>Jika Anda pergi selama</value>
   </data>
+  <data name="DeleteAccountIfAwayFor2" xml:space="preserve">
+    <value>Hapus akun saya jika tidak ada </value>
+  </data>
   <data name="DeleteAccountTitle" xml:space="preserve">
     <value>Penghancuran akun otomatis</value>
   </data>
@@ -1860,6 +1872,9 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergroup:
   <data name="EditedMessage" xml:space="preserve">
     <value>diedit</value>
   </data>
+  <data name="EmailCopied" xml:space="preserve">
+    <value>Email disalin ke papan klip</value>
+  </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Mohon ikuti langkah ini untuk melengkapi Pengaturan Verifikasi Dua Langkah
 
@@ -1879,6 +1894,9 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergroup:
   </data>
   <data name="EmpryUsersPlaceholder" xml:space="preserve">
     <value>Tambahkan Pengguna</value>
+  </data>
+  <data name="EmptyExceptions" xml:space="preserve">
+    <value>Tidak Ada</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>Beberapa video tidak dapat menggunakan metode aliran, khususnya video yang terkirim pada versi 4.7 dan sebelumnya. </value>
@@ -2879,6 +2897,9 @@ Semua media yang akan tetap berada di Telegram cloud dan dapat diunduh kembali j
   <data name="Lately" xml:space="preserve">
     <value>terlihat belakangan ini</value>
   </data>
+  <data name="Later" xml:space="preserve">
+    <value>NANTI</value>
+  </data>
   <data name="LeaveChannel" xml:space="preserve">
     <value>Tinggalkan Channel</value>
   </data>
@@ -3024,6 +3045,21 @@ Operasi Ini memakan waktu beberapa menit untuk diselesaikan.</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Peta</value>
+  </data>
+  <data name="MapPreviewProvider" xml:space="preserve">
+    <value>Penyedia Tampilan Peta</value>
+  </data>
+  <data name="MapPreviewProviderGoogle" xml:space="preserve">
+    <value>Google</value>
+  </data>
+  <data name="MapPreviewProviderNobody" xml:space="preserve">
+    <value>Tidak ada</value>
+  </data>
+  <data name="MapPreviewProviderTelegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="MapPreviewProviderYandex" xml:space="preserve">
+    <value>Yandex</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
     <value>Tandai dibaca</value>
@@ -3211,6 +3247,9 @@ Operasi Ini memakan waktu beberapa menit untuk diselesaikan.</value>
   <data name="MobileUsage" xml:space="preserve">
     <value>Pemakaian Data Seluler</value>
   </data>
+  <data name="Mono" xml:space="preserve">
+    <value>Mono</value>
+  </data>
   <data name="MonthsZero" xml:space="preserve">
     <value/>
   </data>
@@ -3333,6 +3372,11 @@ atau tekan tombol menu untuk opsi lain.</value>
   <data name="NoContacts" xml:space="preserve">
     <value>Belum ada kontak</value>
   </data>
+  <data name="NoExceptions" xml:space="preserve">
+    <value>Bagian ini akan menampilkan semua obrolan dengan pengaturan notifikasi non-bawaan. 
+
+Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memilih 'Notifikasi'.</value>
+  </data>
   <data name="NoGroupsInCommon" xml:space="preserve">
     <value>Belum ada grup yang sama</value>
   </data>
@@ -3407,6 +3451,12 @@ atau tekan tombol menu untuk opsi lain.</value>
   </data>
   <data name="NoSharedLinksSecret" xml:space="preserve">
     <value>Berkas Bersama dari chat ini akan ditampilkan di sini.</value>
+  </data>
+  <data name="NoSharedVoice" xml:space="preserve">
+    <value>Bagikan pesan suara di obrolan ini dan akses dari berbagai perangkat lain. </value>
+  </data>
+  <data name="NoSharedVoiceSecret" xml:space="preserve">
+    <value>Pesan suara di obrolan ini akan terlihat di sini. </value>
   </data>
   <data name="NoSound" xml:space="preserve">
     <value>Tanpa suara</value>
@@ -3704,8 +3754,17 @@ Tim Telegram</value>
   <data name="NotificationsCustomize" xml:space="preserve">
     <value>Kustomisasi</value>
   </data>
+  <data name="NotificationsDefaultOff" xml:space="preserve">
+    <value>Bawaan (OFF)</value>
+  </data>
+  <data name="NotificationsDefaultOn" xml:space="preserve">
+    <value>Bawaan (ON)</value>
+  </data>
   <data name="NotificationsEnableCustom" xml:space="preserve">
     <value>Aktifkan Notifikasi Kostum</value>
+  </data>
+  <data name="NotificationsExceptions" xml:space="preserve">
+    <value>Pengecualian</value>
   </data>
   <data name="NotificationsImportance" xml:space="preserve">
     <value>Penting</value>
@@ -3718,6 +3777,9 @@ Tim Telegram</value>
   </data>
   <data name="NotificationsLedInfo" xml:space="preserve">
     <value>LED adalah cahaya berkedip kecil pada beberapa perangkat yang digunakan sebagai indikasi adanya pesan baru.</value>
+  </data>
+  <data name="NotificationsMuted" xml:space="preserve">
+    <value>Senyap</value>
   </data>
   <data name="NotificationsOff" xml:space="preserve">
     <value>Mati</value>
@@ -3769,6 +3831,9 @@ Tim Telegram</value>
   </data>
   <data name="NotificationsTurnOn" xml:space="preserve">
     <value>Hidupkan</value>
+  </data>
+  <data name="NotificationsUnmuted" xml:space="preserve">
+    <value>Nyala</value>
   </data>
   <data name="NumberUnknown" xml:space="preserve">
     <value>Tidak diketahui</value>
@@ -3932,14 +3997,26 @@ dari beberapa perangkat.</value>
   <data name="PassportAddCard" xml:space="preserve">
     <value>Tambah Kartu Identitas</value>
   </data>
+  <data name="PassportAddDriverLicenceInfo" xml:space="preserve">
+    <value>Unggah pindaian terjemahan Surat Izin Mengemudi Anda yang sudah diverifikasi. </value>
+  </data>
+  <data name="PassportAddIdentityCardInfo" xml:space="preserve">
+    <value>Unggah pindaian terjemahan kartu identitas Anda yang sudah diverifikasi.</value>
+  </data>
   <data name="PassportAddInternalPassport" xml:space="preserve">
     <value>Tambah Paspor Internal</value>
+  </data>
+  <data name="PassportAddInternalPassportInfo" xml:space="preserve">
+    <value>Unggah pindaian terjemahan paspor internal Anda yang sudah diverifikasi. </value>
   </data>
   <data name="PassportAddLicence" xml:space="preserve">
     <value>Tambah SIM</value>
   </data>
   <data name="PassportAddPassport" xml:space="preserve">
     <value>Tambah Paspor</value>
+  </data>
+  <data name="PassportAddPassportInfo" xml:space="preserve">
+    <value>Unggah pindaian terjemahan paspor yang sudah diverifikasi. </value>
   </data>
   <data name="PassportAddPassportRegistration" xml:space="preserve">
     <value>Registrasi paspor</value>
@@ -3952,6 +4029,24 @@ dari beberapa perangkat.</value>
   </data>
   <data name="PassportAddTemporaryRegistrationInfo" xml:space="preserve">
     <value>Unggah pemindaian pendaftaran sementara Anda.</value>
+  </data>
+  <data name="PassportAddTranslationAgreementInfo" xml:space="preserve">
+    <value>Unggah pindaian terjemahan perjanjian sewa Anda yang sudah diverifikasi. </value>
+  </data>
+  <data name="PassportAddTranslationBankInfo" xml:space="preserve">
+    <value>Unggah pindaian terjemahan rekening koran Anda yang sudah diverifikasi.  </value>
+  </data>
+  <data name="PassportAddTranslationBillInfo" xml:space="preserve">
+    <value>Unggah pindaian terjemahan tagihan utilitas Anda yang sudah diverifikasi. </value>
+  </data>
+  <data name="PassportAddTranslationPassportRegistrationInfo" xml:space="preserve">
+    <value>Unggah pindaian terjemahan halaman pendaftaran paspor yang sudah diverifikasi. </value>
+  </data>
+  <data name="PassportAddTranslationTemporaryRegistrationInfo" xml:space="preserve">
+    <value>Unggah pindaian terjemahan pendaftaran sementara Anda yang sudah diverifikasi. </value>
+  </data>
+  <data name="PassportAddTranslationUploadInfo" xml:space="preserve">
+    <value>Mohon unggah pindaian terjemahan dokumen yang dipilih yang sudah diverifikasi. </value>
   </data>
   <data name="PassportAddress" xml:space="preserve">
     <value>Alamat</value>
@@ -3976,6 +4071,9 @@ dari beberapa perangkat.</value>
   </data>
   <data name="PassportCity" xml:space="preserve">
     <value>Kota</value>
+  </data>
+  <data name="PassportCorrectErrors" xml:space="preserve">
+    <value>Ketuk untuk perbaiki kesalahan</value>
   </data>
   <data name="PassportCountry" xml:space="preserve">
     <value>Negara</value>
@@ -4008,7 +4106,7 @@ dari beberapa perangkat.</value>
     <value>Hapus nomer ponsel?</value>
   </data>
   <data name="PassportDeleteScan" xml:space="preserve">
-    <value>Hapus pindai?</value>
+    <value>Hapus pindaian?</value>
   </data>
   <data name="PassportDeleteScanAlert" xml:space="preserve">
     <value>Anda yakin ingin menghapus pindaian ini?</value>
@@ -4025,7 +4123,7 @@ dari beberapa perangkat.</value>
   <data name="PassportDiscardChanges" xml:space="preserve">
     <value>Anda yakin ingin membuang semua informasi yang Anda masukkan?</value>
   </data>
-  <data name="PassportDocumentDetails" xml:space="preserve">
+  <data name="PassportDocument" xml:space="preserve">
     <value>Detail Dokumen</value>
   </data>
   <data name="PassportDocumentNumber" xml:space="preserve">
@@ -4070,18 +4168,166 @@ dari beberapa perangkat.</value>
   <data name="PassportIdentityDocumentInfo" xml:space="preserve">
     <value>Unggah pindaian paspor Anda atau identitas lainnya.</value>
   </data>
+  <data name="PassportIdentityDriverLicence" xml:space="preserve">
+    <value>Unggah pindaian surat izin mengemudi Anda</value>
+  </data>
+  <data name="PassportIdentityID" xml:space="preserve">
+    <value>Unggah pindaian kartu identitas Anda</value>
+  </data>
+  <data name="PassportIdentityInternalPassport" xml:space="preserve">
+    <value>Unggah pindaian paspor internal Anda</value>
+  </data>
+  <data name="PassportIdentityPassport" xml:space="preserve">
+    <value>Unggah pindaian paspor internal Anda</value>
+  </data>
   <data name="PassportInfo" xml:space="preserve">
-    <value>Dengan Paspor Telegram, Anda dapat dengan mudah mendaftar ke situs web dan layanan yang memerlukan verifikasi identitas.
+    <value>Dengan Telegram Passport, Anda dapat dengan mudah mendaftar ke situs web dan layanan yang memerlukan verifikasi identitas.
 
 Informasi Anda, data pribadi, dan dokumen dilindungi oleh enkripsi end-to-end. Tidak seorang pun, termasuk Telegram, dapat mengakses tanpa izin Anda.
 
 Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
   </data>
   <data name="PassportInfoTitle" xml:space="preserve">
-    <value>Apa itu Paspor Telegram?</value>
+    <value>Apa itu Telegram Passport?</value>
   </data>
-  <data name="PassportIssued" xml:space="preserve">
-    <value>Terbit</value>
+  <data name="PassportLanguageAR" xml:space="preserve">
+    <value>Arab</value>
+  </data>
+  <data name="PassportLanguageAZ" xml:space="preserve">
+    <value>Azerbaijani</value>
+  </data>
+  <data name="PassportLanguageBG" xml:space="preserve">
+    <value>Bulgaria</value>
+  </data>
+  <data name="PassportLanguageBN" xml:space="preserve">
+    <value>Bangla</value>
+  </data>
+  <data name="PassportLanguageCS" xml:space="preserve">
+    <value>Czech</value>
+  </data>
+  <data name="PassportLanguageDA" xml:space="preserve">
+    <value>Danish</value>
+  </data>
+  <data name="PassportLanguageDE" xml:space="preserve">
+    <value>Jerman</value>
+  </data>
+  <data name="PassportLanguageDV" xml:space="preserve">
+    <value>Divehi</value>
+  </data>
+  <data name="PassportLanguageDZ" xml:space="preserve">
+    <value>Dzongkha</value>
+  </data>
+  <data name="PassportLanguageEL" xml:space="preserve">
+    <value>Yunani</value>
+  </data>
+  <data name="PassportLanguageES" xml:space="preserve">
+    <value>Spanyol</value>
+  </data>
+  <data name="PassportLanguageET" xml:space="preserve">
+    <value>Estonian</value>
+  </data>
+  <data name="PassportLanguageFA" xml:space="preserve">
+    <value>Farsi</value>
+  </data>
+  <data name="PassportLanguageFR" xml:space="preserve">
+    <value>French</value>
+  </data>
+  <data name="PassportLanguageHE" xml:space="preserve">
+    <value>Hebrew</value>
+  </data>
+  <data name="PassportLanguageHR" xml:space="preserve">
+    <value>Croatian</value>
+  </data>
+  <data name="PassportLanguageHU" xml:space="preserve">
+    <value>Hungaria</value>
+  </data>
+  <data name="PassportLanguageHY" xml:space="preserve">
+    <value>Armenian</value>
+  </data>
+  <data name="PassportLanguageID" xml:space="preserve">
+    <value>Bahasa Indonesia</value>
+  </data>
+  <data name="PassportLanguageIS" xml:space="preserve">
+    <value>Islandia</value>
+  </data>
+  <data name="PassportLanguageIT" xml:space="preserve">
+    <value>Italia</value>
+  </data>
+  <data name="PassportLanguageJA" xml:space="preserve">
+    <value>Jepang</value>
+  </data>
+  <data name="PassportLanguageKA" xml:space="preserve">
+    <value>Georgian</value>
+  </data>
+  <data name="PassportLanguageKM" xml:space="preserve">
+    <value>Khmer</value>
+  </data>
+  <data name="PassportLanguageKO" xml:space="preserve">
+    <value>Korea
+</value>
+  </data>
+  <data name="PassportLanguageLO" xml:space="preserve">
+    <value>Lao</value>
+  </data>
+  <data name="PassportLanguageLT" xml:space="preserve">
+    <value>Lithuania</value>
+  </data>
+  <data name="PassportLanguageLV" xml:space="preserve">
+    <value>Latvia</value>
+  </data>
+  <data name="PassportLanguageMK" xml:space="preserve">
+    <value>Macedonia</value>
+  </data>
+  <data name="PassportLanguageMN" xml:space="preserve">
+    <value>Mongolia</value>
+  </data>
+  <data name="PassportLanguageMS" xml:space="preserve">
+    <value>Melayu</value>
+  </data>
+  <data name="PassportLanguageMY" xml:space="preserve">
+    <value>Burma</value>
+  </data>
+  <data name="PassportLanguageNE" xml:space="preserve">
+    <value>Nepali</value>
+  </data>
+  <data name="PassportLanguageNL" xml:space="preserve">
+    <value>Belanda</value>
+  </data>
+  <data name="PassportLanguagePL" xml:space="preserve">
+    <value>Polish</value>
+  </data>
+  <data name="PassportLanguagePT" xml:space="preserve">
+    <value>Portugis</value>
+  </data>
+  <data name="PassportLanguageRO" xml:space="preserve">
+    <value>Romania</value>
+  </data>
+  <data name="PassportLanguageRU" xml:space="preserve">
+    <value>Russia</value>
+  </data>
+  <data name="PassportLanguageSK" xml:space="preserve">
+    <value>Slovak</value>
+  </data>
+  <data name="PassportLanguageSL" xml:space="preserve">
+    <value>Slovenian</value>
+  </data>
+  <data name="PassportLanguageTH" xml:space="preserve">
+    <value>Thai</value>
+  </data>
+  <data name="PassportLanguageTK" xml:space="preserve">
+    <value>Turkmen</value>
+  </data>
+  <data name="PassportLanguageTR" xml:space="preserve">
+    <value>Turkish</value>
+  </data>
+  <data name="PassportLanguageUK" xml:space="preserve">
+    <value>Ukrainian</value>
+  </data>
+  <data name="PassportLanguageUZ" xml:space="preserve">
+    <value>Uzbek</value>
+  </data>
+  <data name="PassportLanguageVI" xml:space="preserve">
+    <value>Vietnamese</value>
   </data>
   <data name="PassportMainPage" xml:space="preserve">
     <value>Halaman Utama</value>
@@ -4092,8 +4338,37 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
   <data name="PassportMale" xml:space="preserve">
     <value>Laki-laki</value>
   </data>
+  <data name="PassportMidname" xml:space="preserve">
+    <value>Nama Tengah</value>
+  </data>
+  <data name="PassportMidnameCountry" xml:space="preserve">
+    <value>Nama Tengah ({0})</value>
+  </data>
+  <data name="PassportMidnameLatin" xml:space="preserve">
+    <value>Nama Tengah (latin)</value>
+  </data>
   <data name="PassportName" xml:space="preserve">
     <value>Nama</value>
+  </data>
+  <data name="PassportNameCheckAlert" xml:space="preserve">
+    <value>Mohon cek jika nama ini sudah benar:
+
+{0} {1} {2}</value>
+  </data>
+  <data name="PassportNameCountry" xml:space="preserve">
+    <value>Nama ({0})</value>
+  </data>
+  <data name="PassportNameLatin" xml:space="preserve">
+    <value>Nama (latin)</value>
+  </data>
+  <data name="PassportNativeHeader" xml:space="preserve">
+    <value>Nama Anda </value>
+  </data>
+  <data name="PassportNativeHeaderLang" xml:space="preserve">
+    <value>Nama Anda dalam  {0}</value>
+  </data>
+  <data name="PassportNativeInfo" xml:space="preserve">
+    <value>Nama Anda dalam bahasa negara {0} yang menerbitkan dokumen.</value>
   </data>
   <data name="PassportNoDocuments" xml:space="preserve">
     <value>Anda belum memiliki dokumen. </value>
@@ -4176,6 +4451,21 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
   <data name="PassportReverseSideInfo" xml:space="preserve">
     <value>Unggah foto sisi belakang dokumen.</value>
   </data>
+  <data name="PassportSDKCancel" xml:space="preserve">
+    <value>Batal</value>
+  </data>
+  <data name="PassportSDKDownloadTelegram" xml:space="preserve">
+    <value>Anda memerlukan Telegram untuk masuk ke **{0}**. Apakah Anda ingin memasangnya sekarang?</value>
+  </data>
+  <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
+    <value>Masuk dengan Telegram</value>
+  </data>
+  <data name="PassportSDKOpenGooglePlay" xml:space="preserve">
+    <value>Buka Google Play</value>
+  </data>
+  <data name="PassportSDKTelegramPassport" xml:space="preserve">
+    <value>Telegram Passport</value>
+  </data>
   <data name="PassportScanPassport" xml:space="preserve">
     <value>Pindai Paspor Anda</value>
   </data>
@@ -4192,7 +4482,7 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
     <value>Pilih Jenis Kelamin</value>
   </data>
   <data name="PassportSelectNotExpire" xml:space="preserve">
-    <value>Masih berlaku</value>
+    <value>Seumur Hidup</value>
   </data>
   <data name="PassportSelfRequest" xml:space="preserve">
     <value>Silakan masukkan kata sandi Anda untuk mengakses data pribadi Anda.</value>
@@ -4215,6 +4505,18 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
   <data name="PassportSurname" xml:space="preserve">
     <value>Nama Belakang</value>
   </data>
+  <data name="PassportSurnameCountry" xml:space="preserve">
+    <value>Nama Belakang ({0})</value>
+  </data>
+  <data name="PassportSurnameLatin" xml:space="preserve">
+    <value>Nama Belakang (latin)</value>
+  </data>
+  <data name="PassportTranslation" xml:space="preserve">
+    <value>Terjemahan</value>
+  </data>
+  <data name="PassportTwoDocuments" xml:space="preserve">
+    <value>{0} atau {1}</value>
+  </data>
   <data name="PassportUploadAdditinalDocument" xml:space="preserve">
     <value>Unggah Pindaian Tambahan</value>
   </data>
@@ -4225,7 +4527,7 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
     <value>Anda tidak dapat mengunggah lebih dari {0}  dokumen.</value>
   </data>
   <data name="PassportUploadNotImage" xml:space="preserve">
-    <value>Anda dapat mengunggah berkas gambar saja.</value>
+    <value>Anda hanya dapat mengunggah gambar.</value>
   </data>
   <data name="PassportUseLatinOnly" xml:space="preserve">
     <value>Mohon hanya gunakan karakter latin. </value>
@@ -4336,7 +4638,7 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
     <value>E-mail Anda</value>
   </data>
   <data name="PaymentPasswordEmailInfo" xml:space="preserve">
-    <value>Silahkan tambahkan e-mail anda yang valid.Ini adalah satu-satunya cara untuk memulihkan kata sandi yang terlupakan.</value>
+    <value>Mohon masukkan alamat e-mail yang benar. Ini satu-satunya cara untuk memulihkan katasandi. </value>
   </data>
   <data name="PaymentPasswordEmailTitle" xml:space="preserve">
     <value>E-mail Pemulihan</value>
@@ -4469,6 +4771,9 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
   <data name="Phone" xml:space="preserve">
     <value>Telepon</value>
   </data>
+  <data name="PhoneCopied" xml:space="preserve">
+    <value>Ponsel disalin ke papan klip</value>
+  </data>
   <data name="PhoneHome" xml:space="preserve">
     <value>Home</value>
   </data>
@@ -4555,6 +4860,9 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Mohon masukkan kata sandi Anda yang baru</value>
   </data>
+  <data name="PleaseLoginPassport" xml:space="preserve">
+    <value>Mohon masuk ke akun Telegram Ansa agar dapat menggunakan Telegram Passport.</value>
+  </data>
   <data name="PleaseReEnterPassword" xml:space="preserve">
     <value>Mohon masukkan lagi kata sandi Anda</value>
   </data>
@@ -4594,6 +4902,9 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
   <data name="PriorityInfo" xml:space="preserve">
     <value>Notifikasi dengan prioritas tinggi tetap bekerja meskipun telepon Anda dalam mode Jangan Diganggu.</value>
   </data>
+  <data name="PrivacyAdvanced" xml:space="preserve">
+    <value>Lanjutan</value>
+  </data>
   <data name="PrivacyBots" xml:space="preserve">
     <value>Bot dan situs</value>
   </data>
@@ -4611,6 +4922,9 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
   </data>
   <data name="PrivacyClearShipping" xml:space="preserve">
     <value>Informasi pengiriman</value>
+  </data>
+  <data name="PrivacyDeleteCloudDrafts" xml:space="preserve">
+    <value>Hapus Semua Draf Awan</value>
   </data>
   <data name="PrivacyFloodControlError" xml:space="preserve">
     <value>Maaf, terlalu banyak permintaan. Tidak dapat mengubah pengaturan privasi sekarang, silakan tunggu.</value>
@@ -5247,14 +5561,29 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="ShareYouPhoneNumberTitle" xml:space="preserve">
     <value>Bagikan nomer telepon Anda?</value>
   </data>
+  <data name="SharedFilesTab" xml:space="preserve">
+    <value>BERKAS</value>
+  </data>
+  <data name="SharedLinksTab" xml:space="preserve">
+    <value>TAUTAN</value>
+  </data>
   <data name="SharedMedia" xml:space="preserve">
     <value>Media Bersama</value>
+  </data>
+  <data name="SharedMediaTab" xml:space="preserve">
+    <value>MEDIA</value>
   </data>
   <data name="SharedMediaTitle" xml:space="preserve">
     <value>Media Bersama</value>
   </data>
+  <data name="SharedMusicTab" xml:space="preserve">
+    <value>AUDIO</value>
+  </data>
   <data name="SharedPlace" xml:space="preserve">
     <value>Tempat</value>
+  </data>
+  <data name="SharedVoiceTab" xml:space="preserve">
+    <value>SUARA</value>
   </data>
   <data name="SharingLiveLocationTitle" xml:space="preserve">
     <value>Anda berbagi Live Location dengan {0}</value>
@@ -5469,6 +5798,9 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Tekan di sini untuk akses GIF tersimpan</value>
   </data>
+  <data name="TapToChangePhone" xml:space="preserve">
+    <value>Ketuk untuk ganti nomor ponsel</value>
+  </data>
   <data name="TelegramContactsZero" xml:space="preserve">
     <value/>
   </data>
@@ -5505,7 +5837,7 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
 Kata sandi ini juga akan diperlukan setiap kali Anda masuk ke Telegram pada perangkat baru.</value>
   </data>
   <data name="TelegramPassportDelete" xml:space="preserve">
-    <value>Hapus Paspor</value>
+    <value>Hapus Telegram Passport</value>
   </data>
   <data name="TelegramPassportDeleteAlert" xml:space="preserve">
     <value>Apakah Anda yakin ingin menghapus Paspor Telegram Anda?</value>
@@ -5595,6 +5927,10 @@ Anda setuju dengan *Syarat dan Ketentuan*. </value>
   <data name="TodayAtFormatted" xml:space="preserve">
     <value>pada  {0}</value>
   </data>
+  <data name="TooManyTries" xml:space="preserve">
+    <value>Terlalu banyak mencoba.
+Silakan coba lagi dalam  {0}.</value>
+  </data>
   <data name="TosAgeText" xml:space="preserve">
     <value>Tekan Setuju untuk mengonfirmasikan bahwa Anda {0} atau lebih</value>
   </data>
@@ -5625,7 +5961,7 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
     <value>Matikan Sandi</value>
   </data>
   <data name="TurnPasswordOffPassport" xml:space="preserve">
-    <value>PERINGATAN! Semua data yang disimpan di Paspor Telegram Anda akan hilang!</value>
+    <value>PERINGATAN! Semua data yang disimpan di Telegram Passport Anda akan hilang!</value>
   </data>
   <data name="TurnPasswordOffQuestion" xml:space="preserve">
     <value>Anda yakin ingin menonaktifkan sandi Anda?</value>
@@ -5690,6 +6026,9 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
   <data name="UnsupportedMedia" xml:space="preserve">
     <value>Pesan ini tidak didukung oleh Telegram versi Anda. Perbarui aplikasi untuk melihatnya: https://telegram.org/update</value>
   </data>
+  <data name="Update" xml:space="preserve">
+    <value>PERBARUI</value>
+  </data>
   <data name="UpdateApp" xml:space="preserve">
     <value>Perbarui apl</value>
   </data>
@@ -5701,6 +6040,12 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
   </data>
   <data name="UpdateContactsTitle" xml:space="preserve">
     <value>Perbarui kontak?</value>
+  </data>
+  <data name="UpdateNow" xml:space="preserve">
+    <value>SEKARANG</value>
+  </data>
+  <data name="UpdateTelegram" xml:space="preserve">
+    <value>Perbarui Telegram</value>
   </data>
   <data name="UpdatedMinutesZero" xml:space="preserve">
     <value/>

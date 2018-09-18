@@ -523,6 +523,9 @@
   <data name="AreYouSureBlockContact" xml:space="preserve">
     <value>Weet je zeker dat je deze persoon wilt blokkeren?</value>
   </data>
+  <data name="AreYouSureClearDrafts" xml:space="preserve">
+    <value>Echt alle Cloud-conceptberichten wissen?</value>
+  </data>
   <data name="AreYouSureClearHistory" xml:space="preserve">
     <value>Geschiedenis echt wissen? </value>
   </data>
@@ -704,7 +707,7 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general-questions">veel
     <value>Drempelwaarde omgevingslicht</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Schakel om naar je nachtthema als het omgevingslicht minder dan  {0}%% is.</value>
+    <value>Schakel om naar je nachtthema als het omgevingslicht minder dan  {0}% is.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Uitgeschakeld</value>
@@ -869,7 +872,7 @@ Zonsopkomst: {1}</value>
     <value>Terugbellen</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>Als deze emoji's gelijk zijn bij {0} is dit gesprek 100%% veilig.</value>
+    <value>Als deze emoji's gelijk zijn bij {0} is dit gesprek 100% veilig.</value>
   </data>
   <data name="CallMessageIncoming" xml:space="preserve">
     <value>Inkomende oproep</value>
@@ -1134,7 +1137,7 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
     <value>GELUID UIT</value>
   </data>
   <data name="ChannelNotifyMembersInfoOff" xml:space="preserve">
-    <value>Geen berichtgeving voor leden</value>
+    <value>Stille berichtgeving voor leden</value>
   </data>
   <data name="ChannelNotifyMembersInfoOn" xml:space="preserve">
     <value>Berichtgeving voor leden</value>
@@ -1303,6 +1306,9 @@ Wil je dit niet dan kun je een privé-kanaal aanmaken.</value>
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>Kies uit je stickers</value>
   </data>
+  <data name="ChooseMapPreviewProvider" xml:space="preserve">
+    <value>Kies kaartvoorvertoning</value>
+  </data>
   <data name="ChooseStickerSet" xml:space="preserve">
     <value>KIES STICKERBUNDEL</value>
   </data>
@@ -1430,6 +1436,9 @@ Zodra {1} Telegram updatet werken foto's met timers voor 1 minuut of minder in d
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
     <value>Tik om proxy uit te schakelen</value>
+  </data>
+  <data name="ContactBirthday" xml:space="preserve">
+    <value>Verjaardag</value>
   </data>
   <data name="ContactJob" xml:space="preserve">
     <value>Baan</value>
@@ -1619,7 +1628,7 @@ Wil je extra functies en een hogere limiet? Waardeer op naar een supergroep:
     <value/>
   </data>
   <data name="DaysBoldOther" xml:space="preserve">
-    <value>**{0}** dag</value>
+    <value>**{0}** dagen</value>
   </data>
   <data name="Deactivate" xml:space="preserve">
     <value>NU VERWIJDEREN</value>
@@ -1680,6 +1689,9 @@ Wil je extra functies en een hogere limiet? Waardeer op naar een supergroep:
   </data>
   <data name="DeleteAccountIfAwayFor" xml:space="preserve">
     <value>Indien afwezig voor</value>
+  </data>
+  <data name="DeleteAccountIfAwayFor2" xml:space="preserve">
+    <value>Verwijder mijn account indien afwezig voor</value>
   </data>
   <data name="DeleteAccountTitle" xml:space="preserve">
     <value>Account verwijderen</value>
@@ -1870,6 +1882,9 @@ Wil je extra functies en een hogere limiet? Waardeer op naar een supergroep:
   <data name="EditedMessage" xml:space="preserve">
     <value>gewijzigd</value>
   </data>
+  <data name="EmailCopied" xml:space="preserve">
+    <value>E-mail gekopieerd naar klembord</value>
+  </data>
   <data name="EmailPasswordConfirmText" xml:space="preserve">
     <value>Volg deze stappen om twee-staps-verificatie in te schakelen:
 
@@ -1889,6 +1904,9 @@ Wil je extra functies en een hogere limiet? Waardeer op naar een supergroep:
   </data>
   <data name="EmpryUsersPlaceholder" xml:space="preserve">
     <value>Toevoegen</value>
+  </data>
+  <data name="EmptyExceptions" xml:space="preserve">
+    <value>Geen</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>Sommige video's kunnen niet worden gestreamd, bijvoorbeeld video's verstuurd vanaf Android met Telegram versie 4.7 en ouder.</value>
@@ -2949,6 +2967,9 @@ Alle media zal in de Telegram-cloud bewaard blijven en kan opnieuw worden gedown
   <data name="Lately" xml:space="preserve">
     <value>recent gezien</value>
   </data>
+  <data name="Later" xml:space="preserve">
+    <value>LATER</value>
+  </data>
   <data name="LeaveChannel" xml:space="preserve">
     <value>Kanaal verlaten</value>
   </data>
@@ -3094,6 +3115,21 @@ Dit kan enkele minuten duren.</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Kaart</value>
+  </data>
+  <data name="MapPreviewProvider" xml:space="preserve">
+    <value>Kaartvoorvertoning</value>
+  </data>
+  <data name="MapPreviewProviderGoogle" xml:space="preserve">
+    <value>Google</value>
+  </data>
+  <data name="MapPreviewProviderNobody" xml:space="preserve">
+    <value>Geen</value>
+  </data>
+  <data name="MapPreviewProviderTelegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="MapPreviewProviderYandex" xml:space="preserve">
+    <value>Yandex</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
     <value>Markeer als gelezen</value>
@@ -3281,6 +3317,9 @@ Dit kan enkele minuten duren.</value>
   <data name="MobileUsage" xml:space="preserve">
     <value>Mobiel datagebruik</value>
   </data>
+  <data name="Mono" xml:space="preserve">
+    <value>Mono</value>
+  </data>
   <data name="MonthsZero" xml:space="preserve">
     <value/>
   </data>
@@ -3405,6 +3444,11 @@ of druk op de menuknop voor meer opties.</value>
   <data name="NoContacts" xml:space="preserve">
     <value>Nog geen contacten</value>
   </data>
+  <data name="NoExceptions" xml:space="preserve">
+    <value>Hier vind je alle chats met niet-standaard berichtgevingsinstellingen.
+
+Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar ‘Berichtgeving’ te gaan.</value>
+  </data>
   <data name="NoGroupsInCommon" xml:space="preserve">
     <value>Nog geen gedeelde groepen</value>
   </data>
@@ -3479,6 +3523,12 @@ of druk op de menuknop voor meer opties.</value>
   </data>
   <data name="NoSharedLinksSecret" xml:space="preserve">
     <value>Gedeelde links can deze chat verschijnen hier</value>
+  </data>
+  <data name="NoSharedVoice" xml:space="preserve">
+    <value>Deel spraakberichten in deze chat en open ze vanaf al je apparaten.</value>
+  </data>
+  <data name="NoSharedVoiceSecret" xml:space="preserve">
+    <value>Spraakberichten in deze chat worden hier weergegeven.</value>
   </data>
   <data name="NoSound" xml:space="preserve">
     <value>Geen geluid</value>
@@ -3604,7 +3654,7 @@ of druk op de menuknop voor meer opties.</value>
     <value>{0} heeft zijn/haar profielfoto gewijzigd</value>
   </data>
   <data name="NotificationEditedGroupName" xml:space="preserve">
-    <value>{0} heeft de groepsnam van {1} gewijzigd</value>
+    <value>{0} heeft de groepsnaam van {1} gewijzigd</value>
   </data>
   <data name="NotificationEditedGroupPhoto" xml:space="preserve">
     <value>{0} heeft de groepsfoto voor {1} aangepast</value>
@@ -3776,8 +3826,17 @@ Het Telegram-team</value>
   <data name="NotificationsCustomize" xml:space="preserve">
     <value>Aanpassen</value>
   </data>
+  <data name="NotificationsDefaultOff" xml:space="preserve">
+    <value>Standaard (Uit)</value>
+  </data>
+  <data name="NotificationsDefaultOn" xml:space="preserve">
+    <value>Standaard (Aan)</value>
+  </data>
   <data name="NotificationsEnableCustom" xml:space="preserve">
     <value>Aangepaste meldingen inschakelen</value>
+  </data>
+  <data name="NotificationsExceptions" xml:space="preserve">
+    <value>Uitzonderingen</value>
   </data>
   <data name="NotificationsImportance" xml:space="preserve">
     <value>Prioriteit</value>
@@ -3790,6 +3849,9 @@ Het Telegram-team</value>
   </data>
   <data name="NotificationsLedInfo" xml:space="preserve">
     <value>Sommige apparaten hebben een LED-functie, om d.m.v. licht aan te geven dat er nieuwe berichten zijn.</value>
+  </data>
+  <data name="NotificationsMuted" xml:space="preserve">
+    <value>Stil</value>
   </data>
   <data name="NotificationsOff" xml:space="preserve">
     <value>Uit</value>
@@ -3841,6 +3903,9 @@ Het Telegram-team</value>
   </data>
   <data name="NotificationsTurnOn" xml:space="preserve">
     <value>Inschakelen</value>
+  </data>
+  <data name="NotificationsUnmuted" xml:space="preserve">
+    <value>Geluid aan</value>
   </data>
   <data name="NumberUnknown" xml:space="preserve">
     <value>Onbekend</value>
@@ -4004,14 +4069,26 @@ vanaf meerdere apparaten.</value>
   <data name="PassportAddCard" xml:space="preserve">
     <value>Identiteitskaart toevoegen</value>
   </data>
+  <data name="PassportAddDriverLicenceInfo" xml:space="preserve">
+    <value>Upload scans van een gecertificeerde Engelse vertaling van je rijbewijs.</value>
+  </data>
+  <data name="PassportAddIdentityCardInfo" xml:space="preserve">
+    <value>Upload scans van een gecertificeerde Engelse vertaling van je identiteitsbewijs.</value>
+  </data>
   <data name="PassportAddInternalPassport" xml:space="preserve">
     <value>Nationaal paspoort toevoegen</value>
+  </data>
+  <data name="PassportAddInternalPassportInfo" xml:space="preserve">
+    <value>Upload scans van een gecertificeerde Engelse vertaling van je nationale paspoort.</value>
   </data>
   <data name="PassportAddLicence" xml:space="preserve">
     <value>Rijbewijs toevoegen</value>
   </data>
   <data name="PassportAddPassport" xml:space="preserve">
     <value>Paspoort toevoegen</value>
+  </data>
+  <data name="PassportAddPassportInfo" xml:space="preserve">
+    <value>Upload scans van een gecertificeerde Engelse vertaling van je paspoort.</value>
   </data>
   <data name="PassportAddPassportRegistration" xml:space="preserve">
     <value>Paspoortregistratie</value>
@@ -4024,6 +4101,24 @@ vanaf meerdere apparaten.</value>
   </data>
   <data name="PassportAddTemporaryRegistrationInfo" xml:space="preserve">
     <value>Upload een scan van je tijdelijke identiteitsbewijs</value>
+  </data>
+  <data name="PassportAddTranslationAgreementInfo" xml:space="preserve">
+    <value>Upload scans van een gecertificeerde Engelse vertaling van je huurovereenkomst.</value>
+  </data>
+  <data name="PassportAddTranslationBankInfo" xml:space="preserve">
+    <value>Upload scans van een gecertificeerde Engelse vertaling van je bankafschrift.</value>
+  </data>
+  <data name="PassportAddTranslationBillInfo" xml:space="preserve">
+    <value>Upload scans van een gecertificeerde Engelse vertaling van je energierekening.</value>
+  </data>
+  <data name="PassportAddTranslationPassportRegistrationInfo" xml:space="preserve">
+    <value>Upload scans van een gecertificeerde Engelse vertaling van je paspoortregistratiepagina.</value>
+  </data>
+  <data name="PassportAddTranslationTemporaryRegistrationInfo" xml:space="preserve">
+    <value>Upload scans van een gecertificeerde Engelse vertaling van je tijdelijke identiteitsbewijs.</value>
+  </data>
+  <data name="PassportAddTranslationUploadInfo" xml:space="preserve">
+    <value>Upload scans van een gecertificeerde Engelse vertaling van het gekozen document.</value>
   </data>
   <data name="PassportAddress" xml:space="preserve">
     <value>Adres</value>
@@ -4048,6 +4143,9 @@ vanaf meerdere apparaten.</value>
   </data>
   <data name="PassportCity" xml:space="preserve">
     <value>Stad</value>
+  </data>
+  <data name="PassportCorrectErrors" xml:space="preserve">
+    <value>Tik om fouten te corrigeren.</value>
   </data>
   <data name="PassportCountry" xml:space="preserve">
     <value>Land</value>
@@ -4097,8 +4195,8 @@ vanaf meerdere apparaten.</value>
   <data name="PassportDiscardChanges" xml:space="preserve">
     <value>Alle informatie die je hebt ingegeven weggooien?</value>
   </data>
-  <data name="PassportDocumentDetails" xml:space="preserve">
-    <value>Details van document</value>
+  <data name="PassportDocument" xml:space="preserve">
+    <value>Documentdetails</value>
   </data>
   <data name="PassportDocumentNumber" xml:space="preserve">
     <value>Documentnummer</value>
@@ -4142,6 +4240,18 @@ vanaf meerdere apparaten.</value>
   <data name="PassportIdentityDocumentInfo" xml:space="preserve">
     <value>Upload een scan van je paspoort of ander identiteitsbewijs</value>
   </data>
+  <data name="PassportIdentityDriverLicence" xml:space="preserve">
+    <value>Upload een scan van je rijbewijs</value>
+  </data>
+  <data name="PassportIdentityID" xml:space="preserve">
+    <value>Upload een scan van je identiteitskaart</value>
+  </data>
+  <data name="PassportIdentityInternalPassport" xml:space="preserve">
+    <value>Upload een scan van je nationaal paspoort</value>
+  </data>
+  <data name="PassportIdentityPassport" xml:space="preserve">
+    <value>Upload een scan van je paspoort</value>
+  </data>
   <data name="PassportInfo" xml:space="preserve">
     <value>Met Telegram Passport kun je je makkelijk aanmelden voor websites en diensten die identiteitsverificatie vereisen.
 
@@ -4152,8 +4262,143 @@ Je kunt onze veelgestelde vragen bekijken voor meer informatie.</value>
   <data name="PassportInfoTitle" xml:space="preserve">
     <value>Wat is Telegram Passport?</value>
   </data>
-  <data name="PassportIssued" xml:space="preserve">
-    <value>Uitgiftedatum</value>
+  <data name="PassportLanguageAR" xml:space="preserve">
+    <value>Arabisch</value>
+  </data>
+  <data name="PassportLanguageAZ" xml:space="preserve">
+    <value>Azerbeidzjaans</value>
+  </data>
+  <data name="PassportLanguageBG" xml:space="preserve">
+    <value>Bulgaars</value>
+  </data>
+  <data name="PassportLanguageBN" xml:space="preserve">
+    <value>Bangla</value>
+  </data>
+  <data name="PassportLanguageCS" xml:space="preserve">
+    <value>Tsjechisch</value>
+  </data>
+  <data name="PassportLanguageDA" xml:space="preserve">
+    <value>Deens</value>
+  </data>
+  <data name="PassportLanguageDE" xml:space="preserve">
+    <value>Duits</value>
+  </data>
+  <data name="PassportLanguageDV" xml:space="preserve">
+    <value>Divehi</value>
+  </data>
+  <data name="PassportLanguageDZ" xml:space="preserve">
+    <value>Dzongkha</value>
+  </data>
+  <data name="PassportLanguageEL" xml:space="preserve">
+    <value>Grieks</value>
+  </data>
+  <data name="PassportLanguageES" xml:space="preserve">
+    <value>Spaans</value>
+  </data>
+  <data name="PassportLanguageET" xml:space="preserve">
+    <value>Estisch</value>
+  </data>
+  <data name="PassportLanguageFA" xml:space="preserve">
+    <value>Perzisch</value>
+  </data>
+  <data name="PassportLanguageFR" xml:space="preserve">
+    <value>Frans</value>
+  </data>
+  <data name="PassportLanguageHE" xml:space="preserve">
+    <value>Hebreeuws</value>
+  </data>
+  <data name="PassportLanguageHR" xml:space="preserve">
+    <value>Kroatisch</value>
+  </data>
+  <data name="PassportLanguageHU" xml:space="preserve">
+    <value>Hongaars</value>
+  </data>
+  <data name="PassportLanguageHY" xml:space="preserve">
+    <value>Armeens</value>
+  </data>
+  <data name="PassportLanguageID" xml:space="preserve">
+    <value>Indonesisch</value>
+  </data>
+  <data name="PassportLanguageIS" xml:space="preserve">
+    <value>Ijslands</value>
+  </data>
+  <data name="PassportLanguageIT" xml:space="preserve">
+    <value>Italiaans</value>
+  </data>
+  <data name="PassportLanguageJA" xml:space="preserve">
+    <value>Japans</value>
+  </data>
+  <data name="PassportLanguageKA" xml:space="preserve">
+    <value>Georgisch</value>
+  </data>
+  <data name="PassportLanguageKM" xml:space="preserve">
+    <value>Khmer</value>
+  </data>
+  <data name="PassportLanguageKO" xml:space="preserve">
+    <value>Koreaans</value>
+  </data>
+  <data name="PassportLanguageLO" xml:space="preserve">
+    <value>Laotiaans</value>
+  </data>
+  <data name="PassportLanguageLT" xml:space="preserve">
+    <value>Litouws</value>
+  </data>
+  <data name="PassportLanguageLV" xml:space="preserve">
+    <value>Lets</value>
+  </data>
+  <data name="PassportLanguageMK" xml:space="preserve">
+    <value>Macedonisch</value>
+  </data>
+  <data name="PassportLanguageMN" xml:space="preserve">
+    <value>Mongools</value>
+  </data>
+  <data name="PassportLanguageMS" xml:space="preserve">
+    <value>Maleis</value>
+  </data>
+  <data name="PassportLanguageMY" xml:space="preserve">
+    <value>Birmaans</value>
+  </data>
+  <data name="PassportLanguageNE" xml:space="preserve">
+    <value>Nepalees</value>
+  </data>
+  <data name="PassportLanguageNL" xml:space="preserve">
+    <value>Nederlands</value>
+  </data>
+  <data name="PassportLanguagePL" xml:space="preserve">
+    <value>Pools</value>
+  </data>
+  <data name="PassportLanguagePT" xml:space="preserve">
+    <value>Portugees</value>
+  </data>
+  <data name="PassportLanguageRO" xml:space="preserve">
+    <value>Roemeens</value>
+  </data>
+  <data name="PassportLanguageRU" xml:space="preserve">
+    <value>Russisch</value>
+  </data>
+  <data name="PassportLanguageSK" xml:space="preserve">
+    <value>Slowaaks</value>
+  </data>
+  <data name="PassportLanguageSL" xml:space="preserve">
+    <value>Sloveens</value>
+  </data>
+  <data name="PassportLanguageTH" xml:space="preserve">
+    <value>Thai</value>
+  </data>
+  <data name="PassportLanguageTK" xml:space="preserve">
+    <value>Turkmeens</value>
+  </data>
+  <data name="PassportLanguageTR" xml:space="preserve">
+    <value>Turks</value>
+  </data>
+  <data name="PassportLanguageUK" xml:space="preserve">
+    <value>Oekraïens</value>
+  </data>
+  <data name="PassportLanguageUZ" xml:space="preserve">
+    <value>Oesbeeks</value>
+  </data>
+  <data name="PassportLanguageVI" xml:space="preserve">
+    <value>Vietnamees</value>
   </data>
   <data name="PassportMainPage" xml:space="preserve">
     <value>Hoofdpagina</value>
@@ -4164,8 +4409,37 @@ Je kunt onze veelgestelde vragen bekijken voor meer informatie.</value>
   <data name="PassportMale" xml:space="preserve">
     <value>Man</value>
   </data>
+  <data name="PassportMidname" xml:space="preserve">
+    <value>Tweede naam</value>
+  </data>
+  <data name="PassportMidnameCountry" xml:space="preserve">
+    <value>Tweede naam ({0})</value>
+  </data>
+  <data name="PassportMidnameLatin" xml:space="preserve">
+    <value>Tweede naam (Latijns alfabet)</value>
+  </data>
   <data name="PassportName" xml:space="preserve">
     <value>Naam</value>
+  </data>
+  <data name="PassportNameCheckAlert" xml:space="preserve">
+    <value>Controleer of deze naam klopt:
+
+{0} {1} {2}</value>
+  </data>
+  <data name="PassportNameCountry" xml:space="preserve">
+    <value>Naam ({0})</value>
+  </data>
+  <data name="PassportNameLatin" xml:space="preserve">
+    <value>Naam (Latijns alfabet)</value>
+  </data>
+  <data name="PassportNativeHeader" xml:space="preserve">
+    <value>Je naam</value>
+  </data>
+  <data name="PassportNativeHeaderLang" xml:space="preserve">
+    <value>Je naam in het  {0}</value>
+  </data>
+  <data name="PassportNativeInfo" xml:space="preserve">
+    <value>Je naam in de taal van het land ({0}) van residentie.</value>
   </data>
   <data name="PassportNoDocuments" xml:space="preserve">
     <value>Nog geen documenten</value>
@@ -4226,7 +4500,7 @@ Je kunt onze veelgestelde vragen bekijken voor meer informatie.</value>
     <value>Opgegeven informatie</value>
   </data>
   <data name="PassportRequest" xml:space="preserve">
-    <value>{0} vraagt om toegang tot je persoonsgegevens om aan te melden de door hen aangeboden diensten</value>
+    <value>**{0} ** vraagt om toegang tot je persoonsgegevens om je aan te melden voor de door hen aangeboden diensten</value>
   </data>
   <data name="PassportRequestPasswordInfo" xml:space="preserve">
     <value>Voer je Telegram-wachtwoord in om je gegevens te ontsleutelen.</value>
@@ -4235,7 +4509,7 @@ Je kunt onze veelgestelde vragen bekijken voor meer informatie.</value>
     <value>Gevraagde informatie</value>
   </data>
   <data name="PassportRequiredDocuments" xml:space="preserve">
-    <value>Gevraagde documenten</value>
+    <value>Vereiste documenten</value>
   </data>
   <data name="PassportResidence" xml:space="preserve">
     <value>Land van residentie</value>
@@ -4248,6 +4522,21 @@ Je kunt onze veelgestelde vragen bekijken voor meer informatie.</value>
   </data>
   <data name="PassportReverseSideInfo" xml:space="preserve">
     <value>Upload een foto van de achterkant van het document</value>
+  </data>
+  <data name="PassportSDKCancel" xml:space="preserve">
+    <value>Annuleren</value>
+  </data>
+  <data name="PassportSDKDownloadTelegram" xml:space="preserve">
+    <value>Je hebt Telegram nodig om in te loggen op **{0}**. Telegram nu installeren?</value>
+  </data>
+  <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
+    <value>Inloggen met Telegram</value>
+  </data>
+  <data name="PassportSDKOpenGooglePlay" xml:space="preserve">
+    <value>Google Play openen</value>
+  </data>
+  <data name="PassportSDKTelegramPassport" xml:space="preserve">
+    <value>Telegram Passport</value>
   </data>
   <data name="PassportScanPassport" xml:space="preserve">
     <value>Scan je paspoort</value>
@@ -4288,6 +4577,18 @@ Je kunt onze veelgestelde vragen bekijken voor meer informatie.</value>
   <data name="PassportSurname" xml:space="preserve">
     <value>Achternaam</value>
   </data>
+  <data name="PassportSurnameCountry" xml:space="preserve">
+    <value>Achternaam ({0})</value>
+  </data>
+  <data name="PassportSurnameLatin" xml:space="preserve">
+    <value>Achternaam (Latijns alfabet)</value>
+  </data>
+  <data name="PassportTranslation" xml:space="preserve">
+    <value>Vertaling</value>
+  </data>
+  <data name="PassportTwoDocuments" xml:space="preserve">
+    <value>{0} of {1}</value>
+  </data>
   <data name="PassportUploadAdditinalDocument" xml:space="preserve">
     <value>Upload extra scans</value>
   </data>
@@ -4295,7 +4596,7 @@ Je kunt onze veelgestelde vragen bekijken voor meer informatie.</value>
     <value>Scans uploaden</value>
   </data>
   <data name="PassportUploadMaxReached" xml:space="preserve">
-    <value>Je kunt maximaal {0} bestanden uploaden.</value>
+    <value>Je kunt maximaal {0}  uploaden.</value>
   </data>
   <data name="PassportUploadNotImage" xml:space="preserve">
     <value>Je kunt alleen afbeeldingen uploaden</value>
@@ -4542,6 +4843,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   <data name="Phone" xml:space="preserve">
     <value>Telefoon</value>
   </data>
+  <data name="PhoneCopied" xml:space="preserve">
+    <value>Nummer gekopieerd naar klembord</value>
+  </data>
   <data name="PhoneHome" xml:space="preserve">
     <value>Thuis</value>
   </data>
@@ -4628,6 +4932,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Nieuw wachtwoord invoeren</value>
   </data>
+  <data name="PleaseLoginPassport" xml:space="preserve">
+    <value>Log in op Telegram om Telegram Passport te gebruiken.</value>
+  </data>
   <data name="PleaseReEnterPassword" xml:space="preserve">
     <value>Wachtwoord opnieuw invoeren</value>
   </data>
@@ -4667,6 +4974,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   <data name="PriorityInfo" xml:space="preserve">
     <value>Meldingen met hoge prioriteit werken ook als je telefoon op "Niet storen" staat.</value>
   </data>
+  <data name="PrivacyAdvanced" xml:space="preserve">
+    <value>Geavanceerd</value>
+  </data>
   <data name="PrivacyBots" xml:space="preserve">
     <value>Bots en websites</value>
   </data>
@@ -4684,6 +4994,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   </data>
   <data name="PrivacyClearShipping" xml:space="preserve">
     <value>Verzendinformatie</value>
+  </data>
+  <data name="PrivacyDeleteCloudDrafts" xml:space="preserve">
+    <value>Verwijder alle Cloud-conceptberichten</value>
   </data>
   <data name="PrivacyFloodControlError" xml:space="preserve">
     <value>Sorry, te veel verzoeken. Momenteel is het niet mogelijk om de privacyinstellingen te wijzigen, even geduld alsjeblieft.</value>
@@ -5320,14 +5633,29 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="ShareYouPhoneNumberTitle" xml:space="preserve">
     <value>Telefoonnummer delen?</value>
   </data>
+  <data name="SharedFilesTab" xml:space="preserve">
+    <value>BESTANDEN</value>
+  </data>
+  <data name="SharedLinksTab" xml:space="preserve">
+    <value>LINKS</value>
+  </data>
   <data name="SharedMedia" xml:space="preserve">
     <value>Gedeelde media</value>
+  </data>
+  <data name="SharedMediaTab" xml:space="preserve">
+    <value>MEDIA</value>
   </data>
   <data name="SharedMediaTitle" xml:space="preserve">
     <value>Gedeelde media</value>
   </data>
+  <data name="SharedMusicTab" xml:space="preserve">
+    <value>AUDIO</value>
+  </data>
   <data name="SharedPlace" xml:space="preserve">
     <value>Plek</value>
+  </data>
+  <data name="SharedVoiceTab" xml:space="preserve">
+    <value>SPRAAK</value>
   </data>
   <data name="SharingLiveLocationTitle" xml:space="preserve">
     <value>Je deelt je live-locatie met {0}</value>
@@ -5526,7 +5854,7 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
 als 'Contacten Synchroniseren' is ingeschakeld worden je contacten opnieuw gesynchroniseerd.</value>
   </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
-    <value>Inschakelen om contacten continu naar  je account te synchroniseren</value>
+    <value>Inschakelen om contacten continu naar je account te synchroniseren</value>
   </data>
   <data name="SyncContactsInfoOn" xml:space="preserve">
     <value>Contacten van dit apparaat worden aan je account toegevoegd.</value>
@@ -5542,6 +5870,9 @@ als 'Contacten Synchroniseren' is ingeschakeld worden je contacten opnieuw gesyn
   </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>Tik hier om opgeslagen GIF's te bekijken</value>
+  </data>
+  <data name="TapToChangePhone" xml:space="preserve">
+    <value>Tik om je nummer te wijzigen</value>
   </data>
   <data name="TelegramContactsZero" xml:space="preserve">
     <value/>
@@ -5579,7 +5910,7 @@ als 'Contacten Synchroniseren' is ingeschakeld worden je contacten opnieuw gesyn
 Dit wachtwoord heb je ook nodig wanneer je inlogt op Telegram vanaf een nieuw apparaat.</value>
   </data>
   <data name="TelegramPassportDelete" xml:space="preserve">
-    <value>Passport verwijderen</value>
+    <value>Telegram Passport verwijderen</value>
   </data>
   <data name="TelegramPassportDeleteAlert" xml:space="preserve">
     <value>Telegram Passport echt verwijderen?</value>
@@ -5668,6 +5999,10 @@ met onze *Gebruiksvoorwaarden*.</value>
   </data>
   <data name="TodayAtFormatted" xml:space="preserve">
     <value>om {0}</value>
+  </data>
+  <data name="TooManyTries" xml:space="preserve">
+    <value>Teveel pogingen.
+Probeer het opnieuw over {0}.</value>
   </data>
   <data name="TosAgeText" xml:space="preserve">
     <value>Tik om te bevestigen dat je {0} of ouder bent.</value>
@@ -5764,6 +6099,9 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   <data name="UnsupportedMedia" xml:space="preserve">
     <value>Dit bericht wordt niet ondersteund door jouw versie van Telegram. Werk Telegram bij om dit bericht te bekijken: https://telegram.org/update</value>
   </data>
+  <data name="Update" xml:space="preserve">
+    <value>BIJWERKEN</value>
+  </data>
   <data name="UpdateApp" xml:space="preserve">
     <value>App bijwerken</value>
   </data>
@@ -5775,6 +6113,12 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   </data>
   <data name="UpdateContactsTitle" xml:space="preserve">
     <value>Contacten bijwerken?</value>
+  </data>
+  <data name="UpdateNow" xml:space="preserve">
+    <value>NU BIJWERKEN</value>
+  </data>
+  <data name="UpdateTelegram" xml:space="preserve">
+    <value>Telegram bijwerken</value>
   </data>
   <data name="UpdatedMinutesZero" xml:space="preserve">
     <value/>
