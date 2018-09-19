@@ -422,7 +422,7 @@ namespace Unigram.Services
                 var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
                 var entities = Markdown.Parse(_protoService, ref messageText);
 
-                var replyToMsgId = 0;
+                var replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) >> 0 : 0;
                 var chat = default(Chat);
 
                 if (data.TryGetValue("from_id", out string from_id) && int.TryParse(from_id, out int fromId))
@@ -432,12 +432,10 @@ namespace Unigram.Services
                 else if (data.TryGetValue("channel_id", out string channel_id) && int.TryParse(channel_id, out int channelId))
                 {
                     chat = await _protoService.SendAsync(new CreateSupergroupChat(channelId, false)) as Chat;
-                    replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) : 0;
                 }
                 else if (data.TryGetValue("chat_id", out string chat_id) && int.TryParse(chat_id, out int chatId))
                 {
                     chat = await _protoService.SendAsync(new CreateBasicGroupChat(chatId, false)) as Chat;
-                    replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) : 0;
                 }
 
                 if (chat == null)
