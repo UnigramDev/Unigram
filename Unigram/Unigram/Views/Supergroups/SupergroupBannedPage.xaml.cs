@@ -82,6 +82,33 @@ namespace Unigram.Views.Supergroups
 
         private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var member = element.Tag as ChatMember;
+
+            CreateFlyoutItem(ref flyout, ViewModel.MemberUnbanCommand, member, Strings.Resources.Unban);
+
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                flyout.ShowAt(sender, point);
+            }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, ICommand command, object parameter, string text)
+        {
+            var flyoutItem = new MenuFlyoutItem();
+            flyoutItem.IsEnabled = command != null;
+            flyoutItem.Command = command;
+            flyoutItem.CommandParameter = parameter;
+            flyoutItem.Text = text;
+
+            flyout.Items.Add(flyoutItem);
         }
 
         #endregion
