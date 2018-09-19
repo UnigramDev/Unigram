@@ -127,6 +127,11 @@ namespace Unigram.Controls
             }
         }
 
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Search(Field.Text, Field.From);
+        }
+
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             OnBackRequested();
@@ -174,25 +179,21 @@ namespace Unigram.Controls
             if (!string.IsNullOrEmpty(Field.Text))
             {
                 Field.Text = string.Empty;
-                return true;
             }
             else if (Field.State == ChatSearchState.TextByMember)
             {
                 SetState(ChatSearchState.Members);
-                return true;
             }
             else if (Field.State == ChatSearchState.Members)
             {
                 SetState(ChatSearchState.Text);
-                return true;
             }
             else
             {
                 ViewModel.Dialog.Search = null;
-                return true;
             }
 
-            return false;
+            return true;
         }
     }
 }

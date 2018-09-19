@@ -26,7 +26,7 @@
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
             <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
-            <Setter Property="Padding" Value="{ThemeResource TextControlThemePadding}" />
+            <Setter Property="Padding" Value="48,3,6,5" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
@@ -179,7 +179,7 @@
                                             Content="{CustomResource SearchFrom}"
                                             Margin="{TemplateBinding BorderThickness}"
                                             VerticalAlignment="Center"
-                                            Padding="10,3,0,5"/>
+                                            Padding="48,3,0,5"/>
                             <ContentControl x:Name="MemberElement"
                                             Grid.Column="1"
                                             Visibility="Collapsed"
@@ -237,25 +237,24 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
-            <!--<controls:DialogSearchTextBox
-                 x:Name="CaptionInput"
-                 View="{x:Bind ViewModel}"
-                 From="{x:Bind ViewModel.From, Mode=OneWay}"
-                 Text="{x:Bind ViewModel.Query, Mode=OneWay}"
-                 IsFiltering="{x:Bind ViewModel.IsFiltering, Mode=TwoWay}"
-                 Autocomplete="{x:Bind ListAutocomplete}"
-                 SearchCommand="{x:Bind ViewModel.SearchCommand}"
-                 Style="{StaticResource InlinePlaceholderTextBoxStyle}"
-                 PlaceholderText="{CustomResource Search}"
-                 InputScope="Search"
-                 Margin="12,8,0,8"/>-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
             <controls:ChatSearchTextBox
                 x:Name="Field"
                 InputScope="Search"
                 SelectionChanged="OnSelectionChanged"
-                Style="{StaticResource Test}"/>
-
-            <Border BorderThickness="0,0,0,1" VerticalAlignment="Bottom" IsHitTestVisible="False" BorderBrush="{ThemeResource TelegramSeparatorBrush}" Grid.ColumnSpan="5"/>
+                Style="{StaticResource Test}"
+                Grid.ColumnSpan="2"/>
+            
+            <controls:GlyphButton
+                Glyph="&#xE11A;"
+                Click="Search_Click"
+                FontSize="18"
+                AllowFocusOnInteraction="False"
+                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
         </Grid>
 
         <ListView x:Name="ListAutocomplete"
