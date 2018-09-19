@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Views;
-using Unigram.Core.Models;
 using Unigram.Core.Rtf;
 using Unigram.Core.Rtf.Write;
 using Unigram.ViewModels;

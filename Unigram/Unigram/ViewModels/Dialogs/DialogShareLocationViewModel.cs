@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Utils;
 using Unigram.Core.Common;
-using Unigram.Core.Models;
 using Unigram.Core.Services;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Navigation;
@@ -24,7 +23,7 @@ namespace Unigram.ViewModels.Dialogs
         {
             _locationService = foursquareService;
 
-            Items = new MvxObservableCollection<Telegram.Td.Api.Venue>();
+            Items = new MvxObservableCollection<Venue>();
             OnNavigatedToAsync(null, NavigationMode.New, null);
         }
 
@@ -43,7 +42,7 @@ namespace Unigram.ViewModels.Dialogs
             Items.ReplaceWith(venues);
         }
 
-        public MvxObservableCollection<Telegram.Td.Api.Venue> Items { get; private set; }
+        public MvxObservableCollection<Venue> Items { get; private set; }
 
         private Geocoordinate _location;
         public Geocoordinate Location
@@ -69,11 +68,11 @@ namespace Unigram.ViewModels.Dialogs
             }
 
             var venues = await _locationService.GetVenuesAsync(0, location.Point.Position.Latitude, location.Point.Position.Longitude, query);
-            Search = new MvxObservableCollection<Telegram.Td.Api.Venue>(venues);
+            Search = new MvxObservableCollection<Venue>(venues);
         }
 
-        private MvxObservableCollection<Telegram.Td.Api.Venue> _search;
-        public MvxObservableCollection<Telegram.Td.Api.Venue> Search
+        private MvxObservableCollection<Venue> _search;
+        public MvxObservableCollection<Venue> Search
         {
             get
             {

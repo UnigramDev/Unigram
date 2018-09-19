@@ -8,7 +8,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Core.Models;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Devices.Geolocation;
 
