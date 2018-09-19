@@ -54,9 +54,13 @@ namespace Unigram.ViewModels
 
         public IProfileDelegate Delegate { get; set; }
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly IVoIPService _voipService;
+
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoIPService voipService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _voipService = voipService;
+
             SendMessageCommand = new RelayCommand(SendMessageExecute);
             MediaCommand = new RelayCommand(MediaExecute);
             CommonChatsCommand = new RelayCommand(CommonChatsExecute);
@@ -722,27 +726,57 @@ namespace Unigram.ViewModels
         public RelayCommand CallCommand { get; }
         private async void CallExecute()
         {
-            //if (_item == null || _full == null)
-            //{
-            //    return;
-            //}
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
 
-            //if (_full.IsPhoneCallsAvailable && !_item.IsSelf && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1))
-            //{
-            //    try
-            //    {
-            //        var coordinator = VoipCallCoordinator.GetDefault();
-            //        var result = await coordinator.ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask");
-            //        if (result == VoipPhoneCallResourceReservationStatus.Success)
-            //        {
-            //            await VoIPConnection.Current.SendRequestAsync("voip.startCall", _item);
-            //        }
-            //    }
-            //    catch
-            //    {
-            //        await TLMessageDialog.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
-            //    }
-            //}
+            var user = CacheService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            var call = _voipService.ActiveCall;
+            if (call != null)
+            {
+                var callUser = CacheService.GetUser(call.UserId);
+                if (callUser != null && callUser.Id != user.Id)
+                {
+                    var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+
+                    }
+                }
+                else
+                {
+                    _voipService.Show();
+                }
+
+                return;
+            }
+
+            var fullInfo = CacheService.GetUserFull(user.Id);
+            if (fullInfo != null && fullInfo.HasPrivateCalls)
+            {
+                await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.VoipFailed, Strings.Resources.OK);
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 65, 74)));
+            if (response is Error error)
+            {
+                if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.VoipPeerOutdated, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                }
+                else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                }
+            }
         }
 
         #endregion
