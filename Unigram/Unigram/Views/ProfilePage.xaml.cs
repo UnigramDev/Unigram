@@ -571,10 +571,10 @@ namespace Unigram.Views
                 return;
             }
 
-            CreateFlyoutItem(ref flyout, MemberPromote_Loaded, ViewModel.MemberPromoteCommand, status, member, Strings.Resources.SetAsAdmin);
 
             if (chat.Type is ChatTypeSupergroup)
             {
+                CreateFlyoutItem(ref flyout, MemberPromote_Loaded, ViewModel.MemberPromoteCommand, status, member, Strings.Resources.SetAsAdmin);
                 CreateFlyoutItem(ref flyout, MemberRestrict_Loaded, ViewModel.MemberRestrictCommand, status, member, Strings.Resources.KickFromSupergroup);
             }
 
