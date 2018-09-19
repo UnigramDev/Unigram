@@ -16,6 +16,8 @@ namespace Unigram.Converters
         {
             switch (member.Status)
             {
+                case ChatMemberStatusCreator creator:
+                    return Strings.Resources.ChannelCreator;
                 case ChatMemberStatusAdministrator administrator:
                     return string.Format(Strings.Resources.EditAdminPromotedBy, protoService.GetUser(member.InviterUserId).GetFullName());
                 case ChatMemberStatusRestricted restricted:
