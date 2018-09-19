@@ -479,7 +479,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                if (_message.Content is MessageVideo)
+                if (_message.Content is MessageVideo || _message.Content is MessageAnimation)
                 {
                     return true;
                 }
@@ -796,6 +796,8 @@ namespace Unigram.ViewModels
         public override object Constraint => _animation;
 
         public override string Caption => _caption;
+
+        public override bool IsVideo => true;
     }
 
     public interface IGalleryDelegate

@@ -13,8 +13,8 @@ namespace Unigram.ViewModels
     {
         private readonly bool _shouldGroup;
 
-        public InstantGalleryViewModel(IEventAggregator aggregator)
-            : base(null, aggregator)
+        public InstantGalleryViewModel(IProtoService protoService, IEventAggregator aggregator)
+            : base(protoService, aggregator)
         {
             Items = new MvxObservableCollection<GalleryItem>();
             Items.CollectionChanged += OnCollectionChanged;
