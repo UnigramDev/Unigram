@@ -99,7 +99,9 @@
     <PRIResource Include="Strings\nl\Resources.resw" />
     <PRIResource Include="Strings\es\Resources.resw" />
     <PRIResource Include="Strings\it\Resources.resw" />
-    <PRIResource Include="Strings\en\Resources.resw" />
+    <PRIResource Include="Strings\en\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NotificationTask.cs" />
@@ -167,6 +169,11 @@
     <SDKReference Include="Telegram.Td.UWP, Version=1.0">
       <Name>TDLib for Universal Windows Platform</Name>
     </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\zh-CN\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

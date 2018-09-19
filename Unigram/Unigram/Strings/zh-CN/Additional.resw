@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Chats" xml:space="preserve">
-    <value>Chats</value>
+    <value>对话</value>
   </data>
   <data name="CopyImage" xml:space="preserve">
-    <value>Copy image</value>
+    <value>复制图片</value>
   </data>
   <data name="DeletedMessage" xml:space="preserve">
-    <value>Deleted message</value>
+    <value>已删除消息</value>
   </data>
   <data name="News" xml:space="preserve">
-    <value>News</value>
+    <value>新闻</value>
   </data>
   <data name="OriginalMessage" xml:space="preserve">
-    <value>original</value>
+    <value>原消息</value>
     <comment>Original message date and time</comment>
   </data>
   <data name="SaveAs" xml:space="preserve">
-    <value>Save as...</value>
+    <value>另存为……</value>
   </data>
   <data name="Select" xml:space="preserve">
-    <value>Select</value>
+    <value>选择</value>
   </data>
 </root>
