@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Reflection;
 
 namespace Unigram.Views
 {
@@ -48,6 +49,16 @@ namespace Unigram.Views
             catch { }
 
             UseTestDC.IsOn = SettingsService.Current.UseTestDC;
+
+
+
+            var options = TLContainer.Current.Resolve<IOptionsService>();
+            var properties = typeof(IOptionsService).GetProperties();
+
+            foreach (var prop in properties)
+            {
+                Options.Items.Add($"{prop.Name}: {prop.GetValue(options)}");
+            }
         }
 
         private enum VerbosityLevel

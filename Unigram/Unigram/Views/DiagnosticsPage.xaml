@@ -65,6 +65,17 @@
                         Toggled="UseTestDC_Toggled"
                         Style="{StaticResource CheckButtonStyle}"/>
                 </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="Options" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ItemsControl x:Name="Options">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="Padding" Value="12,8"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ItemsControl>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

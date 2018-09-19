@@ -90,6 +90,7 @@ namespace Unigram
                 builder.RegisterType<SettingsService>().WithParameter("session", session).As<ISettingsService>().SingleInstance();
                 builder.RegisterType<NotificationsService>().As<INotificationsService>().SingleInstance().AutoActivate();
                 builder.RegisterType<GenerationService>().As<IGenerationService>().SingleInstance().AutoActivate();
+                builder.RegisterType<OptionsService>().As<IOptionsService>().SingleInstance().AutoActivate();
 
                 builder.RegisterType<VoIPService>().As<IVoIPService>().SingleInstance();
 

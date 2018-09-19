@@ -408,6 +408,7 @@
     <Compile Include="Services\LocaleService.cs" />
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\NotificationsService.cs" />
+    <Compile Include="Services\OptionsService.cs" />
     <Compile Include="Services\PasscodeService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\ProtoService.cs" />
