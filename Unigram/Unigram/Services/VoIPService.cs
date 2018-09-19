@@ -215,7 +215,7 @@ namespace Unigram.Services
             {
                 if (ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
                 {
-                    _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new PhoneCallPage(ProtoService, CacheService, Aggregator, _call, _controller), 0);
+                    _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new PhoneCallPage(ProtoService, CacheService, Aggregator, _call, _controller), call.Id);
                     _callLifetime.Released += (s, args) =>
                     {
                         _callPage.Dispose();
@@ -234,7 +234,7 @@ namespace Unigram.Services
                 }
             }
 
-            _callPage.BeginOnUIThread(() =>
+            await _callPage.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 if (controller != null)
                 {
@@ -245,11 +245,11 @@ namespace Unigram.Services
             });
         }
 
-        private void Hide()
+        private async void Hide()
         {
             if (_callPage != null)
             {
-                _callPage.BeginOnUIThread(() =>
+                await _callPage.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
                     if (_callDialog != null)
                     {
