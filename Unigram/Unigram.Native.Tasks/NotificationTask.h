@@ -38,6 +38,7 @@ namespace Unigram
 				String^ GetGroup(JsonObject^ custom);
 				String^ GetPicture(JsonObject^ custom, String^ group);
 				String^ GetDate(JsonObject^ notification);
+				String^ GetSession(JsonObject^ data);
 				static String^ NotificationTask::CreateTileMessageBody(String^ message);
 				static String^ NotificationTask::CreateTileMessageBodyWithCaption(String^ caption, String^ message);
 

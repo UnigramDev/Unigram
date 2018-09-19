@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4" xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2" IgnorableNamespaces="uap uap3 uap4 uap5 mp rescap desktop desktop4 iot2">
-  <Identity Name="38833FF26BA1D.UnigramPreview" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="2.0.1684.0" />
+  <Identity Name="38833FF26BA1D.UnigramPreview" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="2.0.1688.0" />
   <mp:PhoneIdentity PhoneProductId="bf16cc61-265a-4c8a-9ead-f4f77e6a0a97" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Unigram - A Telegram universal experience</DisplayName>
@@ -45,16 +45,11 @@
             <uap5:ExecutionAlias Alias="Unigram.exe" />
           </uap5:AppExecutionAlias>
         </uap5:Extension>
-        <!--<desktop:Extension Category="windows.fullTrustProcess" Executable="Unigram.DesktopService.exe" />-->
+        <!--<desktop:Extension Category="windows.fullTrustProcess" Executable="Unigram.DesktopService.exe" />
         <uap:Extension Category="windows.appService" EntryPoint="Unigram.Tasks.VoIPServiceTask">
           <uap:AppService Name="VoIPServiceTask" ServerName="BackgroundHost" />
-        </uap:Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
-          <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="pushNotification" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.VoIPCallTask">
+        </uap:Extension>-->
+        <!--<Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.VoIPCallTask">
           <BackgroundTasks ServerName="BackgroundHost">
             <Task Type="systemEvent" />
           </BackgroundTasks>
@@ -62,6 +57,11 @@
         <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
           <BackgroundTasks ServerName="BackgroundHost">
             <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>-->
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
+          <BackgroundTasks>
+            <Task Type="pushNotification" />
           </BackgroundTasks>
         </Extension>
         <uap:Extension Category="windows.protocol">
@@ -111,13 +111,13 @@
         <ActivatableClass ActivatableClassId="Unigram.Native.OpusByteStreamHandler" ThreadingModel="both" />
       </InProcessServer>
     </Extension>
-    <Extension Category="windows.activatableClass.outOfProcessServer">
+    <!--<Extension Category="windows.activatableClass.outOfProcessServer">
       <OutOfProcessServer ServerName="BackgroundHost">
         <Path>UnigramHost.exe</Path>
         <Instancing>singleInstance</Instancing>
         <ActivatableClass ActivatableClassId="UnigramHost.Server" />
       </OutOfProcessServer>
-    </Extension>
+    </Extension>-->
   </Extensions>
   <Capabilities>
     <Capability Name="internetClient" />

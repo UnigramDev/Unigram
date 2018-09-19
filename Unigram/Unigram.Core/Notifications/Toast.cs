@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,9 +35,9 @@ namespace Unigram.Core.Notifications
                 return;
             }
 
-            // TODO: remove the "new" when releasing to the store
             BackgroundTaskManager.Register("NewNotificationTask", "Unigram.Native.Tasks.NotificationTask", new PushNotificationTrigger());
-            BackgroundTaskManager.Register("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
+            BackgroundTaskManager.Register("NewInteractiveTask", null, new ToastNotificationActionTrigger());
+            //BackgroundTaskManager.Register("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
         }
 
         public static int? GetSession(IActivatedEventArgs args)
@@ -53,6 +54,9 @@ namespace Unigram.Core.Notifications
                     {
                         arguments = launch.TileActivatedInfo.RecentlyShownNotifications[0].Arguments;
                     }
+                    break;
+                case ProtocolActivatedEventArgs protocol:
+                    var uri = protocol.Uri.ToString();
                     break;
             }
 
@@ -110,6 +114,20 @@ namespace Unigram.Core.Notifications
             }
 
             return null;
+        }
+
+        public static Dictionary<string, string> GetData(ToastNotificationActionTriggerDetail triggerDetail)
+        {
+            var dictionary = SplitArguments(triggerDetail.Argument);
+            if (triggerDetail.UserInput != null && triggerDetail.UserInput.Count > 0)
+            {
+                foreach (var input in triggerDetail.UserInput)
+                {
+                    dictionary[input.Key] = input.Value.ToString();
+                }
+            }
+
+            return dictionary;
         }
 
         public static Dictionary<string, string> SplitArguments(string arguments)

@@ -145,6 +145,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 		auto group = GetGroup(custom);
 		auto picture = GetPicture(custom, group);
 		auto date = GetDate(notification);
+		auto session = GetSession(data);
 
 		if (message == nullptr)
 		{
@@ -158,13 +159,13 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST"))
 		{
-			UpdateToast(caption, message, L"", L"0", sound, launch, L"phoneCall", group, picture, date, loc_key);
+			UpdateToast(caption, message, session, session, sound, launch, L"phoneCall", group, picture, date, loc_key);
 			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
 		{
 			auto tag = GetTag(custom);
-			UpdateToast(caption, message, L"", L"0", sound, launch, tag, group, picture, date, loc_key);
+			UpdateToast(caption, message, session, session, sound, launch, tag, group, picture, date, loc_key);
 			UpdatePrimaryBadge(data->GetNamedNumber("badge"));
 
 			if (loc_key != L"DC_UPDATE")
@@ -358,6 +359,19 @@ String^ NotificationTask::GetDate(JsonObject^ notification)
 	localtime_s(&dt, &rawtime);
 	wcsftime(buffer, sizeof(buffer), L"%FT%T%zZ", &dt);
 	return ref new String(buffer);
+}
+
+String^ NotificationTask::GetSession(JsonObject^ data)
+{
+	auto user_id = (int)data->GetNamedNumber(L"user_id", 0);
+	auto key = String::Concat(L"User", user_id);
+
+	if (ApplicationData::Current->LocalSettings->Values->HasKey(key))
+	{
+		return ApplicationData::Current->LocalSettings->Values->Lookup(key)->ToString();
+	}
+
+	return nullptr;
 }
 
 void NotificationTask::UpdatePrimaryBadge(int badgeNumber)
@@ -626,7 +640,7 @@ void NotificationTask::UpdatePrimaryTile(String^ session, String^ caption, Strin
 
 void NotificationTask::UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
 {
-	bool allow = false;
+	bool allow = true;
 	//auto settings = ApplicationData::Current->LocalSettings;
 	//if (settings->Values->HasKey("SessionGuid"))
 	//{

@@ -29,7 +29,12 @@ namespace Unigram.Core.Managers
 
                 var builder = new BackgroundTaskBuilder();
                 builder.Name = name;
-                builder.TaskEntryPoint = entryPoint;
+
+                if (entryPoint != null)
+                {
+                    builder.TaskEntryPoint = entryPoint;
+                }
+
                 builder.SetTrigger(trigger);
 
                 var registration = builder.Register();

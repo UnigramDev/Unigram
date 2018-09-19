@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Common;
@@ -13,9 +12,7 @@ using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Native.Tasks;
-using Unigram.Services;
 using Unigram.Views;
-using Windows.ApplicationModel;
 using Windows.Data.Json;
 using Windows.Networking.PushNotifications;
 using Windows.System.Threading;
@@ -29,9 +26,17 @@ namespace Unigram.Services
         Task RegisterAsync();
         Task UnregisterAsync();
         Task CloseAsync();
+
+        Task ProcessAsync(Dictionary<string, string> data);
     }
 
-    public class NotificationsService : INotificationsService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateNewMessage>, IHandle<UpdateChatReadInbox>, IHandle<UpdateServiceNotification>, IHandle<UpdateTermsOfService>
+    public class NotificationsService : INotificationsService,
+        IHandle<UpdateUnreadMessageCount>,
+        IHandle<UpdateNewMessage>,
+        IHandle<UpdateChatReadInbox>,
+        IHandle<UpdateServiceNotification>,
+        IHandle<UpdateTermsOfService>,
+        IHandle<UpdateAuthorizationState>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -234,7 +239,7 @@ namespace Unigram.Services
 
         private string GetTag(Message message)
         {
-            return (message.Id << 20).ToString();
+            return $"{message.Id >> 20}";
         }
 
         private string GetGroup(Chat chat)
@@ -384,7 +389,65 @@ namespace Unigram.Services
             }
         }
 
+        private TaskCompletionSource<AuthorizationState> _authorizationStateTask = new TaskCompletionSource<AuthorizationState>();
 
+        public void Handle(UpdateAuthorizationState update)
+        {
+            switch (update.AuthorizationState)
+            {
+                case AuthorizationStateWaitTdlibParameters waitTdlibParameters:
+                case AuthorizationStateWaitEncryptionKey waitEncryptionKey:
+                    break;
+                default:
+                    _authorizationStateTask.TrySetResult(update.AuthorizationState);
+                    break;
+            }
+        }
+
+        public async Task ProcessAsync(Dictionary<string, string> data)
+        {
+            var state = _protoService.GetAuthorizationState();
+            if (!(state is AuthorizationStateReady))
+            {
+                state = await _authorizationStateTask.Task;
+            }
+
+            if (!(state is AuthorizationStateReady))
+            {
+                return;
+            }
+
+            if (data.TryGetValue("QuickMessage", out string text))
+            {
+                var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+                var entities = Markdown.Parse(_protoService, ref messageText);
+
+                var replyToMsgId = 0;
+                var chat = default(Chat);
+
+                if (data.TryGetValue("from_id", out string from_id) && int.TryParse(from_id, out int fromId))
+                {
+                    chat = await _protoService.SendAsync(new CreatePrivateChat(fromId, false)) as Chat;
+                }
+                else if (data.TryGetValue("channel_id", out string channel_id) && int.TryParse(channel_id, out int channelId))
+                {
+                    chat = await _protoService.SendAsync(new CreateSupergroupChat(channelId, false)) as Chat;
+                    replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) : 0;
+                }
+                else if (data.TryGetValue("chat_id", out string chat_id) && int.TryParse(chat_id, out int chatId))
+                {
+                    chat = await _protoService.SendAsync(new CreateBasicGroupChat(chatId, false)) as Chat;
+                    replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) : 0;
+                }
+
+                if (chat == null)
+                {
+                    return;
+                }
+
+                var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, false, true, null, new InputMessageText(new FormattedText(messageText, entities), false, false)));
+            }
+        }
 
 
 

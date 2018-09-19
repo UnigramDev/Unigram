@@ -409,31 +409,29 @@ namespace Unigram
             }
         }
 
-        /////// <summary>
-        /////// Initializes the app service on the host process 
-        /////// </summary>
-        ////protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
-        ////{
-        ////    base.OnBackgroundActivated(args);
+        protected override async void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+        {
+            base.OnBackgroundActivated(args);
 
-        ////    if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails)
-        ////    {
-        ////        appServiceDeferral = args.TaskInstance.GetDeferral();
-        ////        AppServiceTriggerDetails details = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
-        ////        Connection = details.AppServiceConnection;
-        ////    }
-        ////    else if (args.TaskInstance.TriggerDetails is RawNotification)
-        ////    {
-        ////        var task = new NotificationTask();
-        ////        task.Run(args.TaskInstance);
-        ////    }
-        ////    else if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail)
-        ////    {
-        ////        // TODO: upgrade the task to take advanges from in-process execution.
-        ////        var task = new InteractiveTask();
-        ////        task.Run(args.TaskInstance);
-        ////    }
-        ////}
+            if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail triggerDetail)
+            {
+                var data = Toast.GetData(triggerDetail);
+                if (data == null)
+                {
+                    return;
+                }
+
+                var session = TLContainer.Current.Lifetime.ActiveItem.Id;
+                if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
+                {
+                    session = result;
+                }
+
+                var deferral = args.TaskInstance.GetDeferral();
+                await TLContainer.Current.Resolve<INotificationsService>(session).ProcessAsync(data);
+                deferral.Complete();
+            }
+        }
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
@@ -523,7 +521,7 @@ namespace Unigram
 
             var sessionId = TLContainer.Current.Lifetime.ActiveItem.Id;
 
-            if (e is ContactPanelActivatedEventArgs)
+            if (e is ContactPanelActivatedEventArgs /*|| (e is ProtocolActivatedEventArgs protocol && protocol.Uri.PathAndQuery.Contains("domain=telegrampassport", StringComparison.OrdinalIgnoreCase))*/)
             {
                 var navigationFrame = new Frame();
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
