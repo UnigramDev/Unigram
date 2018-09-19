@@ -22,6 +22,7 @@ using Unigram.Services.Updates;
 using Unigram.ViewModels;
 using Unigram.Views.Channels;
 using Unigram.Views.Chats;
+using Unigram.Views.Passport;
 using Unigram.Views.SecretChats;
 using Unigram.Views.Settings;
 using Unigram.Views.Users;
@@ -623,6 +624,8 @@ namespace Unigram.Views
                 string username = null;
                 string group = null;
                 string sticker = null;
+                string[] instantView = null;
+                Dictionary<string, object> auth = null;
                 string botUser = null;
                 string botChat = null;
                 string message = null;
@@ -641,10 +644,33 @@ namespace Unigram.Views
                 if (scheme.AbsoluteUri.StartsWith("tg:resolve") || scheme.AbsoluteUri.StartsWith("tg://resolve"))
                 {
                     username = query.GetParameter("domain");
-                    botUser = query.GetParameter("start");
-                    botChat = query.GetParameter("startgroup");
-                    game = query.GetParameter("game");
-                    post = query.GetParameter("post");
+
+                    if (string.Equals(username, "telegrampassport", StringComparison.OrdinalIgnoreCase))
+                    {
+                        username = null;
+                        auth = new Dictionary<string, object>();
+                        var scope = query.GetParameter("scope");
+                        if (!string.IsNullOrEmpty(scope) && scope.StartsWith("{") && scope.EndsWith("}"))
+                        {
+                            auth.Add("nonce", query.GetParameter("nonce"));
+                        }
+                        else
+                        {
+                            auth.Add("payload", query.GetParameter("payload"));
+                        }
+
+                        auth.Add("bot_id", int.Parse(query.GetParameter("bot_id")));
+                        auth.Add("scope", scope);
+                        auth.Add("public_key", query.GetParameter("public_key"));
+                        auth.Add("callback_url", query.GetParameter("callback_url"));
+                    }
+                    else
+                    {
+                        botUser = query.GetParameter("start");
+                        botChat = query.GetParameter("startgroup");
+                        game = query.GetParameter("game");
+                        post = query.GetParameter("post");
+                    }
                 }
                 else if (scheme.AbsoluteUri.StartsWith("tg:join") || scheme.AbsoluteUri.StartsWith("tg://join"))
                 {
@@ -684,6 +710,25 @@ namespace Unigram.Views
                     phone = query.GetParameter("phone");
                     phoneHash = query.GetParameter("hash");
                 }
+                else if (scheme.AbsoluteUri.StartsWith("tg:passport") || scheme.AbsoluteUri.StartsWith("tg://passport") || scheme.AbsoluteUri.StartsWith("tg:secureid") || scheme.AbsoluteUri.StartsWith("tg://secureid"))
+                {
+                    //url = url.replace("tg:passport", "tg://telegram.org").replace("tg://passport", "tg://telegram.org").replace("tg:secureid", "tg://telegram.org");
+                    //data = Uri.parse(url);
+                    //auth = new HashMap<>();
+                    //String scope = data.getQueryParameter("scope");
+                    //if (!TextUtils.isEmpty(scope) && scope.startsWith("{") && scope.endsWith("}"))
+                    //{
+                    //    auth.put("nonce", data.getQueryParameter("nonce"));
+                    //}
+                    //else
+                    //{
+                    //    auth.put("payload", data.getQueryParameter("payload"));
+                    //}
+                    //auth.put("bot_id", data.getQueryParameter("bot_id"));
+                    //auth.put("scope", scope);
+                    //auth.put("public_key", data.getQueryParameter("public_key"));
+                    //auth.put("callback_url", data.getQueryParameter("callback_url"));
+                }
                 else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks") || scheme.AbsoluteUri.StartsWith("tg:proxy") || scheme.AbsoluteUri.StartsWith("tg://proxy"))
                 {
                     server = query.GetParameter("server");
@@ -721,6 +766,10 @@ namespace Unigram.Views
                 else if (message != null)
                 {
                     MessageHelper.NavigateToShare(message, hasUrl);
+                }
+                else if (auth != null)
+                {
+                    MasterDetail.NavigationService.Navigate(typeof(PassportPage), state: auth);
                 }
             }
         }

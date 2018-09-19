@@ -24,6 +24,7 @@ using Telegram.Td.Api;
 using Windows.Media.Capture;
 using Unigram.ViewModels.Delegates;
 using Windows.ApplicationModel;
+using Unigram.Views.Passport;
 
 namespace Unigram.Views
 {
@@ -147,6 +148,11 @@ namespace Unigram.Views
         private void Language_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
+        }
+
+        private void Passport_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(PassportPage));
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)

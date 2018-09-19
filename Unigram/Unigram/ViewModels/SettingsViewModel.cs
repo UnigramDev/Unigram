@@ -44,14 +44,15 @@ namespace Unigram.ViewModels
         private Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get { return _chat; }
+            set { Set(ref _chat, value); }
+        }
+
+        private bool _hasPassportData;
+        public bool HasPassportData
+        {
+            get { return _hasPassportData; }
+            set { Set(ref _hasPassportData, value); }
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -80,6 +81,12 @@ namespace Unigram.ViewModels
                         Delegate?.UpdateUserFullInfo(chat, item, cache, false, false);
                     }
                 }
+            }
+
+            var passport = await ProtoService.SendAsync(new GetPasswordState());
+            if (passport is PasswordState passwordState)
+            {
+                HasPassportData = passwordState.HasPassportData;
             }
         }
 

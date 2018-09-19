@@ -311,7 +311,7 @@ namespace Unigram.Common
                             }
                             else
                             {
-                                NavigateToUsername(protoService, navigation, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game);
+                                NavigateToUsername(protoService, navigation, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game, pageKind);
                             }
                         }
                     }
@@ -384,7 +384,7 @@ namespace Unigram.Common
             await StickerSetView.GetForCurrentView().ShowAsync(text);
         }
 
-        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string post, string game)
+        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string post, string game, PageKind kind = PageKind.Dialog)
         {
             if (username.StartsWith("@"))
             {
@@ -403,7 +403,14 @@ namespace Unigram.Common
                     var user = protoService.GetUser(privata.UserId);
                     if (user != null && user.Type is UserTypeBot)
                     {
-                        navigation.NavigateToChat(chat, accessToken: accessToken);
+                        if (kind == PageKind.Search)
+                        {
+                            await ShareView.GetForCurrentView().ShowAsync(user, accessToken);
+                        }
+                        else
+                        {
+                            navigation.NavigateToChat(chat, accessToken: accessToken);
+                        }
                     }
                     else
                     {

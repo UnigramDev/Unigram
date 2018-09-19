@@ -183,6 +183,14 @@
                          Click="Language_Click"
                          Style="{StaticResource GlyphButtonStyle}"/>-->
                 </StackPanel>
+
+                <StackPanel Visibility="{x:Bind ViewModel.HasPassportData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Margin="0,24,0,0">
+                    <controls:GlyphButton Content="{CustomResource TelegramPassport}"
+                                          Glyph="&#xE8C7;"
+                                          Click="Passport_Click"
+                                          Style="{StaticResource GlyphButtonStyle}"/>
+                </StackPanel>
                 
                 <StackPanel Margin="0,24,0,0">
                     <controls:GlyphButton Content="{CustomResource AskAQuestion}"
