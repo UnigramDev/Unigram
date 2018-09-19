@@ -246,8 +246,7 @@ namespace Unigram.Views
 
             CheckMessageBoxEmpty();
 
-            SearchToolBar.Update(ViewModel.Search);
-            SearchBar.Update(ViewModel.Search);
+            SearchMask.Update(ViewModel.Search);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
             ViewModel.Items.AttachChanged = OnAttachChanged;
@@ -333,8 +332,7 @@ namespace Unigram.Views
             }
             else if (e.PropertyName.Equals("Search"))
             {
-                SearchToolBar.Update(ViewModel.Search);
-                SearchBar.Update(ViewModel.Search);
+                SearchMask.Update(ViewModel.Search);
             }
         }
 
@@ -469,8 +467,7 @@ namespace Unigram.Views
         {
             if (ViewModel.Search != null)
             {
-                ViewModel.Search = null;
-                args.Handled = true;
+                args.Handled = SearchMask.OnBackRequested();
             }
 
             if (StickersPanel.Visibility == Visibility.Visible)

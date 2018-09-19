@@ -364,7 +364,7 @@ namespace Unigram.ViewModels
         public void OpenHashtag(string hashtag)
         {
             var search = Search = new DialogSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
-            search.SearchCommand.Execute(hashtag);
+            search.Search(hashtag, null);
         }
 
         public async void OpenUrl(string url, bool untrust)

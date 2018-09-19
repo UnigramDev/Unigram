@@ -476,10 +476,10 @@
             </Grid>
         </controls:ContentPageHeader>
 
-        <controls:DialogSearchToolBar
-            x:Name="SearchToolBar"
+        <controls:ChatSearchMask
+            x:Name="SearchMask"
             Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-            Grid.RowSpan="3"
+            Grid.RowSpan="4"
             Canvas.ZIndex="100000"/>
 
         <Border Visibility="{x:Bind StickersPanel.Visibility, Mode=OneWay}" IsHitTestVisible="False">
@@ -856,7 +856,6 @@
 
         <!-- Input pane -->
         <ContentControl x:Name="TextArea"
-                        Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
                         Grid.Row="3">
@@ -1106,10 +1105,5 @@
                 <TextBlock x:Name="ActionLabel" TextWrapping="Wrap" TextAlignment="Center"/>
             </Button.Content>
         </controls:BubbleBottomButton>
-
-        <controls:DialogSearchBar
-            x:Name="SearchBar"
-            Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-            Grid.Row="3"/>
     </Grid>
 </Page>

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Core.Common;
 using Unigram.Services;
 using Windows.Foundation;
@@ -25,10 +26,8 @@ namespace Unigram.ViewModels.Dialogs
             _dialog = viewModel;
             _loadMoreLock = new DisposableMutex();
 
-            FilterCommand = new RelayCommand(FilterExecute);
             NextCommand = new RelayCommand(NextExecute, NextCanExecute);
             PreviousCommand = new RelayCommand(PreviousExecute, PreviousCanExecute);
-            SearchCommand = new RelayCommand<string>(SearchExecute);
         }
 
         public DialogViewModel Dialog
@@ -36,19 +35,6 @@ namespace Unigram.ViewModels.Dialogs
             get
             {
                 return _dialog;
-            }
-        }
-
-        private bool _isFiltering;
-        public bool IsFiltering
-        {
-            get
-            {
-                return _isFiltering;
-            }
-            set
-            {
-                Set(ref _isFiltering, value);
             }
         }
 
@@ -183,21 +169,15 @@ namespace Unigram.ViewModels.Dialogs
 
         #endregion
 
-        public RelayCommand FilterCommand { get; }
-        private void FilterExecute()
+        public async void Search(string query, User from)
         {
-            IsFiltering = true;
-        }
-
-        public RelayCommand<string> SearchCommand { get; }
-        private async void SearchExecute(string query)
-        {
-            if (string.Equals(_query, query) && PreviousCanExecute())
+            if (string.Equals(_query, query) && _from?.Id == from?.Id && PreviousCanExecute())
             {
                 PreviousExecute();
             }
             else
             {
+                From = from;
                 Query = query;
 
                 var chat = _dialog.Chat;
@@ -209,12 +189,12 @@ namespace Unigram.ViewModels.Dialogs
                 Items = null;
                 SelectedItem = null;
 
-                if (string.IsNullOrEmpty(query))
+                if (string.IsNullOrEmpty(query) && from == null)
                 {
                     return;
                 }
 
-                var collection = new SearchChatMessagesCollection(ProtoService, chat.Id, query, 0, null);
+                var collection = new SearchChatMessagesCollection(ProtoService, chat.Id, query, from?.Id ?? 0, null);
                 var result = await collection.LoadMoreItemsAsync(100);
                 if (result.Count > 0)
                 {
