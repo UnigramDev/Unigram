@@ -32,7 +32,7 @@ using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views.Dialogs
 {
-    public sealed partial class DialogSharedMediaPage : Page, IMasterDetailPage, IFileDelegate
+    public sealed partial class DialogSharedMediaPage : Page, INavigablePage, IFileDelegate
     {
         public DialogSharedMediaViewModel ViewModel => DataContext as DialogSharedMediaViewModel;
 
