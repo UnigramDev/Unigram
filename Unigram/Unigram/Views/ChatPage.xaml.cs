@@ -377,12 +377,6 @@ namespace Unigram.Views
 
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
-            var panel = (ItemsStackPanel)Messages.ItemsPanelRoot;
-            if (panel != null)
-            {
-                _panel = panel;
-            }
-
             ViewVisibleMessages(false);
 
 

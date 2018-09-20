@@ -47,8 +47,6 @@ namespace Unigram.Views
 {
     public partial class ChatPage : Page
     {
-        private ItemsStackPanel _panel;
-
         private void OnViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (Messages.ScrollingHost.ScrollableHeight > 0)
@@ -84,15 +82,16 @@ namespace Unigram.Views
                 return;
             }
 
-            if (_panel == null || _panel.FirstVisibleIndex < 0)
+            var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null || panel.FirstVisibleIndex < 0)
             {
                 return;
             }
 
-            var messages = new List<long>(_panel.LastVisibleIndex - _panel.FirstVisibleIndex);
-            var animations = new List<MessageViewModel>(_panel.LastVisibleIndex - _panel.FirstVisibleIndex);
+            var messages = new List<long>(panel.LastVisibleIndex - panel.FirstVisibleIndex);
+            var animations = new List<MessageViewModel>(panel.LastVisibleIndex - panel.FirstVisibleIndex);
 
-            for (int i = _panel.FirstVisibleIndex; i <= _panel.LastVisibleIndex; i++)
+            for (int i = panel.FirstVisibleIndex; i <= panel.LastVisibleIndex; i++)
             {
                 var container = Messages.ContainerFromIndex(i) as SelectorItem;
                 if (container == null)
@@ -115,7 +114,7 @@ namespace Unigram.Views
                 animations.Add(message);
             }
 
-            if (messages.Count > 0 && _windowContext.ActivationState != CoreWindowActivationState.Deactivated)
+            if (messages.Count > 0 && Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
                 ViewModel.ProtoService.Send(new ViewMessages(chat.Id, messages, false));
             }
@@ -144,7 +143,8 @@ namespace Unigram.Views
 
         private void UpdateHeaderDate()
         {
-            if (_panel == null || _panel.FirstVisibleIndex < 0)
+            var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null || panel.FirstVisibleIndex < 0)
             {
                 return;
             }
@@ -152,7 +152,7 @@ namespace Unigram.Views
             var minItem = true;
             var minDate = true;
 
-            for (int i = _panel.FirstVisibleIndex; i <= _panel.LastVisibleIndex; i++)
+            for (int i = panel.FirstVisibleIndex; i <= panel.LastVisibleIndex; i++)
             {
                 var container = Messages.ContainerFromIndex(i) as SelectorItem;
                 if (container == null)
