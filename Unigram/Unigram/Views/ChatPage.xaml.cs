@@ -111,6 +111,7 @@ namespace Unigram.Views
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
+            StickersPanel.EmojiClick = Emojis_ItemClick;
             StickersPanel.StickerClick = Stickers_ItemClick;
             StickersPanel.AnimationClick = Animations_ItemClick;
 
@@ -523,8 +524,11 @@ namespace Unigram.Views
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnCommands.Visibility = Visibility.Visible;
                 btnMarkup.Visibility = Visibility.Visible;
-                btnStickers.Visibility = Visibility.Visible;
+                //btnStickers.Visibility = Visibility.Visible;
                 btnVoiceMessage.Visibility = Visibility.Visible;
+
+                ButtonStickers.Glyph = "\uE606";
+                ButtonStickers.FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
 
                 ViewModel.DisableWebPagePreview = false;
             }
@@ -533,8 +537,11 @@ namespace Unigram.Views
                 btnSendMessage.Visibility = Visibility.Visible;
                 btnCommands.Visibility = Visibility.Collapsed;
                 btnMarkup.Visibility = Visibility.Collapsed;
-                btnStickers.Visibility = Visibility.Collapsed;
+                //btnStickers.Visibility = Visibility.Collapsed;
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
+
+                ButtonStickers.Glyph = "\uE76E";
+                ButtonStickers.FontFamily = new FontFamily("Segoe MDL2 Assets");
             }
 
             if (ViewModel.DisableWebPagePreview)
@@ -1496,6 +1503,11 @@ namespace Unigram.Views
             {
                 Stickers_ItemClick(sticker);
             }
+        }
+
+        private void Emojis_ItemClick(string emoji)
+        {
+            TextField.InsertText(emoji, false, false);
         }
 
         public async void Stickers_ItemClick(Sticker sticker)

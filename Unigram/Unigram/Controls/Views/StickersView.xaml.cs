@@ -34,6 +34,7 @@ namespace Unigram.Controls.Views
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
+        public Action<string> EmojiClick { get; set; }
         public Action<Sticker> StickerClick { get; set; }
         public Action<Animation> AnimationClick { get; set; }
 
@@ -218,6 +219,29 @@ namespace Unigram.Controls.Views
             {
                 Focus(FocusState.Programmatic);
             }
+        }
+
+        private void Emojis_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is string emoji)
+            {
+                EmojiClick?.Invoke(emoji);
+            }
+        }
+
+        private void Emojis_Switch(object sender, EventArgs e)
+        {
+            Emojis.Visibility = Visibility.Collapsed;
+            RootPanel.Visibility = Visibility.Visible;
+        }
+
+        private void Emojis_Click(object sender, RoutedEventArgs e)
+        {
+            if (Emojis == null)
+                FindName(nameof(Emojis));
+
+            RootPanel.Visibility = Visibility.Collapsed;
+            Emojis.Visibility = Visibility.Visible;
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)

@@ -298,6 +298,9 @@
     <Compile Include="Controls\Views\EditYourAboutView.xaml.cs">
       <DependentUpon>EditYourAboutView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\EmojisView.xaml.cs">
+      <DependentUpon>EmojisView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\LiveLocationsView.xaml.cs">
       <DependentUpon>LiveLocationsView.xaml</DependentUpon>
     </Compile>
@@ -1625,6 +1628,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\EditYourAboutView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\EmojisView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

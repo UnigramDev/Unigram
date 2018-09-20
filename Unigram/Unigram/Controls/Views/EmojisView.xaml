@@ -1,0 +1,99 @@
+﻿<UserControl
+    x:Class="Unigram.Controls.Views.EmojisView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Views"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <CollectionViewSource x:Name="EmojisViewSource" IsSourceGrouped="True"/>
+    </UserControl.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Pivot x:Name="Pivot" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}">
+            <Pivot.ItemTemplate>
+                <DataTemplate>
+                    <UserControl Loaded="ListView_Loaded">
+                        <GridView x:Name="List"
+                                  x:DeferLoadStrategy="Lazy"
+                                  ItemClick="ListView_ItemClick"
+                                  IsItemClickEnabled="True"
+                                  SelectionMode="None">
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <TextBlock x:Phase="0" Text="{x:Bind}" FontSize="20"/>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                            <GridView.ItemContainerStyle>
+                                <Style TargetType="GridViewItem">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GridViewItem">
+                                                <ContentPresenter HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GridView.ItemContainerStyle>
+                        </GridView>
+                    </UserControl>
+                </DataTemplate>
+            </Pivot.ItemTemplate>
+        </Pivot>
+        <Grid x:Name="ToolbarContainer" Grid.Row="1">
+            <Border x:Name="Separator"/>
+            <ListView x:Name="Toolbar"
+                            Height="{ThemeResource TelegramToolBarSmallHeight}"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            IsItemClickEnabled="True"
+                            ItemClick="Toolbar_ItemClick"
+                            SelectionChanged="Toolbar_SelectionChanged"
+                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                            ScrollViewer.HorizontalScrollMode="Auto"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            ScrollViewer.VerticalScrollMode="Disabled"
+                            Grid.Row="0">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Width" Value="{ThemeResource TelegramToolBarSmallHeight}"/>
+                        <Setter Property="Height" Value="{ThemeResource TelegramToolBarSmallHeight}"/>
+                        <Setter Property="MinWidth" Value="0"/>
+                        <Setter Property="MinHeight" Value="0"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <TextBlock Text="{x:Bind}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.Footer>
+                    <StackPanel Orientation="Horizontal">
+                        <controls:GlyphButton Click="Switch_Click" Width="{ThemeResource TelegramToolBarSmallHeight}" Height="{ThemeResource TelegramToolBarSmallHeight}" FontFamily="{StaticResource TelegramThemeFontFamily}" Glyph="&#xE606;"/>
+                    </StackPanel>
+                </ListView.Footer>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection/>
+                </ListView.ItemContainerTransitions>
+            </ListView>
+        </Grid>
+    </Grid>
+</UserControl>
