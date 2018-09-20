@@ -27,7 +27,7 @@ using Windows.ApplicationModel.Core;
 
 namespace Unigram.Controls
 {
-    public class ContentDialogBase : ContentControl
+    public class ContentDialogBase : ContentControl, INavigablePage
     {
         private int _lastHide;
 
@@ -207,8 +207,6 @@ namespace Unigram.Controls
             //BackButtonVisibility = SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility;
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
-            BootStrapper.BackRequested += OnBackRequested;
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
             //Window.Current.SizeChanged += OnSizeChanged;
 
             OnVisibleBoundsChanged(_applicationView, null);
@@ -222,26 +220,12 @@ namespace Unigram.Controls
 
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
             _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
-            BootStrapper.BackRequested -= OnBackRequested;
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
-        private void OnBackRequested(object sender, HandledEventArgs e)
+        public void OnBackRequested(HandledEventArgs e)
         {
             //BootStrapper.BackRequested -= OnBackRequested;
-            OnBackRequestedOverride(sender, e);
-        }
-
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
-        {
-            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
-            {
-                WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
-
-                var e = new HandledEventArgs();
-                OnBackRequestedOverride(sender, e);
-                args.Handled = e.Handled;
-            }
+            OnBackRequestedOverride(this, e);
         }
 
         protected virtual void OnBackRequestedOverride(object sender, HandledEventArgs e)
@@ -276,8 +260,6 @@ namespace Unigram.Controls
 
         public void Hide(ContentDialogBaseResult result)
         {
-            BootStrapper.BackRequested -= OnBackRequested;
-
             if (_popupHost == null || !_popupHost.IsOpen)
             {
                 return;

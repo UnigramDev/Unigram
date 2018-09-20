@@ -42,7 +42,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatPage : Page, IMasterDetailPage, IDialogDelegate
+    public sealed partial class ChatPage : Page, INavigablePage, IDialogDelegate
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 

@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupRestrictedPage : Page, ISupergroupDelegate, IMasterDetailPage
+    public sealed partial class SupergroupRestrictedPage : Page, ISupergroupDelegate, INavigablePage
     {
         public SupergroupRestrictedViewModel ViewModel => DataContext as SupergroupRestrictedViewModel;
 

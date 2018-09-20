@@ -47,7 +47,7 @@ namespace Unigram.Views
 {
     public sealed partial class MainPage : Page,
         IRootContentPage,
-        IMasterDetailPage,
+        INavigablePage,
         IHandle<UpdateChatDraftMessage>,
         IHandle<UpdateChatLastMessage>,
         IHandle<UpdateChatIsPinned>,
