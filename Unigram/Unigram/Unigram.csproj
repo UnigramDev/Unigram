@@ -251,7 +251,6 @@
     <Compile Include="Controls\PaddedListView.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
-    <Compile Include="Controls\BottomSheet.cs" />
     <Compile Include="Controls\DialogBackground.xaml.cs">
       <DependentUpon>DialogBackground.xaml</DependentUpon>
     </Compile>

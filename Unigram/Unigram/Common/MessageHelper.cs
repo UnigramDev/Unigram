@@ -453,43 +453,45 @@ namespace Unigram.Common
                 {
                     var dialog = new JoinChatView(protoService, info);
 
-                    var confirm = await dialog.ShowAsync();
-                    if (confirm == ContentDialogBaseResult.OK)
+                    var confirm = await dialog.ShowQueuedAsync();
+                    if (confirm != ContentDialogResult.Primary)
                     {
-                        var import = await protoService.SendAsync(new JoinChatByInviteLink(link));
-                        if (import is Chat chat)
-                        {
-                            navigation.NavigateToChat(chat);
-                        }
-                        else if (import is Error error)
-                        {
-                            if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
-                            {
-                                Execute.ShowDebugMessage("messages.importChatInvite error " + error);
-                                return;
-                            }
-                            if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
-                            {
-                                //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
-                                return;
-                            }
-                            else if (error.TypeEquals(ErrorType.USERS_TOO_MUCH))
-                            {
-                                //MessageBox.Show(Strings.Additional.UsersTooMuch, Strings.Additional.Error, 0);
-                                return;
-                            }
-                            else if (error.TypeEquals(ErrorType.BOTS_TOO_MUCH))
-                            {
-                                //MessageBox.Show(Strings.Additional.BotsTooMuch, Strings.Additional.Error, 0);
-                                return;
-                            }
-                            else if (error.TypeEquals(ErrorType.USER_ALREADY_PARTICIPANT))
-                            {
-                                return;
-                            }
+                        return;
+                    }
 
+                    var import = await protoService.SendAsync(new JoinChatByInviteLink(link));
+                    if (import is Chat chat)
+                    {
+                        navigation.NavigateToChat(chat);
+                    }
+                    else if (import is Error error)
+                    {
+                        if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
+                        {
                             Execute.ShowDebugMessage("messages.importChatInvite error " + error);
+                            return;
                         }
+                        if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
+                        {
+                            //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
+                            return;
+                        }
+                        else if (error.TypeEquals(ErrorType.USERS_TOO_MUCH))
+                        {
+                            //MessageBox.Show(Strings.Additional.UsersTooMuch, Strings.Additional.Error, 0);
+                            return;
+                        }
+                        else if (error.TypeEquals(ErrorType.BOTS_TOO_MUCH))
+                        {
+                            //MessageBox.Show(Strings.Additional.BotsTooMuch, Strings.Additional.Error, 0);
+                            return;
+                        }
+                        else if (error.TypeEquals(ErrorType.USER_ALREADY_PARTICIPANT))
+                        {
+                            return;
+                        }
+
+                        Execute.ShowDebugMessage("messages.importChatInvite error " + error);
                     }
                 }
             }
