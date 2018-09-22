@@ -37,9 +37,10 @@ namespace Unigram.Services
         private readonly MediaPlayer _mediaPlayer;
 
         private Call _call;
+        private DateTime _callStarted;
         private VoIPControllerWrapper _controller;
 
-        private PhoneCallPage _callPage;
+        private VoIPPage _callPage;
         private ContentDialogBase _callDialog;
         private ViewLifetimeControl _callLifetime;
 
@@ -109,6 +110,7 @@ namespace Unigram.Services
                         }
                         else if (args == libtgvoip.CallState.Established)
                         {
+                            _callStarted = DateTime.Now;
                             _mediaPlayer.Source = null;
                         }
                     });
@@ -116,7 +118,7 @@ namespace Unigram.Services
 
                 BeginOnUIThread(() =>
                 {
-                    Show(update.Call, _controller);
+                    Show(update.Call, _controller, _callStarted);
                 });
 
                 var p2p = base.Settings.PeerToPeerMode == 0 || (base.Settings.PeerToPeerMode == 1 && user.OutgoingLink is LinkStateIsContact);
@@ -168,7 +170,7 @@ namespace Unigram.Services
                             _mediaPlayer.IsLoopingEnabled = true;
                             _mediaPlayer.Play();
 
-                            Show(update.Call, null);
+                            Show(update.Call, null, _callStarted);
                         }
                         else
                         {
@@ -181,7 +183,7 @@ namespace Unigram.Services
                         Hide();
                         break;
                     default:
-                        Show(update.Call, null);
+                        Show(update.Call, null, _callStarted);
                         break;
                 }
             });
@@ -197,7 +199,7 @@ namespace Unigram.Services
 
         public async void Show()
         {
-            Show(_call, _controller);
+            Show(_call, _controller, _callStarted);
 
             if (_callDialog != null)
             {
@@ -205,26 +207,30 @@ namespace Unigram.Services
             }
             else if (_callLifetime != null)
             {
-                _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new PhoneCallPage(ProtoService, CacheService, Aggregator, _call, _controller), 0);
+                _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, _call, _controller, _callStarted), _call.Id);
             }
         }
 
-        private async void Show(Call call, VoIPControllerWrapper controller)
+        private async void Show(Call call, VoIPControllerWrapper controller, DateTime started)
         {
             if (_callPage == null)
             {
                 if (ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
                 {
-                    _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new PhoneCallPage(ProtoService, CacheService, Aggregator, _call, _controller), call.Id);
-                    _callLifetime.Released += (s, args) =>
+                    _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, _call, _controller, _callStarted), call.Id);
+                    _callLifetime.WindowWrapper.ApplicationView().Consolidated += (s, args) =>
                     {
+                        _callLifetime.StopViewInUse();
+                        _callLifetime.WindowWrapper.Window.Close();
+                        _callLifetime = null;
+
                         _callPage.Dispose();
                         _callPage = null;
                     };
                 }
                 else
                 {
-                    _callPage = new PhoneCallPage(ProtoService, CacheService, Aggregator, _call, _controller);
+                    _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, _call, _controller, _callStarted);
 
                     _callDialog = new ContentDialogBase();
                     _callDialog.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -241,7 +247,7 @@ namespace Unigram.Services
                     _callPage.Connect(controller);
                 }
 
-                _callPage.Update(call);
+                _callPage.Update(call, started);
             });
         }
 

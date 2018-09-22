@@ -609,9 +609,6 @@
     <Compile Include="Views\Payments\PaymentReceiptPage.xaml.cs">
       <DependentUpon>PaymentReceiptPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PhoneCallPage.xaml.cs">
-      <DependentUpon>PhoneCallPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PlaygroundPage.xaml.cs">
       <DependentUpon>PlaygroundPage.xaml</DependentUpon>
     </Compile>
@@ -747,6 +744,9 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupRestrictedPage.xaml.cs">
       <DependentUpon>SupergroupRestrictedPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VoIPPage.xaml.cs">
+      <DependentUpon>VoIPPage.xaml</DependentUpon>
     </Compile>
     <Content Include="Assets\Audio\silence.mp3" />
     <Content Include="Assets\Audio\voip_busy.mp3" />
@@ -1887,10 +1887,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PhoneCallPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\PlaygroundPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2134,6 +2130,10 @@
     <Page Include="Views\Users\UserCreatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\VoIPPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

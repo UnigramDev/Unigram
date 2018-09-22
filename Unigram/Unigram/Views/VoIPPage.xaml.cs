@@ -37,7 +37,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views
 {
-    public sealed partial class PhoneCallPage : Page, IDisposable
+    public sealed partial class VoIPPage : Page, IDisposable
     {
         private Visual _descriptionVisual;
         private Visual _largeVisual;
@@ -68,7 +68,7 @@ namespace Unigram.Views
 
         public ContentDialogBase Dialog { get; set; }
 
-        public PhoneCallPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, Call call, VoIPControllerWrapper controller)
+        public VoIPPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, Call call, VoIPControllerWrapper controller, DateTime started)
         {
             this.InitializeComponent();
 
@@ -131,7 +131,7 @@ namespace Unigram.Views
 
             if (call != null)
             {
-                Update(call);
+                Update(call, started);
             }
 
             if (controller != null)
@@ -223,7 +223,7 @@ namespace Unigram.Views
             }
         }
 
-        public void Update(Call call)
+        public void Update(Call call, DateTime started)
         {
             if (_disposed)
             {
@@ -231,6 +231,7 @@ namespace Unigram.Views
             }
 
             _call = call;
+            _started = started;
 
             //if (_state != call.State)
             //{
@@ -423,7 +424,7 @@ namespace Unigram.Views
 
         private void StartUpdatingCallDuration()
         {
-            _started = DateTime.Now;
+            _started = _started == DateTime.MinValue ? DateTime.Now : _started;
             _durationTimer.Start();
         }
 
