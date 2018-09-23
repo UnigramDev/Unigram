@@ -677,12 +677,13 @@
 
                     <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
                 </Grid>
-                <Grid x:Name="InformativeMessage"
+                <Grid x:Name="InformativeMessagePanel"
                       Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
                       Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                       MinHeight="{ThemeResource AppBarThemeCompactHeight}"
                       Grid.Row="2">
-                    <!--<messages:MessageReference Message="{x:Bind ViewModel.InformativeMessage, Mode=OneWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>-->
+
+                    <TextBlock x:Name="InformativeMessage" Text="{x:Bind ViewModel.InformativeMessage, Mode=OneWay}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0" Padding="12,6" IsHitTestVisible="False" />
 
                     <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
                 </Grid>
