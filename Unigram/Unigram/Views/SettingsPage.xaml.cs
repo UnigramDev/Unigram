@@ -152,7 +152,7 @@ namespace Unigram.Views
 
         private void Passport_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(PassportPage));
+            MasterDetail.NavigationService.Navigate(typeof(PassportMrzPage));
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)

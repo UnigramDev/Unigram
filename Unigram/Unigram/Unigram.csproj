@@ -585,6 +585,9 @@
     <Compile Include="Views\Passport\PassportAddressPage.xaml.cs">
       <DependentUpon>PassportAddressPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Passport\PassportMrzPage.xaml.cs">
+      <DependentUpon>PassportMrzPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Passport\PassportPage.xaml.cs">
       <DependentUpon>PassportPage.xaml</DependentUpon>
     </Compile>
@@ -1356,6 +1359,7 @@
     <PRIResource Include="Strings\zh-CN\Additional.resw">
       <SubType>Designer</SubType>
     </PRIResource>
+    <Content Include="Assets\secureid_ocr_nn.bin" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1852,6 +1856,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Passport\PassportAddressPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Passport\PassportMrzPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
