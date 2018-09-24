@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Services;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 
 namespace Unigram.ViewModels
@@ -21,6 +23,7 @@ namespace Unigram.ViewModels
             ShareCommand = new RelayCommand(ShareExecute);
             FeedbackCommand = new RelayCommand(FeedbackExecute);
             BrowserCommand = new RelayCommand(BrowserExecute);
+            CopyCommand = new RelayCommand(CopyExecute);
         }
 
         public Uri ShareLink { get; set; }
@@ -62,6 +65,16 @@ namespace Unigram.ViewModels
         private async void BrowserExecute()
         {
             await Launcher.LaunchUriAsync(ShareLink);
+        }
+
+        public RelayCommand CopyCommand { get; }
+        private async void CopyExecute()
+        {
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(ShareLink.ToString());
+            ClipboardEx.TrySetContent(dataPackage);
+
+            await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
     }
 }
