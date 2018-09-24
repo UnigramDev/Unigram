@@ -197,9 +197,9 @@ namespace Unigram
                 builder.RegisterType<SettingsSecurityPasscodeViewModel>().SingleInstance();
                 builder.RegisterType<SettingsStickersViewModel>().SingleInstance();
                 builder.RegisterType<SettingsStickersTrendingViewModel>().SingleInstance();
-                builder.RegisterType<SettingsStickersArchivedViewModel>().SingleInstance();
+                builder.RegisterType<SettingsStickersArchivedViewModel>();
                 builder.RegisterType<SettingsMasksViewModel>().SingleInstance();
-                builder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
+                builder.RegisterType<SettingsMasksArchivedViewModel>();
                 builder.RegisterType<SettingsWallPaperViewModel>().SingleInstance();
                 builder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
                 builder.RegisterType<SettingsLanguageViewModel>().SingleInstance();

@@ -21,6 +21,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Common;
 using Unigram.Native;
 using Windows.Storage;
+using System.Windows.Input;
 
 namespace Unigram.Views.Settings
 {
@@ -76,6 +77,8 @@ namespace Unigram.Views.Settings
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var stickerSet = args.Item as StickerSetInfo;
+
+            content.Tag = stickerSet;
 
             if (args.Phase == 0)
             {
@@ -141,5 +144,58 @@ namespace Unigram.Views.Settings
 
         #endregion
 
+        #region Context menu
+
+        private void StickerSet_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var stickerSet = element.Tag as StickerSetInfo;
+
+            if (stickerSet == null || stickerSet.Id == 0)
+            {
+                return;
+            }
+
+            if (stickerSet.IsOfficial)
+            {
+                CreateFlyoutItem(ref flyout, ViewModel.StickerSetHideCommand, stickerSet, Strings.Resources.StickersHide);
+            }
+            else
+            {
+                CreateFlyoutItem(ref flyout, ViewModel.StickerSetHideCommand, stickerSet, Strings.Resources.StickersHide);
+                CreateFlyoutItem(ref flyout, ViewModel.StickerSetRemoveCommand, stickerSet, Strings.Resources.StickersRemove);
+                //CreateFlyoutItem(ref flyout, ViewModel.StickerSetShareCommand, stickerSet, Strings.Resources.StickersShare);
+                //CreateFlyoutItem(ref flyout, ViewModel.StickerSetCopyCommand, stickerSet, Strings.Resources.StickersCopy);
+            }
+
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                flyout.ShowAt(element, point);
+            }
+            else if (flyout.Items.Count > 0)
+            {
+                flyout.ShowAt(element);
+            }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, ICommand command, object parameter, string text)
+        {
+            var flyoutItem = new MenuFlyoutItem();
+            flyoutItem.IsEnabled = command != null;
+            flyoutItem.Command = command;
+            flyoutItem.CommandParameter = parameter;
+            flyoutItem.Text = text;
+
+            flyout.Items.Add(flyoutItem);
+        }
+
+        #endregion
     }
 }

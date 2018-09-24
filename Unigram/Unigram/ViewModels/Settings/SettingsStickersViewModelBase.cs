@@ -28,6 +28,11 @@ namespace Unigram.ViewModels.Settings
             Items = new MvxObservableCollection<StickerSetInfo>();
             ReorderCommand = new RelayCommand<StickerSetInfo>(ReorderExecute);
 
+            StickerSetHideCommand = new RelayCommand<StickerSetInfo>(StickerSetHideExecute);
+            StickerSetRemoveCommand = new RelayCommand<StickerSetInfo>(StickerSetRemoveExecute);
+            //StickerSetShareCommand = new RelayCommand<StickerSetInfo>(StickerSetShareExecute);
+            //StickerSetCopyCommand = new RelayCommand<StickerSetInfo>(StickerSetCopyExecute);
+
             Aggregator.Subscribe(this);
         }
 
@@ -144,5 +149,28 @@ namespace Unigram.ViewModels.Settings
             _needReorder = true;
             _newOrder = Items.Select(x => x.Id).ToList();
         }
+
+        #region Context menu
+
+        public RelayCommand<StickerSetInfo> StickerSetHideCommand { get; }
+        private async void StickerSetHideExecute(StickerSetInfo stickerSet)
+        {
+            await ProtoService.SendAsync(new ChangeStickerSet(stickerSet.Id, false, true));
+            ProtoService.Send(new GetArchivedStickerSets(_masks, 0, 1), result =>
+            {
+                if (result is StickerSets stickerSets)
+                {
+                    BeginOnUIThread(() => ArchivedStickersCount = stickerSets.TotalCount);
+                }
+            });
+        }
+
+        public RelayCommand<StickerSetInfo> StickerSetRemoveCommand { get; }
+        private void StickerSetRemoveExecute(StickerSetInfo stickerSet)
+        {
+            ProtoService.Send(new ChangeStickerSet(stickerSet.Id, false, false));
+        }
+
+        #endregion
     }
 }
