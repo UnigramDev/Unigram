@@ -667,9 +667,9 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ att
 	std::wstring actions = L"";
 	if (group != nullptr && key.find(L"CHANNEL") && allow)
 	{
-		actions = L"<actions><input id='QuickMessage' type='text' placeHolderContent='Type a message...' /><action activationType='background' arguments='";
+		actions = L"<actions><input id='QuickMessage' type='text' placeHolderContent='ms-resource:Reply' /><action activationType='background' arguments='";
 		actions += launch->Data();
-		actions += L"' hint-inputId='QuickMessage' content='Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
+		actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
 	}
 
 	std::wstring audio = L"";
