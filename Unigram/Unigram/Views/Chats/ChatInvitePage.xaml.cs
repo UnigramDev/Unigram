@@ -14,13 +14,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views.Chats
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class ChatInvitePage : Page
     {
         public ChatInviteViewModel ViewModel => DataContext as ChatInviteViewModel;
@@ -33,7 +28,7 @@ namespace Unigram.Views.Chats
 
         private void Invite_Click(object sender, RoutedEventArgs e)
         {
-            //ViewModel.NavigationService.Navigate(typeof(ChatInviteLinkPage), ViewModel.Item.ToPeer());
+            ViewModel.NavigationService.Navigate(typeof(ChatInviteLinkPage), ViewModel.Chat.Id);
         }
     }
 }
