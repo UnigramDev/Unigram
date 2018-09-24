@@ -143,9 +143,9 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 		auto sound = data->GetNamedString("sound", "Default");
 		auto launch = GetLaunch(custom, loc_key);
 		auto group = GetGroup(custom);
-		auto picture = GetPicture(custom, group);
-		auto date = GetDate(notification);
 		auto session = GetSession(data);
+		auto picture = GetPicture(custom, group, session);
+		auto date = GetDate(notification);
 
 		if (message == nullptr)
 		{
@@ -315,7 +315,7 @@ String^ NotificationTask::GetGroup(JsonObject^ custom)
 	return nullptr;
 }
 
-String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
+String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group, String^ session)
 {
 	if (custom && custom->HasKey("mtpeer"))
 	{
@@ -667,9 +667,12 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ att
 	std::wstring actions = L"";
 	if (group != nullptr && key.find(L"CHANNEL") && allow)
 	{
-		actions = L"<actions><input id='QuickMessage' type='text' placeHolderContent='ms-resource:Reply' /><action activationType='background' arguments='";
+		actions = L"<actions><input id='input' type='text' placeHolderContent='ms-resource:Reply' /><action activationType='background' arguments='action=markAsRead&amp;";
 		actions += launch->Data();
-		actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
+		//actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
+		actions += L"' content='ms-resource:MarkAsRead'/><action activationType='background' arguments='action=reply&amp;";
+		actions += launch->Data();
+		actions += L"' content='ms-resource:Send'/></actions>";
 	}
 
 	std::wstring audio = L"";

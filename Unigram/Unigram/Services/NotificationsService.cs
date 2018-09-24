@@ -417,14 +417,9 @@ namespace Unigram.Services
                 return;
             }
 
-            if (data.TryGetValue("QuickMessage", out string text))
+            if (data.TryGetValue("action", out string action))
             {
-                var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
-                var entities = Markdown.Parse(_protoService, ref messageText);
-
-                var replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) >> 0 : 0;
                 var chat = default(Chat);
-
                 if (data.TryGetValue("from_id", out string from_id) && int.TryParse(from_id, out int fromId))
                 {
                     chat = await _protoService.SendAsync(new CreatePrivateChat(fromId, false)) as Chat;
@@ -443,7 +438,23 @@ namespace Unigram.Services
                     return;
                 }
 
-                var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, false, true, null, new InputMessageText(new FormattedText(messageText, entities), false, false)));
+                if (string.Equals(action, "reply", StringComparison.OrdinalIgnoreCase) && data.TryGetValue("input", out string text))
+                {
+                    var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+                    var entities = Markdown.Parse(_protoService, ref messageText);
+
+                    var replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) >> 0 : 0;
+                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, false, true, null, new InputMessageText(new FormattedText(messageText, entities), false, false)));
+                }
+                else if (string.Equals(action, "markasread", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (chat.LastMessage == null)
+                    {
+                        return;
+                    }
+
+                    await _protoService.SendAsync(new ViewMessages(chat.Id, new long[] { chat.LastMessage.Id }, true));
+                }
             }
         }
 
