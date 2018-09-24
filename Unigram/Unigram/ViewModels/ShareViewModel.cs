@@ -178,6 +178,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private string _inviteToken;
+        public string InviteToken
+        {
+            get
+            {
+                return _inviteToken;
+            }
+            set
+            {
+                Set(ref _inviteToken, value);
+            }
+        }
+
         private InputMessageContent _inputMedia;
         public InputMessageContent InputMedia
         {
@@ -343,6 +356,14 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, _inviteBot.Id, new ChatMemberStatusMember()));
                 if (response is Ok)
                 {
+                    if (_inviteToken != null)
+                    {
+                        var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                        if (service != null)
+                        {
+                            service.NavigateToChat(chat, accessToken: _inviteToken);
+                        }
+                    }
                     //NavigationService.GoBack();
                 }
             }

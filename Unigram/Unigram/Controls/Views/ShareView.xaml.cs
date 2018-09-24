@@ -121,6 +121,7 @@ namespace Unigram.Controls.Views
             ViewModel.ShareTitle = null;
             ViewModel.Messages = null;
             ViewModel.InviteBot = null;
+            ViewModel.InviteToken = null;
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = false;
 
@@ -144,6 +145,7 @@ namespace Unigram.Controls.Views
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
             ViewModel.InviteBot = null;
+            ViewModel.InviteToken = null;
             ViewModel.InputMedia = null;
 
             var chat = ViewModel.ProtoService.GetChat(message.ChatId);
@@ -199,6 +201,7 @@ namespace Unigram.Controls.Views
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
             ViewModel.InviteBot = null;
+            ViewModel.InviteToken = null;
             ViewModel.InputMedia = null;
 
             return ShowAsync();
@@ -220,6 +223,7 @@ namespace Unigram.Controls.Views
             ViewModel.Comment = null;
             ViewModel.Messages = null;
             ViewModel.InviteBot = null;
+            ViewModel.InviteToken = null;
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = false;
 
@@ -243,6 +247,7 @@ namespace Unigram.Controls.Views
             ViewModel.ShareTitle = null;
             ViewModel.Messages = null;
             ViewModel.InviteBot = null;
+            ViewModel.InviteToken = null;
             ViewModel.IsWithMyScore = false;
 
             //if (inputMedia is TLInputMediaGame gameMedia && gameMedia.Id is TLInputGameShortName shortName)
@@ -253,13 +258,14 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public Task<ContentDialogResult> ShowAsync(User bot)
+        public Task<ContentDialogResult> ShowAsync(User bot, string token = null)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.BasicAndSupergroups;
             ViewModel.IsCommentEnabled = false;
 
             ViewModel.InviteBot = bot;
+            ViewModel.InviteToken = token;
 
             ViewModel.SwitchInline = null;
             ViewModel.SwitchInlineBot = null;

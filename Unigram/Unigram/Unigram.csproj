@@ -258,6 +258,9 @@
     <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">
       <DependentUpon>HistoryCallMessageControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Passport\PassportDocumentCell.xaml.cs">
+      <DependentUpon>PassportDocumentCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\PhoneTextBox.cs" />
@@ -461,6 +464,7 @@
     <Compile Include="ViewModels\InviteViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\Passport\PassportAddressViewModel.cs" />
+    <Compile Include="ViewModels\Passport\PassportDocumentViewModelBase.cs" />
     <Compile Include="ViewModels\Passport\PassportViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep2ViewModel.cs" />
@@ -584,6 +588,9 @@
     </Compile>
     <Compile Include="Views\Passport\PassportAddressPage.xaml.cs">
       <DependentUpon>PassportAddressPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Passport\PassportDocumentPage.xaml.cs">
+      <DependentUpon>PassportDocumentPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Passport\PassportMrzPage.xaml.cs">
       <DependentUpon>PassportMrzPage.xaml</DependentUpon>
@@ -1606,6 +1613,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Passport\PassportDocumentCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\PlaybackHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1856,6 +1867,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Passport\PassportAddressPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Passport\PassportDocumentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

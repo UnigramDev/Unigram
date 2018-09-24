@@ -32,6 +32,18 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static string ToQuery(this Dictionary<string, string> dictionary)
+        {
+            var result = string.Empty;
+
+            foreach (var item in dictionary)
+            {
+                result += $"{item.Key}={item.Value}&";
+            }
+
+            return result.TrimEnd('&');
+        }
+
         public static int ToTimestamp(this DateTime dateTime)
         {
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);

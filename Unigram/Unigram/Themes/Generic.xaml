@@ -968,7 +968,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="local:ProgressBarRing">
         <Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
         <Setter Property="Foreground" Value="#FFFFFFFF"/>
