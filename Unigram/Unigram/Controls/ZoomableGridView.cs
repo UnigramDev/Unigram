@@ -11,6 +11,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Unigram.ViewModels.Dialogs;
 
 namespace Unigram.Controls
 {
@@ -58,6 +59,11 @@ namespace Unigram.Controls
             //    }
             //}
 
+            if (item is StickerViewModel sticker)
+            {
+                _popupPanel.SetSticker(sticker.ProtoService, sticker.Aggregator, sticker.Get());
+            }
+
             var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
             if (bounds != Window.Current.Bounds)
             {
@@ -75,7 +81,7 @@ namespace Unigram.Controls
 
             _popupPanel.Width = bounds.Width;
             _popupPanel.Height = bounds.Height;
-            _popupContent.Content = item;
+            //_popupContent.Content = item;
             _popupHost.IsOpen = true;
 
             _scrollingHost.CancelDirectManipulations();
@@ -85,7 +91,10 @@ namespace Unigram.Controls
         {
             if (_popupHost.IsOpen && _popupContent != content)
             {
-                _popupContent.Content = content;
+                if (content is StickerViewModel sticker)
+                {
+                    _popupPanel.SetSticker(sticker.ProtoService, sticker.Aggregator, sticker.Get());
+                }
             }
         }
 
@@ -115,6 +124,11 @@ namespace Unigram.Controls
 
                 //    _popupContent.Content = content;
                 //}
+
+                if (item is StickerViewModel sticker)
+                {
+                    _popupPanel.SetSticker(sticker.ProtoService, sticker.Aggregator, sticker.Get());
+                }
             }
         }
 
@@ -123,7 +137,7 @@ namespace Unigram.Controls
             if (_popupHost.IsOpen)
             {
                 _popupHost.IsOpen = false;
-                _popupContent.Content = null;
+                //_popupContent.Content = null;
                 e.Handled = true;
             }
 
@@ -135,7 +149,7 @@ namespace Unigram.Controls
             if (_popupHost.IsOpen)
             {
                 _popupHost.IsOpen = false;
-                _popupContent.Content = null;
+                //_popupContent.Content = null;
                 e.Handled = true;
             }
 
@@ -147,7 +161,7 @@ namespace Unigram.Controls
             if (_popupHost.IsOpen)
             {
                 _popupHost.IsOpen = false;
-                _popupContent.Content = null;
+                //_popupContent.Content = null;
                 e.Handled = true;
             }
 

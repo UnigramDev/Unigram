@@ -2792,7 +2792,7 @@ namespace Unigram.ViewModels
 
         private MessageViewModel GetMessage(Message message)
         {
-            return new MessageViewModel(ProtoService, this, message);
+            return new MessageViewModel(ProtoService, Aggregator, this, message);
         }
     }
 
@@ -2899,7 +2899,7 @@ namespace Unigram.ViewModels
                 if (previousDate.Date != itemDate.Date)
                 {
                     var timestamp = previousDate.ToTimestamp();
-                    var service = new MessageViewModel(previous.ProtoService, previous.Delegate, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null));
+                    var service = new MessageViewModel(previous.ProtoService, previous.Aggregator, previous.Delegate, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null));
 
                     //base.InsertItem(index + 1, service);
                     return service;

@@ -6,6 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Native;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -23,14 +24,24 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class VideoContent : AspectView, IContentWithFile
+    public sealed partial class VideoContent : AspectView, IContentWithFile, IHandle<UpdateFile>
     {
         private MessageViewModel _message;
+        private int _small;
+        private int _big;
 
         public VideoContent(MessageViewModel message)
         {
             InitializeComponent();
             UpdateMessage(message);
+
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _message?.Aggregator.Unsubscribe(this, _small);
+            _message?.Aggregator.Unsubscribe(this, _big);
         }
 
         public void UpdateMessage(MessageViewModel message)
@@ -48,9 +59,11 @@ namespace Unigram.Controls.Messages.Content
 
             if (video.Thumbnail != null)
             {
+                _small = video.Thumbnail.Photo.Id;
                 UpdateThumbnail(message, video.Thumbnail.Photo);
             }
 
+            _big = video.VideoValue.Id;
             UpdateFile(message, video.VideoValue);
         }
 
@@ -63,6 +76,18 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
+        public void Handle(UpdateFile update)
+        {
+            if (update.File.Id == _small)
+            {
+                this.BeginOnUIThread(() => UpdateThumbnail(_message, update.File));
+            }
+            else if (update.File.Id == _big)
+            {
+                this.BeginOnUIThread(() => UpdateFile(_message, update.File));
+            }
+        }
+
         public void UpdateFile(MessageViewModel message, File file)
         {
             var video = GetContent(message.Content);
@@ -71,15 +96,15 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (video.Thumbnail != null && video.Thumbnail.Photo.Id == file.Id)
-            {
-                UpdateThumbnail(message, file);
-                return;
-            }
-            else if (video.VideoValue.Id != file.Id)
-            {
-                return;
-            }
+            //if (video.Thumbnail != null && video.Thumbnail.Photo.Id == file.Id)
+            //{
+            //    UpdateThumbnail(message, file);
+            //    return;
+            //}
+            //else if (video.VideoValue.Id != file.Id)
+            //{
+            //    return;
+            //}
 
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
@@ -88,14 +113,17 @@ namespace Unigram.Controls.Messages.Content
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
+
+                message.Aggregator.Subscribe(this, file.Id);
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-
                 Button.Glyph = "\uE10A";
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
+
+                message.Aggregator.Subscribe(this, file.Id);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
@@ -104,9 +132,11 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = video.GetDuration() + ", " + FileSizeConverter.Convert(size);
 
+                message.Aggregator.Subscribe(this, file.Id);
+
                 if (message.Delegate.CanBeDownloaded(message))
                 {
-                    _message.ProtoService.Send(new DownloadFile(file.Id, 32));
+                    message.ProtoService.Send(new DownloadFile(file.Id, 32));
                 }
             }
             else
@@ -125,6 +155,8 @@ namespace Unigram.Controls.Messages.Content
 
                     Subtitle.Text = video.GetDuration();
                 }
+
+                message.Aggregator.Unsubscribe(this, file.Id);
             }
         }
 
@@ -134,10 +166,16 @@ namespace Unigram.Controls.Messages.Content
             {
                 //Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
                 Texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);
+                message.Aggregator.Unsubscribe(this, file.Id);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
+                message.Aggregator.Subscribe(this, file.Id);
                 message.ProtoService.Send(new DownloadFile(file.Id, 1));
+            }
+            else
+            {
+                message.Aggregator.Subscribe(this, file.Id);
             }
         }
 

@@ -9,13 +9,15 @@ namespace Unigram.ViewModels
     public class MessageViewModel
     {
         private readonly IProtoService _protoService;
+        private readonly IEventAggregator _aggregator;
         private readonly IMessageDelegate _delegate;
 
         private Message _message;
 
-        public MessageViewModel(IProtoService protoService, IMessageDelegate delegato, Message message)
+        public MessageViewModel(IProtoService protoService, IEventAggregator aggregator, IMessageDelegate delegato, Message message)
         {
             _protoService = protoService;
+            _aggregator = aggregator;
             _delegate = delegato;
 
             _message = message;
@@ -27,6 +29,7 @@ namespace Unigram.ViewModels
         }
 
         public IProtoService ProtoService => _protoService;
+        public IEventAggregator Aggregator => _aggregator;
         public IMessageDelegate Delegate => _delegate;
 
         public bool IsFirst { get; set; }

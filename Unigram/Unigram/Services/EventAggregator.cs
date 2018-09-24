@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Telegram.Td.Api;
 using Unigram.Common;
 
 namespace Unigram.Services
@@ -51,12 +53,14 @@ namespace Unigram.Services
         /// </summary>
         /// <param name = "subscriber">The instance to subscribe for event publication.</param>
         void Subscribe(object subscriber);
+        void Subscribe(object subscriber, int fileId);
 
         /// <summary>
         ///   Unsubscribes the instance from all events.
         /// </summary>
         /// <param name = "subscriber">The instance to unsubscribe.</param>
         void Unsubscribe(object subscriber);
+        void Unsubscribe(object subscriber, int fileId);
 
         /// <summary>
         ///   Publishes a message.
@@ -66,14 +70,13 @@ namespace Unigram.Services
         ///   Uses the default thread marshaller during publication.
         /// </remarks>
         void Publish(object message);
-        void Publish(object message, object subscriber);
 
         /// <summary>
         ///   Publishes a message.
         /// </summary>
         /// <param name = "message">The message instance.</param>
         /// <param name = "marshal">Allows the publisher to provide a custom thread marshaller for the message publication.</param>
-        void Publish(object message, object subscriber, Action<System.Action> marshal);
+        void Publish(object message, Action<System.Action> marshal);
     }
 
     /// <summary>
@@ -81,7 +84,8 @@ namespace Unigram.Services
     /// </summary>
     public class EventAggregator : IEventAggregator
     {
-        readonly List<Handler> handlers = new List<Handler>();
+        readonly List<Handler> _handlers = new List<Handler>();
+        readonly ConcurrentDictionary<int, List<Handler>> _handlersByFile = new ConcurrentDictionary<int, List<Handler>>();
 
         /// <summary>
         ///   The default thread marshaller used for publication;
@@ -121,7 +125,7 @@ namespace Unigram.Services
         /// <returns>True if any handler is found, false if not.</returns>
         public bool HandlerExistsFor(Type messageType)
         {
-            return handlers.Any(handler => handler.Handles(messageType) & !handler.IsDead);
+            return _handlers.Any(handler => handler.Handles(messageType) & !handler.IsDead);
         }
 
         /// <summary>
@@ -134,8 +138,26 @@ namespace Unigram.Services
             {
                 throw new ArgumentNullException("subscriber");
             }
-            lock (handlers)
+            lock (_handlers)
             {
+                if (_handlers.Any(x => x.Matches(subscriber)))
+                {
+                    return;
+                }
+
+                _handlers.Add(new Handler(subscriber));
+            }
+        }
+
+        public virtual void Subscribe(object subscriber, int fileId)
+        {
+            if (subscriber == null)
+            {
+                throw new ArgumentNullException("subscriber");
+            }
+            lock (_handlersByFile)
+            {
+                var handlers = _handlersByFile.GetOrAdd(fileId, x => new List<Handler>());
                 if (handlers.Any(x => x.Matches(subscriber)))
                 {
                     return;
@@ -155,13 +177,33 @@ namespace Unigram.Services
             {
                 throw new ArgumentNullException("subscriber");
             }
-            lock (handlers)
+            lock (_handlers)
             {
-                var found = handlers.FirstOrDefault(x => x.Matches(subscriber));
+                var found = _handlers.FirstOrDefault(x => x.Matches(subscriber));
 
                 if (found != null)
                 {
-                    handlers.Remove(found);
+                    _handlers.Remove(found);
+                }
+            }
+        }
+
+        public virtual void Unsubscribe(object subscriber, int fileId)
+        {
+            if (subscriber == null)
+            {
+                throw new ArgumentNullException("subscriber");
+            }
+            lock (_handlersByFile)
+            {
+                if (_handlersByFile.TryGetValue(fileId, out List<Handler> handlers))
+                {
+                    var found = handlers.FirstOrDefault(x => x.Matches(subscriber));
+
+                    if (found != null)
+                    {
+                        _handlers.Remove(found);
+                    }
                 }
             }
         }
@@ -190,25 +232,7 @@ namespace Unigram.Services
             }
 #endif
 
-            Publish(message, null, PublicationThreadMarshaller);
-        }
-
-        [DebuggerStepThrough]
-        public virtual void Publish(object message, object subscriber)
-        {
-            if (message == null)
-            {
-                throw new ArgumentNullException("message");
-            }
-
-#if DEBUG
-            if (LogPublish)
-            {
-                Debug.WriteLine("Publish " + message.GetType());
-            }
-#endif
-
-            Publish(message, subscriber, PublicationThreadMarshaller);
+            Publish(message, PublicationThreadMarshaller);
         }
 
         /// <summary>
@@ -216,7 +240,7 @@ namespace Unigram.Services
         /// </summary>
         /// <param name = "message">The message instance.</param>
         /// <param name = "marshal">Allows the publisher to provide a custom thread marshaller for the message publication.</param>
-        public virtual void Publish(object message, object subscriber, Action<System.Action> marshal)
+        public virtual void Publish(object message, Action<System.Action> marshal)
         {
             if (message == null)
             {
@@ -228,17 +252,18 @@ namespace Unigram.Services
             }
 
             Handler[] toNotify;
-            lock (handlers)
+            if (message is UpdateFile update)
             {
-                var found = handlers.FirstOrDefault(x => x.Matches(subscriber));
-
-                if (found != null)
+                lock (_handlersByFile)
                 {
-                    toNotify = handlers.Except(new[] { found }).ToArray();
+                    toNotify = _handlersByFile.GetOrAdd(update.File.Id, x => new List<Handler>()).ToArray();
                 }
-                else
+            }
+            else
+            {
+                lock (_handlers)
                 {
-                    toNotify = handlers.ToArray();
+                    toNotify = _handlers.ToArray();
                 }
             }
 
@@ -251,9 +276,9 @@ namespace Unigram.Services
 
                 if (dead.Any())
                 {
-                    lock (handlers)
+                    lock (_handlers)
                     {
-                        dead.Apply(x => handlers.Remove(x));
+                        dead.Apply(x => _handlers.Remove(x));
                     }
                 }
             });

@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Cells
@@ -23,21 +24,24 @@ namespace Unigram.Controls.Cells
     {
         private Chat _chat;
         private IProtoService _protoService;
+        private IEventAggregator _aggregator;
 
         public ChatCell()
         {
             InitializeComponent();
         }
 
-        public void UpdateChat(IProtoService protoService, Chat chat)
+        public void UpdateChat(IProtoService protoService, IEventAggregator aggregator, Chat chat)
         {
             _protoService = protoService;
+            _aggregator = aggregator;
             Update(chat);
         }
 
-        public void UpdateMessage(IProtoService protoService, Message message)
+        public void UpdateMessage(IProtoService protoService, IEventAggregator aggregator, Message message)
         {
             _protoService = protoService;
+            _aggregator = aggregator;
 
             var chat = protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -108,11 +112,13 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 48, 48);
+            Photo.SetChat(_protoService, _aggregator, chat, 48);
+            //Photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 48, 48);
         }
 
         public void UpdateFile(Chat chat, File file)
         {
+            return;
             Photo.Source = PlaceholderHelper.GetChat(null, chat, 48, 48);
         }
 
@@ -306,7 +312,7 @@ namespace Unigram.Controls.Cells
         {
             if (message.IsService())
             {
-                return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, null, message));
+                return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, _aggregator, null, message));
             }
 
             var result = string.Empty;

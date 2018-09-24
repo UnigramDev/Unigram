@@ -2548,39 +2548,15 @@ namespace Unigram.Views
 
 
 
-        public async void UpdateFile(Telegram.Td.Api.File file)
+        public async void UpdateFile(File file)
         {
-            //for (int i = 0; i < Messages.Items.Count; i++)
-            //{
-            //    var message = Messages.Items[i] as MessageViewModel;
-            //    if (message.UpdateFile(file))
-            //    {
-            //        var container = Messages.ContainerFromItem(message) as ListViewItem;
-            //        if (container == null)
-            //        {
-            //            continue;
-            //        }
-
-            //        var content = container.ContentTemplateRoot as FrameworkElement;
-            //        if (content is Grid grid)
-            //        {
-            //            content = grid.FindName("Bubble") as FrameworkElement;
-            //        }
-
-            //        if (content is MessageBubble bubble)
-            //        {
-            //            bubble.UpdateFile(message, file);
-            //        }
-            //    }
-            //}
-
             if (_viewModel.TryGetMessagesForFileId(file.Id, out IList<MessageViewModel> messages))
             {
                 foreach (var message in messages)
                 {
                     message.UpdateFile(file);
 
-                    var container = Messages.ContainerFromItem(message) as ListViewItem;
+                    var container = Messages.ContainerFromItem(message) as SelectorItem;
                     if (container == null)
                     {
                         continue;

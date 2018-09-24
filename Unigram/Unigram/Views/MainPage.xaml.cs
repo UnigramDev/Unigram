@@ -1576,7 +1576,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                content.UpdateMessage(ViewModel.ProtoService, message);
+                content.UpdateMessage(ViewModel.ProtoService, ViewModel.Aggregator, message);
             }
 
             args.Handled = true;
@@ -1731,16 +1731,8 @@ namespace Unigram.Views
             var photo = grid.Children[0] as ProfilePicture;
             var title = content.Children[1] as TextBlock;
 
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.ProtoService.GetMyId())
-            {
-                photo.Source = PlaceholderHelper.GetChat(null, chat, 48, 48);
-                title.Text = Strings.Resources.SavedMessages;
-            }
-            else
-            {
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48, 48);
-                title.Text = ViewModel.ProtoService.GetTitle(chat, true);
-            }
+            photo.SetChat(ViewModel.ProtoService, ViewModel.Aggregator, chat, 48);
+            title.Text = ViewModel.ProtoService.GetTitle(chat, true);
 
             var badge = grid.Children[1] as Border;
             var text = badge.Child as TextBlock;

@@ -107,7 +107,7 @@ namespace Unigram.ViewModels.Supergroups
 
             Delegate?.UpdateChat(chat);
 
-            Items = new ItemsCollection(ProtoService, this, chat.Id, chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel, _filters, _userIds);
+            Items = new ItemsCollection(ProtoService, Aggregator, this, chat.Id, chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel, _filters, _userIds);
             Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
 
             RaisePropertyChanged(() => Items);
@@ -137,7 +137,7 @@ namespace Unigram.ViewModels.Supergroups
             {
                 Filters = dialog.Filters;
                 UserIds = dialog.UserIds;
-                Items = new ItemsCollection(ProtoService, this, chat.Id, supergroup.IsChannel, dialog.Filters, dialog.UserIds);
+                Items = new ItemsCollection(ProtoService, Aggregator, this, chat.Id, supergroup.IsChannel, dialog.Filters, dialog.UserIds);
 
                 RaisePropertyChanged(() => Items);
             }
@@ -160,6 +160,7 @@ namespace Unigram.ViewModels.Supergroups
         public class ItemsCollection : IncrementalCollection<MessageViewModel>
         {
             private readonly IProtoService _protoService;
+            private readonly IEventAggregator _aggregator;
             private readonly IMessageDelegate _delegate;
             private readonly long _chatId;
             private readonly bool _channel;
@@ -169,10 +170,12 @@ namespace Unigram.ViewModels.Supergroups
             private long _minEventId = long.MaxValue;
             private bool _hasMore;
 
-            public ItemsCollection(IProtoService protoService, IMessageDelegate delegato, long chatId, bool channel, ChatEventLogFilters filters, IList<int> userIds)
+            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, IMessageDelegate delegato, long chatId, bool channel, ChatEventLogFilters filters, IList<int> userIds)
             {
                 _protoService = protoService;
+                _aggregator = aggregator;
                 _delegate = delegato;
+
                 _chatId = chatId;
                 _channel = channel;
                 _filters = filters;
@@ -188,7 +191,7 @@ namespace Unigram.ViewModels.Supergroups
 
             private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent)
             {
-                return new MessageViewModel(_protoService, _delegate, newMessage(chatId, isChannel, chatEvent)) { IsFirst = true, IsLast = true };
+                return new MessageViewModel(_protoService, _aggregator, _delegate, newMessage(chatId, isChannel, chatEvent)) { IsFirst = true, IsLast = true };
             }
 
             public override async Task<IList<MessageViewModel>> LoadDataAsync()

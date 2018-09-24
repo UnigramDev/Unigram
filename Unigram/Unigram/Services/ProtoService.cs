@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td;
@@ -79,6 +79,10 @@ namespace Unigram.Services
 
         int UnreadCount { get; }
         int UnreadUnmutedCount { get; }
+
+
+
+        void ProcessResult(BaseObject result);
     }
 
     public class ProtoService : IProtoService, ClientResultHandler
@@ -103,6 +107,8 @@ namespace Unigram.Services
 
         private readonly Dictionary<int, Supergroup> _supergroups = new Dictionary<int, Supergroup>();
         private readonly Dictionary<int, SupergroupFullInfo> _supergroupsFull = new Dictionary<int, SupergroupFullInfo>();
+
+        private readonly ConcurrentDictionary<int, File> _files = new ConcurrentDictionary<int, File>();
 
         private readonly SimpleFileContext<long> _chatsMap = new SimpleFileContext<long>();
         private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
@@ -145,7 +151,7 @@ namespace Unigram.Services
 
             var parameters = new TdlibParameters
             {
-                DatabaseDirectory = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
+                DatabaseDirectory = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
                 UseSecretChats = true,
                 UseMessageDatabase = true,
                 ApiId = Constants.ApiId,
@@ -257,8 +263,8 @@ namespace Unigram.Services
 
             Task.Run(() =>
             {
-                _client.Send(new SetTdlibParameters(parameters));
-                _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
+                _client.Send(new SetTdlibParameters(parameters), null);
+                _client.Send(new CheckDatabaseEncryptionKey(new byte[0]), null);
                 _client.Run();
             });
         }
@@ -318,7 +324,7 @@ namespace Unigram.Services
 
         public void Send(Function function)
         {
-            _client.Send(function);
+            _client.Send(function, null);
         }
 
         public void Send(Function function, ClientResultHandler handler)
@@ -328,12 +334,15 @@ namespace Unigram.Services
 
         public void Send(Function function, Action<BaseObject> handler)
         {
-            _client.Send(function, handler);
+            _client.Send(function, new TdHandler(handler));
         }
 
         public Task<BaseObject> SendAsync(Function function)
         {
-            return _client.SendAsync(function);
+            var tsc = new TdCompletionSource();
+            _client.Send(function, tsc);
+
+            return tsc.Task;
         }
 
 
@@ -933,6 +942,15 @@ namespace Unigram.Services
             }
             else if (update is UpdateFile updateFile)
             {
+                if (_files.TryGetValue(updateFile.File.Id, out File file))
+                {
+                    file.Update(updateFile.File);
+                }
+                else
+                {
+                    _files[updateFile.File.Id] = updateFile.File;
+                }
+
                 if (TryGetChatForFileId(updateFile.File.Id, out Chat chat))
                 {
                     chat.UpdateFile(updateFile.File);
@@ -1120,6 +1138,197 @@ namespace Unigram.Services
 
             _aggregator.Publish(update);
         }
+
+        class TdCompletionSource : TaskCompletionSource<BaseObject>, ClientResultHandler
+        {
+            public void OnResult(BaseObject result)
+            {
+                SetResult(result);
+            }
+        }
+
+        class TdHandler : ClientResultHandler
+        {
+            private Action<BaseObject> _callback;
+
+            public TdHandler(Action<BaseObject> callback)
+            {
+                _callback = callback;
+            }
+
+            public void OnResult(BaseObject result)
+            {
+                _callback(result);
+            }
+        }
+
+        public void ProcessResult(BaseObject result)
+        {
+            if (result is Messages messages)
+            {
+                foreach (var message in messages.MessagesValue)
+                {
+                    //if (message == null)
+                    //{
+                    //    continue;
+                    //}
+
+                    var content = message.Content as object;
+                    if (content is MessageAnimation animationMessage)
+                    {
+                        content = animationMessage.Animation;
+                    }
+                    else if (content is MessageAudio audioMessage)
+                    {
+                        content = audioMessage.Audio;
+                    }
+                    else if (content is MessageDocument documentMessage)
+                    {
+                        content = documentMessage.Document;
+                    }
+                    else if (content is MessageGame gameMessage)
+                    {
+                        if (gameMessage.Game.Animation != null)
+                        {
+                            content = gameMessage.Game.Animation;
+                        }
+                        else if (gameMessage.Game.Photo != null)
+                        {
+                            content = gameMessage.Game.Photo;
+                        }
+                    }
+                    else if (content is MessageInvoice invoiceMessage)
+                    {
+                        content = invoiceMessage.Photo;
+                    }
+                    else if (content is MessageLocation locationMessage)
+                    {
+                        content = locationMessage.Location;
+                    }
+                    else if (content is MessagePhoto photoMessage)
+                    {
+                        content = photoMessage.Photo;
+                    }
+                    else if (content is MessageSticker stickerMessage)
+                    {
+                        content = stickerMessage.Sticker;
+                    }
+                    else if (content is MessageText textMessage)
+                    {
+                        if (textMessage?.WebPage?.Animation != null)
+                        {
+                            content = textMessage?.WebPage?.Animation;
+                        }
+                        else if (textMessage?.WebPage?.Document != null)
+                        {
+                            content = textMessage?.WebPage?.Document;
+                        }
+                        else if (textMessage?.WebPage?.Sticker != null)
+                        {
+                            content = textMessage?.WebPage?.Sticker;
+                        }
+                        else if (textMessage?.WebPage?.Video != null)
+                        {
+                            content = textMessage?.WebPage?.Video;
+                        }
+                        else if (textMessage?.WebPage?.VideoNote != null)
+                        {
+                            content = textMessage?.WebPage?.VideoNote;
+                        }
+                        // PHOTO SHOULD ALWAYS BE AT THE END!
+                        else if (textMessage?.WebPage?.Photo != null)
+                        {
+                            content = textMessage?.WebPage?.Photo;
+                        }
+                    }
+                    else if (content is MessageVideo videoMessage)
+                    {
+                        content = videoMessage.Video;
+                    }
+                    else if (content is MessageVideoNote videoNoteMessage)
+                    {
+                        content = videoNoteMessage.VideoNote;
+                    }
+                    else if (content is MessageVoiceNote voiceNoteMessage)
+                    {
+                        content = voiceNoteMessage.VoiceNote;
+                    }
+
+                    if (content is Animation animation)
+                    {
+                        if (animation.Thumbnail != null)
+                        {
+                            _files[animation.Thumbnail.Photo.Id] = animation.Thumbnail.Photo;
+                        }
+
+                        _files[animation.AnimationValue.Id] = animation.AnimationValue;
+                    }
+                    else if (content is Audio audio)
+                    {
+                        if (audio.AlbumCoverThumbnail != null)
+                        {
+                            _files[audio.AlbumCoverThumbnail.Photo.Id] = audio.AlbumCoverThumbnail.Photo;
+                        }
+
+                        _files[audio.AudioValue.Id] = audio.AudioValue;
+                    }
+                    else if (content is Document document)
+                    {
+                        if (document.Thumbnail != null)
+                        {
+                            _files[document.Thumbnail.Photo.Id] = document.Thumbnail.Photo;
+                        }
+
+                        _files[document.DocumentValue.Id] = document.DocumentValue;
+                    }
+                    else if (content is Photo photo)
+                    {
+                        foreach (var size in photo.Sizes)
+                        {
+                            _files[size.Photo.Id] = size.Photo;
+                        }
+                    }
+                    else if (content is Sticker sticker)
+                    {
+                        if (sticker.Thumbnail != null)
+                        {
+                            _files[sticker.Thumbnail.Photo.Id] = sticker.Thumbnail.Photo;
+                        }
+
+                        _files[sticker.StickerValue.Id] = sticker.StickerValue;
+                    }
+                    else if (content is Video video)
+                    {
+                        if (video.Thumbnail != null)
+                        {
+                            _files[video.Thumbnail.Photo.Id] = video.Thumbnail.Photo;
+                        }
+
+                        _files[video.VideoValue.Id] = video.VideoValue;
+                    }
+                    else if (content is VideoNote videoNote)
+                    {
+                        if (videoNote.Thumbnail != null)
+                        {
+                            _files[videoNote.Thumbnail.Photo.Id] = videoNote.Thumbnail.Photo;
+                        }
+
+                        _files[videoNote.Video.Id] = videoNote.Video;
+                    }
+                    else if (content is VoiceNote voiceNote)
+                    {
+                        _files[voiceNote.Voice.Id] = voiceNote.Voice;
+                    }
+                }
+            }
+            else if (result is Stickers stickers)
+            {
+                foreach (var sticker in stickers.StickersValue)
+                {
+                    _files[sticker.StickerValue.Id] = sticker.StickerValue;
+                }
+            }
+        }
     }
 
     public class FileContext<T> : Dictionary<int, List<T>>
@@ -1164,23 +1373,6 @@ namespace Unigram.Services
 
     static class TdExtensions
     {
-        public static void Send(this Client client, Function function, Action<BaseObject> handler)
-        {
-            client.Send(function, new TdHandler(handler));
-        }
-
-        public static void Send(this Client client, Function function)
-        {
-            client.Send(function, null);
-        }
-
-        public static Task<BaseObject> SendAsync(this Client client, Function function)
-        {
-            var tsc = new TdCompletionSource();
-            client.Send(function, tsc);
-
-            return tsc.Task;
-        }
 
 
 
@@ -1216,29 +1408,6 @@ namespace Unigram.Services
             }
 
             return false;
-        }
-    }
-
-    class TdCompletionSource : TaskCompletionSource<BaseObject>, ClientResultHandler
-    {
-        public void OnResult(BaseObject result)
-        {
-            SetResult(result);
-        }
-    }
-
-    class TdHandler : ClientResultHandler
-    {
-        private Action<BaseObject> _callback;
-
-        public TdHandler(Action<BaseObject> callback)
-        {
-            _callback = callback;
-        }
-
-        public void OnResult(BaseObject result)
-        {
-            _callback(result);
         }
     }
 }

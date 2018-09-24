@@ -656,13 +656,15 @@ namespace Unigram.Views
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var member = args.Item as ChatMember;
+
+            if (args.InRecycleQueue)
+            {
+                var photo = content.Children[0] as ProfilePicture;
+                photo.Source = null;
+                return;
+            }
 
             content.Tag = member;
 
@@ -674,8 +676,8 @@ namespace Unigram.Views
 
             if (args.Phase == 0)
             {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.Source = null;
+                //var photo = content.Children[0] as ProfilePicture;
+                //photo.Source = null;
 
                 var title = content.Children[1] as TextBlock;
                 if (title.Inlines.Count > 0)
@@ -687,6 +689,9 @@ namespace Unigram.Views
                 {
                     title.Text = user.GetFullName();
                 }
+
+                var photo = content.Children[0] as ProfilePicture;
+                photo.SetUser(ViewModel.ProtoService, ViewModel.Aggregator, user, 36);
             }
             else if (args.Phase == 1)
             {
@@ -695,8 +700,8 @@ namespace Unigram.Views
             }
             else if (args.Phase == 2)
             {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                //var photo = content.Children[0] as ProfilePicture;
+                //photo.SetUser(ViewModel.ProtoService, ViewModel.Aggregator, user, 36);
             }
 
             if (args.Phase < 2)

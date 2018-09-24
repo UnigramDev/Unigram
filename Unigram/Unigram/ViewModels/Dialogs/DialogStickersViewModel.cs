@@ -38,13 +38,13 @@ namespace Unigram.ViewModels.Dialogs
         public DialogStickersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _favoriteSet = new StickerSetViewModel(new StickerSetInfo
+            _favoriteSet = new StickerSetViewModel(ProtoService, Aggregator, new StickerSetInfo
             {
                 Title = Strings.Resources.FavoriteStickers,
                 Name = "tg/favedStickers"
             });
 
-            _recentSet = new StickerSetViewModel(new StickerSetInfo
+            _recentSet = new StickerSetViewModel(ProtoService, Aggregator, new StickerSetInfo
             {
                 Title = Strings.Resources.RecentStickers,
                 Name = "tg/recentlyUsed"
@@ -357,18 +357,18 @@ namespace Unigram.ViewModels.Dialogs
                                 {
                                     if (result4 is StickerSet set)
                                     {
-                                        stickers.Add(new StickerSetViewModel(sets.Sets[0], set));
-                                        BeginOnUIThread(() => SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(x)))));
+                                        stickers.Add(new StickerSetViewModel(ProtoService, Aggregator, sets.Sets[0], set));
+                                        BeginOnUIThread(() => SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ProtoService, Aggregator, x)))));
                                     }
                                     else
                                     {
-                                        BeginOnUIThread(() => SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(x)))));
+                                        BeginOnUIThread(() => SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, Aggregator, x)))));
                                     }
                                 });
                             }
                             else
                             {
-                                BeginOnUIThread(() => SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(x)))));
+                                BeginOnUIThread(() => SavedStickers.ReplaceWith(stickers.Union(sets.Sets.Select(x => new StickerSetViewModel(ProtoService, Aggregator, x)))));
                             }
                         }
                     });
@@ -511,25 +511,31 @@ namespace Unigram.ViewModels.Dialogs
 
     public class StickerSetViewModel
     {
+        private readonly IProtoService _protoService;
+        private readonly IEventAggregator _aggregator;
+
         private readonly StickerSetInfo _info;
         private StickerSet _set;
 
-        public StickerSetViewModel(StickerSetInfo info)
+        public StickerSetViewModel(IProtoService protoService, IEventAggregator aggregator, StickerSetInfo info)
         {
+            _protoService = protoService;
+            _aggregator = aggregator;
+
             _info = info;
 
             var placeholders = new List<StickerViewModel>();
             for (int i = 0; i < info.Size; i++)
             {
-                placeholders.Add(new StickerViewModel(info.Id));
+                placeholders.Add(new StickerViewModel(_protoService, _aggregator, info.Id));
             }
 
             Stickers = new MvxObservableCollection<StickerViewModel>(placeholders);
             Covers = info.Covers;
         }
 
-        public StickerSetViewModel(StickerSetInfo info, StickerSet set)
-            : this(info)
+        public StickerSetViewModel(IProtoService protoService, IEventAggregator aggregator, StickerSetInfo info, StickerSet set)
+            : this(protoService, aggregator, info)
         {
             IsLoaded = true;
             Update(set);
@@ -554,11 +560,11 @@ namespace Unigram.ViewModels.Dialogs
         {
             if (raise)
             {
-                Stickers.ReplaceWith(stickers.StickersValue.Select(x => new StickerViewModel(x)));
+                Stickers.ReplaceWith(stickers.StickersValue.Select(x => new StickerViewModel(_protoService, _aggregator, x)));
             }
             else
             {
-                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.StickersValue.Select(x => new StickerViewModel(x)));
+                Stickers = new MvxObservableCollection<StickerViewModel>(stickers.StickersValue.Select(x => new StickerViewModel(_protoService, _aggregator, x)));
             }
         }
 
@@ -585,13 +591,22 @@ namespace Unigram.ViewModels.Dialogs
         private Sticker _sticker;
         private long _setId;
 
-        public StickerViewModel(long setId)
+        private readonly IProtoService _protoService;
+        private readonly IEventAggregator _aggregator;
+
+        public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, long setId)
         {
+            _protoService = protoService;
+            _aggregator = aggregator;
+
             _setId = setId;
         }
 
-        public StickerViewModel(Sticker sticker)
+        public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, Sticker sticker)
         {
+            _protoService = protoService;
+            _aggregator = aggregator;
+
             _sticker = sticker;
         }
 
@@ -599,6 +614,9 @@ namespace Unigram.ViewModels.Dialogs
         {
             _sticker = sticker;
         }
+
+        public IProtoService ProtoService => _protoService;
+        public IEventAggregator Aggregator => _aggregator;
 
         public bool UpdateFile(File file)
         {
@@ -680,6 +698,7 @@ namespace Unigram.ViewModels.Dialogs
     public class SearchStickerSetsCollection : MvxObservableCollection<StickerSetViewModel>, ISupportIncrementalLoading
     {
         private readonly IProtoService _protoService;
+        private readonly IEventAggregator _aggregator;
         private readonly bool _masks;
         private readonly string _query;
 
@@ -688,9 +707,10 @@ namespace Unigram.ViewModels.Dialogs
         private KeyedList<string, object> _local;
         private KeyedList<string, object> _remote;
 
-        public SearchStickerSetsCollection(IProtoService protoService, bool masks, string query)
+        public SearchStickerSetsCollection(IProtoService protoService, IEventAggregator aggregator, bool masks, string query)
         {
             _protoService = protoService;
+            _aggregator = aggregator;
             _masks = masks;
             _query = query;
         }
@@ -706,7 +726,7 @@ namespace Unigram.ViewModels.Dialogs
                     var response = await _protoService.SendAsync(new SearchInstalledStickerSets(_masks, _query, 100));
                     if (response is StickerSets sets)
                     {
-                        AddRange(sets.Sets.Select(x => new StickerSetViewModel(x)));
+                        AddRange(sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)));
                     }
                 }
                 else if (phase == 1)
@@ -714,7 +734,7 @@ namespace Unigram.ViewModels.Dialogs
                     var response = await _protoService.SendAsync(new SearchStickerSets(_query));
                     if (response is StickerSets sets)
                     {
-                        AddRange(sets.Sets.Select(x => new StickerSetViewModel(x)));
+                        AddRange(sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)));
                     }
                 }
 

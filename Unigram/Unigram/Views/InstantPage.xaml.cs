@@ -704,7 +704,7 @@ namespace Unigram.Views
 
         private MessageViewModel GetMessage(MessageContent content)
         {
-            return new MessageViewModel(ViewModel.ProtoService, this, new Message { Content = content });
+            return new MessageViewModel(ViewModel.ProtoService, ViewModel.Aggregator, this, new Message { Content = content });
         }
 
         private string GetPlainText(RichText text)
