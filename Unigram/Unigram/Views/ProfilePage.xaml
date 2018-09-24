@@ -19,29 +19,89 @@
     </Page.Transitions>
 
     <Page.Resources>
-        <DataTemplate x:Key="MemberTemplate">
-            <Grid Margin="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+        <selectors:MemberTemplateSelector x:Key="MemberTemplateSelector">
+            <selectors:MemberTemplateSelector.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
-                <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                           VerticalAlignment="Top"
-                           TextTrimming="CharacterEllipsis"
-                           TextWrapping="NoWrap"
-                           Grid.Column="1"
-                           Grid.Row="1"
-                           MaxLines="1"/>
-            </Grid>
-        </DataTemplate>
+                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               VerticalAlignment="Top"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               Grid.Column="1"
+                                               Grid.Row="1"
+                                               MaxLines="1"/>
+                    </Grid>
+                </DataTemplate>
+            </selectors:MemberTemplateSelector.ItemTemplate>
+            <selectors:MemberTemplateSelector.AdminTemplate>
+                <DataTemplate>
+                    <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
+                                        <Run />
+                                        <Run Text="&#xE00A;" FontSize="12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               VerticalAlignment="Top"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               Grid.Column="1"
+                                               Grid.Row="1"
+                                               MaxLines="1"/>
+                    </Grid>
+                </DataTemplate>
+            </selectors:MemberTemplateSelector.AdminTemplate>
+            <selectors:MemberTemplateSelector.CreatorTemplate>
+                <DataTemplate>
+                    <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
+                                        <Run />
+                                        <Run Text="&#xE00A;" FontSize="12" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               VerticalAlignment="Top"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               Grid.Column="1"
+                                               Grid.Row="1"
+                                               MaxLines="1"/>
+                    </Grid>
+                </DataTemplate>
+            </selectors:MemberTemplateSelector.CreatorTemplate>
+        </selectors:MemberTemplateSelector>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -99,7 +159,7 @@
         </controls:ContentPageHeader>
 
         <ListView ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
-                  ItemTemplate="{StaticResource MemberTemplate}"
+                  ItemTemplateSelector="{StaticResource MemberTemplateSelector}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   ContainerContentChanging="OnContainerContentChanging"
@@ -120,6 +180,7 @@
                 Grid.Row="1"/>
             <ListView x:Name="ScrollingHost"
                       ItemsSource="{x:Bind ViewModel.Members, Mode=OneWay}"
+                      ItemTemplateSelector="{StaticResource MemberTemplateSelector}"
                       ItemClick="ListView_ItemClick"
                       IsItemClickEnabled="True"
                       ContainerContentChanging="OnContainerContentChanging"
@@ -281,91 +342,6 @@
                         </StackPanel>
                     </StackPanel>
                 </ListView.Header>
-                <ListView.ItemTemplateSelector>
-                    <selectors:MemberTemplateSelector>
-                        <selectors:MemberTemplateSelector.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                               VerticalAlignment="Top"
-                                               TextTrimming="CharacterEllipsis"
-                                               TextWrapping="NoWrap"
-                                               Grid.Column="1"
-                                               Grid.Row="1"
-                                               MaxLines="1"/>
-                                </Grid>
-                            </DataTemplate>
-                        </selectors:MemberTemplateSelector.ItemTemplate>
-                        <selectors:MemberTemplateSelector.AdminTemplate>
-                            <DataTemplate>
-                                <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
-                                        <Run />
-                                        <Run Text="&#xE00A;" FontSize="12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
-                                    </TextBlock>
-                                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                               VerticalAlignment="Top"
-                                               TextTrimming="CharacterEllipsis"
-                                               TextWrapping="NoWrap"
-                                               Grid.Column="1"
-                                               Grid.Row="1"
-                                               MaxLines="1"/>
-                                </Grid>
-                            </DataTemplate>
-                        </selectors:MemberTemplateSelector.AdminTemplate>
-                        <selectors:MemberTemplateSelector.CreatorTemplate>
-                            <DataTemplate>
-                                <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
-                                        <Run />
-                                        <Run Text="&#xE00A;" FontSize="12" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
-                                    </TextBlock>
-                                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                               VerticalAlignment="Top"
-                                               TextTrimming="CharacterEllipsis"
-                                               TextWrapping="NoWrap"
-                                               Grid.Column="1"
-                                               Grid.Row="1"
-                                               MaxLines="1"/>
-                                </Grid>
-                            </DataTemplate>
-                        </selectors:MemberTemplateSelector.CreatorTemplate>
-                    </selectors:MemberTemplateSelector>
-                </ListView.ItemTemplateSelector>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
