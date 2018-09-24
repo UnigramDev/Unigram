@@ -180,39 +180,36 @@ namespace Unigram.Services
                 return;
             }
 
-            var difference = DateTime.Now.ToTimestamp() - update.Message.Date;
-            if (difference > 180)
+            var connectionState = _protoService.GetConnectionState();
+            if (connectionState is ConnectionStateUpdating)
+            {
+                // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
+                return;
+            }
+
+            var chat = _protoService.GetChat(update.Message.ChatId);
+            if (chat == null || chat.LastReadInboxMessageId >= update.Message.Id)
             {
                 return;
             }
 
-            // Adding some delay to be 110% the message hasn't been read already
-            ThreadPoolTimer.CreateTimer(timer =>
+            var caption = GetCaption(chat);
+            var content = GetContent(chat, update.Message);
+            var sound = "";
+            var launch = GetLaunch(chat);
+            var tag = GetTag(update.Message);
+            var group = GetGroup(chat);
+            var picture = GetPhoto(chat);
+            var date = BindConvert.Current.DateTime(update.Message.Date).ToString("o");
+            var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
+
+            var user = _protoService.GetUser(_protoService.GetMyId());
+
+            Update(chat, () =>
             {
-                var chat = _protoService.GetChat(update.Message.ChatId);
-                if (chat == null || chat.LastReadInboxMessageId >= update.Message.Id)
-                {
-                    return;
-                }
-
-                var caption = GetCaption(chat);
-                var content = GetContent(chat, update.Message);
-                var sound = "";
-                var launch = GetLaunch(chat);
-                var tag = GetTag(update.Message);
-                var group = GetGroup(chat);
-                var picture = GetPhoto(chat);
-                var date = BindConvert.Current.DateTime(update.Message.Date).ToString("o");
-                var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
-
-                var user = _protoService.GetUser(_protoService.GetMyId());
-
-                Update(chat, () =>
-                {
-                    NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, date, loc_key);
-                    NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
-                });
-            }, TimeSpan.FromSeconds(3));
+                NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, date, loc_key);
+                NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
+            });
         }
 
         private void Update(Chat chat, Action action)
