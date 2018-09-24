@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using Telegram.Helpers;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
@@ -30,6 +29,8 @@ namespace Unigram.Views.Passport
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<PassportViewModel>();
+
+            NavigationCacheMode = NavigationCacheMode.Required;
         }
 
         #region Recycle
@@ -123,11 +124,11 @@ namespace Unigram.Views.Passport
                 }
                 else if (field.IsDocumentOnly && field.DocumentTypes.Count == 1)
                 {
-                    label = getTextForType(field.DocumentTypes[0].Type);
+                    label = GetTextForType(field.DocumentTypes[0].Type);
                 }
                 else if (field.IsDocumentOnly && field.DocumentTypes.Count == 2)
                 {
-                    label = string.Format(Strings.Resources.PassportTwoDocuments, getTextForType(field.DocumentTypes[0].Type), getTextForType(field.DocumentTypes[1].Type));
+                    label = string.Format(Strings.Resources.PassportTwoDocuments, GetTextForType(field.DocumentTypes[0].Type), GetTextForType(field.DocumentTypes[1].Type));
                 }
                 else
                 {
@@ -145,11 +146,11 @@ namespace Unigram.Views.Passport
                 }
                 else if (field.IsDocumentOnly && field.DocumentTypes.Count == 1)
                 {
-                    label = getTextForType(field.DocumentTypes[0].Type);
+                    label = GetTextForType(field.DocumentTypes[0].Type);
                 }
                 else if (field.IsDocumentOnly && field.DocumentTypes.Count == 2)
                 {
-                    label = string.Format(Strings.Resources.PassportTwoDocuments, getTextForType(field.DocumentTypes[0].Type), getTextForType(field.DocumentTypes[1].Type));
+                    label = string.Format(Strings.Resources.PassportTwoDocuments, GetTextForType(field.DocumentTypes[0].Type), GetTextForType(field.DocumentTypes[1].Type));
                 }
                 else
                 {
@@ -234,53 +235,35 @@ namespace Unigram.Views.Passport
             }
         }
 
-        private String getTextForType(PassportElementType type)
+        private string GetTextForType(PassportElementType type)
         {
-            if (type is PassportElementTypePassport)
+            switch (type)
             {
-                return Strings.Resources.ActionBotDocumentPassport;
+                case PassportElementTypePassport passport:
+                    return Strings.Resources.ActionBotDocumentPassport;
+                case PassportElementTypeDriverLicense driverLicense:
+                    return Strings.Resources.ActionBotDocumentDriverLicence;
+                case PassportElementTypeIdentityCard identityCard:
+                    return Strings.Resources.ActionBotDocumentIdentityCard;
+                case PassportElementTypeUtilityBill utilityBill:
+                    return Strings.Resources.ActionBotDocumentUtilityBill;
+                case PassportElementTypeBankStatement bankStatement:
+                    return Strings.Resources.ActionBotDocumentBankStatement;
+                case PassportElementTypeRentalAgreement rentalAgreement:
+                    return Strings.Resources.ActionBotDocumentRentalAgreement;
+                case PassportElementTypeInternalPassport internalPassport:
+                    return Strings.Resources.ActionBotDocumentInternalPassport;
+                case PassportElementTypePassportRegistration passportRegistration:
+                    return Strings.Resources.ActionBotDocumentPassportRegistration;
+                case PassportElementTypeTemporaryRegistration temporaryRegistration:
+                    return Strings.Resources.ActionBotDocumentTemporaryRegistration;
+                case PassportElementTypePhoneNumber phoneNumber:
+                    return Strings.Resources.ActionBotDocumentPhone;
+                case PassportElementTypeEmailAddress emailAddress:
+                    return Strings.Resources.ActionBotDocumentEmail;
+                default:
+                    return null;
             }
-            else if (type is PassportElementTypeDriverLicense)
-            {
-                return Strings.Resources.ActionBotDocumentDriverLicence;
-            }
-            else if (type is PassportElementTypeIdentityCard)
-            {
-                return Strings.Resources.ActionBotDocumentIdentityCard;
-            }
-            else if (type is PassportElementTypeUtilityBill)
-            {
-                return Strings.Resources.ActionBotDocumentUtilityBill;
-            }
-            else if (type is PassportElementTypeBankStatement)
-            {
-                return Strings.Resources.ActionBotDocumentBankStatement;
-            }
-            else if (type is PassportElementTypeRentalAgreement)
-            {
-                return Strings.Resources.ActionBotDocumentRentalAgreement;
-            }
-            else if (type is PassportElementTypeInternalPassport)
-            {
-                return Strings.Resources.ActionBotDocumentInternalPassport;
-            }
-            else if (type is PassportElementTypePassportRegistration)
-            {
-                return Strings.Resources.ActionBotDocumentPassportRegistration;
-            }
-            else if (type is PassportElementTypeTemporaryRegistration)
-            {
-                return Strings.Resources.ActionBotDocumentTemporaryRegistration;
-            }
-            else if (type is PassportElementTypePhoneNumber)
-            {
-                return Strings.Resources.ActionBotDocumentPhone;
-            }
-            else if (type is PassportElementTypeEmailAddress)
-            {
-                return Strings.Resources.ActionBotDocumentEmail;
-            }
-            return "";
         }
 
         private string getSubtitle(PassportFormField field, PassportSuitableElement documentRequiredType, string value, int availableDocumentTypesCount)
@@ -304,7 +287,7 @@ namespace Unigram.Views.Passport
                     var documentRequiredTypeValue = field.AuthorizationForm.GetElementForType(documentRequiredType?.Type);
                     if (availableDocumentTypesCount > 1)
                     {
-                        builder.Append(getTextForType(documentRequiredType.Type));
+                        builder.Append(GetTextForType(documentRequiredType.Type));
                     }
                     else if (documentRequiredTypeValue == null)
                     {

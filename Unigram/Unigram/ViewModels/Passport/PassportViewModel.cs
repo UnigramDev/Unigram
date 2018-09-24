@@ -12,6 +12,8 @@ using Unigram.Common;
 using Unigram.Views.Passport;
 using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Xaml.Controls;
+using Unigram.Core.Services;
 
 namespace Unigram.ViewModels.Passport
 {
@@ -27,7 +29,7 @@ namespace Unigram.ViewModels.Passport
         public PassportViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<object>();
+            Items = new MvxObservableCollection<PassportElement>();
 
             PasswordCommand = new RelayCommand(PasswordExecute);
 
@@ -57,7 +59,7 @@ namespace Unigram.ViewModels.Passport
             set { Set(ref _botId, value); }
         }
 
-        public MvxObservableCollection<object> Items { get; private set; }
+        public MvxObservableCollection<PassportElement> Items { get; private set; }
 
         private bool IsPersonalDocument(PassportElementType type)
         {
@@ -680,6 +682,7 @@ namespace Unigram.ViewModels.Passport
                 case PassportElementRentalAgreement rentalAgreement:
                 case PassportElementTemporaryRegistration temporaryRegistration:
                 case PassportElementUtilityBill utilityBill:
+                    NavigationService.Navigate(typeof(PassportDocumentPage), state: new Dictionary<string, object>{ { "json", element } });
                     break;
                 case PassportElementDriverLicense driverLicense:
                 case PassportElementIdentityCard identityCard:
@@ -692,7 +695,40 @@ namespace Unigram.ViewModels.Passport
         public RelayCommand AddCommand { get; }
         private async void AddExecute()
         {
+            var types = new List<PassportElementType>();
+            types.Add(new PassportElementTypePhoneNumber());
+            types.Add(new PassportElementTypeEmailAddress());
+            types.Add(new PassportElementTypePersonalDetails());
+            types.Add(new PassportElementTypePassport());
+            types.Add(new PassportElementTypeInternalPassport());
+            types.Add(new PassportElementTypePassportRegistration());
+            types.Add(new PassportElementTypeTemporaryRegistration());
+            types.Add(new PassportElementTypeIdentityCard());
+            types.Add(new PassportElementTypeDriverLicense());
+            types.Add(new PassportElementTypeAddress());
+            types.Add(new PassportElementTypeUtilityBill());
+            types.Add(new PassportElementTypeBankStatement());
+            types.Add(new PassportElementTypeRentalAgreement());
 
+            foreach (var element in Items)
+            {
+                var type = element.ToElementType();
+                var already = types.FirstOrDefault(x => x.TypeEquals(type));
+
+                if (already !=null)
+                {
+                    types.Remove(already);
+                }
+            }
+
+            var combo = new ComboBox();
+            combo.ItemsSource = types;
+            //combo.DisplayMemberPath = "Name";
+
+            var dialog = new ContentDialog();
+            dialog.Content = combo;
+
+            await dialog.ShowQueuedAsync();
         }
 
         public RelayCommand HelpCommand { get; }
@@ -715,40 +751,6 @@ namespace Unigram.ViewModels.Passport
             RequiredType = requiredType;
             DocumentTypes = documentTypes;
             IsDocumentOnly = documentOnly;
-        }
-
-
-        #region BaseObject
-
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-    }
-
-    public class PassportElementGroup<T> : PassportElement
-    {
-        public bool IsOneOf { get; private set; }
-        public PassportSuitableElement Type { get; private set; }
-        public IList<PassportSuitableElement> AcceptedTypes { get; private set; }
-        public T DetailsValue { get; private set; }
-        public PassportElement DocumentValue { get; private set; }
-        public bool IncludesDetails { get; private set; }
-        public bool IsExclusive { get; private set; }
-
-        public List<PassportElementError> Errors { get; set; }
-
-        public PassportElementGroup(bool oneOf, PassportSuitableElement requiredType, IList<PassportSuitableElement> acceptedTypes, T detailsValue, PassportElement documentValue, bool includesDetails, bool exclusive)
-        {
-            IsOneOf = oneOf;
-            Type = requiredType;
-            AcceptedTypes = acceptedTypes;
-            DetailsValue = detailsValue;
-            DocumentValue = documentValue;
-            IncludesDetails = includesDetails;
-            IsExclusive = exclusive;
         }
 
         #region BaseObject

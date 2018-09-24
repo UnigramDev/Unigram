@@ -212,6 +212,7 @@ namespace Unigram
                 builder.RegisterType<PaymentFormStep5ViewModel>();
                 builder.RegisterType<PaymentReceiptViewModel>();
                 builder.RegisterType<PassportViewModel>();
+                builder.RegisterType<PassportDocumentViewModelBase>();
                 builder.RegisterType<PassportAddressViewModel>();
                 builder.RegisterType<InviteViewModel>();
 

@@ -33,6 +33,28 @@ namespace Unigram.Common
             }
         }
 
+        public static void SetPersonalDocument(this InputPassportElement element, InputPersonalDocument document)
+        {
+            switch (element)
+            {
+                case InputPassportElementBankStatement bankStatement:
+                    bankStatement.BankStatement = document;
+                    break;
+                case InputPassportElementPassportRegistration passportRegistration:
+                    passportRegistration.PassportRegistration = document;
+                    break;
+                case InputPassportElementRentalAgreement rentalAgreement:
+                    rentalAgreement.RentalAgreement = document;
+                    break;
+                case InputPassportElementTemporaryRegistration temporaryRegistration:
+                    temporaryRegistration.TemporaryRegistration = document;
+                    break;
+                case InputPassportElementUtilityBill utilityBill:
+                    utilityBill.UtilityBill = document;
+                    break;
+            }
+        }
+
         public static IdentityDocument GetIdentityDocument(this PassportElement element)
         {
             switch (element)
@@ -45,6 +67,41 @@ namespace Unigram.Common
                     return internalPassport.InternalPassport;
                 case PassportElementPassport passport:
                     return passport.Passport;
+                default:
+                    return null;
+            }
+        }
+
+        public static InputPassportElement ToInputElement(this PassportElement element)
+        {
+            switch (element)
+            {
+                case PassportElementAddress address:
+                    return new InputPassportElementAddress();
+                case PassportElementPersonalDetails personalDetails:
+                    return new InputPassportElementPersonalDetails();
+                case PassportElementEmailAddress emailAddress:
+                    return new InputPassportElementEmailAddress();
+                case PassportElementPhoneNumber phoneNumber:
+                    return new InputPassportElementPhoneNumber();
+                case PassportElementBankStatement bankStatement:
+                    return new InputPassportElementBankStatement();
+                case PassportElementPassportRegistration passportRegistration:
+                    return new InputPassportElementPassportRegistration();
+                case PassportElementRentalAgreement rentalAgreement:
+                    return new InputPassportElementRentalAgreement();
+                case PassportElementTemporaryRegistration temporaryRegistration:
+                    return new InputPassportElementTemporaryRegistration();
+                case PassportElementUtilityBill utilityBill:
+                    return new InputPassportElementUtilityBill();
+                case PassportElementDriverLicense driverLicense:
+                    return new InputPassportElementDriverLicense();
+                case PassportElementIdentityCard identityCard:
+                    return new InputPassportElementIdentityCard();
+                case PassportElementInternalPassport internalPassport:
+                    return new InputPassportElementInternalPassport();
+                case PassportElementPassport passport:
+                    return new InputPassportElementPassport();
                 default:
                     return null;
             }
@@ -1560,6 +1617,16 @@ namespace Unigram.Common
             }
 
             return false;
+        }
+
+
+
+        public static void Update(this File file, File update)
+        {
+            file.ExpectedSize = update.ExpectedSize;
+            file.Size = update.Size;
+            file.Local = update.Local;
+            file.Remote = update.Remote;
         }
     }
 }

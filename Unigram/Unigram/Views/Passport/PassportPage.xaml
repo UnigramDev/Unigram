@@ -105,7 +105,7 @@
                     <TextBlock
                         common:TextBlockHelper.FormattedText="{x:Bind ConvertPolicy(ViewModel.AuthorizationForm, ViewModel.BotId), Mode=OneWay}"/>
                     <StackPanel x:Name="Footer">
-                        <Button Content="{CustomResource PassportNoDocumentsAdd}"/>
+                        <Button Command="{x:Bind ViewModel.AddCommand}" Content="{CustomResource PassportNoDocumentsAdd}"/>
                         <Button Content="{CustomResource TelegramPassportDelete}"/>
                     </StackPanel>
                 </StackPanel>
