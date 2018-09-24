@@ -16,7 +16,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Telegram.Helpers;
 using Unigram.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.ViewModels;

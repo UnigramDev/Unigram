@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
-using Telegram.Helpers;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;

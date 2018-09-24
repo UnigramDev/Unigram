@@ -296,7 +296,7 @@ namespace Unigram.Views
 #if DEBUG
                     phoneNumber.Text = "+39 --- --- ----";
 #else
-                    phoneNumber.Text = Telegram.Helpers.PhoneNumber.Format(user.PhoneNumber);
+                    phoneNumber.Text = Common.PhoneNumber.Format(user.PhoneNumber);
 #endif
                     check.IsChecked = _showSessions;
                 }

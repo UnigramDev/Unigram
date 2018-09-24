@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using Telegram.Helpers;
+using Unigram.Common;
 using Unigram.Entities;
 using Unigram.ViewModels.Users;
 using Windows.Foundation;

@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Helpers;
 using Unigram.Strings;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.Globalization.NumberFormatting;
@@ -55,7 +54,7 @@ namespace Unigram.Converters
                 return null;
             }
 
-            return Telegram.Helpers.PhoneNumber.Format(number);
+            return Common.PhoneNumber.Format(number);
         }
 
         public string BannedUntil(long date)

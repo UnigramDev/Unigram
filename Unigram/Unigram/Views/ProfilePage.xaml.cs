@@ -22,7 +22,6 @@ using Windows.UI.Xaml.Navigation;
 using Unigram.Common;
 using System.Windows.Input;
 using Telegram.Td.Api;
-using Telegram.Helpers;
 using Unigram.Converters;
 using Unigram.Collections;
 using Unigram.ViewModels.Chats;

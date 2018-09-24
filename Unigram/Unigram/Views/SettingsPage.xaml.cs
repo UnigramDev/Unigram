@@ -276,7 +276,7 @@ namespace Unigram.Views
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
-            PhoneNumber.Content = Telegram.Helpers.PhoneNumber.Format(user.PhoneNumber);
+            PhoneNumber.Content = Common.PhoneNumber.Format(user.PhoneNumber);
             Username.Content = string.IsNullOrEmpty(user.Username) ? Strings.Resources.UsernameEmpty : $"@{user.Username}";
         }
 
