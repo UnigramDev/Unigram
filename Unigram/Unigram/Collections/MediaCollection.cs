@@ -14,37 +14,17 @@ namespace Unigram.Collections
         private readonly IProtoService _protoService;
         private readonly SearchMessagesFilter _filter;
         private readonly long _chatId;
+        private readonly string _query;
 
         private long _lastMaxId;
         private bool _hasMore;
 
-        public MediaCollection(IProtoService protoService, long chatId, SearchMessagesFilter filter)
+        public MediaCollection(IProtoService protoService, long chatId, SearchMessagesFilter filter, string query = null)
         {
             _protoService = protoService;
             _chatId = chatId;
             _filter = filter;
-        }
-
-        private string _query = string.Empty;
-        public string Query
-        {
-            get
-            {
-                return _query;
-            }
-            set
-            {
-                if (_query != value)
-                {
-                    _query = value;
-                    _lastMaxId = 0;
-                    RaisePropertyChanged("Query");
-
-                    Clear();
-
-                    HasMoreItems = true;
-                }
-            }
+            _query = query ?? string.Empty;
         }
 
         public override async Task<IList<KeyedList<DateTime, Message>>> LoadDataAsync()

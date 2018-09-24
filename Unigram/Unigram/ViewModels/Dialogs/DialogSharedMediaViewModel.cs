@@ -82,6 +82,29 @@ namespace Unigram.ViewModels.Dialogs
         public MediaCollection Links { get; private set; }
         public MediaCollection Music { get; private set; }
 
+        public void Find(SearchMessagesFilter filter, string query)
+        {
+            switch (filter)
+            {
+                case SearchMessagesFilterPhotoAndVideo photoAndVideo:
+                    Media = new MediaCollection(ProtoService, Chat.Id, photoAndVideo, query);
+                    RaisePropertyChanged(() => Media);
+                    break;
+                case SearchMessagesFilterDocument document:
+                    Files = new MediaCollection(ProtoService, Chat.Id, document, query);
+                    RaisePropertyChanged(() => Files);
+                    break;
+                case SearchMessagesFilterUrl url:
+                    Links = new MediaCollection(ProtoService, Chat.Id, url, query);
+                    RaisePropertyChanged(() => Links);
+                    break;
+                case SearchMessagesFilterAudio audio:
+                    Music = new MediaCollection(ProtoService, Chat.Id, audio, query);
+                    RaisePropertyChanged(() => Music);
+                    break;
+            }
+        }
+
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode SelectionMode
         {

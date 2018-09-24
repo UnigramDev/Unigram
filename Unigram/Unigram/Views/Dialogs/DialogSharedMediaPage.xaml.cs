@@ -29,6 +29,7 @@ using Telegram.Td.Api;
 using Unigram.Controls.Items;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Delegates;
+using System.Reactive.Linq;
 
 namespace Unigram.Views.Dialogs
 {
@@ -47,6 +48,19 @@ namespace Unigram.Views.Dialogs
             //ScrollingFiles.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
             //ScrollingLinks.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
             //ScrollingMusic.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+
+            InitializeSearch(SearchFiles, () => new SearchMessagesFilterDocument());
+            InitializeSearch(SearchLinks, () => new SearchMessagesFilterUrl());
+            InitializeSearch(SearchMusic, () => new SearchMessagesFilterAudio());
+        }
+
+        private void InitializeSearch(TextBox field, Func<SearchMessagesFilter> filter)
+        {
+            var observable = Observable.FromEventPattern<TextChangedEventArgs>(field, "TextChanged");
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            {
+                ViewModel.Find(filter(), field.Text);
+            });
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

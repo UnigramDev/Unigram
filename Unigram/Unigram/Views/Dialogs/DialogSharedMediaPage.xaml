@@ -14,10 +14,10 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <CollectionViewSource x:Name="MediaSource" Source="{x:Bind ViewModel.Media}" IsSourceGrouped="True"/>
-        <CollectionViewSource x:Name="FilesSource" Source="{x:Bind ViewModel.Files}" IsSourceGrouped="True"/>
-        <CollectionViewSource x:Name="LinksSource" Source="{x:Bind ViewModel.Links}" IsSourceGrouped="True"/>
-        <CollectionViewSource x:Name="MusicSource" Source="{x:Bind ViewModel.Music}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="MediaSource" Source="{x:Bind ViewModel.Media, Mode=OneWay}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="FilesSource" Source="{x:Bind ViewModel.Files, Mode=OneWay}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="LinksSource" Source="{x:Bind ViewModel.Links, Mode=OneWay}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="MusicSource" Source="{x:Bind ViewModel.Music, Mode=OneWay}" IsSourceGrouped="True"/>
 
         <Style TargetType="PivotItem">
             <Setter Property="Margin" Value="0"/>
@@ -39,7 +39,7 @@
                 </PivotItem.Header>
                 <controls:GroupedGridView
                     x:Name="ScrollingMedia"
-                    ItemsSource="{x:Bind MediaSource.View}"
+                    ItemsSource="{x:Bind MediaSource.View, Mode=OneWay}"
                     ViewSource="{x:Bind MediaSource}"
                     SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                     SelectionChanged="List_SelectionChanged"
@@ -122,7 +122,7 @@
                 </PivotItem.Header>
                 <controls:GroupedListView
                     x:Name="ScrollingFiles"
-                    ItemsSource="{x:Bind FilesSource.View}"
+                    ItemsSource="{x:Bind FilesSource.View, Mode=OneWay}"
                     ViewSource="{x:Bind FilesSource}"
                     SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                     ContainerContentChanging="OnContainerContentChanging"
@@ -133,7 +133,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Header>
-                        <controls:SearchTextBox Text="{Binding Files.Query, Mode=TwoWay}" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
+                        <controls:SearchTextBox x:Name="SearchFiles" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
                         <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
                              Text="{Binding Files.Query, Mode=TwoWay}"
                              PlaceholderText="Search..."
@@ -194,7 +194,7 @@
                 </PivotItem.Header>
                 <controls:GroupedListView
                     x:Name="ScrollingLinks"
-                    ItemsSource="{x:Bind LinksSource.View}"
+                    ItemsSource="{x:Bind LinksSource.View, Mode=OneWay}"
                     ViewSource="{x:Bind LinksSource}"
                     ContainerContentChanging="OnContainerContentChanging"
                     SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
@@ -205,7 +205,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Header>
-                        <controls:SearchTextBox Text="{Binding Links.Query, Mode=TwoWay}" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
+                        <controls:SearchTextBox x:Name="SearchLinks" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
                         <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
                              Text="{Binding Links.Query, Mode=TwoWay}"
                              PlaceholderText="Search..."
@@ -265,7 +265,7 @@
                     <FontIcon Glyph="&#xE189;" />
                 </PivotItem.Header>
                 <ListView x:Name="ScrollingMusic"
-                          ItemsSource="{Binding MusicCollection}"
+                          ItemsSource="{x:Bind MusicSource.View, Mode=OneWay}"
                           SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                           SelectionChanged="List_SelectionChanged">
                     <ListView.ItemContainerStyle>
@@ -274,7 +274,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Header>
-                        <controls:SearchTextBox Text="{Binding Music.Query, Mode=TwoWay}" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
+                        <controls:SearchTextBox x:Name="SearchMusic" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
                         <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
                              Text="{Binding Music.Query, Mode=TwoWay}"
                              PlaceholderText="Search..."
