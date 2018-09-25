@@ -36,6 +36,8 @@ namespace Unigram.Services
         bool IsAutoPlayEnabled { get; set; }
         bool IsSendGrouped { get; set; }
 
+        int LastMessageTtl { get; set; }
+
         string NotificationsToken { get; set; }
         int[] NotificationsIds { get; set; }
 
@@ -450,6 +452,23 @@ namespace Unigram.Common
             {
                 _isSendGrouped = value;
                 AddOrUpdateValue("IsSendGrouped", value);
+            }
+        }
+
+        private int? _lastMessageTtl;
+        public int LastMessageTtl
+        {
+            get
+            {
+                if (_lastMessageTtl == null)
+                    _lastMessageTtl = GetValueOrDefault("LastMessageTtl", 7);
+
+                return _lastMessageTtl ?? 7;
+            }
+            set
+            {
+                _lastMessageTtl = value;
+                AddOrUpdateValue("LastMessageTtl", value);
             }
         }
 

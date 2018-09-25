@@ -412,11 +412,16 @@ namespace Unigram.Controls.Views
         private async void TTLSeconds_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new MessageTtlView(SelectedItem.IsPhoto);
-            dialog.Value = SelectedItem.Ttl;
+            dialog.Value = SelectedItem.Ttl != null && SelectedItem.Ttl > 0 ? SelectedItem.Ttl : ViewModel.Settings.LastMessageTtl;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
+                if (dialog.Value != null && dialog.Value > 0)
+                {
+                    ViewModel.Settings.LastMessageTtl = dialog.Value ?? 7;
+                }
+
                 SelectedItem.Ttl = dialog.Value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
             }
