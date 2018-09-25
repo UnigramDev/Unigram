@@ -15,6 +15,7 @@ using Unigram.Converters;
 using Unigram.Core.Common;
 using Unigram.Core.Helpers;
 using Unigram.Entities;
+using Unigram.Native;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Dialogs;
@@ -147,6 +148,25 @@ namespace Unigram.ViewModels
             if (chat == null)
             {
                 return;
+            }
+
+            if (file.FileType.Equals(".webp", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    var buffer = await FileIO.ReadBufferAsync(file);
+                    var webp = WebPImage.DecodeFromBuffer(buffer);
+
+                    var stickerReply = GetReply(true);
+                    var stickerInput = new InputMessageSticker(await file.ToGeneratedAsync(), null, webp.PixelWidth, webp.PixelHeight);
+
+                    await SendMessageAsync(stickerReply, stickerInput);
+                    return;
+                }
+                catch
+                {
+                    // Not really a sticker, go on sending as a file
+                }
             }
 
             var reply = GetReply(true);
