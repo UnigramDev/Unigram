@@ -1801,6 +1801,14 @@ namespace Unigram.Views
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsProxiesPage));
         }
+
+        private void ChatBackgroundPresenter_Loading(FrameworkElement sender, object args)
+        {
+            if (sender is ChatBackgroundPresenter presenter)
+            {
+                presenter.Update(ViewModel.SessionId, ((TLViewModelBase)ViewModel).Settings, ViewModel.Aggregator);
+            }
+        }
     }
 
     public class AnyCollection : MvxObservableCollection<object>

@@ -19,13 +19,11 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls
 {
-    public sealed partial class DialogBackground : UserControl
+    public sealed partial class ChatBackground : UserControl
     {
-        public DialogBackground()
+        public ChatBackground()
         {
             InitializeComponent();
 

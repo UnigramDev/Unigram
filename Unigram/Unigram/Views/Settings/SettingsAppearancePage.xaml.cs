@@ -40,6 +40,7 @@ namespace Unigram.Views.Settings
             Message2.Mockup("I can't take you seriously right now. Sorry..", true, DateTime.Now);
 
             UpdatePreview(true);
+            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
         }
 
         private void Wallpaper_Click(object sender, RoutedEventArgs e)

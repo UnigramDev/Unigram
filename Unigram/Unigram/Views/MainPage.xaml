@@ -109,7 +109,7 @@
                         <controls:MasterDetailPanel x:Name="AdaptivePanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                             <Grid Background="{TemplateBinding Background}">
                                 <!--<Border x:Name="DropShadow" Loaded="DropShadow_Loaded"/>-->
-                                <controls:DialogBackgroundPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                                <controls:ChatBackgroundPresenter Loading="ChatBackgroundPresenter_Loading" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                                 <Grid x:Name="DetailPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}"/>
                             </Grid>
                             <ContentPresenter x:Name="MasterFrame"

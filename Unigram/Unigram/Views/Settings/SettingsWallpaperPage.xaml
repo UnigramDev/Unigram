@@ -41,7 +41,7 @@
                 <selectors:WallPaperTemplateSelector>
                     <selectors:WallPaperTemplateSelector.DefaultTemplate>
                         <DataTemplate>
-                            <controls:DialogBackground/>
+                            <controls:ChatBackground/>
                         </DataTemplate>
                     </selectors:WallPaperTemplateSelector.DefaultTemplate>
                     <selectors:WallPaperTemplateSelector.ItemTemplate>

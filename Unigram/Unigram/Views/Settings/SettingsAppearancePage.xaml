@@ -235,7 +235,7 @@
 
                 <TextBlock Text="{CustomResource ThemePreview}" Margin="12,12,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                 <Grid x:Name="Preview">
-                    <controls:DialogBackgroundPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                    <controls:ChatBackgroundPresenter x:Name="BackgroundPresenter" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                     <StackPanel Padding="12,12,12,10">
                         <messages:MessageBubble x:Name="Message1"/>
                         <messages:MessageBubble x:Name="Message2">

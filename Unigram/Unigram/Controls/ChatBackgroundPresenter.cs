@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Services.Updates;
 using Unigram.Views;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
@@ -14,38 +15,43 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls
 {
-    public class DialogBackgroundPresenter : ContentControl, IHandle<string>
+    public class ChatBackgroundPresenter : ContentControl, IHandle<UpdateWallpaper>
     {
-        private DialogBackground _defaultBackground;
+        private int _session;
+        private IEventAggregator _aggregator;
+
+        private ChatBackground _defaultBackground;
         private Rectangle _imageBackground;
         private Rectangle _colorBackground;
 
-        public DialogBackgroundPresenter()
+        public ChatBackgroundPresenter()
         {
-            Reload();
-            TLContainer.Current.Resolve<IEventAggregator>().Subscribe(this);
+            //Update();
         }
 
-        public void Handle(string message)
+        public void Handle(UpdateWallpaper update)
         {
-            if (message.Equals("Wallpaper"))
-            {
-                this.BeginOnUIThread(Reload);
-            }
+            this.BeginOnUIThread(() => Update(_session, update.Background, update.Color));
         }
 
-        private async void Reload()
+        public void Update(int session, ISettingsService settings, IEventAggregator aggregator)
+        {
+            _session = session;
+            _aggregator = aggregator;
+
+            aggregator.Subscribe(this);
+            Update(session, settings.SelectedBackground, settings.SelectedColor);
+        }
+
+        private async void Update(int session, int background, int color)
         {
             try
             {
-                var selectedBackground = SettingsService.Current.SelectedBackground;
-                var selectedColor = SettingsService.Current.SelectedColor;
-
-                if (selectedColor == 0)
+                if (color == 0)
                 {
-                    if (selectedBackground != 1000001)
+                    if (background != 1000001)
                     {
-                        var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetFilePath(Constants.WallpaperFileName));
+                        var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync($"{session}\\{Constants.WallpaperFileName}");
                         if (item is StorageFile file)
                         {
                             if (_imageBackground == null)
@@ -64,7 +70,7 @@ namespace Unigram.Controls
                     }
 
                     if (_defaultBackground == null)
-                        _defaultBackground = new DialogBackground();
+                        _defaultBackground = new ChatBackground();
 
                     Content = _defaultBackground;
                 }
@@ -74,9 +80,9 @@ namespace Unigram.Controls
                         _colorBackground = new Rectangle();
 
                     _colorBackground.Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF,
-                        (byte)((selectedColor >> 16) & 0xFF),
-                        (byte)((selectedColor >> 8) & 0xFF),
-                        (byte)((selectedColor & 0xFF))));
+                        (byte)((color >> 16) & 0xFF),
+                        (byte)((color >> 8) & 0xFF),
+                        (byte)((color & 0xFF))));
 
                     Content = _colorBackground;
                 }
@@ -84,7 +90,7 @@ namespace Unigram.Controls
             catch
             {
                 if (_defaultBackground == null)
-                    _defaultBackground = new DialogBackground();
+                    _defaultBackground = new ChatBackground();
 
                 Content = _defaultBackground;
             }

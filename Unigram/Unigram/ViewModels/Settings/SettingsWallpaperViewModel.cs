@@ -9,6 +9,7 @@ using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Core.Helpers;
 using Unigram.Services;
+using Unigram.Services.Updates;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -19,8 +20,6 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsWallPaperViewModel : TLViewModelBase
     {
-        private const string TempWallpaperFileName = "temp_wallpaper.jpg";
-
         public SettingsWallPaperViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
@@ -104,6 +103,8 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        private StorageFile _localFile;
+
         private BitmapImage _local;
         public BitmapImage Local
         {
@@ -149,18 +150,16 @@ namespace Unigram.ViewModels.Settings
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var result = await FileUtils.CreateTempFileAsync(TempWallpaperFileName);
-                await file.CopyAndReplaceAsync(result);
-
                 IsLocal = true;
                 SelectedItem = null;
 
-                using (var stream = await result.OpenReadAsync())
+                using (var stream = await file.OpenReadAsync())
                 {
                     var bitmap = new BitmapImage();
                     try
                     {
                         await bitmap.SetSourceAsync(stream);
+                        _localFile = file;
                     }
                     catch { }
                     Local = bitmap;
@@ -171,6 +170,9 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand DoneCommand { get; }
         private async void DoneExecute()
         {
+            var background = 1000001;
+            var color = 0;
+
             var wallpaper = _selectedItem;
             if (wallpaper != null && wallpaper.Sizes != null && wallpaper.Sizes.Count > 0)
             {
@@ -201,36 +203,28 @@ namespace Unigram.ViewModels.Settings
                     Theme.Current.AddOrUpdateColor("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96));
                 }
 
-                Settings.SelectedBackground = wallpaper.Id;
-                Settings.SelectedColor = 0;
+                Settings.SelectedBackground = background = wallpaper.Id;
+                Settings.SelectedColor = color = 0;
             }
             else if (wallpaper != null)
             {
-                Settings.SelectedBackground = wallpaper.Id;
-                Settings.SelectedColor = wallpaper.Color;
+                Settings.SelectedBackground = background = wallpaper.Id;
+                Settings.SelectedColor = color = wallpaper.Color;
             }
-            else if (_selectedItem == null && _isLocal)
+            else if (_selectedItem == null && _isLocal && _localFile != null)
             {
-                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath(TempWallpaperFileName));
-                if (item is StorageFile file)
-                {
-                    var result = await FileUtils.CreateFileAsync(Constants.WallpaperFileName);
-                    await file.CopyAndReplaceAsync(result);
+                var result = await ApplicationData.Current.LocalFolder.CreateFileAsync($"{SessionId}\\{Constants.WallpaperFileName}", CreationCollisionOption.ReplaceExisting);
+                await _localFile.CopyAndReplaceAsync(result);
 
-                    var accent = await ImageHelper.GetAccentAsync(result);
-                    Theme.Current.AddOrUpdateColor("MessageServiceBackgroundBrush", accent[0]);
-                    Theme.Current.AddOrUpdateColor("MessageServiceBackgroundPressedBrush", accent[1]);
-                }
-                else
-                {
-                    return;
-                }
+                var accent = await ImageHelper.GetAccentAsync(result);
+                Theme.Current.AddOrUpdateColor("MessageServiceBackgroundBrush", accent[0]);
+                Theme.Current.AddOrUpdateColor("MessageServiceBackgroundPressedBrush", accent[1]);
 
-                Settings.SelectedBackground = -1;
-                Settings.SelectedColor = 0;
+                Settings.SelectedBackground = background = -1;
+                Settings.SelectedColor = color = 0;
             }
 
-            Aggregator.Publish("Wallpaper");
+            Aggregator.Publish(new UpdateWallpaper(background, color));
             NavigationService.GoBack();
         }
     }
