@@ -1810,15 +1810,12 @@ namespace Unigram.Views
 
     public class NavigationViewTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate UserTemplate { get; set; }
         public DataTemplate SessionTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             switch (item)
             {
-                case MainViewModel user:
-                    return UserTemplate;
                 case ISessionService session:
                     return SessionTemplate;
             }

@@ -185,21 +185,26 @@ namespace Unigram.Views
             }
         }
 
-        private void InitializeUser(MainViewModel viewModel)
+        private async void InitializeUser(MainViewModel viewModel)
         {
-            for (int i = 0; i < NavigationViewItems.Count; i++)
+            var user = viewModel.ProtoService.GetUser(viewModel.ProtoService.GetMyId());
+            if (user == null)
             {
-                if (NavigationViewItems[i] is MainViewModel)
-                {
-                    NavigationViewItems.RemoveAt(i);
-                    i--;
-                }
+                user = await viewModel.ProtoService.SendAsync(new GetMe()) as User;
             }
 
-            if (viewModel != null)
+            if (user == null)
             {
-                NavigationViewItems.Insert(0, viewModel);
+                return;
             }
+
+            NameLabel.Text = user.GetFullName();
+#if DEBUG
+            PhoneLabel.Text = "+39 --- --- ----";
+#else
+            PhoneLabel.Text = PhoneNumber.Format(user.PhoneNumber);
+#endif
+            Expanded.IsChecked = _showSessions;
         }
 
         private void InitializeSessions(bool show, IList<ISessionService> items)
@@ -250,164 +255,110 @@ namespace Unigram.Views
                 return;
             }
 
-            if (args.Item is ISessionService session)
+            var session = args.Item as ISessionService;
+            if (session == null)
             {
-                args.ItemContainer.RequestedTheme = ElementTheme.Default;
-
-                var user = session.ProtoService.GetUser(session.UserId);
-                if (user == null)
-                {
-                    return;
-                }
-
-                if (args.Phase == 0)
-                {
-                    var title = content.Children[2] as TextBlock;
-                    title.Text = user.GetFullName();
-                }
-                else if (args.Phase == 2)
-                {
-                    var photo = content.Children[0] as ProfilePicture;
-                    photo.Source = PlaceholderHelper.GetUser(session.ProtoService, user, 28, 28);
-                }
-
-                if (args.Phase < 2)
-                {
-                    args.RegisterUpdateCallback(OnContainerContentChanging);
-                }
+                return;
             }
-            else if (args.Item is MainViewModel viewModel)
+
+            var user = session.ProtoService.GetUser(session.UserId);
+            if (user == null)
             {
-                args.ItemContainer.RequestedTheme = ElementTheme.Dark;
-
-                var user = viewModel.ProtoService.GetUser(viewModel.ProtoService.GetMyId());
-                if (user == null)
-                {
-                    return;
-                }
-
-                if (args.Phase == 0)
-                {
-                    var title = content.Children[0] as TextBlock;
-                    var phoneNumber = content.Children[1] as TextBlock;
-                    var check = content.Children[2] as CheckBox;
-
-                    title.Text = user.GetFullName();
-#if DEBUG
-                    phoneNumber.Text = "+39 --- --- ----";
-#else
-                    phoneNumber.Text = Common.PhoneNumber.Format(user.PhoneNumber);
-#endif
-                    check.IsChecked = _showSessions;
-                }
+                return;
             }
-            else
+
+            if (args.Phase == 0)
             {
-                args.ItemContainer.RequestedTheme = ElementTheme.Default;
+                var title = content.Children[2] as TextBlock;
+                title.Text = user.GetFullName();
+            }
+            else if (args.Phase == 2)
+            {
+                var photo = content.Children[0] as ProfilePicture;
+                photo.Source = PlaceholderHelper.GetUser(session.ProtoService, user, 28, 28);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(OnContainerContentChanging);
             }
         }
 
         #endregion
 
+        private void Expand_Click(object sender, RoutedEventArgs e)
+        {
+            _showSessions = !_showSessions;
+
+            InitializeSessions(_showSessions, _lifetime.Items);
+            Expanded.IsChecked = _showSessions;
+        }
+
         private void OnItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is MainViewModel)
+            if (e.ClickedItem as string == "NavigationAdd")
             {
-                var container = NavigationViewList.ContainerFromItem(e.ClickedItem) as SelectorItem;
-                if (container == null)
-                {
-                    return;
-                }
-
-                var content = container.ContentTemplateRoot as Grid;
-                if (content == null)
-                {
-                    return;
-                }
-
-                _showSessions = !_showSessions;
-
-                InitializeSessions(_showSessions, _lifetime.Items);
-
-                var check = content.Children[2] as CheckBox;
-                check.IsChecked = _showSessions;
-
-                //var items = NavigationViewItems.Source as AnyCollection;
-                //if (items.Contains(ViewModel.Lifecycle.Items))
-                //{
-                //    items.RemoveAt(1);
-                //}
-                //else
-                //{
-                //    items.Insert(1, ViewModel.Lifecycle.Items);
-                //}
+                Switch(_lifetime.Create());
             }
-            else
+            else if (e.ClickedItem is ISessionService session)
             {
-                Navigation.IsPaneOpen = false;
-
-                var scroll = NavigationViewList.GetScrollViewer();
-                if (scroll != null)
+                if (session.IsActive)
                 {
-                    scroll.ChangeView(null, 0, null, true);
+                    return;
                 }
 
-                if (e.ClickedItem as string == "NavigationAdd")
+                Switch(session);
+            }
+            else if (_navigationService?.Frame?.Content is IRootContentPage content)
+            {
+                if (e.ClickedItem as string == NavigationNewChat.Name)
                 {
-                    Switch(_lifetime.Create());
+                    content.NavigationView_ItemClick(RootDestination.NewChat);
                 }
-                else if (e.ClickedItem is ISessionService session)
+                else if (e.ClickedItem as string == NavigationNewSecretChat.Name)
                 {
-                    if (session.IsActive)
-                    {
-                        return;
-                    }
+                    content.NavigationView_ItemClick(RootDestination.NewSecretChat);
+                }
+                else if (e.ClickedItem as string == NavigationNewChannel.Name)
+                {
+                    content.NavigationView_ItemClick(RootDestination.NewChannel);
+                }
+                else if (e.ClickedItem as string == NavigationChats.Name)
+                {
+                    content.NavigationView_ItemClick(RootDestination.Chats);
+                }
+                else if (e.ClickedItem as string == NavigationContacts.Name)
+                {
+                    content.NavigationView_ItemClick(RootDestination.Contacts);
+                }
+                else if (e.ClickedItem as string == NavigationCalls.Name)
+                {
+                    content.NavigationView_ItemClick(RootDestination.Calls);
+                }
+                else if (e.ClickedItem as string == NavigationSettings.Name)
+                {
+                    content.NavigationView_ItemClick(RootDestination.Settings);
+                }
+                //else if (e.ClickedItem as string == NavigationInviteFriends.Name)
+                //{
+                //    content.NavigationView_ItemClick(RootDestination.InviteFriends);
+                //}
+                else if (e.ClickedItem as string == NavigationSavedMessages.Name)
+                {
+                    content.NavigationView_ItemClick(RootDestination.SavedMessages);
+                }
+                else if (e.ClickedItem as string == NavigationNews.Name)
+                {
+                    content.NavigationView_ItemClick(RootDestination.News);
+                }
+            }
 
-                    Switch(session);
-                }
-                else if (_navigationService?.Frame?.Content is IRootContentPage content)
-                {
-                    if (e.ClickedItem as string == NavigationNewChat.Name)
-                    {
-                        content.NavigationView_ItemClick(RootDestination.NewChat);
-                    }
-                    else if (e.ClickedItem as string == NavigationNewSecretChat.Name)
-                    {
-                        content.NavigationView_ItemClick(RootDestination.NewSecretChat);
-                    }
-                    else if (e.ClickedItem as string == NavigationNewChannel.Name)
-                    {
-                        content.NavigationView_ItemClick(RootDestination.NewChannel);
-                    }
-                    else if (e.ClickedItem as string == NavigationChats.Name)
-                    {
-                        content.NavigationView_ItemClick(RootDestination.Chats);
-                    }
-                    else if (e.ClickedItem as string == NavigationContacts.Name)
-                    {
-                        content.NavigationView_ItemClick(RootDestination.Contacts);
-                    }
-                    else if (e.ClickedItem as string == NavigationCalls.Name)
-                    {
-                        content.NavigationView_ItemClick(RootDestination.Calls);
-                    }
-                    else if (e.ClickedItem as string == NavigationSettings.Name)
-                    {
-                        content.NavigationView_ItemClick(RootDestination.Settings);
-                    }
-                    //else if (e.ClickedItem as string == NavigationInviteFriends.Name)
-                    //{
-                    //    content.NavigationView_ItemClick(RootDestination.InviteFriends);
-                    //}
-                    else if (e.ClickedItem as string == NavigationSavedMessages.Name)
-                    {
-                        content.NavigationView_ItemClick(RootDestination.SavedMessages);
-                    }
-                    else if (e.ClickedItem as string == NavigationNews.Name)
-                    {
-                        content.NavigationView_ItemClick(RootDestination.News);
-                    }
-                }
+            Navigation.IsPaneOpen = false;
+
+            var scroll = NavigationViewList.GetScrollViewer();
+            if (scroll != null)
+            {
+                scroll.ChangeView(null, 0, null, true);
             }
         }
 
