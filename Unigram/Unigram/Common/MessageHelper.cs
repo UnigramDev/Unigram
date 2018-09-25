@@ -604,12 +604,14 @@ namespace Unigram.Common
                     var hyperlink = text.GetHyperlinkFromPoint(point);
                     if (hyperlink == null)
                     {
+                        args.Handled = false;
                         return;
                     }
 
                     var link = GetEntity(hyperlink);
                     if (link == null)
                     {
+                        args.Handled = false;
                         return;
                     }
 
@@ -626,6 +628,10 @@ namespace Unigram.Common
 
                     args.Handled = true;
                 }
+            }
+            else
+            {
+                args.Handled = false;
             }
         }
 

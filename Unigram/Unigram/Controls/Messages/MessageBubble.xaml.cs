@@ -16,17 +16,20 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class MessageBubble : MessageBubbleBase
+    public sealed partial class MessageBubble : StackPanel
     {
         private MessageViewModel _message;
 
         public MessageBubble()
         {
             InitializeComponent();
+
+            Message.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
         }
 
         public void UpdateMessage(MessageViewModel message)
@@ -1113,6 +1116,33 @@ namespace Unigram.Controls.Messages
             else
             {
                 return base.MeasureOverride(new Size(Math.Max(96, width), availableSize.Height));
+            }
+        }
+
+        private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            MessageHelper.Hyperlink_ContextRequested(sender, args);
+        }
+
+        private void Message_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private static bool IsFullMedia(MessageContent content, bool width = false)
+        {
+            switch (content)
+            {
+                case MessageLocation location:
+                case MessageVenue venue:
+                case MessagePhoto photo:
+                case MessageVideo video:
+                case MessageAnimation animation:
+                    return true;
+                case MessageInvoice invoice:
+                    return width && invoice.Photo != null;
+                default:
+                    return false;
             }
         }
     }

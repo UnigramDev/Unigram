@@ -1,4 +1,4 @@
-<local:MessageBubbleBase
+<StackPanel
     x:Class="Unigram.Controls.Messages.MessageBubble"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -131,7 +131,6 @@
                 Style="{ThemeResource BodyRichTextBlockStyle}"
                 FontSize="{ThemeResource MessageFontSize}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
-                ContextRequested="Message_ContextRequested"
                 ContextMenuOpening="Message_ContextMenuOpening"
                 Grid.Column="1"
                 Grid.Row="2">
@@ -163,4 +162,4 @@
 
     <controls:ReplyMarkupPanel x:Name="Markup" InlineButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,0"/>
 
-</local:MessageBubbleBase>
+</StackPanel>
