@@ -210,7 +210,7 @@ String^ NotificationTask::GetCaption(JsonArray^ loc_args, String^ loc_key)
 
 String^ NotificationTask::GetMessage(JsonArray^ loc_args, String^ loc_key)
 {
-	auto resourceLoader = ResourceLoader::GetForViewIndependentUse("Unigram.Tasks/Resources");
+	auto resourceLoader = ResourceLoader::GetForViewIndependentUse("Unigram.Native.Tasks/Resources");
 	auto text = resourceLoader->GetString(loc_key);
 	if (text->Length())
 	{

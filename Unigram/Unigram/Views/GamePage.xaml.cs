@@ -9,7 +9,7 @@ using Template10.Services.SerializationService;
 using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Core.Services;
-using Unigram.Tasks;
+using Unigram.Native;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;

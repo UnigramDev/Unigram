@@ -264,6 +264,8 @@
     <ClInclude Include="Opus\OpusOutputByteStream.h" />
     <ClInclude Include="PlaceholderImageHelper.h" />
     <ClInclude Include="MediaCapturePreview.h" />
+    <ClInclude Include="Proxies\TelegramGameProxy.h" />
+    <ClInclude Include="Proxies\TelegramPaymentProxy.h" />
     <ClInclude Include="WebP\DemuxerWrapper.h" />
     <ClInclude Include="GIF\GIFByteStreamHandler.h" />
     <ClInclude Include="GIF\GIFMediaSource.h" />
@@ -317,6 +319,8 @@
     <ClCompile Include="AnimatedImageSource\FramesCacheStore.cpp" />
     <ClCompile Include="PlaceholderImageHelper.cpp" />
     <ClCompile Include="MediaCapturePreview.cpp" />
+    <ClCompile Include="Proxies\TelegramGameProxy.cpp" />
+    <ClCompile Include="Proxies\TelegramPaymentProxy.cpp" />
     <ClCompile Include="WebP\WebPFrame.cpp" />
     <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>

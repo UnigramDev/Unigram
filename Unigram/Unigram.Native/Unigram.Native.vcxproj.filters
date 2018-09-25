@@ -22,6 +22,9 @@
     <Filter Include="Mrz">
       <UniqueIdentifier>{9e8ae57f-bce5-4315-9e6d-8ebf3ad1b207}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Proxies">
+      <UniqueIdentifier>{4fa8da03-5bd0-46c1-8618-868e68b3a60c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -103,6 +106,12 @@
     </ClCompile>
     <ClCompile Include="Mrz\genann.c">
       <Filter>Mrz</Filter>
+    </ClCompile>
+    <ClCompile Include="Proxies\TelegramGameProxy.cpp">
+      <Filter>Proxies</Filter>
+    </ClCompile>
+    <ClCompile Include="Proxies\TelegramPaymentProxy.cpp">
+      <Filter>Proxies</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +209,12 @@
     </ClInclude>
     <ClInclude Include="Mrz\genann.h">
       <Filter>Mrz</Filter>
+    </ClInclude>
+    <ClInclude Include="Proxies\TelegramGameProxy.h">
+      <Filter>Proxies</Filter>
+    </ClInclude>
+    <ClInclude Include="Proxies\TelegramPaymentProxy.h">
+      <Filter>Proxies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

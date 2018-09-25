@@ -26,6 +26,27 @@
     <Filter Include="Strings\pt-BR">
       <UniqueIdentifier>{fe309f13-26d4-48b5-87c9-fb71da65e290}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Strings\ko">
+      <UniqueIdentifier>{04ce2918-83d1-4006-945d-52ca109d0dc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\fr">
+      <UniqueIdentifier>{19882d05-bcea-4cef-9e9b-1f4195ab67f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\uk">
+      <UniqueIdentifier>{92dd171b-ced8-49d9-82fd-deca1fdc79df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\id">
+      <UniqueIdentifier>{1430d4d0-4b6e-44de-8161-621de8f945df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\ru">
+      <UniqueIdentifier>{9493a634-71e9-4854-b305-d65cecee00ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\ms">
+      <UniqueIdentifier>{bda9a309-2654-4ea6-8f1b-bbd1cb28fddb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\ar">
+      <UniqueIdentifier>{a1f9a63a-e522-42ad-99f1-f15e18ea2a2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -38,23 +59,44 @@
     <ClInclude Include="VoIPCallTask.h" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="..\unigram.tasks\strings\de\resources.resw">
+    <PRIResource Include="Strings\de\Resources.resw">
       <Filter>Strings\de</Filter>
     </PRIResource>
-    <PRIResource Include="..\unigram.tasks\strings\en\resources.resw">
-      <Filter>Strings\en</Filter>
-    </PRIResource>
-    <PRIResource Include="..\unigram.tasks\strings\es\resources.resw">
-      <Filter>Strings\es</Filter>
-    </PRIResource>
-    <PRIResource Include="..\unigram.tasks\strings\it\resources.resw">
-      <Filter>Strings\it</Filter>
-    </PRIResource>
-    <PRIResource Include="..\unigram.tasks\strings\nl\resources.resw">
+    <PRIResource Include="Strings\nl\Resources.resw">
       <Filter>Strings\nl</Filter>
     </PRIResource>
-    <PRIResource Include="..\Unigram.Tasks\Strings\pt-BR\Resources.resw">
+    <PRIResource Include="Strings\es\Resources.resw">
+      <Filter>Strings\es</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\it\Resources.resw">
+      <Filter>Strings\it</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\en\Resources.resw">
+      <Filter>Strings\en</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\ko\Resources.resw">
+      <Filter>Strings\ko</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\fr\Resources.resw">
+      <Filter>Strings\fr</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\uk\Resources.resw">
+      <Filter>Strings\uk</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\id\Resources.resw">
+      <Filter>Strings\id</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\ru\Resources.resw">
+      <Filter>Strings\ru</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\ms\Resources.resw">
+      <Filter>Strings\ms</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\pt-BR\Resources.resw">
       <Filter>Strings\pt-BR</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\ar\Resources.resw">
+      <Filter>Strings\ar</Filter>
     </PRIResource>
   </ItemGroup>
 </Project>

@@ -235,12 +235,19 @@
     <ClCompile Include="VoIPCallTask.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="..\unigram.tasks\strings\de\resources.resw" />
-    <PRIResource Include="..\unigram.tasks\strings\en\resources.resw" />
-    <PRIResource Include="..\unigram.tasks\strings\es\resources.resw" />
-    <PRIResource Include="..\unigram.tasks\strings\it\resources.resw" />
-    <PRIResource Include="..\unigram.tasks\strings\nl\resources.resw" />
-    <PRIResource Include="..\Unigram.Tasks\Strings\pt-BR\Resources.resw" />
+    <PRIResource Include="Strings\de\Resources.resw" />
+    <PRIResource Include="Strings\nl\Resources.resw" />
+    <PRIResource Include="Strings\es\Resources.resw" />
+    <PRIResource Include="Strings\it\Resources.resw" />
+    <PRIResource Include="Strings\en\Resources.resw" />
+    <PRIResource Include="Strings\pt-BR\Resources.resw" />
+    <PRIResource Include="Strings\fr\Resources.resw" />
+    <PRIResource Include="Strings\uk\Resources.resw" />
+    <PRIResource Include="Strings\ru\Resources.resw" />
+    <PRIResource Include="Strings\ko\Resources.resw" />
+    <PRIResource Include="Strings\id\Resources.resw" />
+    <PRIResource Include="Strings\ar\Resources.resw" />
+    <PRIResource Include="Strings\ms\Resources.resw" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
