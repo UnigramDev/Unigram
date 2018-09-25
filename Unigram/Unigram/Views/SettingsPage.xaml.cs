@@ -28,14 +28,14 @@ using Unigram.Views.Passport;
 
 namespace Unigram.Views
 {
-    public sealed partial class SettingsPage : Page, IUserDelegate, IFileDelegate
+    public sealed partial class SettingsPage : Page, ISettingsDelegate
     {
         public SettingsViewModel ViewModel => DataContext as SettingsViewModel;
 
         public SettingsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsViewModel, IUserDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SettingsViewModel, ISettingsDelegate>(this);
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
@@ -306,9 +306,20 @@ namespace Unigram.Views
         public void UpdateFile(File file)
         {
             var chat = ViewModel.Chat;
-            if (chat != null && chat.UpdateFile(file))
+            if (chat == null)
             {
-                Photo.Source = PlaceholderHelper.GetChat(null, chat, 64, 64);
+                return;
+            }
+
+            var user = ViewModel.CacheService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            if (user.UpdateFile(file))
+            {
+                Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64, 64);
             }
         }
 

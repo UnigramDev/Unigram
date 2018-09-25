@@ -21,14 +21,15 @@ using Unigram.ViewModels.Delegates;
 namespace Unigram.ViewModels
 {
    public class SettingsViewModel : TLViewModelBase,
-        IDelegable<IUserDelegate>,
+        IDelegable<ISettingsDelegate>,
         IHandle<UpdateUser>,
-        IHandle<UpdateUserFullInfo>
+        IHandle<UpdateUserFullInfo>,
+        IHandle<UpdateFile>
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
 
-        public IUserDelegate Delegate { get; set; }
+        public ISettingsDelegate Delegate { get; set; }
 
         public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService) 
             : base(protoService, cacheService, settingsService, aggregator)
@@ -120,6 +121,26 @@ namespace Unigram.ViewModels
             if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
             {
                 BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ProtoService.GetUser(update.UserId), update.UserFullInfo, false, false));
+            }
+        }
+
+        public void Handle(UpdateFile update)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var user = CacheService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            if (user.UpdateFile(update.File))
+            {
+                BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
             }
         }
 

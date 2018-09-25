@@ -268,7 +268,7 @@ namespace Unigram
                 case SettingsWebSessionsPage settingsWebSessions:
                     return container.Resolve<SettingsWebSessionsViewModel>(id);
                 case SettingsPage settings:
-                    return container.Resolve<SettingsViewModel, IUserDelegate>(settings, id);
+                    return container.Resolve<SettingsViewModel, ISettingsDelegate>(settings, id);
                 case SignInPage signIn:
                     return container.Resolve<SignInViewModel>(id);
                 case SignInPasswordPage signInPassword:

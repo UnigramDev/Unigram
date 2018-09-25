@@ -445,6 +445,7 @@
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />
+    <Compile Include="ViewModels\Delegates\ISettingsDelegate.cs" />
     <Compile Include="ViewModels\Dialogs\DialogGalleryViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogSearchViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogSharedMediaViewModel.cs" />
