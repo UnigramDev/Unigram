@@ -68,7 +68,7 @@ namespace Unigram.ViewModels.Chats
         {
             get
             {
-                return _chat != null && (_chat.Type is ChatTypeSupergroup super && !super.IsChannel) || _chat.Type is ChatTypeBasicGroup;
+                return _chat != null && ((_chat.Type is ChatTypeSupergroup super && !super.IsChannel) || _chat.Type is ChatTypeBasicGroup);
             }
         }
 

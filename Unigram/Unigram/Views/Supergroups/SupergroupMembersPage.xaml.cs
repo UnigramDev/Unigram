@@ -77,6 +77,90 @@ namespace Unigram.Views.Supergroups
 
         private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var member = element.Tag as ChatMember;
+
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            ChatMemberStatus status = null;
+            if (chat.Type is ChatTypeBasicGroup basic)
+            {
+                status = ViewModel.ProtoService.GetBasicGroup(basic.BasicGroupId)?.Status;
+            }
+            else if (chat.Type is ChatTypeSupergroup super)
+            {
+                status = ViewModel.ProtoService.GetSupergroup(super.SupergroupId)?.Status;
+            }
+
+            if (status == null)
+            {
+                return;
+            }
+
+
+            CreateFlyoutItem(ref flyout, MemberPromote_Loaded, ViewModel.MemberPromoteCommand, status, member, Strings.Resources.SetAsAdmin);
+            CreateFlyoutItem(ref flyout, MemberRemove_Loaded, ViewModel.MemberRemoveCommand, status, member, Strings.Resources.ChannelRemoveUser);
+
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                flyout.ShowAt(sender, point);
+            }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<ChatMemberStatus, ChatMember, Visibility> visibility, ICommand command, ChatMemberStatus status, object parameter, string text)
+        {
+            var value = visibility(status, parameter as ChatMember);
+            if (value == Visibility.Visible)
+            {
+                var flyoutItem = new MenuFlyoutItem();
+                //flyoutItem.Loaded += (s, args) => flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
+                flyoutItem.Command = command;
+                flyoutItem.CommandParameter = parameter;
+                flyoutItem.Text = text;
+
+                flyout.Items.Add(flyoutItem);
+            }
+        }
+
+        private Visibility MemberPromote_Loaded(ChatMemberStatus status, ChatMember member)
+        {
+            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator)
+            {
+                return Visibility.Collapsed;
+            }
+
+            if (member.UserId == ViewModel.ProtoService.GetMyId())
+            {
+                return Visibility.Collapsed;
+            }
+
+            return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.CanPromoteMembers ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private Visibility MemberRemove_Loaded(ChatMemberStatus status, ChatMember member)
+        {
+            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator admin && !admin.CanBeEdited)
+            {
+                return Visibility.Collapsed;
+            }
+
+            if (member.UserId == ViewModel.ProtoService.GetMyId())
+            {
+                return Visibility.Collapsed;
+            }
+
+            return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.CanRestrictMembers ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion
@@ -92,6 +176,8 @@ namespace Unigram.Views.Supergroups
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var member = args.Item as ChatMember;
+
+            content.Tag = args.Item;
 
             var user = ViewModel.ProtoService.GetUser(member.UserId);
             if (user == null)
@@ -160,7 +246,8 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            AddMore.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            AddNew.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            Invite.Visibility = string.IsNullOrEmpty(group.Username) && group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo) { }

@@ -45,7 +45,6 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock
                         Text="{CustomResource ChannelSubscribers}"
@@ -54,17 +53,11 @@
                         Margin="12,0"/>
 
                     <controls:GlyphButton
-                        x:Name="AddMore"
-                        Glyph="&#xE109;"
-                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                        Grid.Column="1"/>
-
-                    <controls:GlyphButton
                         Glyph="&#xE11A;"
                         Click="Search_Click"
                         FontSize="18"
                         Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                        Grid.Column="2"/>
+                        Grid.Column="1"/>
                 </Grid>
                 <controls:SearchTextBox x:Name="SearchField"
                                         Padding="12,4,6,4"
@@ -104,11 +97,39 @@
                       ContainerContentChanging="OnContainerContentChanging"
                       SelectionMode="None"
                       Grid.Row="1">
+                <ListView.Header>
+                    <StackPanel Margin="0,0,0,18">
+                        <controls:BadgeButton x:Name="AddNew"
+                                              Visibility="Collapsed"
+                                              Content="{CustomResource AddSubscriber}"
+                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Style="{StaticResource BadgeButtonStyle}"/>
+                        <Button x:Name="Invite"
+                                Command="{x:Bind ViewModel.InviteCommand}"
+                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                Style="{StaticResource HyperButtonStyle}"
+                                Visibility="Collapsed">
+                            <StackPanel Orientation="Horizontal" Margin="0,-8">
+                                <Border Width="36" Height="36" Margin="0,0,12,0">
+                                    <FontIcon Glyph="&#xE71B;" Margin="0,2,0,0"/>
+                                </Border>
+                                <TextBlock Text="{CustomResource ChannelInviteViaLink}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </ListView.Header>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     </Style>
                 </ListView.ItemContainerStyle>
+                <ListView.Footer>
+                    <TextBlock
+                        Text="{CustomResource ChannelMembersInfo}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12"/>
+                </ListView.Footer>
             </ListView>
         </Grid>
     </Grid>

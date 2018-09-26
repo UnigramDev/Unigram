@@ -276,7 +276,7 @@ namespace Unigram.Views
                 GroupLeave.Visibility = Visibility.Collapsed;
             }
 
-            GroupInvite.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            GroupInvite.Visibility = !group.IsChannel && group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
 
             EventLog.Visibility = group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
 

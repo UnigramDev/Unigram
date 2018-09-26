@@ -14,6 +14,7 @@
             <Button
                 Click="Invite_Click"
                 Visibility="{x:Bind (Visibility)ViewModel.IsCreator, Mode=OneWay}"
+                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                 Style="{StaticResource HyperButtonStyle}">
                 <StackPanel Orientation="Horizontal" Margin="0,-8">
                     <Border Width="36" Height="36" Margin="0,0,12,0">
