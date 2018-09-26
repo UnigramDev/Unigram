@@ -50,7 +50,19 @@ namespace Unigram.Views
             return string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build, version.Revision);
         }
 
-        public MasterDetailView MasterDetail { get; set; }
+        private MasterDetailView _masterDetail;
+        public MasterDetailView MasterDetail
+        {
+            get
+            {
+                return _masterDetail;
+            }
+            set
+            {
+                _masterDetail = value;
+                ViewModel.NavigationService = value.NavigationService;
+            }
+        }
 
 
         private void General_Click(object sender, RoutedEventArgs e)
