@@ -410,7 +410,9 @@ namespace Unigram.ViewModels
 
         public async void OpenMedia(MessageViewModel message, FrameworkElement target)
         {
-            if (message.Content is MessageAnimation || message.Content is MessageVideoNote || message.Content is MessageText text && text.WebPage != null && text.WebPage.Animation != null)
+            var webPage = message.Content is MessageText text ? text.WebPage : null;
+
+            if (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || ((message.Content is MessageAnimation || (webPage != null && webPage.Animation != null)) && !Settings.IsAutoPlayEnabled))
             {
                 Delegate?.PlayMessage(message);
             }

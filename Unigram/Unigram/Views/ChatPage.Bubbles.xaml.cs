@@ -121,7 +121,7 @@ namespace Unigram.Views
 
             if (animations.Count > 0 && !intermediate)
             {
-                Play(animations, ViewModel.Settings.IsAutoPlayEnabled);
+                Play(animations, ViewModel.Settings.IsAutoPlayEnabled, false);
             }
         }
 
@@ -223,24 +223,54 @@ namespace Unigram.Views
 
         public void PlayMessage(MessageViewModel message)
         {
-            //var document = message.GetDocument();
-            //if (document == null || !TLMessage.IsGif(document))
-            //{
-            //    return;
-            //}
-
-            //var fileName = FileUtils.GetTempFileUrl(document.GetFileName());
-            if (_old.ContainsKey(message.Id))
+            // If autoplay is enabled and the message contains a video note, then we want a different behavior
+            if (ViewModel.Settings.IsAutoPlayEnabled && (message.Content is MessageVideoNote || message.Content is MessageText text && text.WebPage != null && text.WebPage.Video != null))
             {
-                Play(new MessageViewModel[0], false);
+                if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
+                {
+                    // If the video player is muted, then let's play the video again with audio turned on
+                    if (item.Presenter.MediaPlayer.IsMuted)
+                    {
+                        TypedEventHandler<MediaPlayer, object> handler = null;
+                        handler = (player, args) =>
+                        {
+                            player.MediaEnded -= handler;
+                            player.IsMuted = true;
+                            player.IsLoopingEnabled = true;
+                            player.Play();
+                        };
+
+                        item.Presenter.MediaPlayer.MediaEnded += handler;
+                        item.Presenter.MediaPlayer.IsMuted = false;
+                        item.Presenter.MediaPlayer.IsLoopingEnabled = false;
+                        item.Presenter.MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
+                    }
+                    // If the video player is paused, then resume playback
+                    else if (item.Presenter.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
+                    {
+                        item.Presenter.MediaPlayer.Play();
+                    }
+                    // And last, if the video player can be pause, then pause it
+                    else if (item.Presenter.MediaPlayer.PlaybackSession.CanPause)
+                    {
+                        item.Presenter.MediaPlayer.Pause();
+                    }
+                }
             }
             else
             {
-                Play(new[] { message }, true);
+                if (_old.ContainsKey(message.Id))
+                {
+                    Play(new MessageViewModel[0], false, false);
+                }
+                else
+                {
+                    Play(new[] { message }, true, true);
+                }
             }
         }
 
-        public void Play(IEnumerable<MessageViewModel> items, bool auto)
+        public void Play(IEnumerable<MessageViewModel> items, bool auto, bool audio)
         {
             var news = new Dictionary<long, MediaPlayerItem>();
 
@@ -331,7 +361,7 @@ namespace Unigram.Views
                 {
                     var player = new MediaPlayer();
                     player.AutoPlay = true;
-                    player.IsMuted = auto;
+                    player.IsMuted = !audio;
                     player.IsLoopingEnabled = true;
                     player.CommandManager.IsEnabled = false;
                     player.Source = MediaSource.CreateFromUri(new Uri("file:///" + news[item].File.Local.Path));
