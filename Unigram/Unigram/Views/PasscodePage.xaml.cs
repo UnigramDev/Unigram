@@ -45,6 +45,8 @@ namespace Unigram.Views
             //    Photo.Source = DefaultPhotoConverter.Convert(user, false) as ImageSource;
             //    FullName.Text = user.FullName;
             //}
+
+            Field.MaxLength = _passcodeService.IsSimple ? 4 : int.MaxValue;
         }
 
         #region Bounds
@@ -86,7 +88,7 @@ namespace Unigram.Views
 
         private void Field_TextChanged(object sender, RoutedEventArgs e)
         {
-            if (Field.Password.Length == 4)
+            if (_passcodeService.IsSimple && Field.Password.Length == 4)
             {
                 if (Field.Password.All(x => x >= '0' && x <= '9') && _passcodeService.Check(Field.Password))
                 {
@@ -97,6 +99,35 @@ namespace Unigram.Views
                     VisualUtilities.ShakeView(Field);
                     Field.Password = string.Empty;
                 }
+            }
+        }
+
+        private void Field_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                if (_passcodeService.Check(Field.Password))
+                {
+                    Unlock();
+                }
+                else
+                {
+                    VisualUtilities.ShakeView(Field);
+                    Field.Password = string.Empty;
+                }
+            }
+        }
+
+        private void Enter_Click(object sender, RoutedEventArgs e)
+        {
+            if (_passcodeService.Check(Field.Password))
+            {
+                Unlock();
+            }
+            else
+            {
+                VisualUtilities.ShakeView(Field);
+                Field.Password = string.Empty;
             }
         }
 

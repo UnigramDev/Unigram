@@ -16,7 +16,7 @@ using Unigram.Services;
 using Unigram.Views;
 using Windows.Storage;
 
-namespace Unigram.ViewModels
+namespace Unigram.Services
 {
     public interface ILifetimeService
     {

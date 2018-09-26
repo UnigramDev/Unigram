@@ -64,9 +64,8 @@
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource SecurityTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <Button
-                        IsEnabled="False"
                         Tag="{CustomResource Passcode}"
-                        Click="Passcode_Click"
+                        Command="{x:Bind ViewModel.PasscodeCommand}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                     <Button
                         IsEnabled="False"

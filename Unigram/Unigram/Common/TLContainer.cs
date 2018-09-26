@@ -19,13 +19,16 @@ namespace Unigram.Views
         //private Dictionary<int, IContainer> _containers = new Dictionary<int, IContainer>();
         private ConcurrentDictionary<int, IContainer> _containers = new ConcurrentDictionary<int, IContainer>();
         private ILifetimeService _lifetime;
+        private IPasscodeService _passcode;
 
         private TLContainer()
         {
             _lifetime = new LifetimeService();
+            _passcode = new PasscodeService(SettingsService.Current.PasscodeLock);
         }
 
         public ILifetimeService Lifetime => _lifetime;
+        public IPasscodeService Passcode => _passcode;
 
         public static TLContainer Current
         {
@@ -37,11 +40,16 @@ namespace Unigram.Views
 
         public IEnumerable<ISessionService> GetSessions()
         {
+            return ResolveAll<ISessionService>();
+        }
+
+        public IEnumerable<T> ResolveAll<T>()
+        {
             foreach (var container in _containers.Values)
             {
                 if (container != null)
                 {
-                    yield return container.Resolve<ISessionService>();
+                    yield return container.Resolve<T>();
                 }
             }
         }
@@ -60,6 +68,7 @@ namespace Unigram.Views
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(_lifetime).As<ILifetimeService>();
+            builder.RegisterInstance(_passcode).As<IPasscodeService>();
 
             return _containers[id] = factory(builder, id);
         }

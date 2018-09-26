@@ -227,8 +227,7 @@
                                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                             <controls:GlyphToggleButton
                                 x:Name="Lock"
-                                Visibility="{x:Bind ViewModel.Passcode.IsEnabled, Mode=OneWay}"
-                                IsChecked="{x:Bind ViewModel.Passcode.IsLocked, Mode=OneWay}"
+                                Visibility="Collapsed"
                                 UncheckedGlyph="&#xE1F7;"
                                 CheckedGlyph="&#xE1F6;"
                                 Click="Lock_Click"

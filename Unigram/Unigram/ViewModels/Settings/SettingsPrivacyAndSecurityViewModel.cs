@@ -6,6 +6,7 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.ViewModels.Settings.Privacy;
 using Unigram.Views.Settings;
@@ -18,20 +19,23 @@ namespace Unigram.ViewModels.Settings
     public class SettingsPrivacyAndSecurityViewModel : TLMultipleViewModelBase, IHandle<UpdateOption>
     {
         private readonly IContactsService _contactsService;
+        private readonly IPasscodeService _passcodeService;
 
         private readonly SettingsPrivacyShowStatusViewModel _showStatusRules;
         private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
         private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
 
-        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
+        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
+            _passcodeService = passcodeService;
 
             _showStatusRules = statusTimestamp;
             _allowCallsRules = phoneCall;
             _allowChatInvitesRules = chatInvite;
 
+            PasscodeCommand = new RelayCommand(PasscodeExecute);
             PasswordCommand = new RelayCommand(PasswordExecute);
             ClearDraftsCommand = new RelayCommand(ClearDraftsExecute);
             ClearContactsCommand = new RelayCommand(ClearContactsExecute);
@@ -185,6 +189,26 @@ namespace Unigram.ViewModels.Settings
             }
 
             ProtoService.Send(new SetOption("disable_top_chats", new OptionValueBoolean(!value)));
+        }
+
+        public RelayCommand PasscodeCommand { get; }
+        private async void PasscodeExecute()
+        {
+            if (_passcodeService.IsEnabled)
+            {
+                var dialog = new SettingsSecurityPasscodeConfirmView(_passcodeService);
+                dialog.IsSimple = _passcodeService.IsSimple;
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    NavigationService.Navigate(typeof(SettingsSecurityPasscodePage));
+                }
+            }
+            else
+            {
+                NavigationService.Navigate(typeof(SettingsSecurityPasscodePage));
+            }
         }
 
         public RelayCommand PasswordCommand { get; }

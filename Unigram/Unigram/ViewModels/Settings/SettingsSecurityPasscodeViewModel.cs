@@ -5,13 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls.Views;
 using Unigram.Services;
+using Unigram.Services.Updates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsSecurityPasscodeViewModel : TLViewModelBase
+    public class SettingsSecurityPasscodeViewModel : TLViewModelBase, IHandle<UpdatePasscodeLock>
     {
         private readonly IPasscodeService _passcodeService;
 
@@ -20,10 +23,40 @@ namespace Unigram.ViewModels.Settings
         {
             _passcodeService = passcodeService;
 
+            ToggleCommand = new RelayCommand(ToggleExecute);
+            EditCommand = new RelayCommand(EditExecute);
             AutolockCommand = new RelayCommand(AutolockExecute);
         }
 
-        public IPasscodeService Passcode => _passcodeService;
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        {
+            Aggregator.Subscribe(this);
+            return base.OnNavigatedToAsync(parameter, mode, state);
+        }
+
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            Aggregator.Unsubscribe(this);
+            return base.OnNavigatedFromAsync(pageState, suspending);
+        }
+
+        public void Handle(UpdatePasscodeLock update)
+        {
+            BeginOnUIThread(() =>
+            {
+                RaisePropertyChanged(() => IsEnabled);
+                RaisePropertyChanged(() => AutolockTimeout);
+                RaisePropertyChanged(() => IsBiometricsEnabled);
+            });
+        }
+
+        public bool IsEnabled
+        {
+            get
+            {
+                return _passcodeService.IsEnabled;
+            }
+        }
 
         public int AutolockTimeout
         {
@@ -48,6 +81,49 @@ namespace Unigram.ViewModels.Settings
             {
                 _passcodeService.IsBiometricsEnabled = value;
                 RaisePropertyChanged();
+            }
+        }
+
+        public RelayCommand ToggleCommand { get; }
+        private async void ToggleExecute()
+        {
+            if (_passcodeService.IsEnabled)
+            {
+                _passcodeService.Reset();
+            }
+            else
+            {
+                var timeout = _passcodeService.AutolockTimeout + 0;
+                var dialog = new SettingsSecurityPasscodeEditView();
+                dialog.IsSimple = _passcodeService.IsSimple;
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var passcode = dialog.Passcode;
+                    var simple = dialog.IsSimple;
+                    _passcodeService.Set(passcode, simple, timeout);
+
+                    InactivityHelper.Initialize(timeout);
+                }
+            }
+        }
+
+        public RelayCommand EditCommand { get; }
+        private async void EditExecute()
+        {
+            var timeout = _passcodeService.AutolockTimeout + 0;
+            var dialog = new SettingsSecurityPasscodeEditView();
+            dialog.IsSimple = _passcodeService.IsSimple;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var passcode = dialog.Passcode;
+                var simple = dialog.IsSimple;
+                _passcodeService.Set(passcode, simple, timeout);
+
+                InactivityHelper.Initialize(timeout);
             }
         }
 

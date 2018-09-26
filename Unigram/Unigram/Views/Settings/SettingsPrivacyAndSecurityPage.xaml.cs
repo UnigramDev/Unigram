@@ -60,25 +60,6 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsPrivacyAllowChatInvitesPage));
         }
 
-        private async void Passcode_Click(object sender, RoutedEventArgs e)
-        {
-            var service = TLContainer.Current.Resolve<IPasscodeService>();
-            if (sender != null && service.IsEnabled)
-            {
-                var dialog = new SettingsSecurityPasscodeConfirmView();
-
-                var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    Frame.Navigate(typeof(SettingsSecurityPasscodePage));
-                }
-            }
-            else
-            {
-                Frame.Navigate(typeof(SettingsSecurityPasscodePage));
-            }
-        }
-
         #region Binding
 
         private string ConvertSync(bool sync)

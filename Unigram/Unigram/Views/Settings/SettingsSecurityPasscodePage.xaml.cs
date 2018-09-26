@@ -35,50 +35,6 @@ namespace Unigram.Views.Settings
             Biometrics.Visibility = await KeyCredentialManager.IsSupportedAsync() ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private async void Enabled_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (Enabled.FocusState == FocusState.Unfocused)
-            {
-                return;
-            }
-
-            if (ViewModel.Passcode.IsEnabled)
-            {
-                ViewModel.Passcode.Reset();
-            }
-            else if (Enabled.IsOn)
-            {
-                var timeout = ViewModel.Passcode.AutolockTimeout + 0;
-                var dialog = new SettingsSecurityPasscodeEditView();
-
-                var confirm = await dialog.ShowQueuedAsync();
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    var passcode = dialog.Passcode;
-                    ViewModel.Passcode.Set(passcode, true, timeout);
-                    InactivityHelper.Initialize(timeout);
-                }
-                else
-                {
-                    Enabled.IsOn = false;
-                }
-            }
-        }
-
-        private async void Edit_Click(object sender, RoutedEventArgs e)
-        {
-            var timeout = ViewModel.Passcode.AutolockTimeout + 0;
-            var dialog = new SettingsSecurityPasscodeEditView();
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
-            {
-                var passcode = dialog.Passcode;
-                ViewModel.Passcode.Set(passcode, true, timeout);
-                InactivityHelper.Initialize(timeout);
-            }
-        }
-
         #region Binding
 
         private string ConvertAutolock(int seconds)

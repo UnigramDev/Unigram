@@ -103,7 +103,6 @@ namespace Unigram
                 builder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
                 builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
                 builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
-                builder.RegisterType<PasscodeService>().As<IPasscodeService>().SingleInstance();
                 builder.RegisterType<HockeyAppUpdateService>().As<IHockeyAppUpdateService>().SingleInstance();
 
                 // Disabled due to crashes on Mobile: 

@@ -37,6 +37,19 @@ namespace Unigram.Common
             return digest;
         }
 
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public static byte[] ComputeHash(byte[] salt, byte[] passcode)
+        {
+            var array = Combine(salt, passcode, salt);
+            for (int i = 0; i < 1000; i++)
+            {
+                var data = Combine(BitConverter.GetBytes(i), array);
+                ComputeSHA1(data);
+            }
+            return ComputeSHA1(array);
+        }
+
+
         public static byte[] Combine(params byte[][] arrays)
         {
             var length = 0;

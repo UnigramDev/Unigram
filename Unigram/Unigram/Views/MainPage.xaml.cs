@@ -62,6 +62,7 @@ namespace Unigram.Views
         IHandle<UpdateSecretChat>,
         IHandle<UpdateChatNotificationSettings>,
         IHandle<UpdateWorkMode>,
+        IHandle<UpdatePasscodeLock>,
         IHandle<UpdateFile>,
         IHandle<UpdateConnectionState>,
         IHandle<UpdateOption>,
@@ -90,6 +91,7 @@ namespace Unigram.Views
             InitializeTitleBar();
             InitializeLocalization();
             InitializeSearch();
+            InitializeLock();
 
             var update = new UpdateConnectionState(ViewModel.CacheService.GetConnectionState());
             if (update.State != null)
@@ -138,6 +140,12 @@ namespace Unigram.Views
         private void InitializeLocalization()
         {
             TabChats.Header = Strings.Additional.Chats;
+        }
+
+        private void InitializeLock()
+        {
+            Lock.Visibility = ViewModel.Passcode.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
+            Lock.IsChecked = ViewModel.Passcode.IsLocked;
         }
 
         #region Handle
@@ -224,6 +232,15 @@ namespace Unigram.Views
                     WorkMode.Visibility = Visibility.Collapsed;
                     WorkMode.IsChecked = false;
                 }
+            });
+        }
+
+        public void Handle(UpdatePasscodeLock update)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                Lock.Visibility = update.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
+                Lock.IsChecked = update.IsLocked;
             });
         }
 

@@ -362,23 +362,19 @@ namespace Unigram
             IsVisible = e.Visible;
             HandleActivated(e.Visible);
 
-            var passcode = TLContainer.Current.Resolve<IPasscodeService>();
-            if (passcode != null)
+            if (e.Visible && TLContainer.Current.Passcode.IsLockscreenRequired)
             {
-                if (e.Visible && passcode.IsLockscreenRequired)
+                ShowPasscode();
+            }
+            else
+            {
+                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Touch)
                 {
-                    ShowPasscode();
+                    TLContainer.Current.Passcode.CloseTime = DateTime.Now;
                 }
                 else
                 {
-                    if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Touch)
-                    {
-                        passcode.CloseTime = DateTime.Now;
-                    }
-                    else
-                    {
-                        passcode.CloseTime = DateTime.Now.AddYears(1);
-                    }
+                    TLContainer.Current.Passcode.CloseTime = DateTime.MaxValue;
                 }
             }
 
@@ -438,11 +434,10 @@ namespace Unigram
             //Locator.Configure();
             //UnigramContainer.Current.ResolveType<IGenerationService>();
 
-            var passcode = TLContainer.Current.Resolve<IPasscodeService>();
-            if (passcode != null && passcode.IsEnabled)
+            if (TLContainer.Current.Passcode.IsEnabled)
             {
-                passcode.Lock();
-                InactivityHelper.Initialize(passcode.AutolockTimeout);
+                TLContainer.Current.Passcode.Lock();
+                InactivityHelper.Initialize(TLContainer.Current.Passcode.AutolockTimeout);
             }
 
             if (Window.Current != null)

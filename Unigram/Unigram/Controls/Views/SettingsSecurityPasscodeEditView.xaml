@@ -7,28 +7,32 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Style="{StaticResource ModernContentDialogStyle}"
-    Title="PasscodePIN"
+    Title="Passcode"
     PrimaryButtonText="OK"
     SecondaryButtonText="Cancel"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
+        <ComboBox x:Name="Type"
+                  Margin="12,12,12,12"
+                  HorizontalAlignment="Stretch"
+                  SelectionChanged="Type_SelectionChanged">
+            <ComboBoxItem Content="{CustomResource PasscodePIN}"/>
+            <ComboBoxItem Content="{CustomResource PasscodePassword}"/>
+        </ComboBox>
+        
         <PasswordBox
             x:Name="First"
             PlaceholderText="{CustomResource EnterNewFirstPasscode}"
-            MaxLength="4"
             PasswordChanged="First_Changed"
             KeyDown="Password_KeyDown"
-            InputScope="NumericPin"
-            Margin="12,12,12,12"/>
+            Margin="12,0,12,12"/>
         <PasswordBox
             x:Name="Confirm"
             PlaceholderText="{CustomResource ReEnterYourPasscode}"
-            MaxLength="4"
             PasswordChanged="Confirm_Changed"
             KeyDown="Password_KeyDown"
-            InputScope="NumericPin"
             Margin="12,0,12,12"/>
     </StackPanel>
 </ContentDialog>

@@ -274,7 +274,7 @@
                                           Grid.Row="1"
                                           Style="{StaticResource RevealButtonStyle}"
                                           BorderThickness="{TemplateBinding BorderThickness}"
-                                          Margin="{ThemeResource HelperButtonThemePadding}"
+                                          Margin="0,0,28,0"
                                           IsTabStop="False"
                                           Grid.Column="1"
                                           Visibility="Collapsed"
@@ -286,24 +286,98 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Name="EnterButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="ButtonLayoutGrid"
+                              BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              Background="{ThemeResource TextControlButtonBackground}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ButtonLayoutGrid"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0"
+                                                             Duration="0" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <TextBlock x:Name="GlyphElement"
+                                       Foreground="{ThemeResource TextControlButtonForeground}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       FontStyle="Normal"
+                                       FontSize="12"
+                                       Text="&#xE72A;"
+                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </ContentDialog.Resources>
 
     <Grid x:Name="LayoutRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel
             VerticalAlignment="Center"
             HorizontalAlignment="Center">
-            <controls:ProfilePicture x:Name="Photo" Width="120" Height="120" Margin="0,0,0,12" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="FullName" TextAlignment="Center" Margin="0,0,0,24" Style="{StaticResource TitleTextBlockStyle}"/>
-            <PasswordBox
-                x:Name="Field"
-                PlaceholderText="{CustomResource EnterYourPasscode}"
-                MaxLength="4"
-                InputScope="NumericPin"
-                PasswordChanged="Field_TextChanged"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                Margin="0,0,0,120"
-                MinWidth="296"/>
+            <controls:ProfilePicture x:Name="Photo" Source="ms-appx:///Assets/Mockup/a0.png" Width="120" Height="120" Margin="0,0,0,12" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="FullName" Text="{CustomResource AppName}" TextAlignment="Center" Margin="0,0,0,24" Style="{StaticResource TitleTextBlockStyle}"/>
+
+            <Grid HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Margin="0,0,0,120"
+                  Width="296">
+                <PasswordBox
+                    x:Name="Field"
+                    PlaceholderText="{CustomResource EnterYourPasscode}"
+                    InputScope="NumericPin"
+                    PasswordChanged="Field_TextChanged"
+                    KeyDown="Field_KeyDown"/>
+                <Button x:Name="EnterButton"
+                        Click="Enter_Click"
+                        Style="{StaticResource EnterButtonStyle}"
+                        Margin="{ThemeResource HelperButtonThemePadding}"
+                        BorderThickness="2"
+                        IsTabStop="False"
+                        AutomationProperties.AccessibilityView="Raw"
+                        MinWidth="34"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Stretch" />
+            </Grid>
         </StackPanel>
 
         <controls:GlyphButton x:Name="Biometrics" Click="OnLoaded" Visibility="Collapsed" Glyph="&#xE928;" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,24" CornerRadius="24"/>

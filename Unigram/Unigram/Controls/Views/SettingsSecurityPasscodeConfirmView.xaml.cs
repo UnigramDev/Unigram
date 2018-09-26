@@ -18,30 +18,28 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Controls.Views
 {
     public sealed partial class SettingsSecurityPasscodeConfirmView : ContentDialog
     {
-        public SettingsSecurityPasscodeConfirmView()
+        private readonly IPasscodeService _passcodeService;
+
+        public SettingsSecurityPasscodeConfirmView(IPasscodeService passcodeService)
         {
             InitializeComponent();
+
+            _passcodeService = passcodeService;
 
             Title = Strings.Resources.Passcode;
             PrimaryButtonText = Strings.Resources.OK;
             SecondaryButtonText = Strings.Resources.Cancel;
         }
 
+        public bool IsSimple { get; set; }
+
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var service = TLContainer.Current.Resolve<IPasscodeService>();
-            if (service == null)
-            {
-                return;
-            }
-
-            if (Confirm.Password.Length != 4 || !Confirm.Password.All(x => x >= '0' && x <= '9') || !service.Check(Confirm.Password))
+            if (/*Confirm.Password.Length != 4 || !Confirm.Password.All(x => x >= '0' && x <= '9') ||*/ !_passcodeService.Check(Confirm.Password))
             {
                 VisualUtilities.ShakeView(Confirm);
                 Confirm.Password = string.Empty;
@@ -55,13 +53,18 @@ namespace Unigram.Controls.Views
 
         private void Confirm_Changed(object sender, RoutedEventArgs e)
         {
-            if (Confirm.Password.Length == 4 && Confirm.Password.All(x => x >= '0' && x <= '9'))
+            if (IsSimple && Confirm.Password.Length == 4 && Confirm.Password.All(x => x >= '0' && x <= '9'))
             {
-                var button = this.Descendants<Button>().FirstOrDefault(x => x is Button y && y.Parent is Border border && border.Name == "Button1Host") as Button;
-                if (button != null)
-                {
-                    new ButtonAutomationPeer(button).Invoke();
-                }
+                Done();
+            }
+        }
+
+        private void Done()
+        {
+            var button = this.Descendants<Button>().FirstOrDefault(x => x is Button y && y.Parent is Border border && border.Name == "Button1Host") as Button;
+            if (button != null)
+            {
+                new ButtonAutomationPeer(button).Invoke();
             }
         }
 
@@ -69,6 +72,11 @@ namespace Unigram.Controls.Views
         {
             if (e.Key >= Windows.System.VirtualKey.Number0 && e.Key <= Windows.System.VirtualKey.Number9) { }
             else if (e.Key >= Windows.System.VirtualKey.NumberPad0 && e.Key <= Windows.System.VirtualKey.NumberPad9) { }
+            else if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                Done();
+                e.Handled = true;
+            }
             else
             {
                 e.Handled = true;
