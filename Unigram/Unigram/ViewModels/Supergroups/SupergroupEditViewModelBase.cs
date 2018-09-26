@@ -191,14 +191,14 @@ namespace Unigram.ViewModels.Supergroups
         private async void LoadUsername(long chatId)
         {
             var response = await ProtoService.SendAsync(new CheckChatUsername(chatId, "username"));
-            if (response is Ok)
-            {
-                HasTooMuchUsernames = false;
-            }
-            else if (response is CheckChatUsernameResultPublicChatsTooMuch)
+            if (response is CheckChatUsernameResultPublicChatsTooMuch)
             {
                 HasTooMuchUsernames = true;
                 LoadAdminedPublicChannels();
+            }
+            else
+            {
+                HasTooMuchUsernames = false;
             }
         }
 
@@ -351,47 +351,44 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup supergroup)
+            var supergroup = CacheService.GetSupergroup(chat);
+            if (supergroup == null)
             {
-                var item = ProtoService.GetSupergroup(supergroup.SupergroupId);
-                if (item == null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (string.Equals(text, item?.Username))
-                {
-                    IsLoading = false;
-                    IsAvailable = false;
-                    ErrorMessage = null;
+            if (string.Equals(text, supergroup.Username))
+            {
+                IsLoading = false;
+                IsAvailable = false;
+                ErrorMessage = null;
 
-                    return;
-                }
+                return;
+            }
 
-                var response = await ProtoService.SendAsync(new CheckChatUsername(chat.Id, text));
-                if (response is CheckChatUsernameResultOk)
-                {
-                    IsLoading = false;
-                    IsAvailable = false;
-                    ErrorMessage = Strings.Resources.UsernameInUse;
-                }
-                else if (response is CheckChatUsernameResultUsernameInvalid)
-                {
-                    IsLoading = false;
-                    IsAvailable = false;
-                    ErrorMessage = Strings.Resources.UsernameInvalid;
-                }
-                else if (response is CheckChatUsernameResultUsernameOccupied)
-                {
-                    IsLoading = false;
-                    IsAvailable = false;
-                    ErrorMessage = Strings.Resources.UsernameInUse;
-                }
-                else if (response is CheckChatUsernameResultPublicChatsTooMuch)
-                {
-                    HasTooMuchUsernames = true;
-                    LoadAdminedPublicChannels();
-                }
+            var response = await ProtoService.SendAsync(new CheckChatUsername(chat.Id, text));
+            if (response is CheckChatUsernameResultOk)
+            {
+                IsLoading = false;
+                IsAvailable = true;
+                ErrorMessage = null;
+            }
+            else if (response is CheckChatUsernameResultUsernameInvalid)
+            {
+                IsLoading = false;
+                IsAvailable = false;
+                ErrorMessage = Strings.Resources.UsernameInvalid;
+            }
+            else if (response is CheckChatUsernameResultUsernameOccupied)
+            {
+                IsLoading = false;
+                IsAvailable = false;
+                ErrorMessage = Strings.Resources.UsernameInUse;
+            }
+            else if (response is CheckChatUsernameResultPublicChatsTooMuch)
+            {
+                HasTooMuchUsernames = true;
+                LoadAdminedPublicChannels();
             }
         }
 

@@ -18,6 +18,7 @@ using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.Controls;
 using Unigram.Common;
+using System.Reactive.Linq;
 
 namespace Unigram.Views.Channels
 {
@@ -29,6 +30,15 @@ namespace Unigram.Views.Channels
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ChannelCreateStep2ViewModel>();
+
+            var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            {
+                if (ViewModel.UpdateIsValid(Username.Text))
+                {
+                    ViewModel.CheckAvailability(Username.Text);
+                }
+            });
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
