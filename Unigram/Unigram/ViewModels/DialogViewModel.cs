@@ -317,8 +317,8 @@ namespace Unigram.ViewModels
 
         private DispatcherTimer _informativeTimer;
 
-        private Message _informativeMessage;
-        public Message InformativeMessage
+        private string _informativeMessage;
+        public string InformativeMessage
         {
             get
             {
