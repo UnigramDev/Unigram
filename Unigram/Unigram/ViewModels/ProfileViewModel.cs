@@ -855,7 +855,7 @@ namespace Unigram.ViewModels
             var message = Strings.Resources.AreYouSureDeleteAndExit;
             if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
-                message = Strings.Resources.AreYouSureDeleteThisChat;
+                message = Strings.Resources.AreYouSureDeleteContact;
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
