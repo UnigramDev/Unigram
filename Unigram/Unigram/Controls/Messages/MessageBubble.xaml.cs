@@ -1061,10 +1061,12 @@ namespace Unigram.Controls.Messages
             }
             else if (constraint is Sticker sticker)
             {
-                width = sticker.Width;
-                height = sticker.Height;
+                // We actually don't have to calculate bubble width for stickers,
+                // As it might be wider due to reply
+                //width = sticker.Width;
+                //height = sticker.Height;
 
-                goto Calculate;
+                //goto Calculate;
             }
             else if (constraint is Venue venue)
             {
@@ -1090,10 +1092,12 @@ namespace Unigram.Controls.Messages
             }
             else if (constraint is VideoNote videoNote)
             {
-                width = 200;
-                height = 200;
+                // We actually don't have to calculate bubble width for video notes,
+                // As it might be wider due to reply/forward
+                //width = 200;
+                //height = 200;
 
-                goto Calculate;
+                //goto Calculate;
             }
 
             return base.MeasureOverride(availableSize);

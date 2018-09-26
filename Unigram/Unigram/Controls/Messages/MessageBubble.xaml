@@ -32,6 +32,7 @@
                             <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
+                            <Setter Target="Header.CornerRadius" Value="8"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
                             <Setter Target="Header.(Grid.Row)" Value="3"/>
                             <Setter Target="Reply.Margin" Value="0,4,0,2"/>
@@ -56,6 +57,7 @@
                             <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
+                            <Setter Target="Header.CornerRadius" Value="8"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
                             <Setter Target="Header.(Grid.Row)" Value="3"/>
                             <Setter Target="Reply.Margin" Value="0,4,0,2"/>
