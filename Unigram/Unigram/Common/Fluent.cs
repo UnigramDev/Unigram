@@ -16,6 +16,10 @@ namespace Unigram.Common
             {
                 MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Fluent.xaml") });
             }
+            else
+            {
+                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Plain.xaml") });
+            }
         }
     }
 }
