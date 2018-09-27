@@ -784,12 +784,30 @@ namespace Unigram.Common
                 return Strings.Resources.HiddenName;
             }
 
-            return string.IsNullOrEmpty(user.LastName) ? user.FirstName : $"{user.FirstName} {user.LastName}";
+            if (user.FirstName.Length > 0 && user.LastName.Length > 0)
+            {
+                return $"{user.FirstName} {user.LastName}";
+            }
+            else if (user.FirstName.Length > 0)
+            {
+                return user.FirstName;
+            }
+
+            return user.LastName;
         }
 
         public static string GetFullName(this Contact user)
         {
-            return string.IsNullOrEmpty(user.LastName) ? user.FirstName : $"{user.FirstName} {user.LastName}";
+            if (user.FirstName.Length > 0 && user.LastName.Length > 0)
+            {
+                return $"{user.FirstName} {user.LastName}";
+            }
+            else if (user.FirstName.Length > 0)
+            {
+                return user.FirstName;
+            }
+
+            return user.LastName;
         }
 
         public static PhotoSize GetSize(this Wallpaper wallpaper, bool thumbnail)
