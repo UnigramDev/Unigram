@@ -484,13 +484,17 @@ namespace Unigram.Views
                 Scroll(false);
                 args.Handled = true;
             }
-            else if ((args.VirtualKey == Windows.System.VirtualKey.F && ctrl) || args.VirtualKey == Windows.System.VirtualKey.Search)
+            else if (((args.VirtualKey == Windows.System.VirtualKey.E || args.VirtualKey == Windows.System.VirtualKey.K) && ctrl) || args.VirtualKey == Windows.System.VirtualKey.Search)
             {
                 MainHeader.Visibility = Visibility.Collapsed;
                 SearchField.Visibility = Visibility.Visible;
 
                 SearchField.Focus(FocusState.Keyboard);
                 args.Handled = true;
+            }
+            else if (args.VirtualKey == Windows.System.VirtualKey.Q && ctrl)
+            {
+                Application.Current.Exit();
             }
         }
 
