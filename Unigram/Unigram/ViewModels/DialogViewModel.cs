@@ -317,8 +317,8 @@ namespace Unigram.ViewModels
 
         private DispatcherTimer _informativeTimer;
 
-        private Message _informativeMessage;
-        public Message InformativeMessage
+        private MessageViewModel _informativeMessage;
+        public MessageViewModel InformativeMessage
         {
             get
             {
@@ -333,6 +333,7 @@ namespace Unigram.ViewModels
                 }
 
                 Set(ref _informativeMessage, value);
+                Delegate?.UpdateCallbackQueryAnswer(_chat, value);
             }
         }
 

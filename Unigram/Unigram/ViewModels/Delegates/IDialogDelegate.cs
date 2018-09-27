@@ -9,6 +9,7 @@ namespace Unigram.ViewModels.Delegates
         void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification);
 
         void UpdatePinnedMessage(Chat chat, MessageViewModel message, bool loading);
+        void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel answer);
 
         void UpdateNotificationSettings(Chat chat);
 

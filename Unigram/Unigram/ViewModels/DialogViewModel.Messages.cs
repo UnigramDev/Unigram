@@ -1038,15 +1038,15 @@ namespace Unigram.ViewModels
                             }
                             else
                             {
-                                //var bot = GetBot(message);
-                                //if (bot == null)
-                                //{
-                                //    // TODO:
-                                //    await new TLMessageDialog(response.Result.Message).ShowQueuedAsync();
-                                //    return;
-                                //}
+                                var bot = GetBot(message);
+                                if (bot == null)
+                                {
+                                    // TODO:
+                                    await new TLMessageDialog(answer.Text).ShowQueuedAsync();
+                                    return;
+                                }
 
-                                //InformativeMessage = TLUtils.GetShortMessage(0, bot.Id, Peer.ToPeer(), date, response.Result.Message);
+                                InformativeMessage = GetMessage(new Message(0, bot.Id, 0, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
                             }
                         }
                         else if (!string.IsNullOrEmpty(answer.Url))

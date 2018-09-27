@@ -2299,8 +2299,6 @@ namespace Unigram.Views
             }
         }
 
-
-
         public void UpdatePinnedMessage(Chat chat, MessageViewModel message, bool loading)
         {
             if (message == null && !loading)
@@ -2311,6 +2309,19 @@ namespace Unigram.Views
             {
                 PinnedMessagePanel.Visibility = Visibility.Visible;
                 PinnedMessage.UpdateMessage(message, loading, Strings.Resources.PinnedMessage);
+            }
+        }
+
+        public void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel message)
+        {
+            if (message == null)
+            {
+                CallbackQueryAnswerPanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                CallbackQueryAnswerPanel.Visibility = Visibility.Visible;
+                CallbackQueryAnswer.UpdateMessage(message, false, null);
             }
         }
 
