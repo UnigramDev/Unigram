@@ -549,7 +549,7 @@ namespace Unigram.ViewModels
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat == null || Items.Count < 1)
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat == null || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
                 }
@@ -598,8 +598,15 @@ namespace Unigram.ViewModels
                     foreach (var message in replied)
                     {
                         Items.Insert(0, message);
-
+                        
                         //var index = InsertMessageInOrder(Messages, message);
+                    }
+
+                    IsLastSliceLoaded = replied.IsEmpty();
+
+                    if (replied.IsEmpty())
+                    {
+                        await AddHeaderAsync();
                     }
                 }
 
@@ -677,6 +684,58 @@ namespace Unigram.ViewModels
 
                 _isLoadingPreviousSlice = false;
                 IsLoading = false;
+            }
+        }
+
+        private async Task AddHeaderAsync()
+        {
+            var previous = Items.FirstOrDefault();
+            if (previous != null && (previous.Content is MessageHeaderDate || previous.Id == 0))
+            {
+                return;
+            }
+
+            var chat = _chat;
+            if (chat == null)
+            {
+                goto AddDate;
+            }
+
+            var user = CacheService.GetUser(chat);
+            if (user == null || !(user.Type is UserTypeBot))
+            {
+                goto AddDate;
+            }
+
+            var fullInfo = CacheService.GetUserFull(user.Id);
+            if (fullInfo == null)
+            {
+                fullInfo = await ProtoService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
+            }
+
+            if (fullInfo != null)
+            {
+                var result = ProtoService.Execute(new GetTextEntities(fullInfo.BotInfo.Description)) as TextEntities;
+                var entities = result?.Entities ?? new List<TextEntity>();
+
+                foreach (var entity in entities)
+                {
+                    entity.Offset += Strings.Resources.BotInfoTitle.Length + Environment.NewLine.Length;
+                }
+
+                entities.Add(new TextEntity(0, Strings.Resources.BotInfoTitle.Length, new TextEntityTypeBold()));
+
+                var message = $"{Strings.Resources.BotInfoTitle}{Environment.NewLine}{fullInfo.BotInfo.Description}";
+                var text = new FormattedText(message, entities);
+
+                Items.Insert(0, GetMessage(new Message(0, user.Id, chat.Id, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(text, null), null)));
+                return;
+            }
+
+            AddDate:
+            if (previous != null)
+            {
+                Items.Insert(0, GetMessage(new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null)));
             }
         }
 
@@ -874,6 +933,11 @@ namespace Unigram.ViewModels
 
                     IsLastSliceLoaded = null;
                     IsFirstSliceLoaded = IsEndReached();
+
+                    if (replied.IsEmpty())
+                    {
+                        await AddHeaderAsync();
+                    }
                 }
 
                 _isLoadingNextSlice = false;
@@ -2230,7 +2294,7 @@ namespace Unigram.ViewModels
                 {
                     await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.VoipPeerOutdated, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
                 }
-                else if(error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
+                else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
                 {
                     await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
                 }
