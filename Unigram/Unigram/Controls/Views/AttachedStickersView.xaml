@@ -146,7 +146,7 @@
                  CornerRadius="10"
                  Margin="0,0,8,0">
                  <TextBlock Text="{x:Bind ViewModel.StickerSet.Count, Mode=OneWay}"
-                 Style="{ThemeResource CaptionTextBlockStyle}"
+                 Style="{StaticResource CaptionTextBlockStyle}"
                  Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                  TextAlignment="Center"
                  Margin="4,2,4,0"/>

@@ -77,7 +77,7 @@
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,8" ContextRequested="Message_ContextRequested">
                 <messages:MessageService Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Style="{StaticResource ServiceButtonStyle}">
-                    <TextBlock Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </messages:MessageService>
 
                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
@@ -88,7 +88,7 @@
 
         <DataTemplate x:Key="ServiceMessageTemplate">
             <messages:MessageService Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Margin="0,4,0,4" Style="{StaticResource ServiceButtonStyle}">
-                <TextBlock Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
             </messages:MessageService>
         </DataTemplate>
 
@@ -313,7 +313,7 @@
         </controls:PaddedListView>
 
         <Border Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,8,12,8" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.Row="1">
-            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertType('EventLogEmptyChannel', 'EventLogEmpty')}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>
+            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertType('EventLogEmptyChannel', 'EventLogEmpty')}" Foreground="White" TextAlignment="Center" Style="{StaticResource BodyTextBlockStyle}"/>
         </Border>
 
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="{ThemeResource AppBarThemeCompactHeight}" Grid.Row="2">

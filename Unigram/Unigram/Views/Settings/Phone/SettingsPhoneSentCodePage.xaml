@@ -35,7 +35,7 @@
                 x:Name="TitleLabel"
                 Visibility="Collapsed"
                 Text="{CustomResource YourCode}"
-                Style="{ThemeResource TitleTextBlockStyle}"/>
+                Style="{StaticResource TitleTextBlockStyle}"/>
             <TextBlock
                 common:TextBlockHelper.Markdown="{x:Bind ConvertType(ViewModel.CodeInfo, ViewModel.PhoneNumber), FallbackValue=''}"
                 Style="{StaticResource BodyTextBlockStyle}"

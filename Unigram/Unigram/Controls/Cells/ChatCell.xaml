@@ -107,14 +107,14 @@
                       Grid.Column="1"/>
             <TextBlock x:Name="TimeLabel"
                        Text="11:10"
-                       Style="{ThemeResource CaptionTextBlockStyle}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
                        Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
                        VerticalAlignment="Bottom"
                        Margin="0,0,0,1"
                        Grid.Column="2"/>
         </Grid>
         <TextBlock x:Name="BriefInfo"
-                   Style="{ThemeResource BodyTextBlockStyle}"
+                   Style="{StaticResource BodyTextBlockStyle}"
                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                    TextTrimming="CharacterEllipsis"
                    TextWrapping="NoWrap"
@@ -160,7 +160,7 @@
                 Grid.Row="1">
             <TextBlock x:Name="UnreadMentionsLabel"
                        Text="@"
-                       Style="{ThemeResource CaptionTextBlockStyle}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
                        Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                        TextAlignment="Center"
                        Margin="4,1,4,0"/>
@@ -178,7 +178,7 @@
             <Border x:Name="UnreadBackground" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"/>
             <Border x:Name="UnreadMutedBackground" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"/>
             <TextBlock x:Name="UnreadLabel"
-                       Style="{ThemeResource CaptionTextBlockStyle}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
                        Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                        TextAlignment="Center"
                        Margin="4,2,4,0"/>

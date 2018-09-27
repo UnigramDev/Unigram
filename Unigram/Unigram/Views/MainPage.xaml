@@ -315,7 +315,7 @@
                                                                 HorizontalAlignment="Right"
                                                                 Margin="0,-2,-2,0"
                                                                 Visibility="Collapsed">
-                                                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                                            <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
                                                                         Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                                                         TextAlignment="Center"
                                                                         Margin="4,2,4,0"/>
@@ -480,7 +480,7 @@
                                                 VerticalAlignment="Center"
                                                 HorizontalAlignment="Right">
                                             <TextBlock Text="{x:Bind ViewModel.UnreadMutedCount, Mode=OneWay}"
-                                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                                        Style="{StaticResource CaptionTextBlockStyle}"
                                                         Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                                         TextAlignment="Center"
                                                         Margin="4,2,4,0"/>
@@ -506,7 +506,7 @@
                                             Canvas.ZIndex="1">
                                         <TextBlock x:Name="UnreadCount"
                                                 Text="{x:Bind ViewModel.UnreadUnmutedCount, Mode=OneWay}"
-                                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
                                                 Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                                 TextAlignment="Center"
                                                 Margin="4,2,4,0"/>

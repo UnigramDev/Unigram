@@ -60,35 +60,35 @@
                         <ToggleSwitch x:Name="ChangeInfo"
                                       IsOn="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
                                       Header="{CustomResource EditAdminChangeGroupInfo}"
-                                      Style="{ThemeResource CheckButtonStyle}"/>
+                                      Style="{StaticResource CheckButtonStyle}"/>
                         <ToggleSwitch x:Name="PostMessages"
                                       IsOn="{x:Bind ViewModel.CanPostMessages, Mode=TwoWay}"
                                       Header="{CustomResource EditAdminPostMessages}"
-                                      Style="{ThemeResource CheckButtonStyle}"/>
+                                      Style="{StaticResource CheckButtonStyle}"/>
                         <ToggleSwitch x:Name="EditMessages"
                                       IsOn="{x:Bind ViewModel.CanEditMessages, Mode=TwoWay}"
                                       Header="{CustomResource EditAdminEditMessages}"
-                                      Style="{ThemeResource CheckButtonStyle}"/>
+                                      Style="{StaticResource CheckButtonStyle}"/>
                         <ToggleSwitch x:Name="DeleteMessages"
                                       IsOn="{x:Bind ViewModel.CanDeleteMessages, Mode=TwoWay}"
                                       Header="{CustomResource EditAdminGroupDeleteMessages}"
-                                      Style="{ThemeResource CheckButtonStyle}"/>
+                                      Style="{StaticResource CheckButtonStyle}"/>
                         <ToggleSwitch x:Name="BanUsers"
                                       IsOn="{x:Bind ViewModel.CanRestrictMembers, Mode=TwoWay}"
                                       Header="{CustomResource EditAdminBanUsers}"
-                                      Style="{ThemeResource CheckButtonStyle}"/>
+                                      Style="{StaticResource CheckButtonStyle}"/>
                         <ToggleSwitch x:Name="AddUsers"
                                       IsOn="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
                                       Header="{CustomResource EditAdminAddUsers}"
-                                      Style="{ThemeResource CheckButtonStyle}"/>
+                                      Style="{StaticResource CheckButtonStyle}"/>
                         <ToggleSwitch x:Name="PinMessages"
                                       IsOn="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
                                       Header="{CustomResource EditAdminPinMessages}"
-                                      Style="{ThemeResource CheckButtonStyle}"/>
+                                      Style="{StaticResource CheckButtonStyle}"/>
                         <ToggleSwitch x:Name="AddAdmins"
                                       IsOn="{x:Bind ViewModel.CanPromoteMembers, Mode=TwoWay}"
                                       Header="{CustomResource EditAdminAddAdmins}"
-                                      Style="{ThemeResource CheckButtonStyle}"/>
+                                      Style="{StaticResource CheckButtonStyle}"/>
                         <TextBlock
                             x:Name="Footer"
                             Text="{CustomResource EditAdminCantEdit}"

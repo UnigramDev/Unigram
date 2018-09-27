@@ -77,7 +77,7 @@
                                 </ContentControl.Clip>
                                 <ContentControl.ContentTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                                        <TextBlock Text="{Binding}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                                     </DataTemplate>
                                 </ContentControl.ContentTemplate>
                             </ContentControl>
@@ -126,7 +126,7 @@
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.AutoDownloadEnabled, Mode=TwoWay}"
                         Header="{CustomResource AutoDownloadMedia}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <!--<Button
                         Command="{x:Bind ViewModel.DownloadLocationCommand}"
                         Tag="Download location"

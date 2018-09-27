@@ -33,7 +33,7 @@
                 x:Name="TitleLabel"
                 Visibility="Collapsed"
                 Text="{CustomResource YourName}"
-                Style="{ThemeResource TitleTextBlockStyle}"/>
+                Style="{StaticResource TitleTextBlockStyle}"/>
             <TextBlock
                 Text="{CustomResource RegisterText}"
                 Style="{StaticResource BodyTextBlockStyle}"

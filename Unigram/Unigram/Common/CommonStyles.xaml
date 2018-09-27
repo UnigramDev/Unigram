@@ -1678,7 +1678,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <TextBlock Text="{TemplateBinding Tag}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
+                        <TextBlock Text="{TemplateBinding Tag}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
                         <ContentPresenter x:Name="ContentPresenter" TextWrapping="Wrap" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,0,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="{TemplateBinding Padding}"/>
                     </StackPanel>
@@ -4849,7 +4849,7 @@
                                                            VerticalAlignment="Center"
                                                            HorizontalAlignment="Center"
                                                            FontStyle="Normal"
-                                                           Style="{ThemeResource BodyTextBlockStyle}"
+                                                           Style="{StaticResource BodyTextBlockStyle}"
                                                            Text="&#xE10A;"
                                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                            AutomationProperties.AccessibilityView="Raw"/>
@@ -4903,7 +4903,7 @@
                                                            VerticalAlignment="Center"
                                                            HorizontalAlignment="Center"
                                                            FontStyle="Normal"
-                                                           Style="{ThemeResource BodyTextBlockStyle}"
+                                                           Style="{StaticResource BodyTextBlockStyle}"
                                                            Text="&#xE094;"
                                                            FontSize="18"
                                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"

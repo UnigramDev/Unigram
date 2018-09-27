@@ -218,11 +218,11 @@
                            Text="Telegram"
                            FontWeight="SemiBold"
                            TextAlignment="Center"
-                           Style="{ThemeResource TitleTextBlockStyle}"/>
+                           Style="{StaticResource TitleTextBlockStyle}"/>
                 <TextBlock Padding="12,0,12,24"
                            common:TextBlockHelper.Markdown="The world's **fastest** messaging app.&#x0a;It is **free** and **secure**."
                            TextAlignment="Center"
-                           Style="{ThemeResource BodyTextBlockStyle}"/>
+                           Style="{StaticResource BodyTextBlockStyle}"/>
             </StackPanel>
             <ListView x:Name="Carousel"
                       Style="{StaticResource IndicatorListViewStyle}"
@@ -256,11 +256,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page1Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="1">
@@ -269,11 +269,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page2Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="2">
@@ -282,11 +282,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page3Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="3">
@@ -295,11 +295,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page5Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="4">
@@ -308,11 +308,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page4Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="5">
@@ -321,11 +321,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page6Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
         </Grid>

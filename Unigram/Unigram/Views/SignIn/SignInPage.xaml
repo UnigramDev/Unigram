@@ -36,7 +36,7 @@
                 x:Name="TitleLabel"
                 Visibility="Collapsed"
                 Text="{CustomResource YourPhone}"
-                Style="{ThemeResource TitleTextBlockStyle}"/>
+                Style="{StaticResource TitleTextBlockStyle}"/>
             <TextBlock
                 Text="{CustomResource StartText}"
                 Style="{StaticResource BodyTextBlockStyle}"

@@ -59,7 +59,7 @@
                         Visibility="Collapsed"
                         IsOn="{x:Bind ViewModel.IsBiometricsEnabled, Mode=TwoWay}"
                         Header="{CustomResource UnlockFingerprint}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource AutoLock}"
                         Badge="{x:Bind ConvertAutolock(ViewModel.AutolockTimeout), Mode=OneWay}"
@@ -75,7 +75,7 @@
                 <!--<StackPanel Visibility="{x:Bind ViewModel.Passcode.IsEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource SettingsGroupPanelStyle}">
                      <ToggleSwitch
                      Header="{CustomResource ScreenCapture}"
-                     Style="{ThemeResource CheckButtonStyle}"/>
+                     Style="{StaticResource CheckButtonStyle}"/>
                      
                      <TextBlock
                      Text="{CustomResource ScreenCaptureInfo}"

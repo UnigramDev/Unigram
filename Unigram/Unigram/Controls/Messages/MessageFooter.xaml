@@ -13,7 +13,7 @@
     HorizontalAlignment="Right"
     Padding="6,0,6,0">
 
-    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}">
+    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}">
         <ToolTipService.ToolTip>
             <ToolTip Opened="ToolTip_Opened"/>
         </ToolTipService.ToolTip>

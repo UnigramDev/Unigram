@@ -57,19 +57,19 @@
                 <StackPanel x:Name="PermissionsPanel" Visibility="Collapsed">
                     <ToggleSwitch IsOn="{x:Bind ViewModel.CanViewMessages, Mode=TwoWay}"
                                   Header="{CustomResource UserRestrictionsRead}"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
+                                  Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.CanSendMessages, Mode=TwoWay}"
                                   Header="{CustomResource UserRestrictionsSend}"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
+                                  Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}"
                                   Header="{CustomResource UserRestrictionsSendMedia}"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
+                                  Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.CanSendOtherMessages, Mode=TwoWay}"
                                   Header="{CustomResource UserRestrictionsSendStickers}"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
+                                  Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.CanAddWebPagePreviews, Mode=TwoWay}"
                                   Header="{CustomResource UserRestrictionsEmbedLinks}"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
+                                  Style="{StaticResource CheckButtonStyle}"/>
                 </StackPanel>
 
                 <StackPanel Margin="0,24">

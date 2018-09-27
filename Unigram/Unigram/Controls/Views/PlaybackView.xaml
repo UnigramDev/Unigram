@@ -579,8 +579,8 @@
                                 </Grid>
 
                                 <StackPanel Margin="8,0,8,2" VerticalAlignment="Center" Grid.Column="1">
-                                    <TextBlock x:Name="TitleLabel" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
-                                    <TextBlock x:Name="SubtitleLabel" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                                    <TextBlock x:Name="TitleLabel" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                                    <TextBlock x:Name="SubtitleLabel" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
                                 </StackPanel>
 
                                 <Button x:Name="btnOptions"

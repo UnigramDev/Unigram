@@ -21,7 +21,7 @@
                             <Grid x:Name="TogglePaneTopPadding" Padding="{TemplateBinding Padding}" />
                             <local:GlyphButton x:Name="TogglePaneButton" Grid.Row="1" AutomationProperties.LandmarkType="Navigation"/>
                         </Grid>
-                        <SplitView x:Name="RootSplitView" OpenPaneLength="240" IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                        <SplitView x:Name="RootSplitView" PaneBackground="Transparent" OpenPaneLength="240" IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                             <SplitView.Pane>
                                 <Grid x:Name="PaneContentGrid">
                                     <Grid.RowDefinitions>
@@ -206,7 +206,7 @@
                                 <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                                 <Setter Property="FontSize" Value="{ThemeResource MTCMediaFontSize}" />
                                 <Setter Property="FontFamily" Value="{ThemeResource MTCMediaFontFamily}" />
-                                <Setter Property="Style" Value="{ThemeResource CaptionTextBlockStyle }" />
+                                <Setter Property="Style" Value="{StaticResource CaptionTextBlockStyle}" />
                                 <Setter Property="IsTextScaleFactorEnabled" Value="False" />
                             </Style>
                             <!-- Style for Position slider used in Media Transport Controls -->

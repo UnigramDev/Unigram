@@ -177,7 +177,7 @@
                     <ToggleSwitch
                         Header="{CustomResource ChannelSignMessages}"
                         IsOn="{x:Bind ViewModel.IsSignatures, Mode=TwoWay}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <TextBlock
                         Text="{CustomResource ChannelSignMessagesInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"

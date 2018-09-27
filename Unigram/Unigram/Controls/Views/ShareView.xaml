@@ -455,7 +455,7 @@
                                     BorderBrush="{ThemeResource SystemControlBackgroundChromeWhiteBrush}">
                                 <TextBlock x:Name="MultiArrangeOverlayText"
                                            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DragItemsCount}"
-                                           Style="{ThemeResource CaptionTextBlockStyle}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
                                            IsHitTestVisible="False"
                                            Opacity="0"
                                            VerticalAlignment="Center"
@@ -624,7 +624,7 @@
                                                     HorizontalAlignment="Right"
                                                     Margin="0,-2,-2,0"
                                                     Visibility="Collapsed">
-                                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                                <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
                                                            Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                                            TextAlignment="Center"
                                                            Margin="4,2,4,0"/>

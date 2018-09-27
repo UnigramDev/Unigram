@@ -30,7 +30,7 @@
                        Style="{StaticResource BaseTextBlockStyle}"/>
 
             <TextBlock x:Name="Subtitle"
-                       Style="{ThemeResource BodyTextBlockStyle}"
+                       Style="{StaticResource BodyTextBlockStyle}"
                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                        TextTrimming="CharacterEllipsis"
                        TextWrapping="NoWrap"

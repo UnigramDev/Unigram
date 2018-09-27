@@ -692,7 +692,7 @@
                                             MinWidth="20"
                                             Height="20">
                                         <TextBlock Text="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay}"
-                                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
                                                     Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                                     TextAlignment="Center"
                                                     VerticalAlignment="Center"

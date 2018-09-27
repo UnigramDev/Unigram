@@ -40,19 +40,19 @@
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.Contacts, Mode=TwoWay}"
                         Header="{CustomResource AutodownloadContacts}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.PrivateChats, Mode=TwoWay}"
                         Header="{CustomResource AutodownloadPrivateChats}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.Groups, Mode=TwoWay}"
                         Header="{CustomResource AutodownloadGroupChats}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.Channels, Mode=TwoWay}"
                         Header="{CustomResource AutodownloadChannels}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <Slider Header="{CustomResource AutodownloadSizeLimit}" Visibility="Collapsed"/>
                 </StackPanel>
             </StackPanel>

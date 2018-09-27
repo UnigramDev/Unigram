@@ -192,7 +192,7 @@
                                                 Margin="8,0,12,0"
                                                 Grid.Column="2">
                                             <TextBlock Text="{x:Bind UnreadCount, Mode=OneWay}"
-                                                       Style="{ThemeResource CaptionTextBlockStyle}"
+                                                       Style="{StaticResource CaptionTextBlockStyle}"
                                                        Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                                        TextAlignment="Center"
                                                        Margin="4,2,4,0"/>

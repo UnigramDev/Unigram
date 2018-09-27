@@ -99,8 +99,8 @@
             <controls:GlyphHyperlinkButton x:Name="Button" Glyph="&#xE13A;" Click="Button_Click" Style="{StaticResource InlineButtonStyle}"/>
         </Border>
         <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-            <TextBlock x:Name="TitleLabel" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
-            <TextBlock Style="{ThemeResource DisabledCaptionTextBlockStyle}">
+            <TextBlock x:Name="TitleLabel" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+            <TextBlock Style="{StaticResource DisabledCaptionTextBlockStyle}">
                 <ToolTipService.ToolTip>
                     <ToolTip Opened="ToolTip_Opened"/>
                 </ToolTipService.ToolTip>

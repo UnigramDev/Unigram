@@ -40,17 +40,17 @@
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
                         Header="{CustomResource SendByEnter}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
 
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
                         Header="Replace emojis"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
 
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsAutoPlayEnabled, Mode=TwoWay}"
                         Header="{CustomResource AutoplayGifs}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
 
                     <controls:StartupSwitch Margin="0,24"/>
 
@@ -59,7 +59,7 @@
                         <ToggleSwitch
                             IsOn="{x:Bind ViewModel.IsWorkModeVisible, Mode=TwoWay}"
                             Header="Show work mode toggle"
-                            Style="{ThemeResource CheckButtonStyle}"/>
+                            Style="{StaticResource CheckButtonStyle}"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

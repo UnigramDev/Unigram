@@ -35,7 +35,7 @@
                 x:Name="TitleLabel"
                 Visibility="Collapsed"
                 Text="{CustomResource ChangePhoneNewNumber}"
-                Style="{ThemeResource TitleTextBlockStyle}"/>
+                Style="{StaticResource TitleTextBlockStyle}"/>
             <TextBlock
                 Text="{CustomResource ChangePhoneHelp}"
                 Style="{StaticResource BodyTextBlockStyle}"

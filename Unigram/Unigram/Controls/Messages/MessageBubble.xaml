@@ -130,7 +130,7 @@
 
             <RichTextBlock
                 x:Name="Message"
-                Style="{ThemeResource BodyRichTextBlockStyle}"
+                Style="{StaticResource BodyRichTextBlockStyle}"
                 FontSize="{ThemeResource MessageFontSize}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
                 ContextMenuOpening="Message_ContextMenuOpening"

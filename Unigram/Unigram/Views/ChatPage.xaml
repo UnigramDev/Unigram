@@ -224,7 +224,7 @@
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,8" ContextRequested="Message_ContextRequested">
                 <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Style="{StaticResource ServiceButtonStyle}">
-                    <TextBlock Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </messages:MessageService>
 
                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
@@ -235,7 +235,7 @@
 
         <DataTemplate x:Key="ServiceMessageTemplate">
             <messages:MessageService Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Margin="0,4,0,6" Style="{StaticResource ServiceButtonStyle}">
-                <TextBlock Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
             </messages:MessageService>
         </DataTemplate>
 
@@ -624,13 +624,13 @@
             </controls:BubbleListView>
 
             <Border Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,7" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
-                <TextBlock x:Name="EmptyLabel" Foreground="White" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                <TextBlock x:Name="EmptyLabel" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
             </Border>
 
             <StackPanel Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <FontIcon Glyph="&#xE753;" Foreground="White" FontSize="64"/>
                 <TextBlock Text="{CustomResource ChatYourSelfTitle}" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>
-                <TextBlock Foreground="White" Style="{ThemeResource BodyTextBlockStyle}">
+                <TextBlock Foreground="White" Style="{StaticResource BodyTextBlockStyle}">
                     <Run Text="•"/>
                     <Run Text="{CustomResource ChatYourSelfDescription1}"/>
                     <LineBreak/>
@@ -646,7 +646,7 @@
             </StackPanel>
 
             <!--<Border Visibility="{x:Bind (Visibility)ViewModel.IsEmpty, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="18">
-                 <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Background="{ThemeResource MessageServiceBackgroundBrush}" Style="{StaticResource SkypeProgressRingStyle}"/>
+                 <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Background="{StaticResource MessageServiceBackgroundBrush}" Style="{StaticResource SkypeProgressRingStyle}"/>
                  </Border>-->
 
             <Grid>
@@ -707,7 +707,7 @@
                 <StackPanel x:Name="DateHeaderRelative" x:DeferLoadStrategy="Lazy" Grid.Row="4">
                     <Border x:Name="DateHeaderPanel" HorizontalAlignment="Center">
                         <messages:MessageService x:Name="DateHeader" Click="Date_Click" BorderThickness="0,4,0,4" Style="{StaticResource ServiceButtonStyle}">
-                            <TextBlock x:Name="DateHeaderLabel" Text="31 dicembre 2017" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                            <TextBlock x:Name="DateHeaderLabel" Text="31 dicembre 2017" Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
                         </messages:MessageService>
                     </Border>
                 </StackPanel>
@@ -723,7 +723,7 @@
                             Margin="0,0,0,-12"
                             Canvas.ZIndex="1">
                         <TextBlock x:Name="Mentions"
-                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                    TextAlignment="Center"
                                    Margin="4,2,4,0"/>
@@ -751,7 +751,7 @@
                             Canvas.ZIndex="1">
                         <TextBlock x:Name="UnreadCount"
                                    Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
-                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                    TextAlignment="Center"
                                    Margin="4,2,4,0"/>

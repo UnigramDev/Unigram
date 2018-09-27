@@ -99,12 +99,12 @@
                         IsEnabled="False"
                         IsOn="True"
                         Header="{CustomResource ContactJoined}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
                         IsEnabled="False"
                         IsOn="True"
                         Header="{CustomResource PinnedMessages}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                 </StackPanel>
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
@@ -112,7 +112,7 @@
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IncludeMutedChats, Mode=TwoWay}"
                         Header="Include muted chats"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                 </StackPanel>
 
                 <StackPanel Margin="0,24,0,0">

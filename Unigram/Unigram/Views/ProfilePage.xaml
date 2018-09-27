@@ -235,7 +235,7 @@
                             </Button>
 
                             <StackPanel x:Name="DescriptionPanel" Visibility="Collapsed">
-                                <TextBlock x:Name="DescriptionTitle" Visibility="Collapsed" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
+                                <TextBlock x:Name="DescriptionTitle" Visibility="Collapsed" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
                                 <RichTextBlock x:Name="DescriptionLabel"
                                                ContextRequested="About_ContextRequested"
                                                ContextMenuOpening="About_ContextMenuOpening"
@@ -264,7 +264,7 @@
                         <StackPanel Margin="0,24,0,0">
                             <ToggleSwitch x:Name="Notifications"
                                           Header="{CustomResource Notifications}"
-                                          Style="{ThemeResource CheckButtonStyle}"
+                                          Style="{StaticResource CheckButtonStyle}"
                                           Toggled="Notifications_Toggled"/>
 
                             <controls:BadgeButton Content="{CustomResource SharedMedia}"
