@@ -22,7 +22,8 @@ namespace Unigram.ViewModels
             _contactsService = contactsService;
             aggregator.Subscribe(this);
 
-            Items = new SortedObservableCollection<User>(new UserComparer(true));
+            // Let's sort contacts alphabetically due to high amount of crashes in the latest version
+            Items = new SortedObservableCollection<User>(new UserComparer(false));
         }
 
         public void LoadContacts()
@@ -80,6 +81,8 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateUserStatus update)
         {
+            return;
+
             BeginOnUIThread(() =>
             {
                 var first = Items.FirstOrDefault(x => x != null && x.Id == update.UserId);
@@ -154,7 +157,10 @@ namespace Unigram.ViewModels
                 var epoch = LastSeenConverter.GetIndex(y).CompareTo(LastSeenConverter.GetIndex(x));
                 if (epoch == 0)
                 {
-                    var fullName = x.FirstName.CompareTo(y.FirstName);
+                    var nameX = x.FirstName.Length > 0 ? x.FirstName : x.LastName;
+                    var nameY = y.FirstName.Length > 0 ? y.FirstName : y.LastName;
+
+                    var fullName = nameX.CompareTo(nameY);
                     if (fullName == 0)
                     {
                         return y.Id.CompareTo(x.Id);
@@ -167,7 +173,10 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var fullName = x.FirstName.CompareTo(y.FirstName);
+                var nameX = x.FirstName.Length > 0 ? x.FirstName : x.LastName;
+                var nameY = y.FirstName.Length > 0 ? y.FirstName : y.LastName;
+
+                var fullName = nameX.CompareTo(nameY);
                 if (fullName == 0)
                 {
                     return y.Id.CompareTo(x.Id);
