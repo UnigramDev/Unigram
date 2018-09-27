@@ -41,16 +41,16 @@
                     <controls:ProfilePicture x:Name="Photo" Click="EditPhoto_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
 
                     <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                        <controls:UpdateTextBox
+                        <TextBox
                             x:Name="Title"
-                            Text="{Binding Title, Mode=TwoWay}"
+                            Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             MaxLength="{StaticResource ChannelTitleMaxLength}"/>
                     </Border>
                 </Grid>
 
                 <StackPanel>
-                    <controls:UpdateTextBox
-                        Text="{Binding About, Mode=TwoWay}"
+                    <TextBox
+                        Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         MaxLength="{StaticResource ChannelAboutMaxLength}"
                         PlaceholderText="{CustomResource DescriptionOptionalPlaceholder}"
                         TextWrapping="Wrap"
@@ -87,9 +87,9 @@
 
                     <StackPanel Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <StackPanel Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
-                            <controls:UpdateTextBox
+                            <TextBox
                                 x:Name="Username"
-                                Text="{Binding Username, Mode=TwoWay}"
+                                Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 Header="{CustomResource ChannelLinkType}"
                                 PlaceholderText="{x:Bind Converter={StaticResource MeUrlPrefixConverter}}"
                                 Style="{StaticResource InlinePlaceholderTextBoxStyle}"

@@ -1174,7 +1174,6 @@
       <DependentUpon>MessageReference.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SearchTextBox.cs" />
-    <Compile Include="Controls\UpdateTextBox.cs" />
     <Compile Include="Converters\BindConvert.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DateTimeToFormatConverter.cs" />

@@ -66,16 +66,15 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <!-- The user can enter their phone number here -->
-                <controls:UpdateTextBox x:Name="PhoneCode"
-                                        Text="{Binding PhoneCode, Mode=TwoWay}"
-                                        Margin="0,0,8,0"
-                                        Width="30"
-                                        InputScope="TelephoneNumber"
-                                        PlaceholderText="+"
-                                        Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
+                <TextBox x:Name="PhoneCode"
+                         Text="{x:Bind ViewModel.PhoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,8,0"
+                         Width="30"
+                         InputScope="TelephoneNumber"
+                         PlaceholderText="+"
+                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
                 <controls:PhoneTextBox x:Name="PrimaryInput"
-                                       Text="{Binding PhoneNumber, Mode=TwoWay}"
+                                       Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                        PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
                                        MinWidth="200"
                                        InputScope="TelephoneNumber"

@@ -40,9 +40,9 @@
                     <controls:ProfilePicture x:Name="Photo" Click="EditPhoto_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
              
                     <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                        <controls:UpdateTextBox
+                        <TextBox
                             x:Name="Title"
-                            Text="{Binding Title, Mode=TwoWay}"
+                            Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             MaxLength="{StaticResource ChannelTitleMaxLength}"
                             PlaceholderText="{CustomResource GroupName}"/>
                     </Border>

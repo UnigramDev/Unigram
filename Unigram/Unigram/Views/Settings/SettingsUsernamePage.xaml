@@ -28,9 +28,9 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <controls:UpdateTextBox
+            <TextBox
                 x:Name="Username"
-                Text="{Binding Username, Mode=TwoWay}"
+                Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 PlaceholderText="{CustomResource UsernamePlaceholder}"
                 Margin="0,0,0,8"/>
 

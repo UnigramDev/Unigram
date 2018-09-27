@@ -39,8 +39,8 @@
                     <controls:ProfilePicture Click="EditPhoto_Click" Source="{x:Bind ViewModel.Preview, Mode=OneWay}"/>
                 </Grid>
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                    <controls:UpdateTextBox
-                        Text="{Binding Title, Mode=TwoWay}"
+                    <TextBox
+                        Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         MaxLength="{StaticResource ChatTitleMaxLength}"
                         PlaceholderText="{CustomResource EnterGroupNamePlaceholder}"/>
                 </Border>
