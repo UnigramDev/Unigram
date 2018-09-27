@@ -192,7 +192,7 @@ namespace Unigram
                 builder.RegisterType<SettingsPrivacyAlwaysAllowCallsViewModel>();
                 builder.RegisterType<SettingsPrivacyAlwaysAllowChatInvitesViewModel>();
                 builder.RegisterType<SettingsPrivacyAlwaysShowStatusViewModel>();
-                builder.RegisterType<SettingsSecurityChangePasswordViewModel>(); //.SingleInstance();
+                builder.RegisterType<SettingsPasswordViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsSecurityPasscodeViewModel>().SingleInstance();
                 builder.RegisterType<SettingsStickersViewModel>().SingleInstance();
                 builder.RegisterType<SettingsStickersTrendingViewModel>().SingleInstance();

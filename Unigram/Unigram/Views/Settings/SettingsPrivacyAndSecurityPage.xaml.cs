@@ -60,6 +60,11 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsPrivacyAllowChatInvitesPage));
         }
 
+        private void Password_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPasswordPage));
+        }
+
         #region Binding
 
         private string ConvertSync(bool sync)

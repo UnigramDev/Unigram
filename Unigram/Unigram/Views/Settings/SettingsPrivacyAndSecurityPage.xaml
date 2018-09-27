@@ -68,9 +68,8 @@
                         Command="{x:Bind ViewModel.PasscodeCommand}"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                     <Button
-                        IsEnabled="False"
                         Tag="{CustomResource TwoStepVerification}"
-                        Click="Sessions_Click"
+                        Click="Password_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                     <Button
                         Tag="{CustomResource SessionsTitle}" 
@@ -129,11 +128,11 @@
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                         Header="{CustomResource SyncContacts}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsContactsSuggestEnabled, Mode=TwoWay}"
                         Header="{CustomResource SuggestContacts}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
 
                     <TextBlock
                         Text="{CustomResource SuggestContactsInfo}"
@@ -161,7 +160,7 @@
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsSecretPreviewsEnabled, Mode=TwoWay}"
                         Header="{CustomResource SecretWebPage}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
 
                     <TextBlock
                         Text="{CustomResource SecretWebPageInfo}"

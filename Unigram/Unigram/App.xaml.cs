@@ -243,10 +243,8 @@ namespace Unigram
                     return container.Resolve<SettingsNotificationsViewModel>(id);
                 case SettingsPrivacyAndSecurityPage settingsPrivacyAndSecurity:
                     return container.Resolve<SettingsPrivacyAndSecurityViewModel>(id);
-                case SettingsSecurityChangePasswordPage settingsSecurityChangePassword:
-                    return container.Resolve<SettingsSecurityChangePasswordViewModel>(id);
-                case SettingsSecurityEnterPasswordPage settingsSecurityEnterPassword:
-                    return container.Resolve<SettingsSecurityEnterPasswordViewModel>(id);
+                case SettingsPasswordPage settingsSecurityEnterPassword:
+                    return container.Resolve<SettingsPasswordViewModel>(id);
                 case SettingsSecurityPasscodePage settingsSecurityPasscode:
                     return container.Resolve<SettingsSecurityPasscodeViewModel>(id);
                 case SettingsSessionsPage settingsSessions:
