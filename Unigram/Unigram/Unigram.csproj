@@ -1266,8 +1266,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
+    <AppxManifest Include="..\Assets\$(ConfigurationName)\Package.appxmanifest">
       <SubType>Designer</SubType>
+      <Link>Package.appxmanifest</Link>
     </AppxManifest>
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
