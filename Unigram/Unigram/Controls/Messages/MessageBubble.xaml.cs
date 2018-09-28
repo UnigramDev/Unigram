@@ -8,6 +8,7 @@ using Unigram.Controls.Messages.Content;
 using Unigram.Selectors;
 using Unigram.ViewModels;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
@@ -24,12 +25,24 @@ namespace Unigram.Controls.Messages
     public sealed partial class MessageBubble : StackPanel
     {
         private MessageViewModel _message;
+        private static bool? _apiAvailable;
 
         public MessageBubble()
         {
             InitializeComponent();
 
-            Message.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
+            // For some reason the event is available since Anniversary Update,
+            // but the property has been added in April Update.
+            _apiAvailable = _apiAvailable ?? ApiInformation.IsReadOnlyPropertyPresent("Windows.UI.Xaml.UIElement", "ContextRequestedEvent");
+
+            if (_apiAvailable == true)
+            {
+                Message.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
+            }
+            else
+            {
+                Message.ContextRequested += Message_ContextRequested;
+            }
         }
 
         public void UpdateMessage(MessageViewModel message)

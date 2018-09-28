@@ -151,7 +151,23 @@ namespace Unigram.Common
 
         #endregion
 
-        public CoreWindowActivationState ActivationState { get; private set; }
+        private bool? _apiAvailable;
+
+        private CoreWindowActivationMode _activationMode;
+        public CoreWindowActivationMode ActivationMode
+        {
+            get
+            {
+                _apiAvailable = _apiAvailable ?? ApiInformation.IsReadOnlyPropertyPresent("Windows.UI.Core.CoreWindow", "ActivationMode");
+
+                if (_apiAvailable == true)
+                {
+                    return _window.CoreWindow.ActivationMode;
+                }
+
+                return _activationMode;
+            }
+        }
 
         public ContactPanel ContactPanel { get; private set; }
 
@@ -167,7 +183,9 @@ namespace Unigram.Common
 
         private void OnActivated(object sender, WindowActivatedEventArgs e)
         {
-            ActivationState = e.WindowActivationState;
+            _activationMode = e.WindowActivationState == CoreWindowActivationState.Deactivated
+                ? CoreWindowActivationMode.Deactivated
+                : CoreWindowActivationMode.ActivatedInForeground;
         }
 
 
