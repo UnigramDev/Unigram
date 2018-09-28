@@ -105,11 +105,6 @@ namespace Unigram
         /// </summary>
         public App(int session)
         {
-            if (!SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
-            {
-                RequestedTheme = SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) ? ApplicationTheme.Dark : ApplicationTheme.Light;
-            }
-
 #if DEBUG
             Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en";
 #endif
@@ -496,7 +491,7 @@ namespace Unigram
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
-            Theme.Current.Update();
+            //Theme.Current.Update();
             //NotifyThemeChanged();
 
             var dispatcher = Window.Current.Dispatcher;
@@ -612,24 +607,24 @@ namespace Unigram
         //    ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrush"]).Color = e.WindowActivationState != CoreWindowActivationState.Deactivated ? ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrushBase"]).Color : ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrushDeactivated"]).Color;
         //}
 
-        public static void NotifyThemeChanged()
-        {
-            var frame = Window.Current.Content as Frame;
-            if (frame == null)
-            {
-                return;
-            }
+        //public static void NotifyThemeChanged()
+        //{
+        //    var frame = Window.Current.Content as Frame;
+        //    if (frame == null)
+        //    {
+        //        return;
+        //    }
 
-            var current = App.Current as App;
-            var theme = current.UISettings.GetColorValue(UIColorType.Background);
+        //    var current = App.Current as App;
+        //    var theme = current.UISettings.GetColorValue(UIColorType.Background);
 
-            frame.RequestedTheme = SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Dark) || (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
-            //frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme;
+        //    frame.RequestedTheme = SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Dark) || (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
+        //    //frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme;
 
-            //var dark = (bool)App.Current.Resources["IsDarkTheme"];
+        //    //var dark = (bool)App.Current.Resources["IsDarkTheme"];
 
-            //frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
-            //frame.RequestedTheme = ElementTheme.Default;
-        }
+        //    //frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
+        //    //frame.RequestedTheme = ElementTheme.Default;
+        //}
     }
 }

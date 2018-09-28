@@ -80,28 +80,15 @@ namespace Unigram.Common
         {
             try
             {
-                var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
-                if (accent == null)
-                {
-                    return;
-                }
-
                 if (GetValueOrDefault("Theme", TelegramTheme.Default | TelegramTheme.Brand).HasFlag(TelegramTheme.Brand))
                 {
-                    try
-                    {
-                        accent.MergedDictionaries.Clear();
-                        accent.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Brand.xaml") });
-                    }
-                    catch
-                    {
-                        // Turn off
-                        Update();
-                    }
+                    MergedDictionaries.Clear();
+                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
                 }
                 else
                 {
-                    accent.MergedDictionaries.Clear();
+                    MergedDictionaries.Clear();
+                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeSystem.xaml") });
                 }
             }
             catch { }

@@ -75,7 +75,6 @@ namespace Unigram.ViewModels.Settings
                 Settings.Appearance.RequestedTheme = IsSystemTheme ? (TelegramTheme)value : ((TelegramTheme)value | TelegramTheme.Brand);
                 RaisePropertyChanged();
                 RaisePropertyChanged(() => IsSystemTheme);
-                RaisePropertyChanged(() => IsThemeChanged);
             }
         }
 
@@ -90,15 +89,6 @@ namespace Unigram.ViewModels.Settings
                 Settings.Appearance.RequestedTheme = value ? GetRawTheme() : (GetRawTheme() | TelegramTheme.Brand);
                 RaisePropertyChanged();
                 RaisePropertyChanged(() => RequestedTheme);
-                RaisePropertyChanged(() => IsThemeChanged);
-            }
-        }
-
-        public bool IsThemeChanged
-        {
-            get
-            {
-                return Settings.Appearance.CurrentTheme != Settings.Appearance.RequestedTheme;
             }
         }
     }

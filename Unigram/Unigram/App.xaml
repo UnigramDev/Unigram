@@ -200,10 +200,10 @@
             </Style>
             
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
-                <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
                 <common:Fluent/>
                 <common:Theme/>
+                <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
+                <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
                 <themes:Messages/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

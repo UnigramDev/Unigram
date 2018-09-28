@@ -1,0 +1,89 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Themes">
+    
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#F5F5F5" />
+            <SolidColorBrush x:Key="MessageForegroundOutBrush" Color="#E4ECF2" />
+
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#182533" />
+            <SolidColorBrush x:Key="MessageBackgroundOutBrush" Color="#2B5278" />
+
+            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#6D7F8F" />
+            <SolidColorBrush x:Key="MessageSubtleLabelOutBrush" Color="#7DA8D3" />
+
+            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#6D7F8F" />
+            <SolidColorBrush x:Key="MessageSubtleGlyphOutBrush" Color="#72BCFD" />
+
+            <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#6D7F8F" />
+            <SolidColorBrush x:Key="MessageSubtleForegroundOutBrush" Color="#7DA8D3" />
+
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#71BAFA" />
+            <SolidColorBrush x:Key="MessageHeaderForegroundOutBrush" Color="#90CAFF" />
+
+            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#429BDB" />
+            <SolidColorBrush x:Key="MessageHeaderBorderOutBrush" Color="#65B9F4" />
+
+            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="MessageMediaForegroundOutBrush" Color="#FFFFFF" />
+
+            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#3F96D0" />
+            <SolidColorBrush x:Key="MessageMediaBackgroundOutBrush" Color="#4C9CE2" />
+
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#70BAF5" />
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundOutBrush" Color="#83CAFF" />
+
+            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000" />
+            <SolidColorBrush x:Key="MessageOverlayBackgroundOutBrush" Color="#54000000" />
+
+            <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="#49A2F0" />
+            <SolidColorBrush x:Key="MessageCallForegroundOutBrush" Color="#49A2F0" />
+
+            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="#ED5050" />
+            <SolidColorBrush x:Key="MessageCallMissedForegroundOutBrush" Color="#ED5050" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000" />
+            <SolidColorBrush x:Key="MessageForegroundOutBrush" Color="#000000" />
+
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="MessageBackgroundOutBrush" Color="#F0FDDF" />
+
+            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#A1ADB6" />
+            <SolidColorBrush x:Key="MessageSubtleLabelOutBrush" Color="#6DC264" />
+
+            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#A1ADB6" />
+            <SolidColorBrush x:Key="MessageSubtleGlyphOutBrush" Color="#5DC452" />
+
+            <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#A1ADB6" />
+            <SolidColorBrush x:Key="MessageSubtleForegroundOutBrush" Color="#6DC264" />
+
+            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#158DCD" />
+            <SolidColorBrush x:Key="MessageHeaderForegroundOutBrush" Color="#3A8E26" />
+
+            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#37A4DE" />
+            <SolidColorBrush x:Key="MessageHeaderBorderOutBrush" Color="#5DC452" />
+
+            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="MessageMediaForegroundOutBrush" Color="#F0FDDF" />
+
+            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#40A7E3" />
+            <SolidColorBrush x:Key="MessageMediaBackgroundOutBrush" Color="#78C67F" />
+
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#158DCD" />
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundOutBrush" Color="#158DCD" />
+
+            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000" />
+            <SolidColorBrush x:Key="MessageOverlayBackgroundOutBrush" Color="#54000000" />
+
+            <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="#2AB32A" />
+            <SolidColorBrush x:Key="MessageCallForegroundOutBrush" Color="#2AB32A" />
+
+            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="#DD5849" />
+            <SolidColorBrush x:Key="MessageCallMissedForegroundOutBrush" Color="#DD5849" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

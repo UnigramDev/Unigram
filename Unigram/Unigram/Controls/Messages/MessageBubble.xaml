@@ -17,9 +17,7 @@
         <Grid x:Name="ContentPanel"
               Padding="{ThemeResource MessageContentPadding}"
               CornerRadius="{ThemeResource MessageCornerRadius}"
-              Background="{ThemeResource MessageBackgroundBrush}"
-              BorderBrush="{ThemeResource MessageBackgroundBrush}"
-              BorderThickness="0,0,0,0">
+              Background="{ThemeResource MessageBackgroundBrush}">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="Normal"/>

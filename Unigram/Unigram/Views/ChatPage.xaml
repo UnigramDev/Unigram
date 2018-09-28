@@ -246,7 +246,7 @@
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
-                            <ResourceDictionary Source="ms-appx:///Themes/AccentOut.xaml"/>
+                            <ResourceDictionary Source="ms-appx:///Themes/OutgoingOverride.xaml"/>
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </FrameworkElement.Resources>
@@ -600,27 +600,6 @@
                         </selectors:MessageStyleSelector.ServiceStyle>
                     </selectors:MessageStyleSelector>
                 </ListView.ItemContainerStyleSelector>
-                <ListView.Header>
-                    <Grid Padding="0,48,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel x:Name="BotInfoPanel"
-                                    Visibility="Collapsed"
-                                    Padding="{ThemeResource MessageContentPadding}"
-                                    Background="{ThemeResource MessageBackgroundBrush}"
-                                    BorderBrush="{ThemeResource MessageBorderBrush}"
-                                    BorderThickness="0,0,0,2"
-                                    VerticalAlignment="Center"
-                                    MaxWidth="360"
-                                    Margin="12,12,12,8">
-                            <TextBlock Text="What can this bot do?" Style="{StaticResource BaseTextBlockStyle}"/>
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"/>
-                        </StackPanel>
-                        <Border Height="4" Grid.Row="1"/>
-                    </Grid>
-                </ListView.Header>
             </controls:BubbleListView>
 
             <Border Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,7" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">

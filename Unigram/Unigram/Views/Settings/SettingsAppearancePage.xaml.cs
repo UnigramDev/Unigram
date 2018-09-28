@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
@@ -39,7 +40,7 @@ namespace Unigram.Views.Settings
             Message1.Mockup("Ahh you kids today with techno music! Enjoy the classics, like Hasselhoff!", "Lucio", "Reinhardt, we need to find you some new tunes.", false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup("I can't take you seriously right now. Sorry..", true, DateTime.Now);
 
-            UpdatePreview(true);
+            //UpdatePreview(true);
             BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
         }
 
@@ -96,7 +97,7 @@ namespace Unigram.Views.Settings
             await file.CopyAndReplaceAsync(palette);
 
             Theme.Current.Update();
-            App.NotifyThemeChanged();
+            //App.NotifyThemeChanged();
 
             UpdatePreview(true);
         }
@@ -133,7 +134,7 @@ namespace Unigram.Views.Settings
             await palette.DeleteAsync();
 
             Theme.Current.Update();
-            App.NotifyThemeChanged();
+            //App.NotifyThemeChanged();
 
             UpdatePreview(true);
         }
@@ -143,11 +144,11 @@ namespace Unigram.Views.Settings
         {
             if (e.PropertyName.Equals("FontSize") || e.PropertyName.Equals("RequestedTheme"))
             {
-                UpdatePreview(false);
+                //UpdatePreview(false);
             }
             else if (e.PropertyName.Equals("IsSystemTheme"))
             {
-                UpdatePreview(true);
+                //UpdatePreview(true);
             }
         }
 
@@ -158,19 +159,49 @@ namespace Unigram.Views.Settings
 
             if (extended)
             {
-                Preview.Resources.MergedDictionaries.Clear();
+                Theme.Current.Update();
 
-                if (ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Brand))
-                {
-                    Preview.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Brand.xaml") });
-                }
+                //foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+                //{
+                //    window.UpdateTitleBar();
 
-                Message2.Resources.MergedDictionaries.Clear();
-                Message2.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/AccentOut.xaml?nocache=xxxxxxxx") });
+                //    if (window.Content is FrameworkElement element)
+                //    {
+                //        element.RequestedTheme = ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) || (ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
+                //    }
+                //}
             }
 
-            Preview.RequestedTheme = ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) || (ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
-            Preview.RequestedTheme = ViewModel.GetElementTheme();
+            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+            {
+                window.UpdateTitleBar();
+
+                if (window.Content is FrameworkElement element)
+                {
+                    element.RequestedTheme = ViewModel.GetElementTheme();
+                }
+            }
+        }
+
+        bool a = true;
+
+        private void Switch_Click(object sender, RoutedEventArgs e)
+        {
+            //if (a)
+            //{
+            //    Message2.Resources.MergedDictionaries.Clear();
+            //    Message1.IsOutgoing = true;
+            //}
+            //else
+            //{
+            //    Message1.Resources.MergedDictionaries.Clear();
+            //    Message2.IsOutgoing = true;
+            //}
+
+            //a = !a;
+
+            UpdatePreview(false);
+
         }
     }
 }

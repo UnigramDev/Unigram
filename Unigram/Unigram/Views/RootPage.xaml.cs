@@ -38,6 +38,11 @@ namespace Unigram.Views
 
         public RootPage(NavigationService service)
         {
+            if (!SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
+            {
+                RequestedTheme = SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
+            }
+
             InitializeComponent();
 
             _lifetime = TLContainer.Current.Lifetime;
