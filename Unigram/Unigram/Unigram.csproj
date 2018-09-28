@@ -340,11 +340,11 @@
     <Compile Include="Controls\Views\SendMediaView.xaml.cs">
       <DependentUpon>SendMediaView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\SettingsSecurityPasscodeConfirmView.xaml.cs">
-      <DependentUpon>SettingsSecurityPasscodeConfirmView.xaml</DependentUpon>
+    <Compile Include="Controls\Views\SettingsPasscodeConfirmView.xaml.cs">
+      <DependentUpon>SettingsPasscodeConfirmView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\SettingsSecurityPasscodeEditView.xaml.cs">
-      <DependentUpon>SettingsSecurityPasscodeEditView.xaml</DependentUpon>
+    <Compile Include="Controls\Views\SettingsPasscodeInputView.xaml.cs">
+      <DependentUpon>SettingsPasscodeInputView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\ShareView.xaml.cs">
       <DependentUpon>ShareView.xaml</DependentUpon>
@@ -500,6 +500,7 @@
     <Compile Include="ViewModels\Settings\SettingsGeneralViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsLanguageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNetworkViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPasscodeViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxiesViewModel.cs" />
@@ -680,16 +681,15 @@
     <Compile Include="Views\Settings\SettingsLanguagePage.xaml.cs">
       <DependentUpon>SettingsLanguagePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsPasscodePage.xaml.cs">
+      <DependentUpon>SettingsPasscodePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsPasswordPage.xaml.cs">
       <DependentUpon>SettingsPasswordPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsProxiesPage.xaml.cs">
       <DependentUpon>SettingsProxiesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsSecurityPasscodePage.xaml.cs">
-      <DependentUpon>SettingsSecurityPasscodePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModels\Settings\SettingsSecurityPasscodeViewModel.cs" />
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
     </Compile>
@@ -1726,13 +1726,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Views\SettingsSecurityPasscodeConfirmView.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Controls\Views\SettingsPasscodeConfirmView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Views\SettingsSecurityPasscodeEditView.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Controls\Views\SettingsPasscodeInputView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\ShareView.xaml">
       <SubType>Designer</SubType>
@@ -1992,15 +1992,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\SettingsPasscodePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\SettingsPasswordPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsProxiesPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsSecurityPasscodePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

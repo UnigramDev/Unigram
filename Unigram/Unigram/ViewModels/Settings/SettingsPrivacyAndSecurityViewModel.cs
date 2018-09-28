@@ -196,18 +196,18 @@ namespace Unigram.ViewModels.Settings
         {
             if (_passcodeService.IsEnabled)
             {
-                var dialog = new SettingsSecurityPasscodeConfirmView(_passcodeService);
+                var dialog = new SettingsPasscodeConfirmView(_passcodeService);
                 dialog.IsSimple = _passcodeService.IsSimple;
 
                 var confirm = await dialog.ShowAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    NavigationService.Navigate(typeof(SettingsSecurityPasscodePage));
+                    NavigationService.Navigate(typeof(SettingsPasscodePage));
                 }
             }
             else
             {
-                NavigationService.Navigate(typeof(SettingsSecurityPasscodePage));
+                NavigationService.Navigate(typeof(SettingsPasscodePage));
             }
         }
 

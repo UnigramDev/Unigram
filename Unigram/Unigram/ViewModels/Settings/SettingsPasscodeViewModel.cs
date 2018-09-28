@@ -14,11 +14,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsSecurityPasscodeViewModel : TLViewModelBase, IHandle<UpdatePasscodeLock>
+    public class SettingsPasscodeViewModel : TLViewModelBase, IHandle<UpdatePasscodeLock>
     {
         private readonly IPasscodeService _passcodeService;
 
-        public SettingsSecurityPasscodeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IPasscodeService passcodeService)
+        public SettingsPasscodeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IPasscodeService passcodeService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _passcodeService = passcodeService;
@@ -94,7 +94,7 @@ namespace Unigram.ViewModels.Settings
             else
             {
                 var timeout = _passcodeService.AutolockTimeout + 0;
-                var dialog = new SettingsSecurityPasscodeEditView();
+                var dialog = new SettingsPasscodeInputView();
                 dialog.IsSimple = _passcodeService.IsSimple;
 
                 var confirm = await dialog.ShowQueuedAsync();
@@ -113,7 +113,7 @@ namespace Unigram.ViewModels.Settings
         private async void EditExecute()
         {
             var timeout = _passcodeService.AutolockTimeout + 0;
-            var dialog = new SettingsSecurityPasscodeEditView();
+            var dialog = new SettingsPasscodeInputView();
             dialog.IsSimple = _passcodeService.IsSimple;
 
             var confirm = await dialog.ShowQueuedAsync();

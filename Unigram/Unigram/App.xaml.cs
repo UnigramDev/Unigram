@@ -245,8 +245,8 @@ namespace Unigram
                     return container.Resolve<SettingsPrivacyAndSecurityViewModel>(id);
                 case SettingsPasswordPage settingsSecurityEnterPassword:
                     return container.Resolve<SettingsPasswordViewModel>(id);
-                case SettingsSecurityPasscodePage settingsSecurityPasscode:
-                    return container.Resolve<SettingsSecurityPasscodeViewModel>(id);
+                case SettingsPasscodePage settingsSecurityPasscode:
+                    return container.Resolve<SettingsPasscodeViewModel>(id);
                 case SettingsSessionsPage settingsSessions:
                     return container.Resolve<SettingsSessionsViewModel>(id);
                 case SettingsStatsPage settingsNetwork:

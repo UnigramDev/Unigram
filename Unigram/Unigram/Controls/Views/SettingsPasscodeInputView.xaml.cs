@@ -19,9 +19,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SettingsSecurityPasscodeEditView : ContentDialog
+    public sealed partial class SettingsPasscodeInputView : ContentDialog
     {
-        public SettingsSecurityPasscodeEditView()
+        public SettingsPasscodeInputView()
         {
             InitializeComponent();
 

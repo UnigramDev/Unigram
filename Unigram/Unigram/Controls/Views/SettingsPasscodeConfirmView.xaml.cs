@@ -20,11 +20,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SettingsSecurityPasscodeConfirmView : ContentDialog
+    public sealed partial class SettingsPasscodeConfirmView : ContentDialog
     {
         private readonly IPasscodeService _passcodeService;
 
-        public SettingsSecurityPasscodeConfirmView(IPasscodeService passcodeService)
+        public SettingsPasscodeConfirmView(IPasscodeService passcodeService)
         {
             InitializeComponent();
 
@@ -33,6 +33,11 @@ namespace Unigram.Controls.Views
             Title = Strings.Resources.Passcode;
             PrimaryButtonText = Strings.Resources.OK;
             SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirmScope = new InputScope();
+            confirmScope.Names.Add(new InputScopeName(passcodeService.IsSimple ? InputScopeNameValue.NumericPin : InputScopeNameValue.Password));
+            Confirm.InputScope = confirmScope;
+            Confirm.MaxLength = passcodeService.IsSimple ? 4 : int.MaxValue;
         }
 
         public bool IsSimple { get; set; }
@@ -79,7 +84,7 @@ namespace Unigram.Controls.Views
             }
             else
             {
-                e.Handled = true;
+                e.Handled = IsSimple;
             }
         }
     }

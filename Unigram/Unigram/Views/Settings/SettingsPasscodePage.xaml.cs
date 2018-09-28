@@ -20,14 +20,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsSecurityPasscodePage : Page
+    public sealed partial class SettingsPasscodePage : Page
     {
-        public SettingsSecurityPasscodeViewModel ViewModel => DataContext as SettingsSecurityPasscodeViewModel;
+        public SettingsPasscodeViewModel ViewModel => DataContext as SettingsPasscodeViewModel;
 
-        public SettingsSecurityPasscodePage()
+        public SettingsPasscodePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsSecurityPasscodeViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsPasscodeViewModel>();
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
