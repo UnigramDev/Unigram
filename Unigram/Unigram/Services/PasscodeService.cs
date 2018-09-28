@@ -102,7 +102,7 @@ namespace Unigram.Services
         {
             get
             {
-                return IsEnabled && ((AutolockTimeout > 0 && DateTime.Now > CloseTime.AddSeconds(AutolockTimeout)) || IsLocked);
+                return IsEnabled && ((AutolockTimeout > 0 && CloseTime < DateTime.MaxValue && DateTime.Now > CloseTime.AddSeconds(AutolockTimeout)) || IsLocked);
             }
         }
 
