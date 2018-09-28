@@ -484,7 +484,7 @@ namespace Unigram.Views
                 Scroll(false);
                 args.Handled = true;
             }
-            else if (((args.VirtualKey == Windows.System.VirtualKey.E || args.VirtualKey == Windows.System.VirtualKey.K) && ctrl) || args.VirtualKey == Windows.System.VirtualKey.Search)
+            else if (((args.VirtualKey == Windows.System.VirtualKey.E || args.VirtualKey == Windows.System.VirtualKey.K) && ctrl && !alt && !shift) || args.VirtualKey == Windows.System.VirtualKey.Search)
             {
                 MainHeader.Visibility = Visibility.Collapsed;
                 SearchField.Visibility = Visibility.Visible;
@@ -492,7 +492,7 @@ namespace Unigram.Views
                 SearchField.Focus(FocusState.Keyboard);
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.Q && ctrl)
+            else if (args.VirtualKey == Windows.System.VirtualKey.Q && ctrl && !alt && !shift)
             {
                 Application.Current.Exit();
             }
