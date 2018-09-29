@@ -920,7 +920,7 @@ namespace Unigram.Controls.Views
 
             CreateFlyoutItem(ref flyout, item.CanView, ViewModel.ViewCommand, item, Strings.Resources.ShowInChat);
             CreateFlyoutItem(ref flyout, item.CanCopy, ViewModel.CopyCommand, item, Strings.Resources.Copy, Windows.System.VirtualKey.C);
-            CreateFlyoutItem(ref flyout, ViewModel.CanSave, ViewModel.SaveCommand, item, Strings.Additional.SaveAs, Windows.System.VirtualKey.S);
+            CreateFlyoutItem(ref flyout, item.CanSave, ViewModel.SaveCommand, item, Strings.Additional.SaveAs, Windows.System.VirtualKey.S);
             CreateFlyoutItem(ref flyout, ViewModel.CanOpenWith, ViewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp);
             CreateFlyoutItem(ref flyout, ViewModel.CanDelete, ViewModel.DeleteCommand, item, Strings.Resources.Delete);
 

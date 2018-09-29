@@ -69,7 +69,7 @@ namespace Unigram.Controls
             var data = item.GetFile();
             var thumb = item.GetThumbnail();
 
-            if (thumb != null && thumb.Id == file.Id)
+            if (thumb != null && thumb.Id != data.Id && thumb.Id == file.Id)
             {
                 UpdateThumbnail(item, file);
                 return;

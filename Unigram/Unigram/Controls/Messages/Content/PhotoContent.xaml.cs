@@ -152,7 +152,7 @@ namespace Unigram.Controls.Messages.Content
             if (file.Local.IsDownloadingCompleted)
             {
                 //Background = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + file.Local.Path)), Stretch = Stretch.UniformToFill };
-                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path), Stretch = Stretch.UniformToFill };
+                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

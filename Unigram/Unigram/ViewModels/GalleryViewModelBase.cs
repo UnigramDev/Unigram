@@ -112,8 +112,6 @@ namespace Unigram.ViewModels
                 OnSelectedItemChanged(value);
                 //RaisePropertyChanged(() => SelectedIndex);
                 RaisePropertyChanged(() => Position);
-                RaisePropertyChanged(() => CanCopy);
-                RaisePropertyChanged(() => CanSave);
             }
         }
 
@@ -158,27 +156,6 @@ namespace Unigram.ViewModels
             get
             {
                 return false;
-            }
-        }
-
-        public virtual bool CanCopy
-        {
-            get
-            {
-                return SelectedItem.IsPhoto;
-            }
-        }
-
-        public virtual bool CanSave
-        {
-            get
-            {
-                if (SelectedItem is GalleryMessageItem message && message.IsHot)
-                {
-                    return false;
-                }
-
-                return true;
             }
         }
 
@@ -383,12 +360,13 @@ namespace Unigram.ViewModels
 
         public virtual bool IsVideo { get; private set; }
         public virtual bool IsLoop { get; private set; }
-        public virtual bool IsShareEnabled { get; private set; }
 
         public virtual bool HasStickers { get; private set; }
 
+        public virtual bool CanShare { get; private set; }
         public virtual bool CanView { get; private set; }
 
+        public virtual bool CanSave { get; private set; }
         public virtual bool CanCopy { get; private set; }
 
         public virtual void Share()
@@ -512,7 +490,8 @@ namespace Unigram.ViewModels
 
 
         public override bool CanView => true;
-        public override bool CanCopy => IsPhoto;
+        public override bool CanCopy => !_message.IsSecret() && IsPhoto;
+        public override bool CanSave => !_message.IsSecret();
     }
 
     public class GalleryUserProfilePhotoItem : GalleryItem
@@ -573,6 +552,7 @@ namespace Unigram.ViewModels
         public override int Date => _photo.AddedDate;
 
         public override bool CanCopy => true;
+        public override bool CanSave => true;
     }
 
     public class GalleryProfilePhotoItem : GalleryItem
@@ -643,6 +623,7 @@ namespace Unigram.ViewModels
         public override string Caption => _caption;
 
         public override bool CanCopy => true;
+        public override bool CanSave => true;
 
         public override int Date => _date;
 
@@ -704,6 +685,7 @@ namespace Unigram.ViewModels
         public override bool HasStickers => _photo.HasStickers;
 
         public override bool CanCopy => true;
+        public override bool CanSave => true;
     }
 
     public class GalleryVideoItem : GalleryItem
@@ -751,6 +733,8 @@ namespace Unigram.ViewModels
         public override string Caption => _caption;
 
         public override bool HasStickers => _video.HasStickers;
+
+        public override bool CanSave => true;
     }
 
     public class GalleryAnimationItem : GalleryItem
@@ -798,6 +782,8 @@ namespace Unigram.ViewModels
         public override string Caption => _caption;
 
         public override bool IsVideo => true;
+
+        public override bool CanSave => true;
     }
 
     public interface IGalleryDelegate
