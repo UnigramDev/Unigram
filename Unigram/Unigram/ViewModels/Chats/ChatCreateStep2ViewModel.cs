@@ -23,7 +23,7 @@ namespace Unigram.ViewModels.Chats
         public ChatCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _maximum = ProtoService.GetOption<OptionValueInteger>("supergroup_size_max").Value;
+            _maximum = CacheService.Options.SupergroupSizeMax;
         }
 
         public override string Title => _title;
@@ -48,10 +48,10 @@ namespace Unigram.ViewModels.Chats
 
         protected override async void SendExecute()
         {
-            var maxSize = ProtoService.GetOption<OptionValueInteger>("basic_group_size_max");
+            var maxSize = CacheService.Options.BasicGroupSizeMax;
 
             var peers = SelectedItems.Select(x => x.Id).ToList();
-            if (peers.Count <= maxSize.Value)
+            if (peers.Count <= maxSize)
             {
                 // Classic chat
                 var response = await ProtoService.SendAsync(new CreateNewBasicGroupChat(peers, _title));

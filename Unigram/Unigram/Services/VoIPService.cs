@@ -86,8 +86,8 @@ namespace Unigram.Services
                 var logFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", "tgvoip.logFile.txt");
                 var statsDumpFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", "tgvoip.statsDump.txt");
 
-                var call_packet_timeout_ms = CacheService.GetOption<OptionValueInteger>("call_packet_timeout_ms");
-                var call_connect_timeout_ms = CacheService.GetOption<OptionValueInteger>("call_connect_timeout_ms");
+                var call_packet_timeout_ms = CacheService.Options.CallPacketTimeoutMs;
+                var call_connect_timeout_ms = CacheService.Options.CallConnectTimeoutMs;
 
                 if (_controller != null)
                 {
@@ -96,7 +96,7 @@ namespace Unigram.Services
                 }
 
                 _controller = new VoIPControllerWrapper();
-                _controller.SetConfig(call_packet_timeout_ms.Value / 1000.0, call_connect_timeout_ms.Value / 1000.0, base.Settings.UseLessData, true, true, true, logFile, statsDumpFile);
+                _controller.SetConfig(call_packet_timeout_ms / 1000.0, call_connect_timeout_ms / 1000.0, base.Settings.UseLessData, true, true, true, logFile, statsDumpFile);
 
                 _controller.CallStateChanged += (s, args) =>
                 {
@@ -136,6 +136,10 @@ namespace Unigram.Services
             }
             else if (update.Call.State is CallStateDiscarded discarded)
             {
+#if DEBUG
+                discarded.NeedRating = true;
+#endif
+
                 if (discarded.NeedDebugInformation)
                 {
                     ProtoService.Send(new SendCallDebugInformation(update.Call.Id, _controller.GetDebugLog()));
@@ -149,7 +153,7 @@ namespace Unigram.Services
                         var confirm = await dialog.ShowQueuedAsync();
                         if (confirm == ContentDialogResult.Primary)
                         {
-                            ProtoService.Send(new SendCallRating(update.Call.Id, dialog.Rating + 1, dialog.Rating >= 0 && dialog.Rating <= 3 ? dialog.Comment : null));
+                            ProtoService.Send(new SendCallRating(update.Call.Id, dialog.Rating + 1, dialog.Rating >= 0 && dialog.Rating <= 3 ? dialog.Comment : string.Empty));
                         }
                     });
                 }

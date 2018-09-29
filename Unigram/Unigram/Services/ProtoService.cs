@@ -33,6 +33,8 @@ namespace Unigram.Services
         T GetOption<T>(string key) where T : OptionValue;
         bool TryGetOption<T>(string key, out T value) where T : OptionValue;
 
+        IOptionsService Options { get; }
+
         AuthorizationState GetAuthorizationState();
         ConnectionState GetConnectionState();
 
@@ -108,6 +110,7 @@ namespace Unigram.Services
         private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
 
         private AutoDownloadPreferences _preferences;
+        private IOptionsService _optionsService;
 
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
@@ -406,6 +409,12 @@ namespace Unigram.Services
         public ConnectionState GetConnectionState()
         {
             return _connectionState;
+        }
+
+        public IOptionsService Options
+        {
+            get { return _optionsService; }
+            set { _optionsService = value; }
         }
 
         public int GetMyId()
@@ -1037,6 +1046,7 @@ namespace Unigram.Services
             }
             else if (update is UpdateOption updateOption)
             {
+                _optionsService.Handle(updateOption);
                 _options[updateOption.Name] = updateOption.Value;
 
                 if (updateOption.Name == "my_id" && updateOption.Value is OptionValueInteger myId)

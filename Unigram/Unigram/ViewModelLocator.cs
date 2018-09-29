@@ -86,11 +86,27 @@ namespace Unigram
         {
             return _container.Build(id, (builder, session) =>
             {
-                builder.RegisterType<ProtoService>().WithParameter("session", session).As<IProtoService, ICacheService>().SingleInstance();
-                builder.RegisterType<SettingsService>().WithParameter("session", session).As<ISettingsService>().SingleInstance();
-                builder.RegisterType<NotificationsService>().As<INotificationsService>().SingleInstance().AutoActivate();
-                builder.RegisterType<GenerationService>().As<IGenerationService>().SingleInstance().AutoActivate();
-                builder.RegisterType<OptionsService>().As<IOptionsService>().SingleInstance().AutoActivate();
+                builder.RegisterType<ProtoService>()
+                    .WithParameter("session", session)
+                    .As<IProtoService, ICacheService>()
+                    .SingleInstance()
+                    .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+                builder.RegisterType<SettingsService>()
+                    .WithParameter("session", session)
+                    .As<ISettingsService>()
+                    .SingleInstance();
+                builder.RegisterType<NotificationsService>()
+                    .As<INotificationsService>()
+                    .SingleInstance()
+                    .AutoActivate();
+                builder.RegisterType<GenerationService>()
+                    .As<IGenerationService>()
+                    .SingleInstance()
+                    .AutoActivate();
+                builder.RegisterType<OptionsService>()
+                    .As<IOptionsService>()
+                    .SingleInstance()
+                    .AutoActivate();
 
                 builder.RegisterType<VoIPService>().As<IVoIPService>().SingleInstance();
 

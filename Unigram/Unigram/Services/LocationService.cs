@@ -20,7 +20,7 @@ namespace Unigram.Services
 
         Task<Geocoordinate> GetPositionAsync();
 
-        Task<List<Telegram.Td.Api.Venue>> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null);
+        Task<List<Venue>> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null);
     }
 
     public class LocationService : ILocationService
@@ -164,16 +164,16 @@ namespace Unigram.Services
 
 #else
 
-            var results = new List<Telegram.Td.Api.Venue>();
+            var results = new List<Venue>();
 
-            var option = _cacheService.GetOption<OptionValueString>("venue_search_bot_username");
-            if (option == null)
+            var option = _cacheService.Options.VenueSearchBotUsername;
+            if (string.IsNullOrEmpty(option))
             {
                 // TODO: use hardcoded bot?
                 return results;
             }
 
-            var chat = await _protoService.SendAsync(new SearchPublicChat(option.Value)) as Chat;
+            var chat = await _protoService.SendAsync(new SearchPublicChat(option)) as Chat;
             if (chat == null)
             {
                 return results;
@@ -186,7 +186,7 @@ namespace Unigram.Services
                 return results;
             }
 
-            var response = await _protoService.SendAsync(new GetInlineQueryResults(user.Id, chatId, new Telegram.Td.Api.Location(latitude, longitude), query ?? string.Empty, string.Empty));
+            var response = await _protoService.SendAsync(new GetInlineQueryResults(user.Id, chatId, new Location(latitude, longitude), query ?? string.Empty, string.Empty));
             if (response is InlineQueryResults inlineResults)
             {
                 foreach (var item in inlineResults.Results)

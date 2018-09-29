@@ -93,12 +93,10 @@ namespace Unigram.ViewModels.Settings
 
         public async void CheckAvailability(string text)
         {
-            var myid = ProtoService.GetOption<OptionValueInteger>("my_id");
-
             var response = await ProtoService.SendAsync(new SearchPublicChat(text));
             if (response is Chat chat)
             {
-                if (chat.Type is ChatTypePrivate privata && privata.UserId == myid.Value)
+                if (chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.GetMyId())
                 {
                     IsLoading = false;
                     IsAvailable = true;

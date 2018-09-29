@@ -118,7 +118,7 @@ namespace Unigram.ViewModels.Chats
 
         protected override async void SendExecute(User user)
         {
-            var count = ProtoService.GetOption<OptionValueInteger>("forwarded_messages_count_max");
+            var count = CacheService.Options.ForwardedMessagesCountMax;
 
             var chat = _chat;
             if (chat == null)
@@ -137,7 +137,7 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            ProtoService.Send(new AddChatMember(chat.Id, user.Id, count?.Value ?? 0));
+            ProtoService.Send(new AddChatMember(chat.Id, user.Id, count));
 
             NavigationService.GoBack();
         }
