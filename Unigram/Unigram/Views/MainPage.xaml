@@ -287,7 +287,7 @@
                         <ListView x:Name="DialogsSearchListView"
                                     ItemsSource="{x:Bind ChatsResults.View, Mode=OneWay}"
                                     IsItemClickEnabled="True"
-                                    SelectionMode="None"
+                                    SelectionMode="Single"
                                     ItemClick="ListView_ItemClick"
                                     ContainerContentChanging="DialogsSearchListView_ContainerContentChanging"
                                     SelectionChanged="ListView_SelectionChanged">
