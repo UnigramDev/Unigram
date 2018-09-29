@@ -485,6 +485,9 @@ namespace Unigram.Views
             }
             else if (((args.VirtualKey == Windows.System.VirtualKey.E || args.VirtualKey == Windows.System.VirtualKey.K) && ctrl && !alt && !shift) || args.VirtualKey == Windows.System.VirtualKey.Search)
             {
+                MasterDetail.AllowCompact = false;
+
+                Header.Visibility = Visibility.Visible;
                 MainHeader.Visibility = Visibility.Collapsed;
                 SearchField.Visibility = Visibility.Visible;
 
@@ -842,6 +845,7 @@ namespace Unigram.Views
                 Root?.SetPaneToggleButtonVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
                 SetTitleBarVisibility(Visibility.Visible);
                 Header.Visibility = Visibility.Visible;
+                StatusLabel.Visibility = Visibility.Visible;
             }
             else
             {
@@ -854,6 +858,7 @@ namespace Unigram.Views
                 Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
                 SetTitleBarVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
                 Header.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
+                StatusLabel.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
             }
 
             ChatsList.UpdateViewState(MasterDetail.CurrentState);
@@ -1357,6 +1362,7 @@ namespace Unigram.Views
             if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrEmpty(SearchField.Text))
             {
                 rpMasterTitlebar.IsLocked = false;
+                MasterDetail.AllowCompact = true;
 
                 if (rpMasterTitlebar.SelectedIndex == 0)
                 {
@@ -1375,6 +1381,7 @@ namespace Unigram.Views
             else if (SearchField.FocusState != FocusState.Unfocused)
             {
                 rpMasterTitlebar.IsLocked = true;
+                MasterDetail.AllowCompact = false;
 
                 if (rpMasterTitlebar.SelectedIndex == 0)
                 {
