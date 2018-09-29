@@ -293,8 +293,7 @@ namespace Unigram.Views
         {
             this.BeginOnUIThread(() =>
             {
-                var expectBlocking = ViewModel.CacheService.GetOption<OptionValueBoolean>("expect_blocking")?.Value ?? false;
-                SetProxyVisibility(expectBlocking, update.State);
+                SetProxyVisibility(_cacheService.Options.ExpectBlocking, _cacheService.Options.EnabledProxyId, update.State);
 
                 switch (update.State)
                 {
@@ -319,15 +318,15 @@ namespace Unigram.Views
 
         public void Handle(UpdateOption update)
         {
-            if (update.Name.Equals("expect_blocking") && update.Value is OptionValueBoolean expectBlocking)
+            if (update.Name.Equals("expect_blocking") || update.Name.Equals("enabled_proxy_id"))
             {
-                SetProxyVisibility(expectBlocking.Value, ViewModel.CacheService.GetConnectionState());
+                this.BeginOnUIThread(() => SetProxyVisibility(_cacheService.Options.ExpectBlocking, _cacheService.Options.EnabledProxyId, _cacheService.GetConnectionState()));
             }
         }
 
-        private void SetProxyVisibility(bool expectBlocking, ConnectionState connectionState)
+        private void SetProxyVisibility(bool expectBlocking, string proxyId, ConnectionState connectionState)
         {
-            if (expectBlocking)
+            if (expectBlocking || !string.IsNullOrEmpty(proxyId))
             {
                 Proxy.Visibility = Visibility.Visible;
             }
