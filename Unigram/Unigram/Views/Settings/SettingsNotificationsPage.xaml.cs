@@ -42,5 +42,15 @@ namespace Unigram.Views.Settings
 
             await ViewModel.UpdateGroupAsync();
         }
+
+        #region Binding
+
+        private string ConvertCountInfo(bool count)
+        {
+            return count ? "Switch off to show the number of unread chats instead of messages" : "Switch on to show the number of unread messages instead of chats";
+        }
+
+        #endregion
+
     }
 }

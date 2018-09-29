@@ -156,8 +156,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 2016840;
-        public const string CurrentChangelog = "New in version 2.0.1684:\r\n- You can add multiple accounts with different phone numbers to your Telegram app, and then quickly switch between them from the side menu. Notifications will keep coming from all accounts, unless you change this in the Notification settings.\r\n- You can now finally search for chats while forwarding a message.\r\n- Voice calls are finally back!\r\n- Search for near locations when sharing your position.\r\n- More than 100 bug fixes and improvements since previous version.";
+        public const int CurrentVersion = 2117240;
+        public const string CurrentChangelog = "New in Unigram version 2.1.1724:\r\n- You can now protect your chats enabling Passcode Lock from Settings > Privacy and Security.\r\n- Bug fixes and improvements since previous version.";
 
         public int Session => _session;
 
@@ -739,6 +739,23 @@ namespace Unigram.Common
                 AddOrUpdateValue("IncludeMutedChats", value);
             }
         }
+
+        private bool? _countUnreadMessages;
+        public bool CountUnreadMessages
+        {
+            get
+            {
+                if (_countUnreadMessages == null)
+                    _countUnreadMessages = GetValueOrDefault("CountUnreadMessages", true);
+
+                return _countUnreadMessages ?? true;
+            }
+            set
+            {
+                _countUnreadMessages = value;
+                AddOrUpdateValue("CountUnreadMessages", value);
+            }
+        }
     }
 
     public class AppearanceSettings : ApplicationSettingsBase
@@ -749,18 +766,6 @@ namespace Unigram.Common
 
         }
 
-        private TelegramTheme? _currentTheme;
-        public TelegramTheme CurrentTheme
-        {
-            get
-            {
-                if (_currentTheme == null)
-                    _currentTheme = RequestedTheme;
-
-                return _currentTheme ?? (TelegramTheme.Default | TelegramTheme.Brand);
-            }
-        }
-
         private TelegramTheme? _requestedTheme;
         public TelegramTheme RequestedTheme
         {
@@ -769,7 +774,6 @@ namespace Unigram.Common
                 if (_requestedTheme == null)
                 {
                     _requestedTheme = (TelegramTheme)GetValueOrDefault(_container, "Theme", (int)(TelegramTheme.Default | TelegramTheme.Brand));
-                    _currentTheme = _requestedTheme;
                 }
 
                 return _requestedTheme ?? (TelegramTheme.Default | TelegramTheme.Brand);
@@ -780,7 +784,6 @@ namespace Unigram.Common
                 AddOrUpdateValue(_container, "Theme", (int)value);
             }
         }
-
     }
 
     public class StickersSettings : ApplicationSettingsBase

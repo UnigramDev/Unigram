@@ -32,6 +32,7 @@ namespace Unigram.Services
 
     public class NotificationsService : INotificationsService,
         IHandle<UpdateUnreadMessageCount>,
+        IHandle<UpdateUnreadChatCount>,
         IHandle<UpdateNewMessage>,
         IHandle<UpdateChatReadInbox>,
         IHandle<UpdateServiceNotification>,
@@ -163,6 +164,28 @@ namespace Unigram.Services
 
         public void Handle(UpdateUnreadMessageCount update)
         {
+            if (!_settings.Notifications.CountUnreadMessages)
+            {
+                return;
+            }
+
+            if (_settings.Notifications.IncludeMutedChats)
+            {
+                NotificationTask.UpdatePrimaryBadge(update.UnreadCount);
+            }
+            else
+            {
+                NotificationTask.UpdatePrimaryBadge(update.UnreadUnmutedCount);
+            }
+        }
+
+        public void Handle(UpdateUnreadChatCount update)
+        {
+            if (_settings.Notifications.CountUnreadMessages)
+            {
+                return;
+            }
+
             if (_settings.Notifications.IncludeMutedChats)
             {
                 NotificationTask.UpdatePrimaryBadge(update.UnreadCount);
@@ -224,7 +247,7 @@ namespace Unigram.Services
                         return;
                     }
 
-                    if (TLWindowContext.GetForCurrentView().ActivationState != Windows.UI.Core.CoreWindowActivationState.Deactivated && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
+                    if (TLWindowContext.GetForCurrentView().ActivationMode != Windows.UI.Core.CoreWindowActivationMode.Deactivated && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
                     {
                         return;
                     }

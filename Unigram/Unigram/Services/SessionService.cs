@@ -28,7 +28,7 @@ namespace Unigram.Services
         IEventAggregator Aggregator { get; }
     }
 
-    public class SessionService : TLViewModelBase, ISessionService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateAuthorizationState>, IHandle<UpdateConnectionState>
+    public class SessionService : TLViewModelBase, ISessionService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateUnreadChatCount>, IHandle<UpdateAuthorizationState>, IHandle<UpdateConnectionState>
     {
         private readonly ILifetimeService _lifetimeService;
         private readonly int _id;
@@ -78,6 +78,28 @@ namespace Unigram.Services
 
         public void Handle(UpdateUnreadMessageCount update)
         {
+            if (!Settings.Notifications.CountUnreadMessages)
+            {
+                return;
+            }
+
+            if (Settings.Notifications.IncludeMutedChats)
+            {
+                Execute.BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
+            }
+            else
+            {
+                Execute.BeginOnUIThread(() => UnreadCount = update.UnreadUnmutedCount, () => _unreadCount = update.UnreadUnmutedCount);
+            }
+        }
+
+        public void Handle(UpdateUnreadChatCount update)
+        {
+            if (Settings.Notifications.CountUnreadMessages)
+            {
+                return;
+            }
+
             if (Settings.Notifications.IncludeMutedChats)
             {
                 Execute.BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);

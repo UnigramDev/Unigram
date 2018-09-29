@@ -113,6 +113,11 @@
                         IsOn="{x:Bind ViewModel.IncludeMutedChats, Mode=TwoWay}"
                         Header="Include muted chats"
                         Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.CountUnreadMessages, Mode=TwoWay}"
+                        Header="Count unread messages"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                    <TextBlock Text="{x:Bind ConvertCountInfo(ViewModel.CountUnreadMessages),Mode=OneWay}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
                 <StackPanel Margin="0,24,0,0">

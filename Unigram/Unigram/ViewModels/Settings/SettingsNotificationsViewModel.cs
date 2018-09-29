@@ -239,6 +239,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool CountUnreadMessages
+        {
+            get
+            {
+                return Settings.Notifications.CountUnreadMessages;
+            }
+            set
+            {
+                Settings.Notifications.CountUnreadMessages = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public void Handle(UpdateScopeNotificationSettings update)
         {
             if (update.Scope is NotificationSettingsScopePrivateChats)
