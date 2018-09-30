@@ -118,8 +118,9 @@ namespace Unigram.Controls.Cells
 
         private void UpdateChatType(Chat chat)
         {
-            TypeIcon.Text = UpdateType(chat);
-            TypeIcon.Visibility = chat.Type is ChatTypePrivate ? Visibility.Collapsed : Visibility.Visible;
+            var type = UpdateType(chat);
+            TypeIcon.Text = type ?? string.Empty;
+            TypeIcon.Visibility = type == null ? Visibility.Collapsed : Visibility.Visible;
 
             var verified = false;
             if (chat.Type is ChatTypePrivate privata)
@@ -554,16 +555,16 @@ namespace Unigram.Controls.Cells
             {
                 return "\uE1F6";
             }
-            //else if (chat.Type is ChatTypePrivate privata && _protoService != null)
-            //{
-            //    var user = _protoService.GetUser(privata.UserId);
-            //    if (user != null && user.Type is UserTypeBot)
-            //    {
-            //        return "\uE99A";
-            //    }
-            //}
+            else if (chat.Type is ChatTypePrivate privata && _protoService != null)
+            {
+                var user = _protoService.GetUser(privata.UserId);
+                if (user != null && user.Type is UserTypeBot)
+                {
+                    return "\uE99A";
+                }
+            }
 
-            return string.Empty;
+            return null;
         }
 
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
