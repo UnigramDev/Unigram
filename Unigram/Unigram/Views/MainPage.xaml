@@ -211,12 +211,12 @@
                             <controls:GlyphButton
                                 Glyph="&#xE109;"
                                 Click="NewContact_Click"
-                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                Style="{StaticResource HeaderGlyphButtonStyle}"/>
                             <controls:GlyphButton
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
                                 FontSize="18"
-                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                Style="{StaticResource HeaderGlyphButtonStyle}"/>
                         </StackPanel>
                         <StackPanel x:Name="ChatsOptions" Orientation="Horizontal" Grid.Column="1">
                             <controls:GlyphButton
@@ -224,19 +224,19 @@
                                 Glyph="&#xE730;"
                                 Click="Proxy_Click"
                                 Visibility="Collapsed"
-                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                Style="{StaticResource HeaderGlyphButtonStyle}"/>
                             <controls:GlyphToggleButton
                                 x:Name="Lock"
                                 Visibility="Collapsed"
                                 UncheckedGlyph="&#xE1F7;"
                                 CheckedGlyph="&#xE1F6;"
                                 Click="Lock_Click"
-                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                Style="{StaticResource HeaderGlyphToggleButtonStyle}"/>
                             <controls:GlyphButton
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
                                 FontSize="18"
-                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                Style="{StaticResource HeaderGlyphButtonStyle}"/>
                         </StackPanel>
                     </Grid>
 

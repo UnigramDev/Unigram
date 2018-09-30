@@ -125,7 +125,7 @@
                         Glyph="&#xE13A;"
                         Visibility="Collapsed"
                         Command="{x:Bind ViewModel.CallCommand}"
-                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1"/>
                     <!--<controls:GlyphButton
                          x:Name="SendMessage"

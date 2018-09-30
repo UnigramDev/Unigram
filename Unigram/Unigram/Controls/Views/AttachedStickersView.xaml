@@ -1,4 +1,4 @@
-<controls:ContentDialogBase
+<ContentDialog
     x:Class="Unigram.Controls.Views.AttachedStickersView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -11,23 +11,16 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    VerticalAlignment="Stretch"
-    Background="Transparent"
     mc:Ignorable="d"
+    Style="{StaticResource ModernContentDialogStyle}"
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <controls:ContentDialogBase.Resources>
+    <ContentDialog.Resources>
         <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.Items}" ItemsPath="Covers" IsSourceGrouped="True"/>
-    </controls:ContentDialogBase.Resources>
+    </ContentDialog.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Border x:Name="BackgroundPanel"/>
-
         <controls:ZoomableGridView
             x:Name="List"
             ItemsSource="{x:Bind ViewSource.View}"
@@ -36,8 +29,6 @@
             ContainerContentChanging="OnContainerContentChanging"
             SelectionMode="None"
             Padding="12,0"
-            Loaded="GridView_Loaded"
-            SizeChanged="List_SizeChanged"
             common:FluidGridView.OrientationOnly="False">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="5"/>
@@ -47,9 +38,6 @@
                     <Image Margin="2"/>
                 </DataTemplate>
             </GridView.ItemTemplate>
-            <GridView.Header>
-                <Border x:Name="Header" Background="Transparent" Tapped="LightDismiss_Tapped"/>
-            </GridView.Header>
             <GridView.Footer>
                 <Border Height="12"/>
             </GridView.Footer>
@@ -57,21 +45,13 @@
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate x:DataType="td:StickerSetInfo">
-                            <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-                                  Height="{ThemeResource AppBarThemeCompactHeight}" 
-                                  Loaded="GroupHeader_Loaded"
-                                  VerticalAlignment="Bottom" 
-                                  Margin="-12,0">
-                                <Border x:Name="LineAccent" BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}" IsHitTestVisible="False" Grid.RowSpan="2"/>
-
-                                <Grid Margin="0,8,0,0" Height="{ThemeResource AppBarThemeCompactHeight}">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="{x:Bind Title}" VerticalAlignment="Bottom" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
-                                    <TextBlock Text="{x:Bind Size, Converter={StaticResource StringPluralConverter}, ConverterParameter=Stickers}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Margin="12,0" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
-                                </Grid>
+                            <Grid Margin="0,8,0,0" Height="{ThemeResource AppBarThemeCompactHeight}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{x:Bind Title}" VerticalAlignment="Bottom" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <TextBlock Text="{x:Bind Size, Converter={StaticResource StringPluralConverter}, ConverterParameter=Stickers}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Margin="12,0" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
                             </Grid>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
@@ -120,44 +100,9 @@
             </GridView.ItemContainerTransitions>
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsWrapGrid Orientation="Horizontal" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" GroupPadding="0,0,0,12" AreStickyGroupHeadersEnabled="False"/>
+                    <ItemsWrapGrid Orientation="Horizontal" GroupPadding="0,0,0,12" AreStickyGroupHeadersEnabled="False"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </controls:ZoomableGridView>
-
-        <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <!--<ColumnDefinition Width="3*"/>
-                     <ColumnDefinition Width="2*"/>-->
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Border x:Name="LineBottom" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-
-            
-            <!--<Button Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                 HorizontalAlignment="Stretch" 
-                 HorizontalContentAlignment="Left" 
-                 Margin="12,8,4,8">
-                 <StackPanel Orientation="Horizontal">
-                 <Grid Background="{ThemeResource SystemControlForegroundAccentBrush}"
-                 MinWidth="20"
-                 Height="20"
-                 CornerRadius="10"
-                 Margin="0,0,8,0">
-                 <TextBlock Text="{x:Bind ViewModel.StickerSet.Count, Mode=OneWay}"
-                 Style="{StaticResource CaptionTextBlockStyle}"
-                 Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
-                 TextAlignment="Center"
-                 Margin="4,2,4,0"/>
-                 </Grid>
-                 
-                 
-                 <TextBlock Text="Add stickers"/>
-                 </StackPanel>
-                 </Button>-->
-
-            <Button Click="Close_Click" Content="{CustomResource Close}" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
-        </Grid>
     </Grid>
-</controls:ContentDialogBase>
+</ContentDialog>

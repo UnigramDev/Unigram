@@ -155,7 +155,7 @@
                 <controls:GlyphButton
                      Glyph="&#xE72D;"
                      Command="{x:Bind ViewModel.ShareCommand}"
-                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                     Style="{StaticResource HeaderGlyphButtonStyle}"
                      Grid.Column="1"/>
                 <Button Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="2">
                     <Button.Flyout>

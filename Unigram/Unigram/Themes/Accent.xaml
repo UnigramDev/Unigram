@@ -8,8 +8,8 @@
         <ResourceDictionary x:Key="Dark">
             <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
 
-            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="CommandBarBackground"/>
-            <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
+            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
+            <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
@@ -25,8 +25,8 @@
 
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
 
-            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="CommandBarBackground"/>
-            <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
+            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
+            <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
@@ -53,7 +53,7 @@
     <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
     <HorizontalAlignment x:Key="MessageHorizontalAlignmentOut">Right</HorizontalAlignment>
 
-    <x:Double x:Key="MessageFontSize">15</x:Double>
+    <!--<x:Double x:Key="MessageFontSize">15</x:Double>-->
     
     <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#667A8A96"/>
     <SolidColorBrush x:Key="MessageServiceForegroundBrush" Color="#FFFFFFFF"/>
@@ -73,6 +73,7 @@
     <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="#FFFFFF"/>
 
     <x:Double x:Key="TelegramToolBarSmallHeight">44</x:Double>
+    <x:Double x:Key="TelegramToolBarHeight">48</x:Double>
 
     <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
 
