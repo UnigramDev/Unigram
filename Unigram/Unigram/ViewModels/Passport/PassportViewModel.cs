@@ -124,7 +124,7 @@ namespace Unigram.ViewModels.Passport
                 var nonce = state["nonce"] as string;
 
                 state.Clear();
-                _authorizationRequest = new GetPassportAuthorizationForm(botId, scope, publicKey, nonce, string.Empty);
+                //_authorizationRequest = new GetPassportAuthorizationFormAvailableElements(botId, scope, publicKey, nonce);
             }
 
             var response = await ProtoService.SendAsync(new GetPasswordState());
@@ -140,7 +140,7 @@ namespace Unigram.ViewModels.Passport
             if (request != null)
             {
                 _authorizationRequest = null;
-                request.Password = password;
+                //request.Password = password;
             }
 
             var response = await ProtoService.SendAsync(request);
@@ -741,6 +741,7 @@ namespace Unigram.ViewModels.Passport
     public class PassportFormField : PassportElement
     {
         public PassportAuthorizationForm AuthorizationForm { get; set; }
+        public PassportElementsWithErrors AvailableElements { get; set; }
         public PassportSuitableElement RequiredType { get; set; }
         public List<PassportSuitableElement> DocumentTypes { get; set; }
         public bool IsDocumentOnly { get; set; }

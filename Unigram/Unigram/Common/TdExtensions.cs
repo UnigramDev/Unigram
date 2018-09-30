@@ -142,7 +142,7 @@ namespace Unigram.Common
             }
         }
 
-        public static PassportElement GetElementForType(this PassportAuthorizationForm authorizationForm, PassportElementType type)
+        public static PassportElement GetElementForType(this PassportElementsWithErrors authorizationForm, PassportElementType type)
         {
             foreach (var element in authorizationForm.Elements)
             {
@@ -203,7 +203,7 @@ namespace Unigram.Common
             return null;
         }
 
-        public static IEnumerable<PassportElementError> GetErrorsForType(this PassportAuthorizationForm authorizationForm, PassportElementType type)
+        public static IEnumerable<PassportElementError> GetErrorsForType(this PassportElementsWithErrors authorizationForm, PassportElementType type)
         {
             foreach (var error in authorizationForm.Errors)
             {

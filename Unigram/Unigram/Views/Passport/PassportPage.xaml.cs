@@ -179,7 +179,7 @@ namespace Unigram.Views.Passport
                     //documentsToTypesLink.put(documentType, requiredType);
                     if (!found)
                     {
-                        var documentValue = field.AuthorizationForm.GetElementForType(documentType.Type);
+                        var documentValue = field.AvailableElements.GetElementForType(documentType.Type);
                         if (documentValue != null)
                         {
                             //if (documentValue.data != null)
@@ -270,12 +270,12 @@ namespace Unigram.Views.Passport
         {
             if (field.RequiredType.Type is PassportElementTypePhoneNumber)
             {
-                var element = field.AuthorizationForm.GetElementForType(field.RequiredType.Type);
+                var element = field.AvailableElements.GetElementForType(field.RequiredType.Type);
                 value = getTextForElement(element);
             }
             else if (field.RequiredType.Type is PassportElementTypeEmailAddress)
             {
-                var element = field.AuthorizationForm.GetElementForType(field.RequiredType.Type);
+                var element = field.AvailableElements.GetElementForType(field.RequiredType.Type);
                 value = getTextForElement(element);
             }
             else
@@ -284,7 +284,7 @@ namespace Unigram.Views.Passport
 
                 if (documentRequiredType != null)
                 {
-                    var documentRequiredTypeValue = field.AuthorizationForm.GetElementForType(documentRequiredType?.Type);
+                    var documentRequiredTypeValue = field.AvailableElements.GetElementForType(documentRequiredType?.Type);
                     if (availableDocumentTypesCount > 1)
                     {
                         builder.Append(GetTextForType(documentRequiredType.Type));
@@ -299,7 +299,7 @@ namespace Unigram.Views.Passport
                 {
                     if (!field.IsDocumentOnly)
                     {
-                        var element = field.AuthorizationForm.GetElementForType(field.RequiredType.Type);
+                        var element = field.AvailableElements.GetElementForType(field.RequiredType.Type);
                         if (builder.Length > 0)
                         {
                             builder.Append(", ");
@@ -309,7 +309,7 @@ namespace Unigram.Views.Passport
                     }
                     if (documentRequiredType != null)
                     {
-                        var element = field.AuthorizationForm.GetElementForType(documentRequiredType.Type);
+                        var element = field.AvailableElements.GetElementForType(documentRequiredType.Type);
                         if (builder.Length > 0)
                         {
                             builder.Append(", ");
@@ -322,7 +322,7 @@ namespace Unigram.Views.Passport
                 {
                     if (!field.IsDocumentOnly)
                     {
-                        var element = field.AuthorizationForm.GetElementForType(field.RequiredType.Type);
+                        var element = field.AvailableElements.GetElementForType(field.RequiredType.Type);
                         if (builder.Length > 0)
                         {
                             builder.Append(", ");
@@ -347,8 +347,8 @@ namespace Unigram.Views.Passport
 
             bool isError = false;
 
-            var errors = !field.IsDocumentOnly ? field.AuthorizationForm.GetErrorsForType(field.RequiredType.Type).ToList() : null;
-            var documentsErrors = documentRequiredType != null ? field.AuthorizationForm.GetErrorsForType(documentRequiredType.Type).ToList() : null;
+            var errors = !field.IsDocumentOnly ? field.AvailableElements.GetErrorsForType(field.RequiredType.Type).ToList() : null;
+            var documentsErrors = documentRequiredType != null ? field.AvailableElements.GetErrorsForType(documentRequiredType.Type).ToList() : null;
 
             if (errors != null && errors.Count > 0 || documentsErrors != null && documentsErrors.Count > 0)
             {

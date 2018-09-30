@@ -324,9 +324,9 @@ namespace Unigram.Views
             }
         }
 
-        private void SetProxyVisibility(bool expectBlocking, string proxyId, ConnectionState connectionState)
+        private void SetProxyVisibility(bool expectBlocking, int proxyId, ConnectionState connectionState)
         {
-            if (expectBlocking || !string.IsNullOrEmpty(proxyId))
+            if (expectBlocking || proxyId != 0)
             {
                 Proxy.Visibility = Visibility.Visible;
             }
