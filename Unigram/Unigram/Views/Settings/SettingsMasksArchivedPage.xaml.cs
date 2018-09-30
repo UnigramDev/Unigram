@@ -75,10 +75,7 @@ namespace Unigram.Views.Settings
                 var file = cover.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    var buffer = await FileIO.ReadBufferAsync(temp);
-
-                    photo.Source = WebPImage.DecodeFromBuffer(buffer);
+                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {

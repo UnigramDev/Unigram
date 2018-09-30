@@ -98,9 +98,6 @@ namespace Unigram.Controls.Views
 
             if (_stickers.TryGetValue(file.Id, out List<ViewModels.Dialogs.StickerViewModel> items) && items.Count > 0)
             {
-                var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                var buffer = await FileIO.ReadBufferAsync(temp);
-
                 foreach (var item in items)
                 {
                     item.UpdateFile(file);
@@ -112,7 +109,7 @@ namespace Unigram.Controls.Views
                     }
 
                     var content = container.ContentTemplateRoot as Image;
-                    content.Source = WebPImage.DecodeFromBuffer(buffer);
+                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
                 }
             }
 
@@ -174,10 +171,7 @@ namespace Unigram.Controls.Views
 
                 if (cover.UpdateFile(file))
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    var buffer = await FileIO.ReadBufferAsync(temp);
-
-                    content.Source = WebPImage.DecodeFromBuffer(buffer);
+                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
                 }
             }
 
@@ -399,10 +393,7 @@ namespace Unigram.Controls.Views
                 var file = sticker.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    var buffer = await FileIO.ReadBufferAsync(temp);
-
-                    content.Source = WebPImage.DecodeFromBuffer(buffer);
+                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -507,10 +498,7 @@ namespace Unigram.Controls.Views
                         var file = sticker.Thumbnail.Photo;
                         if (file.Local.IsDownloadingCompleted)
                         {
-                            var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                            var buffer = await FileIO.ReadBufferAsync(temp);
-
-                            content.Source = WebPImage.DecodeFromBuffer(buffer);
+                            content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
                         }
                         else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
@@ -599,10 +587,7 @@ namespace Unigram.Controls.Views
             var file = cover.Thumbnail.Photo;
             if (file.Local.IsDownloadingCompleted)
             {
-                var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                var buffer = await FileIO.ReadBufferAsync(temp);
-
-                content.Source = WebPImage.DecodeFromBuffer(buffer);
+                content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

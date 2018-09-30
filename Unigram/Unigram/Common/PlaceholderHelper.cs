@@ -7,6 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.Native;
 using Unigram.Services;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
@@ -233,14 +234,14 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetBlurred(string path)
+        public static ImageSource GetBlurred(string path, float amount = 3)
         {
             var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
                 {
-                    PlaceholderImageHelper.GetForCurrentView().DrawThumbnailPlaceholder(path, 3, stream);
+                    PlaceholderImageHelper.GetForCurrentView().DrawThumbnailPlaceholder(path, amount, stream);
 
                     bitmap.SetSource(stream);
                 }
@@ -248,6 +249,21 @@ namespace Unigram.Common
             }
 
             return bitmap;
+        }
+
+        public static async Task<ImageSource> GetWebpAsync(string path)
+        {
+            if (ApiInfo.CanDecodeWebp)
+            {
+                return new BitmapImage(new Uri("file:///" + path));
+            }
+            else
+            {
+                var temp = await StorageFile.GetFileFromPathAsync(path);
+                var buffer = await FileIO.ReadBufferAsync(temp);
+
+                return WebPImage.DecodeFromBuffer(buffer);
+            }
         }
     }
 }

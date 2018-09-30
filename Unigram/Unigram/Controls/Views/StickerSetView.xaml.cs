@@ -165,10 +165,7 @@ namespace Unigram.Controls.Views
                 var file = sticker.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    var buffer = await FileIO.ReadBufferAsync(temp);
-
-                    photo.Source = WebPImage.DecodeFromBuffer(buffer);
+                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -240,11 +237,8 @@ namespace Unigram.Controls.Views
                         continue;
                     }
 
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    var buffer = await FileIO.ReadBufferAsync(temp);
-
                     var photo = content.Children[0] as Image;
-                    photo.Source = WebPImage.DecodeFromBuffer(buffer);
+                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
                 }
             }
         }

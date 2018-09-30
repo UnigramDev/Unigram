@@ -111,6 +111,7 @@
     <Compile Include="Collections\SearchMembersAndUsersCollection.cs" />
     <Compile Include="Collections\SearchStickersCollection.cs" />
     <Compile Include="Collections\SearchUsersCollection.cs" />
+    <Compile Include="Common\ApiInfo.cs" />
     <Compile Include="Common\Mouse.cs" />
     <Compile Include="Common\TLContainer.cs" />
     <Compile Include="Common\Execute.cs" />

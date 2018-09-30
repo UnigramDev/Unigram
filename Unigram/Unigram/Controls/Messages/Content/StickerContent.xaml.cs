@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -75,10 +76,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                var buffer = await FileIO.ReadBufferAsync(temp);
-
-                Texture.Source = WebPImage.DecodeFromBuffer(buffer);
+                Texture.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -90,10 +88,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                var buffer = await FileIO.ReadBufferAsync(temp);
-
-                Background = new ImageBrush { ImageSource = WebPImage.DecodeFromBuffer(buffer) };
+                Background = new ImageBrush { ImageSource = await PlaceholderHelper.GetWebpAsync(file.Local.Path) };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
