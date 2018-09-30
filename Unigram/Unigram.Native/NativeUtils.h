@@ -29,6 +29,8 @@ namespace Unigram
 			static int32 GetDirectionality(String^ value);
 			static int32 GetDirectionality(char16 value);
 
+			static String^ GetCurrentCulture();
+
 		private:
 			static uint64_t GetDirectorySizeInternal(const std::wstring &path, const std::wstring &filter, uint64_t size);
 			static void CleanDirectoryInternal(const std::wstring &path, int days);

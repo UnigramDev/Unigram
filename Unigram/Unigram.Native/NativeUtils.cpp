@@ -188,3 +188,19 @@ int32 NativeUtils::GetDirectionality(char16 value)
 
 	return C2_OTHERNEUTRAL;
 }
+
+String^ NativeUtils::GetCurrentCulture()
+{
+	TCHAR buff[530];
+	int result = GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_SNAME, buff, 530);
+	if (result == 0)
+	{
+		result = GetLocaleInfoEx(LOCALE_NAME_SYSTEM_DEFAULT, LOCALE_SNAME, buff, 530);
+		if (result == 0)
+		{
+			return nullptr;
+		}
+	}
+
+	return ref new String(buff);
+}
