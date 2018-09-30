@@ -36,6 +36,8 @@ namespace Unigram.ViewModels
             ChatClearCommand = new RelayCommand<Chat>(ChatClearExecute);
             ChatDeleteAndStopCommand = new RelayCommand<Chat>(ChatDeleteAndStopExecute);
 
+            ClearRecentChatsCommand = new RelayCommand(ClearRecentChatsExecute);
+
             aggregator.Subscribe(this);
             protoService.Send(new GetChats(long.MaxValue, 0, 20));
 
@@ -166,6 +168,26 @@ namespace Unigram.ViewModels
             {
                 ProtoService.Send(new BlockUser(privata.UserId));
                 ProtoService.Send(new DeleteChatHistory(chat.Id, true));
+            }
+        }
+
+
+
+        public RelayCommand ClearRecentChatsCommand { get; }
+        private async void ClearRecentChatsExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ClearSearch, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            ProtoService.Send(new ClearRecentlyFoundChats());
+
+            var items = Search;
+            if (items != null && string.IsNullOrEmpty(items.Query))
+            {
+                items.Clear();
             }
         }
 

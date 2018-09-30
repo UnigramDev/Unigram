@@ -27,6 +27,10 @@ namespace Unigram.Collections
         private KeyedList<string, object> _remote;
         private KeyedList<string, object> _messages;
 
+        public KeyedList<string, object> Local => _local;
+        public KeyedList<string, object> Remote => _remote;
+        public KeyedList<string, object> Messages => _messages;
+
         public SearchChatsCollection(IProtoService protoService, string query, SearchChatsType type = SearchChatsType.All)
         {
             _protoService = protoService;
