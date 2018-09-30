@@ -1,5 +1,4 @@
 ﻿using Microsoft.HockeyApp;
-using Mono.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;

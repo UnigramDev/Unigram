@@ -1,4 +1,5 @@
-﻿using Mono.Options;
+﻿#if DISABLE_XAML_GENERATED_MAIN
+using Mono.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,6 @@ using Windows.ApplicationModel.Activation;
 
 namespace Unigram
 {
-#if DISABLE_XAML_GENERATED_MAIN
     public static class Program
     {
         // This example code shows how you could implement the required Main method to
@@ -122,5 +122,5 @@ namespace Unigram
             }
         }
     }
-#endif
 }
+#endif
