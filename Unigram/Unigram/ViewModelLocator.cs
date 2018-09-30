@@ -89,8 +89,7 @@ namespace Unigram
                 builder.RegisterType<ProtoService>()
                     .WithParameter("session", session)
                     .As<IProtoService, ICacheService>()
-                    .SingleInstance()
-                    .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+                    .SingleInstance();
                 builder.RegisterType<SettingsService>()
                     .WithParameter("session", session)
                     .As<ISettingsService>()
@@ -103,10 +102,10 @@ namespace Unigram
                     .As<IGenerationService>()
                     .SingleInstance()
                     .AutoActivate();
-                builder.RegisterType<OptionsService>()
-                    .As<IOptionsService>()
-                    .SingleInstance()
-                    .AutoActivate();
+                //builder.RegisterType<OptionsService>()
+                //    .As<IOptionsService>()
+                //    .SingleInstance()
+                //    .AutoActivate();
 
                 builder.RegisterType<VoIPService>().As<IVoIPService>().SingleInstance();
 

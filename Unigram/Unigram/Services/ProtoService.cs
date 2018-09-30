@@ -89,6 +89,7 @@ namespace Unigram.Services
         private readonly int _session;
         private readonly IDeviceInfoService _deviceInfoService;
         private readonly ISettingsService _settings;
+        private readonly IOptionsService _optionsService;
         private readonly IEventAggregator _aggregator;
 
         private readonly Dictionary<string, object> _options = new Dictionary<string, object>();
@@ -110,7 +111,6 @@ namespace Unigram.Services
         private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
 
         private AutoDownloadPreferences _preferences;
-        private IOptionsService _optionsService;
 
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
@@ -124,6 +124,7 @@ namespace Unigram.Services
             _session = session;
             _deviceInfoService = deviceInfoService;
             _settings = settings;
+            _optionsService = new OptionsService(this, this, settings, aggregator);
             _aggregator = aggregator;
 
             _preferences = new AutoDownloadPreferences(ApplicationData.Current.LocalSettings.CreateContainer("autoDownload", ApplicationDataCreateDisposition.Always));
@@ -414,7 +415,6 @@ namespace Unigram.Services
         public IOptionsService Options
         {
             get { return _optionsService; }
-            set { _optionsService = value; }
         }
 
         public int GetMyId()
