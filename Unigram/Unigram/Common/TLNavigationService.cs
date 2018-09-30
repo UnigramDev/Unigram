@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Telegram.Td.Api;
 using Template10.Services.NavigationService;
 using Template10.Services.ViewService;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.System;
@@ -66,6 +67,12 @@ namespace Unigram.Common
                 var supergroup = _protoService.GetSupergroup(super.SupergroupId);
                 if (supergroup == null)
                 {
+                    return;
+                }
+
+                if (supergroup.Status is ChatMemberStatusLeft && string.IsNullOrEmpty(supergroup.Username))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }

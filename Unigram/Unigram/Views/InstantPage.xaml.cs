@@ -131,7 +131,7 @@ namespace Unigram.Views
 
             ViewModel.IsLoading = true;
 
-            var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(url, false));
+            var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(url, true));
             if (response is WebPageInstantView instantView)
             {
                 UpdateView(instantView);

@@ -46,6 +46,11 @@ namespace Unigram.Controls.Views
             });
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            SearchField.FocusInput(FocusState.Keyboard);
+        }
+
         public void Attach()
         {
             ViewModel.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;

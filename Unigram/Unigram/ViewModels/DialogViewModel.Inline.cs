@@ -187,14 +187,14 @@ namespace Unigram.ViewModels
 
         private User GetBot(MessageViewModel message)
         {
-            var via = message.GetViaBotUser();
+            var via = message?.GetViaBotUser();
             if (via != null)
             {
                 return via;
             }
 
-            var sender = message.GetSenderUser();
-            if (sender.Type is UserTypeBot)
+            var sender = message?.GetSenderUser();
+            if (sender != null && sender.Type is UserTypeBot)
             {
                 return sender;
             }

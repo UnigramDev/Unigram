@@ -39,7 +39,7 @@ namespace Unigram.Views
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            Diagnostics.Text = $"Unigram X {GetVersion()}";
+            Diagnostics.Text = $"Unigram {GetVersion()}";
         }
 
         private string GetVersion()

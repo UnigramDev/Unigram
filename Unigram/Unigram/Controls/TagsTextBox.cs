@@ -76,6 +76,14 @@ namespace Unigram.Controls
 
         #endregion
 
+        public void FocusInput(FocusState value)
+        {
+            if (InputPlaceholder != null)
+            {
+                InputPlaceholder.Focus(value);
+            }
+        }
+
         internal void Initialize(TagsTextBoxFooter inline)
         {
             InputPlaceholder = inline;
