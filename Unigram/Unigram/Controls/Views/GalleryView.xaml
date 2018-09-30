@@ -274,19 +274,33 @@
         </controls:GalleryTransportControls.Content>
         <controls:GalleryTransportControls.Header>
             <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <TextBlock
                     Text="{x:Bind ConvertOf(ViewModel.Position, ViewModel.TotalItems), Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Style="{StaticResource BaseTextBlockStyle}"/>
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Grid.ColumnSpan="3"/>
 
                 <local:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
                                    Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
+                                   Height="{ThemeResource AppBarThemeCompactHeight}"
                                    FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                   HorizontalAlignment="Right"
                                    Glyph="&#xE60E;"
-                                   FontSize="24"/>
+                                   FontSize="24"
+                                   Grid.Column="1"/>
+                <local:GlyphButton Click="Compact_Click"
+                                   Visibility="{x:Bind ConvertCompactVisibility(ViewModel.SelectedItem), Mode=OneWay}"
+                                   Height="{ThemeResource AppBarThemeCompactHeight}"
+                                   FontFamily="ms-appx:///Assets/Fonts/SegMVR2.ttf#Segoe MVR MDL2 Assets"
+                                   Glyph="&#xEE49;"
+                                   FontSize="16"
+                                   Grid.Column="2"/>
             </Grid>
         </controls:GalleryTransportControls.Header>
         <controls:GalleryTransportControls.Footer>

@@ -38,6 +38,7 @@ using System.Windows.Input;
 using Windows.Storage.Streams;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Template10.Services.ViewService;
 
 namespace Unigram.Controls.Views
 {
@@ -261,25 +262,41 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter)
         {
-            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
-
-            parameter.Delegate = this;
-            parameter.Items.CollectionChanged -= OnCollectionChanged;
-            parameter.Items.CollectionChanged += OnCollectionChanged;
-
-            Load(parameter);
-
-            PrepareNext(0);
-
-            RoutedEventHandler handler = null;
-            handler = new RoutedEventHandler(async (s, args) =>
+            return AsyncInfo.Run(async (token) =>
             {
-                Loaded -= handler;
-                await ViewModel?.OnNavigatedToAsync(parameter, NavigationMode.New, null);
-            });
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
 
-            Loaded += handler;
-            return ShowAsync();
+                if (_compactLifetime != null)
+                {
+                    var compact = _compactLifetime;
+                    await compact.CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        compact.StopViewInUse();
+                        compact.WindowWrapper.Close();
+                    });
+
+                    _compactLifetime = null;
+                    Dispose();
+                }
+
+                parameter.Delegate = this;
+                parameter.Items.CollectionChanged -= OnCollectionChanged;
+                parameter.Items.CollectionChanged += OnCollectionChanged;
+
+                Load(parameter);
+
+                PrepareNext(0);
+
+                RoutedEventHandler handler = null;
+                handler = new RoutedEventHandler(async (s, args) =>
+                {
+                    Loaded -= handler;
+                    await ViewModel?.OnNavigatedToAsync(parameter, NavigationMode.New, null);
+                });
+
+                Loaded += handler;
+                return await ShowAsync();
+            });
         }
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -313,6 +330,11 @@ namespace Unigram.Controls.Views
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
                 if (animation != null && _closing != null)
                 {
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
+                    {
+                        animation.Configuration = new BasicConnectedAnimationConfiguration();
+                    }
+
                     var element = _closing();
                     if (element.ActualWidth > 0)
                     {
@@ -365,6 +387,11 @@ namespace Unigram.Controls.Views
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
             if (animation != null)
             {
+                if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
+                {
+                    animation.Configuration = new BasicConnectedAnimationConfiguration();
+                }
+
                 Layer.Visibility = Visibility.Visible;
 
                 if (animation.TryStart(image.Inner))
@@ -416,6 +443,21 @@ namespace Unigram.Controls.Views
         private string ConvertOf(int index, int count)
         {
             return string.Format(Strings.Resources.Of, index, count);
+        }
+
+        private Visibility ConvertCompactVisibility(GalleryItem item)
+        {
+            if (item.IsVideo)
+            {
+                if (item is GalleryMessageItem message && message.IsHot)
+                {
+                    return Visibility.Collapsed;
+                }
+
+                return ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay) ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return Visibility.Collapsed;
         }
 
         #endregion
@@ -498,8 +540,11 @@ namespace Unigram.Controls.Views
                 //_mediaPlayerElement.TransportControls = null;
                 //_mediaPlayerElement = null;
 
-                _mediaPlayer.Dispose();
-                _mediaPlayer = null;
+                if (_compactLifetime == null)
+                {
+                    _mediaPlayer.Dispose();
+                    _mediaPlayer = null;
+                }
 
                 OnSourceChanged();
             }
@@ -952,6 +997,93 @@ namespace Unigram.Controls.Views
 
                 flyout.Items.Add(flyoutItem);
             }
+        }
+
+        private static ViewLifetimeControl _compactLifetime;
+        private IViewService _viewService;
+
+        private async void Compact_Click(object sender, RoutedEventArgs e)
+        {
+            _viewService = TLContainer.Current.Resolve<IViewService>();
+
+            _mediaPlayerElement.SetMediaPlayer(null);
+
+            var width = 340d;
+            var height = 200d;
+
+            var constraint = ViewModel.SelectedItem.Constraint;
+            if (constraint is MessageAnimation messageAnimation)
+            {
+                constraint = messageAnimation.Animation;
+            }
+            else if (constraint is MessageVideo messageVideo)
+            {
+                constraint = messageVideo.Video;
+            }
+
+            if (constraint is Animation animation)
+            {
+                width = animation.Width;
+                height = animation.Height;
+            }
+            else if (constraint is Video video)
+            {
+                width = video.Width;
+                height = video.Height;
+            }
+
+            if (width > 500 || height > 500)
+            {
+                var ratioX = 500d / width;
+                var ratioY = 500d / height;
+                var ratio = Math.Min(ratioX, ratioY);
+
+                width *= ratio;
+                height *= ratio;
+            }
+
+            _compactLifetime = await _viewService.OpenAsync(() =>
+            {
+                var element = new MediaPlayerElement();
+                element.RequestedTheme = ElementTheme.Dark;
+                element.SetMediaPlayer(_mediaPlayer);
+                element.TransportControls = new MediaTransportControls
+                {
+                    IsCompact = true,
+                    IsCompactOverlayButtonVisible = false,
+                    IsFastForwardButtonVisible = false,
+                    IsFastRewindButtonVisible = false,
+                    IsFullWindowButtonVisible = false,
+                    IsNextTrackButtonVisible = false,
+                    IsPlaybackRateButtonVisible = false,
+                    IsPreviousTrackButtonVisible = false,
+                    IsRepeatButtonVisible = false,
+                    IsSkipBackwardButtonVisible = false,
+                    IsSkipForwardButtonVisible = false,
+                    IsVolumeButtonVisible = false,
+                    IsStopButtonVisible = false,
+                    IsZoomButtonVisible = false,
+                };
+                element.AreTransportControlsEnabled = true;
+                return element;
+
+            }, "PIP", width, height);
+            _compactLifetime.WindowWrapper.ApplicationView().Consolidated += (s, args) =>
+            {
+                if (_compactLifetime != null)
+                {
+                    _compactLifetime.StopViewInUse();
+                    _compactLifetime.WindowWrapper.Window.Close();
+                    _compactLifetime = null;
+                }
+
+                this.BeginOnUIThread(() =>
+                {
+                    Dispose();
+                });
+            };
+
+            OnBackRequestedOverride(this, new HandledEventArgs());
         }
     }
 }

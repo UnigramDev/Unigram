@@ -142,7 +142,7 @@ namespace Unigram
                     .WithParameter("session", session)
                     .WithParameter("selected", session == SettingsService.Current.ActiveSession).SingleInstance();
 
-                builder.RegisterType<ViewService>().As<IViewService>();
+                builder.RegisterType<ViewService>().As<IViewService>().SingleInstance();
 
                 // ViewModels
                 builder.RegisterType<SignInViewModel>();
