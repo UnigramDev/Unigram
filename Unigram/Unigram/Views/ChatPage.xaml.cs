@@ -61,6 +61,7 @@ namespace Unigram.Views
         private Visual _elapsedVisual;
         private Visual _slideVisual;
         private Visual _rootVisual;
+        private Visual _textShadowVisual;
 
         private Visual _dateHeaderPanel;
         private Visual _dateHeader;
@@ -185,6 +186,9 @@ namespace Unigram.Views
             //    ElementCompositionPreview.SetImplicitShowAnimation(InfoPanel, hideShowAnimation);
             //    ElementCompositionPreview.SetImplicitHideAnimation(InfoPanel, showHideAnimation);
             //}
+
+            _textShadowVisual = Shadow.Attach(Separator, 20, 0.25f);
+            _textShadowVisual.IsVisible = false;
         }
 
         private void ContactPanel_LaunchFullAppRequested(Windows.ApplicationModel.Contacts.ContactPanel sender, Windows.ApplicationModel.Contacts.ContactPanelLaunchFullAppRequestedEventArgs args)
@@ -1536,7 +1540,8 @@ namespace Unigram.Views
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _rootVisual.Size = new Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
+            _textShadowVisual.Size = e.NewSize.ToVector2();
+            _rootVisual.Size = e.NewSize.ToVector2();
         }
 
         private void ElapsedPanel_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -1545,7 +1550,7 @@ namespace Unigram.Views
             point.X = (float)-e.NewSize.Width;
 
             _elapsedVisual.Offset = point;
-            _elapsedVisual.Size = new Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
+            _elapsedVisual.Size = e.NewSize.ToVector2();
         }
 
         private void SlidePanel_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -1555,7 +1560,7 @@ namespace Unigram.Views
 
             _slideVisual.Opacity = 0;
             _slideVisual.Offset = point;
-            _slideVisual.Size = new Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
+            _slideVisual.Size = e.NewSize.ToVector2();
         }
 
         private void VoiceButton_RecordingStarted(object sender, EventArgs e)
@@ -1828,6 +1833,12 @@ namespace Unigram.Views
         //{
         //    return info != null && !string.IsNullOrEmpty(info.Description) && last ? Visibility.Visible : Visibility.Collapsed;
         //}
+
+        private Visibility ConvertShadowVisibility(Visibility inline, object stickers, object autocomplete)
+        {
+            _textShadowVisual.IsVisible = inline == Visibility.Visible || stickers != null || autocomplete != null;
+            return Visibility.Visible;
+        }
 
         public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)
         {

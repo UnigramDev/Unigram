@@ -15,7 +15,7 @@ namespace Unigram.Common
 {
     public static class Shadow
     {
-        public static Visual Attach(UIElement element, float radius, float opacity, CompositionClip clip)
+        public static Visual Attach(UIElement element, float radius, float opacity, CompositionClip clip = null)
         {
             var elementVisual = ElementCompositionPreview.GetElementVisual(element);
 

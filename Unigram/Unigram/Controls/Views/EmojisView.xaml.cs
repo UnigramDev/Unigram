@@ -18,8 +18,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Views
 {
     public sealed partial class EmojisView : UserControl
@@ -31,24 +29,11 @@ namespace Unigram.Controls.Views
         {
             this.InitializeComponent();
 
-            var separator = ElementCompositionPreview.GetElementVisual(Separator);
-            var shadow = separator.Compositor.CreateDropShadow();
-            shadow.BlurRadius = 20;
-            shadow.Opacity = 0.25f;
-            //shadow.Offset = new Vector3(-20, 0, 0);
-            shadow.Color = Colors.Black;
-
-            var visual = separator.Compositor.CreateSpriteVisual();
-            visual.Shadow = shadow;
-            visual.Size = new Vector2(0, 0);
-            visual.Offset = new Vector3(0, 0, 0);
-            //visual.Clip = visual.Compositor.CreateInsetClip(-100, 0, 19, 0);
-
-            ElementCompositionPreview.SetElementChildVisual(Separator, visual);
+            var shadow = Shadow.Attach(Separator, 20, 0.25f);
 
             Toolbar.SizeChanged += (s, args) =>
             {
-                visual.Size = new Vector2((float)args.NewSize.Width, (float)args.NewSize.Height);
+                shadow.Size = args.NewSize.ToVector2();
             };
 
             Pivot.ItemsSource = Emoji.Emojis.Keys;
