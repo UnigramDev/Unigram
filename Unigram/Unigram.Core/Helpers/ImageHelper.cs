@@ -21,19 +21,28 @@ namespace Unigram.Core.Helpers
 {
     public static class ImageHelper
     {
-        public static async Task<(int Width, int Height)> GetScaleAsync(StorageFile file, int requestedMinSide = 1280, double quality = 0.77)
+        public static async Task<(int Width, int Height)> GetScaleAsync(StorageFile file, int requestedMinSide = 1280, Rect? crop = null)
         {
             var props = await file.Properties.GetImagePropertiesAsync();
-            if (props.Width > requestedMinSide || props.Height > requestedMinSide)
-            {
-                double ratioX = (double)requestedMinSide / props.Width;
-                double ratioY = (double)requestedMinSide / props.Height;
-                double ratio = Math.Min(ratioX, ratioY);
+            var width = props.Width;
+            var height = props.Height;
 
-                return ((int)(props.Width * ratio), (int)(props.Height * ratio));
+            if (crop.HasValue)
+            {
+                width = (uint)crop.Value.Width;
+                height = (uint)crop.Value.Height;
             }
 
-            return ((int)props.Width, (int)props.Height);
+            if (width > requestedMinSide || height > requestedMinSide)
+            {
+                double ratioX = (double)requestedMinSide / width;
+                double ratioY = (double)requestedMinSide / height;
+                double ratio = Math.Min(ratioX, ratioY);
+
+                return ((int)(width * ratio), (int)(height * ratio));
+            }
+
+            return ((int)width, (int)height);
         }
 
 
@@ -215,9 +224,12 @@ namespace Unigram.Core.Helpers
             return result;
         }
 
-        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, Rect cropRectangle, int min = 1280, int max = 0)
+        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, double quality = 0.77)
         {
-            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
+            if (file == null)
+            {
+                file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
+            }
 
             using (var fileStream = await OpenReadAsync(sourceFile))
             using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
@@ -253,7 +265,7 @@ namespace Unigram.Core.Helpers
                 var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
                 var propertySet = new BitmapPropertySet();
-                var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
+                var qualityValue = new BitmapTypedValue(quality, PropertyType.Single);
                 propertySet.Add("ImageQuality", qualityValue);
 
                 var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
