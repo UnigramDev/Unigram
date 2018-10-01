@@ -151,7 +151,16 @@ namespace Unigram.Services
                 var file = await StorageFile.GetFileFromPathAsync(update.OriginalPath);
                 var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
-                await ImageHelper.ScaleJpegAsync(file, temp, 1280, 0.77);
+                var args = update.Conversion.Split('#');
+                if (args.Length > 2)
+                {
+                    var rect = JsonConvert.DeserializeObject<Rect>(args[1]);
+                    await ImageHelper.CropAsync(file, temp, rect);
+                }
+                else
+                {
+                    await ImageHelper.ScaleJpegAsync(file, temp, 1280, 0.77);
+                }
 
                 _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
             }
@@ -246,7 +255,7 @@ namespace Unigram.Services
 
                     if (!conversion.CropRectangle.IsEmpty())
                     {
-                        file = await ImageHelper.CropAsync(file, conversion.CropRectangle);
+                        file = await ImageHelper.CropAsync(file, temp, conversion.CropRectangle);
                         originalWidth = conversion.CropRectangle.Width;
                         originalHeight = conversion.CropRectangle.Height;
                     }

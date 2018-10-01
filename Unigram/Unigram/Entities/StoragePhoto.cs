@@ -57,16 +57,6 @@ namespace Unigram.Entities
         //    }
         //}
 
-        public Task<StorageFile> GetFileAsync()
-        {
-            if (IsCropped)
-            {
-                return ImageHelper.CropAsync(File, CropRectangle.Value);
-            }
-
-            return Task.FromResult(File);
-        }
-
         public ImageProperties Properties { get; private set; }
 
         public new static async Task<StoragePhoto> CreateAsync(StorageFile file, bool selected)

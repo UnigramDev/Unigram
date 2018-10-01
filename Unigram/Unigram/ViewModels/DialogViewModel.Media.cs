@@ -329,8 +329,7 @@ namespace Unigram.ViewModels
                     {
                         if (storage is StoragePhoto photo)
                         {
-                            var storageFile = await photo.GetFileAsync();
-                            await SendPhotoAsync(storageFile, storage.Caption, storage.IsForceFile, storage.Ttl);
+                            await SendPhotoAsync(storage.File, storage.Caption, storage.IsForceFile, storage.Ttl, storage.IsCropped ? storage.CropRectangle : null);
                         }
                         else if (storage is StorageVideo video)
                         {
@@ -415,8 +414,7 @@ namespace Unigram.ViewModels
                     {
                         if (storage is StoragePhoto photo)
                         {
-                            var storageFile = await photo.GetFileAsync();
-                            await SendPhotoAsync(storageFile, storage.Caption, storage.IsForceFile, storage.Ttl);
+                            await SendPhotoAsync(storage.File, storage.Caption, storage.IsForceFile, storage.Ttl, storage.IsCropped ? storage.CropRectangle : null);
                         }
                         else if (storage is StorageVideo video)
                         {
@@ -427,7 +425,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task SendPhotoAsync(StorageFile file, string caption, bool asFile, int? ttl = null)
+        private async Task SendPhotoAsync(StorageFile file, string caption, bool asFile, int? ttl = null, Rect? crop = null)
         {
             var chat = _chat;
             if (chat == null)
@@ -435,9 +433,9 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var size = await ImageHelper.GetScaleAsync(file);
+            var size = await ImageHelper.GetScaleAsync(file, crop: crop);
 
-            var generated = await file.ToGeneratedAsync(asFile ? "copy" : "compress");
+            var generated = await file.ToGeneratedAsync((asFile ? "copy" : "compress") + (crop.HasValue ? "#" + JsonConvert.SerializeObject(crop) : string.Empty));
             var thumbnail = default(InputThumbnail);
 
             if (asFile)
@@ -647,13 +645,16 @@ namespace Unigram.ViewModels
             {
                 if (item is StoragePhoto photo)
                 {
-                    var file = await photo.GetFileAsync();
+                    var file = photo.File;
+                    var crop = photo.IsCropped ? photo.CropRectangle : null;
 
                     var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
                     var props = await file.GetBasicPropertiesAsync();
-                    var size = await ImageHelper.GetScaleAsync(file);
+                    var size = await ImageHelper.GetScaleAsync(file, crop: crop);
 
-                    var input = new InputMessagePhoto(new InputFileGenerated(file.Path, "compress", (int)props.Size), null, new int[0], size.Width, size.Height, GetFormattedText(photo.Caption), photo.Ttl ?? 0);
+                    var generated = await file.ToGeneratedAsync("compress" + (crop.HasValue ? "#" + JsonConvert.SerializeObject(crop) : string.Empty));
+
+                    var input = new InputMessagePhoto(generated, null, new int[0], size.Width, size.Height, GetFormattedText(photo.Caption), photo.Ttl ?? 0);
 
                     operations.Add(input);
                 }
