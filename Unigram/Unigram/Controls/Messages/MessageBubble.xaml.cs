@@ -25,7 +25,6 @@ namespace Unigram.Controls.Messages
     public sealed partial class MessageBubble : StackPanel
     {
         private MessageViewModel _message;
-        private static bool? _apiAvailable;
 
         public MessageBubble()
         {
@@ -33,9 +32,7 @@ namespace Unigram.Controls.Messages
 
             // For some reason the event is available since Anniversary Update,
             // but the property has been added in April Update.
-            _apiAvailable = _apiAvailable ?? ApiInformation.IsReadOnlyPropertyPresent("Windows.UI.Xaml.UIElement", "ContextRequestedEvent");
-
-            if (_apiAvailable == true)
+            if (ApiInfo.CanAddContextRequestedEvent)
             {
                 Message.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
             }
@@ -210,11 +207,11 @@ namespace Unigram.Controls.Messages
                 var title = string.Empty;
                 if (message.ForwardInfo is MessageForwardedFromUser fromUser)
                 {
-                    title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromUser.SenderUserId));
                 }
                 else if (message.ForwardInfo is MessageForwardedPost post)
                 {
-                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ForwardedFromChatId));
+                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
                 }
 
                 var hyperlink = new Hyperlink();

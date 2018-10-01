@@ -12,5 +12,8 @@ namespace Unigram.Common
     {
         private static bool? _canRenderWebP;
         public static bool CanDecodeWebp => (_canRenderWebP = _canRenderWebP ?? ApiInformation.IsReadOnlyPropertyPresent("Windows.Graphics.Imaging.BitmapDecoder", "WebpDecoderId")) ?? false;
+
+        private static bool? _canAddContextRequestedEvent;
+        public static bool CanAddContextRequestedEvent = (_canAddContextRequestedEvent = _canAddContextRequestedEvent ?? ApiInformation.IsReadOnlyPropertyPresent("Windows.UI.Xaml.UIElement", "ContextRequestedEvent")) ?? false;
     }
 }

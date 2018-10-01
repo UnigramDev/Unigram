@@ -295,6 +295,9 @@
     <Compile Include="Controls\Views\ChatTtlView.xaml.cs">
       <DependentUpon>ChatTtlView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\CreateLinkView.xaml.cs">
+      <DependentUpon>CreateLinkView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\EditUserNameView.xaml.cs">
       <DependentUpon>EditUserNameView.xaml</DependentUpon>
     </Compile>
@@ -1637,6 +1640,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\ChatTtlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\CreateLinkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1956,14 +1956,24 @@ namespace Unigram.ViewModels
             await SendMessageAsync(args);
         }
 
-        public async Task SendMessageAsync(string text)
+        public async Task SendMessageAsync(string text, IList<TextEntity> entities = null)
         {
-            text = text.Format();
+            text = text.Replace('\v', '\n').Replace('\r', '\n');
 
             var chat = _chat;
             if (chat == null)
             {
                 return;
+            }
+
+            FormattedText formattedText;
+            if (entities == null)
+            {
+                formattedText = GetFormattedText(text);
+            }
+            else
+            {
+                formattedText = new FormattedText(text, entities);
             }
 
             var disablePreview = DisableWebPagePreview;
@@ -1977,11 +1987,11 @@ namespace Unigram.ViewModels
                 Function function;
                 if (editing.Content is MessageText)
                 {
-                    function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(GetFormattedText(text), disablePreview, true));
+                    function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(formattedText, disablePreview, true));
                 }
                 else
                 {
-                    function = new EditMessageCaption(chat.Id, editing.Id, null, GetFormattedText(text));
+                    function = new EditMessageCaption(chat.Id, editing.Id, null, formattedText);
                 }
 
                 var response = await ProtoService.SendAsync(function);
@@ -2012,9 +2022,19 @@ namespace Unigram.ViewModels
                     for (int a = 0; a < count; a++)
                     {
                         var message = text.Substr(a * 4096, Math.Min((a + 1) * 4096, text.Length));
-                        var input = new InputMessageText(GetFormattedText(message), disablePreview, true);
+                        var sub = new List<TextEntity>();
 
-                        var boh = await SendMessageAsync(reply, input);
+                        // Todo
+                        foreach (var entity in entities)
+                        {
+                            if (entity.Offset >= a * 4096 || entity.Offset + entity.Length >= a * 4096)
+                            {
+                                sub.Add(entity);
+                            }
+                        }
+
+                        var input = new InputMessageText(formattedText, disablePreview, true);
+                        await SendMessageAsync(reply, input);
                     }
                 }
             }
