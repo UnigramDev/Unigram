@@ -15,6 +15,7 @@
 
     <UserControl x:Name="LayoutRoot">
         <Grid x:Name="ContentPanel"
+              MinHeight="30"
               Padding="{ThemeResource MessageContentPadding}"
               CornerRadius="{ThemeResource MessageCornerRadius}"
               Background="{ThemeResource MessageBackgroundBrush}">
