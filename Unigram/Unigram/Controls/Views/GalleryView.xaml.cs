@@ -242,7 +242,7 @@ namespace Unigram.Controls.Views
             return context;
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing)
+        public IAsyncOperation<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing)
         {
             _closing = closing;
 
@@ -260,7 +260,7 @@ namespace Unigram.Controls.Views
             return ShowAsync(parameter);
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter)
+        public IAsyncOperation<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter)
         {
             return AsyncInfo.Run(async (token) =>
             {
@@ -1004,14 +1004,25 @@ namespace Unigram.Controls.Views
 
         private async void Compact_Click(object sender, RoutedEventArgs e)
         {
+            var item = ViewModel.SelectedItem;
+            if (item == null)
+            {
+                return;
+            }
+
             _viewService = TLContainer.Current.Resolve<IViewService>();
+
+            if (_mediaPlayer == null || _mediaPlayer.Source == null)
+            {
+                Play(item, item.GetFile());
+            }
 
             _mediaPlayerElement.SetMediaPlayer(null);
 
             var width = 340d;
             var height = 200d;
 
-            var constraint = ViewModel.SelectedItem.Constraint;
+            var constraint = item.Constraint;
             if (constraint is MessageAnimation messageAnimation)
             {
                 constraint = messageAnimation.Animation;

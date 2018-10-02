@@ -204,7 +204,7 @@ namespace Unigram.Views
                     IsCropEnabled = false
                 };
                 var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogBaseResult.OK)
+                if (dialogResult == ContentDialogResult.Primary)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
@@ -227,7 +227,7 @@ namespace Unigram.Views
                     IsCropEnabled = false
                 };
                 var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogBaseResult.OK)
+                if (dialogResult == ContentDialogResult.Primary)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }

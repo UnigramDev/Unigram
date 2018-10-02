@@ -59,7 +59,7 @@ namespace Unigram.Controls.Views
             return context;
         }
 
-        public new IAsyncOperation<ContentDialogBaseResult> ShowAsync()
+        public new IAsyncOperation<ContentDialogResult> ShowAsync()
         {
             ViewModel.Items.Clear();
 
@@ -385,12 +385,12 @@ namespace Unigram.Controls.Views
 
         private void LightDismiss_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Hide(ContentDialogBaseResult.None);
+            Hide(ContentDialogResult.None);
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            Hide(ContentDialogBaseResult.Cancel);
+            Hide(ContentDialogResult.Secondary);
         }
     }
 }

@@ -48,7 +48,7 @@ namespace Unigram.Views.Channels
                 };
 
                 var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogBaseResult.OK)
+                if (confirm == ContentDialogResult.Primary)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }

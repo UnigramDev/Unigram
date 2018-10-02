@@ -147,7 +147,7 @@ namespace Unigram.ViewModels.Settings
             dialog.Content = page;
 
             var confirm = await dialog.ShowAsync();
-            if (confirm != ContentDialogBaseResult.OK)
+            if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }

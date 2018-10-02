@@ -18,6 +18,7 @@ using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -54,7 +55,7 @@ namespace Unigram.Controls.Views
             }
             set
             {
-                if (value != null)
+                if (_selectedItem != null && value != null)
                 {
                     value.Caption = CaptionInput.GetFormattedText(ViewModel.ProtoService);
                 }
@@ -262,7 +263,7 @@ namespace Unigram.Controls.Views
             else
             {
                 e.Handled = true;
-                Hide(ContentDialogBaseResult.None);
+                Hide(ContentDialogResult.None);
             }
         }
 
@@ -271,7 +272,12 @@ namespace Unigram.Controls.Views
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
-            IsGrouped = SettingsService.Current.IsSendGrouped;
+            IsGrouped = ViewModel.Settings.IsSendGrouped;
+
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "MaxLength"))
+            {
+                CaptionInput.MaxLength = ViewModel.CacheService.Options.MessageCaptionLengthMax;
+            }
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
@@ -306,7 +312,7 @@ namespace Unigram.Controls.Views
         {
             if (Items == null)
             {
-                Hide(ContentDialogBaseResult.Cancel);
+                Hide(ContentDialogResult.Secondary);
                 return;
             }
 
@@ -337,12 +343,12 @@ namespace Unigram.Controls.Views
 
             if (IsGroupingEnabled)
             {
-                SettingsService.Current.IsSendGrouped = IsGrouped;
+                ViewModel.Settings.IsSendGrouped = IsGrouped;
             }
 
             SelectedItem.Caption = CaptionInput.GetFormattedText(ViewModel.ProtoService);
 
-            Hide(ContentDialogBaseResult.OK);
+            Hide(ContentDialogResult.Primary);
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -359,7 +365,7 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            Hide(ContentDialogBaseResult.Cancel);
+            Hide(ContentDialogResult.Secondary);
         }
 
         private void TextBox_KeyDown(object sender, KeyRoutedEventArgs e)

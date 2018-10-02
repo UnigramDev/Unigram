@@ -71,12 +71,12 @@ namespace Unigram.Controls.Views
         private async void Accept_Click(object sender, RoutedEventArgs e)
         {
             Result = await Cropper.CropAsync(640, 640);
-            Hide(ContentDialogBaseResult.OK);
+            Hide(ContentDialogResult.Primary);
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Hide(ContentDialogBaseResult.Cancel);
+            Hide(ContentDialogResult.Secondary);
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Unigram.Controls.Views
             }
         }
 
-        //public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLWebPage webPage)
+        //public IAsyncOperation<ContentDialogResult> ShowAsync(TLWebPage webPage)
         //{
         //    if (ApplicationView.GetForCurrentView().IsCompactOverlaySupported())
         //    {
@@ -118,7 +118,7 @@ namespace Unigram.Controls.Views
 
         //            var viewShown = await ApplicationViewSwitcher.TryShowAsViewModeAsync(newViewId, ApplicationViewMode.CompactOverlay, preferences);
 
-        //            return ContentDialogBaseResult.OK;
+        //            return ContentDialogResult.Primary;
         //        });
         //    }
         //    else

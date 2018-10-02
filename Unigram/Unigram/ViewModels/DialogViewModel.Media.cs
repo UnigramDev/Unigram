@@ -377,6 +377,9 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var formattedText = GetFormattedText(true);
+            selectedItem.Caption = formattedText;
+
             var dialog = new SendMediaView { ViewModel = this, IsTTLEnabled = chat.Type is ChatTypePrivate };
             dialog.SetItems(media);
             dialog.SelectedItem = selectedItem;
@@ -385,41 +388,44 @@ namespace Unigram.ViewModels
 
             TextField?.FocusMaybe(FocusState.Keyboard);
 
-            if (dialogResult == ContentDialogBaseResult.OK)
+            if (dialogResult != ContentDialogResult.Primary)
             {
-                var items = dialog.SelectedItems.ToList();
-                if (items.Count > 1 && dialog.IsGrouped)
+                TextField?.SetText(formattedText.Text, formattedText.Entities);
+                return;
+            }
+
+            var items = dialog.SelectedItems.ToList();
+            if (items.Count > 1 && dialog.IsGrouped)
+            {
+                var group = new List<StorageMedia>(Math.Min(items.Count, 10));
+
+                foreach (var item in items)
                 {
-                    var group = new List<StorageMedia>(Math.Min(items.Count, 10));
+                    group.Add(item);
 
-                    foreach (var item in items)
-                    {
-                        group.Add(item);
-
-                        if (group.Count == 10)
-                        {
-                            await SendGroupedAsync(group);
-                            group = new List<StorageMedia>(Math.Min(items.Count, 10));
-                        }
-                    }
-
-                    if (group.Count > 0)
+                    if (group.Count == 10)
                     {
                         await SendGroupedAsync(group);
+                        group = new List<StorageMedia>(Math.Min(items.Count, 10));
                     }
                 }
-                else
+
+                if (group.Count > 0)
                 {
-                    foreach (var storage in items)
+                    await SendGroupedAsync(group);
+                }
+            }
+            else
+            {
+                foreach (var storage in items)
+                {
+                    if (storage is StoragePhoto photo)
                     {
-                        if (storage is StoragePhoto photo)
-                        {
-                            await SendPhotoAsync(storage.File, storage.Caption, storage.IsForceFile, storage.Ttl, storage.IsCropped ? storage.CropRectangle : null);
-                        }
-                        else if (storage is StorageVideo video)
-                        {
-                            await SendVideoAsync(storage.File, storage.Caption, video.IsMuted, storage.IsForceFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
-                        }
+                        await SendPhotoAsync(storage.File, storage.Caption, storage.IsForceFile, storage.Ttl, storage.IsCropped ? storage.CropRectangle : null);
+                    }
+                    else if (storage is StorageVideo video)
+                    {
+                        await SendVideoAsync(storage.File, storage.Caption, video.IsMuted, storage.IsForceFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
                     }
                 }
             }
@@ -572,7 +578,7 @@ namespace Unigram.ViewModels
             //page.LiveLocation = !_liveLocationService.IsTracking(Peer.ToPeer());
 
             var confirm = await dialog.ShowAsync();
-            if (confirm == ContentDialogBaseResult.OK)
+            if (confirm == ContentDialogResult.Primary)
             {
                 var reply = GetReply(true);
                 var input = page.Media;

@@ -34,8 +34,8 @@ namespace Unigram.Controls
         private ApplicationView _applicationView;
         private Popup _popupHost;
 
-        private TaskCompletionSource<ContentDialogBaseResult> _callback;
-        private ContentDialogBaseResult _result;
+        private TaskCompletionSource<ContentDialogResult> _callback;
+        private ContentDialogResult _result;
 
         protected Border Container;
         protected Border BackgroundElement;
@@ -137,7 +137,7 @@ namespace Unigram.Controls
             }
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync()
+        public IAsyncOperation<ContentDialogResult> ShowAsync()
         {
             return AsyncInfo.Run(async (token) =>
             {
@@ -150,8 +150,8 @@ namespace Unigram.Controls
 
                 var previous = _callback;
 
-                _result = ContentDialogBaseResult.None;
-                _callback = new TaskCompletionSource<ContentDialogBaseResult>();
+                _result = ContentDialogResult.None;
+                _callback = new TaskCompletionSource<ContentDialogResult>();
 
                 _applicationView = ApplicationView.GetForCurrentView();
                 OnVisibleBoundsChanged(_applicationView, null);
@@ -231,7 +231,7 @@ namespace Unigram.Controls
         protected virtual void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             e.Handled = true;
-            Hide(ContentDialogBaseResult.None);
+            Hide(ContentDialogResult.None);
         }
 
         protected void Prepare()
@@ -240,7 +240,7 @@ namespace Unigram.Controls
             Closing?.Invoke(this, EventArgs.Empty);
         }
 
-        public void TryHide(ContentDialogBaseResult result)
+        public void TryHide(ContentDialogResult result)
         {
             var e = new HandledEventArgs();
             OnBackRequestedOverride(this, e);
@@ -255,10 +255,10 @@ namespace Unigram.Controls
 
         public void Hide()
         {
-            Hide(ContentDialogBaseResult.None);
+            Hide(ContentDialogResult.None);
         }
 
-        public void Hide(ContentDialogBaseResult result)
+        public void Hide(ContentDialogResult result)
         {
             if (_popupHost == null || !_popupHost.IsOpen)
             {
@@ -427,15 +427,6 @@ namespace Unigram.Controls
         #endregion
     }
 
-    public enum ContentDialogBaseResult
-    {
-        Cancel,
-        No,
-        None,
-        OK,
-        Yes
-    }
-
     public class ContentDialogNavigationService : INavigationService
     {
         private readonly ContentDialogBase _contentDialog;
@@ -447,7 +438,7 @@ namespace Unigram.Controls
 
         public void GoBack(NavigationTransitionInfo infoOverride = null)
         {
-            _contentDialog.TryHide(ContentDialogBaseResult.None);
+            _contentDialog.TryHide(ContentDialogResult.None);
         }
 
         public object Content => throw new NotImplementedException();
