@@ -31,7 +31,7 @@ namespace Unigram.Controls
                     _lastPointer = null;
                 }
 
-                _parent.OnItemHolding(this, Content);
+                _parent.OnItemHolding(this, Tag);
             }
 
             base.OnHolding(e);
@@ -44,7 +44,7 @@ namespace Unigram.Controls
             if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
             {
                 _parent.CapturePointer(e.Pointer);
-                _parent.OnItemHolding(this, Content);
+                _parent.OnItemHolding(this, Tag);
             }
 
             base.OnPointerPressed(e);
@@ -53,7 +53,7 @@ namespace Unigram.Controls
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
         {
             //if (_parent.capt)
-            _parent.OnItemPointerEntered(this, Content);
+            _parent.OnItemPointerEntered(this, Tag);
 
             base.OnPointerEntered(e);
         }

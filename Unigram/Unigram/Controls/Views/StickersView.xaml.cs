@@ -367,6 +367,9 @@ namespace Unigram.Controls.Views
                 return;
             }
 
+            args.ItemContainer.Tag = args.Item;
+            content.Tag = args.Item;
+
             //if (args.Phase < 2)
             //{
             //    content.Source = null;

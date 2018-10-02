@@ -13,46 +13,40 @@
     Loaded="OnLoaded"
     Unloaded="OnUnloaded">
 
-    <ContentControl x:Name="PopupContent" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-        <!--<ContentControl.ContentTemplate>
-             --><!-- THIS WILL BE STICKERS ONLY TEMPLATE --><!--
-             <DataTemplate>
-                 <StackPanel>
-                     <StackPanel.Resources>
-                         <Storyboard x:Key="Board">
-                             <DoubleAnimation Storyboard.TargetName="Transform" Storyboard.TargetProperty="CompositeTransform.ScaleX" From="0.8" To="1.0" Duration="0:0:0.5">
-                                 <DoubleAnimation.EasingFunction>
-                                     <ElasticEase Oscillations="1" Springiness="10" EasingMode="EaseOut"/>
-                                 </DoubleAnimation.EasingFunction>
-                             </DoubleAnimation>
-                             <DoubleAnimation Storyboard.TargetName="Transform" Storyboard.TargetProperty="CompositeTransform.ScaleY" From="0.8" To="1.0" Duration="0:0:0.5">
-                                 <DoubleAnimation.EasingFunction>
-                                     <ElasticEase Oscillations="1" Springiness="10" EasingMode="EaseOut"/>
-                                 </DoubleAnimation.EasingFunction>
-                             </DoubleAnimation>
-                         </Storyboard>
-                     </StackPanel.Resources>
-                     <TextBlock Text="{x:Bind Converter={StaticResource StickerToEmojiConverter}}" TextAlignment="Center" Margin="0,-40,0,20" FontSize="30"/>
-                    
-                     <Viewbox StretchDirection="DownOnly" RenderTransformOrigin="0.5,0.5">
-                         <Viewbox.RenderTransform>
-                             <CompositeTransform x:Name="Transform"/>
-                         </Viewbox.RenderTransform>
-                         <controls:ImageView Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}}" 
-                                             Constraint="{x:Bind}"
-                                             HorizontalAlignment="Center" 
-                                             VerticalAlignment="Center"
-                                             MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
-                                             MaxHeight="{StaticResource TelegramLightMediaMaxHeight}">
-                             <i:Interaction.Behaviors>
-                                 <core:EventTriggerBehavior EventName="ImageOpened">
-                                     <media:ControlStoryboardAction Storyboard="{StaticResource Board}"/>
-                                 </core:EventTriggerBehavior>
-                             </i:Interaction.Behaviors>
-                         </controls:ImageView>
-                     </Viewbox>
-                 </StackPanel>
-             </DataTemplate>
-             </ContentControl.ContentTemplate>-->
-    </ContentControl>
+    <StackPanel VerticalAlignment="Center">
+        <StackPanel.Resources>
+            <Storyboard x:Key="Board">
+                <DoubleAnimation Storyboard.TargetName="Transform" Storyboard.TargetProperty="CompositeTransform.ScaleX" From="0.8" To="1.0" Duration="0:0:0.5">
+                    <DoubleAnimation.EasingFunction>
+                        <ElasticEase Oscillations="1" Springiness="10" EasingMode="EaseOut"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="Transform" Storyboard.TargetProperty="CompositeTransform.ScaleY" From="0.8" To="1.0" Duration="0:0:0.5">
+                    <DoubleAnimation.EasingFunction>
+                        <ElasticEase Oscillations="1" Springiness="10" EasingMode="EaseOut"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+        </StackPanel.Resources>
+        <TextBlock x:Name="Title" TextAlignment="Center" Margin="0,-40,0,20" FontSize="30"/>
+
+        <Viewbox StretchDirection="DownOnly" RenderTransformOrigin="0.5,0.5">
+            <Viewbox.RenderTransform>
+                <CompositeTransform x:Name="Transform"/>
+            </Viewbox.RenderTransform>
+            <Border x:Name="Container">
+                <controls:ImageView x:Name="Texture"
+                                    HorizontalAlignment="Center" 
+                                    VerticalAlignment="Center"
+                                    MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
+                                    MaxHeight="{StaticResource TelegramLightMediaMaxHeight}">
+                    <!--<i:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="ImageOpened">
+                            <media:ControlStoryboardAction Storyboard="{StaticResource Board}"/>
+                        </core:EventTriggerBehavior>
+                    </i:Interaction.Behaviors>-->
+                </controls:ImageView>
+            </Border>
+        </Viewbox>
+    </StackPanel>
 </Grid>

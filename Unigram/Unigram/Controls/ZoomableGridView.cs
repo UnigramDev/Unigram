@@ -11,6 +11,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Unigram.ViewModels.Dialogs;
 
 namespace Unigram.Controls
 {
@@ -20,14 +21,13 @@ namespace Unigram.Controls
 
         private Popup _popupHost;
         private ZoomableGridViewPopup _popupPanel;
-        private ContentControl _popupContent;
+        private object _popupContent;
 
         public ZoomableGridView()
         {
             _popupHost = new Popup();
             _popupHost.IsHitTestVisible = false;
             _popupHost.Child = _popupPanel = new ZoomableGridViewPopup();
-            _popupContent = _popupPanel.Children[0] as ContentControl;
 
             PointerMoved += ZoomableGridView_PointerMoved;
         }
@@ -58,6 +58,11 @@ namespace Unigram.Controls
             //    }
             //}
 
+            if (item is StickerViewModel sticker)
+            {
+                _popupPanel.SetSticker(sticker.ProtoService, sticker.Aggregator, sticker.Get());
+            }
+
             var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
             if (bounds != Window.Current.Bounds)
             {
@@ -75,7 +80,7 @@ namespace Unigram.Controls
 
             _popupPanel.Width = bounds.Width;
             _popupPanel.Height = bounds.Height;
-            _popupContent.Content = item;
+            _popupContent = item;
             _popupHost.IsOpen = true;
 
             _scrollingHost.CancelDirectManipulations();
@@ -85,7 +90,12 @@ namespace Unigram.Controls
         {
             if (_popupHost.IsOpen && _popupContent != content)
             {
-                _popupContent.Content = content;
+                if (content is StickerViewModel sticker)
+                {
+                    _popupPanel.SetSticker(sticker.ProtoService, sticker.Aggregator, sticker.Get());
+                }
+
+                _popupContent = content;
             }
         }
 
@@ -93,28 +103,7 @@ namespace Unigram.Controls
         {
             if (_popupHost.IsOpen && e.OriginalSource is FrameworkElement element)
             {
-                var item = element.DataContext;
-                //if (item is TLBotInlineMediaResult inlineMediaResult)
-                //{
-                //    if (inlineMediaResult.HasDocument)
-                //    {
-                //        item = inlineMediaResult.Document;
-                //    }
-                //    else
-                //    {
-                //        return;
-                //    }
-                //}
-
-                //if (item is TLDocument content && _popupContent.Content != content)
-                //{
-                //    //if (content.StickerSet != null)
-                //    //{
-                //    //    Debug.WriteLine(string.Join(" ", UnigramContainer.Current.ResolveType<IStickersService>().GetEmojiForSticker(content.Id)));
-                //    //}
-
-                //    _popupContent.Content = content;
-                //}
+                OnItemPointerEntered(sender, element.Tag);
             }
         }
 
@@ -123,7 +112,7 @@ namespace Unigram.Controls
             if (_popupHost.IsOpen)
             {
                 _popupHost.IsOpen = false;
-                _popupContent.Content = null;
+                //_popupContent.Content = null;
                 e.Handled = true;
             }
 
@@ -135,7 +124,7 @@ namespace Unigram.Controls
             if (_popupHost.IsOpen)
             {
                 _popupHost.IsOpen = false;
-                _popupContent.Content = null;
+                //_popupContent.Content = null;
                 e.Handled = true;
             }
 
@@ -147,7 +136,7 @@ namespace Unigram.Controls
             if (_popupHost.IsOpen)
             {
                 _popupHost.IsOpen = false;
-                _popupContent.Content = null;
+                //_popupContent.Content = null;
                 e.Handled = true;
             }
 
