@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Template10.Mvvm;
 using Unigram.Controls;
 using Unigram.Core.Helpers;
@@ -63,8 +64,8 @@ namespace Unigram.Entities
             }
         }
 
-        protected string _caption;
-        public string Caption
+        protected FormattedText _caption;
+        public FormattedText Caption
         {
             get
             {

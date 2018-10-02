@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls.Views;
@@ -10,6 +11,7 @@ using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
@@ -18,7 +20,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
 {
-    public class CaptionTextBox : TextBox
+    public class CaptionTextBox : FormattedTextBox
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -26,7 +28,6 @@ namespace Unigram.Controls
 
         public CaptionTextBox()
         {
-            TextChanged += OnTextChanged;
             SelectionChanged += OnSelectionChanged;
 
             Loaded += OnLoaded;
@@ -132,23 +133,28 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (View?.SelectedItem != null)
-            {
-                View.SelectedItem.Caption = Text.ToString();
-            }
-        }
-
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
-            var text = Text.ToString();
+            Document.GetText(TextGetOptions.NoHidden, out string text);
 
-            if (BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(SelectionStart, text.Length)), out string username, out int index))
+            if (BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username, out int index))
             {
-                //View.Autocomplete = GetUsernames(username);
+                var chat = ViewModel.Chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
+                {
+                    View.Autocomplete = new BubbleTextBox.UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, username, false, true);
+                }
+                else
+                {
+                    View.Autocomplete = null;
+                }
             }
-            else if (BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(SelectionStart, text.Length)), out string replacement) && replacement.Length > 0)
+            else if (BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
             {
                 View.Autocomplete = EmojiSuggestion.GetSuggestions(replacement.Length < 2 ? replacement : replacement.ToLower());
             }

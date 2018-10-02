@@ -489,7 +489,7 @@ namespace Unigram.ViewModels
             return text;
         }
 
-        public FormattedText GetFormattedText()
+        public FormattedText GetFormattedText(bool clear = false)
         {
             var field = TextField;
             if (field == null)
@@ -497,7 +497,7 @@ namespace Unigram.ViewModels
                 return null;
             }
 
-            return field.GetFormattedText();
+            return field.GetFormattedText(clear);
         }
 
         public bool IsEndReached()

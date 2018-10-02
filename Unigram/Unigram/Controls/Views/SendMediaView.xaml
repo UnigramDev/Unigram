@@ -748,6 +748,7 @@
                       AllowFocusOnInteraction="False"
                       IsItemClickEnabled="True"
                       ItemClick="Autocomplete_ItemClick"
+                      ContainerContentChanging="OnContainerContentChanging"
                       Grid.RowSpan="2">
                 <ListView.Header>
                     <Border x:Name="AutocompleteHeader"
@@ -782,7 +783,6 @@
                     Autocomplete="{x:Bind ListAutocomplete}"
                     DataContext="{x:Bind ViewModel}"
                     Paste="OnPaste"
-                    MaxLength="200"
                     InputScope="Chat"
                     PlaceholderText="{CustomResource AddCaption}"
                     Margin="12,8,12,8"

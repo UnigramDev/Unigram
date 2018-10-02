@@ -10,8 +10,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Views;
-using Unigram.Core.Rtf;
-using Unigram.Core.Rtf.Write;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -63,25 +61,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            SelectionHighlightColorWhenNotFocused = new SolidColorBrush(Colors.Red);
-
             ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
-
-            //_flyout = new MenuFlyout();
-            //_flyout.Items.Add(new MenuFlyoutItem { Text = "Bold" });
-            //_flyout.Items.Add(new MenuFlyoutItem { Text = "Italic" });
-            //_flyout.AllowFocusOnInteraction = false;
-            //_flyout.AllowFocusWhenDisabled = false;
-
-            //((MenuFlyoutItem)_flyout.Items[0]).Click += Bold_Click;
-            //((MenuFlyoutItem)_flyout.Items[1]).Click += Italic_Click;
-            //((MenuFlyoutItem)_flyout.Items[1]).Loaded += Italic_Loaded;
-
-            //#if DEBUG
-            //            // To test hyperlinks (Used for mention name => to tag people that has no username)
-            //            _flyout.Items.Add(new MenuFlyoutItem { Text = "Hyperlink" });
-            //            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
-            //#endif
 
             Paste += OnPaste;
             //Clipboard.ContentChanged += Clipboard_ContentChanged;
@@ -168,7 +148,15 @@ namespace Unigram.Controls
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                flyout.ShowAt(this, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
+                if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
+                {
+                    // We don't want to unfocus the text are when the context menu gets opened
+                    flyout.ShowAt(this, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
+                }
+                else
+                {
+                    flyout.ShowAt(this, point);
+                }
             }
             else if (flyout.Items.Count > 0)
             {
@@ -501,7 +489,7 @@ namespace Unigram.Controls
 
                 if (package.Contains(StandardDataFormats.Text))
                 {
-                    media[0].Caption = await package.GetTextAsync();
+                    media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
                 }
 
                 ViewModel.SendMediaExecute(media, media[0]);
@@ -863,7 +851,7 @@ namespace Unigram.Controls
                             members = false;
                         }
 
-                        ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, username, index == 0, members); //GetUsernames(username.ToLower(), text.StartsWith('@' + username));
+                        ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, username, index == 0, members);
                     }
                     else if (SearchByHashtag(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string hashtag, out int index2))
                     {
@@ -1144,7 +1132,6 @@ namespace Unigram.Controls
             FormatText();
 
             Document.BatchDisplayUpdates();
-            Document.GetText(TextGetOptions.NoHidden, out string text);
 
             var entities = new List<TextEntity>();
             var adjust = 0;
@@ -1211,6 +1198,8 @@ namespace Unigram.Controls
                 end = i >= range.EndPosition;
                 i = range.EndPosition;
             }
+
+            Document.GetText(TextGetOptions.NoHidden, out string text);
 
             if (clear)
             {

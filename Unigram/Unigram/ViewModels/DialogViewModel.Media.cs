@@ -142,7 +142,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task SendFileAsync(StorageFile file, string caption = null)
+        private async Task SendFileAsync(StorageFile file, FormattedText caption = null)
         {
             var chat = _chat;
             if (chat == null)
@@ -170,7 +170,7 @@ namespace Unigram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageDocument(await file.ToGeneratedAsync(), null, GetFormattedText(caption));
+            var input = new InputMessageDocument(await file.ToGeneratedAsync(), null, caption);
 
             await SendMessageAsync(reply, input);
         }
@@ -190,7 +190,7 @@ namespace Unigram.ViewModels
             public Rect CropRectangle { get; set; }
         }
 
-        public async Task SendVideoAsync(StorageFile file, string caption, bool animated, bool asFile, int? ttl = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        public async Task SendVideoAsync(StorageFile file, FormattedText caption, bool animated, bool asFile, int? ttl = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
             var basicProps = await file.GetBasicPropertiesAsync();
             var videoProps = await file.Properties.GetVideoPropertiesAsync();
@@ -231,7 +231,7 @@ namespace Unigram.ViewModels
             if (asFile)
             {
                 var reply = GetReply(true);
-                var input = new InputMessageDocument(generated, thumbnail, GetFormattedText(caption));
+                var input = new InputMessageDocument(generated, thumbnail, caption);
 
                 await SendMessageAsync(reply, input);
             }
@@ -240,14 +240,14 @@ namespace Unigram.ViewModels
                 if (profile != null && profile.Audio == null)
                 {
                     var reply = GetReply(true);
-                    var input = new InputMessageAnimation(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, GetFormattedText(caption));
+                    var input = new InputMessageAnimation(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, caption);
 
                     await SendMessageAsync(reply, input);
                 }
                 else
                 {
                     var reply = GetReply(true);
-                    var input = new InputMessageVideo(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, true, GetFormattedText(caption), ttl ?? 0);
+                    var input = new InputMessageVideo(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, true, caption, ttl ?? 0);
 
                     await SendMessageAsync(reply, input);
                 }
@@ -425,7 +425,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task SendPhotoAsync(StorageFile file, string caption, bool asFile, int? ttl = null, Rect? crop = null)
+        private async Task SendPhotoAsync(StorageFile file, FormattedText caption, bool asFile, int? ttl = null, Rect? crop = null)
         {
             var chat = _chat;
             if (chat == null)
@@ -441,14 +441,14 @@ namespace Unigram.ViewModels
             if (asFile)
             {
                 var reply = GetReply(true);
-                var input = new InputMessageDocument(generated, thumbnail, GetFormattedText(caption));
+                var input = new InputMessageDocument(generated, thumbnail, caption);
 
                 await SendMessageAsync(reply, input);
             }
             else
             {
                 var reply = GetReply(true);
-                var input = new InputMessagePhoto(generated, thumbnail, new int[0], size.Width, size.Height, GetFormattedText(caption), ttl ?? 0);
+                var input = new InputMessagePhoto(generated, thumbnail, new int[0], size.Width, size.Height, caption, ttl ?? 0);
 
                 await SendMessageAsync(reply, input);
             }
@@ -654,7 +654,7 @@ namespace Unigram.ViewModels
 
                     var generated = await file.ToGeneratedAsync("compress" + (crop.HasValue ? "#" + JsonConvert.SerializeObject(crop) : string.Empty));
 
-                    var input = new InputMessagePhoto(generated, null, new int[0], size.Width, size.Height, GetFormattedText(photo.Caption), photo.Ttl ?? 0);
+                    var input = new InputMessagePhoto(generated, null, new int[0], size.Width, size.Height, photo.Caption, photo.Ttl ?? 0);
 
                     operations.Add(input);
                 }
@@ -708,13 +708,13 @@ namespace Unigram.ViewModels
 
                     if (profile != null && profile.Audio == null)
                     {
-                        var input = new InputMessageAnimation(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, GetFormattedText(video.Caption));
+                        var input = new InputMessageAnimation(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, video.Caption);
 
                         operations.Add(input);
                     }
                     else
                     {
-                        var input = new InputMessageVideo(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, true, GetFormattedText(video.Caption), video.Ttl ?? 0);
+                        var input = new InputMessageVideo(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, true, video.Caption, video.Ttl ?? 0);
 
                         operations.Add(input);
                     }

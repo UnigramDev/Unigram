@@ -767,7 +767,7 @@ namespace Unigram.Views
 
                 if (package.Contains(StandardDataFormats.Text))
                 {
-                    media[0].Caption = await package.GetTextAsync();
+                    media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
                 }
 
                 ViewModel.SendMediaExecute(media, media[0]);
@@ -1764,20 +1764,16 @@ namespace Unigram.Views
                     insert = user.Username;
                 }
 
-                var format = TextField.Document.GetDefaultCharacterFormat();
-                var start = TextField.Document.Selection.StartPosition - username.Length - adjust + insert.Length;
                 var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - username.Length - adjust, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
                 if (string.IsNullOrEmpty(user.Username))
                 {
                     range.Link = $"\"tg-user://{user.Id}\"";
-                    start += range.Link.Length + "HYPERLINK ".Length;
                 }
 
-                TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
-                TextField.Document.Selection.StartPosition = start + 1;
-                TextField.Document.SetDefaultCharacterFormat(format);
+                TextField.Document.GetRange(range.EndPosition, range.EndPosition).SetText(TextSetOptions.None, " ");
+                TextField.Document.Selection.StartPosition = range.EndPosition + 1;
 
                 if (index == 0 && user.Type is UserTypeBot bot && bot.IsInline)
                 {

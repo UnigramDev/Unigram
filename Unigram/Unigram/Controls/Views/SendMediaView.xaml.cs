@@ -21,11 +21,13 @@ using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
@@ -52,6 +54,11 @@ namespace Unigram.Controls.Views
             }
             set
             {
+                if (value != null)
+                {
+                    value.Caption = CaptionInput.GetFormattedText(ViewModel.ProtoService);
+                }
+
                 if (_selectedItem != value)
                 {
                     _selectedItem = value;
@@ -60,7 +67,7 @@ namespace Unigram.Controls.Views
 
                 if (_selectedItem != null)
                 {
-                    CaptionInput.Text = _selectedItem.Caption ?? string.Empty;
+                    CaptionInput.SetText(_selectedItem.Caption);
                 }
             }
         }
@@ -316,6 +323,8 @@ namespace Unigram.Controls.Views
                 media.CropRectangle = Cropper.CropRectangle;
                 media.Refresh();
 
+                Select_Click(null, null);
+
                 IsEditingCropping = false;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
                 return;
@@ -330,6 +339,8 @@ namespace Unigram.Controls.Views
             {
                 SettingsService.Current.IsSendGrouped = IsGrouped;
             }
+
+            SelectedItem.Caption = CaptionInput.GetFormattedText(ViewModel.ProtoService);
 
             Hide(ContentDialogBaseResult.OK);
         }
@@ -429,32 +440,54 @@ namespace Unigram.Controls.Views
 
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var text = CaptionInput.Text.ToString();
-
-            if (e.ClickedItem is User user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.SelectionStart, text.Length)), out string username, out int index))
+            var chat = ViewModel.Chat;
+            if (chat == null)
             {
-                var insert = $"@{user.Username} ";
-                var start = CaptionInput.SelectionStart - 1 - username.Length;
-                var part1 = text.Substring(0, start);
-                var part2 = text.Substring(start + 1 + username.Length);
-
-                CaptionInput.Text = part1 + insert + part2;
-                CaptionInput.SelectionStart = start + insert.Length;
-
-                Autocomplete = null;
+                return;
             }
-            else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.SelectionStart, text.Length)), out string replacement))
+
+            CaptionInput.Document.GetText(TextGetOptions.None, out string hidden);
+            CaptionInput.Document.GetText(TextGetOptions.NoHidden, out string text);
+
+            if (e.ClickedItem is User user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string username, out int index))
+            {
+                var insert = string.Empty;
+                var adjust = 0;
+
+                if (string.IsNullOrEmpty(user.Username))
+                {
+                    insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
+                    adjust = 1;
+                }
+                else
+                {
+                    insert = user.Username;
+                }
+
+                var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - username.Length - adjust, CaptionInput.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
+
+                if (string.IsNullOrEmpty(user.Username))
+                {
+                    range.Link = $"\"tg-user://{user.Id}\"";
+                }
+
+                CaptionInput.Document.GetRange(range.EndPosition, range.EndPosition).SetText(TextSetOptions.None, " ");
+                CaptionInput.Document.Selection.StartPosition = range.EndPosition + 1;
+            }
+            else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string replacement))
             {
                 var insert = $"{emoji.Emoji} ";
-                var start = CaptionInput.SelectionStart - 1 - replacement.Length;
-                var part1 = text.Substring(0, start);
-                var part2 = text.Substring(start + 1 + replacement.Length);
+                var start = CaptionInput.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
+                var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - replacement.Length, CaptionInput.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
 
-                CaptionInput.Text = part1 + insert + part2;
-                CaptionInput.SelectionStart = start + insert.Length;
-
-                Autocomplete = null;
+                //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
+                //TextField.Document.Selection.StartPosition = start + 1;
+                CaptionInput.Document.Selection.StartPosition = start;
             }
+
+            ViewModel.Autocomplete = null;
         }
 
         private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -662,7 +695,7 @@ namespace Unigram.Controls.Views
 
                 if (package.Contains(StandardDataFormats.Text))
                 {
-                    media[0].Caption = await package.GetTextAsync();
+                    media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
                 }
 
                 foreach (var item in media)
@@ -711,6 +744,30 @@ namespace Unigram.Controls.Views
                 {
                     // Not supported here!
                 }
+            }
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
+            if (args.Item is User user)
+            {
+                var photo = content.Children[0] as ProfilePicture;
+                var title = content.Children[1] as TextBlock;
+
+                var name = title.Inlines[0] as Run;
+                var username = title.Inlines[1] as Run;
+
+                name.Text = user.GetFullName();
+                username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
+
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
             }
         }
     }
