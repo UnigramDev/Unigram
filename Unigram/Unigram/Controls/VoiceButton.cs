@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.Core.Common;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Devices.Enumeration;

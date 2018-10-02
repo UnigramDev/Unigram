@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 
-namespace Unigram.Core.Stripe
+namespace Unigram.Services.Stripe
 {
     public class StripeClient : IDisposable
     {

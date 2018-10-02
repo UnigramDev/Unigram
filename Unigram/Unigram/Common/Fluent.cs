@@ -20,6 +20,11 @@ namespace Unigram.Common
             {
                 MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Plain.xaml") });
             }
+
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
+            {
+                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Compatibility/CreatorsUpdate.xaml") });
+            }
         }
     }
 }

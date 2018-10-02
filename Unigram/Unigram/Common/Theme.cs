@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Services;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
@@ -37,45 +38,45 @@ namespace Unigram.Common
             catch { }
         }
 
-        public void UpdateCustom()
-        {
-            try
-            {
-                var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
-                if (accent == null)
-                {
-                    return;
-                }
+        //public void UpdateCustom()
+        //{
+        //    try
+        //    {
+        //        var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
+        //        if (accent == null)
+        //        {
+        //            return;
+        //        }
 
-                var fileName = FileUtils.GetFileName("colors.palette");
-                if (File.Exists(fileName))
-                {
-                    var text = File.ReadAllText(fileName);
+        //        var fileName = FileUtils.GetFileName("colors.palette");
+        //        if (File.Exists(fileName))
+        //        {
+        //            var text = File.ReadAllText(fileName);
 
-                    try
-                    {
-                        var dictionary = XamlReader.Load(text) as ResourceDictionary;
-                        if (dictionary == null)
-                        {
-                            return;
-                        }
+        //            try
+        //            {
+        //                var dictionary = XamlReader.Load(text) as ResourceDictionary;
+        //                if (dictionary == null)
+        //                {
+        //                    return;
+        //                }
 
-                        accent.MergedDictionaries.Clear();
-                        accent.MergedDictionaries.Add(dictionary);
-                    }
-                    catch
-                    {
-                        File.Delete(fileName);
-                        Update();
-                    }
-                }
-                else
-                {
-                    accent.MergedDictionaries.Clear();
-                }
-            }
-            catch { }
-        }
+        //                accent.MergedDictionaries.Clear();
+        //                accent.MergedDictionaries.Add(dictionary);
+        //            }
+        //            catch
+        //            {
+        //                File.Delete(fileName);
+        //                Update();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            accent.MergedDictionaries.Clear();
+        //        }
+        //    }
+        //    catch { }
+        //}
 
         public void Update()
         {

@@ -9,9 +9,9 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Template10.Common;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
-using Unigram.Core.Common;
 using Unigram.Entities;
 using Unigram.Native;
 using Unigram.ViewModels;
@@ -34,8 +34,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Controls.Views
 {

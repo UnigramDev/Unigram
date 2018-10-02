@@ -8,21 +8,21 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Unigram.Core.Common;
+using Unigram.Common;
 using Windows.ApplicationModel;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 
-namespace Unigram.Core.Services
+namespace Unigram.Services
 {
-    public interface IHockeyAppUpdateService
+    public interface IHockeyUpdateService
     {
         Task CheckForUpdatesAsync(string appId, CoreDispatcher dispatcher);
     }
 
-    public class HockeyAppUpdateService : IHockeyAppUpdateService
+    public class HockeyUpdateService : IHockeyUpdateService
     {
         public async Task CheckForUpdatesAsync(string appId, CoreDispatcher dispatcher)
         {

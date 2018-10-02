@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.Core.Common;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.Native.Tasks;
 using Unigram.Entities;
 using Unigram.Services;
@@ -2067,6 +2067,10 @@ namespace Unigram.ViewModels
                         var input = new InputMessageText(formattedText, disablePreview, true);
                         await SendMessageAsync(reply, input);
                     }
+                }
+                else
+                {
+                    await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, SnapPointsAlignment.Far, 8);
                 }
             }
 

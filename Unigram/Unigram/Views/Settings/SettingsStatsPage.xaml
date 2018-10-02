@@ -80,8 +80,8 @@
                                             <TextBlock Text="{CustomResource BytesSent}" Margin="0,4" Grid.Row="0"/>
                                             <TextBlock Text="{CustomResource BytesReceived}" Margin="0,4" Grid.Row="1"/>
 
-                                            <TextBlock Text="{x:Bind SentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="0"/>
-                                            <TextBlock Text="{x:Bind ReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
+                                            <TextBlock Text="{x:Bind SentBytes, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="0"/>
+                                            <TextBlock Text="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
                                         </Grid>
                                     </StackPanel>
                                 </DataTemplate>
@@ -100,9 +100,9 @@
                                             <TextBlock Text="{CustomResource BytesReceived}" Margin="0,4" Grid.Row="1"/>
                                             <TextBlock Text="{CustomResource CallsTotalTime}" Margin="0,4" Grid.Row="2"/>
 
-                                            <TextBlock Text="{x:Bind SentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="0"/>
-                                            <TextBlock Text="{x:Bind ReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
-                                            <TextBlock Text="{x:Bind Duration, Mode=OneWay}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
+                                            <TextBlock Text="{x:Bind SentBytes, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="0"/>
+                                            <TextBlock Text="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
+                                            <TextBlock Text="{x:Bind Duration}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
                                         </Grid>
                                     </StackPanel>
                                 </DataTemplate>

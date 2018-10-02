@@ -139,17 +139,17 @@ namespace Unigram.Views.Settings
             if (items != null)
             {
                 SelectedItems = List.SelectedItems.Cast<StorageStatisticsByFileType>().Select(x => x.FileType).ToList();
-                _dialog.Hide(ContentDialogBaseResult.OK);
+                _dialog.Hide(ContentDialogResult.Primary);
             }
             else
             {
-                _dialog.Hide(ContentDialogBaseResult.Cancel);
+                _dialog.Hide(ContentDialogResult.Secondary);
             }
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            _dialog.Hide(ContentDialogBaseResult.Cancel);
+            _dialog.Hide(ContentDialogResult.Secondary);
         }
     }
 }

@@ -267,6 +267,11 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void OpenLiveLocation(MessageViewModel message)
+        {
+            NavigationService.Navigate(typeof(LiveLocationPage), message.ChatId);
+        }
+
         public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)
         {
             KeyboardButtonExecute(message, button);

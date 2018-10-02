@@ -55,10 +55,20 @@ namespace Unigram.Controls.Messages.Content
                 if (expired)
                 {
                     LivePanel.Visibility = Visibility.Collapsed;
+                    PinDot.Visibility = Visibility.Visible;
+                    PinPhoto.Source = null;
                 }
                 else
                 {
                     LivePanel.Visibility = Visibility.Visible;
+                    PinDot.Visibility = Visibility.Collapsed;
+
+                    var user = _message.ProtoService.GetUser(message.SenderUserId);
+                    if (user != null)
+                    {
+                        PinPhoto.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 32, 32);
+                    }
+
                     Title.Text = Strings.Resources.AttachLiveLocation;
                     Subtitle.Text = Locale.FormatLocationUpdateDate(message.EditDate > 0 ? message.EditDate : message.Date);
                 }
@@ -67,6 +77,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 LivePanel.Visibility = Visibility.Collapsed;
                 PinDot.Visibility = Visibility.Visible;
+                PinPhoto.Source = null;
             }
         }
 
@@ -85,7 +96,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (location.LivePeriod > 0)
             {
-
+                _message.Delegate.OpenLiveLocation(_message);
             }
             else
             {

@@ -14,9 +14,6 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Converters;
-using Unigram.Core.Common;
-using Unigram.Core.Notifications;
-using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.ViewModels;
@@ -334,6 +331,7 @@ namespace Unigram.Views
             {
                 switch (connectionState)
                 {
+                    case ConnectionStateWaitingForNetwork waitingForNetwork:
                     case ConnectionStateConnecting connecting:
                     case ConnectionStateConnectingToProxy connectingToProxy:
                         Proxy.Visibility = Visibility.Visible;

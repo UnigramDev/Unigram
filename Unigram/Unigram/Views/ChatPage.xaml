@@ -386,9 +386,9 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <controls:ProfilePicture x:Name="Photo" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
+                                <controls:ProfilePicture x:Name="Photo" Width="30" Height="30" Margin="12,0" IsHitTestVisible="False"/>
 
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Top" Grid.Column="1">
                                     <TextBlock x:Name="Title"
                                                 Style="{StaticResource BaseTextBlockStyle}"
                                                 TextWrapping="NoWrap"
@@ -888,6 +888,7 @@
                         VerticalContentAlignment="Bottom"
                         PreventKeyboardDisplayOnProgrammaticFocus="True"
                         MinHeight="{StaticResource TelegramToolBarHeight}"
+                        Style="{StaticResource Yolo}"
                         MaxHeight="192"
                         TextChanged="TextField_TextChanged"
                         LostFocus="TextField_LostFocus"

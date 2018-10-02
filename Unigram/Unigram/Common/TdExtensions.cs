@@ -264,6 +264,14 @@ namespace Unigram.Common
 
         #endregion
 
+        public static bool IsInstantGallery(this WebPage webPage)
+        {
+            return webPage.HasInstantView && 
+                (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) || 
+                 string.Equals(webPage.SiteName, "instagram", StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
+        }
+
         public static Photo GetPhoto(this Message message)
         {
             switch (message.Content)

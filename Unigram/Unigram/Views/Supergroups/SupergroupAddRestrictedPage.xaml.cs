@@ -10,7 +10,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Supergroups;
 using Windows.Foundation;

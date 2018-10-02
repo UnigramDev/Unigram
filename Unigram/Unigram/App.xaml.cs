@@ -8,8 +8,6 @@ using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Core.Notifications;
-using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.BasicGroups;

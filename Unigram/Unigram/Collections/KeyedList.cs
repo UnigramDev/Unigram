@@ -5,9 +5,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Unigram.Core.Common;
 
-namespace Unigram.Common
+namespace Unigram.Collections
 {
     public class KeyedList<TKey, T> : MvxObservableCollection<T>
     {

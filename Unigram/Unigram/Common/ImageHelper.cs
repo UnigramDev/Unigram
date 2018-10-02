@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Unigram.Core.Common;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Editing;
@@ -17,7 +17,7 @@ using Windows.UI;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Core.Helpers
+namespace Unigram.Common
 {
     public static class ImageHelper
     {

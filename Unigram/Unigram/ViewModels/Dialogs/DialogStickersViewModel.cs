@@ -6,11 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Core;
 using Unigram.Services;
 using Windows.UI.Popups;
 using Template10.Utils;
-using Unigram.Core.Common;
 using Template10.Mvvm;
 using System.ComponentModel;
 using System.Collections.Specialized;
@@ -20,6 +18,7 @@ using Telegram.Td.Api;
 using Windows.UI.Xaml.Data;
 using Windows.Foundation;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Collections;
 
 namespace Unigram.ViewModels.Dialogs
 {

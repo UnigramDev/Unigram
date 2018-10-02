@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using Unigram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Navigation;
-using Unigram.Core.Common;
 using Unigram.Controls;
 using Unigram.Common;
 using Unigram.Views.Passport;
 using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
-using Unigram.Core.Services;
+using Unigram.Services;
+using Unigram.Collections;
 
 namespace Unigram.ViewModels.Passport
 {

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Core.Common;
+using Unigram.Collections;
 using Windows.Devices.Geolocation;
 
-namespace Unigram.Core.Services
+namespace Unigram.Services
 {
     public interface ILiveLocationService
     {
@@ -39,7 +39,7 @@ namespace Unigram.Core.Services
 
             //_aggregator.Subscribe(this);
 
-            Items = new MvxObservableCollection<Message>();
+            //Items = new MvxObservableCollection<Message>();
         }
 
         public void Handle(object MessagesRemovedEventArgs)
@@ -82,23 +82,23 @@ namespace Unigram.Core.Services
 
         public void StopTracking()
         {
-            foreach (var message in Items.ToList())
-            {
-                Items.Remove(message);
-                //Update(message, null, true);
-            }
+            //foreach (var message in Items.ToList())
+            //{
+            //    Items.Remove(message);
+            //    //Update(message, null, true);
+            //}
         }
 
         public async Task TrackAsync(Message message)
         {
-            Items.Add(message);
+            //Items.Add(message);
 
-            if (_locator == null)
-            {
-                //_locator = await _locationService.StartTrackingAsync();
-                //_locator.PositionChanged -= OnPositionChanged;
-                //_locator.PositionChanged += OnPositionChanged;
-            }
+            //if (_locator == null)
+            //{
+            //    //_locator = await _locationService.StartTrackingAsync();
+            //    //_locator.PositionChanged -= OnPositionChanged;
+            //    //_locator.PositionChanged += OnPositionChanged;
+            //}
         }
 
         private void OnPositionChanged(Geolocator sender, PositionChangedEventArgs args)

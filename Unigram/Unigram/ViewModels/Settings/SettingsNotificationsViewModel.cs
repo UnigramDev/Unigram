@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.Strings;
 using Windows.Foundation.Metadata;

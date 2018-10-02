@@ -30,7 +30,7 @@ using Unigram.Controls;
 using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Unigram.Common;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Dialogs;
 using Telegram.Td.Api;

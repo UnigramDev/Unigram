@@ -8,7 +8,7 @@ using Telegram.Td.Api;
 using Template10.Services.SerializationService;
 using Unigram.Common;
 using Unigram.Controls.Views;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.Native;
 using Windows.Foundation;
 using Windows.Foundation.Collections;

@@ -12,7 +12,6 @@ using Template10.Mvvm;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Core.Common;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;

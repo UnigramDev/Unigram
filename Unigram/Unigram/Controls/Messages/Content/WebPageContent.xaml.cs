@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Selectors;
@@ -23,6 +24,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class WebPageContent : WebPageContentBase, IContentWithFile
     {
         private MessageViewModel _message;
+        private CancellationTokenSource _instantViewToken;
 
         public WebPageContent(MessageViewModel message)
         {
@@ -32,6 +34,9 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessage(MessageViewModel message)
         {
+            _instantViewToken?.Cancel();
+            _instantViewToken = new CancellationTokenSource();
+
             _message = message;
 
             var text = message.Content as MessageText;
@@ -48,6 +53,7 @@ namespace Unigram.Controls.Messages.Content
 
             UpdateWebPage(webPage, Label, TitleLabel, SubtitleLabel, ContentLabel);
             UpdateInstantView(webPage, Button, Run1, Run2, Run3);
+            UpdateInstantView(message.ProtoService, _instantViewToken.Token, webPage, Overlay, Subtitle);
 
             if (webPage.IsMedia())
             {

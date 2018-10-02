@@ -11,18 +11,18 @@
     <AssemblyName>Unigram</AssemblyName>
     <DefaultLanguage>en</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.17134.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.17763.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>Unigram_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>CE7E95812C4B2B0C8A7D5EA3DB7D201C2F459116</PackageCertificateThumbprint>
-    <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
+    <!--<BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>-->
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
@@ -107,15 +107,19 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Collections\KeyedList.cs" />
+    <Compile Include="Collections\MvxObservableCollection.cs" />
     <Compile Include="Collections\SearchChatsCollection.cs" />
     <Compile Include="Collections\SearchMembersAndUsersCollection.cs" />
     <Compile Include="Collections\SearchStickersCollection.cs" />
     <Compile Include="Collections\SearchUsersCollection.cs" />
     <Compile Include="Common\ApiInfo.cs" />
+    <Compile Include="Common\ColorsHelper.cs" />
+    <Compile Include="Common\DisposableMutex.cs" />
+    <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\Mouse.cs" />
     <Compile Include="Common\TLContainer.cs" />
     <Compile Include="Common\Execute.cs" />
-    <Compile Include="Common\FileUtils.cs" />
     <Compile Include="Common\Fluent.cs" />
     <Compile Include="Common\AutoDownloadPreferences.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
@@ -135,6 +139,7 @@
     <Compile Include="Common\Theme.cs" />
     <Compile Include="Common\TLNavigationService.cs" />
     <Compile Include="Common\TLRootNavigationService.cs" />
+    <Compile Include="Common\Toast.cs" />
     <Compile Include="Common\UniqueList.cs" />
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
@@ -163,6 +168,7 @@
     <Compile Include="Controls\ChatSearchTextBox.cs" />
     <Compile Include="Controls\DialogListView.cs" />
     <Compile Include="Controls\FileButton.cs" />
+    <Compile Include="Controls\FormattedTextBox.cs" />
     <Compile Include="Controls\GalleryContent.xaml.cs">
       <DependentUpon>GalleryContent.xaml</DependentUpon>
     </Compile>
@@ -408,9 +414,12 @@
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\ContactsService.cs" />
+    <Compile Include="Services\DeviceInfoService.cs" />
     <Compile Include="Services\EventAggregator.cs" />
     <Compile Include="Services\GenerationService.cs" />
+    <Compile Include="Services\HockeyUpdateService.cs" />
     <Compile Include="Services\LifetimeService.cs" />
+    <Compile Include="Services\LiveLocationService.cs" />
     <Compile Include="Services\LocaleService.cs" />
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\NotificationsService.cs" />
@@ -419,9 +428,19 @@
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\ProtoService.cs" />
     <Compile Include="Services\SessionService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="Services\Stripe\Card.cs" />
+    <Compile Include="Services\Stripe\CardUtils.cs" />
+    <Compile Include="Services\Stripe\DateUtils.cs" />
+    <Compile Include="Services\Stripe\StripeClient.cs" />
+    <Compile Include="Services\Stripe\StripeNetworkUtils.cs" />
+    <Compile Include="Services\Stripe\StripeTextUtils.cs" />
+    <Compile Include="Services\Stripe\StripeToken.cs" />
+    <Compile Include="Services\TLSerializationService.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
     <Compile Include="Services\Updates\UpdateWallpaper.cs" />
     <Compile Include="Services\Updates\UpdateWorkMode.cs" />
+    <Compile Include="Services\VibrationService.cs" />
     <Compile Include="Services\VoIPService.cs" />
     <Compile Include="Strings\en\Additional.cs">
       <AutoGen>True</AutoGen>
@@ -451,6 +470,7 @@
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />
+    <Compile Include="ViewModels\Delegates\ILiveLocationDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISettingsDelegate.cs" />
     <Compile Include="ViewModels\Dialogs\DialogGalleryViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogSearchViewModel.cs" />
@@ -469,6 +489,7 @@
     <Compile Include="ViewModels\Delegates\ISupergroupDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IUserDelegate.cs" />
     <Compile Include="ViewModels\InviteViewModel.cs" />
+    <Compile Include="ViewModels\LiveLocationViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\Passport\PassportAddressViewModel.cs" />
     <Compile Include="ViewModels\Passport\PassportDocumentViewModelBase.cs" />
@@ -589,6 +610,9 @@
       <DependentUpon>InvitePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Collections\MediaLibraryCollection.cs" />
+    <Compile Include="Views\LiveLocationPage.xaml.cs">
+      <DependentUpon>LiveLocationPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PasscodePage.xaml.cs">
       <DependentUpon>PasscodePage.xaml</DependentUpon>
     </Compile>
@@ -1776,6 +1800,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
+    <Page Include="Themes\Compatibility\CreatorsUpdate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Fluent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1872,6 +1900,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\InvitePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LiveLocationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2204,10 +2236,6 @@
       <Project>{1cfa1bfa-98d3-4316-8e3b-ac3ea8b3510e}</Project>
       <Name>Telegram.Intro</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Unigram.Core\Unigram.Core.csproj">
-      <Project>{580d2885-8129-499e-9ffd-39ff1b586f18}</Project>
-      <Name>Unigram.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Unigram.Native.Tasks\Unigram.Native.Tasks.vcxproj">
       <Project>{ca0c2cc0-3d83-4556-a9a3-0923ece8c1d3}</Project>
       <Name>Unigram.Native.Tasks</Name>
@@ -2224,10 +2252,10 @@
     <SDKReference Include="Telegram.Td.UWP, Version=1.0">
       <Name>TDLib for Universal Windows Platform</Name>
     </SDKReference>
-    <SDKReference Include="WindowsDesktop, Version=10.0.17134.0">
-      <Name>Windows Desktop Extensions for the UWP %28WindowsDesktop, Version=10.0.17134.0%29</Name>
+    <SDKReference Include="WindowsDesktop, Version=10.0.17763.0">
+      <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.17134.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.17763.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>

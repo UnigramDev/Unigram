@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Utils;
-using Unigram.Core.Common;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
+using Unigram.Collections;
 
 namespace Unigram.ViewModels.Dialogs
 {

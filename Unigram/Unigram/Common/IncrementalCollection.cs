@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Unigram.Collections;
 using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -17,7 +18,7 @@ namespace Unigram.Common
 
     }
 
-    public abstract class IncrementalCollection<T> : ObservableCollection<T>, IGroupSupportIncrementalLoading
+    public abstract class IncrementalCollection<T> : MvxObservableCollection<T>, IGroupSupportIncrementalLoading
     {
         private bool _hasMoreItems = true;
         public bool HasMoreItems

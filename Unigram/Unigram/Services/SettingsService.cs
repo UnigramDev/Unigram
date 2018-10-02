@@ -54,15 +54,12 @@ namespace Unigram.Services
 
         void Clear();
     }
-}
 
-namespace Unigram.Common
-{
-    public class ApplicationSettingsBase
+    public class SettingsServiceBase
     {
         protected readonly ApplicationDataContainer _container;
 
-        public ApplicationSettingsBase(ApplicationDataContainer container = null)
+        public SettingsServiceBase(ApplicationDataContainer container = null)
         {
             _container = container ?? ApplicationData.Current.LocalSettings;
         }
@@ -123,7 +120,7 @@ namespace Unigram.Common
         }
     }
 
-    public class SettingsService : ApplicationSettingsBase, ISettingsService
+    public class SettingsService : SettingsServiceBase, ISettingsService
     {
         private static SettingsService _current;
         public static SettingsService Current
@@ -664,7 +661,7 @@ namespace Unigram.Common
         }
     }
 
-    public class NotificationsSettings : ApplicationSettingsBase
+    public class NotificationsSettings : SettingsServiceBase
     {
         public NotificationsSettings(ApplicationDataContainer container)
             : base(container)
@@ -758,7 +755,7 @@ namespace Unigram.Common
         }
     }
 
-    public class AppearanceSettings : ApplicationSettingsBase
+    public class AppearanceSettings : SettingsServiceBase
     {
         public AppearanceSettings()
             : base(ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always))
@@ -786,7 +783,7 @@ namespace Unigram.Common
         }
     }
 
-    public class StickersSettings : ApplicationSettingsBase
+    public class StickersSettings : SettingsServiceBase
     {
         public StickersSettings(ApplicationDataContainer container)
             : base(container)
@@ -812,7 +809,7 @@ namespace Unigram.Common
         }
     }
 
-    public class PasscodeLockSettings : ApplicationSettingsBase
+    public class PasscodeLockSettings : SettingsServiceBase
     {
         public PasscodeLockSettings()
             : base(ApplicationData.Current.LocalSettings.CreateContainer("PasscodeLock", ApplicationDataCreateDisposition.Always))

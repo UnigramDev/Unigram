@@ -3,6 +3,8 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Unigram.Common;
+using Unigram.Services;
+using Windows.Storage;
 
 namespace Unigram.Logs
 {
@@ -69,8 +71,30 @@ namespace Unigram.Logs
             var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
 
             str = string.Format("{0} {1}{2}", timestamp, str, Environment.NewLine);
-            FileUtils.Write(_fileSyncRoot, DirectoryName, FileName, str);
+            Write(_fileSyncRoot, DirectoryName, FileName, str);
             callback?.Invoke();
+        }
+
+        public static void Write(object syncRoot, string directoryName, string fileName, string str)
+        {
+            lock (syncRoot)
+            {
+                if (!Directory.Exists(GetFileName(directoryName)))
+                {
+                    Directory.CreateDirectory(GetFileName(directoryName));
+                }
+
+                using (var file = File.Open(Path.Combine(GetFileName(directoryName), fileName), FileMode.Append))
+                {
+                    byte[] bytes = Encoding.UTF8.GetBytes(str);
+                    file.Write(bytes, 0, bytes.Length);
+                }
+            }
+        }
+
+        public static string GetFileName(string fileName)
+        {
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, fileName);
         }
 
         private const string DirectoryName = "Logs";

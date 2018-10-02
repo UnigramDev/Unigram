@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
 
-namespace Unigram.Core.Helpers
+namespace Unigram.Common
 {
     // ColorHelper is a set of color conversion utilities
     public static class ColorsHelper

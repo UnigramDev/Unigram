@@ -11,7 +11,6 @@ using Template10.Utils;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Core.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Settings;

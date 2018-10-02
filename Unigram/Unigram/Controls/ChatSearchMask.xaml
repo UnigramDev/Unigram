@@ -254,6 +254,7 @@
                 Click="Search_Click"
                 FontSize="18"
                 AllowFocusOnInteraction="False"
+                Height="{ThemeResource AppBarThemeCompactHeight}"
                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
         </Grid>
 
@@ -304,8 +305,6 @@
 
             <controls:GlyphButton Command="{x:Bind ViewModel.PreviousCommand}" Glyph="&#xE0A0;" AllowFocusOnInteraction="False" Grid.Column="3"/>
             <controls:GlyphButton Command="{x:Bind ViewModel.NextCommand}" Glyph="&#xE0A1;" AllowFocusOnInteraction="False" Grid.Column="4"/>
-
-            <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource TelegramSeparatorBrush}" Grid.ColumnSpan="5"/>
         </Grid>
     </Grid>
 </UserControl>

@@ -8,7 +8,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Views;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.ApplicationModel;
 using Windows.Foundation;
@@ -35,7 +35,6 @@ using Unigram.ViewModels.Users;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages.Content;
 using Unigram.Controls.Messages;
-using Unigram.Services;
 using Unigram.ViewModels.Dialogs;
 using Unigram.ViewModels.Delegates;
 
@@ -1351,6 +1350,11 @@ namespace Unigram.Views
 
         public void OpenLocation(Location location, string title)
         {
+        }
+
+        public void OpenLiveLocation(MessageViewModel message)
+        {
+
         }
 
         public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)

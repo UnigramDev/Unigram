@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Unigram.Core.Common;
+using Unigram.Collections;
 using Unigram.Services;
 
 namespace Unigram.ViewModels

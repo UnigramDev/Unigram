@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Core.Helpers;
-using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.Storage;

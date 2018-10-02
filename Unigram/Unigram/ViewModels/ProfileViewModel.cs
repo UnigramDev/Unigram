@@ -29,7 +29,7 @@ using Unigram.Collections;
 using Unigram.ViewModels.Chats;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Chats;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
 using Windows.ApplicationModel.DataTransfer;

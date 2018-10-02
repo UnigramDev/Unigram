@@ -14,7 +14,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Collections;
 
-namespace Unigram.Core.Common
+namespace Unigram.Collections
 {
     public class MvxObservableCollection<T>
         : ObservableCollection<T>

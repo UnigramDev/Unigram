@@ -52,91 +52,91 @@ namespace Unigram.Views.Settings
         private int _advanced;
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
-            _advanced++;
+            //_advanced++;
 
-            if (_advanced >= 7)
-            {
-                Options.Opacity = 1;
+            //if (_advanced >= 7)
+            //{
+            //    Options.Opacity = 1;
 
-                var flyout = new MenuFlyout();
-                var import = new MenuFlyoutItem { Text = "Import palette" };
+            //    var flyout = new MenuFlyout();
+            //    var import = new MenuFlyoutItem { Text = "Import palette" };
 
-                import.Click += Import_Click;
+            //    import.Click += Import_Click;
 
-                flyout.Items.Add(import);
+            //    flyout.Items.Add(import);
 
-                var exists = File.Exists(FileUtils.GetFileName("colors.palette"));
-                if (exists)
-                {
-                    var export = new MenuFlyoutItem { Text = "Export palette" };
-                    var remove = new MenuFlyoutItem { Text = "Remove palette" };
+            //    var exists = File.Exists(FileUtils.GetFileName("colors.palette"));
+            //    if (exists)
+            //    {
+            //        var export = new MenuFlyoutItem { Text = "Export palette" };
+            //        var remove = new MenuFlyoutItem { Text = "Remove palette" };
 
-                    export.Click += Export_Click;
-                    remove.Click += Remove_Click;
+            //        export.Click += Export_Click;
+            //        remove.Click += Remove_Click;
 
-                    flyout.Items.Add(export);
-                    flyout.Items.Add(remove);
-                }
+            //        flyout.Items.Add(export);
+            //        flyout.Items.Add(remove);
+            //    }
 
-                flyout.ShowAt((Button)sender);
-            }
+            //    flyout.ShowAt((Button)sender);
+            //}
         }
 
         private async void Import_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new FileOpenPicker();
-            picker.FileTypeFilter.Add(".palette");
+            //var picker = new FileOpenPicker();
+            //picker.FileTypeFilter.Add(".palette");
 
-            var file = await picker.PickSingleFileAsync();
-            if (file == null)
-            {
-                return;
-            }
+            //var file = await picker.PickSingleFileAsync();
+            //if (file == null)
+            //{
+            //    return;
+            //}
 
-            var palette = await FileUtils.CreateFileAsync("colors.palette");
-            await file.CopyAndReplaceAsync(palette);
+            //var palette = await FileUtils.CreateFileAsync("colors.palette");
+            //await file.CopyAndReplaceAsync(palette);
 
-            Theme.Current.Update();
-            //App.NotifyThemeChanged();
+            //Theme.Current.Update();
+            ////App.NotifyThemeChanged();
 
-            UpdatePreview(true);
+            //UpdatePreview(true);
         }
 
         private async void Export_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new FileSavePicker();
-            picker.FileTypeChoices.Add("Palette", new[] { ".palette" });
-            picker.SuggestedFileName = "colors.palette";
+            //var picker = new FileSavePicker();
+            //picker.FileTypeChoices.Add("Palette", new[] { ".palette" });
+            //picker.SuggestedFileName = "colors.palette";
 
-            var file = await picker.PickSaveFileAsync();
-            if (file == null)
-            {
-                return;
-            }
+            //var file = await picker.PickSaveFileAsync();
+            //if (file == null)
+            //{
+            //    return;
+            //}
 
-            var palette = await FileUtils.TryGetItemAsync("colors.palette");
-            if (palette == null)
-            {
-                return;
-            }
+            //var palette = await FileUtils.TryGetItemAsync("colors.palette");
+            //if (palette == null)
+            //{
+            //    return;
+            //}
 
-            await ((StorageFile)palette).CopyAndReplaceAsync(file);
+            //await ((StorageFile)palette).CopyAndReplaceAsync(file);
         }
 
         private async void Remove_Click(object sender, RoutedEventArgs e)
         {
-            var palette = await FileUtils.TryGetItemAsync("colors.palette");
-            if (palette == null)
-            {
-                return;
-            }
+            //var palette = await FileUtils.TryGetItemAsync("colors.palette");
+            //if (palette == null)
+            //{
+            //    return;
+            //}
 
-            await palette.DeleteAsync();
+            //await palette.DeleteAsync();
 
-            Theme.Current.Update();
-            //App.NotifyThemeChanged();
+            //Theme.Current.Update();
+            ////App.NotifyThemeChanged();
 
-            UpdatePreview(true);
+            //UpdatePreview(true);
         }
 
 

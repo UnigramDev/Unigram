@@ -12,7 +12,7 @@ using System.Reflection;
 using Telegram.Td.Api;
 using Newtonsoft.Json.Linq;
 
-namespace Unigram.Core.Services
+namespace Unigram.Services
 {
     public class TLSerializationService : ISerializationService
     {

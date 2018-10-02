@@ -1,0 +1,22 @@
+﻿<Page
+    x:Class="Unigram.Views.LiveLocationPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
+      mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <maps:MapControl x:Name="Map" MapServiceToken="05wFBCi3igV05Qwo43MP~lcpzO5UGwDSGj0DYrlayPA~Am2tMY6A9-vRSedZPL-yuUfUoVoRd0FcQIoPh0xQErRotbnird_u0IYQOJrODViy"/>
+
+        <ListView ItemsSource="{x:Bind ViewModel.Items}" Grid.Column="1">
+            
+        </ListView>
+    </Grid>
+</Page>

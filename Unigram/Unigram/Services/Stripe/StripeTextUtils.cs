@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Unigram.Core.Stripe
+namespace Unigram.Services.Stripe
 {
     public class StripeTextUtils
     {

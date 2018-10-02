@@ -87,54 +87,6 @@ namespace Unigram.Common
             return flag;
         }
 
-        public static T OpenObjectFromMTProtoFile<T>(object syncRoot, string fileName)
-        {
-            try
-            {
-                if (!File.Exists(FileUtils.GetFileName(fileName)))
-                {
-                    return default(T);
-                }
-
-                lock (syncRoot)
-                {
-                    //using (var fileStream = FileUtils.GetLocalFileStreamForRead(fileName))
-                    //{
-                    //    if (fileStream.Length > 0)
-                    //    {
-                    //using (var from = TLObjectSerializer.CreateReader(FileUtils.GetFileName(fileName)))
-                    //{
-                    //    from.ReadUInt32();
-                    //    return (T)Activator.CreateInstance(typeof(T), from);
-                    //    //return TLFactory.Read<T>(from);
-                    //}
-                    //    }
-                    //}
-                }
-            }
-            catch (Exception e)
-            {
-
-            }
-
-            return default(T);
-        }
-
-        public static void SaveObjectToMTProtoFile<T>(object syncRoot, string fileName, T data)
-        {
-            try
-            {
-                lock (syncRoot)
-                {
-                    FileUtils.SaveWithTempFile(fileName, data);
-                }
-            }
-            catch (Exception e)
-            {
-
-            }
-        }
-
         public static DateTime ToDateTime(int? date)
         {
             var ticks = date.Value;

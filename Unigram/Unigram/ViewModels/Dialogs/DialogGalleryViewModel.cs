@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Core.Common;
 using Unigram.Services;
 
 namespace Unigram.ViewModels.Dialogs

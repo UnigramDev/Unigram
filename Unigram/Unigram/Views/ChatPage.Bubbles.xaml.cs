@@ -228,6 +228,11 @@ namespace Unigram.Views
             {
                 if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
                 {
+                    if (item.Presenter == null || item.Presenter.MediaPlayer == null)
+                    {
+                        return;
+                    }
+
                     // If the video player is muted, then let's play the video again with audio turned on
                     if (item.Presenter.MediaPlayer.IsMuted)
                     {
@@ -503,7 +508,7 @@ namespace Unigram.Views
                         }
                         else if (message.ForwardInfo is MessageForwardedPost post)
                         {
-                            var chat = message.ProtoService.GetChat(post.ForwardedFromChatId);
+                            var chat = message.ProtoService.GetChat(post.ChatId);
                             if (chat != null)
                             {
                                 photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30, 30);

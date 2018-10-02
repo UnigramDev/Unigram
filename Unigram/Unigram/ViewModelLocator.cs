@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Telegram.Td;
 using Template10.Services.ViewService;
 using Unigram.Common;
-using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.BasicGroups;
@@ -116,9 +115,9 @@ namespace Unigram
                 builder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
                 builder.RegisterType<LiveLocationService>().As<ILiveLocationService>().SingleInstance();
                 builder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
-                builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
+                //builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
                 builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
-                builder.RegisterType<HockeyAppUpdateService>().As<IHockeyAppUpdateService>().SingleInstance();
+                builder.RegisterType<HockeyUpdateService>().As<IHockeyUpdateService>().SingleInstance();
 
                 // Disabled due to crashes on Mobile: 
                 // The RPC server is unavailable.
@@ -166,6 +165,7 @@ namespace Unigram
                 builder.RegisterType<SupergroupAddAdministratorViewModel>();
                 builder.RegisterType<SupergroupAddRestrictedViewModel>();
                 builder.RegisterType<BasicGroupEditViewModel>();// .SingleInstance();
+                builder.RegisterType<LiveLocationViewModel>();
                 builder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
                 builder.RegisterType<ChatInviteLinkViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupAdministratorsViewModel>();// .SingleInstance();

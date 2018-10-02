@@ -8,7 +8,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;

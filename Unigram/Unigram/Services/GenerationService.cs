@@ -8,8 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Core.Common;
-using Unigram.Core.Helpers;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Effects;

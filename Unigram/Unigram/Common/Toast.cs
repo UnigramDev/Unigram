@@ -4,19 +4,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Unigram.Core.Managers;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 
-namespace Unigram.Core.Notifications
+namespace Unigram.Common
 {
     public class Toast
     {
-        protected const string TaskName = "ToastBackgroundTask";
-        protected const string TaskEndPoint = "Unigram.BackgroundTasks.Notifications.ToastBackgroundTask";
-
         public static async Task RegisterBackgroundTasks()
         {
             //BackgroundExecutionManager.RemoveAccess();
@@ -35,9 +31,54 @@ namespace Unigram.Core.Notifications
                 return;
             }
 
-            BackgroundTaskManager.Register("NewNotificationTask", "Unigram.Native.Tasks.NotificationTask", new PushNotificationTrigger());
-            BackgroundTaskManager.Register("NewInteractiveTask", null, new ToastNotificationActionTrigger());
+            Register("NewNotificationTask", "Unigram.Native.Tasks.NotificationTask", new PushNotificationTrigger());
+            Register("NewInteractiveTask", null, new ToastNotificationActionTrigger());
             //BackgroundTaskManager.Register("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
+        }
+
+        private static bool Register(string name, string entryPoint, IBackgroundTrigger trigger, Action onCompleted = null)
+        {
+            //var access = await BackgroundExecutionManager.RequestAccessAsync();
+            //if (access == BackgroundAccessStatus.DeniedByUser || access == BackgroundAccessStatus.DeniedBySystemPolicy)
+            //{
+            //    return false;
+            //}
+            try
+            {
+                foreach (var t in BackgroundTaskRegistration.AllTasks)
+                {
+                    if (t.Value.Name == name)
+                    {
+                        //t.Value.Unregister(false);
+                        return false;
+                    }
+                }
+
+                var builder = new BackgroundTaskBuilder();
+                builder.Name = name;
+
+                if (entryPoint != null)
+                {
+                    builder.TaskEntryPoint = entryPoint;
+                }
+
+                builder.SetTrigger(trigger);
+
+                var registration = builder.Register();
+                if (onCompleted != null)
+                {
+                    registration.Completed += (s, a) =>
+                    {
+                        onCompleted();
+                    };
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static int? GetSession(IActivatedEventArgs args)

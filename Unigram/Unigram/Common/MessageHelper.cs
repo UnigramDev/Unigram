@@ -32,6 +32,8 @@ using Unigram.Services;
 using Template10.Services.NavigationService;
 using Telegram.Td.Api;
 using Unigram.Entities;
+using Windows.Foundation.Metadata;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Common
 {
@@ -595,7 +597,16 @@ namespace Unigram.Common
 
                     var flyout = new MenuFlyout();
                     flyout.Items.Add(copy);
-                    flyout.ShowAt(sender, point);
+
+                    if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
+                    {
+                        // We don't want to unfocus the text are when the context menu gets opened
+                        flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
+                    }
+                    else
+                    {
+                        flyout.ShowAt(sender, point);
+                    }
 
                     args.Handled = true;
                 }
@@ -624,7 +635,16 @@ namespace Unigram.Common
                     var flyout = new MenuFlyout();
                     flyout.Items.Add(open);
                     flyout.Items.Add(copy);
-                    flyout.ShowAt(sender, point);
+
+                    if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
+                    {
+                        // We don't want to unfocus the text are when the context menu gets opened
+                        flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
+                    }
+                    else
+                    {
+                        flyout.ShowAt(sender, point);
+                    }
 
                     args.Handled = true;
                 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.UI.ViewManagement;

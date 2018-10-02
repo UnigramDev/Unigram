@@ -10,7 +10,7 @@ using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Delegates;

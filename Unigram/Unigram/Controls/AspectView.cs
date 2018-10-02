@@ -200,6 +200,11 @@ namespace Unigram.Controls
                 width = 200;
                 height = 200;
             }
+            else if (constraint is WebPage webPage)
+            {
+                width = webPage.EmbedWidth;
+                height = webPage.EmbedHeight;
+            }
 
             if (constraint is PhotoSize photoSize)
             {

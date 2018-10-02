@@ -14,6 +14,7 @@ namespace Unigram.ViewModels.Delegates
         void OpenWebPage(WebPage webPage);
         void OpenSticker(Sticker sticker);
         void OpenLocation(Location location, string title);
+        void OpenLiveLocation(MessageViewModel message);
         void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button);
         void OpenMedia(MessageViewModel message, FrameworkElement target);
         void PlayMessage(MessageViewModel message);

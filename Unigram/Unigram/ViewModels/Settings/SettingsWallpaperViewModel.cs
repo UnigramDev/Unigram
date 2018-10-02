@@ -5,9 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Core.Common;
-using Unigram.Core.Helpers;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Windows.Storage;
@@ -69,7 +68,7 @@ namespace Unigram.ViewModels.Settings
                 IsLocal = true;
                 SelectedItem = null;
 
-                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetFilePath(Constants.WallpaperFileName));
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync($"{SessionId}\\{Constants.WallpaperFileName}");
                 if (item is StorageFile file)
                 {
                     using (var stream = await file.OpenReadAsync())

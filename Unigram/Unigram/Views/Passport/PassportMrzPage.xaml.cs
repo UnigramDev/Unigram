@@ -7,7 +7,6 @@ using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Unigram.Common;
-using Unigram.Core.Helpers;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Imaging;

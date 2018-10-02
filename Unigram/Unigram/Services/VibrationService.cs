@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using HapticsDevice = Windows.Devices.Haptics.VibrationDevice;
 using PhoneDevice = Windows.Phone.Devices.Notification.VibrationDevice;
 
-namespace Unigram.Core.Services
+namespace Unigram.Services
 {
     public interface IVibrationService
     {

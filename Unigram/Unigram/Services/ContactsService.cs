@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Core.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.UserDataAccounts;

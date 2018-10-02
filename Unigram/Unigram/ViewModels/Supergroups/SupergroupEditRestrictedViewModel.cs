@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views;

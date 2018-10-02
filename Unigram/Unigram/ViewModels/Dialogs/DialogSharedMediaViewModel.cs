@@ -494,6 +494,11 @@ namespace Unigram.ViewModels.Dialogs
         {
         }
 
+        public void OpenLiveLocation(MessageViewModel message)
+        {
+
+        }
+
         public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)
         {
         }

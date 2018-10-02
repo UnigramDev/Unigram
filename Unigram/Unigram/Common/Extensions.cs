@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
-using Unigram.Core.Common;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
@@ -19,6 +18,7 @@ using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
+using Windows.Storage.FileProperties;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -90,6 +90,35 @@ namespace Unigram.Common
             {
                 return null;
             }
+        }
+
+        public static string RegexReplace(this string input, string pattern, string replacement)
+        {
+            return Regex.Replace(input, pattern, replacement);
+        }
+
+        public static uint GetHeight(this ImageProperties props)
+        {
+            return props.Height;
+            return props.Orientation == PhotoOrientation.Rotate180 ? props.Height : props.Width;
+        }
+
+        public static uint GetWidth(this ImageProperties props)
+        {
+            return props.Width;
+            return props.Orientation == PhotoOrientation.Rotate180 ? props.Width : props.Height;
+        }
+
+
+
+        public static uint GetHeight(this VideoProperties props)
+        {
+            return props.Orientation == VideoOrientation.Rotate180 || props.Orientation == VideoOrientation.Normal ? props.Height : props.Width;
+        }
+
+        public static uint GetWidth(this VideoProperties props)
+        {
+            return props.Orientation == VideoOrientation.Rotate180 || props.Orientation == VideoOrientation.Normal ? props.Width : props.Height;
         }
 
         /// <summary>
@@ -183,6 +212,33 @@ namespace Unigram.Common
             }
 
             return default(T);
+        }
+
+        public static bool IsEmpty<T>(this ICollection<T> items)
+        {
+            return items.Count == 0;
+        }
+
+        public static void PutRange<TKey, TItem>(this IDictionary<TKey, TItem> list, IDictionary<TKey, TItem> source)
+        {
+            foreach (var item in source)
+            {
+                list[item.Key] = item.Value;
+            }
+        }
+
+
+        public static bool Equals(this string input, params string[] check)
+        {
+            foreach (var str in check)
+            {
+                if (input.Equals(str))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static bool IsEmpty(this Rect rect)

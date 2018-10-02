@@ -34,7 +34,6 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Unigram.Controls.Cells;
 using System.Reactive.Linq;
-using Unigram.Core.Common;
 using System.Threading.Tasks;
 
 namespace Unigram.Controls.Views

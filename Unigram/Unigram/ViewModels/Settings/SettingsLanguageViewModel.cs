@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Unigram.Core.Common;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
@@ -11,6 +10,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Windows.Globalization;
 using Template10.Common;
+using Unigram.Collections;
 
 namespace Unigram.ViewModels.Settings
 {

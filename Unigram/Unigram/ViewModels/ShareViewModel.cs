@@ -9,7 +9,6 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Core.Common;
 using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;

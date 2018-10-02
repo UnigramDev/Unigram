@@ -8,7 +8,7 @@ using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.Entities;
 using Unigram.Services;
 using Unigram.Views;

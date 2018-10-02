@@ -11,7 +11,6 @@ using Template10.Services.NavigationService;
 using Template10.Services.SerializationService;
 using Template10.Services.ViewService;
 using Unigram.Controls;
-using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.Views;
