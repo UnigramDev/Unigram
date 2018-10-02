@@ -12,8 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+using Unigram.Common;
 
 namespace Unigram.Controls.Views
 {
@@ -54,6 +53,18 @@ namespace Unigram.Controls.Views
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            if (string.IsNullOrEmpty(Text))
+            {
+                VisualUtilities.ShakeView(TextField);
+                args.Cancel = true;
+                return;
+            }
+
+            if (!Uri.TryCreate(Link, UriKind.Absolute, out Uri result))
+            {
+                VisualUtilities.ShakeView(LinkField);
+                args.Cancel = true;
+            }
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
