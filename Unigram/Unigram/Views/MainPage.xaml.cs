@@ -534,20 +534,6 @@ namespace Unigram.Views
                 MasterDetail.Initialize("Main", Frame, ViewModel.ProtoService.SessionId);
                 MasterDetail.NavigationService.Frame.Navigated += OnNavigated;
             }
-            else
-            {
-                while (MasterDetail.NavigationService.Frame.BackStackDepth > 1)
-                {
-                    MasterDetail.NavigationService.Frame.BackStack.RemoveAt(1);
-                }
-
-                if (MasterDetail.NavigationService.Frame.CanGoBack)
-                {
-                    MasterDetail.NavigationService.Frame.GoBack();
-                }
-
-                MasterDetail.NavigationService.Frame.ForwardStack.Clear();
-            }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
             ViewModel.Chats.NavigationService = MasterDetail.NavigationService;
