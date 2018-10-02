@@ -1771,9 +1771,7 @@ namespace Unigram.Views
 
                 if (string.IsNullOrEmpty(user.Username))
                 {
-                    //range.CharacterFormat.Underline = UnderlineType.Dash;
-                    range.CharacterFormat.ForegroundColor = Colors.Red;
-                    range.Link = $"\"{user.Id}\"";
+                    range.Link = $"\"tg-user://{user.Id}\"";
                     start += range.Link.Length + "HYPERLINK ".Length;
                 }
 
@@ -2237,7 +2235,7 @@ namespace Unigram.Views
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36, 36);
+            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30, 30);
         }
 
         public void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification)
@@ -2678,7 +2676,7 @@ namespace Unigram.Views
             var chat = ViewModel.Chat;
             if (chat != null && chat.UpdateFile(file))
             {
-                Photo.Source = PlaceholderHelper.GetChat(null, chat, 36, 36);
+                Photo.Source = PlaceholderHelper.GetChat(null, chat, 30, 30);
             }
 
             InlinePanel.UpdateFile(file);

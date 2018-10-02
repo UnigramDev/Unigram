@@ -135,12 +135,16 @@ namespace Unigram.Controls
 
             var clipboard = Clipboard.GetContent();
 
+            var clone = Document.Selection.GetClone();
+            clone.StartOf(TextRangeUnit.Link, true);
+            var mention = TryGetUserId(clone, out int userId);
+
             var formatting = new MenuFlyoutSubItem { Text = "Formatting" };
             CreateFlyoutItem(formatting.Items, length && format.Bold == FormatEffect.Off, ContextBold_Click, "Bold", VirtualKey.B);
             CreateFlyoutItem(formatting.Items, length && format.Italic == FormatEffect.Off, ContextItalic_Click, "Italic", VirtualKey.I);
             CreateFlyoutItem(formatting.Items, length && format.Name != "Consolas", ContextMonospace_Click, "Monospace", VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(formatting.Items, true, ContextLink_Click, "Create link", VirtualKey.K);
+            CreateFlyoutItem(formatting.Items, !mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : "Create link", VirtualKey.K);
             formatting.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(formatting.Items, length && !IsDefault(format), ContextPlain_Click, "Plain text", VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
@@ -198,22 +202,23 @@ namespace Unigram.Controls
 
         private async void ContextLink_Click()
         {
+            var range = Document.Selection.GetClone();
             var clone = Document.Selection.GetClone();
             clone.StartOf(TextRangeUnit.Link, true);
 
             if (clone.Link.Length > 0)
             {
-                Document.Selection.Expand(TextRangeUnit.Link);
+                range.Expand(TextRangeUnit.Link);
             }
 
-            Document.Selection.GetText(TextGetOptions.NoHidden, out string text);
+            range.GetText(TextGetOptions.NoHidden, out string text);
 
-            var start = Math.Min(Document.Selection.StartPosition, Document.Selection.EndPosition);
-            var end = Math.Max(Document.Selection.StartPosition, Document.Selection.EndPosition);
+            var start = Math.Min(range.StartPosition, range.EndPosition);
+            var end = Math.Max(range.StartPosition, range.EndPosition);
 
             var dialog = new CreateLinkView();
             dialog.Text = text;
-            dialog.Link = Document.Selection.Link.Trim('"');
+            dialog.Link = range.Link.Trim('"');
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -222,12 +227,14 @@ namespace Unigram.Controls
             }
 
             Document.BatchDisplayUpdates();
-            Document.Selection.SetRange(start, end);
-            Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
+            range.SetRange(start, end);
+            range.CharacterFormat = Document.GetDefaultCharacterFormat();
 
-            Document.Selection.SetText(TextSetOptions.Unlink, dialog.Text);
-            Document.Selection.SetRange(start, start + dialog.Text.Length);
-            Document.Selection.Link = $"\"{dialog.Link}\"";
+            range.SetText(end > start ? TextSetOptions.Unlink : TextSetOptions.None, dialog.Text);
+            range.SetRange(start, start + dialog.Text.Length);
+            range.Link = $"\"{dialog.Link}\"";
+
+            Document.Selection.SetRange(range.EndPosition, range.EndPosition);
             Document.ApplyDisplayUpdates();
         }
 
@@ -282,6 +289,18 @@ namespace Unigram.Controls
                 //document.TextScript == format.TextScript &&
                 document.Underline == format.Underline &&
                 document.Weight == format.Weight;
+        }
+
+        private bool TryGetUserId(ITextRange range, out int userId)
+        {
+            var link = range.Link.Trim('"');
+            if (link.StartsWith("tg-user://") && int.TryParse(link.Substring("tg-user://".Length), out userId))
+            {
+                return true;
+            }
+
+            userId = 0;
+            return false;
         }
 
         private void ContextUndo_Click()
@@ -1117,6 +1136,11 @@ namespace Unigram.Controls
 
         public async Task SendAsync()
         {
+            await ViewModel.SendMessageAsync(GetFormattedText(true));
+        }
+
+        public FormattedText GetFormattedText(bool clear = false)
+        {
             FormatText();
 
             Document.BatchDisplayUpdates();
@@ -1156,7 +1180,14 @@ namespace Unigram.Controls
                 {
                     range.GetText(TextGetOptions.NoHidden, out string value);
 
-                    entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = value.Length, Type = new TextEntityTypeTextUrl { Url = range.Link } });
+                    if (TryGetUserId(range, out int userId))
+                    {
+                        entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = value.Length, Type = new TextEntityTypeMentionName { UserId = userId } });
+                    }
+                    else
+                    {
+                        entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = value.Length, Type = new TextEntityTypeTextUrl { Url = range.Link.Trim('"') } });
+                    }
 
                     adjust += Math.Abs(range.Length) - value.Length;
                 }
@@ -1181,11 +1212,14 @@ namespace Unigram.Controls
                 i = range.EndPosition;
             }
 
-            Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
-            //Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
+            if (clear)
+            {
+                Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
+            }
+
             Document.ApplyDisplayUpdates();
 
-            await ViewModel.SendMessageAsync(text, entities);
+            return new FormattedText(text, entities);
         }
 
         public bool IsEmpty
@@ -1440,356 +1474,48 @@ namespace Unigram.Controls
 
         public void SetText(string text, IList<TextEntity> entities)
         {
-            if (entities != null && entities.Count > 0)
+            Document.BatchDisplayUpdates();
+            Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
+
+            if (!string.IsNullOrEmpty(text))
             {
-                entities = new List<TextEntity>(entities);
+                Document.SetText(TextSetOptions.None, text);
 
-                var builder = new StringBuilder(text);
-                var addToOffset = 0;
-
-                foreach (var entity in entities.ToList())
+                if (entities != null && entities.Count > 0)
                 {
-                    if (entity.Type is TextEntityTypeCode)
+                    foreach (var entity in entities)
                     {
-                        builder.Insert(entity.Offset + entity.Length + addToOffset, "`");
-                        builder.Insert(entity.Offset + addToOffset, "`");
-                        addToOffset += 2;
-                        entities.Remove(entity);
-                    }
-                    else if (entity.Type is TextEntityTypePre)
-                    {
-                        builder.Insert(entity.Offset + entity.Length + addToOffset, "```");
-                        builder.Insert(entity.Offset + addToOffset, "```");
-                        addToOffset += 6;
-                        entities.Remove(entity);
-                    }
-                    else if (entity.Type is TextEntityTypeBold)
-                    {
-                        builder.Insert(entity.Offset + entity.Length + addToOffset, "**");
-                        builder.Insert(entity.Offset + addToOffset, "**");
-                        addToOffset += 4;
-                        entities.Remove(entity);
-                    }
-                    else if (entity.Type is TextEntityTypeItalic)
-                    {
-                        builder.Insert(entity.Offset + entity.Length + addToOffset, "__");
-                        builder.Insert(entity.Offset + addToOffset, "__");
-                        addToOffset += 4;
-                        entities.Remove(entity);
-                    }
-                    else if (entity.Type is TextEntityTypeTextUrl textUrl)
-                    {
-                        builder.Insert(entity.Offset + entity.Length + addToOffset, $"]({textUrl.Url})");
-                        builder.Insert(entity.Offset + addToOffset, "[");
-                        addToOffset += 4 + textUrl.Url.Length;
-                        entities.Remove(entity);
-                    }
-                    else
-                    {
-                        entity.Offset += addToOffset;
-                    }
-                }
+                        var range = Document.GetRange(entity.Offset, entity.Offset + entity.Length);
 
-                text = builder.ToString();
-
-                var document = new RtfDocument(PaperSize.A4, PaperOrientation.Portrait, Lcid.English);
-                var segoe = document.CreateFont("Segoe UI");
-                var consolas = document.CreateFont("Consolas");
-                document.SetDefaultFont("Segoe UI");
-
-                var paragraph = document.AddParagraph();
-                var previous = 0;
-
-                foreach (var entity in entities)
-                {
-                    if (entity.Offset > previous)
-                    {
-                        paragraph.Text.Append(text.Substring(previous, entity.Offset - previous));
-                    }
-
-                    //if (type == TLType.MessageEntityBold)
-                    //{
-                    //    paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
-                    //    paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).FontStyle.addStyle(FontStyleFlag.Bold);
-                    //}
-                    //else if (type == TLType.MessageEntityItalic)
-                    //{
-                    //    paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
-                    //    paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).FontStyle.addStyle(FontStyleFlag.Italic);
-                    //}
-                    //else if (type == TLType.MessageEntityCode)
-                    //{
-                    //    paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
-                    //    paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).Font = consolas;
-                    //}
-                    //else if (type == TLType.MessageEntityPre)
-                    //{
-                    //    // TODO any additional
-                    //    paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
-                    //    paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).Font = consolas;
-                    //}
-                    //else 
-                    if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypePhoneNumber || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeCashtag || entity.Type is TextEntityTypeBotCommand)
-                    {
-                        paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
-                    }
-                    else if (entity.Type is TextEntityTypeTextUrl ||
-                             entity.Type is TextEntityTypeMentionName)
-                    {
-                        object data = null;
-                        if (entity.Type is TextEntityTypeTextUrl textUrl)
+                        if (entity.Type is TextEntityTypeBold)
                         {
-                            data = textUrl.Url;
+                            range.CharacterFormat.Bold = FormatEffect.On;
+                        }
+                        else if (entity.Type is TextEntityTypeItalic)
+                        {
+                            range.CharacterFormat.Italic = FormatEffect.On;
+                        }
+                        else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                        {
+                            range.CharacterFormat.Name = "Consolas";
+                        }
+                        else if (entity.Type is TextEntityTypeTextUrl textUrl)
+                        {
+                            range.Link = $"\"{textUrl.Url}\"";
                         }
                         else if (entity.Type is TextEntityTypeMentionName mentionName)
                         {
-                            data = mentionName.UserId;
+                            range.Link = $"\"tg-user://{mentionName.UserId}\"";
                         }
-
-                        //var hyper = new Hyperlink();
-                        //hyper.Click += (s, args) => Hyperlink_Navigate(type, data);
-                        //hyper.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
-                        //hyper.Foreground = foreground;
-                        //paragraph.Inlines.Add(hyper);
-
-                        paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
-                        paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).LocalHyperlink = data.ToString();
                     }
-
-                    previous = entity.Offset + entity.Length;
                 }
 
-                if (text.Length > previous)
-                {
-                    paragraph.Text.Append(text.Substring(previous));
-                }
-
-                Document.SetText(TextSetOptions.FormatRtf, document.Render());
-                Document.GetRange(0, text.Length).CharacterFormat.ForegroundColor = Document.GetDefaultCharacterFormat().ForegroundColor;
-                Document.Selection.SetRange(text.Length, text.Length);
+                // We need to get full text as hidden content has been added and we don't want to hardcode lengths
+                Document.GetText(TextGetOptions.None, out string result);
+                Document.Selection.SetRange(result.Length, result.Length);
             }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(text))
-                {
-                    Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
-                }
-                else
-                {
-                    Document.SetText(TextSetOptions.None, text);
-                    Document.Selection.SetRange(text.Length, text.Length);
-                }
-            }
-        }
-    }
 
-    public class RtfToTLParser : RtfSarParser
-    {
-        private bool _bold;
-        private bool _italic;
-        private bool _firstPard;
-
-        private string _groupText;
-        private string _lastKey;
-        private int? _field;
-
-        private int _length;
-
-        private Stack<TextEntity> _entities;
-
-        public List<TextEntity> Entities { get; private set; }
-
-        public override void StartRtfDocument()
-        {
-            _entities = new Stack<TextEntity>();
-            Entities = null;
-
-            _bold = false;
-            _italic = false;
-            _firstPard = false;
-
-            _groupText = null;
-            _lastKey = null;
-            _field = null;
-
-            _length = 0;
-        }
-
-        public override void StartRtfGroup()
-        {
-            if (_firstPard)
-            {
-                if (_field.HasValue)
-                    _field++;
-            }
-        }
-
-        public override void RtfControl(string key, bool hasParameter, int parameter)
-        {
-            if (_firstPard && key == "'" && hasParameter)
-            {
-                if (_field.HasValue && _lastKey == "fldinst")
-                {
-                    _groupText += (char)parameter;
-                }
-                else if (_field.HasValue && _lastKey.Equals("fldrslt"))
-                {
-                    _groupText += (char)parameter;
-                }
-                else if (_bold || _italic)
-                {
-                    _groupText += (char)parameter;
-                }
-                else
-                {
-                    _groupText += (char)parameter;
-                    HandleBasicText();
-                    _groupText = string.Empty;
-                }
-            }
-        }
-
-        public override void RtfKeyword(string key, bool hasParameter, int parameter)
-        {
-            if (key.Equals("pard"))
-            {
-                _firstPard = true;
-            }
-            else if (key.Equals("field"))
-            {
-                _field = !hasParameter || (hasParameter && parameter == 1) ? new int?(0) : null;
-            }
-            else if (key.Equals("b"))
-            {
-                if (!hasParameter || (hasParameter && parameter == 1))
-                {
-                    _groupText = string.Empty;
-                    _bold = true;
-                }
-                else
-                {
-                    HandleBoldText();
-                    _groupText = string.Empty;
-                    _bold = false;
-                }
-            }
-            else if (key.Equals("i"))
-            {
-                if (!hasParameter || (hasParameter && parameter == 1))
-                {
-                    _groupText = string.Empty;
-                    _italic = true;
-                }
-                else
-                {
-                    HandleItalicText();
-                    _groupText = string.Empty;
-                    _italic = false;
-                }
-            }
-            else if (key.Equals("fldinst") || key.Equals("fldrslt"))
-            {
-                _lastKey = key;
-            }
-        }
-
-        public override void RtfText(string text)
-        {
-            if (_firstPard)
-            {
-                if (_field.HasValue && _lastKey == "fldinst")
-                {
-                    if (text.IndexOf("HYPERLINK") == 0)
-                        _groupText += text.Substring("HYPERLINK ".Length);
-                    else
-                        _groupText += text;
-                }
-                else if (_field.HasValue && _lastKey.Equals("fldrslt"))
-                {
-                    _groupText += text;
-                }
-                else if (_bold || _italic)
-                {
-                    _groupText += text;
-                }
-                else
-                {
-                    _groupText += text;
-                    HandleBasicText();
-                    _groupText = string.Empty;
-                }
-            }
-        }
-
-        public override void EndRtfGroup()
-        {
-            if (_firstPard)
-            {
-                if (_bold) HandleBoldText();
-                else if (_italic) HandleItalicText();
-                else if (_field.HasValue && _field == 2 && _lastKey.Equals("fldinst")) HandleHyperlinkUrl();
-                else if (_field.HasValue && _field == 2 && _lastKey.Equals("fldrslt")) HandleHyperlinkText();
-                else if (string.IsNullOrEmpty(_groupText) == false) HandleBasicText();
-
-                _bold = false;
-                _italic = false;
-                _lastKey = string.Empty;
-                _groupText = string.Empty;
-
-                if (_field.HasValue)
-                    _field--;
-
-                if (_field.HasValue && _field < 0)
-                    _field = null;
-            }
-        }
-
-        private void HandleBoldText()
-        {
-            _entities.Push(new TextEntity(_length, _groupText.Length, new TextEntityTypeBold()));
-            _length += _groupText.Length;
-        }
-
-        private void HandleItalicText()
-        {
-            _entities.Push(new TextEntity(_length, _groupText.Length, new TextEntityTypeItalic()));
-            _length += _groupText.Length;
-        }
-
-        private void HandleHyperlinkUrl()
-        {
-            if (int.TryParse(_groupText.Trim().Trim('"'), out int userId))
-            {
-                _entities.Push(new TextEntity(0, 0, new TextEntityTypeMentionName(userId)));
-            }
-        }
-
-        private void HandleHyperlinkText()
-        {
-            if (_entities.Count > 0)
-            {
-                var mention = _entities.Peek();
-                if (mention.Type is TextEntityTypeMentionName)
-                {
-                    mention.Offset = _length;
-                    mention.Length = _groupText.Length;
-                }
-
-                _length += _groupText.Length;
-            }
-        }
-
-        private void HandleBasicText()
-        {
-            _length += _groupText.Length;
-        }
-
-        public override void EndRtfDocument()
-        {
-            if (Entities == null)
-            {
-                Entities = new List<TextEntity>(_entities.Reverse());
-            }
+            Document.ApplyDisplayUpdates();
         }
     }
 }

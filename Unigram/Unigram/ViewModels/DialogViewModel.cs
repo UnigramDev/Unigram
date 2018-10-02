@@ -195,6 +195,15 @@ namespace Unigram.ViewModels
             //Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
 
             Aggregator.Subscribe(this);
+            Window.Current.Activated += Window_Activated;
+        }
+
+        private void Window_Activated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated)
+            {
+                SaveDraft();
+            }
         }
 
         //~DialogViewModel()
@@ -478,6 +487,17 @@ namespace Unigram.ViewModels
 
             field.Document.GetText(TextGetOptions.NoHidden, out string text);
             return text;
+        }
+
+        public FormattedText GetFormattedText()
+        {
+            var field = TextField;
+            if (field == null)
+            {
+                return null;
+            }
+
+            return field.GetFormattedText();
         }
 
         public bool IsEndReached()
@@ -1474,6 +1494,7 @@ namespace Unigram.ViewModels
         public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
         {
             Aggregator.Unsubscribe(this);
+            Window.Current.Activated -= Window_Activated;
 
             var chat = _chat;
             if (chat == null)
@@ -1738,7 +1759,12 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var messageText = GetText().Format();
+            var formattedText = GetFormattedText();
+            if (formattedText == null)
+            {
+                return;
+            }
+
             var reply = 0L;
 
             if (embedded != null && embedded.ReplyToMessage != null)
@@ -1747,9 +1773,9 @@ namespace Unigram.ViewModels
             }
 
             DraftMessage draft = null;
-            if (!string.IsNullOrWhiteSpace(messageText))
+            if (!string.IsNullOrWhiteSpace(formattedText.Text))
             {
-                draft = new DraftMessage(reply, new InputMessageText(GetFormattedText(messageText), false, false));
+                draft = new DraftMessage(reply, new InputMessageText(formattedText, false, false));
             }
 
             ProtoService.Send(new SetChatDraftMessage(_chat.Id, draft));
@@ -1954,6 +1980,11 @@ namespace Unigram.ViewModels
         private async void SendMessage(string args)
         {
             await SendMessageAsync(args);
+        }
+
+        public Task SendMessageAsync(FormattedText formattedText)
+        {
+            return SendMessageAsync(formattedText.Text, formattedText.Entities);
         }
 
         public async Task SendMessageAsync(string text, IList<TextEntity> entities = null)
