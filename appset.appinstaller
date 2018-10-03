@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppInstaller
+    xmlns="http://schemas.microsoft.com/appx/appinstaller/2017"
+    Version="1.0.0.0" 
+    Uri="https://raw.githubusercontent.com/UnigramDev/Unigram/develop/appset.appinstaller" > 
+   
+    <MainBundle 
+        Name="38833FF26BA1D.UnigramPreview"
+        Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB"
+        Version="2.1.1761"
+        Uri="https://www.dropbox.com/s/71rp48tj6g0csjd/Unigram_2.1.1761.0_x86_x64_arm.appxbundle?dl=1" />
+
+    <Dependencies>
+        <Package Name="Microsoft.NET.Native.Framework.1.7" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.7.25531.0" ProcessorArchitecture="x86" Uri="https://www.dropbox.com/s/0nj5nn4b5vhvz0p/Microsoft.NET.Native.Framework.1.7.appx?dl=1" />
+		<Package Name="Microsoft.NET.Native.Framework.1.7" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.7.25531.0" ProcessorArchitecture="x64" Uri="https://www.dropbox.com/s/sm971rrk8mdrjyj/Microsoft.NET.Native.Framework.1.7.appx?dl=1" />
+		
+        <Package Name="Microsoft.NET.Native.Runtime.1.7" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.7.25531.0" ProcessorArchitecture="x86" Uri="https://www.dropbox.com/s/yebukgwlkqs0kiy/Microsoft.NET.Native.Runtime.1.7.appx?dl=1" />
+		<Package Name="Microsoft.NET.Native.Runtime.1.7" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.7.25531.0" ProcessorArchitecture="x64" Uri="https://www.dropbox.com/s/64r11dzkx2geiz4/Microsoft.NET.Native.Runtime.1.7.appx?dl=1" />
+		
+        <Package Name="Microsoft.VCLibs.140.00" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="14.0.25426.0" ProcessorArchitecture="x86" Uri="https://www.dropbox.com/s/1dxnt0h196no4fe/Microsoft.VCLibs.x86.14.00.appx?dl=1" />
+		<Package Name="Microsoft.VCLibs.140.00" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="14.0.25426.0" ProcessorArchitecture="x64" Uri="https://www.dropbox.com/s/7m5zrzxgwypi54t/Microsoft.VCLibs.x64.14.00.appx?dl=1" />
+    </Dependencies>
+
+</AppInstaller>
