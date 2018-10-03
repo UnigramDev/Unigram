@@ -17,9 +17,6 @@
 
 <br>
 
-## Install from browser
-If you're running Windows 10 April 2018 Update you can install the app by [clicking here](ms-appinstaller:?source=https://raw.githubusercontent.com/UnigramDev/Unigram/develop/appset.appinstaller).
-
 ## Build instructions
 1. First, check that you have the [necessary tools](#requirements) installed.
 2. Go to <https://my.telegram.org/apps> and register a new app.
