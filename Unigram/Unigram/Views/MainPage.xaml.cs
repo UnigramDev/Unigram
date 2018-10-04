@@ -426,9 +426,14 @@ namespace Unigram.Views
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
             }
-            else if (SearchField.FocusState != FocusState.Unfocused || !string.IsNullOrEmpty(SearchField.Text))
+            else if (SearchField.FocusState != FocusState.Unfocused && !string.IsNullOrEmpty(SearchField.Text))
             {
                 SearchField.Text = string.Empty;
+                args.Handled = true;
+            }
+            else if (SearchField.FocusState != FocusState.Unfocused)
+            {
+                DialogsSearchListView.Focus(FocusState.Programmatic);
                 args.Handled = true;
             }
         }
@@ -473,13 +478,27 @@ namespace Unigram.Views
 
             if ((args.VirtualKey == Windows.System.VirtualKey.Up && alt) || (args.VirtualKey == Windows.System.VirtualKey.PageUp && ctrl) || (args.VirtualKey == Windows.System.VirtualKey.Tab && ctrl && shift))
             {
-                Scroll(true);
+                Scroll(true, true);
                 args.Handled = true;
             }
             else if ((args.VirtualKey == Windows.System.VirtualKey.Down && alt) || (args.VirtualKey == Windows.System.VirtualKey.PageDown && ctrl) || (args.VirtualKey == Windows.System.VirtualKey.Tab && ctrl && !shift))
             {
-                Scroll(false);
+                Scroll(false, true);
                 args.Handled = true;
+            }
+            else if (args.VirtualKey == Windows.System.VirtualKey.Up && !alt && !ctrl && !shift && !MasterDetail.NavigationService.CanGoBack && SearchField.FocusState == FocusState.Unfocused)
+            {
+                Scroll(true, false);
+                args.Handled = true;
+            }
+            else if (args.VirtualKey == Windows.System.VirtualKey.Down && !alt && !ctrl && !shift && !MasterDetail.NavigationService.CanGoBack && SearchField.FocusState == FocusState.Unfocused)
+            {
+                Scroll(false, false);
+                args.Handled = true;
+            }
+            else if (args.VirtualKey == Windows.System.VirtualKey.Home && !alt && !ctrl && !shift)
+            {
+                ChatsList.ScrollIntoView(ViewModel.Chats.Items.FirstOrDefault());
             }
             else if (((args.VirtualKey == Windows.System.VirtualKey.E || args.VirtualKey == Windows.System.VirtualKey.K) && ctrl && !alt && !shift) || args.VirtualKey == Windows.System.VirtualKey.Search)
             {
@@ -498,14 +517,9 @@ namespace Unigram.Views
             }
         }
 
-        public void Scroll(bool up)
+        public void Scroll(bool up, bool navigate)
         {
             var index = ChatsList.SelectedIndex;
-            if (index == -1)
-            {
-                return;
-            }
-
             if (up)
             {
                 index--;
@@ -518,8 +532,15 @@ namespace Unigram.Views
             if (index >= 0 && index < ViewModel.Chats.Items.Count)
             {
                 ChatsList.SelectedIndex = index;
-                Navigate(ChatsList.SelectedItem);
-                MasterDetail.NavigationService.RemoveLastIf(typeof(ChatPage));
+
+                if (navigate)
+                {
+                    Navigate(ChatsList.SelectedItem);
+                }
+            }
+            else if (index < 0 && up && !navigate)
+            {
+                Search_Click(null, null);
             }
         }
 
