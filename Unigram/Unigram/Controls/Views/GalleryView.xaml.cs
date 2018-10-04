@@ -447,7 +447,7 @@ namespace Unigram.Controls.Views
 
         private Visibility ConvertCompactVisibility(GalleryItem item)
         {
-            if (item.IsVideo)
+            if (item.IsVideo && !item.IsLoop)
             {
                 if (item is GalleryMessageItem message && message.IsHot)
                 {

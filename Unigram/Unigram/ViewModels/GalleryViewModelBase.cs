@@ -470,6 +470,23 @@ namespace Unigram.ViewModels
             }
         }
 
+        public override bool IsLoop
+        {
+            get
+            {
+                if (_message.Content is MessageAnimation)
+                {
+                    return true;
+                }
+                else if (_message.Content is MessageText text)
+                {
+                    return text.WebPage?.Animation != null;
+                }
+
+                return false;
+            }
+        }
+
         public override bool HasStickers
         {
             get
@@ -734,6 +751,8 @@ namespace Unigram.ViewModels
 
         public override bool HasStickers => _video.HasStickers;
 
+        public override bool IsVideo => true;
+
         public override bool CanSave => true;
     }
 
@@ -782,6 +801,7 @@ namespace Unigram.ViewModels
         public override string Caption => _caption;
 
         public override bool IsVideo => true;
+        public override bool IsLoop => true;
 
         public override bool CanSave => true;
     }
