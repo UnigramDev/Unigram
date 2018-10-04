@@ -428,6 +428,10 @@ namespace Unigram.ViewModels
                 {
                     viewModel = new DialogGalleryViewModel(ProtoService, Aggregator, message.ChatId, message.Get());
                 }
+                else if (webPage != null && webPage.IsInstantGallery())
+                {
+                    viewModel = await InstantGalleryViewModel.CreateAsync(ProtoService, Aggregator, message, webPage);
+                }
                 else
                 {
                     viewModel = new SingleGalleryViewModel(ProtoService, Aggregator, new GalleryMessageItem(ProtoService, message.Get()));

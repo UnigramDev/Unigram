@@ -272,6 +272,38 @@ namespace Unigram.Common
                  string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
         }
 
+        public static string ToPlainText(this RichText text)
+        {
+            switch (text)
+            {
+                case RichTextPlain plainText:
+                    return plainText.Text;
+                case RichTexts concatText:
+                    var builder = new StringBuilder();
+                    foreach (var concat in concatText.Texts)
+                    {
+                        builder.Append(ToPlainText(concat));
+                    }
+                    return builder.ToString();
+                case RichTextBold boldText:
+                    return ToPlainText(boldText.Text);
+                case RichTextEmailAddress emailText:
+                    return ToPlainText(emailText.Text);
+                case RichTextFixed fixedText:
+                    return ToPlainText(fixedText.Text);
+                case RichTextItalic italicText:
+                    return ToPlainText(italicText.Text);
+                case RichTextStrikethrough strikeText:
+                    return ToPlainText(strikeText.Text);
+                case RichTextUnderline underlineText:
+                    return ToPlainText(underlineText.Text);
+                case RichTextUrl urlText:
+                    return ToPlainText(urlText.Text);
+                default:
+                    return null;
+            }
+        }
+
         public static Photo GetPhoto(this Message message)
         {
             switch (message.Content)

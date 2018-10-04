@@ -4,8 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Collections;
+using Unigram.Common;
 using Unigram.Services;
+using Unigram.Views;
 
 namespace Unigram.ViewModels
 {
@@ -20,16 +23,58 @@ namespace Unigram.ViewModels
             Items.CollectionChanged += OnCollectionChanged;
         }
 
-        //public InstantGalleryViewModel(TLMessage message, TLWebPage webPage)
-        //    : base(null, null)
-        //{
-        //    _shouldGroup = true;
+        public static async Task<InstantGalleryViewModel> CreateAsync(IProtoService protoService, IEventAggregator aggregator, MessageViewModel message, WebPage webPage)
+        {
+            var items = new List<GalleryItem>();
 
-        //    Items = new MvxObservableCollection<GalleryItem>(GetWebPagePhotos(message, webPage));
-        //    FirstItem = Items.FirstOrDefault();
-        //    SelectedItem = Items.FirstOrDefault();
-        //    TotalItems = Items.Count;
-        //}
+            var response = await protoService.SendAsync(new GetWebPageInstantView(webPage.Url, false));
+            if (response is WebPageInstantView instantView && instantView.IsFull)
+            {
+                foreach (var block in instantView.PageBlocks)
+                {
+                    if (block is PageBlockSlideshow slideshow)
+                    {
+                        foreach (var item in slideshow.PageBlocks)
+                        {
+                            items.Add(CountBlock(protoService, instantView, item));
+                        }
+                    }
+                    else if (block is PageBlockCollage collage)
+                    {
+                        foreach (var item in collage.PageBlocks)
+                        {
+                            items.Add(CountBlock(protoService, instantView, item));
+                        }
+                    }
+                }
+            }
+
+            var result = new InstantGalleryViewModel(protoService, aggregator);
+            result.Items.ReplaceWith(items);
+            result.FirstItem = items.FirstOrDefault();
+            result.SelectedItem = items.FirstOrDefault();
+            result.TotalItems = items.Count;
+
+            return result;
+        }
+
+        private static GalleryItem CountBlock(IProtoService protoService, WebPageInstantView webPage, PageBlock pageBlock)
+        {
+            if (pageBlock is PageBlockPhoto photoBlock)
+            {
+                return new GalleryPhotoItem(protoService, photoBlock.Photo, photoBlock.Caption.ToPlainText());
+            }
+            else if (pageBlock is PageBlockVideo videoBlock)
+            {
+                return new GalleryVideoItem(protoService, videoBlock.Video, videoBlock.Caption.ToPlainText());
+            }
+            else if (pageBlock is PageBlockAnimation animationBlock)
+            {
+                return new GalleryAnimationItem(protoService, animationBlock.Animation, animationBlock.Caption.ToPlainText());
+            }
+
+            return null;
+        }
 
         public override MvxObservableCollection<GalleryItem> Group => _shouldGroup ? this.Items : null;
 
