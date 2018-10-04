@@ -388,7 +388,7 @@
                                 </Grid.ColumnDefinitions>
                                 <controls:ProfilePicture x:Name="Photo" Width="30" Height="30" Margin="12,0" IsHitTestVisible="False"/>
 
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Top" Grid.Column="1">
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
                                     <TextBlock x:Name="Title"
                                                 Style="{StaticResource BaseTextBlockStyle}"
                                                 TextWrapping="NoWrap"
@@ -426,7 +426,7 @@
 
                     <Button x:Name="Options"
                             Click="Menu_ContextRequested"
-                            Padding="16,19,16,0"
+                            Padding="{StaticResource EllipsisButtonPadding}"
                             Style="{StaticResource EllipsisButton}"
                             Grid.Column="2">
                         <FontIcon x:Name="EllipsisIcon"
@@ -475,12 +475,6 @@
                 </Grid>
             </Grid>
         </controls:ContentPageHeader>
-
-        <controls:ChatSearchMask
-            x:Name="SearchMask"
-            Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-            Grid.RowSpan="4"
-            Canvas.ZIndex="100000"/>
 
         <Border Visibility="{x:Bind StickersPanel.Visibility, Mode=OneWay}" IsHitTestVisible="False">
             <Border x:Name="HeaderOverlay" Background="#99000000" Visibility="Collapsed"/>
@@ -600,6 +594,27 @@
                         </selectors:MessageStyleSelector.ServiceStyle>
                     </selectors:MessageStyleSelector>
                 </ListView.ItemContainerStyleSelector>
+                <ListView.Header>
+                    <Grid Padding="0,48,0,0">
+                        <!--<Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel x:Name="BotInfoPanel"
+                                    Visibility="Collapsed"
+                                    Padding="{ThemeResource MessageContentPadding}"
+                                    Background="{ThemeResource MessageBackgroundBrush}"
+                                    BorderBrush="{ThemeResource MessageBorderBrush}"
+                                    BorderThickness="0,0,0,2"
+                                    VerticalAlignment="Center"
+                                    MaxWidth="360"
+                                    Margin="12,12,12,8">
+                            <TextBlock Text="What can this bot do?" Style="{StaticResource BaseTextBlockStyle}"/>
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"/>
+                        </StackPanel>-->
+                        <Border Height="4" Grid.Row="1"/>
+                    </Grid>
+                </ListView.Header>
             </controls:BubbleListView>
 
             <Border Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,7" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
@@ -888,7 +903,6 @@
                         VerticalContentAlignment="Bottom"
                         PreventKeyboardDisplayOnProgrammaticFocus="True"
                         MinHeight="{StaticResource TelegramToolBarHeight}"
-                        Style="{StaticResource Yolo}"
                         MaxHeight="192"
                         TextChanged="TextField_TextChanged"
                         LostFocus="TextField_LostFocus"
@@ -1093,5 +1107,10 @@
                 <TextBlock x:Name="ActionLabel" TextWrapping="Wrap" TextAlignment="Center"/>
             </Button.Content>
         </controls:BubbleBottomButton>
+
+        <controls:ChatSearchMask
+            x:Name="SearchMask"
+            Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+            Grid.RowSpan="4"/>
     </Grid>
 </Page>

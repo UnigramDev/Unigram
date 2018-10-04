@@ -38,6 +38,8 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+    <!--<Thickness x:Key="EllipsisButtonPadding">16,23,16,0</Thickness>-->
+
     <Style x:Key="MessageBubbleStyle" TargetType="ContentControl"/>
     <Style x:Key="MessageBubbleOutStyle" TargetType="ContentControl"/>
 

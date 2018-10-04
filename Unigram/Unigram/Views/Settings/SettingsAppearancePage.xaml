@@ -205,7 +205,7 @@
         <controls:PageHeader x:Uid="SettingsAppearance_Header" Text="Appearance"/>
         <Button x:Name="Options"
                 Click="Menu_ContextRequested"
-                Padding="16,23,16,0"
+                Padding="{StaticResource EllipsisButtonPadding}"
                 Style="{StaticResource EllipsisButton}"
                 HorizontalAlignment="Right"
                 Opacity="0">

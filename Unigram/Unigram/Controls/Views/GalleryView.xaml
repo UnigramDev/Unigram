@@ -400,7 +400,7 @@
                     Grid.Column="1"
                     Grid.Row="2"/>
 
-                <Button Padding="16,23,16,0"
+                <Button Padding="{StaticResource EllipsisButtonPadding}"
                         HorizontalAlignment="Right"
                         Height="48"
                         Style="{StaticResource EllipsisButton}"

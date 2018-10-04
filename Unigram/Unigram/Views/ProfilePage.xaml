@@ -133,7 +133,7 @@
                          Command="{x:Bind ViewModel.SendMessageCommand}"
                          Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                          Grid.Column="2"/>-->
-                    <Button Click="Menu_ContextRequested" Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="3">
+                    <Button Click="Menu_ContextRequested" Padding="{StaticResource EllipsisButtonPadding}" Style="{StaticResource EllipsisButton}" Grid.Column="3">
                         <FontIcon x:Name="EllipsisIcon"
                                   VerticalAlignment="Center"
                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"

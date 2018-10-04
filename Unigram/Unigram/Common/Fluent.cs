@@ -21,9 +21,13 @@ namespace Unigram.Common
                 MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Plain.xaml") });
             }
 
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7))
             {
-                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Compatibility/CreatorsUpdate.xaml") });
+                this["EllipsisButtonPadding"] = new Thickness(16, 19, 16, 0);
+            }
+            else
+            {
+                this["EllipsisButtonPadding"] = new Thickness(16, 23, 16, 0);
             }
         }
     }

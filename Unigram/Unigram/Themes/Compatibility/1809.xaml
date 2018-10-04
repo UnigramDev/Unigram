@@ -3,8 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls">
 
-    <Style x:Key="Yolo" TargetType="local:BubbleTextBox">
-        <Setter Property="SelectionHighlightColorWhenNotFocused" Value="{ThemeResource TextControlSelectionHighlightColor}" />
-    </Style>
-    
+    <Thickness x:Key="EllipsisButtonPadding">16,19,16,0</Thickness>
+
 </ResourceDictionary>

@@ -584,7 +584,7 @@
                                 </StackPanel>
 
                                 <Button x:Name="btnOptions"
-                                        Padding="16,23,16,0"
+                                        Padding="{StaticResource EllipsisButtonPadding}"
                                         Style="{StaticResource EllipsisButton}"
                                         Grid.Column="2">
                                     <FontIcon x:Name="EllipsisIcon"

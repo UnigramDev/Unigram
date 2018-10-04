@@ -157,7 +157,7 @@
                      Command="{x:Bind ViewModel.ShareCommand}"
                      Style="{StaticResource HeaderGlyphButtonStyle}"
                      Grid.Column="1"/>
-                <Button Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="2">
+                <Button Padding="{StaticResource EllipsisButtonPadding}" Style="{StaticResource EllipsisButton}" Grid.Column="2">
                     <Button.Flyout>
                         <MenuFlyout>
                             <MenuFlyoutItem Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInExternalApp}"/>
