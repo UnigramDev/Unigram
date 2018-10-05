@@ -18,7 +18,6 @@ using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Native.Tasks;
 using Unigram.Entities;
-using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Dialogs;
 using Unigram.Views;
@@ -34,6 +33,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services.Factories;
 
 namespace Unigram.ViewModels
 {
@@ -101,12 +101,15 @@ namespace Unigram.ViewModels
         private readonly INotificationsService _pushService;
         private readonly IPlaybackService _playbackService;
         private readonly IVoIPService _voipService;
+        private readonly IMessageFactory _messageFactory;
+
+        public IPlaybackService PlaybackService => _playbackService;
 
         //private UserActivitySession _timelineSession;
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService, IVoIPService voipService)
+        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService, IVoIPService voipService, IMessageFactory messageFactory)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _locationService = locationService;
@@ -114,6 +117,7 @@ namespace Unigram.ViewModels
             _pushService = pushService;
             _playbackService = playbackService;
             _voipService = voipService;
+            _messageFactory = messageFactory;
 
             _stickers = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
 
@@ -156,6 +160,7 @@ namespace Unigram.ViewModels
             SwitchCommand = new RelayCommand<string>(SwitchExecute);
             SetTimerCommand = new RelayCommand(SetTimerExecute);
             ActionCommand = new RelayCommand(ActionExecute);
+            OpenMessageCommand = new RelayCommand<Message>(OpenMessageExecute);
 
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
@@ -609,7 +614,7 @@ namespace Unigram.ViewModels
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
                     }
 
-                    var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => GetMessage(x)).ToList();
+                    var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
                     ProcessFiles(_chat, replied);
                     ProcessReplies(replied);
 
@@ -684,7 +689,7 @@ namespace Unigram.ViewModels
 
                     var added = false;
 
-                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => GetMessage(x)).ToList();
+                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
                     ProcessFiles(_chat, replied);
                     ProcessReplies(replied);
 
@@ -748,14 +753,14 @@ namespace Unigram.ViewModels
                 var message = $"{Strings.Resources.BotInfoTitle}{Environment.NewLine}{fullInfo.BotInfo.Description}";
                 var text = new FormattedText(message, entities);
 
-                Items.Insert(0, GetMessage(new Message(0, user.Id, chat.Id, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(text, null), null)));
+                Items.Insert(0, _messageFactory.Create(this, new Message(0, user.Id, chat.Id, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(text, null), null)));
                 return;
             }
 
             AddDate:
             if (previous != null)
             {
-                Items.Insert(0, GetMessage(new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null)));
+                Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null)));
             }
         }
 
@@ -943,9 +948,7 @@ namespace Unigram.ViewModels
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                     }
 
-                    var lastRead = false;
-
-                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => GetMessage(x)).ToList();
+                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
                     ProcessFiles(_chat, replied);
                     ProcessReplies(replied);
 
@@ -1248,22 +1251,22 @@ namespace Unigram.ViewModels
 
                         if (message.Content is MessagePinMessage pinMessage && pinMessage.MessageId == result.Id)
                         {
-                            message.ReplyToMessage = GetMessage(result);
+                            message.ReplyToMessage = _messageFactory.Create(this, result);
                             break;
                         }
                         else if (message.Content is MessageGameScore gameScore && gameScore.GameMessageId == result.Id)
                         {
-                            message.ReplyToMessage = GetMessage(result);
+                            message.ReplyToMessage = _messageFactory.Create(this, result);
                             break;
                         }
                         else if (message.Content is MessagePaymentSuccessful paymentSuccessful && paymentSuccessful.InvoiceMessageId == result.Id)
                         {
-                            message.ReplyToMessage = GetMessage(result);
+                            message.ReplyToMessage = _messageFactory.Create(this, result);
                             break;
                         }
                         else if (message.ReplyToMessageId == result.Id)
                         {
-                            message.ReplyToMessage = GetMessage(result);
+                            message.ReplyToMessage = _messageFactory.Create(this, result);
                             break;
                         }
                     }
@@ -1582,7 +1585,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(new GetMessage(chat.Id, chat.ReplyMarkupMessageId));
                 if (response is Message message)
                 {
-                    Delegate?.UpdateChatReplyMarkup(chat, GetMessage(message));
+                    Delegate?.UpdateChatReplyMarkup(chat, _messageFactory.Create(this, message));
                 }
                 else
                 {
@@ -1611,7 +1614,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(new GetMessage(chat.Id, fullInfo.PinnedMessageId));
                 if (response is Message message)
                 {
-                    Delegate?.UpdatePinnedMessage(chat, GetMessage(message), false);
+                    Delegate?.UpdatePinnedMessage(chat, _messageFactory.Create(this, message), false);
                 }
                 else
                 {
@@ -1639,7 +1642,7 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.SendAsync(new GetMessage(chat.Id, draft.ReplyToMessageId));
                     if (response is Message message)
                     {
-                        EmbedData = new MessageEmbedData { ReplyToMessage = GetMessage(message) };
+                        EmbedData = new MessageEmbedData { ReplyToMessage = _messageFactory.Create(this, message) };
                     }
                 }
             }
@@ -2910,10 +2913,20 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        private MessageViewModel GetMessage(Message message)
+        #region Open message
+
+        public RelayCommand<Message> OpenMessageCommand { get; }
+        private void OpenMessageExecute(Message message)
         {
-            return new MessageViewModel(ProtoService, this, message);
+            var webPage = message.Content is MessageText text ? text.WebPage : null;
+
+            if (message.Content is MessageVoiceNote || webPage?.VoiceNote != null)
+            {
+                NavigationService.NavigateToChat(message.ChatId, message: message.Id);
+            }
         }
+
+        #endregion
     }
 
     //public class TLMessageMediaGroup : TLMessageMediaBase
@@ -3019,7 +3032,7 @@ namespace Unigram.ViewModels
                 if (previousDate.Date != itemDate.Date)
                 {
                     var timestamp = previousDate.ToTimestamp();
-                    var service = new MessageViewModel(previous.ProtoService, previous.Delegate, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null));
+                    var service = new MessageViewModel(previous.ProtoService, previous.PlaybackService, previous.Delegate, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null));
 
                     //base.InsertItem(index + 1, service);
                     return service;

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
+using Telegram.Td.Api;
 using Template10.Common;
+using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Converters;
@@ -20,26 +23,35 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls
 {
     public sealed partial class PlaybackHeader : UserControl
     {
-        public IPlaybackService Playback { get; } = TLContainer.Current.Resolve<IPlaybackService>();
+        private ICacheService _cacheService;
+        private IPlaybackService _playbackService;
+        private INavigationService _navigationService;
 
         public PlaybackHeader()
         {
             InitializeComponent();
+        }
 
-            Playback.PropertyChanged += OnCurrentItemChanged;
-            Playback.Session.PlaybackStateChanged += OnPlaybackStateChanged;
+        public void Update(ICacheService cacheService, IPlaybackService playbackService, INavigationService navigationService)
+        {
+            _cacheService = cacheService;
+            _playbackService = playbackService;
+            _navigationService = navigationService;
+
+            _playbackService.PropertyChanged -= OnCurrentItemChanged;
+            _playbackService.PropertyChanged += OnCurrentItemChanged;
+            _playbackService.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
+            _playbackService.Session.PlaybackStateChanged += OnPlaybackStateChanged;
             UpdateGlyph();
         }
 
         private void OnCurrentItemChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            UpdateGlyph();
+            this.BeginOnUIThread(UpdateGlyph);
         }
 
         private void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
@@ -49,24 +61,44 @@ namespace Unigram.Controls
 
         private void UpdateGlyph()
         {
-            //PlaybackButton.Glyph = Playback.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
+            if (_playbackService.CurrentItem == null)
+            {
+                Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Visibility = Visibility.Visible;
+            }
 
-            //if (Playback.CurrentItem is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-            //{
-            //    var audio = document.Attributes.FirstOrDefault(x => x is TLDocumentAttributeAudio) as TLDocumentAttributeAudio;
-            //    if (audio == null)
-            //    {
-            //        return;
-            //    }
+            PlaybackButton.Glyph = _playbackService.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
 
-            //    if (audio.IsVoice)
-            //    {
-            //        var date = BindConvert.Current.DateTime(message.Date);
-            //        //TitleLabel.Text = message.Participant is TLUser user && user.IsSelf ? "You" : message.Participant?.DisplayName;
-            //        SubtitleLabel.Text = string.Format("{0} at {1}", date.Date == DateTime.Now.Date ? "Today" : BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
-            //    }
-            //    else
-            //    {
+            var message = _playbackService.CurrentItem;
+            if (message == null)
+            {
+                return;
+            }
+
+            var webPage = message.Content is MessageText text ? text.WebPage : null;
+
+            if (message.Content is MessageVoiceNote || webPage?.VoiceNote != null)
+            {
+                var voiceNote = message.Content is MessageVoiceNote messageVoiceNote ? messageVoiceNote?.VoiceNote : webPage?.VoiceNote;
+                if (voiceNote == null)
+                {
+                    return;
+                }
+
+                var date = BindConvert.Current.DateTime(message.Date);
+                var user = _cacheService.GetUser(message.SenderUserId);
+                if (user == null)
+                {
+                    return;
+                }
+
+                TitleLabel.Text = user.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : user.GetFullName();
+                SubtitleLabel.Text = string.Format("{0} at {1}", date.Date == DateTime.Now.Date ? "Today" : BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
+            }
+
             //        if (audio.HasPerformer && audio.HasTitle)
             //        {
             //            TitleLabel.Text = audio.Title;
@@ -93,43 +125,32 @@ namespace Unigram.Controls
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
-            if (Playback.Session.PlaybackState == MediaPlaybackState.Playing)
+            if (_playbackService.Session.PlaybackState == MediaPlaybackState.Playing)
             {
-                Playback.Pause();
+                _playbackService.Pause();
             }
             else
             {
-                Playback.Play();
+                _playbackService.Play();
             }
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
-            Playback.Clear();
+            _playbackService.Clear();
         }
 
-        private async void View_Click(object sender, RoutedEventArgs e)
+        private void View_Click(object sender, RoutedEventArgs e)
         {
-            var message = Playback.CurrentItem;
+            var message = _playbackService.CurrentItem;
             if (message == null)
             {
                 return;
             }
 
-            //if (message.IsVoice())
-            //{
-            //    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-            //    if (service == null)
-            //    {
-            //        return;
-            //    }
-
-            //    service.NavigateToDialog(message.Parent, message.Id);
-            //}
-            //else
-            //{
-            //    await PlaybackView.Current.ShowAsync();
-            //}
+            Command?.Execute(message);
         }
+
+        public ICommand Command { get; set; }
     }
 }

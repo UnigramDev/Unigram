@@ -18,11 +18,11 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>Unigram_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>CE7E95812C4B2B0C8A7D5EA3DB7D201C2F459116</PackageCertificateThumbprint>
-    <!--<BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>-->
+    <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
@@ -109,10 +109,12 @@
   <ItemGroup>
     <Compile Include="Collections\KeyedList.cs" />
     <Compile Include="Collections\MvxObservableCollection.cs" />
+    <Compile Include="Collections\SearchChatMessagesCollection.cs" />
     <Compile Include="Collections\SearchChatsCollection.cs" />
     <Compile Include="Collections\SearchMembersAndUsersCollection.cs" />
     <Compile Include="Collections\SearchStickersCollection.cs" />
     <Compile Include="Collections\SearchUsersCollection.cs" />
+    <Compile Include="Collections\TopChatsCollection.cs" />
     <Compile Include="Common\ApiInfo.cs" />
     <Compile Include="Common\ColorsHelper.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
@@ -416,6 +418,7 @@
     <Compile Include="Services\ContactsService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
     <Compile Include="Services\EventAggregator.cs" />
+    <Compile Include="Services\Factories\MessageFactory.cs" />
     <Compile Include="Services\GenerationService.cs" />
     <Compile Include="Services\HockeyUpdateService.cs" />
     <Compile Include="Services\LifetimeService.cs" />
@@ -438,6 +441,7 @@
     <Compile Include="Services\Stripe\StripeToken.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
+    <Compile Include="Services\Updates\UpdatePlaybackItem.cs" />
     <Compile Include="Services\Updates\UpdateWallpaper.cs" />
     <Compile Include="Services\Updates\UpdateWorkMode.cs" />
     <Compile Include="Services\VibrationService.cs" />
@@ -780,6 +784,9 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupRestrictedPage.xaml.cs">
       <DependentUpon>SupergroupRestrictedPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TestStreamingPage.xaml.cs">
+      <DependentUpon>TestStreamingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VoIPPage.xaml.cs">
       <DependentUpon>VoIPPage.xaml</DependentUpon>
@@ -1800,7 +1807,7 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
-    <Page Include="Themes\Compatibility\CreatorsUpdate.xaml">
+    <Page Include="Themes\Compatibility\1809.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2186,6 +2193,10 @@
     <Page Include="Views\Supergroups\SupergroupRestrictedPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TestStreamingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Users\UserCommonChatsPage.xaml">
       <Generator>MSBuild:Compile</Generator>

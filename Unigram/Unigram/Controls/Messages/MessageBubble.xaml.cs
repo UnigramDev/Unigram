@@ -144,15 +144,15 @@ namespace Unigram.Controls.Messages
             {
                 if (chatEvent.Event.Action is ChatEventMessageDeleted messageDeleted)
                 {
-                    message = new MessageViewModel(message.ProtoService, message.Delegate, messageDeleted.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
+                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageDeleted.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
                 }
                 else if (chatEvent.Event.Action is ChatEventMessageEdited messageEdited)
                 {
-                    message = new MessageViewModel(message.ProtoService, message.Delegate, messageEdited.NewMessage) { IsFirst = true, IsLast = true, IsOutgoing = false };
+                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageEdited.NewMessage) { IsFirst = true, IsLast = true, IsOutgoing = false };
                 }
                 else if (chatEvent.Event.Action is ChatEventMessagePinned messagePinned)
                 {
-                    message = new MessageViewModel(message.ProtoService, message.Delegate, messagePinned.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
+                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messagePinned.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
                 }
             }
         }

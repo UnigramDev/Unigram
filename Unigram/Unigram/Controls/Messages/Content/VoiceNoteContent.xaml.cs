@@ -7,6 +7,7 @@ using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -14,8 +15,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -29,9 +28,27 @@ namespace Unigram.Controls.Messages.Content
             UpdateMessage(message);
         }
 
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            var message = _message;
+            if (message == null)
+            {
+                return;
+            }
+
+            message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
+            message.PlaybackService.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
+            message.PlaybackService.Session.PositionChanged -= OnPositionChanged;
+        }
+
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
+
+            message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
+            message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
+            message.PlaybackService.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
+            message.PlaybackService.Session.PlaybackStateChanged += OnPlaybackStateChanged;
 
             var voiceNote = GetContent(message.Content);
             if (voiceNote == null)
@@ -41,17 +58,96 @@ namespace Unigram.Controls.Messages.Content
 
             Progress.UpdateWave(voiceNote);
 
+            //UpdateDuration();
+            UpdateFile(message, voiceNote.Voice);
+        }
+
+        #region Playback
+
+        private void OnCurrentItemChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var voiceNote = GetContent(_message?.Content);
+            if (voiceNote == null)
+            {
+                return;
+            }
+
+            this.BeginOnUIThread(() => UpdateFile(_message, voiceNote.Voice));
+        }
+
+        private void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
+        {
+            var voiceNote = GetContent(_message?.Content);
+            if (voiceNote == null)
+            {
+                return;
+            }
+
+            this.BeginOnUIThread(() => UpdateFile(_message, voiceNote.Voice));
+        }
+
+        private void OnPositionChanged(MediaPlaybackSession sender, object args)
+        {
+            this.BeginOnUIThread(UpdatePosition);
+        }
+
+        private void UpdateDuration()
+        {
+            var message = _message;
+            if (message == null)
+            {
+                return;
+            }
+
+            var voiceNote = GetContent(message.Content);
+            if (voiceNote == null)
+            {
+                return;
+            }
+
             if (message.Content is MessageVoiceNote voiceNoteMessage)
             {
                 Subtitle.Text = voiceNote.GetDuration() + (voiceNoteMessage.IsListened ? string.Empty : " ●");
+                Progress.Maximum = voiceNote.Duration;
+                Progress.Value = message.IsOutgoing || voiceNoteMessage.IsListened ? 0 : voiceNote.Duration;
             }
             else
             {
                 Subtitle.Text = voiceNote.GetDuration();
+                Progress.Maximum = voiceNote.Duration;
+                Progress.Value = 0;
+            }
+        }
+
+        private void UpdatePosition()
+        {
+            var message = _message;
+            if (message == null)
+            {
+                return;
             }
 
-            UpdateFile(message, voiceNote.Voice);
+            if (message.Equals(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
+            {
+                Subtitle.Text = FormatTime(message.PlaybackService.Session.Position) + " / " + FormatTime(message.PlaybackService.Session.NaturalDuration);
+                Progress.Maximum = /*Slider.Maximum =*/ message.PlaybackService.Session.NaturalDuration.TotalMilliseconds;
+                Progress.Value = /*Slider.Value =*/ message.PlaybackService.Session.Position.TotalMilliseconds;
+            }
         }
+
+        private string FormatTime(TimeSpan span)
+        {
+            if (span.TotalHours >= 1)
+            {
+                return span.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return span.ToString("mm\\:ss");
+            }
+        }
+
+        #endregion
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
@@ -63,6 +159,8 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateFile(MessageViewModel message, File file)
         {
+            message.PlaybackService.Session.PositionChanged -= OnPositionChanged;
+
             var voiceNote = GetContent(message.Content);
             if (voiceNote == null)
             {
@@ -82,7 +180,6 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-
                 Button.Glyph = "\uE10A";
                 Button.Progress = (double)file.Remote.UploadedSize / size;
             }
@@ -98,7 +195,19 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                Button.Glyph = "\uE102";
+                if (Equals(message, message.PlaybackService.CurrentItem))
+                {
+                    Button.Glyph = message.PlaybackService.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
+                    UpdatePosition();
+
+                    message.PlaybackService.Session.PositionChanged += OnPositionChanged;
+                }
+                else
+                {
+                    Button.Glyph = "\uE102";
+                    UpdateDuration();
+                }
+
                 Button.Progress = 1;
             }
         }
@@ -154,7 +263,21 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                _message.Delegate.PlayMessage(_message);
+                if (_message.Equals(_message.PlaybackService.CurrentItem))
+                {
+                    if (_message.PlaybackService.Session.PlaybackState == MediaPlaybackState.Playing)
+                    {
+                        _message.PlaybackService.Pause();
+                    }
+                    else
+                    {
+                        _message.PlaybackService.Play();
+                    }
+                }
+                else
+                {
+                    _message.Delegate.PlayMessage(_message);
+                }
             }
         }
     }

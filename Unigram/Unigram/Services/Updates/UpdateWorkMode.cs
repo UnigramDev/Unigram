@@ -15,7 +15,6 @@ namespace Unigram.Services.Updates
         }
 
         public bool IsVisible { get; private set; }
-
         public bool IsEnabled { get; private set; }
     }
 }

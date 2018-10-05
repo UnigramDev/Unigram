@@ -14,7 +14,7 @@ namespace Unigram.Services.Updates
             IsLocked = locked;
         }
 
-        public bool IsEnabled { get; set; }
-        public bool IsLocked { get; set; }
+        public bool IsEnabled { get; private set; }
+        public bool IsLocked { get; private set; }
     }
 }

@@ -9,13 +9,15 @@ namespace Unigram.ViewModels
     public class MessageViewModel
     {
         private readonly IProtoService _protoService;
+        private readonly IPlaybackService _playbackService;
         private readonly IMessageDelegate _delegate;
 
         private Message _message;
 
-        public MessageViewModel(IProtoService protoService, IMessageDelegate delegato, Message message)
+        public MessageViewModel(IProtoService protoService, IPlaybackService playbackService, IMessageDelegate delegato, Message message)
         {
             _protoService = protoService;
+            _playbackService = playbackService;
             _delegate = delegato;
 
             _message = message;
@@ -27,6 +29,7 @@ namespace Unigram.ViewModels
         }
 
         public IProtoService ProtoService => _protoService;
+        public IPlaybackService PlaybackService => _playbackService;
         public IMessageDelegate Delegate => _delegate;
 
         public bool IsFirst { get; set; }
@@ -177,5 +180,19 @@ namespace Unigram.ViewModels
             return false;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is Message y)
+            {
+                return Id == y.Id && ChatId == y.ChatId;
+            }
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode() ^ ChatId.GetHashCode();
+        }
     }
 }

@@ -307,7 +307,7 @@ namespace Unigram.Controls.Cells
         {
             if (message.IsService())
             {
-                return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, null, message));
+                return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, null, null, message));
             }
 
             var result = string.Empty;

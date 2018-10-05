@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Mvvm;
 using Unigram.Common;
+using Unigram.Services.Updates;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Sensors;
 using Windows.Foundation;
@@ -103,6 +104,11 @@ namespace Unigram.Services
 
         private void OnCurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
+            if (_mapping.TryGetValue((string)args.NewItem.Source.CustomProperties["token"], out Message value))
+            {
+                CurrentItem = value;
+            }
+
             return;
 
             if (args.NewItem != null && _playlist.CurrentItemIndex == _playlist.Items.Count - 1)
@@ -181,6 +187,7 @@ namespace Unigram.Services
             private set
             {
                 _currentItem = value;
+                _aggregator.Publish(new UpdatePlaybackItem(value));
                 RaisePropertyChanged(() => CurrentItem);
             }
         }
@@ -216,6 +223,7 @@ namespace Unigram.Services
         public void Clear()
         {
             //Execute.BeginOnUIThread(() => CurrentItem = null);
+            CurrentItem = null;
             Dispose();
         }
 

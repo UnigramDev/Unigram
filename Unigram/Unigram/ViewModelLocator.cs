@@ -6,6 +6,7 @@ using Telegram.Td;
 using Template10.Services.ViewService;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Services.Factories;
 using Unigram.ViewModels;
 using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Channels;
@@ -118,6 +119,8 @@ namespace Unigram
                 //builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
                 builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
                 builder.RegisterType<HockeyUpdateService>().As<IHockeyUpdateService>().SingleInstance();
+
+                builder.RegisterType<MessageFactory>().As<IMessageFactory>().SingleInstance();
 
                 // Disabled due to crashes on Mobile: 
                 // The RPC server is unavailable.

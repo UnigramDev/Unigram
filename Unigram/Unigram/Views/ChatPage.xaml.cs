@@ -258,6 +258,8 @@ namespace Unigram.Views
             ViewModel.Items.AttachChanged = OnAttachChanged;
             //Bindings.Update();
 
+            Playback.Update(ViewModel.CacheService, ViewModel.PlaybackService, ViewModel.NavigationService);
+
             //LosingFocus -= DialogPage_LosingFocus;
             //LosingFocus += DialogPage_LosingFocus;
 
@@ -2677,7 +2679,7 @@ namespace Unigram.Views
             InlinePanel.UpdateFile(file);
             StickersPanel.UpdateFile(file);
 
-            foreach (var item in ListAutocomplete.Items)
+            foreach (var item in ListAutocomplete.Items.ToArray())
             {
                 if (item is UserCommand command)
                 {
@@ -2727,7 +2729,7 @@ namespace Unigram.Views
                 return;
             }
 
-            foreach (Sticker sticker in StickerPack.Items)
+            foreach (Sticker sticker in StickerPack.Items.ToArray())
             {
                 if (sticker.UpdateFile(file) && file.Id == sticker.Thumbnail?.Photo.Id)
                 {

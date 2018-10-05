@@ -10,7 +10,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Visibility="{x:Bind Playback.CurrentItem, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+    <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="48"/>
             <ColumnDefinition />

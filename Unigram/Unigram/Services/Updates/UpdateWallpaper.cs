@@ -14,7 +14,7 @@ namespace Unigram.Services.Updates
             Color = color;
         }
 
-        public int Background { get; set; }
-        public int Color { get; set; }
+        public int Background { get; private set; }
+        public int Color { get; private set; }
     }
 }

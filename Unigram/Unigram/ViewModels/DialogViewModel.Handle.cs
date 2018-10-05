@@ -221,7 +221,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(new GetMessage(update.ChatId, update.ReplyMarkupMessageId));
                 if (response is Message message)
                 {
-                    BeginOnUIThread(() => Delegate?.UpdateChatReplyMarkup(_chat, GetMessage(message)));
+                    BeginOnUIThread(() => Delegate?.UpdateChatReplyMarkup(_chat, _messageFactory.Create(this, message)));
                 }
                 else
                 {
@@ -684,7 +684,7 @@ namespace Unigram.ViewModels
                 //if (endReached || IsEndReached())
                 if (IsFirstSliceLoaded == true)
                 {
-                    var messageCommon = GetMessage(message);
+                    var messageCommon = _messageFactory.Create(this, message);
                     var result = new List<MessageViewModel> { messageCommon };
                     ProcessFiles(_chat, result);
                     ProcessReplies(result);

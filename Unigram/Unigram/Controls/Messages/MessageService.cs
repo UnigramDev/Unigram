@@ -103,13 +103,13 @@ namespace Unigram.Controls.Messages
                         case ChatEventMessageUnpinned messageUnpinned:
                             return UpdateMessageUnpinned(message, messageUnpinned, active);
                         case ChatEventMessageDeleted messageDeleted:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.Delegate, messageDeleted.Message), active) : UpdateMessageDeleted(message, messageDeleted, active);
+                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageDeleted.Message), active) : UpdateMessageDeleted(message, messageDeleted, active);
                         case ChatEventMessageEdited messageEdited:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.Delegate, messageEdited.NewMessage), active) : UpdateMessageEdited(message, messageEdited, active);
+                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageEdited.NewMessage), active) : UpdateMessageEdited(message, messageEdited, active);
                         case ChatEventDescriptionChanged descriptionChanged:
                             return UpdateDescriptionChanged(message, descriptionChanged, active);
                         case ChatEventMessagePinned messagePinned:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.Delegate, messagePinned.Message), active) : UpdateMessagePinned(message, messagePinned, active);
+                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messagePinned.Message), active) : UpdateMessagePinned(message, messagePinned, active);
                         case ChatEventUsernameChanged usernameChanged:
                             return UpdateUsernameChanged(message, usernameChanged, active);
                         default:

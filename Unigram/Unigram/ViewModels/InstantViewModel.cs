@@ -8,6 +8,8 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Services;
+using Unigram.Services.Factories;
+using Unigram.ViewModels.Delegates;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 
@@ -15,9 +17,12 @@ namespace Unigram.ViewModels
 {
     public class InstantViewModel : TLViewModelBase
     {
-        public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        private readonly IMessageFactory _messageFactory;
+
+        public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IMessageFactory messageFactory, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _messageFactory = messageFactory;
             _gallery = new InstantGalleryViewModel(protoService, aggregator);
 
             ShareCommand = new RelayCommand(ShareExecute);
@@ -28,6 +33,11 @@ namespace Unigram.ViewModels
 
         public Uri ShareLink { get; set; }
         public string ShareTitle { get; set; }
+
+        public MessageViewModel CreateMessage(IMessageDelegate delegato, Message message)
+        {
+            return _messageFactory.Create(delegato, message);
+        }
 
         private InstantGalleryViewModel _gallery;
         public InstantGalleryViewModel Gallery

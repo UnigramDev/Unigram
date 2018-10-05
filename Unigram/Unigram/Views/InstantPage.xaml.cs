@@ -703,7 +703,7 @@ namespace Unigram.Views
 
         private MessageViewModel GetMessage(MessageContent content)
         {
-            return new MessageViewModel(ViewModel.ProtoService, this, new Message { Content = content });
+            return ViewModel.CreateMessage(this, new Message { Content = content });
         }
 
         private FrameworkElement ProcessEmbed(PageBlockEmbedded block)
