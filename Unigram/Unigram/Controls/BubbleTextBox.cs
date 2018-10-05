@@ -89,12 +89,21 @@ namespace Unigram.Controls
                 ContextRequested += OnContextRequested;
             }
 
-            CreateKeyboardAccelerator(VirtualKey.B);
-            CreateKeyboardAccelerator(VirtualKey.I);
-            CreateKeyboardAccelerator(VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            CreateKeyboardAccelerator(VirtualKey.K);
-            CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "DisabledFormattingAccelerators"))
+            {
+                DisabledFormattingAccelerators = DisabledFormattingAccelerators.All;
+            }
 
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAcceleratorPlacementMode"))
+            {
+                KeyboardAcceleratorPlacementMode = KeyboardAcceleratorPlacementMode.Hidden;
+
+                CreateKeyboardAccelerator(VirtualKey.B);
+                CreateKeyboardAccelerator(VirtualKey.I);
+                CreateKeyboardAccelerator(VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+                CreateKeyboardAccelerator(VirtualKey.K);
+                CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            }
         }
 
         #region Context menu
@@ -164,6 +173,11 @@ namespace Unigram.Controls
 
         private void ContextBold_Click()
         {
+            if (Math.Abs(Document.Selection.Length) < 1)
+            {
+                return;
+            }
+
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection);
             Document.Selection.CharacterFormat.Bold = FormatEffect.On;
@@ -172,6 +186,11 @@ namespace Unigram.Controls
 
         private void ContextItalic_Click()
         {
+            if (Math.Abs(Document.Selection.Length) < 1)
+            {
+                return;
+            }
+
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection);
             Document.Selection.CharacterFormat.Italic = FormatEffect.On;
@@ -180,6 +199,11 @@ namespace Unigram.Controls
 
         private void ContextMonospace_Click()
         {
+            if (Math.Abs(Document.Selection.Length) < 1)
+            {
+                return;
+            }
+
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection);
             Document.Selection.CharacterFormat.Name = "Consolas";
@@ -226,6 +250,11 @@ namespace Unigram.Controls
 
         private void ContextPlain_Click()
         {
+            if (Math.Abs(Document.Selection.Length) < 1)
+            {
+                return;
+            }
+
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection);
             Document.ApplyDisplayUpdates();
@@ -1138,30 +1167,15 @@ namespace Unigram.Controls
             for (int i = 0; !end; i++)
             {
                 var range = Document.GetRange(i, i + 1);
-                var expand = range.Expand(TextRangeUnit.CharacterFormat);
-
-                if (range.CharacterFormat.Bold == FormatEffect.On)
+                if (range.Expand(TextRangeUnit.Bold) > 0)
                 {
                     entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeBold() });
                 }
-                else if (range.CharacterFormat.Italic == FormatEffect.On)
+                else if (range.Expand(TextRangeUnit.Italic) > 0)
                 {
                     entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeItalic() });
                 }
-                else if (range.CharacterFormat.Name.Equals("Consolas"))
-                {
-                    range.GetText(TextGetOptions.NoHidden, out string value);
-
-                    if (value.Contains('\v') || value.Contains('\r'))
-                    {
-                        entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypePre() });
-                    }
-                    else
-                    {
-                        entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeCode() });
-                    }
-                }
-                else if (range.Link.Length > 0)
+                else if (range.Expand(TextRangeUnit.Link) > 0)
                 {
                     range.GetText(TextGetOptions.NoHidden, out string value);
 
@@ -1176,19 +1190,33 @@ namespace Unigram.Controls
 
                     adjust += Math.Abs(range.Length) - value.Length;
                 }
-                else
+                else if (range.Expand(TextRangeUnit.CharacterFormat) > 0)
                 {
                     range.GetText(TextGetOptions.NoHidden, out string value);
 
-                    var sub = Markdown.Parse(ViewModel.ProtoService, ref value);
-                    if (sub != null && sub.Count > 0)
+                    if (range.CharacterFormat.Name.Equals("Consolas"))
                     {
-                        range.SetText(TextSetOptions.None, value);
-
-                        foreach (var entity in sub)
+                        if (value.Contains('\v') || value.Contains('\r'))
                         {
-                            entity.Offset = range.StartPosition + entity.Offset;
-                            entities.Add(entity);
+                            entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypePre() });
+                        }
+                        else
+                        {
+                            entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeCode() });
+                        }
+                    }
+                    else if (value.Length > 0)
+                    {
+                        var sub = Markdown.Parse(ViewModel.ProtoService, ref value);
+                        if (sub != null && sub.Count > 0)
+                        {
+                            range.SetText(TextSetOptions.None, value);
+
+                            foreach (var entity in sub)
+                            {
+                                entity.Offset = range.StartPosition + entity.Offset;
+                                entities.Add(entity);
+                            }
                         }
                     }
                 }
@@ -1206,7 +1234,7 @@ namespace Unigram.Controls
 
             Document.ApplyDisplayUpdates();
 
-            return new FormattedText(text, entities);
+            return new FormattedText(text.Replace('\v', '\n').Replace('\r', '\n'), entities);
         }
 
         public bool IsEmpty
