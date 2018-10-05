@@ -111,7 +111,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanInviteUsers = true;
                     CanPinMessages = true;
                     CanPostMessages = true;
-                    CanPromoteMembers = false;
+                    CanPromoteMembers = member.Status is ChatMemberStatusCreator;
                     CanRestrictMembers = true;
                 }
             }
