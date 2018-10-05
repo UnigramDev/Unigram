@@ -568,7 +568,7 @@ namespace Unigram.Views
 
         private SelectorItem CreateSelectorItem(string typeName)
         {
-            SelectorItem item = new ListViewItem();
+            SelectorItem item = new BubbleListViewItem(Messages);
             //item.ContextRequested += Message_ContextRequested;
             //item.ContentTemplate = _typeToTemplateMapping[typeName];
             item.ContentTemplate = Resources[typeName] as DataTemplate;

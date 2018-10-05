@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class PaddedListView : SelectListView
+    public class PaddedListView : LazoListView
     {
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
         {
