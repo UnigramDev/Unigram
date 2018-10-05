@@ -29,6 +29,8 @@ namespace Unigram.Services
 
         Message CurrentItem { get; }
 
+        double PlaybackRate { get; set; }
+
         void Pause();
         void Play();
 
@@ -64,6 +66,7 @@ namespace Unigram.Services
             _aggregator = aggregator;
 
             _mediaPlayer = new MediaPlayer();
+            _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
             //_mediaPlayer.CommandManager.IsEnabled = false;
 
             //_transport = _mediaPlayer.SystemMediaTransportControls;
@@ -73,6 +76,14 @@ namespace Unigram.Services
             _binders = new Dictionary<string, MediaBindingEventArgs>();
 
             aggregator.Subscribe(this);
+        }
+
+        private void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
+        {
+            if (sender.PlaybackState == MediaPlaybackState.Playing && sender.PlaybackRate != _playbackRate)
+            {
+                sender.PlaybackRate = _playbackRate;
+            }
         }
 
         #region Proximity
@@ -104,9 +115,13 @@ namespace Unigram.Services
 
         private void OnCurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
-            if (_mapping.TryGetValue((string)args.NewItem.Source.CustomProperties["token"], out Message value))
+            if (args.NewItem != null && _mapping.TryGetValue((string)args.NewItem.Source.CustomProperties["token"], out Message value))
             {
                 CurrentItem = value;
+            }
+            else
+            {
+                CurrentItem = null;
             }
 
             return;
@@ -169,6 +184,7 @@ namespace Unigram.Services
             Debug.WriteLine("PlaybackService: OnMediaEnded");
 
             //Execute.BeginOnUIThread(() => CurrentItem = null);
+            CurrentItem = null;
             Dispose();
         }
 
@@ -189,6 +205,20 @@ namespace Unigram.Services
                 _currentItem = value;
                 _aggregator.Publish(new UpdatePlaybackItem(value));
                 RaisePropertyChanged(() => CurrentItem);
+            }
+        }
+
+        private double _playbackRate = 1.0;
+        public double PlaybackRate
+        {
+            get
+            {
+                return _playbackRate;
+            }
+            set
+            {
+                _playbackRate = value;
+                _mediaPlayer.PlaybackSession.PlaybackRate = value;
             }
         }
 

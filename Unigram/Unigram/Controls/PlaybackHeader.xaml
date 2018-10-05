@@ -15,9 +15,10 @@
             <ColumnDefinition Width="48"/>
             <ColumnDefinition />
             <ColumnDefinition Width="48"/>
+            <ColumnDefinition Width="48"/>
         </Grid.ColumnDefinitions>
 
-        <Button Click="View_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="3">
+        <Button Click="View_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="4">
             <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
                 <Run x:Name="TitleLabel" FontWeight="SemiBold"/>
                 <Run x:Name="SubtitleLabel"/>
@@ -25,7 +26,17 @@
         </Button>
 
         <controls:GlyphButton x:Name="PlaybackButton" Click="Toggle_Click" Glyph="&#xE103;" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" FontSize="16" Height="32"/>
-        <controls:GlyphButton Click="Clear_Click" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="2"/>
+        <controls:GlyphToggleButton
+            x:Name="RateButton"
+            Click="Rate_Click"
+            UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+            CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
+            UncheckedGlyph="&#xEC57;"
+            CheckedGlyph="&#xEC58;"
+            FontSize="16"
+            Height="32"
+            Grid.Column="2"/>
+        <controls:GlyphButton Click="Clear_Click" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="3"/>
 
         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
     </Grid>

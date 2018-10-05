@@ -14,6 +14,7 @@ using Unigram.Services;
 using Unigram.Views;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -47,6 +48,7 @@ namespace Unigram.Controls
             _playbackService.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
             _playbackService.Session.PlaybackStateChanged += OnPlaybackStateChanged;
             UpdateGlyph();
+            UpdateRate();
         }
 
         private void OnCurrentItemChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -123,6 +125,21 @@ namespace Unigram.Controls
             //}
         }
 
+        private void UpdateRate()
+        {
+            if (ApiInformation.IsMethodPresent("Windows.Media.Playback.MediaPlaybackSession", "IsSupportedPlaybackRateRange"))
+            {
+                //RateButton.Visibility = _playbackService.Session.IsSupportedPlaybackRateRange(2.0, 2.0) ? Visibility.Visible : Visibility.Collapsed;
+                RateButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                RateButton.Visibility = Visibility.Collapsed;
+            }
+
+            RateButton.IsChecked = _playbackService.PlaybackRate == 2.0;
+        }
+
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
             if (_playbackService.Session.PlaybackState == MediaPlaybackState.Playing)
@@ -132,6 +149,20 @@ namespace Unigram.Controls
             else
             {
                 _playbackService.Play();
+            }
+        }
+
+        private void Rate_Click(object sender, RoutedEventArgs e)
+        {
+            if (_playbackService.PlaybackRate == 1.0)
+            {
+                _playbackService.PlaybackRate = 2.0;
+                RateButton.IsChecked = true;
+            }
+            else
+            {
+                _playbackService.PlaybackRate = 1.0;
+                RateButton.IsChecked = false;
             }
         }
 
