@@ -17,9 +17,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsWallPaperViewModel : TLViewModelBase
+    public class SettingsWallpaperViewModel : TLViewModelBase
     {
-        public SettingsWallPaperViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public SettingsWallpaperViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Wallpaper>();
@@ -177,6 +177,21 @@ namespace Unigram.ViewModels.Settings
             {
                 if (wallpaper.Id != 1000001)
                 {
+                    var big = wallpaper.GetBig();
+                    if (big == null || !big.Photo.Local.IsDownloadingCompleted)
+                    {
+                        return;
+                    }
+
+                    var item = await StorageFile.GetFileFromPathAsync(big.Photo.Local.Path);
+
+                    var result = await ApplicationData.Current.LocalFolder.CreateFileAsync($"{SessionId}\\{Constants.WallpaperFileName}", CreationCollisionOption.ReplaceExisting);
+                    await item.CopyAndReplaceAsync(result);
+
+                    var accent = await ImageHelper.GetAccentAsync(result);
+                    Theme.Current.AddOrUpdateColor("MessageServiceBackgroundBrush", accent[0]);
+                    Theme.Current.AddOrUpdateColor("MessageServiceBackgroundPressedBrush", accent[1]);
+
                     //var photoSize = wallpaper.Full as TLPhotoSize;
                     //var location = photoSize.Location as TLFileLocation;
                     //var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);

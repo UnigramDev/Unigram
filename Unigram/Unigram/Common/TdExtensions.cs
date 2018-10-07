@@ -860,6 +860,21 @@ namespace Unigram.Common
             return thumbnail ? photo.GetSmall() : photo.GetBig();
         }
 
+        public static bool UpdateFile(this Wallpaper wallpaper, File file)
+        {
+            var any = false;
+            foreach (var size in wallpaper.Sizes)
+            {
+                if (size.Photo.Id == file.Id)
+                {
+                    size.Photo = file;
+                    any = true;
+                }
+            }
+
+            return any;
+        }
+
         public static PhotoSize GetSmall(this Wallpaper wallpaper)
         {
             return wallpaper.Sizes.OrderBy(x => x.Width).FirstOrDefault();

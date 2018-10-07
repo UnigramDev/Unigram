@@ -46,7 +46,7 @@ namespace Unigram.Views.Settings
 
         private void Wallpaper_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsWallPaperPage));
+            Frame.Navigate(typeof(SettingsWallpaperPage));
         }
 
         private int _advanced;

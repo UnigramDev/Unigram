@@ -253,8 +253,8 @@ namespace Unigram
                     return container.Resolve<SettingsStorageViewModel>(id);
                 case SettingsUsernamePage settingsUsername:
                     return container.Resolve<SettingsUsernameViewModel>(id);
-                case SettingsWallPaperPage settingsWallPaper:
-                    return container.Resolve<SettingsWallPaperViewModel>(id);
+                case SettingsWallpaperPage settingsWallPaper:
+                    return container.Resolve<SettingsWallpaperViewModel>(id);
                 case SettingsWebSessionsPage settingsWebSessions:
                     return container.Resolve<SettingsWebSessionsViewModel>(id);
                 case SettingsPage settings:
