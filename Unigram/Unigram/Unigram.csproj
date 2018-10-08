@@ -427,6 +427,7 @@
     <Compile Include="Services\LiveLocationService.cs" />
     <Compile Include="Services\LocaleService.cs" />
     <Compile Include="Services\LocationService.cs" />
+    <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\NotificationsService.cs" />
     <Compile Include="Services\OptionsService.cs" />
     <Compile Include="Services\PasscodeService.cs" />

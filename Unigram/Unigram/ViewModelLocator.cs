@@ -103,6 +103,10 @@ namespace Unigram
                     .As<IGenerationService>()
                     .SingleInstance()
                     .AutoActivate();
+                builder.RegisterType<NetworkService>()
+                    .As<INetworkService>()
+                    .SingleInstance()
+                    .AutoActivate();
                 //builder.RegisterType<OptionsService>()
                 //    .As<IOptionsService>()
                 //    .SingleInstance()
