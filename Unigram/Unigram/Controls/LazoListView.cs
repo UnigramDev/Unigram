@@ -32,23 +32,36 @@ namespace Unigram.Controls
 
         internal void OnPointerEntered(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            if (_firstItem == null || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if (_firstItem == null || !e.Pointer.IsInContact /*|| SelectionMode != ListViewSelectionMode.Multiple*/ || e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
+            var point = e.GetCurrentPoint(item);
+            if (!point.Properties.IsLeftButtonPressed)
             {
                 return;
             }
 
             e.Handled = true;
-            var point = e.GetCurrentPoint(item);
+
+            if (SelectionMode != ListViewSelectionMode.Multiple)
+            {
+                SelectionMode = ListViewSelectionMode.Multiple;
+            }
 
             var index = IndexFromContainer(item);
             var first = Math.Min(_firstIndex, index);
             var last = Math.Max(_firstIndex, index);
 
-            SelectedItems.Clear();
-
-            foreach (var original in _ranges)
+            if (SelectedItems.Count > 0)
             {
-                SelectRange(original);
+                SelectedItems.Clear();
+
+                foreach (var original in _ranges)
+                {
+                    SelectRange(original);
+                }
             }
 
             if (_operation)
@@ -68,8 +81,13 @@ namespace Unigram.Controls
                 return;
             }
 
-            e.Handled = true;
             var point = e.GetCurrentPoint(item);
+            if (!point.Properties.IsLeftButtonPressed)
+            {
+                return;
+            }
+
+            e.Handled = true;
 
             if (_firstItem == null)
             {
@@ -120,16 +138,18 @@ namespace Unigram.Controls
 
         internal void OnPointerReleased(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            e.Handled = _firstItem != null && _firstItem.IsSelected == _operation;
-
-            if (e.Handled)
+            if (SelectionMode != ListViewSelectionMode.Multiple)
             {
-                SelectionMode = SelectedItems.Count > 0 ? ListViewSelectionMode.Multiple : ListViewSelectionMode.None;
+                return;
             }
+
+            e.Handled = _firstItem != null && _firstItem.IsSelected == _operation;
 
             _firstItem = null;
             _firstIndex = -1;
             _ranges = null;
+
+            _position = new Point();
         }
     }
 }
