@@ -24,10 +24,12 @@ namespace Unigram.Common
             if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7))
             {
                 this["EllipsisButtonPadding"] = new Thickness(16, 19, 16, 0);
+                this["GlyphButtonFontSize"] = 16d;
             }
             else
             {
                 this["EllipsisButtonPadding"] = new Thickness(16, 23, 16, 0);
+                this["GlyphButtonFontSize"] = 20d;
             }
         }
     }
