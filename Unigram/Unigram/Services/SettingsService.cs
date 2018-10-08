@@ -153,8 +153,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const int CurrentVersion = 2117240;
-        public const string CurrentChangelog = "New in Unigram version 2.1.1724:\r\n- You can now protect your chats enabling Passcode Lock from Settings > Privacy and Security.\r\n- Bug fixes and improvements since previous version.";
+        public const int CurrentVersion = 2117670;
+        public const string CurrentChangelog = "New in Unigram version 2.1.1767:\r\n- To play GIFs in full screen and video messages with audio turned on, just click on them.\r\n- You can now play any received or sent video in PiP mode.\r\n- Use the new rich context menu to format messages with bold, italic, monospace and links.\r\n- The app is now optimized for October 2018 Update.\r\n- Zoom stickers in the stickers panel right clicking them.\r\n- Bug fixes and improvements.";
 
         public int Session => _session;
 
@@ -554,7 +554,7 @@ namespace Unigram.Services
             set
             {
                 _notificationsIds = value;
-                AddOrUpdateValue(_local, "NotificationsIds", null);
+                AddOrUpdateValue(_local, "NotificationsIds", string.Join(",", value));
             }
         }
 
