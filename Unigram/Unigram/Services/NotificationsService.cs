@@ -164,7 +164,7 @@ namespace Unigram.Services
 
         public void Handle(UpdateUnreadMessageCount update)
         {
-            if (!_settings.Notifications.CountUnreadMessages)
+            if (!_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
                 return;
             }
@@ -181,7 +181,7 @@ namespace Unigram.Services
 
         public void Handle(UpdateUnreadChatCount update)
         {
-            if (_settings.Notifications.CountUnreadMessages)
+            if (_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
                 return;
             }
@@ -231,7 +231,11 @@ namespace Unigram.Services
             Update(chat, () =>
             {
                 NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, date, loc_key);
-                NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
+
+                if (_sessionService.IsActive)
+                {
+                    NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
+                }
             });
         }
 
