@@ -259,7 +259,7 @@ namespace Unigram.Controls
                 document.Hidden == format.Hidden &&
                 document.Italic == format.Italic &&
                 document.Kerning == format.Kerning &&
-                document.LanguageTag == format.LanguageTag &&
+                //document.LanguageTag == format.LanguageTag &&
                 document.LinkType == format.LinkType &&
                 document.Name == format.Name &&
                 document.Outline == format.Outline &&
