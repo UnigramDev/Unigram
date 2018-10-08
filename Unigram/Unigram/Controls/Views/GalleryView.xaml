@@ -278,14 +278,15 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock
                     Text="{x:Bind ConvertOf(ViewModel.Position, ViewModel.TotalItems), Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Style="{StaticResource BaseTextBlockStyle}"
-                    Grid.ColumnSpan="3"/>
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Grid.ColumnSpan="4"/>
 
                 <local:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
                                    Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
@@ -301,6 +302,39 @@
                                    Glyph="&#xEE49;"
                                    FontSize="16"
                                    Grid.Column="2"/>
+
+                <Button Padding="{StaticResource EllipsisButtonPadding}"
+                        HorizontalAlignment="Right"
+                        Style="{StaticResource EllipsisButton}"
+                        Grid.Column="3">
+                    <FontIcon x:Name="EllipsisIcon"
+                              VerticalAlignment="Center"
+                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              FontSize="16"
+                              Glyph="&#xE10C;"
+                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanView, Mode=OneWay}"
+                                            Text="{CustomResource ShowInChat}"/>
+                            <MenuFlyoutItem x:Name="FlyoutCopy"
+                                            Command="{x:Bind ViewModel.CopyCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanCopy, Mode=OneWay}"
+                                            Text="{CustomResource Copy}"/>
+                            <MenuFlyoutItem x:Name="FlyoutSaveAs"
+                                            Command="{x:Bind ViewModel.SaveCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanSave, Mode=OneWay}"
+                                            Text="Save as..."/>
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"
+                                            Text="{CustomResource OpenInExternalApp}" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
+                                            Text="{CustomResource Delete}"/>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
             </Grid>
         </controls:GalleryTransportControls.Header>
         <controls:GalleryTransportControls.Footer>
@@ -386,7 +420,7 @@
                      </ListView.Template>
                      </ListView>-->
 
-                <Border x:Name="Details" Grid.Row="2">
+                <Border x:Name="Details" Height="{ThemeResource TelegramToolBarHeight}" Grid.Row="2">
                     <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0,0,0" VerticalAlignment="Center">
                         <TextBlock Text="{x:Bind ConvertFrom(ViewModel.SelectedItem.From), Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
                         <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}" Style="{StaticResource CaptionTextBlockStyle}"/>
@@ -399,41 +433,6 @@
                     Glyph="&#xEE35;"
                     Grid.Column="1"
                     Grid.Row="2"/>
-
-                <Button Padding="{StaticResource EllipsisButtonPadding}"
-                        HorizontalAlignment="Right"
-                        Height="48"
-                        Style="{StaticResource EllipsisButton}"
-                        Grid.Column="2"
-                        Grid.Row="2">
-                    <FontIcon x:Name="EllipsisIcon"
-                              VerticalAlignment="Center"
-                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                              FontSize="16"
-                              Glyph="&#xE10C;"
-                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                    <Button.Flyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanView, Mode=OneWay}"
-                                            Text="{CustomResource ShowInChat}"/>
-                            <MenuFlyoutItem x:Name="FlyoutCopy"
-                                            Command="{x:Bind ViewModel.CopyCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanCopy, Mode=OneWay}"
-                                            Text="{CustomResource Copy}"/>
-                            <MenuFlyoutItem x:Name="FlyoutSaveAs"
-                                            Command="{x:Bind ViewModel.SaveCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanSave, Mode=OneWay}"
-                                            Text="Save as..."/>
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"
-                                            Text="{CustomResource OpenInExternalApp}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
-                                            Text="{CustomResource Delete}"/>
-                        </MenuFlyout>
-                    </Button.Flyout>
-                </Button>
             </Grid>
         </controls:GalleryTransportControls.Footer>
     </controls:GalleryTransportControls>
