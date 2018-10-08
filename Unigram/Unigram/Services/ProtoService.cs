@@ -119,7 +119,7 @@ namespace Unigram.Services
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
 
-        public ProtoService(int session, IDeviceInfoService deviceInfoService, ISettingsService settings, IEventAggregator aggregator)
+        public ProtoService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, IEventAggregator aggregator)
         {
             _session = session;
             _deviceInfoService = deviceInfoService;
@@ -129,7 +129,7 @@ namespace Unigram.Services
 
             _preferences = new AutoDownloadPreferences(ApplicationData.Current.LocalSettings.CreateContainer("autoDownload", ApplicationDataCreateDisposition.Always));
 
-            Initialize();
+            Initialize(online);
         }
 
         public bool TryInitialize()
@@ -143,7 +143,7 @@ namespace Unigram.Services
             return false;
         }
 
-        private void Initialize()
+        private void Initialize(bool online = true)
         {
             _client = Client.Create(this);
 
@@ -261,6 +261,7 @@ namespace Unigram.Services
 
             Task.Run(() =>
             {
+                _client.Send(new SetOption("online", new OptionValueBoolean(online)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
                 _client.Run();

@@ -88,6 +88,7 @@ namespace Unigram
             {
                 builder.RegisterType<ProtoService>()
                     .WithParameter("session", session)
+                    .WithParameter("online", session == SettingsService.Current.ActiveSession)
                     .As<IProtoService, ICacheService>()
                     .SingleInstance();
                 builder.RegisterType<SettingsService>()
@@ -142,7 +143,8 @@ namespace Unigram
 
                 builder.RegisterType<SessionService>().As<ISessionService>()
                     .WithParameter("session", session)
-                    .WithParameter("selected", session == SettingsService.Current.ActiveSession).SingleInstance();
+                    .WithParameter("selected", session == SettingsService.Current.ActiveSession)
+                    .SingleInstance();
 
                 builder.RegisterType<ViewService>().As<IViewService>().SingleInstance();
 
