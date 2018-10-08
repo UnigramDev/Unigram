@@ -34,6 +34,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services.Factories;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace Unigram.ViewModels
 {
@@ -103,6 +104,7 @@ namespace Unigram.ViewModels
         private readonly INotificationsService _pushService;
         private readonly IPlaybackService _playbackService;
         private readonly IVoIPService _voipService;
+        private readonly INetworkService _networkService;
         private readonly IMessageFactory _messageFactory;
 
         public IPlaybackService PlaybackService => _playbackService;
@@ -111,7 +113,7 @@ namespace Unigram.ViewModels
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService, IVoIPService voipService, IMessageFactory messageFactory)
+        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService, IVoIPService voipService, INetworkService networkService, IMessageFactory messageFactory)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _locationService = locationService;
@@ -119,6 +121,7 @@ namespace Unigram.ViewModels
             _pushService = pushService;
             _playbackService = playbackService;
             _voipService = voipService;
+            _networkService = networkService;
             _messageFactory = messageFactory;
 
             _stickers = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
@@ -1532,6 +1535,13 @@ namespace Unigram.ViewModels
 
 
             RemoveNotifications();
+
+
+
+            if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
+            {
+                await HandlePackageAsync(package);
+            }
         }
 
         public override Task OnNavigatingFromAsync(NavigatingEventArgs args)

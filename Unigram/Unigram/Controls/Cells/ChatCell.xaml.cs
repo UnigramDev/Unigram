@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
+using Template10.Common;
+using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Services;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -23,21 +26,24 @@ namespace Unigram.Controls.Cells
     {
         private Chat _chat;
         private IProtoService _protoService;
+        private INavigationService _navigationService;
 
         public ChatCell()
         {
             InitializeComponent();
         }
 
-        public void UpdateChat(IProtoService protoService, Chat chat)
+        public void UpdateChat(IProtoService protoService, INavigationService navigationService, Chat chat)
         {
             _protoService = protoService;
+            _navigationService = navigationService;
             Update(chat);
         }
 
-        public void UpdateMessage(IProtoService protoService, Message message)
+        public void UpdateMessage(IProtoService protoService, INavigationService navigationService, Message message)
         {
             _protoService = protoService;
+            _navigationService = navigationService;
 
             var chat = protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -154,7 +160,7 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public bool UpdateFilterMode(Chat chat, ChatFilterMode filter)
+        public static bool UpdateFilterMode(Chat chat, ChatFilterMode filter)
         {
             switch (filter)
             {
@@ -574,6 +580,62 @@ namespace Unigram.Controls.Cells
             {
                 tooltip.Content = BriefInfo.Text;
             }
+        }
+
+        protected override void OnDragEnter(DragEventArgs e)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (_protoService.CanPostMessages(chat))
+            {
+                if (DropVisual == null)
+                    FindName(nameof(DropVisual));
+
+                DropVisual.Visibility = Visibility.Visible;
+                e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
+            }
+            else
+            {
+                if (DropVisual != null)
+                    DropVisual.Visibility = Visibility.Collapsed;
+
+                e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
+            }
+
+            base.OnDragEnter(e);
+        }
+
+        protected override void OnDragLeave(DragEventArgs e)
+        {
+            if (DropVisual != null)
+                DropVisual.Visibility = Visibility.Collapsed;
+
+            base.OnDragLeave(e);
+        }
+
+        protected override void OnDrop(DragEventArgs e)
+        {
+            if (DropVisual != null)
+                DropVisual.Visibility = Visibility.Collapsed;
+
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Main{_protoService.SessionId}") as NavigationService;
+            if (service != null)
+            {
+                App.DataPackages[chat.Id] = e.DataView;
+                service.NavigateToChat(chat);
+            }
+
+            base.OnDrop(e);
         }
     }
 

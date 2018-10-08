@@ -18,6 +18,7 @@ using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Dialogs;
 using Windows.ApplicationModel.Contacts;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
@@ -27,6 +28,7 @@ using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -746,6 +748,113 @@ namespace Unigram.ViewModels
             return new FormattedText(text, entities);
 
             //return ProtoService.Execute(new ParseTextEntities(text.Format(), new TextParseModeMarkdown())) as FormattedText;
+        }
+
+        public async Task HandlePackageAsync(DataPackageView package)
+        {
+            var boh = string.Join(", ", package.AvailableFormats);
+
+            if (package.Contains(StandardDataFormats.Bitmap))
+            {
+                var bitmap = await package.GetBitmapAsync();
+                var media = new ObservableCollection<StorageMedia>();
+                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = new byte[(int)stream.Size];
+                    reader.ReadBytes(buffer);
+                    await FileIO.WriteBytesAsync(cache, buffer);
+
+                    media.Add(await StoragePhoto.CreateAsync(cache, true));
+                }
+
+                if (package.Contains(StandardDataFormats.Text))
+                {
+                    media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
+                }
+
+                SendMediaExecute(media, media[0]);
+            }
+            else if (package.Contains(StandardDataFormats.StorageItems))
+            {
+                var items = await package.GetStorageItemsAsync();
+                var media = new ObservableCollection<StorageMedia>();
+                var files = new List<StorageFile>(items.Count);
+
+                foreach (StorageFile file in items)
+                {
+                    if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
+                    {
+                        media.Add(await StoragePhoto.CreateAsync(file, true));
+                    }
+                    else if (file.ContentType == "video/mp4")
+                    {
+                        media.Add(await StorageVideo.CreateAsync(file, true));
+                    }
+
+                    files.Add(file);
+                }
+
+                // Send compressed __only__ if user is dropping photos and videos only
+                if (media.Count > 0 && media.Count == files.Count)
+                {
+                    SendMediaExecute(media, media[0]);
+                }
+                else if (files.Count > 0)
+                {
+                    SendFileExecute(files);
+                }
+            }
+            //else if (e.DataView.Contains(StandardDataFormats.WebLink))
+            //{
+            //    // TODO: Invoke getting a preview of the weblink above the Textbox
+            //    var link = await e.DataView.GetWebLinkAsync();
+            //    if (TextField.Text == "")
+            //    {
+            //        TextField.Text = link.AbsolutePath;
+            //    }
+            //    else
+            //    {
+            //        TextField.Text = (TextField.Text + " " + link.AbsolutePath);
+            //    }
+            //
+            //    gridLoading.Visibility = Visibility.Collapsed;
+            //
+            //}
+            else if (package.Contains(StandardDataFormats.Text))
+            {
+                var field = TextField;
+                if (field == null)
+                {
+                    return;
+                }
+
+                var text = await package.GetTextAsync();
+
+                if (package.Contains(StandardDataFormats.WebLink))
+                {
+                    text += Environment.NewLine + await package.GetWebLinkAsync();
+                }
+
+                field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
+            }
+            else if (package.Contains(StandardDataFormats.WebLink))
+            {
+                var field = TextField;
+                if (field == null)
+                {
+                    return;
+                }
+
+                var text = await package.GetWebLinkAsync();
+                field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, text.ToString());
+            }
         }
     }
 }

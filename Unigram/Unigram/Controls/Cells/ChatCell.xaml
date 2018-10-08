@@ -8,9 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    AllowDrop="True">
 
-    <Grid Padding="12,8" Background="Transparent">
+    <Grid Padding="0,8,12,8" Background="Transparent">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Normal"/>
@@ -38,12 +39,14 @@
                 <VisualState x:Name="Expanded"/>
                 <VisualState x:Name="Compact">
                     <VisualState.Setters>
-                        <Setter Target="UnreadBadge.(Grid.Column)" Value="0"/>
+                        <Setter Target="UnreadMentionsBadge.(Grid.Column)" Value="0"/>
+                        <Setter Target="UnreadBadge.(Grid.Column)" Value="1"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition MinWidth="4"/>
             <ColumnDefinition Width="Auto"/>
@@ -54,9 +57,9 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <controls:ProfilePicture x:Name="Photo" Width="48" Height="48" VerticalAlignment="Top" IsHitTestVisible="False" Grid.RowSpan="2" />
+        <controls:ProfilePicture x:Name="Photo" Width="48" Height="48" Margin="12,0,0,0" VerticalAlignment="Top" IsHitTestVisible="False" Grid.RowSpan="2" Grid.ColumnSpan="2" />
 
-        <Grid VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="1" Grid.ColumnSpan="3">
+        <Grid VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="2" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
@@ -120,7 +123,7 @@
                    TextWrapping="NoWrap"
                    MaxLines="1"
                    Margin="12,0,0,0"
-                   Grid.Column="1"
+                   Grid.Column="2"
                    Grid.Row="1">
             <ToolTipService.ToolTip>
                 <ToolTip Opened="ToolTip_Opened"/>
@@ -143,7 +146,7 @@
                 HorizontalAlignment="Right"
                 Margin="8,2,0,-22"
                 Grid.ColumnSpan="2"
-                Grid.Column="2"
+                Grid.Column="3"
                 Grid.Row="1">
             <FontIcon Glyph="&#xE840;" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
@@ -156,7 +159,7 @@
                 HorizontalAlignment="Right"
                 Margin="8,1,0,-22"
                 Visibility="Collapsed"
-                Grid.Column="2"
+                Grid.Column="3"
                 Grid.Row="1">
             <TextBlock x:Name="UnreadMentionsLabel"
                        Text="@"
@@ -173,7 +176,7 @@
               HorizontalAlignment="Right"
               Margin="8,1,0,-22"
               Visibility="Collapsed"
-              Grid.Column="3"
+              Grid.Column="4"
               Grid.Row="1">
             <Border x:Name="UnreadBackground" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"/>
             <Border x:Name="UnreadMutedBackground" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"/>
@@ -183,5 +186,14 @@
                        TextAlignment="Center"
                        Margin="4,2,4,0"/>
         </Grid>
+
+        <Rectangle x:Name="DropVisual"
+                   x:DeferLoadStrategy="Lazy"
+                   Grid.RowSpan="2"
+                   Grid.ColumnSpan="5"
+                   Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                   StrokeThickness="2"
+                   Margin="0,-8,-12,-8"
+                   Visibility="Collapsed"/>
     </Grid>
 </UserControl>

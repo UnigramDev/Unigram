@@ -1,5 +1,6 @@
 ﻿using Microsoft.HockeyApp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -67,6 +68,8 @@ namespace Unigram
     {
         public static ShareOperation ShareOperation { get; set; }
         public static DataPackageView DataPackage { get; set; }
+
+        public static ConcurrentDictionary<long, DataPackageView> DataPackages { get; } = new ConcurrentDictionary<long, DataPackageView>();
 
         public static AppServiceConnection Connection { get; private set; }
 
