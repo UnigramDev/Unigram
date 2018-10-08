@@ -498,7 +498,9 @@ namespace Unigram.Controls
 
                 if (entities != null && entities.Count > 0)
                 {
-                    foreach (var entity in entities)
+                    // We want to enumerate entities from last to first to not
+                    // fuck up ranges due to hidden texts when formatting a link
+                    foreach (var entity in entities.Reverse())
                     {
                         var range = Document.GetRange(entity.Offset, entity.Offset + entity.Length);
 

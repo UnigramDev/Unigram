@@ -304,6 +304,23 @@ namespace Unigram.Common
             }
         }
 
+        public static bool IsEditable(this TextEntity entity)
+        {
+            switch (entity.Type)
+            {
+                case TextEntityTypeBold bold:
+                case TextEntityTypeItalic italic:
+                case TextEntityTypeCode code:
+                case TextEntityTypePre pre:
+                case TextEntityTypePreCode preCode:
+                case TextEntityTypeTextUrl textUrl:
+                case TextEntityTypeMentionName mentionName:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public static Photo GetPhoto(this Message message)
         {
             switch (message.Content)

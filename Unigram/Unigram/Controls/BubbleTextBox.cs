@@ -340,7 +340,8 @@ namespace Unigram.Controls
 
         private void ContextPaste_Click()
         {
-            Document.Selection.Paste(0);
+            //Document.Selection.Paste(0);
+            OnPaste(this, null);
         }
 
         private void ContextDelete_Click()
@@ -464,7 +465,10 @@ namespace Unigram.Controls
             var package = Clipboard.GetContent();
             if (package.Contains(StandardDataFormats.Text) && package.Contains("Rich Text Format"))
             {
-                e.Handled = true;
+                if (e != null)
+                {
+                    e.Handled = true;
+                }
 
                 var text = await package.GetTextAsync();
                 var start = Document.Selection.StartPosition;
@@ -486,7 +490,10 @@ namespace Unigram.Controls
             }
             else if (package.Contains(StandardDataFormats.Bitmap))
             {
-                e.Handled = true;
+                if (e != null)
+                {
+                    e.Handled = true;
+                }
 
                 var bitmap = await package.GetBitmapAsync();
                 var media = new ObservableCollection<StorageMedia>();
@@ -527,7 +534,10 @@ namespace Unigram.Controls
             }
             else if (package.Contains(StandardDataFormats.StorageItems))
             {
-                e.Handled = true;
+                if (e != null)
+                {
+                    e.Handled = true;
+                }
 
                 var items = await package.GetStorageItemsAsync();
                 var media = new ObservableCollection<StorageMedia>();
@@ -562,7 +572,48 @@ namespace Unigram.Controls
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {
+                if (e != null)
+                {
+                    e.Handled = true;
+                }
+
                 // This is our field format
+                var text = await package.GetTextAsync();
+                var data = await package.GetDataAsync("application/x-tl-field-tags") as IRandomAccessStream;
+                var reader = new DataReader(data.GetInputStreamAt(0));
+                var length = await reader.LoadAsync((uint)data.Size);
+
+                var count = reader.ReadInt32();
+                var entities = new List<TextEntity>(count);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var entity = new TextEntity { Offset = reader.ReadInt32(), Length = reader.ReadInt32() };
+                    var type = reader.ReadByte();
+
+                    switch (type)
+                    {
+                        case 1:
+                            entity.Type = new TextEntityTypeBold();
+                            break;
+                        case 2:
+                            entity.Type = new TextEntityTypeItalic();
+                            break;
+                        case 3:
+                            entity.Type = new TextEntityTypePreCode();
+                            break;
+                        case 4:
+                            entity.Type = new TextEntityTypeTextUrl { Url = reader.ReadString(reader.ReadUInt32()) };
+                            break;
+                        case 5:
+                            entity.Type = new TextEntityTypeMentionName { UserId = reader.ReadInt32() };
+                            break;
+                    }
+
+                    entities.Add(entity);
+                }
+
+                SetText(text, entities);
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-td-field-tags"))
             {
@@ -1498,7 +1549,9 @@ namespace Unigram.Controls
 
                 if (entities != null && entities.Count > 0)
                 {
-                    foreach (var entity in entities)
+                    // We want to enumerate entities from last to first to not
+                    // fuck up ranges due to hidden texts when formatting a link
+                    foreach (var entity in entities.Reverse())
                     {
                         var range = Document.GetRange(entity.Offset, entity.Offset + entity.Length);
 
