@@ -469,7 +469,13 @@ namespace Unigram.ViewModels
 
         public bool IsAdmin(int userId)
         {
-            return false;
+            var chat = _chat;
+            if (chat == null)
+            {
+                return false;
+            }
+
+            return _admins.TryGetValue(chat.Id, out IList<int> value) && value.Contains(userId);
         }
     }
 }

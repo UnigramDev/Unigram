@@ -89,8 +89,10 @@ namespace Unigram.ViewModels
 
         private readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
 
-        private static readonly Dictionary<long, long> _scrollingIndex = new Dictionary<long, long>();
-        private static readonly Dictionary<long, double> _scrollingPixel = new Dictionary<long, double>();
+        private static readonly ConcurrentDictionary<long, long> _scrollingIndex = new ConcurrentDictionary<long, long>();
+        private static readonly ConcurrentDictionary<long, double> _scrollingPixel = new ConcurrentDictionary<long, double>();
+
+        private static readonly ConcurrentDictionary<long, IList<int>> _admins = new ConcurrentDictionary<long, IList<int>>();
 
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly DisposableMutex _insertLock = new DisposableMutex();
@@ -623,7 +625,7 @@ namespace Unigram.ViewModels
                     foreach (var message in replied)
                     {
                         Items.Insert(0, message);
-                        
+
                         //var index = InsertMessageInOrder(Messages, message);
                     }
 
@@ -757,7 +759,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            AddDate:
+        AddDate:
             if (previous != null)
             {
                 Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null)));
@@ -951,6 +953,28 @@ namespace Unigram.ViewModels
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
                     ProcessFiles(_chat, replied);
                     ProcessReplies(replied);
+
+                    // If we're loading from the last read message
+                    // then we want to skip it to align first unread message at top
+                    if (maxId == _chat.LastReadInboxMessageId)
+                    {
+                        foreach (var item in replied)
+                        {
+                            if (item.Id > maxId)
+                            {
+                                maxId = item.Id;
+                                break;
+                            }
+                        }
+                    }
+
+                    // If we're loading the last message and it has been read already
+                    // then we want to align it at bottom, as it might be taller than the window height
+                    if (maxId == _chat.LastReadInboxMessageId && maxId == _chat.LastMessage?.Id && alignment != SnapPointsAlignment.Center)
+                    {
+                        alignment = SnapPointsAlignment.Far;
+                        pixel = 8;
+                    }
 
                     Items.ReplaceWith(replied);
 
@@ -1344,9 +1368,9 @@ namespace Unigram.ViewModels
             }
             else
             {
-                if (_scrollingIndex.TryGetValue(chat.Id, out long start))
+                if (_scrollingIndex.TryRemove(chat.Id, out long start))
                 {
-                    if (_scrollingPixel.TryGetValue(chat.Id, out double pixel))
+                    if (_scrollingPixel.TryRemove(chat.Id, out double pixel))
                     {
                         LoadMessageSliceAsync(null, start, SnapPointsAlignment.Far, pixel);
                     }
@@ -1459,6 +1483,14 @@ namespace Unigram.ViewModels
                 {
                     Delegate?.UpdateBasicGroupFullInfo(chat, item, cache);
                 }
+
+                ProtoService.Send(new GetChatAdministrators(chat.Id), result =>
+                {
+                    if (result is Telegram.Td.Api.Users users)
+                    {
+                        _admins[chat.Id] = users.UserIds;
+                    }
+                });
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
@@ -1475,6 +1507,14 @@ namespace Unigram.ViewModels
                 {
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
+
+                ProtoService.Send(new GetChatAdministrators(chat.Id), result =>
+                {
+                    if (result is Telegram.Td.Api.Users users)
+                    {
+                        _admins[chat.Id] = users.UserIds;
+                    }
+                });
             }
 
             ShowReplyMarkup(chat);
@@ -1538,14 +1578,14 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    _scrollingIndex.Remove(chat.Id);
-                    _scrollingPixel.Remove(chat.Id);
+                    _scrollingIndex.TryRemove(chat.Id, out long index);
+                    _scrollingPixel.TryRemove(chat.Id, out double pixel);
                 }
             }
             catch
             {
-                _scrollingIndex.Remove(chat.Id);
-                _scrollingPixel.Remove(chat.Id);
+                _scrollingIndex.TryRemove(chat.Id, out long index);
+                _scrollingPixel.TryRemove(chat.Id, out double pixel);
             }
 
             if (Dispatcher != null)
@@ -1776,7 +1816,7 @@ namespace Unigram.ViewModels
             }
 
             DraftMessage draft = null;
-            if (!string.IsNullOrWhiteSpace(formattedText.Text))
+            if (!string.IsNullOrWhiteSpace(formattedText.Text) || reply != 0)
             {
                 draft = new DraftMessage(reply, new InputMessageText(formattedText, false, false));
             }
@@ -2059,7 +2099,7 @@ namespace Unigram.ViewModels
                         var sub = new List<TextEntity>();
 
                         // Todo
-                        foreach (var entity in entities)
+                        foreach (var entity in formattedText.Entities)
                         {
                             if (entity.Offset >= a * 4096 || entity.Offset + entity.Length >= a * 4096)
                             {
@@ -3124,39 +3164,30 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var oldFirst = item.IsFirst;
-
-            var itemPost = item.IsChannelPost;
-
-            if (!itemPost)
-            {
-                var attach = false;
-                if (previous != null)
-                {
-                    var previousPost = previous.IsChannelPost;
-
-                    attach = !previousPost &&
-                             //!(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
-                             !(previous.IsService()) &&
-                             AreTogether(item, previous) &&
-                             item.Date - previous.Date < 900;
-                }
-
-                item.IsFirst = !attach;
-
-                if (previous != null)
-                {
-                    previous.IsLast = item.IsFirst || item.IsService();
-                }
-            }
-            else
+            if (item.IsChannelPost)
             {
                 item.IsFirst = true;
+                item.IsLast = true;
+                return;
+            }
 
-                if (previous != null)
-                {
-                    previous.IsLast = false;
-                }
+            var attach = false;
+            if (previous != null)
+            {
+                var previousPost = previous.IsChannelPost;
+
+                attach = !previousPost &&
+                         //!(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
+                         !(previous.IsService()) &&
+                         AreTogether(item, previous) &&
+                         item.Date - previous.Date < 900;
+            }
+
+            item.IsFirst = !attach;
+
+            if (previous != null)
+            {
+                previous.IsLast = item.IsFirst || item.IsService();
             }
         }
 
