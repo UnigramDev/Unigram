@@ -54,7 +54,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override IStateItems SessionState
+        public override IDictionary<string, object> SessionState
         {
             get
             {

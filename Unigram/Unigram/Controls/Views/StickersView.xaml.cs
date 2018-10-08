@@ -485,6 +485,9 @@ namespace Unigram.Controls.Views
 
                         var content = container.ContentTemplateRoot as Image;
 
+                        container.Tag = sticker;
+                        content.Tag = sticker;
+
                         var file = sticker.Thumbnail.Photo;
                         if (file.Local.IsDownloadingCompleted)
                         {

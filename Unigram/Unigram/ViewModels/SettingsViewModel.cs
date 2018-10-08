@@ -178,6 +178,9 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            Settings.Clear();
+            Settings.PasscodeLock.Clear();
+
             await _pushService.UnregisterAsync();
             await _contactsService.RemoveAsync();
 

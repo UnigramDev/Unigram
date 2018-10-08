@@ -1289,23 +1289,41 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageSaveDownloadCommand { get; }
         private async void MessageSaveDownloadExecute(MessageViewModel message)
         {
-            //if (message.IsSticker())
-            //{
-            //    MessageSaveStickerExecute(message);
-            //    return;
-            //}
+            var result = message.Get().GetFileAndName(true);
 
-            //var photo = message.GetPhoto();
-            //if (photo?.Full is TLPhotoSize photoSize)
-            //{
-            //    await TLFileHelper.SavePhotoAsync(photoSize, message.Date, true);
-            //}
+            var file = result.File;
+            if (file == null || !file.Local.IsDownloadingCompleted)
+            {
+                return;
+            }
 
-            //var document = message.GetDocument();
-            //if (document != null)
-            //{
-            //    await TLFileHelper.SaveDocumentAsync(document, message.Date, true);
-            //}
+            var fileName = result.FileName;
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = Path.GetFileName(file.Local.Path);
+            }
+
+            var extension = Path.GetExtension(fileName);
+            if (string.IsNullOrEmpty(extension))
+            {
+                extension = ".dat";
+            }
+
+            var picker = new FileSavePicker();
+            picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
+            picker.SuggestedStartLocation = PickerLocationId.Downloads;
+            picker.SuggestedFileName = fileName;
+
+            var picked = await picker.PickSaveFileAsync();
+            if (picked != null)
+            {
+                try
+                {
+                    var cached = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    await cached.CopyAndReplaceAsync(picked);
+                }
+                catch { }
+            }
         }
 
         #endregion

@@ -84,6 +84,10 @@ namespace Unigram.Services
             {
                 sender.PlaybackRate = _playbackRate;
             }
+            else if (sender.PlaybackState == MediaPlaybackState.Paused && sender.Position == sender.NaturalDuration && _playlist.CurrentItem == _playlist.Items.LastOrDefault())
+            {
+                Clear();
+            }
         }
 
         #region Proximity

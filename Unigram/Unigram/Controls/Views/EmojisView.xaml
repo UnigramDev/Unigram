@@ -87,6 +87,18 @@
                 </ListView.ItemTemplate>
                 <ListView.Footer>
                     <StackPanel Orientation="Horizontal">
+                        <!--<controls:GlyphButton Width="{ThemeResource TelegramToolBarSmallHeight}" Height="{ThemeResource TelegramToolBarSmallHeight}" FontFamily="Segoe UI Emoji" Glyph="&#x1F3FB;">
+                            <controls:GlyphButton.Flyout>
+                                <MenuFlyout x:Name="Follodf">
+                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;"/>
+                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;&#x1F3FB;"/>
+                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;&#x1F3FC;"/>
+                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;&#x1F3FD;"/>
+                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;&#x1F3FE;"/>
+                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;&#x1F3FF;"/>
+                                </MenuFlyout>
+                            </controls:GlyphButton.Flyout>
+                        </controls:GlyphButton>-->
                         <controls:GlyphButton Click="Switch_Click" Width="{ThemeResource TelegramToolBarSmallHeight}" Height="{ThemeResource TelegramToolBarSmallHeight}" FontFamily="{StaticResource TelegramThemeFontFamily}" Glyph="&#xE606;"/>
                     </StackPanel>
                 </ListView.Footer>

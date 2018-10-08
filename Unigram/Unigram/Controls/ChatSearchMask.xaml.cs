@@ -188,7 +188,7 @@ namespace Unigram.Controls
             {
                 SetState(ChatSearchState.Text);
             }
-            else
+            else if (ViewModel?.Dialog?.Search != null)
             {
                 ViewModel.Dialog.Search = null;
             }

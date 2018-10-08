@@ -85,7 +85,7 @@ namespace Unigram.Controls.Views
         public Task<ContentDialogResult> ShowAsync(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
-            ViewModel.SearchType = SearchChatsType.BasicAndSupergroups;
+            ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = false;
 
             ViewModel.SwitchInline = switchInline;

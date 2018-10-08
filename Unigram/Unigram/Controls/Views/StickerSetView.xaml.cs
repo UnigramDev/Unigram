@@ -145,6 +145,8 @@ namespace Unigram.Controls.Views
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var sticker = args.Item as Sticker;
 
+            content.Tag = args.ItemContainer.Tag = new ViewModels.Dialogs.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
+
             if (args.Phase == 0)
             {
                 var title = content.Children[1] as TextBlock;

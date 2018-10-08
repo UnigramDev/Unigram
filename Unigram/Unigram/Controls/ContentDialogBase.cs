@@ -33,6 +33,8 @@ namespace Unigram.Controls
         private ApplicationView _applicationView;
         private Popup _popupHost;
 
+        private bool _closing;
+
         private TaskCompletionSource<ContentDialogResult> _callback;
         private ContentDialogResult _result;
 
@@ -178,6 +180,7 @@ namespace Unigram.Controls
                 //    await Task.Delay(200);
                 //}
 
+                _closing = false;
                 _popupHost.IsOpen = true;
 
                 return await _callback.Task;
@@ -223,7 +226,13 @@ namespace Unigram.Controls
 
         public void OnBackRequested(HandledEventArgs e)
         {
+            if (_closing)
+            {
+                return;
+            }
+
             //BootStrapper.BackRequested -= OnBackRequested;
+            _closing = true;
             OnBackRequestedOverride(this, e);
         }
 

@@ -491,7 +491,7 @@
                         Glyph="&#xE11A;"
                         Click="Search_Click"
                         FontSize="18"
-                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1"/>
 
                 <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>

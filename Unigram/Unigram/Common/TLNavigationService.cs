@@ -6,6 +6,7 @@ using Template10.Services.ViewService;
 using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Views;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -89,6 +90,11 @@ namespace Unigram.Common
                 }
 
                 page.ViewModel.TextField?.FocusMaybe(FocusState.Keyboard);
+
+                if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
+                {
+                    await page.ViewModel.HandlePackageAsync(package);
+                }
             }
             else
             {

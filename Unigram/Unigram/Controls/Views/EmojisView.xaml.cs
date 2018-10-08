@@ -39,6 +39,8 @@ namespace Unigram.Controls.Views
             Pivot.ItemsSource = Emoji.Emojis.Keys;
             Toolbar.ItemsSource = Emoji.Emojis.Keys;
             Toolbar.SelectedIndex = 0;
+
+            //Follodf.ShowMode = FlyoutShowMode.Transient;
         }
 
         private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -71,6 +71,8 @@ namespace Unigram.Common
                 element.PointerEntered += Element_PointerEntered;
                 element.PointerExited -= Element_PointerExited;
                 element.PointerExited += Element_PointerExited;
+                element.PointerCaptureLost -= Element_PointerCaptureLost;
+                element.PointerCaptureLost += Element_PointerCaptureLost;
                 element.Unloaded -= ElementOnUnloaded;
                 element.Unloaded += ElementOnUnloaded;
             }
@@ -78,24 +80,23 @@ namespace Unigram.Common
 
         private static void Element_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            CoreCursorType cursor = GetCursor((FrameworkElement)sender);
-            Window.Current.CoreWindow.PointerCursor = _cursors[cursor];
+            if (sender is FrameworkElement element)
+            {
+                CoreCursorType cursor = GetCursor(element);
+                Window.Current.CoreWindow.PointerCursor = _cursors[cursor];
+                element.CapturePointer(e.Pointer);
+            }
         }
 
         private static void Element_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             // when exiting change the cursor to the target Mouse.Cursor value of the new element
-            CoreCursor cursor;
-            if (e.OriginalSource is FrameworkElement newElement)
-            {
-                cursor = _cursors[GetCursor(newElement)];
-            }
-            else
-            {
-                cursor = _defaultCursor;
-            }
+            Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+        }
 
-            Window.Current.CoreWindow.PointerCursor = cursor;
+        private static void Element_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = _defaultCursor;
         }
 
         private static void ElementOnUnloaded(object sender, RoutedEventArgs routedEventArgs)
