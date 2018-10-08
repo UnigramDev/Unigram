@@ -225,6 +225,32 @@ namespace Unigram.ViewModels.Settings
 
         #endregion
 
+        public bool IsContactEnabled
+        {
+            get
+            {
+                return Settings.Notifications.IsContactEnabled;
+            }
+            set
+            {
+                Settings.Notifications.IsContactEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsPinnedEnabled
+        {
+            get
+            {
+                return Settings.Notifications.IsPinnedEnabled;
+            }
+            set
+            {
+                Settings.Notifications.IsPinnedEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool IncludeMutedChats
         {
             get

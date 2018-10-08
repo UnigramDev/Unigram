@@ -96,13 +96,11 @@
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource Events}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <ToggleSwitch
-                        IsEnabled="False"
-                        IsOn="True"
+                        IsOn="{x:Bind ViewModel.IsContactEnabled, Mode=TwoWay}"
                         Header="{CustomResource ContactJoined}"
                         Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
-                        IsEnabled="False"
-                        IsOn="True"
+                        IsOn="{x:Bind ViewModel.IsPinnedEnabled, Mode=TwoWay}"
                         Header="{CustomResource PinnedMessages}"
                         Style="{StaticResource CheckButtonStyle}"/>
                 </StackPanel>

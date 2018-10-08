@@ -753,6 +753,40 @@ namespace Unigram.Services
                 AddOrUpdateValue("CountUnreadMessages", value);
             }
         }
+
+        private bool? _isPinnedEnabled;
+        public bool IsPinnedEnabled
+        {
+            get
+            {
+                if (_isPinnedEnabled == null)
+                    _isPinnedEnabled = GetValueOrDefault("IsPinnedEnabled", true);
+
+                return _isPinnedEnabled ?? true;
+            }
+            set
+            {
+                _isPinnedEnabled = value;
+                AddOrUpdateValue("IsPinnedEnabled", value);
+            }
+        }
+
+        private bool? _isContactEnabled;
+        public bool IsContactEnabled
+        {
+            get
+            {
+                if (_isContactEnabled == null)
+                    _isContactEnabled = GetValueOrDefault("IsContactEnabled", true);
+
+                return _isContactEnabled ?? true;
+            }
+            set
+            {
+                _isContactEnabled = value;
+                AddOrUpdateValue("IsContactEnabled", value);
+            }
+        }
     }
 
     public class AppearanceSettings : SettingsServiceBase

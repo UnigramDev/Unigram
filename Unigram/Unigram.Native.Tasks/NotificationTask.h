@@ -27,7 +27,7 @@ namespace Unigram
 				static void ResetSecondaryTile(String^ caption, String^ picture, String^ group);
 				static void UpdatePrimaryTile(String^ session, String^ caption, String^ message, String^ picture);
 				//static void UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group);
-				static void UpdateToast(String^ caption, String^ message, String^ attribution, String^ session, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key); 
+				static void UpdateToast(String^ caption, String^ message, String^ attribution, String^ session, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ hero, String^ date, String^ loc_key); 
 
 			private:
 				void UpdateToastAndTiles(String^ content /*, std::wofstream* log*/);

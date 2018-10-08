@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -15,6 +16,7 @@ using Unigram.Native.Tasks;
 using Unigram.Views;
 using Windows.Data.Json;
 using Windows.Networking.PushNotifications;
+using Windows.Storage;
 using Windows.System.Threading;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Controls;
@@ -37,7 +39,8 @@ namespace Unigram.Services
         IHandle<UpdateChatReadInbox>,
         IHandle<UpdateServiceNotification>,
         IHandle<UpdateTermsOfService>,
-        IHandle<UpdateAuthorizationState>
+        IHandle<UpdateAuthorizationState>,
+        IHandle<UpdateFile>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -216,6 +219,15 @@ namespace Unigram.Services
                 return;
             }
 
+            if (update.Message.Content is MessageContactRegistered && !_settings.Notifications.IsContactEnabled)
+            {
+                return;
+            }
+            else if (update.Message.Content is MessagePinMessage && !_settings.Notifications.IsPinnedEnabled)
+            {
+                return;
+            }
+
             var caption = GetCaption(chat);
             var content = GetContent(chat, update.Message);
             var sound = "";
@@ -230,7 +242,7 @@ namespace Unigram.Services
 
             Update(chat, () =>
             {
-                NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, date, loc_key);
+                NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, string.Empty, date, loc_key);
 
                 if (_sessionService.IsActive)
                 {
@@ -259,6 +271,68 @@ namespace Unigram.Services
 
                 action();
             });
+        }
+
+        private ConcurrentDictionary<int, Message> _files = new ConcurrentDictionary<int, Message>();
+
+        private string GetPhoto(Message message)
+        {
+            if (message.Content is MessagePhoto photo)
+            {
+                var small = photo.Photo.GetBig();
+                if (small == null || !small.Photo.Local.IsDownloadingCompleted)
+                {
+                    _files[small.Photo.Id] = message;
+                    _protoService.Send(new DownloadFile(small.Photo.Id, 1));
+                    return string.Empty;
+                }
+
+                var file = new Uri(small.Photo.Local.Path);
+                var folder = new Uri(ApplicationData.Current.LocalFolder.Path + "\\");
+
+                var relativePath = Uri.UnescapeDataString(
+                                        folder.MakeRelativeUri(file)
+                                              .ToString()
+                                        );
+
+                return "ms-appdata:///local/" + relativePath;
+            }
+
+            return string.Empty;
+        }
+
+        public void Handle(UpdateFile update)
+        {
+            if (update.File.Local.IsDownloadingCompleted && _files.TryGetValue(update.File.Id, out Message message))
+            {
+                message.UpdateFile(update.File);
+
+                var chat = _protoService.GetChat(message.ChatId);
+
+                var caption = GetCaption(chat);
+                var content = GetContent(chat, message);
+                var sound = "";
+                var launch = GetLaunch(chat);
+                var tag = GetTag(message);
+                var group = GetGroup(chat);
+                var picture = GetPhoto(chat);
+                var date = BindConvert.Current.DateTime(message.Date).ToString("o");
+                var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
+
+                var hero = GetPhoto(message);
+
+                var user = _protoService.GetUser(_protoService.GetMyId());
+
+                Update(chat, () =>
+                {
+                    NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, hero, date, loc_key);
+
+                    if (_sessionService.IsActive)
+                    {
+                        NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
+                    }
+                });
+            }
         }
 
         private string GetTag(Message message)

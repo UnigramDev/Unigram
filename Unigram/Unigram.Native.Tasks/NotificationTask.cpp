@@ -159,13 +159,29 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST"))
 		{
-			UpdateToast(caption, message, session, session, sound, launch, L"phoneCall", group, picture, date, loc_key);
+			UpdateToast(caption, message, session, session, sound, launch, L"phoneCall", group, picture, nullptr, date, loc_key);
 			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
 		{
+			std::wstring key = loc_key->Data();
+			if ((key.find(L"CONTACT_JOINED") == 0 || key.find(L"PINNED") == 0) && ApplicationData::Current->LocalSettings->Values->HasKey(session))
+			{
+				auto settings = safe_cast<ApplicationDataCompositeValue^>(ApplicationData::Current->LocalSettings->Values->Lookup(session));
+				auto notifications = safe_cast<ApplicationDataCompositeValue^>(settings->Lookup(L"Notifications"));
+
+				if (key.find(L"CONTACT_JOINED") == 0 && notifications->HasKey(L"IsContactEnabled") && safe_cast<bool>(notifications->Lookup(L"IsContactEnabled")))
+				{
+					return;
+				}
+				else if (key.find(L"PINNED") == 0 && notifications->HasKey(L"IsPinnedEnabled") && safe_cast<bool>(notifications->Lookup(L"IsPinnedEnabled")))
+				{
+					return;
+				}
+			}
+
 			auto tag = GetTag(custom);
-			UpdateToast(caption, message, session, session, sound, launch, tag, group, picture, date, loc_key);
+			UpdateToast(caption, message, session, session, sound, launch, tag, group, picture, nullptr, date, loc_key);
 			UpdatePrimaryBadge(data->GetNamedNumber("badge"));
 
 			if (loc_key != L"DC_UPDATE")
@@ -638,7 +654,7 @@ void NotificationTask::UpdatePrimaryTile(String^ session, String^ caption, Strin
 //	updater->Update(notification);
 //}
 
-void NotificationTask::UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
+void NotificationTask::UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ hero, String^ date, String^ loc_key)
 {
 	bool allow = true;
 	//auto settings = ApplicationData::Current->LocalSettings;
@@ -705,7 +721,16 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ att
 	xml += L"]]></text><text><![CDATA[";
 	xml += message->Data();
 	//xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
-	xml += L"]]></text><text placement='attribution'><![CDATA[";
+	xml += L"]]></text>";
+
+	if (hero != nullptr && hero->Length())
+	{
+		xml += L"<image src='";
+		xml += hero->Data();
+		xml += L"'/>";
+	}
+
+	xml += L"<text placement='attribution'><![CDATA[";
 	xml += attribution->Data();
 	xml += L"]]></text></binding></visual>";
 	xml += actions;
