@@ -8,8 +8,9 @@
         <ResourceDictionary x:Key="Dark">
             <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
 
-            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
-            <StaticResource x:Key="TelegramSubtitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{ThemeResource SystemChromeLowColor}"/>
+            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="TelegramSubtitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>

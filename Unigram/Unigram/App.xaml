@@ -15,7 +15,7 @@
                 <ResourceDictionary x:Key="Default">
                     <Color x:Key="SystemChromeMediumHighColor">#FF323232</Color>
 
-                    <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+                    <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
                     <SolidColorBrush x:Key="TelegramSeparatorBrush" Color="Transparent"/>
                     <!--<StaticResource x:Key="TelegramSeparatorBrush" ResourceKey="SystemControlForegroundBaseLowBrush"/>-->
 
