@@ -149,6 +149,9 @@
     <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
+    <Compile Include="Controls\Cells\CallCell.xaml.cs">
+      <DependentUpon>CallCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\ChatCell.xaml.cs">
       <DependentUpon>ChatCell.xaml</DependentUpon>
     </Compile>
@@ -253,7 +256,6 @@
     <Compile Include="Controls\Messages\Content\VenueContent.xaml.cs">
       <DependentUpon>VenueContent.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\HistoryCallMessageControlBase.cs" />
     <Compile Include="Controls\Messages\InvoiceFooter.xaml.cs">
       <DependentUpon>InvoiceFooter.xaml</DependentUpon>
     </Compile>
@@ -266,9 +268,6 @@
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\GlyphRadioButton.cs" />
-    <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">
-      <DependentUpon>HistoryCallMessageControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Passport\PassportDocumentCell.xaml.cs">
       <DependentUpon>PassportDocumentCell.xaml</DependentUpon>
     </Compile>
@@ -1533,6 +1532,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\CallCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Cells\ChatCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1698,10 +1701,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Items\SharedFileListViewItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Messages\HistoryCallMessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

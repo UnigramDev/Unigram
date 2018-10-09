@@ -451,7 +451,12 @@
                                                    IsItemClickEnabled="True"
                                                    SelectionMode="None"
                                                    ItemClick="ListView_ItemClick"
-                                                   SelectionChanged="ListView_SelectionChanged">
+                                                   SelectionChanged="ListView_SelectionChanged"
+                                                   AllowDrop="True">
+                                                   <!--CanDragItems="True"
+                                                   CanReorderItems="True"
+                                                   DragItemsStarting="ChatsList_DragItemsStarting"
+                                                   DragItemsCompleted="ChatsList_DragItemsCompleted"-->
                                 <ListView.ItemContainerStyleSelector>
                                     <selectors:DialogStyleSelector CacheService="{x:Bind ViewModel.CacheService}">
                                         <selectors:DialogStyleSelector.DialogStyle>
@@ -658,10 +663,11 @@
                     <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
                               ItemClick="ListView_ItemClick"
                               IsItemClickEnabled="True"
+                              ContainerContentChanging="Calls_ContainerContentChanging"
                               SelectionMode="None">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <messages:HistoryCallMessageControl ContextRequested="Call_ContextRequested"/>
+                                <cells:CallCell ContextRequested="Call_ContextRequested"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                         <ListView.ItemContainerStyle>

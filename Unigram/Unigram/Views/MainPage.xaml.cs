@@ -13,6 +13,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Updates;
@@ -631,6 +632,11 @@ namespace Unigram.Views
 
         public async void Activate(Uri scheme)
         {
+            if (App.DataPackage != null)
+            {
+                await ShareView.GetForCurrentView().ShowAsync(App.DataPackage);
+            }
+
             if (MessageHelper.IsTelegramUrl(scheme))
             {
                 MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, MasterDetail.NavigationService, scheme.ToString());
@@ -1091,7 +1097,7 @@ namespace Unigram.Views
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var call = element.DataContext as TLCallGroup;
+            var call = element.Tag as TLCallGroup;
 
             CreateFlyoutItem(ref flyout, _ => Visibility.Visible, ViewModel.Calls.CallDeleteCommand, call, Strings.Resources.Delete);
 
@@ -1322,8 +1328,6 @@ namespace Unigram.Views
 
             if (rpMasterTitlebar.SelectedIndex > 0)
             {
-                MasterDetail.Push(true);
-
                 if (Window.Current.Bounds.Width >= 501 && Window.Current.Bounds.Width < 820)
                 {
                     while (MasterDetail.NavigationService.Frame.CanGoBack)
@@ -1608,7 +1612,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                content.UpdateMessage(ViewModel.ProtoService, message);
+                content.UpdateMessage(ViewModel.ProtoService, ViewModel.NavigationService, message);
             }
 
             args.Handled = true;
@@ -1781,6 +1785,22 @@ namespace Unigram.Views
             text.Text = chat.UnreadCount.ToString();
         }
 
+        private void Calls_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as CallCell;
+            var call = args.Item as TLCallGroup;
+
+            args.ItemContainer.Tag = call;
+            content.Tag = call;
+
+            content.UpdateCall(ViewModel.ProtoService, call);
+        }
+
         public async void NavigationView_ItemClick(RootDestination destination)
         {
             if (destination == RootDestination.NewChat)
@@ -1798,18 +1818,22 @@ namespace Unigram.Views
             else if (destination == RootDestination.Chats)
             {
                 rpMasterTitlebar.SelectedIndex = 0;
+                MasterDetail.Push(true);
             }
             else if (destination == RootDestination.Contacts)
             {
                 rpMasterTitlebar.SelectedIndex = 1;
+                MasterDetail.Push(true);
             }
             else if (destination == RootDestination.Calls)
             {
                 rpMasterTitlebar.SelectedIndex = 2;
+                MasterDetail.Push(true);
             }
             else if (destination == RootDestination.Settings)
             {
                 rpMasterTitlebar.SelectedIndex = 3;
+                MasterDetail.Push(true);
             }
             else if (destination == RootDestination.InviteFriends)
             {
@@ -1839,6 +1863,35 @@ namespace Unigram.Views
             if (sender is ChatBackgroundPresenter presenter)
             {
                 presenter.Update(ViewModel.SessionId, ((TLViewModelBase)ViewModel).Settings, ViewModel.Aggregator);
+            }
+        }
+
+        private void ChatsList_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            var chat = e.Items.LastOrDefault() as Chat;
+            if (chat == null || e.Items.Count > 1)
+            {
+                ChatsList.CanReorderItems = false;
+                e.Cancel = true;
+                return;
+            }
+
+            if (chat.IsPinned)
+            {
+                ChatsList.CanReorderItems = true;
+            }
+            else
+            {
+                ChatsList.CanReorderItems = false;
+                e.Cancel = true;
+            }
+        }
+
+        private void ChatsList_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        {
+            if (args.DropResult == Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move)
+            {
+                ViewModel.ProtoService.Send(new SetPinnedChats(ViewModel.Chats.Items.Where(x => x.IsPinned).Select(x => x.Id).ToArray()));
             }
         }
     }
