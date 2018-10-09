@@ -98,7 +98,7 @@
                     </GroupStyle.HeaderTemplate>
                     <GroupStyle.HeaderContainerStyle>
                         <Style TargetType="ListViewHeaderItem">
-                            <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
                             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                             <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                             <Setter Property="Margin" Value="0,0,0,0"/>

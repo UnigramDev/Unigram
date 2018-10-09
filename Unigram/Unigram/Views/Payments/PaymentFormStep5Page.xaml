@@ -73,7 +73,7 @@
         <controls:PageHeader Text="{x:Bind ConvertTitle(ViewModel.PaymentForm.Invoice.IsTest), FallbackValue=Checkout}"/>
 
         <controls:ScrollViewerBackground 
-            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Top"
             Grid.Row="1"/>
@@ -82,7 +82,7 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Padding="0,0,0,48">
-                <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Padding="12" Margin="0,0,0,12">
+                <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}" Padding="12" Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>

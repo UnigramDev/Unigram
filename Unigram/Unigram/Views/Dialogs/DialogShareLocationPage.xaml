@@ -193,7 +193,7 @@
                         </Button>
 
                         <!-- Nearby header -->
-                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                             <TextBlock Text="{CustomResource NearbyPlaces}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </Border>
                     </StackPanel>

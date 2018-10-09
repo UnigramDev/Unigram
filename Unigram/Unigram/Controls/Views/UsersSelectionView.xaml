@@ -36,7 +36,7 @@
         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
     </Grid>
 
-    <Grid Background="{ThemeResource CommandBarOverflowPresenterBackground}" MinHeight="48" Grid.Row="1">
+    <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}" MinHeight="48" Grid.Row="1">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
@@ -94,7 +94,7 @@
                 </GroupStyle.HeaderTemplate>
                 <GroupStyle.HeaderContainerStyle>
                     <Style TargetType="ListViewHeaderItem">
-                        <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
                         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                         <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                         <Setter Property="Margin" Value="0,0,0,0"/>

@@ -4975,7 +4975,7 @@
         <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
         <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}" />
         <Setter Property="SelectionHighlightColor" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
         <Setter Property="BorderThickness" Value="0,0,0,1" />

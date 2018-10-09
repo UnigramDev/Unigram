@@ -85,7 +85,7 @@
                             <GroupStyle>
                                 <GroupStyle.HeaderContainerStyle>
                                     <Style TargetType="GridViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
                                         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                         <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                         <Setter Property="Margin" Value="-8,0,-8,0"/>
@@ -161,7 +161,7 @@
                             <GroupStyle>
                                 <GroupStyle.HeaderContainerStyle>
                                     <Style TargetType="ListViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
                                         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                         <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                         <Setter Property="Margin" Value="0,0,0,0"/>
@@ -230,7 +230,7 @@
                             <GroupStyle>
                                 <GroupStyle.HeaderContainerStyle>
                                     <Style TargetType="ListViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
                                         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                         <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                         <Setter Property="Margin" Value="0,0,0,0"/>

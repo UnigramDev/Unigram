@@ -9,7 +9,7 @@
             <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
 
             <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
-            <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="TelegramSubtitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
@@ -26,7 +26,7 @@
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
 
             <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
-            <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="TelegramSubtitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>

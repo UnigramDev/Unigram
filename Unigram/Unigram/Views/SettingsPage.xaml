@@ -81,7 +81,7 @@
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <controls:ScrollViewerBackground
-            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Top"/>
         <ScrollViewer x:Name="ScrollingHost"
@@ -89,7 +89,7 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Padding="0,0,0,24">
-                <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>

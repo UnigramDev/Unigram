@@ -143,7 +143,7 @@
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Border x:Name="CheckedMark" Background="{ThemeResource CommandBarOverflowPresenterBackground}" Margin="4" CornerRadius="2" Visibility="Collapsed"/>
+                            <Border x:Name="CheckedMark" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}" Margin="4" CornerRadius="2" Visibility="Collapsed"/>
                             <TextBlock
                                 x:Name="ContentPresenter"
                                 Margin="{TemplateBinding Padding}"

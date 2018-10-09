@@ -31,7 +31,7 @@
             VerticalAlignment="Top"
             Grid.Row="1"/>
         <ScrollViewer x:Name="ScrollingHost"
-                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">

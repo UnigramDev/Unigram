@@ -655,7 +655,7 @@
 
                 <Grid x:Name="PinnedMessagePanel"
                       Visibility="{x:Bind ViewModel.PinnedMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
                       MinHeight="{ThemeResource AppBarThemeCompactHeight}"
                       Grid.Row="1">
                     <Grid.ColumnDefinitions>
@@ -673,7 +673,7 @@
                 </Grid>
                 <Grid x:Name="CallbackQueryAnswerPanel"
                       Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
                       MinHeight="{ThemeResource AppBarThemeCompactHeight}"
                       Grid.Row="2">
                     <messages:MessageReference x:Name="CallbackQueryAnswer" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
@@ -682,7 +682,7 @@
                 </Grid>
 
                 <Grid Visibility="{x:Bind (Visibility)ViewModel.IsReportSpam, Mode=OneWay}"
-                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
                       Grid.Row="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -724,7 +724,7 @@
                     </Border>
                     <Grid Margin="12,6">
                         <Ellipse x:Name="ArrowMentionsShadow" Fill="White" Width="36" Height="36"/>
-                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
                                 CornerRadius="18"
                                 Height="36"
                                 Width="36">
@@ -751,7 +751,7 @@
                     </Border>
                     <Grid Margin="12,6">
                         <Ellipse x:Name="ArrowShadow" Fill="White" Width="36" Height="36"/>
-                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
                                 CornerRadius="18"
                                 Height="36"
                                 Width="36">

@@ -174,7 +174,7 @@
 
         <Grid x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="1">
             <controls:ScrollViewerBackground 
-                Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
                 ScrollingHost="{x:Bind ScrollingHost}"
                 VerticalAlignment="Top"
                 Grid.Row="1"/>
@@ -188,7 +188,7 @@
                       Grid.Row="1">
                 <ListView.Header>
                     <StackPanel Margin="0,0,0,24">
-                        <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                        <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>

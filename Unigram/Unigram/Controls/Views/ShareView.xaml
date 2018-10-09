@@ -602,7 +602,7 @@
                       Visibility="Collapsed">
                 <ListView.Header>
                     <StackPanel Visibility="{x:Bind ViewModel.TopChats, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                             <TextBlock Text="{CustomResource ChatHints}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </Border>
                         <ListView SelectionMode="None"
@@ -643,7 +643,7 @@
                             </ListView.ItemContainerStyle>
                         </ListView>
 
-                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                             <TextBlock Text="{CustomResource Recent}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </Border>
                     </StackPanel>
@@ -705,7 +705,7 @@
                         </GroupStyle.HeaderTemplate>
                         <GroupStyle.HeaderContainerStyle>
                             <Style TargetType="ListViewHeaderItem">
-                                <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                 <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                 <Setter Property="Margin" Value="0,0,0,0"/>

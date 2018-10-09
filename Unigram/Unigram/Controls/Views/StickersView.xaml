@@ -480,7 +480,7 @@
                 <Grid x:Name="ToolbarContainer">
                     <Border x:Name="Separator"/>
                     <!--
-                                Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"-->
+                                Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"-->
                     <ListView x:Name="Toolbar"
                                 ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
                                 Height="{ThemeResource TelegramToolBarSmallHeight}"

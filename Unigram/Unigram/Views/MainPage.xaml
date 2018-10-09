@@ -256,7 +256,7 @@
                 </Grid>
             </controls:ContentPageHeader>
 
-            <!--<Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="2">
+            <!--<Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}" Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="48"/>
@@ -293,7 +293,7 @@
                                   SelectionChanged="ListView_SelectionChanged">
                             <ListView.Header>
                                 <StackPanel Visibility="{x:Bind ViewModel.Chats.TopChats, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                                    <Border Visibility="{x:Bind ViewModel.Chats.TopChats.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                                    <Border Visibility="{x:Bind ViewModel.Chats.TopChats.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                                         <TextBlock Text="{CustomResource ChatHints}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                     </Border>
                                     <ListView SelectionMode="None"
@@ -334,7 +334,7 @@
                                         </ListView.ItemContainerStyle>
                                     </ListView>
 
-                                    <Grid Visibility="{x:Bind ViewModel.Chats.Search.Local.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                                    <Grid Visibility="{x:Bind ViewModel.Chats.Search.Local.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
                                             <ColumnDefinition Width="Auto"/>
@@ -406,7 +406,7 @@
                                     </GroupStyle.HeaderTemplate>
                                     <GroupStyle.HeaderContainerStyle>
                                         <Style TargetType="ListViewHeaderItem">
-                                            <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
                                             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                             <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                             <Setter Property="Margin" Value="0,0,0,0"/>
@@ -443,7 +443,7 @@
                         <Grid x:Name="DialogsPanel">
                             <controls:ScrollViewerBackground
                                 Visibility="{x:Bind (Visibility)ViewModel.Chats.IsFirstPinned, Mode=OneWay}"
-                                Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                                Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
                                 ScrollingHost="{x:Bind ChatsList}"
                                 VerticalAlignment="Top"/>
                             <controls:ChatListView x:Name="ChatsList"
@@ -469,7 +469,7 @@
                                         <selectors:DialogStyleSelector.PinnedStyle>
                                             <Style TargetType="ListViewItem">
                                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                                <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
                                                 <Setter Property="Padding" Value="0"/>
                                                 <Setter Property="MinHeight" Value="0"/>
                                             </Style>
@@ -521,7 +521,7 @@
                                                 TextAlignment="Center"
                                                 Margin="4,2,4,0"/>
                                  </Border>
-                                 <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                                 <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
                                          BorderBrush="{ThemeResource TelegramSeparatorBrush}"
                                          BorderThickness="1"
                                          CornerRadius="24"
@@ -586,7 +586,7 @@
                                     </GroupStyle.HeaderTemplate>
                                     <GroupStyle.HeaderContainerStyle>
                                         <Style TargetType="ListViewHeaderItem">
-                                            <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
                                             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                             <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                             <Setter Property="Margin" Value="0,0,0,0"/>
