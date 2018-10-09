@@ -20,6 +20,7 @@ using Unigram.Views.Dialogs;
 using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Graphics.Imaging;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
@@ -437,6 +438,15 @@ namespace Unigram.ViewModels
             if (chat == null)
             {
                 return;
+            }
+
+            using (var stream = await file.OpenReadAsync())
+            {
+                var decoder = await BitmapDecoder.CreateAsync(stream);
+                if (decoder.FrameCount > 1)
+                {
+                    asFile = true;
+                }
             }
 
             var size = await ImageHelper.GetScaleAsync(file, crop: crop);
