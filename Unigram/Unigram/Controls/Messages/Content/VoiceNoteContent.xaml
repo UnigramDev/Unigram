@@ -52,7 +52,7 @@
     </Border>
     <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
         <!--<TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>-->
-        <controls:ProgressVoice x:Name="Progress"/>
+        <controls:ProgressVoice x:Name="Progress" HorizontalAlignment="Left"/>
 
         <TextBlock x:Name="Subtitle" Style="{StaticResource DisabledCaptionTextBlockStyle}"/>
     </StackPanel>
