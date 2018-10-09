@@ -19,13 +19,13 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Items
+namespace Unigram.Controls.Cells
 {
-    public sealed partial class SharedLinkListViewItem : UserControl
+    public sealed partial class SharedLinkCell : UserControl
     {
         private Message _message;
 
-        public SharedLinkListViewItem()
+        public SharedLinkCell()
         {
             InitializeComponent();
         }
@@ -234,7 +234,8 @@ namespace Unigram.Controls.Items
 
                     if (link == webPageLink && webPageCached)
                     {
-                        hyperlink.Inlines.Add(new Run { Text = "\uE611 ", FontSize = 12, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+                        hyperlink.Inlines.Add(new Run { Text = "\uE611", FontSize = 12, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+                        hyperlink.Inlines.Add(new Run { Text = " \u200D" });
                     }
 
                     hyperlink.Inlines.Add(new Run { Text = link });

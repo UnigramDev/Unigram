@@ -26,11 +26,11 @@ using System.Windows.Input;
 using Unigram.Strings;
 using Unigram.ViewModels.Dialogs;
 using Telegram.Td.Api;
-using Unigram.Controls.Items;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Delegates;
 using System.Reactive.Linq;
 using Unigram.ViewModels.Chats;
+using Unigram.Controls.Cells;
 
 namespace Unigram.Views.Chats
 {
@@ -256,14 +256,14 @@ namespace Unigram.Views.Chats
             }
             else if (message.Content is MessageDocument)
             {
-                if (args.ItemContainer.ContentTemplateRoot is SharedFileListViewItem content)
+                if (args.ItemContainer.ContentTemplateRoot is SharedFileCell content)
                 {
                     content.UpdateMessage(ViewModel.ProtoService, ViewModel, message);
                 }
             }
             else if (message.Content is MessageText)
             {
-                if (args.ItemContainer.ContentTemplateRoot is SharedLinkListViewItem content)
+                if (args.ItemContainer.ContentTemplateRoot is SharedLinkCell content)
                 {
                     content.UpdateMessage(message);
                 }
@@ -323,7 +323,7 @@ namespace Unigram.Views.Chats
                     }
 
                     var document = message.Content as MessageDocument;
-                    var content = container.ContentTemplateRoot as SharedFileListViewItem;
+                    var content = container.ContentTemplateRoot as SharedFileCell;
 
                     if (document == null || document.Document == null || document.Document.DocumentValue == null)
                     {

@@ -4,9 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:common="using:Unigram.Common"
-    xmlns:items="using:Unigram.Controls.Items"
+    xmlns:cells="using:Unigram.Controls.Cells"
     xmlns:controls ="using:Unigram.Controls"
     xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+    xmlns:collections="using:Unigram.Collections"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -114,8 +115,8 @@
                                     </Style>
                                 </GroupStyle.HeaderContainerStyle>
                                 <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    <DataTemplate x:DataType="collections:DateMessageKeyedList">
+                                        <TextBlock Text="{x:Bind Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                     </DataTemplate>
                                 </GroupStyle.HeaderTemplate>
                             </GroupStyle>
@@ -190,15 +191,15 @@
                                     </Style>
                                 </GroupStyle.HeaderContainerStyle>
                                 <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    <DataTemplate x:DataType="collections:DateMessageKeyedList">
+                                        <TextBlock Text="{x:Bind Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                     </DataTemplate>
                                 </GroupStyle.HeaderTemplate>
                             </GroupStyle>
                         </ListView.GroupStyle>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <items:SharedFileListViewItem ContextRequested="Message_ContextRequested"/>
+                                <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </controls:GroupedListView>
@@ -259,15 +260,15 @@
                                     </Style>
                                 </GroupStyle.HeaderContainerStyle>
                                 <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    <DataTemplate x:DataType="collections:DateMessageKeyedList">
+                                        <TextBlock Text="{x:Bind Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                     </DataTemplate>
                                 </GroupStyle.HeaderTemplate>
                             </GroupStyle>
                         </ListView.GroupStyle>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <items:SharedLinkListViewItem ContextRequested="Message_ContextRequested"/>
+                                <cells:SharedLinkCell ContextRequested="Message_ContextRequested"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </controls:GroupedListView>
@@ -294,6 +295,45 @@
                         <ListView.Footer>
                             <Border Height="6"/>
                         </ListView.Footer>
+                        <ListView.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderContainerStyle>
+                                    <Style TargetType="ListViewHeaderItem">
+                                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
+                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                        <Setter Property="Margin" Value="0,0,0,0"/>
+                                        <Setter Property="Padding" Value="12,0,12,0"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="VerticalContentAlignment" Value="Top" />
+                                        <Setter Property="MinHeight" Value="0"/>
+                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListViewHeaderItem">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                                        <ContentPresenter x:Name="ContentPresenter"
+                                                                          Margin="{TemplateBinding Padding}"
+                                                                          Content="{TemplateBinding Content}"
+                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.HeaderContainerStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate x:DataType="collections:DateMessageKeyedList">
+                                        <TextBlock Text="{x:Bind Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ListView.GroupStyle>
                         <!--<ListView.ItemTemplate>
                              <DataTemplate>
                              <items:SharedFileListViewItem/>
@@ -323,6 +363,45 @@
                         <ListView.Footer>
                             <Border Height="6"/>
                         </ListView.Footer>
+                        <ListView.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderContainerStyle>
+                                    <Style TargetType="ListViewHeaderItem">
+                                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
+                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                        <Setter Property="Margin" Value="0,0,0,0"/>
+                                        <Setter Property="Padding" Value="12,0,12,0"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="VerticalContentAlignment" Value="Top" />
+                                        <Setter Property="MinHeight" Value="0"/>
+                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListViewHeaderItem">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                                        <ContentPresenter x:Name="ContentPresenter"
+                                                                          Margin="{TemplateBinding Padding}"
+                                                                          Content="{TemplateBinding Content}"
+                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.HeaderContainerStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate x:DataType="collections:DateMessageKeyedList">
+                                        <TextBlock Text="{x:Bind Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ListView.GroupStyle>
                         <!--<ListView.ItemTemplate>
                              <DataTemplate>
                              <items:SharedFileListViewItem/>

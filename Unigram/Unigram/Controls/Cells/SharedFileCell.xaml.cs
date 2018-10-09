@@ -18,15 +18,15 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Items
+namespace Unigram.Controls.Cells
 {
-    public sealed partial class SharedFileListViewItem : UserControl
+    public sealed partial class SharedFileCell : UserControl
     {
         private IProtoService _protoService;
         private IMessageDelegate _delegate;
         private Message _message;
 
-        public SharedFileListViewItem()
+        public SharedFileCell()
         {
             InitializeComponent();
         }

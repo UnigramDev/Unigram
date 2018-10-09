@@ -9,7 +9,7 @@ using Unigram.Services;
 
 namespace Unigram.Collections
 {
-    public class MediaCollection : IncrementalCollection<KeyedList<DateTime, Message>>
+    public class MediaCollection : IncrementalCollection<DateMessageKeyedList>
     {
         private readonly IProtoService _protoService;
         private readonly SearchMessagesFilter _filter;
@@ -27,7 +27,7 @@ namespace Unigram.Collections
             _query = query ?? string.Empty;
         }
 
-        public override async Task<IList<KeyedList<DateTime, Message>>> LoadDataAsync()
+        public override async Task<IList<DateMessageKeyedList>> LoadDataAsync()
         {
             try
             {
@@ -49,12 +49,12 @@ namespace Unigram.Collections
                         var dateTime = Utils.UnixTimestampToDateTime(x.Date);
                         return new DateTime(dateTime.Year, dateTime.Month, 1);
 
-                    }).Select(x => new KeyedList<DateTime, Message>(x)).ToList();
+                    }).Select(x => new DateMessageKeyedList(x)).ToList();
                 }
             }
             catch { }
 
-            return new KeyedList<DateTime, Message>[0];
+            return new DateMessageKeyedList[0];
         }
 
         protected override bool GetHasMoreItems()
@@ -62,7 +62,7 @@ namespace Unigram.Collections
             return _hasMore;
         }
 
-        protected override void Merge(IList<KeyedList<DateTime, Message>> result)
+        protected override void Merge(IList<DateMessageKeyedList> result)
         {
             base.Merge(result);
             return;
@@ -70,7 +70,7 @@ namespace Unigram.Collections
             var last = this.LastOrDefault();
             if (last == null)
             {
-                Add(new KeyedList<DateTime, Message>(DateTime.Now));
+                Add(new DateMessageKeyedList(DateTime.Now));
             }
 
             foreach (var group in result)

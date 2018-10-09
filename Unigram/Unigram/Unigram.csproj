@@ -158,6 +158,15 @@
     <Compile Include="Controls\Cells\SessionCell.xaml.cs">
       <DependentUpon>SessionCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\SharedFileCell.xaml.cs">
+      <DependentUpon>SharedFileCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\SharedLinkCell.xaml.cs">
+      <DependentUpon>SharedLinkCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\SharedVoiceCell.xaml.cs">
+      <DependentUpon>SharedVoiceCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\WebSessionCell.xaml.cs">
       <DependentUpon>WebSessionCell.xaml</DependentUpon>
     </Compile>
@@ -199,9 +208,6 @@
       <DependentUpon>MessageFooter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\MessageService.cs" />
-    <Compile Include="Controls\Items\SharedLinkListViewItem.xaml.cs">
-      <DependentUpon>SharedLinkListViewItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\MediaPlayerView.cs" />
     <Compile Include="Controls\Media\GroupedMediaView.xaml.cs">
       <DependentUpon>GroupedMediaView.xaml</DependentUpon>
@@ -1194,9 +1200,6 @@
     <Compile Include="Controls\InputDialog.xaml.cs">
       <DependentUpon>InputDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Items\SharedFileListViewItem.xaml.cs">
-      <DependentUpon>SharedFileListViewItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\MasterDetailView.cs" />
     <Compile Include="Controls\Views\GalleryView.xaml.cs">
       <DependentUpon>GalleryView.xaml</DependentUpon>
@@ -1544,6 +1547,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\SharedFileCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\SharedLinkCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\SharedVoiceCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\WebSessionCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1573,10 +1588,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\MessageFooter.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Items\SharedLinkListViewItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1697,10 +1708,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\InputDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Items\SharedFileListViewItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
