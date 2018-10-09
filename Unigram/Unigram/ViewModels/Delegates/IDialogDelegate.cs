@@ -1,9 +1,12 @@
-﻿using Telegram.Td.Api;
+﻿using System.Collections.Generic;
+using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Delegates
 {
     public interface IDialogDelegate : IProfileDelegate
     {
+        void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions);
+
         void UpdateChatReplyMarkup(Chat chat, MessageViewModel message);
         void UpdateChatUnreadMentionCount(Chat chat, int unreadMentionCount);
         void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification);

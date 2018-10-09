@@ -6,9 +6,11 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Common;
+using Unigram.Common.Dialogs;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -122,6 +124,21 @@ namespace Unigram.Controls.Cells
             Photo.Source = PlaceholderHelper.GetChat(null, chat, 48, 48);
         }
 
+        public void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions)
+        {
+            if (actions != null && actions.Count > 0)
+            {
+                TypingLabel.Text = InputTypingManager.GetTypingString(chat, actions, _protoService.GetUser);
+                TypingLabel.Visibility = Visibility.Visible;
+                BriefInfo.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                TypingLabel.Visibility = Visibility.Collapsed;
+                BriefInfo.Visibility = Visibility.Visible;
+            }
+        }
+
         private void UpdateChatType(Chat chat)
         {
             var type = UpdateType(chat);
@@ -156,6 +173,7 @@ namespace Unigram.Controls.Cells
             //UpdateChatReadInbox(chat);
             UpdateChatUnreadMentionCount(chat);
             UpdateNotificationSettings(chat);
+            UpdateChatActions(chat, _protoService.GetChatActions(chat.Id));
         }
 
         #endregion
@@ -590,7 +608,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            if (_protoService.CanPostMessages(chat))
+            if (_protoService.CanPostMessages(chat) && e.DataView.AvailableFormats.Count > 0)
             {
                 if (DropVisual == null)
                     FindName(nameof(DropVisual));

@@ -390,24 +390,23 @@
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
                                     <TextBlock x:Name="Title"
-                                                Style="{StaticResource BaseTextBlockStyle}"
-                                                TextWrapping="NoWrap"
-                                                TextTrimming="CharacterEllipsis"
-                                                MaxLines="1"/>
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               MaxLines="1"/>
                                     <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                                         <TextBlock x:Name="Subtitle"
-                                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}"
-                                                    TextWrapping="NoWrap"
-                                                    TextTrimming="CharacterEllipsis"
-                                                    Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
-                                        <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
-                                                    TextWrapping="NoWrap"
-                                                    TextTrimming="CharacterEllipsis"
-                                                    Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                    Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
-                                                    Style="{StaticResource CaptionTextBlockStyle}"/>
+                                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                                   Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}"
+                                                   TextWrapping="NoWrap"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock x:Name="Typing"
+                                                   Visibility="Collapsed"
+                                                   TextWrapping="NoWrap"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                                   Style="{StaticResource CaptionTextBlockStyle}"/>
                                     </Grid>
                                 </StackPanel>
 
@@ -597,21 +596,21 @@
                 <ListView.Header>
                     <Grid Padding="0,48,0,0">
                         <!--<Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel x:Name="BotInfoPanel"
-                                    Visibility="Collapsed"
-                                    Padding="{ThemeResource MessageContentPadding}"
-                                    Background="{ThemeResource MessageBackgroundBrush}"
-                                    BorderBrush="{ThemeResource MessageBorderBrush}"
-                                    BorderThickness="0,0,0,2"
-                                    VerticalAlignment="Center"
-                                    MaxWidth="360"
-                                    Margin="12,12,12,8">
-                            <TextBlock Text="What can this bot do?" Style="{StaticResource BaseTextBlockStyle}"/>
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"/>
-                        </StackPanel>-->
+                             <RowDefinition/>
+                             <RowDefinition Height="Auto"/>
+                             </Grid.RowDefinitions>
+                             <StackPanel x:Name="BotInfoPanel"
+                             Visibility="Collapsed"
+                             Padding="{ThemeResource MessageContentPadding}"
+                             Background="{ThemeResource MessageBackgroundBrush}"
+                             BorderBrush="{ThemeResource MessageBorderBrush}"
+                             BorderThickness="0,0,0,2"
+                             VerticalAlignment="Center"
+                             MaxWidth="360"
+                             Margin="12,12,12,8">
+                             <TextBlock Text="What can this bot do?" Style="{StaticResource BaseTextBlockStyle}"/>
+                             <TextBlock Style="{StaticResource BodyTextBlockStyle}"/>
+                             </StackPanel>-->
                         <Border Height="4" Grid.Row="1"/>
                     </Grid>
                 </ListView.Header>

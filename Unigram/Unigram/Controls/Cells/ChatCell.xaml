@@ -131,13 +131,16 @@
             <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/><Run x:Name="DraftLabel" Foreground="Red"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
         </TextBlock>
 
-        <!--<TextBlock x:Name="TypingLabel"
-             Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
-             Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}"
-             Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
-             Style="{StaticResource BodyTextBlockStyle}"
-             TextWrapping="NoWrap"
-             MaxLines="1"/>-->
+        <TextBlock x:Name="TypingLabel"
+                   Visibility="Collapsed"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                   TextTrimming="CharacterEllipsis"
+                   TextWrapping="NoWrap"
+                   MaxLines="1"
+                   Margin="12,0,0,0"
+                   Grid.Column="2"
+                   Grid.Row="1"/>
 
         <Border x:Name="PinnedIcon"
                 Width="20"

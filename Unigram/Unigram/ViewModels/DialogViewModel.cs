@@ -35,6 +35,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services.Factories;
 using Windows.ApplicationModel.DataTransfer;
+using Unigram.Common.Dialogs;
 
 namespace Unigram.ViewModels
 {
@@ -353,6 +354,15 @@ namespace Unigram.ViewModels
 
                 Set(ref _informativeMessage, value);
                 Delegate?.UpdateCallbackQueryAnswer(_chat, value);
+            }
+        }
+
+        private OutputTypingManager _outputTypingManager;
+        public OutputTypingManager OutputTypingManager
+        {
+            get
+            {
+                return _outputTypingManager = _outputTypingManager ?? new OutputTypingManager(ProtoService, _chat);
             }
         }
 
@@ -1436,6 +1446,7 @@ namespace Unigram.ViewModels
             ProtoService.Send(new OpenChat(chat.Id));
 
             Delegate?.UpdateChat(chat);
+            Delegate?.UpdateChatActions(chat, CacheService.GetChatActions(chat.Id));
 
             if (chat.Type is ChatTypePrivate privata)
             {

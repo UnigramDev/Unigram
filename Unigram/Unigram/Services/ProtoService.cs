@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -42,6 +43,8 @@ namespace Unigram.Services
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
         IList<Chat> GetChats(int count);
+
+        IDictionary<int, ChatAction> GetChatActions(long id);
 
         bool IsUserSavedMessages(User user);
         bool IsChatSavedMessages(Chat chat);
@@ -95,6 +98,7 @@ namespace Unigram.Services
         private readonly Dictionary<string, object> _options = new Dictionary<string, object>();
 
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
+        private readonly ConcurrentDictionary<long, Dictionary<int, ChatAction>> _chatActions = new ConcurrentDictionary<long, Dictionary<int, ChatAction>>();
 
         private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
 
@@ -492,6 +496,16 @@ namespace Unigram.Services
         public Chat GetChat(long id)
         {
             if (_chats.TryGetValue(id, out Chat value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        public IDictionary<int, ChatAction> GetChatActions(long id)
+        {
+            if (_chatActions.TryGetValue(id, out Dictionary<int, ChatAction> value))
             {
                 return value;
             }
@@ -1111,7 +1125,15 @@ namespace Unigram.Services
             }
             else if (update is UpdateUserChatAction updateUserChatAction)
             {
-
+                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new Dictionary<int, ChatAction>());
+                if (updateUserChatAction.Action is ChatActionCancel)
+                {
+                    actions.Remove(updateUserChatAction.UserId);
+                }
+                else
+                {
+                    actions[updateUserChatAction.UserId] = updateUserChatAction.Action;
+                }
             }
             else if (update is UpdateUserFullInfo updateUserFullInfo)
             {

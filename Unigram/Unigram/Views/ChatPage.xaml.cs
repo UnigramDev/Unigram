@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Common.Dialogs;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
@@ -2165,6 +2166,20 @@ namespace Unigram.Views
             }
         }
 
+        public void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions)
+        {
+            if (actions != null && actions.Count > 0)
+            {
+                Typing.Text = InputTypingManager.GetTypingString(chat, actions, ViewModel.CacheService.GetUser);
+                Typing.Visibility = Visibility.Visible;
+                Subtitle.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Typing.Visibility = Visibility.Collapsed;
+                Subtitle.Visibility = Visibility.Visible;
+            }
+        }
 
 
         public void UpdateNotificationSettings(Chat chat)

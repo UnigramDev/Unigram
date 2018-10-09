@@ -55,6 +55,7 @@ namespace Unigram.Views
         IHandle<UpdateChatUnreadMentionCount>,
         IHandle<UpdateChatTitle>,
         IHandle<UpdateChatPhoto>,
+        IHandle<UpdateUserChatAction>,
         IHandle<UpdateMessageMentionRead>,
         //IHandle<UpdateMessageContent>,
         IHandle<UpdateSecretChat>,
@@ -191,6 +192,11 @@ namespace Unigram.Views
         public void Handle(UpdateChatPhoto update)
         {
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatPhoto(chat));
+        }
+
+        public void Handle(UpdateUserChatAction update)
+        {
+            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatActions(chat, ViewModel.ProtoService.GetChatActions(chat.Id)));
         }
 
         public void Handle(UpdateMessageMentionRead update)
@@ -501,7 +507,7 @@ namespace Unigram.Views
             {
                 ChatsList.ScrollIntoView(ViewModel.Chats.Items.FirstOrDefault());
             }
-            else if (((args.VirtualKey == Windows.System.VirtualKey.E || args.VirtualKey == Windows.System.VirtualKey.K) && ctrl && !alt && !shift) || args.VirtualKey == Windows.System.VirtualKey.Search)
+            else if (((args.VirtualKey == Windows.System.VirtualKey.E /*|| args.VirtualKey == Windows.System.VirtualKey.K*/) && ctrl && !alt && !shift) || args.VirtualKey == Windows.System.VirtualKey.Search)
             {
                 MasterDetail.AllowCompact = false;
 

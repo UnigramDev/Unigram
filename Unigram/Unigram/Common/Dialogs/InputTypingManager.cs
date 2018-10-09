@@ -8,161 +8,137 @@ namespace Unigram.Common.Dialogs
 {
     public class InputTypingManager
     {
-        private readonly Action _callback;
-        private readonly Action<IList<Tuple<int, ChatAction>>> _typingCallback;
-
-        private readonly Dictionary<int, Tuple<DateTime, ChatAction>> _typingUsersCache = new Dictionary<int, Tuple<DateTime, ChatAction>>();
-
-        private readonly object _typingUsersSyncRoot = new object();
-
-        private readonly Timer _typingUsersTimer;
-
-        public InputTypingManager(Action<IList<Tuple<int, ChatAction>>> typingCallback, Action callback)
+        public static string GetTypingString(Chat chat, IDictionary<int, ChatAction> typingUsers, Func<int, User> getUser)
         {
-            _typingUsersTimer = new Timer(UpdateTypingUsersCache, null, -1, -1);
-            _typingCallback = typingCallback;
-            _callback = callback;
-        }
-
-        public void AddTypingUser(int userId, ChatAction action)
-        {
-            var now = DateTime.Now;
-            var max = DateTime.MaxValue;
-            var typing = new List<Tuple<int, ChatAction>>();
-
-            lock (_typingUsersSyncRoot)
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
-                _typingUsersCache[userId] = new Tuple<DateTime, ChatAction>(TillDate(now, action), action);
-
-                foreach (var current in _typingUsersCache)
+                var tuple = typingUsers.FirstOrDefault();
+                //if (tuple != null)
                 {
-                    if (current.Value.Item1 > now)
+                    var action = tuple.Value;
+                    switch (action)
                     {
-                        if (max > current.Value.Item1)
+                        //case TLSendMessageChooseContactAction chooseContact:
+                        //    return "";
+                        case ChatActionStartPlayingGame gamePlay:
+                            return Strings.Resources.SendingGame;
+                        //case TLSendMessageGeoLocationAction geoLocation:
+                        //    return "";
+                        case ChatActionRecordingVoiceNote recordAudio:
+                            return Strings.Resources.RecordingAudio;
+                        case ChatActionRecordingVideoNote recordRound:
+                        case ChatActionUploadingVideoNote uploadRound:
+                            return Strings.Resources.RecordingRound;
+                        //case TLSendMessageTypingAction typing:
+                        //    return Strings.Resources.Typing;
+                        case ChatActionUploadingVoiceNote uploadAudio:
+                            return Strings.Resources.SendingAudio;
+                        case ChatActionUploadingDocument uploadDocument:
+                            return Strings.Resources.SendingFile;
+                        case ChatActionUploadingPhoto uploadPhoto:
+                            return Strings.Resources.SendingPhoto;
+                        case ChatActionRecordingVideo recordVideo:
+                        case ChatActionUploadingVideo uploadVideo:
+                            return Strings.Resources.SendingVideoStatus;
+                    }
+                }
+
+                return Strings.Resources.Typing;
+            }
+
+            if (typingUsers.Count == 1)
+            {
+                var tuple = typingUsers.FirstOrDefault();
+
+                var user = getUser.Invoke(tuple.Key);
+                if (user == null)
+                {
+                    return null;
+                }
+
+                var userName = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
+
+                //if (tuple != null)
+                {
+                    var action = tuple.Value;
+                    switch (action)
+                    {
+                        //case TLSendMessageChooseContactAction chooseContact:
+                        //    return "";
+                        case ChatActionStartPlayingGame gamePlay:
+                            return string.Format(Strings.Resources.IsSendingGame, userName);
+                        //case TLSendMessageGeoLocationAction geoLocation:
+                        //    return "";
+                        case ChatActionRecordingVoiceNote recordAudio:
+                            return string.Format(Strings.Resources.IsRecordingAudio, userName);
+                        case ChatActionRecordingVideoNote recordRound:
+                        case ChatActionUploadingVideoNote uploadRound:
+                            return string.Format(Strings.Resources.IsSendingVideo, userName);
+                        //case TLSendMessageTypingAction typing:
+                        //    return string.Format(Strings.Resources.IsTyping, userName);
+                        case ChatActionUploadingVoiceNote uploadAudio:
+                            return string.Format(Strings.Resources.IsSendingAudio, userName);
+                        case ChatActionUploadingDocument uploadDocument:
+                            return string.Format(Strings.Resources.IsSendingFile, userName);
+                        case ChatActionUploadingPhoto uploadPhoto:
+                            return string.Format(Strings.Resources.IsSendingPhoto, userName);
+                        case ChatActionRecordingVideo recordVideo:
+                        case ChatActionUploadingVideo uploadVideo:
+                            return string.Format(Strings.Resources.IsSendingVideo, userName);
+                    }
+                }
+
+                return string.Format("{0} {1}", userName, Strings.Resources.IsTyping);
+            }
+            else
+            {
+
+                var count = 0;
+                var label = string.Empty;
+                foreach (var pu in typingUsers)
+                {
+                    var user = getUser.Invoke(pu.Key);
+                    if (user == null)
+                    {
+
+                    }
+
+                    if (user != null)
+                    {
+                        if (label.Length > 0)
                         {
-                            max = current.Value.Item1;
+                            label += ", ";
                         }
-
-                        typing.Add(new Tuple<int, ChatAction>(current.Key, current.Value.Item2));
+                        label += string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
+                        count++;
+                    }
+                    if (count == 2)
+                    {
+                        break;
                     }
                 }
-            }
 
-            if (typing.Count > 0)
-            {
-                StartTypingTimer((int)(max - now).TotalMilliseconds);
-                _typingCallback?.Invoke(typing);
-                return;
-            }
-
-            _callback?.Invoke();
-        }
-
-        public void RemoveTypingUser(int userId)
-        {
-            var typing = new List<Tuple<int, ChatAction>>();
-
-            lock (_typingUsersSyncRoot)
-            {
-                _typingUsersCache.Remove(userId);
-
-                foreach (var current in _typingUsersCache)
+                if (label.Length > 0)
                 {
-                    if (current.Value.Item1 > DateTime.Now)
+                    if (count == 1)
                     {
-                        typing.Add(new Tuple<int, ChatAction>(current.Key, current.Value.Item2));
-                    }
-                }
-            }
-
-            if (typing.Count > 0)
-            {
-                _typingCallback?.Invoke(typing);
-                return;
-            }
-
-            _callback?.Invoke();
-        }
-
-        public void Start()
-        {
-            StartTypingTimer(0);
-        }
-
-        private void StartTypingTimer(int dueTime)
-        {
-            if (_typingUsersTimer != null)
-            {
-                _typingUsersTimer.Change(dueTime, -1);
-            }
-        }
-
-        public void Stop()
-        {
-            StopTypingTimer();
-        }
-
-        private void StopTypingTimer()
-        {
-            if (_typingUsersTimer != null)
-            {
-                _typingUsersTimer.Change(-1, -1);
-            }
-        }
-
-        private static DateTime TillDate(DateTime now, ChatAction action)
-        {
-            var playGameAction = action as ChatActionStartPlayingGame;
-            if (playGameAction != null)
-            {
-                return now.AddSeconds(10.0);
-            }
-
-            return now.AddSeconds(5.0);
-        }
-
-        private void UpdateTypingUsersCache(object state)
-        {
-            var now = DateTime.Now;
-            var max = DateTime.MaxValue;
-            var typing = new List<Tuple<int, ChatAction>>();
-
-            lock (_typingUsersSyncRoot)
-            {
-                if (_typingUsersCache.Count == 0)
-                {
-                    return;
-                }
-
-                var keys = _typingUsersCache.Keys.ToList();
-
-                foreach (var current in keys)
-                {
-                    if (_typingUsersCache[current].Item1 <= now)
-                    {
-                        _typingUsersCache.Remove(current);
+                        return string.Format("{0} {1}", label, Strings.Resources.IsTyping);
                     }
                     else
                     {
-                        if (max > _typingUsersCache[current].Item1)
+                        if (typingUsers.Count > 2)
                         {
-                            max = _typingUsersCache[current].Item1;
+                            return string.Format("{0} {1}", label, Locale.Declension("AndMoreTyping", typingUsers.Count - 2));
                         }
-
-                        typing.Add(new Tuple<int, ChatAction>(current, _typingUsersCache[current].Item2));
+                        else
+                        {
+                            return string.Format("{0} {1}", label, Strings.Resources.AreTyping);
+                        }
                     }
                 }
-            }
 
-            if (typing.Count > 0)
-            {
-                StartTypingTimer((int)(max - now).TotalMilliseconds);
-                _typingCallback?.Invoke(typing);
-                return;
+                return null;
             }
-
-            StopTypingTimer();
-            _callback?.Invoke();
         }
     }
 }

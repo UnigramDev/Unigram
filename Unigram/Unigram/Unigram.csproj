@@ -1151,7 +1151,6 @@
     </Compile>
     <Compile Include="Converters\LastSeenConverter.cs" />
     <Compile Include="ViewModels\InstantViewModel.cs" />
-    <Compile Include="ViewModels\DialogViewModel.Typing.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">

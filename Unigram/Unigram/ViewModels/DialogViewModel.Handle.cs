@@ -55,14 +55,7 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                if (update.Action is ChatActionCancel)
-                {
-                    BeginOnUIThread(() => InputTypingManager.RemoveTypingUser(update.UserId));
-                }
-                else
-                {
-                    BeginOnUIThread(() => InputTypingManager.AddTypingUser(update.UserId, update.Action));
-                }
+                BeginOnUIThread(() => Delegate?.UpdateChatActions(_chat, CacheService.GetChatActions(update.ChatId)));
             }
         }
 
