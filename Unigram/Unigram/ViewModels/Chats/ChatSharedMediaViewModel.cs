@@ -17,13 +17,13 @@ using Windows.UI.Xaml;
 using System.Linq;
 using Unigram.ViewModels.Delegates;
 
-namespace Unigram.ViewModels.Dialogs
+namespace Unigram.ViewModels.Chats
 {
-    public class DialogSharedMediaViewModel : TLViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>
+    public class ChatSharedMediaViewModel : TLViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>
     {
         public IFileDelegate Delegate { get; set; }
 
-        public DialogSharedMediaViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public ChatSharedMediaViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
@@ -50,11 +50,13 @@ namespace Unigram.ViewModels.Dialogs
             Files = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterDocument());
             Links = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterUrl());
             Music = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterAudio());
+            Voice = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterVoiceNote());
 
             RaisePropertyChanged(() => Media);
             RaisePropertyChanged(() => Files);
             RaisePropertyChanged(() => Links);
             RaisePropertyChanged(() => Music);
+            RaisePropertyChanged(() => Voice);
 
             return Task.CompletedTask;
         }
@@ -81,6 +83,7 @@ namespace Unigram.ViewModels.Dialogs
         public MediaCollection Files { get; private set; }
         public MediaCollection Links { get; private set; }
         public MediaCollection Music { get; private set; }
+        public MediaCollection Voice { get; private set; }
 
         public void Find(SearchMessagesFilter filter, string query)
         {
@@ -101,6 +104,10 @@ namespace Unigram.ViewModels.Dialogs
                 case SearchMessagesFilterAudio audio:
                     Music = new MediaCollection(ProtoService, Chat.Id, audio, query);
                     RaisePropertyChanged(() => Music);
+                    break;
+                case SearchMessagesFilterVoiceNote voiceNote:
+                    Voice = new MediaCollection(ProtoService, Chat.Id, voiceNote, query);
+                    RaisePropertyChanged(() => Voice);
                     break;
             }
         }

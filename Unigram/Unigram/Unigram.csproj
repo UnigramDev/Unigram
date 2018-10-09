@@ -474,13 +474,13 @@
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />
     <Compile Include="ViewModels\Delegates\ILiveLocationDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISettingsDelegate.cs" />
     <Compile Include="ViewModels\Dialogs\DialogGalleryViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogSearchViewModel.cs" />
-    <Compile Include="ViewModels\Dialogs\DialogSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogShareLocationViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Delegate.cs" />
@@ -600,11 +600,11 @@
     <Compile Include="Views\Chats\ChatInvitePage.xaml.cs">
       <DependentUpon>ChatInvitePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Chats\ChatSharedMediaPage.xaml.cs">
+      <DependentUpon>ChatSharedMediaPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DiagnosticsPage.xaml.cs">
       <DependentUpon>DiagnosticsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Dialogs\DialogSharedMediaPage.xaml.cs">
-      <DependentUpon>DialogSharedMediaPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\DialogShareLocationPage.xaml.cs">
       <DependentUpon>DialogShareLocationPage.xaml</DependentUpon>
@@ -1880,13 +1880,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Chats\ChatSharedMediaPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\DiagnosticsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Dialogs\DialogSharedMediaPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Dialogs\DialogShareLocationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2222,6 +2222,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.UI.Xaml">
+      <Version>2.0.180916002-prerelease</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>11.0.2</Version>

@@ -168,8 +168,8 @@ namespace Unigram
                     return container.Resolve<ChatInviteLinkViewModel>(id);
                 case ChatInvitePage chatInvite:
                     return container.Resolve<ChatInviteViewModel>(id);
-                case DialogSharedMediaPage dialogSharedMedia:
-                    return container.Resolve<DialogSharedMediaViewModel, IFileDelegate>(dialogSharedMedia, id);
+                case ChatSharedMediaPage dialogSharedMedia:
+                    return container.Resolve<ChatSharedMediaViewModel, IFileDelegate>(dialogSharedMedia, id);
                 case DialogShareLocationPage dialogShareLocation:
                     return container.Resolve<DialogShareLocationViewModel>(id);
                 case InstantPage instant:
@@ -341,18 +341,13 @@ namespace Unigram
             _passcodeShown = false;
         }
 
-        public static bool IsActive { get; private set; }
-        public static bool IsVisible { get; private set; }
-
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
-            IsActive = e.WindowActivationState != CoreWindowActivationState.Deactivated;
             HandleActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
         }
 
         private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
         {
-            IsVisible = e.Visible;
             HandleActivated(e.Visible);
 
             if (e.Visible && TLContainer.Current.Passcode.IsLockscreenRequired)
@@ -391,10 +386,10 @@ namespace Unigram
                 aggregator.Publish(active ? "Window_Activated" : "Window_Deactivated");
             }
 
-            var protoService = TLContainer.Current.Resolve<IProtoService>();
-            if (protoService != null)
+            var cacheService = TLContainer.Current.Resolve<ICacheService>();
+            if (cacheService != null)
             {
-                protoService.Send(new SetOption("online", new OptionValueBoolean(active)));
+                cacheService.Options.Online = active;
             }
         }
 

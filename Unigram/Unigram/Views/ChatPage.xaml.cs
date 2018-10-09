@@ -18,6 +18,7 @@ using Unigram.Entities;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Chats;
 using Unigram.Views.Dialogs;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
@@ -648,7 +649,7 @@ namespace Unigram.Views
 
             if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.ProtoService.GetMyId())
             {
-                ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage), chat.Id);
+                ViewModel.NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id);
             }
             else
             {
@@ -953,6 +954,11 @@ namespace Unigram.Views
             if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
             {
                 ViewModel.ExpandSelection(Messages.SelectedItems.Cast<MessageViewModel>());
+
+                //if (ViewModel.SelectedItems.IsEmpty())
+                //{
+                //    ViewModel.SelectionMode = ListViewSelectionMode.None;
+                //}
             }
         }
 

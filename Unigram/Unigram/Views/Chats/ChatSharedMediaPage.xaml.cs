@@ -30,28 +30,35 @@ using Unigram.Controls.Items;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Delegates;
 using System.Reactive.Linq;
+using Unigram.ViewModels.Chats;
 
-namespace Unigram.Views.Dialogs
+namespace Unigram.Views.Chats
 {
-    public sealed partial class DialogSharedMediaPage : Page, INavigablePage, IFileDelegate
+    public sealed partial class ChatSharedMediaPage : Page, INavigablePage, IFileDelegate
     {
-        public DialogSharedMediaViewModel ViewModel => DataContext as DialogSharedMediaViewModel;
+        public ChatSharedMediaViewModel ViewModel => DataContext as ChatSharedMediaViewModel;
 
-        public DialogSharedMediaPage()
+        public ChatSharedMediaPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<DialogSharedMediaViewModel, IFileDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<ChatSharedMediaViewModel, IFileDelegate>(this);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
-            //ScrollingMedia.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
-            //ScrollingFiles.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
-            //ScrollingLinks.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
-            //ScrollingMusic.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+            MediaHeader.Content = Camelize(Strings.Resources.SharedMediaTab);
+            FilesHeader.Content = Camelize(Strings.Resources.SharedFilesTab);
+            LinksHeader.Content = Camelize(Strings.Resources.SharedLinksTab);
+            MusicHeader.Content = Camelize(Strings.Resources.SharedMusicTab);
+            VoiceHeader.Content = Camelize(Strings.Resources.SharedVoiceTab);
 
             InitializeSearch(SearchFiles, () => new SearchMessagesFilterDocument());
             InitializeSearch(SearchLinks, () => new SearchMessagesFilterUrl());
             InitializeSearch(SearchMusic, () => new SearchMessagesFilterAudio());
+        }
+
+        private string Camelize(string text)
+        {
+            return text.Substring(0, 1).ToUpper() + text.Substring(1).ToLower();
         }
 
         private void InitializeSearch(TextBox field, Func<SearchMessagesFilter> filter)
@@ -61,25 +68,6 @@ namespace Unigram.Views.Dialogs
             {
                 ViewModel.Find(filter(), field.Text);
             });
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
-        }
-
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
-        {
-            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased && ViewModel.SelectionMode != ListViewSelectionMode.None)
-            {
-                ViewModel.SelectionMode = ListViewSelectionMode.None;
-                args.Handled = true;
-            }
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -99,6 +87,9 @@ namespace Unigram.Views.Dialogs
                         break;
                     case 3:
                         ScrollingMusic.SelectedItems.AddRange(ViewModel.SelectedItems);
+                        break;
+                    case 4:
+                        ScrollingVoice.SelectedItems.AddRange(ViewModel.SelectedItems);
                         break;
                 }
             }
@@ -344,6 +335,54 @@ namespace Unigram.Views.Dialogs
                         content.UpdateFile(message, file);
                     }
                 }
+            }
+        }
+
+        private void NavigationView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
+        {
+            if (args.InvokedItemContainer == MediaHeader)
+            {
+                ScrollingHost.SelectedIndex = 0;
+            }
+            else if (args.InvokedItemContainer == FilesHeader)
+            {
+                ScrollingHost.SelectedIndex = 1;
+            }
+            else if (args.InvokedItemContainer == LinksHeader)
+            {
+                ScrollingHost.SelectedIndex = 2;
+            }
+            else if (args.InvokedItemContainer == MusicHeader)
+            {
+                ScrollingHost.SelectedIndex = 3;
+            }
+            else if (args.InvokedItemContainer == VoiceHeader)
+            {
+                ScrollingHost.SelectedIndex = 4;
+            }
+        }
+
+        private void ScrollingHost_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ScrollingHost.SelectedIndex == 0)
+            {
+                Header.SelectedItem = MediaHeader;
+            }
+            else if (ScrollingHost.SelectedIndex == 1)
+            {
+                Header.SelectedItem = FilesHeader;
+            }
+            else if (ScrollingHost.SelectedIndex == 2)
+            {
+                Header.SelectedItem = LinksHeader;
+            }
+            else if (ScrollingHost.SelectedIndex == 3)
+            {
+                Header.SelectedItem = MusicHeader;
+            }
+            else if (ScrollingHost.SelectedIndex == 4)
+            {
+                Header.SelectedItem = VoiceHeader;
             }
         }
     }

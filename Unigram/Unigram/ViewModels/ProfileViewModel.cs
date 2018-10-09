@@ -21,7 +21,6 @@ using Unigram.Controls.Views;
 using Unigram.Views.Users;
 using Unigram.Converters;
 using System.Runtime.CompilerServices;
-using Unigram.Views.Dialogs;
 using Unigram.Services;
 using Telegram.Td.Api;
 using Unigram.Views.Channels;
@@ -29,7 +28,6 @@ using Unigram.Collections;
 using Unigram.ViewModels.Chats;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Chats;
-using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
 using Windows.ApplicationModel.DataTransfer;
@@ -373,7 +371,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(DialogSharedMediaPage), chat.Id);
+            NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id);
         }
 
         public RelayCommand CommonChatsCommand { get; }

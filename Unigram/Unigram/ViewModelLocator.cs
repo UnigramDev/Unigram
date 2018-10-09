@@ -181,7 +181,7 @@ namespace Unigram
                 builder.RegisterType<SupergroupBannedViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupRestrictedViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupMembersViewModel>();// .SingleInstance();
-                builder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
+                builder.RegisterType<ChatSharedMediaViewModel>(); // .SingleInstance();
                 builder.RegisterType<UsersSelectionViewModel>(); //.SingleInstance();
                 builder.RegisterType<ChannelCreateStep1ViewModel>(); //.SingleInstance();
                 builder.RegisterType<ChannelCreateStep2ViewModel>(); //.SingleInstance();
