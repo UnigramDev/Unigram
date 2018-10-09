@@ -82,24 +82,27 @@ namespace Unigram.Controls.Views
             return context;
         }
 
+        public Task<ContentDialogResult> ShowAsync(DataPackageView package)
+        {
+            ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
+            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.IsCommentEnabled = false;
+
+            ViewModel.Clear();
+            ViewModel.Package = package;
+
+            return ShowAsync();
+        }
+
         public Task<ContentDialogResult> ShowAsync(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = false;
 
+            ViewModel.Clear();
             ViewModel.SwitchInline = switchInline;
             ViewModel.SwitchInlineBot = bot;
-
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.Messages = null;
-            ViewModel.InviteBot = null;
-            ViewModel.InputMedia = null;
-            ViewModel.IsWithMyScore = false;
 
             return ShowAsync();
         }
@@ -110,19 +113,9 @@ namespace Unigram.Controls.Views
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
 
+            ViewModel.Clear();
             ViewModel.SendMessage = message;
             ViewModel.SendMessageUrl = hasUrl;
-
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.Messages = null;
-            ViewModel.InviteBot = null;
-            ViewModel.InviteToken = null;
-            ViewModel.InputMedia = null;
-            ViewModel.IsWithMyScore = false;
 
             return ShowAsync();
         }
@@ -133,19 +126,9 @@ namespace Unigram.Controls.Views
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
 
+            ViewModel.Clear();
             ViewModel.Messages = new[] { message };
             ViewModel.IsWithMyScore = withMyScore;
-
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.InviteBot = null;
-            ViewModel.InviteToken = null;
-            ViewModel.InputMedia = null;
 
             var chat = ViewModel.ProtoService.GetChat(message.ChatId);
             if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel && ViewModel.ProtoService.GetSupergroup(super.SupergroupId) is Supergroup supergroup && supergroup.Username.Length > 0)
@@ -189,19 +172,9 @@ namespace Unigram.Controls.Views
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
 
+            ViewModel.Clear();
             ViewModel.Messages = messages;
             ViewModel.IsWithMyScore = withMyScore;
-
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.InviteBot = null;
-            ViewModel.InviteToken = null;
-            ViewModel.InputMedia = null;
 
             return ShowAsync();
         }
@@ -212,19 +185,9 @@ namespace Unigram.Controls.Views
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
 
+            ViewModel.Clear();
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
-
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.Messages = null;
-            ViewModel.InviteBot = null;
-            ViewModel.InviteToken = null;
-            ViewModel.InputMedia = null;
-            ViewModel.IsWithMyScore = false;
 
             return ShowAsync();
         }
@@ -235,19 +198,8 @@ namespace Unigram.Controls.Views
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
 
+            ViewModel.Clear();
             ViewModel.InputMedia = inputMedia;
-
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.Messages = null;
-            ViewModel.InviteBot = null;
-            ViewModel.InviteToken = null;
-            ViewModel.IsWithMyScore = false;
 
             //if (inputMedia is TLInputMediaGame gameMedia && gameMedia.Id is TLInputGameShortName shortName)
             //{
@@ -263,18 +215,9 @@ namespace Unigram.Controls.Views
             ViewModel.SearchType = SearchChatsType.BasicAndSupergroups;
             ViewModel.IsCommentEnabled = false;
 
+            ViewModel.Clear();
             ViewModel.InviteBot = bot;
             ViewModel.InviteToken = token;
-
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.Messages = null;
-            ViewModel.IsWithMyScore = false;
 
             return ShowAsync();
         }

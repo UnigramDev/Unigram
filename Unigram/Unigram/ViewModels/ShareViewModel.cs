@@ -280,8 +280,31 @@ namespace Unigram.ViewModels
             set { _switchInlineBot = value; }
         }
 
+        private DataPackageView _package;
+        public DataPackageView Package
+        {
+            get { return _package; }
+            set { _package = value; }
+        }
+
         public string SendMessage { get; set; }
         public bool SendMessageUrl { get; set; }
+
+        public void Clear()
+        {
+            Package = null;
+            SwitchInline = null;
+            SwitchInlineBot = null;
+            SendMessage = null;
+            SendMessageUrl = false;
+            Comment = null;
+            ShareLink = null;
+            ShareTitle = null;
+            Messages = null;
+            InviteBot = null;
+            InputMedia = null;
+            IsWithMyScore = false;
+        }
 
 
 
@@ -384,6 +407,22 @@ namespace Unigram.ViewModels
                 if (service != null)
                 {
                     service.NavigateToChat(chat, state: state);
+                }
+            }
+            else if (_package != null)
+            {
+                var chat = chats.FirstOrDefault();
+                if (chat == null)
+                {
+                    return;
+                }
+
+                App.DataPackages[chat.Id] = _package;
+
+                var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                if (service != null)
+                {
+                    service.NavigateToChat(chat);
                 }
             }
 
