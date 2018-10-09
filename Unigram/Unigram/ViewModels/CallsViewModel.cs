@@ -69,7 +69,7 @@ namespace Unigram.ViewModels
                             continue;
                         }
 
-                        var peer = message.IsOutgoing ? _protoService.GetUser(message.SenderUserId) : _protoService.GetUser(chat);
+                        var peer = _protoService.GetUser(chat);
                         if (peer == null)
                         {
                             continue;
