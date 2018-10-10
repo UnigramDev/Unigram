@@ -32,6 +32,11 @@ namespace Unigram.Services
 
         private void Update(ConnectionProfile profile)
         {
+            if (profile == null)
+            {
+                return;
+            }
+
             var cost = profile.GetConnectionCost();
             if (cost != null && cost.Roaming)
             {
