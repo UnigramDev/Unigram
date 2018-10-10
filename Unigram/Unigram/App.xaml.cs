@@ -110,6 +110,11 @@ namespace Unigram
 
             Locator.Configure(/*session*/);
 
+            if (!SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
+            {
+                RequestedTheme = SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) ? ApplicationTheme.Dark : ApplicationTheme.Light;
+            }
+
             InitializeComponent();
 
             _uiSettings = new UISettings();
