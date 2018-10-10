@@ -83,7 +83,7 @@ namespace Unigram.Services
 
                 VoIPControllerWrapper.UpdateServerConfig(ready.Config);
 
-                var logFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", "tgvoip.logFile.txt");
+                var logFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", $"voip{update.Call.Id}.txt");
                 var statsDumpFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", "tgvoip.statsDump.txt");
 
                 var call_packet_timeout_ms = CacheService.Options.CallPacketTimeoutMs;
@@ -147,15 +147,7 @@ namespace Unigram.Services
 
                 if (discarded.NeedRating)
                 {
-                    BeginOnUIThread(async () =>
-                    {
-                        var dialog = new PhoneCallRatingView();
-                        var confirm = await dialog.ShowQueuedAsync();
-                        if (confirm == ContentDialogResult.Primary)
-                        {
-                            ProtoService.Send(new SendCallRating(update.Call.Id, dialog.Rating + 1, dialog.Rating >= 0 && dialog.Rating <= 3 ? dialog.Comment : string.Empty));
-                        }
-                    });
+                    BeginOnUIThread(async () => await SendRatingAsync(update.Call.Id));
                 }
 
                 _controller?.Dispose();
@@ -191,6 +183,34 @@ namespace Unigram.Services
                         break;
                 }
             });
+        }
+
+        private async Task SendRatingAsync(int callId)
+        {
+            var dialog = new CallRatingView();
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                // We need updates here
+                await ProtoService.SendAsync(new SendCallRating(callId, dialog.Rating, dialog.Rating >= 1 && dialog.Rating <= 4 ? dialog.Comment : string.Empty));
+
+                if (dialog.IncludeDebugLogs && dialog.Rating <= 3)
+                {
+                    var file = await ApplicationData.Current.LocalFolder.TryGetItemAsync(Path.Combine($"{SessionId}", $"voip{callId}.txt")) as StorageFile;
+                    if (file == null)
+                    {
+                        return;
+                    }
+
+                    var chat = await ProtoService.SendAsync(new CreatePrivateChat(4244000, false)) as Chat;
+                    if (chat == null)
+                    {
+                        return;
+                    }
+
+                    ProtoService.Send(new SendMessage(chat.Id, 0, false, false, null, new InputMessageDocument(new InputFileLocal(file.Path), null, null)));
+                }
+            }
         }
 
         public Call ActiveCall
