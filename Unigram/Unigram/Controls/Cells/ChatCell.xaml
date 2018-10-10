@@ -31,7 +31,7 @@
                         <Setter Target="FromLabel.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
                         <Setter Target="DraftLabel.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
                         <Setter Target="BriefLabel.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
-                        <!--<Setter Target="TypingLabel.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>-->
+                        <Setter Target="TypingLabel.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
