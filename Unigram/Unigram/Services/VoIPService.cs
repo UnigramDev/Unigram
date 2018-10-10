@@ -137,10 +137,6 @@ namespace Unigram.Services
             }
             else if (update.Call.State is CallStateDiscarded discarded)
             {
-#if DEBUG
-                discarded.NeedRating = true;
-#endif
-
                 if (discarded.NeedDebugInformation)
                 {
                     ProtoService.Send(new SendCallDebugInformation(update.Call.Id, _controller.GetDebugLog()));

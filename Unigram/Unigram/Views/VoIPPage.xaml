@@ -181,7 +181,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
         <!--<Image x:Name="Image" Source="http://i.imgur.com/kx2hM3N.jpg" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
         <Image x:Name="Image" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Border x:Name="GrabPanel" Background="Transparent"/>
+        <Border x:Name="BackgroundPanel" Background="Transparent"/>
         
         <Grid Padding="12,0">
             <Grid.RowDefinitions>
@@ -235,7 +235,7 @@
             <StackPanel x:Name="SmallPanel" Orientation="Horizontal" Width="108" Height="24" Margin="12,6"/>
         </Border>
 
-        <Border x:Name="BlurPanel"/>
+        <Border x:Name="BlurPanel" Background="Transparent"/>
 
         <Grid x:Name="EmojifyPanel">
             <Grid Padding="12,0">
@@ -286,6 +286,5 @@
             
             <controls:GlyphToggleButton x:Name="Routing" Click="Routing_Click" CheckedGlyph="&#xE767;" HorizontalAlignment="Left" Margin="12,0,0,0" Grid.Column="4"/>
         </Grid>
-
     </Grid>
 </Page>

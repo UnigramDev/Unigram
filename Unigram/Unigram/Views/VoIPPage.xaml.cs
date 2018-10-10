@@ -127,7 +127,7 @@ namespace Unigram.Views
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveForegroundColor = Colors.White;
 
-            Window.Current.SetTitleBar(GrabPanel);
+            Window.Current.SetTitleBar(BlurPanel);
 
             if (call != null)
             {
@@ -265,15 +265,26 @@ namespace Unigram.Views
             var user = _cacheService.GetUser(call.UserId);
             if (user != null)
             {
-                //if (user.HasPhoto && user.Photo is TLUserProfilePhoto)
-                //{
-                //    Image.Source = DefaultPhotoConverter.Convert(user, true) as ImageSource;
-                //    GrabPanel.Background = new SolidColorBrush(Colors.Transparent);
-                //}
-                //else
+                if (user.ProfilePhoto != null)
+                {
+                    var file = user.ProfilePhoto.Big;
+                    if (file.Local.IsDownloadingCompleted)
+                    {
+                        Image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                        BackgroundPanel.Background = new SolidColorBrush(Colors.Transparent);
+                    }
+                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        Image.Source = null;
+                        BackgroundPanel.Background = PlaceholderHelper.GetBrush(user.Id);
+
+                        _protoService?.Send(new DownloadFile(file.Id, 1));
+                    }
+                }
+                else
                 {
                     Image.Source = null;
-                    GrabPanel.Background = PlaceholderHelper.GetBrush(user.Id);
+                    BackgroundPanel.Background = PlaceholderHelper.GetBrush(user.Id);
                 }
 
                 FromLabel.Text = user.GetFullName();
