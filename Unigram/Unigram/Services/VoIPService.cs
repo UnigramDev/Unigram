@@ -10,6 +10,7 @@ using Template10.Services.ViewService;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
+using Unigram.Services.Updates;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.ApplicationModel.Core;
@@ -223,6 +224,11 @@ namespace Unigram.Services
 
         public async void Show()
         {
+            if (_call == null)
+            {
+                return;
+            }
+
             Show(_call, _controller, _callStarted);
 
             if (_callDialog != null)
@@ -232,7 +238,11 @@ namespace Unigram.Services
             else if (_callLifetime != null)
             {
                 _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, _call, _controller, _callStarted), _call.Id);
+                _callLifetime.WindowWrapper.ApplicationView().Consolidated -= ApplicationView_Consolidated;
+                _callLifetime.WindowWrapper.ApplicationView().Consolidated += ApplicationView_Consolidated;
             }
+
+            Aggregator.Publish(new UpdateCallDialog(_call, true));
         }
 
         private async void Show(Call call, VoIPControllerWrapper controller, DateTime started)
@@ -242,15 +252,8 @@ namespace Unigram.Services
                 if (ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
                 {
                     _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, _call, _controller, _callStarted), call.Id);
-                    _callLifetime.WindowWrapper.ApplicationView().Consolidated += (s, args) =>
-                    {
-                        _callLifetime.StopViewInUse();
-                        _callLifetime.WindowWrapper.Window.Close();
-                        _callLifetime = null;
-
-                        _callPage.Dispose();
-                        _callPage = null;
-                    };
+                    _callLifetime.WindowWrapper.ApplicationView().Consolidated -= ApplicationView_Consolidated;
+                    _callLifetime.WindowWrapper.ApplicationView().Consolidated += ApplicationView_Consolidated;
                 }
                 else
                 {
@@ -262,6 +265,8 @@ namespace Unigram.Services
                     _callDialog.Content = _callPage;
                     _callDialog.IsOpen = true;
                 }
+
+                Aggregator.Publish(new UpdateCallDialog(call, true));
             }
 
             await _callPage.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -296,7 +301,21 @@ namespace Unigram.Services
                     _callPage.Dispose();
                     _callPage = null;
                 });
+
+                Aggregator.Publish(new UpdateCallDialog(_call, true));
             }
+        }
+
+        private void ApplicationView_Consolidated(ApplicationView sender, ApplicationViewConsolidatedEventArgs args)
+        {
+            _callLifetime.StopViewInUse();
+            _callLifetime.WindowWrapper.Window.Close();
+            _callLifetime = null;
+
+            _callPage.Dispose();
+            _callPage = null;
+
+            Aggregator.Publish(new UpdateCallDialog(_call, false));
         }
     }
 }

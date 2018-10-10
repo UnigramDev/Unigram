@@ -66,7 +66,7 @@ namespace Unigram.Views
         IHandle<UpdateFile>,
         IHandle<UpdateConnectionState>,
         IHandle<UpdateOption>,
-        IHandle<UpdateCall>
+        IHandle<UpdateCallDialog>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
         public RootPage Root { get; set; }
@@ -363,20 +363,11 @@ namespace Unigram.Views
             StatusLabel.Text = "Unigram";
         }
 
-        public void Handle(UpdateCall update)
+        public void Handle(UpdateCallDialog update)
         {
             this.BeginOnUIThread(() =>
             {
-                switch (update.Call.State)
-                {
-                    case CallStateDiscarded discarded:
-                    case CallStateError error:
-                        CallBanner.Visibility = Visibility.Collapsed;
-                        break;
-                    default:
-                        CallBanner.Visibility = Visibility.Visible;
-                        break;
-                }
+                CallBanner.Visibility = update.IsOpen ? Visibility.Collapsed : Visibility.Visible;
             });
         }
 
