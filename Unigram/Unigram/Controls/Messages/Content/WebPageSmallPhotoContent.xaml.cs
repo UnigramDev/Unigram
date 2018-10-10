@@ -17,8 +17,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Messages.Content
 {
     public sealed partial class WebPageSmallPhotoContent : WebPageContentBase, IContentWithFile
@@ -88,6 +86,13 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
+                double ratioX = (double)48 / small.Width;
+                double ratioY = (double)48 / small.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(small.Width * ratio);
+                var height = (int)(small.Height * ratio);
+
                 Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
