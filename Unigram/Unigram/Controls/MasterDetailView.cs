@@ -41,7 +41,6 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(MasterDetailView);
 
             Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
             SizeChanged += OnSizeChanged;
         }
 
@@ -158,13 +157,6 @@ namespace Unigram.Controls
             {
                 ViewStateChanged(this, EventArgs.Empty);
             }
-
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         private void UpdateVisualState()
@@ -211,18 +203,6 @@ namespace Unigram.Controls
         //        base.OnKeyDown(e);
         //    }
         //}
-
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
-        {
-            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
-            {
-                if (DetailFrame.CanGoBack && CurrentState == MasterDetailState.Minimal)
-                {
-                    DetailFrame.GoBack();
-                    args.Handled = true;
-                }
-            }
-        }
 
         protected override void OnApplyTemplate()
         {
