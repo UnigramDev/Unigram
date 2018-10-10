@@ -119,7 +119,6 @@
     <Compile Include="Common\ColorsHelper.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\ImageHelper.cs" />
-    <Compile Include="Common\Mouse.cs" />
     <Compile Include="Common\TLContainer.cs" />
     <Compile Include="Common\Execute.cs" />
     <Compile Include="Common\Fluent.cs" />

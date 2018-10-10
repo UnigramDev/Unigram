@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
 using Windows.Foundation;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -62,7 +63,7 @@ namespace Unigram.Controls
         {
             var detail = Children[0];
             var master = Children[1];
-            var grip = Children[2];
+            var grip = Children[2] as FrameworkElement;
 
             if (grip.ManipulationMode == ManipulationModes.System)
             {
@@ -70,6 +71,14 @@ namespace Unigram.Controls
                 grip.ManipulationStarted += Grip_ManipulationStarted;
                 grip.ManipulationDelta += Grip_ManipulationDelta;
                 grip.ManipulationCompleted += Grip_ManipulationCompleted;
+
+                grip.PointerEntered += Grip_PointerEntered;
+                grip.PointerPressed += Grip_PointerPressed;
+                grip.PointerReleased += Grip_PointerReleased;
+                grip.PointerExited += Grip_PointerExited;
+                grip.PointerCanceled += Grip_PointerExited;
+                grip.PointerCaptureLost += Grip_PointerExited;
+                grip.Unloaded += Grip_Unloaded;
             }
 
             if (availableSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain)
@@ -164,7 +173,7 @@ namespace Unigram.Controls
             var master = Children[1] as FrameworkElement;
             var grip = Children[2];
 
-            var newWidth = master.ActualWidth + e.Cumulative.Translation.X;
+            var newWidth = master.ActualWidth + e.Cumulative.Translation.X + 12;
             var newRatio = (newWidth < columnMinimalWidthLeft / 2)
                 ? 0
                 : newWidth / ActualWidth;
@@ -191,6 +200,54 @@ namespace Unigram.Controls
 
             InvalidateMeasure();
             InvalidateArrange();
+
+            if (e.Position.X < 0 || e.Position.X > 12)
+            {
+                Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+            }
+
+            foreach (var pointer in PointerCaptures)
+            {
+                ReleasePointerCapture(pointer);
+            }
+        }
+
+        private static readonly CoreCursor _defaultCursor = new CoreCursor(CoreCursorType.Arrow, 1);
+        private static readonly CoreCursor _resizeCursor = new CoreCursor(CoreCursorType.SizeWestEast, 1);
+
+        private void Grip_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = _resizeCursor;
+        }
+
+        private void Grip_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+        }
+
+        private void Grip_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+        }
+
+        private void Grip_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            VisualStateManager.GoToState(Children[2] as UserControl, "Pressed", false);
+
+            CapturePointer(e.Pointer);
+            e.Handled = true;
+        }
+
+        private void Grip_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            var point = e.GetCurrentPoint(Children[2]);
+            if (point.Position.X < 0 || point.Position.X > 12)
+            {
+                Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+            }
+
+            ReleasePointerCapture(e.Pointer);
+            e.Handled = true;
         }
 
         public event EventHandler ViewStateChanged;

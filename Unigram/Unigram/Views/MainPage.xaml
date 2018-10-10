@@ -121,7 +121,7 @@
                                               VerticalContentAlignment="Stretch"/>
 
                             <UserControl Canvas.ZIndex="2">
-                                <Border x:Name="Grip" common:Mouse.Cursor="SizeWestEast" Width="12" Background="Transparent" BorderBrush="Transparent" BorderThickness="0,0,6,0">
+                                <Border x:Name="Grip" Width="12" Background="Transparent" BorderBrush="Transparent" BorderThickness="0,0,6,0">
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup>
                                             <VisualState x:Name="Normal"/>
