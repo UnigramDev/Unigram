@@ -201,6 +201,8 @@ namespace Unigram.ViewModels
             SelectionMode = ListViewSelectionMode.None;
 
             await ShareView.GetForCurrentView().ShowAsync(message.Get());
+
+            TextField?.FocusMaybe(FocusState.Keyboard);
         }
 
         #endregion
@@ -356,6 +358,8 @@ namespace Unigram.ViewModels
                 SelectionMode = ListViewSelectionMode.None;
 
                 await ShareView.GetForCurrentView().ShowAsync(messages);
+
+                TextField?.FocusMaybe(FocusState.Keyboard);
             }
         }
 
