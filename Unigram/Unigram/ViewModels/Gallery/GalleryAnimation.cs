@@ -4,18 +4,18 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels.Gallery
 {
-    public class GalleryAnimationItem : GalleryItem
+    public class GalleryAnimation : GalleryContent
     {
         private readonly Animation _animation;
         private readonly string _caption;
 
-        public GalleryAnimationItem(IProtoService protoService, Animation animation)
+        public GalleryAnimation(IProtoService protoService, Animation animation)
             : base(protoService)
         {
             _animation = animation;
         }
 
-        public GalleryAnimationItem(IProtoService protoService, Animation animation, string caption)
+        public GalleryAnimation(IProtoService protoService, Animation animation, string caption)
             : base(protoService)
         {
             _animation = animation;

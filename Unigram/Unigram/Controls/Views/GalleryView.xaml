@@ -253,9 +253,9 @@
                     </Grid.ColumnDefinitions>
                     <Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>
 
-                    <controls:GalleryContent x:Name="Element2" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested"/>
-                    <controls:GalleryContent x:Name="Element0" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
-                    <controls:GalleryContent x:Name="Element1" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
+                    <controls:GalleryContentView x:Name="Element2" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested"/>
+                    <controls:GalleryContentView x:Name="Element0" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
+                    <controls:GalleryContentView x:Name="Element1" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
                 </Grid>
             </Grid>
         </controls:GalleryTransportControls.Content>

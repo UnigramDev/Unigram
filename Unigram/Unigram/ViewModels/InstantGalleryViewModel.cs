@@ -20,13 +20,13 @@ namespace Unigram.ViewModels
         public InstantGalleryViewModel(IProtoService protoService, IEventAggregator aggregator)
             : base(protoService, aggregator)
         {
-            Items = new MvxObservableCollection<GalleryItem>();
+            Items = new MvxObservableCollection<GalleryContent>();
             Items.CollectionChanged += OnCollectionChanged;
         }
 
         public static async Task<InstantGalleryViewModel> CreateAsync(IProtoService protoService, IEventAggregator aggregator, MessageViewModel message, WebPage webPage)
         {
-            var items = new List<GalleryItem>();
+            var items = new List<GalleryContent>();
 
             var response = await protoService.SendAsync(new GetWebPageInstantView(webPage.Url, false));
             if (response is WebPageInstantView instantView && instantView.IsFull)
@@ -59,25 +59,25 @@ namespace Unigram.ViewModels
             return result;
         }
 
-        private static GalleryItem CountBlock(IProtoService protoService, WebPageInstantView webPage, PageBlock pageBlock)
+        private static GalleryContent CountBlock(IProtoService protoService, WebPageInstantView webPage, PageBlock pageBlock)
         {
             if (pageBlock is PageBlockPhoto photoBlock)
             {
-                return new GalleryPhotoItem(protoService, photoBlock.Photo, photoBlock.Caption.ToPlainText());
+                return new GalleryPhoto(protoService, photoBlock.Photo, photoBlock.Caption.ToPlainText());
             }
             else if (pageBlock is PageBlockVideo videoBlock)
             {
-                return new GalleryVideoItem(protoService, videoBlock.Video, videoBlock.Caption.ToPlainText());
+                return new GalleryVideo(protoService, videoBlock.Video, videoBlock.Caption.ToPlainText());
             }
             else if (pageBlock is PageBlockAnimation animationBlock)
             {
-                return new GalleryAnimationItem(protoService, animationBlock.Animation, animationBlock.Caption.ToPlainText());
+                return new GalleryAnimation(protoService, animationBlock.Animation, animationBlock.Caption.ToPlainText());
             }
 
             return null;
         }
 
-        public override MvxObservableCollection<GalleryItem> Group => _shouldGroup ? this.Items : null;
+        public override MvxObservableCollection<GalleryContent> Group => _shouldGroup ? this.Items : null;
 
         //private GalleryItem GetBlock(TLMessage message, TLWebPage webPage, object pageBlock)
         //{

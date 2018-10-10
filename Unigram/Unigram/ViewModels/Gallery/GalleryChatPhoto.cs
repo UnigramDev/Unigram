@@ -3,28 +3,23 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels.Gallery
 {
-    public class GalleryProfilePhotoItem : GalleryItem
+    public class GalleryChatPhoto : GalleryContent
     {
-        private readonly Telegram.Td.Api.User _user;
-        private readonly ProfilePhoto _photo;
+        private readonly ChatPhoto _photo;
         private readonly string _caption;
-        private int _date;
 
-        public GalleryProfilePhotoItem(IProtoService protoService, Telegram.Td.Api.User user)
+        public GalleryChatPhoto(IProtoService protoService, ChatPhoto photo)
             : base(protoService)
         {
-            _user = user;
-            _photo = user.ProfilePhoto;
+            _photo = photo;
         }
 
-        public GalleryProfilePhotoItem(IProtoService protoService, ProfilePhoto photo, string caption)
+        public GalleryChatPhoto(IProtoService protoService, ChatPhoto photo, string caption)
             : base(protoService)
         {
             _photo = photo;
             _caption = caption;
         }
-
-        public long Id => _photo.Id;
 
         public override File GetFile()
         {
@@ -64,21 +59,11 @@ namespace Unigram.ViewModels.Gallery
             return false;
         }
 
-        public override object From => _user;
-
         public override object Constraint => new PhotoSize(string.Empty, null, 640, 640);
 
         public override string Caption => _caption;
 
         public override bool CanCopy => true;
         public override bool CanSave => true;
-
-        public override int Date => _date;
-
-        public void SetDate(int date)
-        {
-            _date = date;
-            RaisePropertyChanged(() => Date);
-        }
     }
 }

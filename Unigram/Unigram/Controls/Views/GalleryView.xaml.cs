@@ -144,12 +144,12 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public void OpenFile(GalleryItem item, File file)
+        public void OpenFile(GalleryContent item, File file)
         {
             Play(item, file);
         }
 
-        public void OpenItem(GalleryItem item)
+        public void OpenItem(GalleryContent item)
         {
             if (_selecting)
             {
@@ -373,13 +373,13 @@ namespace Unigram.Controls.Views
 
         private void ImageView_ImageOpened(object sender, RoutedEventArgs e)
         {
-            var image = sender as GalleryContent;
+            var image = sender as GalleryContentView;
             if (image.Item != ViewModel.FirstItem)
             {
                 return;
             }
 
-            var item = image.Item as GalleryItem;
+            var item = image.Item as GalleryContent;
             if (item == null)
             {
                 return;
@@ -446,11 +446,11 @@ namespace Unigram.Controls.Views
             return string.Format(Strings.Resources.Of, index, count);
         }
 
-        private Visibility ConvertCompactVisibility(GalleryItem item)
+        private Visibility ConvertCompactVisibility(GalleryContent item)
         {
             if (item.IsVideo && !item.IsLoop)
             {
-                if (item is GalleryMessageItem message && message.IsHot)
+                if (item is GalleryMessage message && message.IsHot)
                 {
                     return Visibility.Collapsed;
                 }
@@ -463,7 +463,7 @@ namespace Unigram.Controls.Views
 
         #endregion
 
-        private void Play(GalleryItem item, File file)
+        private void Play(GalleryContent item, File file)
         {
             try
             {
@@ -483,7 +483,7 @@ namespace Unigram.Controls.Views
             catch { }
         }
 
-        private void Play(Grid parent, GalleryItem item, File file)
+        private void Play(Grid parent, GalleryContent item, File file)
         {
             try
             {
@@ -868,9 +868,9 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            GalleryContent previous = null;
-            GalleryContent target = null;
-            GalleryContent next = null;
+            GalleryContentView previous = null;
+            GalleryContentView target = null;
+            GalleryContentView next = null;
             if (Grid.GetColumn(Element1) == direction + 1)
             {
                 previous = Element0;
@@ -908,7 +908,7 @@ namespace Unigram.Controls.Views
             //_selecting = false;
         }
 
-        private GalleryContent GetContainer(int direction)
+        private GalleryContentView GetContainer(int direction)
         {
             if (Grid.GetColumn(Element1) == direction + 1)
             {
@@ -926,7 +926,7 @@ namespace Unigram.Controls.Views
             return null;
         }
 
-        private bool TrySet(GalleryContent element, GalleryItem content)
+        private bool TrySet(GalleryContentView element, GalleryContent content)
         {
             if (object.Equals(element.Item, content))
             {
@@ -958,7 +958,7 @@ namespace Unigram.Controls.Views
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var item = element.Tag as GalleryItem;
+            var item = element.Tag as GalleryContent;
             if (item == null)
             {
                 return;

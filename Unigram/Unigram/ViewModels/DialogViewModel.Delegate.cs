@@ -436,7 +436,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    viewModel = new SingleGalleryViewModel(ProtoService, Aggregator, new GalleryMessageItem(ProtoService, message.Get()));
+                    viewModel = new SingleGalleryViewModel(ProtoService, Aggregator, new GalleryMessage(ProtoService, message.Get()));
                 }
 
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);

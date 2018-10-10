@@ -4,18 +4,18 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels.Gallery
 {
-    public class GalleryVideoItem : GalleryItem
+    public class GalleryVideo : GalleryContent
     {
         private readonly Video _video;
         private readonly string _caption;
 
-        public GalleryVideoItem(IProtoService protoService, Video video)
+        public GalleryVideo(IProtoService protoService, Video video)
             : base(protoService)
         {
             _video = video;
         }
 
-        public GalleryVideoItem(IProtoService protoService, Video video, string caption)
+        public GalleryVideo(IProtoService protoService, Video video, string caption)
             : base(protoService)
         {
             _video = video;

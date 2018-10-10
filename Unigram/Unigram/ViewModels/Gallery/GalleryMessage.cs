@@ -4,11 +4,11 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels.Gallery
 {
-    public class GalleryMessageItem : GalleryItem
+    public class GalleryMessage : GalleryContent
     {
         protected readonly Message _message;
 
-        public GalleryMessageItem(IProtoService protoService, Message message)
+        public GalleryMessage(IProtoService protoService, Message message)
             : base(protoService)
         {
             _message = message;

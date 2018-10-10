@@ -4,18 +4,18 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels.Gallery
 {
-    public class GalleryPhotoItem : GalleryItem
+    public class GalleryPhoto : GalleryContent
     {
         private readonly Photo _photo;
         private readonly string _caption;
 
-        public GalleryPhotoItem(IProtoService protoService, Photo photo)
+        public GalleryPhoto(IProtoService protoService, Photo photo)
             : base(protoService)
         {
             _photo = photo;
         }
 
-        public GalleryPhotoItem(IProtoService protoService, Photo photo, string caption)
+        public GalleryPhoto(IProtoService protoService, Photo photo, string caption)
             : base(protoService)
         {
             _photo = photo;

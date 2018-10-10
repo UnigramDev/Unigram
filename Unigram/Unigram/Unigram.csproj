@@ -182,8 +182,8 @@
     <Compile Include="Controls\DialogListView.cs" />
     <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
-    <Compile Include="Controls\GalleryContent.xaml.cs">
-      <DependentUpon>GalleryContent.xaml</DependentUpon>
+    <Compile Include="Controls\GalleryContentView.xaml.cs">
+      <DependentUpon>GalleryContentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\GalleryTransportControls.cs" />
     <Compile Include="Controls\GroupedGridView.cs" />
@@ -496,14 +496,14 @@
     <Compile Include="ViewModels\Delegates\IDialogDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IFileDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IMessageDelegate.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryAnimationItem.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryChatPhotoItem.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryItem.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryMessageItem.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryPhotoItem.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryProfilePhotoItem.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryUserProfilePhotoItem.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryVideoItem.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryAnimation.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryChatPhoto.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryContent.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryMessage.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryPhoto.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryProfilePhoto.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryUserProfilePhoto.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryVideo.cs" />
     <Compile Include="ViewModels\Gallery\GalleryViewModelBase.cs" />
     <Compile Include="ViewModels\InstantGalleryViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IProfileDelegate.cs" />
@@ -1578,9 +1578,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\GalleryContent.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Controls\GalleryContentView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Messages\Content\AudioContent.xaml">
       <SubType>Designer</SubType>

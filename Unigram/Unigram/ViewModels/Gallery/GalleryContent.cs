@@ -5,11 +5,11 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels.Gallery
 {
-    public abstract class GalleryItem : BindableBase
+    public abstract class GalleryContent
     {
         protected readonly IProtoService _protoService;
 
-        public GalleryItem(IProtoService protoService)
+        public GalleryContent(IProtoService protoService)
         {
             _protoService = protoService;
         }

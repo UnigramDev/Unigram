@@ -10,7 +10,7 @@ namespace Unigram.ViewModels.Delegates
 {
     public interface IGalleryDelegate
     {
-        void OpenItem(GalleryItem item);
-        void OpenFile(GalleryItem item, File file);
+        void OpenItem(GalleryContent item);
+        void OpenFile(GalleryContent item, File file);
     }
 }

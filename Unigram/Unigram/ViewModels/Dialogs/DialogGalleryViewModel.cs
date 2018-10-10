@@ -12,13 +12,13 @@ namespace Unigram.ViewModels.Dialogs
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly long _chatId;
 
-        private readonly MvxObservableCollection<GalleryItem> _group;
+        private readonly MvxObservableCollection<GalleryContent> _group;
         private long _current;
 
         public DialogGalleryViewModel(IProtoService protoService, IEventAggregator aggregator, long chatId, Message selected)
             : base(protoService, aggregator)
         {
-            _group = new MvxObservableCollection<GalleryItem>();
+            _group = new MvxObservableCollection<GalleryContent>();
             _chatId = chatId;
 
             //if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo())
@@ -34,7 +34,7 @@ namespace Unigram.ViewModels.Dialogs
 
             //Initialize(selected.Id);
 
-            Items = new MvxObservableCollection<GalleryItem> { new GalleryMessageItem(protoService, selected) };
+            Items = new MvxObservableCollection<GalleryContent> { new GalleryMessage(protoService, selected) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -57,7 +57,7 @@ namespace Unigram.ViewModels.Dialogs
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
-                            Items.Insert(0, new GalleryMessageItem(ProtoService, message));
+                            Items.Insert(0, new GalleryMessage(ProtoService, message));
                         }
                         else
                         {
@@ -69,7 +69,7 @@ namespace Unigram.ViewModels.Dialogs
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
-                            Items.Add(new GalleryMessageItem(ProtoService, message));
+                            Items.Add(new GalleryMessage(ProtoService, message));
                         }
                         else
                         {
@@ -86,7 +86,7 @@ namespace Unigram.ViewModels.Dialogs
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var item = Items.FirstOrDefault() as GalleryMessageItem;
+                var item = Items.FirstOrDefault() as GalleryMessage;
                 if (item == null)
                 {
                     return;
@@ -106,7 +106,7 @@ namespace Unigram.ViewModels.Dialogs
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
-                            Items.Insert(0, new GalleryMessageItem(ProtoService, message));
+                            Items.Insert(0, new GalleryMessage(ProtoService, message));
                         }
                         else
                         {
@@ -156,7 +156,7 @@ namespace Unigram.ViewModels.Dialogs
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var item = Items.LastOrDefault() as GalleryMessageItem;
+                var item = Items.LastOrDefault() as GalleryMessage;
                 if (item == null)
                 {
                     return;
@@ -176,7 +176,7 @@ namespace Unigram.ViewModels.Dialogs
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
-                            Items.Add(new GalleryMessageItem(ProtoService, message));
+                            Items.Add(new GalleryMessage(ProtoService, message));
                         }
                         else
                         {
@@ -191,9 +191,9 @@ namespace Unigram.ViewModels.Dialogs
 
         public override int Position => TotalItems - (Items.Count - base.Position);
 
-        public override MvxObservableCollection<GalleryItem> Group => _group;
+        public override MvxObservableCollection<GalleryContent> Group => _group;
 
-        protected override void OnSelectedItemChanged(GalleryItem item)
+        protected override void OnSelectedItemChanged(GalleryContent item)
         {
             //var messageItem = item as GalleryLegacyMessageItem;
             //if (messageItem == null)

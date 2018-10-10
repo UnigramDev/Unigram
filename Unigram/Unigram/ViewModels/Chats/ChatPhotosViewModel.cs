@@ -30,7 +30,7 @@ namespace Unigram.ViewModels.Chats
             //_peer = chat.ToInputPeer();
             //_lastMaxId = int.MaxValue;
 
-            Items = new MvxObservableCollection<GalleryItem> { new GalleryChatPhotoItem(protoService, chat.Photo) };
+            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(protoService, chat.Photo) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -77,7 +77,7 @@ namespace Unigram.ViewModels.Chats
                                 continue;
                             }
 
-                            Items.Add(new GalleryMessageItem(ProtoService, message));
+                            Items.Add(new GalleryMessage(ProtoService, message));
                         }
                         else
                         {
@@ -171,7 +171,7 @@ namespace Unigram.ViewModels.Chats
 
         public override int Position => TotalItems - (Items.Count - base.Position);
 
-        public override MvxObservableCollection<GalleryItem> Group => this.Items;
+        public override MvxObservableCollection<GalleryContent> Group => this.Items;
     }
 
     //public class GalleryChatPhotoItem : GalleryItem

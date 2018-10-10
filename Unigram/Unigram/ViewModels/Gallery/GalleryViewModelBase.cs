@@ -98,8 +98,8 @@ namespace Unigram.ViewModels.Gallery
             }
         }
 
-        protected GalleryItem _selectedItem;
-        public GalleryItem SelectedItem
+        protected GalleryContent _selectedItem;
+        public GalleryContent SelectedItem
         {
             get
             {
@@ -114,8 +114,8 @@ namespace Unigram.ViewModels.Gallery
             }
         }
 
-        protected GalleryItem _firstItem;
-        public GalleryItem FirstItem
+        protected GalleryContent _firstItem;
+        public GalleryContent FirstItem
         {
             get
             {
@@ -140,15 +140,15 @@ namespace Unigram.ViewModels.Gallery
             }
         }
 
-        public MvxObservableCollection<GalleryItem> Items { get; protected set; }
+        public MvxObservableCollection<GalleryContent> Items { get; protected set; }
 
-        public virtual MvxObservableCollection<GalleryItem> Group { get; }
+        public virtual MvxObservableCollection<GalleryContent> Group { get; }
 
         protected virtual void LoadPrevious() { }
 
         protected virtual void LoadNext() { }
 
-        protected virtual void OnSelectedItemChanged(GalleryItem item) { }
+        protected virtual void OnSelectedItemChanged(GalleryContent item) { }
 
         public virtual bool CanDelete
         {
@@ -162,7 +162,7 @@ namespace Unigram.ViewModels.Gallery
         {
             get
             {
-                if (SelectedItem is GalleryMessageItem message && message.IsHot)
+                if (SelectedItem is GalleryMessage message && message.IsHot)
                 {
                     return false;
                 }
@@ -202,7 +202,7 @@ namespace Unigram.ViewModels.Gallery
         {
             NavigationService.GoBack();
 
-            var message = _selectedItem as GalleryMessageItem;
+            var message = _selectedItem as GalleryMessage;
             if (message == null)
             {
                 return;
@@ -317,9 +317,9 @@ namespace Unigram.ViewModels.Gallery
             }
         }
 
-        public void OpenMessage(GalleryItem galleryItem)
+        public void OpenMessage(GalleryContent galleryItem)
         {
-            var message = galleryItem as GalleryMessageItem;
+            var message = galleryItem as GalleryMessage;
             if (message == null)
             {
                 return;

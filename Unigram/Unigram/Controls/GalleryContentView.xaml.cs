@@ -20,20 +20,20 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls
 {
-    public sealed partial class GalleryContent : Grid
+    public sealed partial class GalleryContentView : Grid
     {
         private IGalleryDelegate _delegate;
-        private GalleryItem _item;
+        private GalleryContent _item;
 
-        public GalleryItem Item => _item;
+        public GalleryContent Item => _item;
         public Grid Inner => Panel;
 
-        public GalleryContent()
+        public GalleryContentView()
         {
             InitializeComponent();
         }
 
-        public void UpdateItem(IGalleryDelegate delegato, GalleryItem item)
+        public void UpdateItem(IGalleryDelegate delegato, GalleryContent item)
         {
             _delegate = delegato;
             _item = item;
@@ -64,7 +64,7 @@ namespace Unigram.Controls
             UpdateFile(item, data);
         }
 
-        public void UpdateFile(GalleryItem item, File file)
+        public void UpdateFile(GalleryContent item, File file)
         {
             var data = item.GetFile();
             var thumb = item.GetThumbnail();
@@ -119,7 +119,7 @@ namespace Unigram.Controls
             }
         }
 
-        private void UpdateThumbnail(GalleryItem item, File file)
+        private void UpdateThumbnail(GalleryContent item, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {

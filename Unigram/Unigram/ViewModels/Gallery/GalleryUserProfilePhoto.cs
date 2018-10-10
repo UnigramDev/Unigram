@@ -4,25 +4,17 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels.Gallery
 {
-    public class GalleryUserProfilePhotoItem : GalleryItem
+    public class GalleryUserProfilePhoto : GalleryContent
     {
-        private readonly Telegram.Td.Api.User _user;
+        private readonly User _user;
         private readonly UserProfilePhoto _photo;
         private readonly string _caption;
 
-        public GalleryUserProfilePhotoItem(IProtoService protoService, Telegram.Td.Api.User user, UserProfilePhoto photo)
+        public GalleryUserProfilePhoto(IProtoService protoService, User user, UserProfilePhoto photo)
             : base(protoService)
         {
             _user = user;
             _photo = photo;
-        }
-
-        public GalleryUserProfilePhotoItem(IProtoService protoService, Telegram.Td.Api.User user, UserProfilePhoto photo, string caption)
-            : base(protoService)
-        {
-            _user = user;
-            _photo = photo;
-            _caption = caption;
         }
 
         public long Id => _photo.Id;

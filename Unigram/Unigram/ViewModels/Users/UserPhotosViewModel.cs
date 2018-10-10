@@ -25,7 +25,7 @@ namespace Unigram.ViewModels.Users
         {
             _user = user;
 
-            Items = new MvxObservableCollection<GalleryItem> { new GalleryProfilePhotoItem(protoService, user) };
+            Items = new MvxObservableCollection<GalleryContent> { new GalleryProfilePhoto(protoService, user) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -43,13 +43,13 @@ namespace Unigram.ViewModels.Users
 
                     foreach (var item in photos.Photos)
                     {
-                        if (item.Id == user.ProfilePhoto.Id && Items[0] is GalleryProfilePhotoItem main)
+                        if (item.Id == user.ProfilePhoto.Id && Items[0] is GalleryProfilePhoto main)
                         {
                             main.SetDate(item.AddedDate);
                         }
                         else
                         {
-                            Items.Add(new GalleryUserProfilePhotoItem(ProtoService, _user, item));
+                            Items.Add(new GalleryUserProfilePhoto(ProtoService, _user, item));
                         }
                     }
                 }
@@ -67,20 +67,20 @@ namespace Unigram.ViewModels.Users
 
                     foreach (var item in photos.Photos)
                     {
-                        Items.Add(new GalleryUserProfilePhotoItem(ProtoService, _user, item));
+                        Items.Add(new GalleryUserProfilePhoto(ProtoService, _user, item));
                     }
                 }
             }
         }
 
-        public override MvxObservableCollection<GalleryItem> Group => this.Items;
+        public override MvxObservableCollection<GalleryContent> Group => this.Items;
 
         public override bool CanDelete => _user != null && _user.Id == ProtoService.GetMyId();
 
         protected override async void DeleteExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureDeletePhoto, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryProfilePhotoItem item)
+            if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryProfilePhoto item)
             {
                 var response = await ProtoService.SendAsync(new DeleteProfilePhoto(item.Id));
                 if (response is Ok)
@@ -100,7 +100,7 @@ namespace Unigram.ViewModels.Users
                     //}
                 }
             }
-            else if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryUserProfilePhotoItem profileItem)
+            else if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryUserProfilePhoto profileItem)
             {
                 var response = await ProtoService.SendAsync(new DeleteProfilePhoto(profileItem.Id));
                 if (response is Ok)

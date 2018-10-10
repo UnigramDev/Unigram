@@ -607,7 +607,7 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessPhoto(PageBlockPhoto block)
         {
-            var galleryItem = new GalleryPhotoItem(ViewModel.ProtoService, block.Photo, block.Caption.ToPlainText());
+            var galleryItem = new GalleryPhoto(ViewModel.ProtoService, block.Photo, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessagePhoto(block.Photo, null, false));
@@ -638,7 +638,7 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessVideo(PageBlockVideo block)
         {
-            var galleryItem = new GalleryVideoItem(ViewModel.ProtoService, block.Video, block.Caption.ToPlainText());
+            var galleryItem = new GalleryVideo(ViewModel.ProtoService, block.Video, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessageVideo(block.Video, null, false));
@@ -671,7 +671,7 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessAnimation(PageBlockAnimation block)
         {
-            var galleryItem = new GalleryAnimationItem(ViewModel.ProtoService, block.Animation, block.Caption.ToPlainText());
+            var galleryItem = new GalleryAnimation(ViewModel.ProtoService, block.Animation, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessageAnimation(block.Animation, null, false));
@@ -777,7 +777,7 @@ namespace Unigram.Views
             {
                 if (item is PageBlockPhoto photoBlock)
                 {
-                    var galleryItem = new GalleryPhotoItem(ViewModel.ProtoService, photoBlock.Photo, block.Caption.ToPlainText());
+                    var galleryItem = new GalleryPhoto(ViewModel.ProtoService, photoBlock.Photo, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
                     var message = GetMessage(new MessagePhoto(photoBlock.Photo, null, false));
@@ -797,7 +797,7 @@ namespace Unigram.Views
                 }
                 else if (item is PageBlockVideo videoBlock)
                 {
-                    var galleryItem = new GalleryVideoItem(ViewModel.ProtoService, videoBlock.Video, block.Caption.ToPlainText());
+                    var galleryItem = new GalleryVideo(ViewModel.ProtoService, videoBlock.Video, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
                     var message = GetMessage(new MessageVideo(videoBlock.Video, null, false));
@@ -1194,7 +1194,7 @@ namespace Unigram.Views
         private async void Image_Click(object sender, RoutedEventArgs e)
         {
             var image = sender as ImageView;
-            var item = image.DataContext as GalleryItem;
+            var item = image.DataContext as GalleryContent;
             if (item != null)
             {
                 ViewModel.Gallery.SelectedItem = item;
