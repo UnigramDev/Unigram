@@ -235,7 +235,7 @@ namespace Unigram.Views
             }
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (ViewModel != null)
             {
@@ -268,13 +268,6 @@ namespace Unigram.Views
 
             //LosingFocus -= DialogPage_LosingFocus;
             //LosingFocus += DialogPage_LosingFocus;
-
-            if (App.DataPackage != null)
-            {
-                var package = App.DataPackage;
-                App.DataPackage = null;
-                await ViewModel.HandlePackageAsync(package);
-            }
 
             base.OnNavigatedTo(e);
 
@@ -2684,5 +2677,10 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void Messages_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+
+        }
     }
 }

@@ -25,6 +25,7 @@ using Unigram.Views.SecretChats;
 using Unigram.Views.Settings;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Core;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI;
@@ -638,9 +639,9 @@ namespace Unigram.Views
 
         public async void Activate(Uri scheme)
         {
-            if (App.DataPackage != null)
+            if (App.DataPackages.TryRemove(0, out DataPackageView package))
             {
-                await ShareView.GetForCurrentView().ShowAsync(App.DataPackage);
+                await ShareView.GetForCurrentView().ShowAsync(package);
             }
 
             if (MessageHelper.IsTelegramUrl(scheme))

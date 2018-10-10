@@ -282,7 +282,7 @@ namespace Unigram.Common
                 }
 
                 App.ShareOperation = share.ShareOperation;
-                App.DataPackage = package.GetView();
+                App.DataPackages[0] = package.GetView();
 
                 var options = new Windows.System.LauncherOptions();
                 options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
