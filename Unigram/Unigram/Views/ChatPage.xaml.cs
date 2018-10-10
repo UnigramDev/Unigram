@@ -1082,7 +1082,20 @@ namespace Unigram.Views
 
             // Generic
             CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply);
-            CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, message, ViewModel.PinnedMessage?.Id == message.Id ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage);
+
+            if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                var fullInfo = ViewModel.CacheService.GetSupergroupFull(supergroup.SupergroupId);
+                if (fullInfo != null)
+                {
+                    CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, message, fullInfo.PinnedMessageId == message.Id ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage);
+                }
+                else
+                {
+                    CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, message, Strings.Resources.PinMessage);
+                }
+            }
+
             CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit);
             CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward);
             CreateFlyoutItem(ref flyout, MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat);

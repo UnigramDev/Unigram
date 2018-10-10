@@ -138,7 +138,6 @@ namespace Unigram.ViewModels
             NextMentionCommand = new RelayCommand(NextMentionExecute);
             PreviousSliceCommand = new RelayCommand(PreviousSliceExecute);
             ClearReplyCommand = new RelayCommand(ClearReplyExecute);
-            PinnedCommand = new RelayCommand(PinnedExecute);
             JoinChannelCommand = new RelayCommand(JoinChannelExecute);
             ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
             MuteCommand = new RelayCommand(() => ToggleMuteExecute(false));
@@ -319,19 +318,6 @@ namespace Unigram.ViewModels
             get
             {
                 return (_accessToken != null || _isEmpty) && !_isLoadingNextSlice && !_isLoadingPreviousSlice;
-            }
-        }
-
-        private Message _pinnedMessage;
-        public Message PinnedMessage
-        {
-            get
-            {
-                return _pinnedMessage;
-            }
-            set
-            {
-                Set(ref _pinnedMessage, value);
             }
         }
 
@@ -2039,15 +2025,6 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public RelayCommand PinnedCommand { get; }
-        private async void PinnedExecute()
-        {
-            if (PinnedMessage != null)
-            {
-                await LoadMessageSliceAsync(null, PinnedMessage.Id);
-            }
-        }
-
         public RelayCommand<string> SendCommand { get; }
         private async void SendMessage(string args)
         {
@@ -2458,7 +2435,7 @@ namespace Unigram.ViewModels
                 var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    PinnedMessage = null;
+                    Delegate?.UpdatePinnedMessage(chat, null, false);
                     ProtoService.Send(new UnpinSupergroupMessage(supergroup.Id));
                 }
             }
