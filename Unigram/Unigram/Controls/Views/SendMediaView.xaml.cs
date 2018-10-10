@@ -106,7 +106,7 @@ namespace Unigram.Controls.Views
         {
             get
             {
-                return SelectedItems.Count > 1 && !SelectedItems.Any(x => x.Ttl.HasValue);
+                return SelectedItems.Count > 1 && !SelectedItems.Any(x => x.Ttl > 0);
             }
         }
 
@@ -410,11 +410,11 @@ namespace Unigram.Controls.Views
 
         private void OnSecondsChanged(DependencyObject sender, DependencyProperty dp)
         {
-            VisualStateManager.GoToState(TTLSeconds, SelectedItem.Ttl == null ? "Unselected" : "Selected", false);
+            VisualStateManager.GoToState(TTLSeconds, SelectedItem.Ttl == 0 ? "Unselected" : "Selected", false);
             //VisualStateManager.GoToState(this, SelectedItem.TTLSeconds == null ? "Unselected" : "Selected", false);
 
             // TODO: WRONG!!!
-            if (SelectedItem.Ttl == null)
+            if (SelectedItem.Ttl == 0)
             {
                 TTLSeconds.ClearValue(Button.ForegroundProperty);
             }
@@ -427,14 +427,14 @@ namespace Unigram.Controls.Views
         private async void TTLSeconds_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new MessageTtlView(SelectedItem.IsPhoto);
-            dialog.Value = SelectedItem.Ttl != null && SelectedItem.Ttl > 0 ? SelectedItem.Ttl : ViewModel.Settings.LastMessageTtl;
+            dialog.Value = SelectedItem.Ttl > 0 ? SelectedItem.Ttl : ViewModel.Settings.LastMessageTtl;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                if (dialog.Value != null && dialog.Value > 0)
+                if (dialog.Value > 0)
                 {
-                    ViewModel.Settings.LastMessageTtl = dialog.Value ?? 7;
+                    ViewModel.Settings.LastMessageTtl = dialog.Value;
                 }
 
                 SelectedItem.Ttl = dialog.Value;

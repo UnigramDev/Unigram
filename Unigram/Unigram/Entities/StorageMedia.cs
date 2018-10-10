@@ -77,8 +77,8 @@ namespace Unigram.Entities
             }
         }
 
-        protected int? _ttl;
-        public int? Ttl
+        protected int _ttl;
+        public int Ttl
         {
             get
             {

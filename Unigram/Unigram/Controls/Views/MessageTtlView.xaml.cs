@@ -37,7 +37,7 @@ namespace Unigram.Controls.Views
             FieldSeconds.ItemsSource = seconds;
         }
 
-        public int? Value { get; set; }
+        public int Value { get; set; }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
