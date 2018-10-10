@@ -3,6 +3,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.ViewModels.Gallery;
 
 namespace Unigram.ViewModels.Dialogs
 {

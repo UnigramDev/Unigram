@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unigram.Collections;
 using Unigram.Services;
+using Unigram.ViewModels.Gallery;
 
 namespace Unigram.ViewModels
 {

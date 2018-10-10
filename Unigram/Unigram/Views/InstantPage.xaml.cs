@@ -37,6 +37,7 @@ using Unigram.Controls.Messages.Content;
 using Unigram.Controls.Messages;
 using Unigram.ViewModels.Dialogs;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Gallery;
 
 namespace Unigram.Views
 {

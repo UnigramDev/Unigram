@@ -39,6 +39,7 @@ using Windows.Storage.Streams;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Template10.Services.ViewService;
+using Unigram.ViewModels.Gallery;
 
 namespace Unigram.Controls.Views
 {

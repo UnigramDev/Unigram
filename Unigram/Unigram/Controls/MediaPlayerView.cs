@@ -123,6 +123,10 @@ namespace Unigram.Controls
             {
                 constraint = videoNoteMessage.VideoNote;
             }
+            else if (constraint is MessageChatChangePhoto chatChangePhoto)
+            {
+                constraint = chatChangePhoto.Photo;
+            }
 
             #endregion
 

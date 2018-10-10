@@ -10,6 +10,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
+using Unigram.ViewModels.Gallery;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Users

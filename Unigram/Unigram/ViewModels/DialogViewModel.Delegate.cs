@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Controls;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Gallery;
 
 namespace Unigram.ViewModels
 {

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
+using Unigram.ViewModels.Gallery;
 using Unigram.ViewModels.Users;
 using Windows.UI.Xaml.Controls;
 
@@ -18,18 +20,21 @@ namespace Unigram.ViewModels.Chats
         //private readonly TLInputPeerBase _peer;
 
         private int _lastMaxId;
+        private readonly long _chatId;
 
-        public ChatPhotosViewModel(IProtoService protoService, IEventAggregator aggregator/*, TLChatFullBase chatFull, TLChatBase chat*/)
+        public ChatPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, Chat chat)
             : base(protoService, aggregator)
         {
+            _chatId = chat.Id;
+
             //_peer = chat.ToInputPeer();
             //_lastMaxId = int.MaxValue;
 
-            //Items = new MvxObservableCollection<GalleryItem> { new GalleryPhotoItem(chatFull.ChatPhoto as TLPhoto, chat) };
-            //SelectedItem = Items[0];
-            //FirstItem = Items[0];
+            Items = new MvxObservableCollection<GalleryItem> { new GalleryChatPhotoItem(protoService, chat.Photo) };
+            SelectedItem = Items[0];
+            FirstItem = Items[0];
 
-            Initialize(int.MaxValue);
+            Initialize(chat.Photo.Big.Id, chat.Photo.Small.Id);
         }
 
         //public ChatPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, TLChatFullBase chatFull, TLChatBase chat, TLMessageService serviceMessage)
@@ -48,158 +53,120 @@ namespace Unigram.ViewModels.Chats
         //    Initialize(serviceMessage.Id);
         //}
 
-        private async void Initialize(int offset)
+        private async void Initialize(long bigId, long smallId)
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                //var limit = 20;
-                //var req = new TLMessagesSearch
-                //{
-                //    Peer = _peer,
-                //    Filter = new TLInputMessagesFilterChatPhotos(),
-                //    FromId = null,
-                //    OffsetId = offset,
-                //    AddOffset = -limit / 2,
-                //    Limit = limit,
-                //};
+                var limit = 20;
+                var offset = -limit / 2;
 
-                ////var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterChatPhotos(), 0, 0, 0, _lastMaxId, 15);
-                //var response = await LegacyService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                //if (response.IsSucceeded && response.Result is ITLMessages result)
-                //{
-                //    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
+                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, 0, offset, limit, new SearchMessagesFilterChatPhoto()));
+                if (response is Telegram.Td.Api.Messages messages)
+                {
+                    TotalItems = messages.TotalCount;
 
-                //    var current = 1;
-                //    if (response.Result is TLMessagesMessagesSlice slice)
-                //    {
-                //        TotalItems = slice.Count + current;
-                //    }
-                //    else if (response.Result is TLMessagesChannelMessages channelMessages)
-                //    {
-                //        TotalItems = channelMessages.Count + current;
-                //    }
-                //    else
-                //    {
-                //        TotalItems = result.Messages.Count + current;
-                //    }
+                    var missing = true;
 
-                //    foreach (var photo in result.Messages.Where(x => x.Id < offset))
-                //    {
-                //        if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
-                //        {
-                //            Items.Insert(0, new GalleryMessageServiceItem(message));
-                //            _lastMaxId = message.Id;
-                //        }
-                //        else
-                //        {
-                //            TotalItems--;
-                //        }
-                //    }
+                    foreach (var message in messages.MessagesValue.OrderByDescending(x => x.Id))
+                    {
+                        if (message.Content is MessageChatChangePhoto chatChangePhoto)
+                        {
+                            if (chatChangePhoto.Photo.Sizes.Any(x => x.Photo.Id == bigId))
+                            {
+                                missing = false;
+                                continue;
+                            }
 
-                //    foreach (var photo in result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
-                //    {
-                //        if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
-                //        {
-                //            Items.Add(new GalleryMessageServiceItem(message));
-                //            _lastMaxId = message.Id;
-                //        }
-                //        else
-                //        {
-                //            TotalItems--;
-                //        }
-                //    }
-                //}
+                            Items.Add(new GalleryMessageItem(ProtoService, message));
+                        }
+                        else
+                        {
+                            TotalItems--;
+                        }
+                    }
+
+                    if (missing)
+                    {
+                        TotalItems++;
+                    }
+
+                    OnSelectedItemChanged(_selectedItem);
+                }
             }
         }
 
         protected override async void LoadPrevious()
         {
-            using (await _loadMoreLock.WaitAsync())
-            {
-                //var item = Items.FirstOrDefault() as GalleryMessageItem;
-                //if (item == null)
-                //{
-                //    return;
-                //}
+            //using (await _loadMoreLock.WaitAsync())
+            //{
+            //    var item = Items.FirstOrDefault() as GalleryMessageItem;
+            //    if (item == null)
+            //    {
+            //        return;
+            //    }
 
-                //var offset = item.Message.Id;
+            //    var fromMessageId = item.Id;
 
-                //var limit = 20;
-                //var req = new TLMessagesSearch
-                //{
-                //    Peer = _peer,
-                //    Filter = new TLInputMessagesFilterChatPhotos(),
-                //    OffsetId = offset,
-                //    AddOffset = 0,
-                //    Limit = limit,
-                //};
+            //    var limit = 20;
+            //    var offset = -limit / 2;
 
-                ////var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
-                //var response = await LegacyService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                //if (response.IsSucceeded && response.Result is ITLMessages result)
-                //{
-                //    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
+            //    var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterChatPhoto()));
+            //    if (response is Telegram.Td.Api.Messages messages)
+            //    {
+            //        TotalItems = messages.TotalCount;
 
-                //    foreach (var photo in result.Messages.Where(x => x.Id < offset))
-                //    {
-                //        if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
-                //        {
-                //            Items.Insert(0, new GalleryMessageServiceItem(message));
-                //        }
-                //        else
-                //        {
-                //            TotalItems--;
-                //        }
-                //    }
+            //        foreach (var message in messages.MessagesValue.Where(x => x.Id < fromMessageId))
+            //        {
+            //            if (message.Content is MessageChatChangePhoto)
+            //            {
+            //                Items.Insert(0, new GalleryMessageItem(ProtoService, message));
+            //            }
+            //            else
+            //            {
+            //                TotalItems--;
+            //            }
+            //        }
 
-                //    OnSelectedItemChanged(_selectedItem);
-                //}
-            }
+            //        OnSelectedItemChanged(_selectedItem);
+            //    }
+            //}
         }
 
         protected override async void LoadNext()
         {
-            using (await _loadMoreLock.WaitAsync())
-            {
-                //var item = Items.LastOrDefault() as GalleryMessageItem;
-                //if (item == null)
-                //{
-                //    return;
-                //}
+            //using (await _loadMoreLock.WaitAsync())
+            //{
+            //    var item = Items.LastOrDefault() as GalleryMessageItem;
+            //    if (item == null)
+            //    {
+            //        return;
+            //    }
 
-                //var offset = item.Message.Id;
+            //    var fromMessageId = item.Id;
 
-                //var limit = 20;
-                //var req = new TLMessagesSearch
-                //{
-                //    Peer = _peer,
-                //    Filter = new TLInputMessagesFilterChatPhotos(),
-                //    OffsetId = offset + 1,
-                //    AddOffset = -limit,
-                //    Limit = limit,
-                //};
+            //    var limit = 20;
+            //    var offset = -limit / 2;
 
-                ////var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
-                //var response = await LegacyService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-                //if (response.IsSucceeded && response.Result is ITLMessages result)
-                //{
-                //    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
+            //    var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterChatPhoto()));
+            //    if (response is Telegram.Td.Api.Messages messages)
+            //    {
+            //        TotalItems = messages.TotalCount;
 
-                //    foreach (var photo in result.Messages.Where(x => x.Id > offset).OrderBy(x => x.Id))
-                //    {
-                //        if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
-                //        {
-                //            Items.Add(new GalleryMessageServiceItem(message));
-                //        }
-                //        else
-                //        {
-                //            TotalItems--;
-                //        }
-                //    }
+            //        foreach (var message in messages.MessagesValue.Where(x => x.Id > fromMessageId).OrderBy(x => x.Id))
+            //        {
+            //            if (message.Content is MessageChatChangePhoto)
+            //            {
+            //                Items.Add(new GalleryMessageItem(ProtoService, message));
+            //            }
+            //            else
+            //            {
+            //                TotalItems--;
+            //            }
+            //        }
 
-                //    OnSelectedItemChanged(_selectedItem);
-                //}
-            }
+            //        OnSelectedItemChanged(_selectedItem);
+            //    }
+            //}
         }
 
         public override int Position => TotalItems - (Items.Count - base.Position);

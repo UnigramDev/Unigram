@@ -483,6 +483,7 @@
     <Compile Include="ViewModels\Chats\ChatSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />
+    <Compile Include="ViewModels\Delegates\IGalleryDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ILiveLocationDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISettingsDelegate.cs" />
     <Compile Include="ViewModels\Dialogs\DialogGalleryViewModel.cs" />
@@ -495,6 +496,15 @@
     <Compile Include="ViewModels\Delegates\IDialogDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IFileDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IMessageDelegate.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryAnimationItem.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryChatPhotoItem.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryItem.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryMessageItem.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryPhotoItem.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryProfilePhotoItem.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryUserProfilePhotoItem.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryVideoItem.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryViewModelBase.cs" />
     <Compile Include="ViewModels\InstantGalleryViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IProfileDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupDelegate.cs" />
@@ -1231,7 +1241,6 @@
     <Compile Include="ViewModels\SignIn\SignInSentCodeViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\GalleryViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSessionsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStorageViewModel.cs" />

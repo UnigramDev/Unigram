@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.ViewModels.Gallery;
 using Unigram.Views;
 
 namespace Unigram.ViewModels

@@ -333,6 +333,8 @@ namespace Unigram.Common
                     return photo.Photo;
                 case MessageText text:
                     return text.WebPage?.Photo;
+                case MessageChatChangePhoto chatChangePhoto:
+                    return chatChangePhoto.Photo;
                 default:
                     return null;
             }
@@ -1404,6 +1406,8 @@ namespace Unigram.Common
                     return videoNote.UpdateFile(file);
                 case MessageVoiceNote voiceNote:
                     return voiceNote.UpdateFile(file);
+                case MessageChatChangePhoto chatChangePhoto:
+                    return chatChangePhoto.UpdateFile(file);
                 default:
                     return false;
             }
@@ -1707,6 +1711,13 @@ namespace Unigram.Common
             }
 
             return false;
+        }
+
+
+
+        public static bool UpdateFile(this MessageChatChangePhoto chatChangePhoto, File file)
+        {
+            return chatChangePhoto.Photo.UpdateFile(file);
         }
 
 
