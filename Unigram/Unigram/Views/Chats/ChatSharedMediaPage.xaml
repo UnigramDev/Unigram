@@ -141,8 +141,8 @@
                         ItemsSource="{x:Bind FilesSource.View, Mode=OneWay}"
                         ViewSource="{x:Bind FilesSource}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
-                        ContainerContentChanging="OnContainerContentChanging"
-                        SelectionChanged="List_SelectionChanged">
+                        SelectionChanged="List_SelectionChanged"
+                        ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -209,9 +209,9 @@
                         x:Name="ScrollingLinks"
                         ItemsSource="{x:Bind LinksSource.View, Mode=OneWay}"
                         ViewSource="{x:Bind LinksSource}"
-                        ContainerContentChanging="OnContainerContentChanging"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
-                        SelectionChanged="List_SelectionChanged">
+                        SelectionChanged="List_SelectionChanged"
+                        ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -279,7 +279,8 @@
                         ItemsSource="{x:Bind MusicSource.View, Mode=OneWay}"
                         ViewSource="{x:Bind MusicSource}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
-                        SelectionChanged="List_SelectionChanged">
+                        SelectionChanged="List_SelectionChanged"
+                        ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -334,11 +335,11 @@
                                 </GroupStyle.HeaderTemplate>
                             </GroupStyle>
                         </ListView.GroupStyle>
-                        <!--<ListView.ItemTemplate>
-                             <DataTemplate>
-                             <items:SharedFileListViewItem/>
-                             </DataTemplate>
-                             </ListView.ItemTemplate>-->
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </controls:GroupedListView>
                 </PivotItem>
                 <PivotItem>
@@ -347,7 +348,8 @@
                         ItemsSource="{x:Bind VoiceSource.View, Mode=OneWay}"
                         ViewSource="{x:Bind VoiceSource}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
-                        SelectionChanged="List_SelectionChanged">
+                        SelectionChanged="List_SelectionChanged"
+                        ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -402,11 +404,11 @@
                                 </GroupStyle.HeaderTemplate>
                             </GroupStyle>
                         </ListView.GroupStyle>
-                        <!--<ListView.ItemTemplate>
-                             <DataTemplate>
-                             <items:SharedFileListViewItem/>
-                             </DataTemplate>
-                             </ListView.ItemTemplate>-->
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </controls:GroupedListView>
                 </PivotItem>
             </Pivot>

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
@@ -37,27 +38,43 @@ namespace Unigram.Controls.Cells
             _delegate = delegato;
             _message = message;
 
-            var document = message.Content as MessageDocument;
-            if (document == null)
+            var data = message.GetFileAndName(false);
+            if (data.File == null)
             {
                 return;
             }
 
-            Ellipse.Background = UpdateEllipseBrush(document.Document);
-            Title.Text = document.Document.FileName;
+            Ellipse.Background = UpdateEllipseBrush(data.FileName);
 
-            UpdateFile(message, document.Document.DocumentValue);
+            if (string.IsNullOrEmpty(data.FileName))
+            {
+                var user = protoService.GetUser(message.SenderUserId);
+                if (user != null)
+                {
+                    Title.Text = user.GetFullName();
+                }
+                else
+                {
+                    Title.Text = string.Empty;
+                }
+            }
+            else
+            {
+                Title.Text = data.FileName ?? string.Empty;
+            }
+
+            UpdateFile(message, data.File);
         }
 
         public void UpdateFile(Message message, File file)
         {
-            var document = message.Content as MessageDocument;
-            if (document == null)
+            var data = message.GetFileAndName(false);
+            if (data.File == null)
             {
                 return;
             }
 
-            if (document.Document.DocumentValue.Id != file.Id)
+            if (data.File.Id != file.Id)
             {
                 return;
             }
@@ -94,7 +111,7 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private Brush UpdateEllipseBrush(Document document)
+        private Brush UpdateEllipseBrush(string name)
         {
             var brushes = new[]
             {
@@ -104,12 +121,11 @@ namespace Unigram.Controls.Cells
                 App.Current.Resources["Placeholder3Brush"]
             };
 
-            if (document == null)
+            if (name == null)
             {
                 return brushes[0] as SolidColorBrush;
             }
 
-            var name = document.FileName.ToLower();
             if (name.Length > 0)
             {
                 var color = -1;
@@ -156,20 +172,20 @@ namespace Unigram.Controls.Cells
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var document = _message?.Content as MessageDocument;
-            if (document == null)
+            var data = _message.GetFileAndName(false);
+            if (data.File == null)
             {
                 return;
             }
 
-            var file = document.Document.DocumentValue;
+            var file = data.File;
             if (file.Local.IsDownloadingActive)
             {
                 _protoService.Send(new CancelDownloadFile(file.Id, false));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _protoService.Send(new DownloadFile(file.Id, 1));
+                _protoService.Send(new DownloadFile(file.Id, 32));
             }
             else
             {

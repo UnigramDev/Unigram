@@ -254,19 +254,13 @@ namespace Unigram.Views.Chats
                     photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, videoMessage.Video.Thumbnail.Photo, 0, 0);
                 }
             }
-            else if (message.Content is MessageDocument)
+            else if (args.ItemContainer.ContentTemplateRoot is SharedFileCell fileCell)
             {
-                if (args.ItemContainer.ContentTemplateRoot is SharedFileCell content)
-                {
-                    content.UpdateMessage(ViewModel.ProtoService, ViewModel, message);
-                }
+                fileCell.UpdateMessage(ViewModel.ProtoService, ViewModel, message);
             }
-            else if (message.Content is MessageText)
+            else if (args.ItemContainer.ContentTemplateRoot is SharedLinkCell linkCell)
             {
-                if (args.ItemContainer.ContentTemplateRoot is SharedLinkCell content)
-                {
-                    content.UpdateMessage(message);
-                }
+                linkCell.UpdateMessage(message);
             }
 
             var element = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
@@ -322,15 +316,65 @@ namespace Unigram.Views.Chats
                         continue;
                     }
 
-                    var document = message.Content as MessageDocument;
+                    var document = message.GetFile();
                     var content = container.ContentTemplateRoot as SharedFileCell;
 
-                    if (document == null || document.Document == null || document.Document.DocumentValue == null)
+                    if (document == null)
                     {
                         continue;
                     }
 
-                    if (file.Id == document.Document.DocumentValue.Id)
+                    if (file.Id == document.Id)
+                    {
+                        content.UpdateFile(message, file);
+                    }
+                }
+            }
+
+            foreach (Message message in ScrollingMusic.Items)
+            {
+                if (message.UpdateFile(file))
+                {
+                    var container = ScrollingMusic.ContainerFromItem(message) as ListViewItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var document = message.GetFile();
+                    var content = container.ContentTemplateRoot as SharedFileCell;
+
+                    if (document == null)
+                    {
+                        continue;
+                    }
+
+                    if (file.Id == document.Id)
+                    {
+                        content.UpdateFile(message, file);
+                    }
+                }
+            }
+
+            foreach (Message message in ScrollingVoice.Items)
+            {
+                if (message.UpdateFile(file))
+                {
+                    var container = ScrollingVoice.ContainerFromItem(message) as ListViewItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var document = message.GetFile();
+                    var content = container.ContentTemplateRoot as SharedFileCell;
+
+                    if (document == null)
+                    {
+                        continue;
+                    }
+
+                    if (file.Id == document.Id)
                     {
                         content.UpdateFile(message, file);
                     }
