@@ -573,11 +573,11 @@ namespace Unigram.Views
 
             if (chat.Type is ChatTypeSupergroup)
             {
-                CreateFlyoutItem(ref flyout, MemberPromote_Loaded, ViewModel.MemberPromoteCommand, status, member, Strings.Resources.SetAsAdmin);
-                CreateFlyoutItem(ref flyout, MemberRestrict_Loaded, ViewModel.MemberRestrictCommand, status, member, Strings.Resources.KickFromSupergroup);
+                CreateFlyoutItem(ref flyout, MemberPromote_Loaded, ViewModel.MemberPromoteCommand, chat.Type,status, member, Strings.Resources.SetAsAdmin);
+                CreateFlyoutItem(ref flyout, MemberRestrict_Loaded, ViewModel.MemberRestrictCommand, chat.Type, status, member, Strings.Resources.KickFromSupergroup);
             }
 
-            CreateFlyoutItem(ref flyout, MemberRemove_Loaded, ViewModel.MemberRemoveCommand, status, member, Strings.Resources.KickFromGroup);
+            CreateFlyoutItem(ref flyout, MemberRemove_Loaded, ViewModel.MemberRemoveCommand, chat.Type, status, member, Strings.Resources.KickFromGroup);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -590,9 +590,9 @@ namespace Unigram.Views
             }
         }
 
-        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<ChatMemberStatus, ChatMember, Visibility> visibility, ICommand command, ChatMemberStatus status, object parameter, string text)
+        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<ChatType, ChatMemberStatus, ChatMember, Visibility> visibility, ICommand command, ChatType chatType, ChatMemberStatus status, object parameter, string text)
         {
-            var value = visibility(status, parameter as ChatMember);
+            var value = visibility(chatType, status, parameter as ChatMember);
             if (value == Visibility.Visible)
             {
                 var flyoutItem = new MenuFlyoutItem();
@@ -605,7 +605,7 @@ namespace Unigram.Views
             }
         }
 
-        private Visibility MemberPromote_Loaded(ChatMemberStatus status, ChatMember member)
+        private Visibility MemberPromote_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
         {
             if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator)
             {
@@ -620,7 +620,7 @@ namespace Unigram.Views
             return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.CanPromoteMembers ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private Visibility MemberRestrict_Loaded(ChatMemberStatus status, ChatMember member)
+        private Visibility MemberRestrict_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
         {
             if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusRestricted || member.Status is ChatMemberStatusAdministrator admin && !admin.CanBeEdited)
             {
@@ -635,7 +635,7 @@ namespace Unigram.Views
             return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.CanRestrictMembers ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private Visibility MemberRemove_Loaded(ChatMemberStatus status, ChatMember member)
+        private Visibility MemberRemove_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
         {
             if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator admin && !admin.CanBeEdited)
             {
@@ -645,6 +645,11 @@ namespace Unigram.Views
             if (member.UserId == ViewModel.ProtoService.GetMyId())
             {
                 return Visibility.Collapsed;
+            }
+
+            if (chatType is ChatTypeBasicGroup && status is ChatMemberStatusAdministrator)
+            {
+                return member.InviterUserId == ViewModel.ProtoService.GetMyId() ? Visibility.Visible : Visibility.Collapsed;
             }
 
             return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.CanRestrictMembers ? Visibility.Visible : Visibility.Collapsed;
