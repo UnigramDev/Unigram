@@ -541,7 +541,7 @@ namespace Unigram.Services
                     var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
                     var entities = Markdown.Parse(_protoService, ref messageText);
 
-                    var replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) >> 0 : 0;
+                    var replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) << 20 : 0;
                     var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, false, true, null, new InputMessageText(new FormattedText(messageText, entities), false, false)));
                 }
                 else if (string.Equals(action, "markasread", StringComparison.OrdinalIgnoreCase))
