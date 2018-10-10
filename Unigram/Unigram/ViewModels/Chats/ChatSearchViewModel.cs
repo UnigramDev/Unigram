@@ -13,14 +13,14 @@ using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.ViewModels.Dialogs
+namespace Unigram.ViewModels.Chats
 {
-    public class DialogSearchViewModel : TLViewModelBase
+    public class ChatSearchViewModel : TLViewModelBase, IDisposable
     {
         private readonly DialogViewModel _dialog;
         private readonly DisposableMutex _loadMoreLock;
 
-        public DialogSearchViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, DialogViewModel viewModel)
+        public ChatSearchViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, DialogViewModel viewModel)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _dialog = viewModel;
@@ -268,6 +268,15 @@ namespace Unigram.ViewModels.Dialogs
             }
 
             return SelectedIndex < Items.TotalCount - 1;
+        }
+
+        public void Dispose()
+        {
+            Autocomplete = null;
+            Query = null;
+            From = null;
+            Items = null;
+            SelectedItem = null;
         }
     }
 }

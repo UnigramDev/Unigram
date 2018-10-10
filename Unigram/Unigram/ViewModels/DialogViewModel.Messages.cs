@@ -48,7 +48,7 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageReplyCommand { get; }
         private void MessageReplyExecute(MessageViewModel message)
         {
-            Search = null;
+            DisposeSearch();
 
             if (message == null)
             {
@@ -197,7 +197,7 @@ namespace Unigram.ViewModels
             //    await ShareView.GetForCurrentView().ShowAsync(message);
             //}
 
-            Search = null;
+            DisposeSearch();
             SelectionMode = ListViewSelectionMode.None;
 
             await ShareView.GetForCurrentView().ShowAsync(message.Get());
@@ -354,7 +354,7 @@ namespace Unigram.ViewModels
             var messages = SelectedItems.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).Select(x => x.Get()).ToList();
             if (messages.Count > 0)
             {
-                Search = null;
+                DisposeSearch();
                 SelectionMode = ListViewSelectionMode.None;
 
                 await ShareView.GetForCurrentView().ShowAsync(messages);
@@ -626,7 +626,7 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageSelectCommand { get; }
         private void MessageSelectExecute(MessageViewModel message)
         {
-            Search = null;
+            DisposeSearch();
 
             //var messageCommon = message as TLMessageCommonBase;
             //if (messageCommon == null)
@@ -794,7 +794,7 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageEditCommand { get; }
         private void MessageEditExecute(MessageViewModel message)
         {
-            Search = null;
+            DisposeSearch();
             CurrentInlineBot = null;
 
             var container = new MessageEmbedData { EditingMessage = message };

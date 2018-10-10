@@ -36,6 +36,7 @@ using Windows.UI.Xaml.Navigation;
 using Unigram.Services.Factories;
 using Windows.ApplicationModel.DataTransfer;
 using Unigram.Common.Dialogs;
+using Unigram.ViewModels.Chats;
 
 namespace Unigram.ViewModels
 {
@@ -286,8 +287,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private DialogSearchViewModel _search;
-        public DialogSearchViewModel Search
+        private ChatSearchViewModel _search;
+        public ChatSearchViewModel Search
         {
             get
             {
@@ -297,6 +298,17 @@ namespace Unigram.ViewModels
             {
                 Set(ref _search, value);
             }
+        }
+
+        public void DisposeSearch()
+        {
+            var search = _search;
+            if (search != null)
+            {
+                search.Dispose();
+            }
+
+            Search = null;
         }
 
         private string _accessToken;
@@ -2725,7 +2737,7 @@ namespace Unigram.ViewModels
         public RelayCommand SearchCommand { get; }
         private void SearchExecute()
         {
-            Search = new DialogSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
+            Search = new ChatSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
         }
 
         #endregion

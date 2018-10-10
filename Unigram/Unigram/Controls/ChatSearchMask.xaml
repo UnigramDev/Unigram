@@ -245,6 +245,7 @@
             </Grid.ColumnDefinitions>
             <controls:ChatSearchTextBox
                 x:Name="Field"
+                Text="{x:Bind ViewModel.Query, Mode=OneWay}"
                 InputScope="Search"
                 SelectionChanged="OnSelectionChanged"
                 Style="{StaticResource Test}"

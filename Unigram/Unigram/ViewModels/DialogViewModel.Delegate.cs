@@ -16,6 +16,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Chats;
 
 namespace Unigram.ViewModels
 {
@@ -368,7 +369,7 @@ namespace Unigram.ViewModels
 
         public void OpenHashtag(string hashtag)
         {
-            var search = Search = new DialogSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
+            var search = Search = new ChatSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
             search.Search(hashtag, null);
         }
 

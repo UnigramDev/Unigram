@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Dialogs;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
@@ -17,7 +18,7 @@ namespace Unigram.Controls
 {
     public sealed partial class ChatSearchMask : UserControl
     {
-        public DialogSearchViewModel ViewModel => DataContext as DialogSearchViewModel;
+        public ChatSearchViewModel ViewModel => DataContext as ChatSearchViewModel;
 
         public ChatSearchMask()
         {
@@ -35,7 +36,7 @@ namespace Unigram.Controls
             RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
         }
 
-        public void Update(DialogSearchViewModel viewModel)
+        public void Update(ChatSearchViewModel viewModel)
         {
             DataContext = viewModel;
             Bindings.Update();
@@ -190,7 +191,7 @@ namespace Unigram.Controls
             }
             else if (ViewModel?.Dialog?.Search != null)
             {
-                ViewModel.Dialog.Search = null;
+                ViewModel.Dialog.DisposeSearch();
             }
 
             return true;

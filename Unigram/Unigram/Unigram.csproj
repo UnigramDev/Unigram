@@ -480,13 +480,13 @@
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatSearchViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />
     <Compile Include="ViewModels\Delegates\ILiveLocationDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISettingsDelegate.cs" />
     <Compile Include="ViewModels\Dialogs\DialogGalleryViewModel.cs" />
-    <Compile Include="ViewModels\Dialogs\DialogSearchViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogShareLocationViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Delegate.cs" />
