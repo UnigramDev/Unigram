@@ -1101,25 +1101,33 @@ namespace Unigram.ViewModels
                 }
                 else if (content is MessageText textMessage)
                 {
-                    if (textMessage?.WebPage?.Animation != null)
+                    if (textMessage.WebPage?.Animation != null)
                     {
-                        content = textMessage?.WebPage?.Animation;
+                        content = textMessage.WebPage.Animation;
                     }
-                    else if (textMessage?.WebPage?.Document != null)
+                    else if (textMessage.WebPage?.Audio != null)
                     {
-                        content = textMessage?.WebPage?.Document;
+                        content = textMessage.WebPage.Audio;
                     }
-                    else if (textMessage?.WebPage?.Sticker != null)
+                    else if (textMessage.WebPage?.Document != null)
                     {
-                        content = textMessage?.WebPage?.Sticker;
+                        content = textMessage.WebPage.Document;
                     }
-                    else if (textMessage?.WebPage?.Video != null)
+                    else if (textMessage.WebPage?.Sticker != null)
                     {
-                        content = textMessage?.WebPage?.Video;
+                        content = textMessage.WebPage.Sticker;
                     }
-                    else if (textMessage?.WebPage?.VideoNote != null)
+                    else if (textMessage.WebPage?.Video != null)
                     {
-                        content = textMessage?.WebPage?.VideoNote;
+                        content = textMessage.WebPage.Video;
+                    }
+                    else if (textMessage.WebPage?.VideoNote != null)
+                    {
+                        content = textMessage.WebPage.VideoNote;
+                    }
+                    else if (textMessage.WebPage?.VoiceNote != null)
+                    {
+                        content = textMessage.WebPage.VoiceNote;
                     }
                     // PHOTO SHOULD ALWAYS BE AT THE END!
                     else if (textMessage?.WebPage?.Photo != null)

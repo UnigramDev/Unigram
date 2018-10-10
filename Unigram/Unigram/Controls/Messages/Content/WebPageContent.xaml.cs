@@ -85,7 +85,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (webPage.Audio != null)
                 {
-
+                    Media.Content = new AudioContent(message);
                 }
                 else if (webPage.Document != null)
                 {
@@ -105,7 +105,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (webPage.VoiceNote != null)
                 {
-
+                    Media.Content = new VoiceNoteContent(message);
                 }
                 else if (webPage.Photo != null)
                 {
