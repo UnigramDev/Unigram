@@ -25,11 +25,13 @@ namespace Unigram.Common
             {
                 this["EllipsisButtonPadding"] = new Thickness(16, 19, 16, 0);
                 this["GlyphButtonFontSize"] = 16d;
+                this["ChatPhotoSize"] = 30d;
             }
             else
             {
                 this["EllipsisButtonPadding"] = new Thickness(16, 23, 16, 0);
                 this["GlyphButtonFontSize"] = 20d;
+                this["ChatPhotoSize"] = 36d;
             }
         }
     }

@@ -2157,7 +2157,7 @@ namespace Unigram.Views
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30, 30);
+            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, (int)Photo.Width, (int)Photo.Height);
         }
 
         public void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification)
@@ -2612,7 +2612,7 @@ namespace Unigram.Views
             var chat = ViewModel.Chat;
             if (chat != null && chat.UpdateFile(file))
             {
-                Photo.Source = PlaceholderHelper.GetChat(null, chat, 30, 30);
+                Photo.Source = PlaceholderHelper.GetChat(null, chat, (int)Photo.Width, (int)Photo.Height);
             }
 
             InlinePanel.UpdateFile(file);
