@@ -27,6 +27,7 @@ namespace Unigram
             "telegram.me",
             "telegram.dog",
             "t.me",
+            "telegra.ph"
             /*"telesco.pe"*/
         };
     }

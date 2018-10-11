@@ -213,8 +213,11 @@ namespace Unigram.Common
 
         public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, string url)
         {
-            // TODO: in-app navigation
-            if (url.Contains("joinchat"))
+            if (url.Contains("telegra.ph"))
+            {
+                navigation.Navigate(typeof(InstantPage), url);
+            }
+            else if (url.Contains("joinchat"))
             {
                 var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
                 if (index != -1)
