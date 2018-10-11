@@ -42,6 +42,7 @@ using Unigram.Common;
 using Unigram.Controls.Messages;
 using LinqToVisualTree;
 using Telegram.Td.Api;
+using Windows.Foundation.Metadata;
 
 namespace Unigram.Views
 {
@@ -217,6 +218,7 @@ namespace Unigram.Views
             public Grid Container { get; set; }
             public MediaPlayerView Presenter { get; set; }
             public bool Watermark { get; set; }
+            public bool Clip { get; set; }
         }
 
         private Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
@@ -301,31 +303,68 @@ namespace Unigram.Views
                         root = grid.FindName("Bubble") as FrameworkElement;
                     }
 
+                    var target = message.Content as object;
                     var media = root.FindName("Media") as ContentControl;
                     var panel = media.ContentTemplateRoot as Panel;
 
-                    if (message.Content is MessageText)
+                    if (target is MessageText messageText && messageText.WebPage != null)
+                    {
+                        if (messageText.WebPage.Animation != null)
+                        {
+                            target = messageText.WebPage.Animation;
+                        }
+                        else if (messageText.WebPage.Audio != null)
+                        {
+                            target = messageText.WebPage.Audio;
+                        }
+                        else if (messageText.WebPage.Document != null)
+                        {
+                            target = messageText.WebPage.Document;
+                        }
+                        else if (messageText.WebPage.Sticker != null)
+                        {
+                            target = messageText.WebPage.Sticker;
+                        }
+                        else if (messageText.WebPage.Video != null)
+                        {
+                            target = messageText.WebPage.Video;
+                        }
+                        else if (messageText.WebPage.VideoNote != null)
+                        {
+                            target = messageText.WebPage.VideoNote;
+                        }
+                        else if (messageText.WebPage.VoiceNote != null)
+                        {
+                            target = messageText.WebPage.VoiceNote;
+                        }
+                        else if (messageText.WebPage.Photo != null)
+                        {
+                            // Photo at last: web page preview might have both a file and a thumbnail
+                            target = messageText.WebPage.Photo;
+                        }
+
+                        media = panel.FindName("Media") as ContentControl;
+                        panel = media.ContentTemplateRoot as Panel;
+                    }
+                    else if (target is MessageGame)
                     {
                         media = panel.FindName("Media") as ContentControl;
                         panel = media.ContentTemplateRoot as Panel;
                     }
-                    else if (message.Content is MessageGame)
+                    else if (target is MessageVideoNote messageVideoNote)
                     {
-                        panel = panel.FindName("Media") as Panel;
+                        target = messageVideoNote.VideoNote;
                     }
-                    //else if (message.Media is TLMessageMediaGame)
-                    //{
-                    //    panel = panel.FindName("Media") as FrameworkElement;
-                    //}
-                    //else if (message.IsRoundVideo())
-                    //{
-                    //    panel = panel.FindName("Inner") as FrameworkElement;
-                    //}
+                    
+                    if (target is VideoNote)
+                    {
+                        panel = panel.FindName("Presenter") as Panel;
+                    }
 
                     if (panel is Grid final)
                     {
                         final.Tag = message;
-                        news[message.Id] = new MediaPlayerItem { File = animation, Container = final, Watermark = message.Content is MessageGame };
+                        news[message.Id] = new MediaPlayerItem { File = animation, Container = final, Watermark = message.Content is MessageGame, Clip = target is VideoNote };
                     }
                 }
             }
@@ -361,24 +400,41 @@ namespace Unigram.Views
                     continue;
                 }
 
-                var container = news[item].Container;
-                if (container != null && container.Children.Count < 5)
+                if (news.TryGetValue(item, out MediaPlayerItem data) && data.Container != null && data.Container.Children.Count < 5)
                 {
                     var player = new MediaPlayer();
                     player.AutoPlay = true;
                     player.IsMuted = !audio;
                     player.IsLoopingEnabled = true;
                     player.CommandManager.IsEnabled = false;
-                    player.Source = MediaSource.CreateFromUri(new Uri("file:///" + news[item].File.Local.Path));
+                    player.Source = MediaSource.CreateFromUri(new Uri("file:///" + data.File.Local.Path));
 
                     var presenter = new MediaPlayerView();
                     presenter.MediaPlayer = player;
                     presenter.IsHitTestVisible = false;
-                    presenter.Constraint = container.Tag;
+                    presenter.Constraint = data.Container.Tag;
 
-                    news[item].Presenter = presenter;
+                    //if (data.Clip && ApiInformation.IsTypePresent("Windows.UI.Composition.CompositionGeometricClip"))
+                    //{
+                    //    var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
+                    //    ellipse.Center = new Vector2(100, 100);
+                    //    ellipse.Radius = new Vector2(100, 100);
+
+                    //    var clip = ellipse.Compositor.CreateGeometricClip();
+                    //    clip.ViewBox = ellipse.Compositor.CreateViewBox();
+                    //    clip.ViewBox.Size = new Vector2(200, 200);
+                    //    clip.ViewBox.Stretch = CompositionStretch.UniformToFill;
+                    //    clip.Geometry = ellipse;
+
+                    //    var visual = ElementCompositionPreview.GetElementVisual(presenter);
+                    //    visual.Clip = clip;
+                    //}
+
+                    data.Presenter = presenter;
                     //container.Children.Insert(news[item].Watermark ? 2 : 2, presenter);
-                    container.Children.Add(presenter);
+                    //container.Children.Add(presenter);
+
+                    data.Container.Children.Add(presenter);
                 }
 
                 _old[item] = news[item];

@@ -180,6 +180,10 @@ namespace Unigram.Controls.Messages.Content
             {
                 return photo.Photo;
             }
+            else if (content is MessageGame game)
+            {
+                return game.Game.Photo;
+            }
             else if (content is MessageText text && text.WebPage != null)
             {
                 return text.WebPage.Photo;

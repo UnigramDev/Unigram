@@ -164,6 +164,10 @@ namespace Unigram.Controls.Messages.Content
             {
                 return animation.Animation;
             }
+            else if (content is MessageGame game)
+            {
+                return game.Game.Animation;
+            }
             else if (content is MessageText text && text.WebPage != null)
             {
                 return text.WebPage.Animation;
