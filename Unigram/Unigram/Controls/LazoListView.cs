@@ -19,6 +19,7 @@ namespace Unigram.Controls
         private int _firstIndex = -1;
         private bool _operation;
 
+        private bool _pressed;
         private Point _position;
 
         protected override DependencyObject GetContainerForItemOverride()
@@ -28,11 +29,12 @@ namespace Unigram.Controls
 
         internal void OnPointerPressed(LazoListViewItem item, PointerRoutedEventArgs e)
         {
+            _pressed = true;
         }
 
         internal void OnPointerEntered(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            if (_firstItem == null || !e.Pointer.IsInContact /*|| SelectionMode != ListViewSelectionMode.Multiple*/ || e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if (_firstItem == null || !_pressed || !e.Pointer.IsInContact /*|| SelectionMode != ListViewSelectionMode.Multiple*/ || e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
             {
                 return;
             }
@@ -76,7 +78,7 @@ namespace Unigram.Controls
 
         internal void OnPointerMoved(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            if ((_firstItem != null && _firstItem != item) || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if ((_firstItem != null && _firstItem != item) || !_pressed || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
             {
                 return;
             }
@@ -138,18 +140,19 @@ namespace Unigram.Controls
 
         internal void OnPointerReleased(LazoListViewItem item, PointerRoutedEventArgs e)
         {
+            _firstItem = null;
+            _firstIndex = -1;
+            _ranges = null;
+
+            _pressed = false;
+            _position = new Point();
+
             if (SelectionMode != ListViewSelectionMode.Multiple)
             {
                 return;
             }
 
             e.Handled = _firstItem != null && _firstItem.IsSelected == _operation;
-
-            _firstItem = null;
-            _firstIndex = -1;
-            _ranges = null;
-
-            _position = new Point();
         }
     }
 }
