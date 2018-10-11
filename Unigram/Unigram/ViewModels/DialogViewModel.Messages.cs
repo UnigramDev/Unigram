@@ -1147,6 +1147,7 @@ namespace Unigram.ViewModels
                             bundle.Add("username", viaBot.Username);
                         }
 
+                        ChatActionManager.SetTyping(new ChatActionStartPlayingGame());
                         NavigationService.Navigate(typeof(GamePage), bundle);
                     }
                 }

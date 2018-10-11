@@ -6,7 +6,7 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Common;
-using Unigram.Common.Dialogs;
+using Unigram.Common.Chats;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Services;
@@ -128,7 +128,7 @@ namespace Unigram.Controls.Cells
         {
             if (actions != null && actions.Count > 0)
             {
-                TypingLabel.Text = InputTypingManager.GetTypingString(chat, actions, _protoService.GetUser);
+                TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _protoService.GetUser, out ChatAction commonAction);
                 TypingLabel.Visibility = Visibility.Visible;
                 BriefInfo.Visibility = Visibility.Collapsed;
             }

@@ -11,7 +11,7 @@ using System.Windows.Input;
 using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
-using Unigram.Common.Dialogs;
+using Unigram.Common.Chats;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
@@ -1532,7 +1532,7 @@ namespace Unigram.Views
             };
             batch.End();
 
-            ViewModel.OutputTypingManager.SetTyping(btnVoiceMessage.IsChecked.Value ? (ChatAction)new ChatActionRecordingVideoNote() : new ChatActionRecordingVoiceNote());
+            ViewModel.ChatActionManager.SetTyping(btnVoiceMessage.IsChecked.Value ? (ChatAction)new ChatActionRecordingVideoNote() : new ChatActionRecordingVoiceNote());
         }
 
         private void VoiceButton_RecordingStopped(object sender, EventArgs e)
@@ -1580,7 +1580,7 @@ namespace Unigram.Views
             };
             batch.End();
 
-            ViewModel.OutputTypingManager.CancelTyping();
+            ViewModel.ChatActionManager.CancelTyping();
         }
 
         private void VoiceButton_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
@@ -2176,14 +2176,16 @@ namespace Unigram.Views
         {
             if (actions != null && actions.Count > 0)
             {
-                Typing.Text = InputTypingManager.GetTypingString(chat, actions, ViewModel.CacheService.GetUser);
-                Typing.Visibility = Visibility.Visible;
-                Subtitle.Visibility = Visibility.Collapsed;
+                ChatActionLabel.Text = InputChatActionManager.GetTypingString(chat, actions, ViewModel.CacheService.GetUser, out ChatAction commonAction);
+                ChatActionIndicator.UpdateAction(commonAction);
+                ChatActionPanel.Visibility = Visibility.Visible;
+                Subtitle.Opacity = 0;
             }
             else
             {
-                Typing.Visibility = Visibility.Collapsed;
-                Subtitle.Visibility = Visibility.Visible;
+                ChatActionIndicator.UpdateAction(null);
+                ChatActionPanel.Visibility = Visibility.Collapsed;
+                Subtitle.Opacity = 1;
             }
         }
 

@@ -15,5 +15,8 @@ namespace Unigram.Common
 
         private static bool? _canAddContextRequestedEvent;
         public static bool CanAddContextRequestedEvent = (_canAddContextRequestedEvent = _canAddContextRequestedEvent ?? ApiInformation.IsReadOnlyPropertyPresent("Windows.UI.Xaml.UIElement", "ContextRequestedEvent")) ?? false;
+
+        private static bool? _canUseDirectComposition;
+        public static bool CanUseDirectComposition = (_canUseDirectComposition = _canUseDirectComposition ?? ApiInformation.IsTypePresent("Windows.UI.Composition.CompositionEllipseGeometry")) ?? false;
     }
 }

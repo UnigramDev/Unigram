@@ -35,7 +35,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services.Factories;
 using Windows.ApplicationModel.DataTransfer;
-using Unigram.Common.Dialogs;
+using Unigram.Common.Chats;
 using Unigram.ViewModels.Chats;
 
 namespace Unigram.ViewModels
@@ -355,12 +355,12 @@ namespace Unigram.ViewModels
             }
         }
 
-        private OutputTypingManager _outputTypingManager;
-        public OutputTypingManager OutputTypingManager
+        private OutputChatActionManager _chatActionManager;
+        public OutputChatActionManager ChatActionManager
         {
             get
             {
-                return _outputTypingManager = _outputTypingManager ?? new OutputTypingManager(ProtoService, _chat);
+                return _chatActionManager = _chatActionManager ?? new OutputChatActionManager(ProtoService, _chat);
             }
         }
 

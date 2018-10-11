@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Template10.Common;
 using Unigram.Common;
-using Unigram.Common.Dialogs;
 using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.Views;

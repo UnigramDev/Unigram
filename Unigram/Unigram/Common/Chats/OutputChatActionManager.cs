@@ -2,9 +2,9 @@
 using Telegram.Td.Api;
 using Unigram.Services;
 
-namespace Unigram.Common.Dialogs
+namespace Unigram.Common.Chats
 {
-    public class OutputTypingManager
+    public class OutputChatActionManager
     {
         private readonly IProtoService _protoService;
         private readonly Chat _chat;
@@ -12,7 +12,7 @@ namespace Unigram.Common.Dialogs
 
         private DateTime? _lastTypingTime;
 
-        public OutputTypingManager(IProtoService protoService, Chat chat, double delay = 5.0)
+        public OutputChatActionManager(IProtoService protoService, Chat chat, double delay = 5.0)
         {
             _chat = chat;
             _delay = delay;

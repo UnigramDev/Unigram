@@ -401,12 +401,18 @@
                                                    Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}"
                                                    TextWrapping="NoWrap"
                                                    TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock x:Name="Typing"
-                                                   Visibility="Collapsed"
-                                                   TextWrapping="NoWrap"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
-                                                   Style="{StaticResource CaptionTextBlockStyle}"/>
+                                        <StackPanel x:Name="ChatActionPanel" Orientation="Horizontal" Visibility="Collapsed">
+                                            <controls:ChatActionIndicator x:Name="ChatActionIndicator"
+                                                                        Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                                                        VerticalAlignment="Bottom"
+                                                                        Margin="0,0,0,-2"/>
+                                            <TextBlock x:Name="ChatActionLabel"
+                                                       TextWrapping="NoWrap"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                                       VerticalAlignment="Top"/>
+                                        </StackPanel>
                                     </Grid>
                                 </StackPanel>
 
