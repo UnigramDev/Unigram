@@ -40,9 +40,9 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls.Primitives;
 using Unigram.Controls.Views;
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Chats
 {
-    public class BubbleTextBox : RichEditBox
+    public class ChatTextBox : RichEditBox
     {
         private ContentControl InlinePlaceholderTextContentPresenter;
 
@@ -50,9 +50,9 @@ namespace Unigram.Controls
 
         private readonly IDisposable _textChangedSubscription;
 
-        public BubbleTextBox()
+        public ChatTextBox()
         {
-            DefaultStyleKey = typeof(BubbleTextBox);
+            DefaultStyleKey = typeof(ChatTextBox);
 
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
             {
@@ -162,6 +162,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
+                    flyout.AllowFocusOnInteraction = false;
                     flyout.ShowAt(this, point);
                 }
             }
@@ -463,32 +464,7 @@ namespace Unigram.Controls
             // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
             // we have to handle the pasting operation manually to allow plaintext only.
             var package = Clipboard.GetContent();
-            if (package.Contains(StandardDataFormats.Text) && package.Contains("Rich Text Format"))
-            {
-                if (e != null)
-                {
-                    e.Handled = true;
-                }
-
-                var text = await package.GetTextAsync();
-                var start = Document.Selection.StartPosition;
-
-                var result = Emoticon.Pattern.Replace(text, (match) =>
-                {
-                    var emoticon = match.Groups[1].Value;
-                    var emoji = Emoticon.Replace(emoticon);
-                    if (match.Value.StartsWith(" "))
-                    {
-                        emoji = $" {emoji}";
-                    }
-
-                    return emoji;
-                });
-
-                Document.Selection.SetText(TextSetOptions.None, result);
-                Document.Selection.SetRange(start + result.Length, start + result.Length);
-            }
-            else if (package.Contains(StandardDataFormats.Bitmap))
+            if (package.Contains(StandardDataFormats.Bitmap))
             {
                 if (e != null)
                 {
@@ -618,6 +594,31 @@ namespace Unigram.Controls
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-td-field-tags"))
             {
                 // This is Telegram Desktop mentions format
+            }
+            else if (package.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
+            {
+                if (e != null)
+                {
+                    e.Handled = true;
+                }
+
+                var text = await package.GetTextAsync();
+                var start = Document.Selection.StartPosition;
+
+                var result = Emoticon.Pattern.Replace(text, (match) =>
+                {
+                    var emoticon = match.Groups[1].Value;
+                    var emoji = Emoticon.Replace(emoticon);
+                    if (match.Value.StartsWith(" "))
+                    {
+                        emoji = $" {emoji}";
+                    }
+
+                    return emoji;
+                });
+
+                Document.Selection.SetText(TextSetOptions.None, result);
+                Document.Selection.SetRange(start + result.Length, start + result.Length);
             }
         }
 
@@ -879,7 +880,7 @@ namespace Unigram.Controls
 
             if (IsEmpty == false)
             {
-                ViewModel.OutputTypingManager.SetTyping(new ChatActionTyping());
+                ViewModel.ChatActionManager.SetTyping(new ChatActionTyping());
             }
         }
 
@@ -997,7 +998,7 @@ namespace Unigram.Controls
                     if (_bots)
                     {
                         var response = await _protoService.SendAsync(new GetTopChats(new TopChatCategoryInlineBots(), 10));
-                        if (response is Chats chats)
+                        if (response is Telegram.Td.Api.Chats chats)
                         {
                             foreach (var id in chats.ChatIds)
                             {
@@ -1501,11 +1502,11 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty InlinePlaceholderTextProperty =
-            DependencyProperty.Register("InlinePlaceholderText", typeof(string), typeof(BubbleTextBox), new PropertyMetadata(null, OnInlinePlaceholderTextChanged));
+            DependencyProperty.Register("InlinePlaceholderText", typeof(string), typeof(ChatTextBox), new PropertyMetadata(null, OnInlinePlaceholderTextChanged));
 
         private static void OnInlinePlaceholderTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((BubbleTextBox)d).UpdateInlinePlaceholder();
+            ((ChatTextBox)d).UpdateInlinePlaceholder();
         }
 
         #endregion
@@ -1520,11 +1521,11 @@ namespace Unigram.Controls
 
         // Using a DependencyProperty as the backing store for Reply.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ReplyProperty =
-            DependencyProperty.Register("Reply", typeof(object), typeof(BubbleTextBox), new PropertyMetadata(null, OnReplyChanged));
+            DependencyProperty.Register("Reply", typeof(object), typeof(ChatTextBox), new PropertyMetadata(null, OnReplyChanged));
 
         private static void OnReplyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((BubbleTextBox)d).OnReplyChanged((object)e.NewValue, (object)e.OldValue);
+            ((ChatTextBox)d).OnReplyChanged((object)e.NewValue, (object)e.OldValue);
         }
 
         private async void OnReplyChanged(object newValue, object oldValue)

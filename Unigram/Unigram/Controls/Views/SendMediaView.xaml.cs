@@ -11,6 +11,7 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls.Chats;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Native;
@@ -453,7 +454,7 @@ namespace Unigram.Controls.Views
             CaptionInput.Document.GetText(TextGetOptions.None, out string hidden);
             CaptionInput.Document.GetText(TextGetOptions.NoHidden, out string text);
 
-            if (e.ClickedItem is User user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string username, out int index))
+            if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string username, out int index))
             {
                 var insert = string.Empty;
                 var adjust = 0;
@@ -479,7 +480,7 @@ namespace Unigram.Controls.Views
                 CaptionInput.Document.GetRange(range.EndPosition, range.EndPosition).SetText(TextSetOptions.None, " ");
                 CaptionInput.Document.Selection.StartPosition = range.EndPosition + 1;
             }
-            else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string replacement))
+            else if (e.ClickedItem is EmojiSuggestion emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string replacement))
             {
                 var insert = $"{emoji.Emoji} ";
                 var start = CaptionInput.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;

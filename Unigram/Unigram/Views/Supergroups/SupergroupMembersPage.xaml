@@ -102,8 +102,7 @@
                         <controls:BadgeButton x:Name="AddNew"
                                               Visibility="Collapsed"
                                               Content="{CustomResource AddSubscriber}"
-                                              Command="{x:Bind ViewModel.AddCommand}"
-                                              Style="{StaticResource BadgeButtonStyle}"/>
+                                              Command="{x:Bind ViewModel.AddCommand}"/>
                         <Button x:Name="Invite"
                                 Command="{x:Bind ViewModel.InviteCommand}"
                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"

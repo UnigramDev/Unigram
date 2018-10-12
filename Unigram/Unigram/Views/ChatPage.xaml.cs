@@ -13,6 +13,7 @@ using Template10.Common;
 using Unigram.Common;
 using Unigram.Common.Chats;
 using Unigram.Controls;
+using Unigram.Controls.Chats;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Entities;
@@ -159,8 +160,8 @@ namespace Unigram.Views
 
             //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
             //{
-            //    var visual = ElementCompositionPreview.GetElementVisual(Header);
-            //    visual.Clip = Window.Current.Compositor.CreateInsetClip();
+            //    var visual2 = ElementCompositionPreview.GetElementVisual(Header);
+            //    visual2.Clip = Window.Current.Compositor.CreateInsetClip();
 
             //    var showShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             //    showShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
@@ -190,6 +191,26 @@ namespace Unigram.Views
             //    ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
             //    ElementCompositionPreview.SetImplicitShowAnimation(InfoPanel, hideShowAnimation);
             //    ElementCompositionPreview.SetImplicitHideAnimation(InfoPanel, showHideAnimation);
+
+
+
+            //    var visual3 = ElementCompositionPreview.GetElementVisual(Clipper);
+            //    visual3.Clip = Window.Current.Compositor.CreateInsetClip();
+
+            //    var showShowAnimation2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    showShowAnimation2.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
+            //    showShowAnimation2.InsertKeyFrame(1.0f, new Vector3());
+            //    showShowAnimation2.Target = nameof(Visual.Offset);
+            //    showShowAnimation2.Duration = TimeSpan.FromMilliseconds(400);
+
+            //    var hideHideAnimation2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    hideHideAnimation2.InsertKeyFrame(0.0f, new Vector3());
+            //    hideHideAnimation2.InsertKeyFrame(1.0f, new Vector3(0, -48, 0));
+            //    hideHideAnimation2.Target = nameof(Visual.Offset);
+            //    hideHideAnimation2.Duration = TimeSpan.FromMilliseconds(400);
+
+            //    ElementCompositionPreview.SetImplicitShowAnimation(PinnedMessagePanel, showShowAnimation);
+            //    ElementCompositionPreview.SetImplicitHideAnimation(PinnedMessagePanel, hideHideAnimation);
             //}
 
             _textShadowVisual = Shadow.Attach(Separator, 20, 0.25f);
@@ -1673,7 +1694,7 @@ namespace Unigram.Views
             TextField.Document.GetText(TextGetOptions.None, out string hidden);
             TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
 
-            if (e.ClickedItem is User user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string username, out int index))
+            if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string username, out int index))
             {
                 var insert = string.Empty;
                 var adjust = 0;
@@ -1719,7 +1740,7 @@ namespace Unigram.Views
                 TextField.SetText(null, null);
                 ViewModel.SendCommand.Execute(insert);
             }
-            else if (e.ClickedItem is string hashtag && BubbleTextBox.SearchByHashtag(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string initial, out int index2))
+            else if (e.ClickedItem is string hashtag && ChatTextBox.SearchByHashtag(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string initial, out int index2))
             {
                 var insert = $"{hashtag} ";
                 var start = TextField.Document.Selection.StartPosition - 1 - initial.Length + insert.Length;
@@ -1730,7 +1751,7 @@ namespace Unigram.Views
                 //TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.Selection.StartPosition = start;
             }
-            else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
+            else if (e.ClickedItem is EmojiSuggestion emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
             {
                 var insert = $"{emoji.Emoji} ";
                 var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;

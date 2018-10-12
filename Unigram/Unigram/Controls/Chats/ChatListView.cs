@@ -17,16 +17,16 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Chats
 {
-    public class BubbleListView : PaddedListView
+    public class ChatListView : PaddedListView
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         public ScrollViewer ScrollingHost { get; private set; }
         public ItemsStackPanel ItemsStack { get; private set; }
 
-        public BubbleListView()
+        public ChatListView()
         {
             DefaultStyleKey = typeof(ListView);
 
@@ -159,7 +159,7 @@ namespace Unigram.Controls
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new BubbleListViewItem(this);
+            return new ChatListViewItem(this);
         }
     }
 }

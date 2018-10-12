@@ -31,14 +31,12 @@
                     <controls:BadgeButton
                         Content="{CustomResource SuggestStickers}"
                         Command="{x:Bind ViewModel.SuggestCommand}"
-                        Badge="{x:Bind ConvertSuggest(ViewModel.SuggestStickers), Mode=OneWay}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        Badge="{x:Bind ConvertSuggest(ViewModel.SuggestStickers), Mode=OneWay}"/>
                     <controls:BadgeButton
                         Content="{CustomResource FeaturedStickers}"
                         Click="FeaturedStickers_Click"
                         Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
-                        BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBlock
                         Text="{CustomResource FeaturedStickersInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
@@ -58,8 +56,7 @@
                         Content="{CustomResource ArchivedStickers}"
                         Click="ArchivedStickers_Click"
                         Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBlock
                         Text="{CustomResource ArchivedStickersInfo}"
                         Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"

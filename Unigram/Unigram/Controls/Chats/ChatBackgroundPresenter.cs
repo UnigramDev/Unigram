@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Chats
 {
     public class ChatBackgroundPresenter : ContentControl, IHandle<UpdateWallpaper>
     {

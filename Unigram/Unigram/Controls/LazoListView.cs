@@ -140,6 +140,8 @@ namespace Unigram.Controls
 
         internal void OnPointerReleased(LazoListViewItem item, PointerRoutedEventArgs e)
         {
+            var handled = _firstItem != null && _firstItem.IsSelected == _operation;
+
             _firstItem = null;
             _firstIndex = -1;
             _ranges = null;
@@ -152,7 +154,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            e.Handled = _firstItem != null && _firstItem.IsSelected == _operation;
+            e.Handled = handled;
         }
     }
 }

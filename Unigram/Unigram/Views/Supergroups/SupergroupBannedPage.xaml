@@ -108,7 +108,6 @@
                                               Visibility="Collapsed"
                                               Content="{CustomResource ChannelBlockUser}"
                                               Command="{x:Bind ViewModel.AddCommand}"
-                                              Style="{StaticResource BadgeButtonStyle}"
                                               Margin="0,0,0,18"/>
                     </StackPanel>
                 </ListView.Header>

@@ -16,10 +16,12 @@ using Windows.UI.Xaml.Media;
 using Windows.Foundation;
 using Unigram.Common;
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Chats
 {
     public class ChatActionIndicator : Control
     {
+        private const float PI = 3.1415926535897931f;
+
         private Visual _previous;
         private ChatAction _action;
 
@@ -56,8 +58,8 @@ namespace Unigram.Controls
             switch (action)
             {
                 // Doesn't work yet
-                //case ChatActionTyping typing:
-                //    return GetTyping(compositor, width, height, color);
+                case ChatActionTyping typing:
+                    return GetTyping(compositor, width, height, color);
                 case ChatActionUploadingDocument document:
                 case ChatActionUploadingPhoto photo:
                 case ChatActionUploadingVideo video:
@@ -75,39 +77,33 @@ namespace Unigram.Controls
 
             return null;
         }
-        public const float PI = 3.1415926535897931f;
-
         private Visual GetTyping(Compositor compositor, float width, float height, Color color)
         {
-            float leftPadding = 6.0f;
-            float topPadding = 9.0f;
-            float distance = 11.0f / 2.0f;
-
-            float minAlpha = 0.75f;
-            float deltaAlpha = 1.0f - minAlpha;
-
-            //float radius = 0.0f;
+            float radius = 1.00f;
 
             // Begin dot1
             var dot1 = compositor.CreateEllipseGeometry();
-            //dot1.Radius = new Vector2(radius, radius);
+            dot1.Radius = new Vector2(radius, radius);
 
             var spriteDot1 = compositor.CreateSpriteShape(dot1);
             var brushDot1 = spriteDot1.FillBrush = compositor.CreateColorBrush(color);
+            spriteDot1.Offset = new Vector2(3, 3.5f);
 
             // Begin dot2
             var dot2 = compositor.CreateEllipseGeometry();
-            //dot2.Radius = new Vector2(radius, radius);
+            dot2.Radius = new Vector2(radius, radius);
 
             var spriteDot2 = compositor.CreateSpriteShape(dot2);
             var brushDot2 = spriteDot2.FillBrush = compositor.CreateColorBrush(color);
+            spriteDot2.Offset = new Vector2(8, 3.5f);
 
             // Begin dot2
             var dot3 = compositor.CreateEllipseGeometry();
-            //dot3.Radius = new Vector2(radius, radius);
+            dot3.Radius = new Vector2(radius, radius);
 
             var spriteDot3 = compositor.CreateSpriteShape(dot3);
             var brushDot3 = spriteDot3.FillBrush = compositor.CreateColorBrush(color);
+            spriteDot3.Offset = new Vector2(13, 3.5f);
 
             // Begin shape
             var shape = compositor.CreateShapeVisual();
@@ -118,50 +114,38 @@ namespace Unigram.Controls
             shape.Scale = new Vector3(2, 2, 0);
 
             // Begin animation
-            var props = compositor.CreatePropertySet();
-            props.InsertScalar("animationValue", 0.0f);
+            var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0, 0), new Vector2(0.58f, 1));
+            var radiusDot1 = compositor.CreateVector2KeyFrameAnimation();
+            radiusDot1.InsertKeyFrame(0.0f, new Vector2(1.00f, 1.00f), easing);
+            radiusDot1.InsertKeyFrame(0.4f, new Vector2(1.80f, 1.80f), easing);
+            radiusDot1.InsertKeyFrame(0.8f, new Vector2(1.00f, 1.00f), easing);
+            radiusDot1.InsertKeyFrame(1.0f, new Vector2(1.00f, 1.00f), easing);
+            radiusDot1.Duration = TimeSpan.FromMilliseconds(800);
+            radiusDot1.IterationBehavior = AnimationIterationBehavior.Forever;
 
-            var reference = props.GetReference();
-            var animationValue = reference.GetScalarProperty("animationValue");
+            var radiusDot2 = compositor.CreateVector2KeyFrameAnimation();
+            radiusDot2.InsertKeyFrame(0.0f, new Vector2(1.00f, 1.00f), easing);
+            radiusDot2.InsertKeyFrame(0.4f, new Vector2(1.80f, 1.80f), easing);
+            radiusDot2.InsertKeyFrame(0.8f, new Vector2(1.00f, 1.00f), easing);
+            radiusDot2.InsertKeyFrame(1.0f, new Vector2(1.00f, 1.00f), easing);
+            radiusDot2.Duration = TimeSpan.FromMilliseconds(800);
+            radiusDot2.DelayTime = TimeSpan.FromMilliseconds(150);
+            radiusDot2.IterationBehavior = AnimationIterationBehavior.Forever;
 
-            var easing = compositor.CreateLinearEasingFunction();
-            var animationValueImpl = compositor.CreateScalarKeyFrameAnimation();
-            animationValueImpl.InsertKeyFrame(0, 0, easing);
-            animationValueImpl.InsertKeyFrame(1, 1, easing);
-            animationValueImpl.Duration = TimeSpan.FromMilliseconds(700);
-            animationValueImpl.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            props.StartAnimation("animationValue", animationValueImpl);
-
-            ScalarNode radius = radiusFunction(animationValue, 0.4f);
-            radius = (EF.Max(minDiameter, radius) - minDiameter) / (maxDiameter - minDiameter);
-            radius = radius * 1.5f;
-
-            ExpressionNode radiusDot1 = EF.Vector2(minDiameter + radius, minDiameter + radius);
+            var radiusDot3 = compositor.CreateVector2KeyFrameAnimation();
+            radiusDot3.InsertKeyFrame(0.0f, new Vector2(1.00f, 1.00f), easing);
+            radiusDot3.InsertKeyFrame(0.4f, new Vector2(1.80f, 1.80f), easing);
+            radiusDot3.InsertKeyFrame(0.8f, new Vector2(1.00f, 1.00f), easing);
+            radiusDot3.InsertKeyFrame(1.0f, new Vector2(1.00f, 1.00f), easing);
+            radiusDot3.Duration = TimeSpan.FromMilliseconds(800);
+            radiusDot3.DelayTime = TimeSpan.FromMilliseconds(300);
+            radiusDot3.IterationBehavior = AnimationIterationBehavior.Forever;
 
             dot1.StartAnimation("Radius", radiusDot1);
+            dot2.StartAnimation("Radius", radiusDot2);
+            dot3.StartAnimation("Radius", radiusDot3);
 
             return shape;
-        }
-
-        const float minDiameter = 3.0f;
-        const float maxDiameter = 4.5f;
-
-        ScalarNode radiusFunction(ScalarNode value, ScalarNode timeOffset)
-        {
-            ScalarNode clampedValue = value + timeOffset;
-            clampedValue = EF.Conditional(clampedValue > 1.0f, clampedValue - EF.Floor(clampedValue), clampedValue);
-
-            return EF.Conditional(clampedValue < 0.4f,
-                interpolateFrom(minDiameter, maxDiameter, clampedValue / 0.4f),
-                    EF.Conditional(clampedValue < 0.8f,
-                        interpolateFrom(maxDiameter, minDiameter, (clampedValue - 0.4f) / 0.4f),
-                        minDiameter));
-        }
-
-        ScalarNode interpolateFrom(ScalarNode from, ScalarNode to, ScalarNode value)
-        {
-            return (1.0f - value) * from + value * to;
         }
 
         private Visual GetVoiceRecording(Compositor compositor, float width, float height, Color color)
@@ -481,6 +465,8 @@ namespace Unigram.Controls
         {
             switch (_action)
             {
+                case ChatActionTyping typing:
+                    return new Size(36, 16);
                 case ChatActionUploadingDocument document:
                 case ChatActionUploadingPhoto photo:
                 case ChatActionUploadingVideo video:

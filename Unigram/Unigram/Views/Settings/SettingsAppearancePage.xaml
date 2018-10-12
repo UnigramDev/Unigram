@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
     xmlns:messages="using:Unigram.Controls.Messages"
+    xmlns:chats="using:Unigram.Controls.Chats"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -235,7 +236,7 @@
 
                 <TextBlock Text="{CustomResource ThemePreview}" Margin="12,12,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                 <Grid x:Name="Preview">
-                    <controls:ChatBackgroundPresenter x:Name="BackgroundPresenter" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                    <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                     <StackPanel Padding="12,12,12,10">
                         <messages:MessageBubble x:Name="Message1"/>
                         <messages:MessageBubble x:Name="Message2">

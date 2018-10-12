@@ -37,6 +37,7 @@ using Unigram.Services.Factories;
 using Windows.ApplicationModel.DataTransfer;
 using Unigram.Common.Chats;
 using Unigram.ViewModels.Chats;
+using Unigram.Controls.Chats;
 
 namespace Unigram.ViewModels
 {
@@ -424,8 +425,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public BubbleTextBox TextField { get; set; }
-        public BubbleListView ListField { get; set; }
+        public ChatTextBox TextField { get; set; }
+        public ChatListView ListField { get; set; }
 
         public void SetSelection(int start)
         {

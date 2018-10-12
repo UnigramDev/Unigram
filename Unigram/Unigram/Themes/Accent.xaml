@@ -8,7 +8,7 @@
         <ResourceDictionary x:Key="Dark">
             <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
 
-            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{ThemeResource SystemChromeLowColor}"/>
+            <!--<SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{ThemeResource SystemChromeLowColor}"/>-->
             <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
             <StaticResource x:Key="TelegramSubtitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>

@@ -90,6 +90,10 @@ namespace Unigram.ViewModels.Gallery
                 {
                     return true;
                 }
+                else if (_message.Content is MessageGame game)
+                {
+                    return game.Game.Animation != null;
+                }
                 else if (_message.Content is MessageText text)
                 {
                     return text.WebPage?.Video != null;
@@ -106,6 +110,10 @@ namespace Unigram.ViewModels.Gallery
                 if (_message.Content is MessageAnimation)
                 {
                     return true;
+                }
+                else if (_message.Content is MessageGame game)
+                {
+                    return game.Game.Animation != null;
                 }
                 else if (_message.Content is MessageText text)
                 {

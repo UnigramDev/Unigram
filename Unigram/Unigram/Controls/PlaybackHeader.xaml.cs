@@ -134,7 +134,7 @@ namespace Unigram.Controls
             }
             else
             {
-                RateButton.Visibility = Visibility.Collapsed;
+                RateButton.Visibility = Visibility.Visible;
             }
 
             RateButton.IsChecked = _playbackService.PlaybackRate == 2.0;

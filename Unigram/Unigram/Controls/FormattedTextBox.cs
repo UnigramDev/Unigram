@@ -132,6 +132,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
+                    flyout.AllowFocusOnInteraction = false;
                     flyout.ShowAt(this, point);
                 }
             }

@@ -7,7 +7,7 @@ using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Chats
 {
     public class ChatSearchTextBox : TextBox
     {

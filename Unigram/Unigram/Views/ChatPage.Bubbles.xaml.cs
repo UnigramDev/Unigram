@@ -43,6 +43,7 @@ using Unigram.Controls.Messages;
 using LinqToVisualTree;
 using Telegram.Td.Api;
 using Windows.Foundation.Metadata;
+using Unigram.Controls.Chats;
 
 namespace Unigram.Views
 {
@@ -624,7 +625,7 @@ namespace Unigram.Views
 
         private SelectorItem CreateSelectorItem(string typeName)
         {
-            SelectorItem item = new BubbleListViewItem(Messages);
+            SelectorItem item = new ChatListViewItem(Messages);
             //item.ContextRequested += Message_ContextRequested;
             //item.ContentTemplate = _typeToTemplateMapping[typeName];
             item.ContentTemplate = Resources[typeName] as DataTemplate;

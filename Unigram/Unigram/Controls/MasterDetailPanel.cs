@@ -206,9 +206,9 @@ namespace Unigram.Controls
                 Window.Current.CoreWindow.PointerCursor = _defaultCursor;
             }
 
-            foreach (var pointer in PointerCaptures)
+            foreach (var pointer in Children[2].PointerCaptures)
             {
-                ReleasePointerCapture(pointer);
+                Children[2].ReleasePointerCapture(pointer);
             }
         }
 
@@ -234,19 +234,21 @@ namespace Unigram.Controls
         {
             VisualStateManager.GoToState(Children[2] as UserControl, "Pressed", false);
 
-            CapturePointer(e.Pointer);
+            Children[2].CapturePointer(e.Pointer);
             e.Handled = true;
         }
 
         private void Grip_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
+            VisualStateManager.GoToState(Children[2] as UserControl, "Pressed", false);
+
             var point = e.GetCurrentPoint(Children[2]);
             if (point.Position.X < 0 || point.Position.X > 12)
             {
                 Window.Current.CoreWindow.PointerCursor = _defaultCursor;
             }
 
-            ReleasePointerCapture(e.Pointer);
+            Children[2].ReleasePointerCapture(e.Pointer);
             e.Handled = true;
         }
 

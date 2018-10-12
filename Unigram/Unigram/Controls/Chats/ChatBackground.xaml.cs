@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Chats
 {
     public sealed partial class ChatBackground : UserControl
     {

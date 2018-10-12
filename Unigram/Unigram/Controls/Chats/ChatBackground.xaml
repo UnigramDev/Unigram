@@ -1,8 +1,8 @@
 <UserControl
-    x:Class="Unigram.Controls.ChatBackground"
+    x:Class="Unigram.Controls.Chats.ChatBackground"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Controls"
+    xmlns:local="using:Unigram.Controls.Chats"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

@@ -61,8 +61,7 @@
                         <controls:BadgeButton
                             Content="{CustomResource TerminateAllSessions}"
                             Foreground="Red"
-                            Command="{x:Bind ViewModel.TerminateOthersCommand}"
-                            Style="{StaticResource BadgeButtonStyle}"/>
+                            Command="{x:Bind ViewModel.TerminateOthersCommand}"/>
                         <TextBlock 
                             Text="{CustomResource ClearOtherSessionsHelp}"
                             Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"

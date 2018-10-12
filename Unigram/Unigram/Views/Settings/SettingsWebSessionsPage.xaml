@@ -28,8 +28,7 @@
                         <controls:BadgeButton
                             Content="{CustomResource TerminateAllWebSessions}"
                             Foreground="Red"
-                            Click="TerminateOthers_Click"
-                            Style="{StaticResource BadgeButtonStyle}"/>
+                            Click="TerminateOthers_Click"/>
                         <TextBlock 
                             Text="{CustomResource ClearOtherWebSessionsHelp}"
                             Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"

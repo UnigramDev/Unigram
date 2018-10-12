@@ -52,8 +52,7 @@
                     <controls:BadgeButton
                         Content="{CustomResource DeleteMega}"
                         Foreground="Red"
-                        Command="{x:Bind ViewModel.DeleteCommand}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        Command="{x:Bind ViewModel.DeleteCommand}"/>
                     <TextBlock
                         Text="{CustomResource MegaDeleteInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"

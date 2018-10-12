@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
+    xmlns:chats="using:Unigram.Controls.Chats"
     xmlns:controls="using:Unigram.Controls"
     xmlns:common="using:Unigram.Common"
     xmlns:selectors="using:Unigram.Selectors"
@@ -41,7 +42,7 @@
                 <selectors:WallPaperTemplateSelector>
                     <selectors:WallPaperTemplateSelector.DefaultTemplate>
                         <DataTemplate>
-                            <controls:ChatBackground/>
+                            <chats:ChatBackground/>
                         </DataTemplate>
                     </selectors:WallPaperTemplateSelector.DefaultTemplate>
                     <selectors:WallPaperTemplateSelector.ItemTemplate>

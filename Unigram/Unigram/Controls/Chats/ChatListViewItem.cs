@@ -5,13 +5,13 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Chats
 {
-    public class BubbleListViewItem : LazoListViewItem
+    public class ChatListViewItem : LazoListViewItem
     {
-        public readonly BubbleListView Messages;
+        public readonly ChatListView Messages;
 
-        public BubbleListViewItem(BubbleListView messages)
+        public ChatListViewItem(ChatListView messages)
             : base(messages)
         {
             Messages = messages;
@@ -26,7 +26,7 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty ContentMarginProperty =
-            DependencyProperty.Register("ContentMargin", typeof(Thickness), typeof(BubbleListViewItem), new PropertyMetadata(default(Thickness)));
+            DependencyProperty.Register("ContentMargin", typeof(Thickness), typeof(ChatListViewItem), new PropertyMetadata(default(Thickness)));
 
         #endregion
 

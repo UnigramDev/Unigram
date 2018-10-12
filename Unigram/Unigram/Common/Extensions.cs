@@ -775,7 +775,7 @@ namespace Unigram.Common
 
         public static ScrollViewer GetScrollViewer(this ListViewBase listViewBase)
         {
-            if (listViewBase is BubbleListView bubble)
+            if (listViewBase is ChatsListView bubble)
             {
                 return bubble.ScrollingHost;
             }

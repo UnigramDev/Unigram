@@ -12,9 +12,9 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
-using static Unigram.Controls.BubbleTextBox;
+using static Unigram.Controls.Chats.ChatTextBox;
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Chats
 {
     public sealed partial class ChatSearchMask : UserControl
     {

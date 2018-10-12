@@ -7,6 +7,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:cells="using:Unigram.Controls.Cells"
+    xmlns:chats="using:Unigram.Controls.Chats"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -109,7 +110,7 @@
                         <controls:MasterDetailPanel x:Name="AdaptivePanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                             <Grid Background="{TemplateBinding Background}">
                                 <!--<Border x:Name="DropShadow" Loaded="DropShadow_Loaded"/>-->
-                                <controls:ChatBackgroundPresenter Loading="ChatBackgroundPresenter_Loading" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                                <chats:ChatBackgroundPresenter Loading="ChatBackgroundPresenter_Loading" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                                 <Grid x:Name="DetailPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}"/>
                             </Grid>
                             <ContentPresenter x:Name="MasterFrame"
@@ -152,12 +153,6 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <!--<controls:NavigationView.PaneFooter>
-             <StackPanel>
-             <controls:GlyphButton x:Name="NavigationAbout" Click="About_Click" Content="About" Glyph="&#xE946;" Style="{StaticResource NavigationGlyphButtonStyle}"/>
-             </StackPanel>
-             </controls:NavigationView.PaneFooter>-->
-
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -446,7 +441,7 @@
                                 Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
                                 ScrollingHost="{x:Bind ChatsList}"
                                 VerticalAlignment="Top"/>
-                            <controls:ChatListView x:Name="ChatsList"
+                            <controls:ChatsListView x:Name="ChatsList"
                                                    ItemsSource="{x:Bind ViewModel.Chats.Items}"
                                                    IsItemClickEnabled="True"
                                                    SelectionMode="None"
@@ -503,7 +498,7 @@
                                 <ListView.ItemContainerTransitions>
                                     <TransitionCollection/>
                                 </ListView.ItemContainerTransitions>
-                            </controls:ChatListView>
+                            </controls:ChatsListView>
 
                             <!--<StackPanel x:Name="Arrow" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                                  --><!--Visibility="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"--><!--

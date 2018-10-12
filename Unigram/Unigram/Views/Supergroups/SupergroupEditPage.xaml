@@ -229,8 +229,7 @@
                     <controls:BadgeButton
                         x:Name="GroupStickers"
                         Content="{CustomResource GroupStickers}"
-                        Command="{x:Bind ViewModel.EditStickerSetCommand}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        Command="{x:Bind ViewModel.EditStickerSetCommand}"/>
                     <TextBlock
                         Text="{CustomResource GroupStickersInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
@@ -242,8 +241,7 @@
                     <controls:BadgeButton
                         x:Name="Delete"
                         Foreground="Red"
-                        Command="{x:Bind ViewModel.DeleteCommand}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        Command="{x:Bind ViewModel.DeleteCommand}"/>
                     <TextBlock
                         x:Name="DeleteInfo"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"

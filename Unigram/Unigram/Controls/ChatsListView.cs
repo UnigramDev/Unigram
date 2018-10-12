@@ -5,21 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls.Cells;
-using Unigram.Controls.Items;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class ChatListView : GroupedListView
+    public class ChatsListView : GroupedListView
     {
         public TLViewModelBase ViewModel => DataContext as TLViewModelBase;
 
         public MasterDetailState _viewState;
         public ChatFilterMode _filterMode;
 
-        public ChatListView()
+        public ChatsListView()
         {
             ContainerContentChanging += OnContainerContentChanging;
             RegisterPropertyChangedCallback(SelectionModeProperty, OnSelectionModeChanged);
@@ -84,20 +83,20 @@ namespace Unigram.Controls
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new ChatListViewItem(this);
+            return new ChatsListViewItem(this);
         }
     }
 
-    public class ChatListViewItem : ListViewItem
+    public class ChatsListViewItem : ListViewItem
     {
-        private ChatListView _list;
+        private ChatsListView _list;
 
-        public ChatListViewItem()
+        public ChatsListViewItem()
         {
 
         }
 
-        public ChatListViewItem(ChatListView list)
+        public ChatsListViewItem(ChatsListView list)
         {
             _list = list;
             RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);

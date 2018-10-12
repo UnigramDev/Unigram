@@ -268,20 +268,17 @@
                                           Toggled="Notifications_Toggled"/>
 
                             <controls:BadgeButton Content="{CustomResource SharedMedia}"
-                                                  Command="{x:Bind ViewModel.MediaCommand}"
-                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                                                  Command="{x:Bind ViewModel.MediaCommand}"/>
 
                             <controls:BadgeButton x:Name="SecretLifetime"
                                                   Visibility="Collapsed"
                                                   Command="{x:Bind ViewModel.SetTimerCommand}"
-                                                  Content="{CustomResource MessageLifetime}"
-                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                                                  Content="{CustomResource MessageLifetime}"/>
 
                             <controls:BadgeButton x:Name="SecretHashKey"
                                                   Visibility="Collapsed"
                                                   Content="{CustomResource EncryptionKey}"
-                                                  Command="{x:Bind ViewModel.IdenticonCommand}"
-                                                  Style="{StaticResource BadgeButtonStyle}">
+                                                  Command="{x:Bind ViewModel.IdenticonCommand}">
                                 <!--<controls:BadgeButton.Badge>
                                      <Image x:Name="SecretIdenticon" Width="24" Height="24"/>
                                      </controls:BadgeButton.Badge>-->
@@ -290,15 +287,13 @@
                             <controls:BadgeButton x:Name="UserCommonChats"
                                                   Visibility="Collapsed"
                                                   Content="{CustomResource GroupsInCommon}"
-                                                  Command="{x:Bind ViewModel.CommonChatsCommand}"
-                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                                                  Command="{x:Bind ViewModel.CommonChatsCommand}"/>
 
                             <controls:BadgeButton x:Name="UserStartSecret"
                                                   Visibility="Collapsed"
                                                   Content="{CustomResource StartEncryptedChat}"
                                                   Command="{x:Bind ViewModel.SecretChatCommand}"
-                                                  Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"
-                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                                                  Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"/>
 
                             <Button x:Name="GroupLeave"
                                     Content="{CustomResource LeaveChannel}"
@@ -322,23 +317,19 @@
                             <controls:BadgeButton x:Name="Admins"
                                                   Visibility="Collapsed"
                                                   Content="{CustomResource ChannelAdministrators}"
-                                                  Command="{x:Bind ViewModel.AdminsCommand}"
-                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                                                  Command="{x:Bind ViewModel.AdminsCommand}"/>
                             <controls:BadgeButton x:Name="Restricted"
                                                   Visibility="Collapsed"
                                                   Content="{CustomResource ChannelRestrictedUsers}"
-                                                  Command="{x:Bind ViewModel.KickedCommand}"
-                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                                                  Command="{x:Bind ViewModel.KickedCommand}"/>
                             <controls:BadgeButton x:Name="Banned"
                                                   Visibility="Collapsed"
                                                   Content="{CustomResource ChannelBlockedUsers}"
-                                                  Command="{x:Bind ViewModel.BannedCommand}"
-                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                                                  Command="{x:Bind ViewModel.BannedCommand}"/>
                             <controls:BadgeButton x:Name="Members"
                                                   Visibility="Collapsed"
                                                   Content="{CustomResource ChannelSubscribers}"
-                                                  Command="{x:Bind ViewModel.ParticipantsCommand}"
-                                                  Style="{StaticResource BadgeButtonStyle}"/>
+                                                  Command="{x:Bind ViewModel.ParticipantsCommand}"/>
                         </StackPanel>
                     </StackPanel>
                 </ListView.Header>

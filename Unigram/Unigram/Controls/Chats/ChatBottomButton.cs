@@ -8,16 +8,16 @@ using Unigram.Converters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Chats
 {
     /// <summary>
     /// This button is intended to be placed over the BubbleTextBox
     /// </summary>
-    public class BubbleBottomButton : Button
+    public class ChatBottomButton : Button
     {
-        public BubbleBottomButton()
+        public ChatBottomButton()
         {
-            DefaultStyleKey = typeof(BubbleBottomButton);
+            DefaultStyleKey = typeof(ChatBottomButton);
         }
     }
 }

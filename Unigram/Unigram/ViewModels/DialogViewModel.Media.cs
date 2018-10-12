@@ -670,7 +670,7 @@ namespace Unigram.ViewModels
 
                     var generated = await file.ToGeneratedAsync("compress" + (crop.HasValue ? "#" + JsonConvert.SerializeObject(crop) : string.Empty));
 
-                    var input = new InputMessagePhoto(generated, null, new int[0], size.Width, size.Height, photo.Caption, photo.Ttl ?? 0);
+                    var input = new InputMessagePhoto(generated, null, new int[0], size.Width, size.Height, photo.Caption, photo.Ttl);
 
                     operations.Add(input);
                 }
@@ -730,7 +730,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var input = new InputMessageVideo(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, true, video.Caption, video.Ttl ?? 0);
+                        var input = new InputMessageVideo(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, true, video.Caption, video.Ttl);
 
                         operations.Add(input);
                     }

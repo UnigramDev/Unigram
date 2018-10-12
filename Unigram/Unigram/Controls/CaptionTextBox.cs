@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls.Chats;
 using Unigram.Controls.Views;
 using Unigram.Native;
 using Unigram.ViewModels;
@@ -137,7 +138,7 @@ namespace Unigram.Controls
         {
             Document.GetText(TextGetOptions.NoHidden, out string text);
 
-            if (BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username, out int index))
+            if (ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username, out int index))
             {
                 var chat = ViewModel.Chat;
                 if (chat == null)
@@ -147,14 +148,14 @@ namespace Unigram.Controls
 
                 if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
                 {
-                    View.Autocomplete = new BubbleTextBox.UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, username, false, true);
+                    View.Autocomplete = new ChatTextBox.UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, username, false, true);
                 }
                 else
                 {
                     View.Autocomplete = null;
                 }
             }
-            else if (BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
+            else if (ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
             {
                 View.Autocomplete = EmojiSuggestion.GetSuggestions(replacement.Length < 2 ? replacement : replacement.ToLower());
             }

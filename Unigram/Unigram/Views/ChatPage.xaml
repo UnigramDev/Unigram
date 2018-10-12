@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
     xmlns:views="using:Unigram.Controls.Views"
+    xmlns:chats="using:Unigram.Controls.Chats"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -356,7 +357,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
-        <controls:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.RowSpan="5"/>
+        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.RowSpan="5"/>
 
         <Grid Padding="0,0,0,4" VerticalAlignment="Bottom" Grid.RowSpan="4">
             <Grid.ColumnDefinitions>
@@ -402,10 +403,10 @@
                                                    TextWrapping="NoWrap"
                                                    TextTrimming="CharacterEllipsis"/>
                                         <StackPanel x:Name="ChatActionPanel" Orientation="Horizontal" Visibility="Collapsed">
-                                            <controls:ChatActionIndicator x:Name="ChatActionIndicator"
-                                                                        Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
-                                                                        VerticalAlignment="Bottom"
-                                                                        Margin="0,0,0,-2"/>
+                                            <chats:ChatActionIndicator x:Name="ChatActionIndicator"
+                                                                       Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                                                       VerticalAlignment="Bottom"
+                                                                       Margin="0,0,0,-2"/>
                                             <TextBlock x:Name="ChatActionLabel"
                                                        TextWrapping="NoWrap"
                                                        TextTrimming="CharacterEllipsis"
@@ -486,17 +487,17 @@
         </Border>
 
         <Grid Grid.Row="2">
-            <controls:BubbleListView x:Name="Messages"
-                                     Style="{StaticResource BubbleListViewStyle}"
-                                     ItemsSource="{x:Bind ViewModel.Items}"
-                                     ItemContainerTransitions="{x:Null}"
-                                     ShowsScrollingPlaceholders="False"
-                                     SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
-                                     SelectionChanged="List_SelectionChanged"
-                                     ChoosingItemContainer="OnChoosingItemContainer"
-                                     ContainerContentChanging="OnContainerContentChanging"
-                                     Padding="0,0,0,2"
-                                     Grid.ColumnSpan="2">
+            <chats:ChatListView x:Name="Messages"
+                                Style="{StaticResource BubbleListViewStyle}"
+                                ItemsSource="{x:Bind ViewModel.Items}"
+                                ItemContainerTransitions="{x:Null}"
+                                ShowsScrollingPlaceholders="False"
+                                SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                                SelectionChanged="List_SelectionChanged"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                Padding="0,0,0,2"
+                                Grid.ColumnSpan="2">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel Loading="ItemsStackPanel_Loading"
@@ -620,7 +621,7 @@
                         <Border Height="4" Grid.Row="1"/>
                     </Grid>
                 </ListView.Header>
-            </controls:BubbleListView>
+            </chats:ChatListView>
 
             <Border Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,7" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <TextBlock x:Name="EmptyLabel" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
@@ -648,7 +649,7 @@
                  <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Background="{StaticResource MessageServiceBackgroundBrush}" Style="{StaticResource SkypeProgressRingStyle}"/>
                  </Border>-->
 
-            <Grid>
+            <Grid x:Name="Clipper">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -888,7 +889,7 @@
                 </Grid>
 
                 <Grid Grid.ColumnSpan="2" Grid.Row="1">
-                    <controls:BubbleTextBox
+                    <chats:ChatTextBox
                         x:Name="TextField"
                         Background="Transparent"
                         Reply="{x:Bind ViewModel.EmbedData, Mode=OneWay}"
@@ -1099,7 +1100,7 @@
             </Grid>
         </ContentControl>
 
-        <controls:BubbleBottomButton
+        <chats:ChatBottomButton
             x:Name="Action"
             Command="{x:Bind ViewModel.ActionCommand}"
             Height="{StaticResource TelegramToolBarHeight}"
@@ -1107,9 +1108,9 @@
             <Button.Content>
                 <TextBlock x:Name="ActionLabel" TextWrapping="Wrap" TextAlignment="Center"/>
             </Button.Content>
-        </controls:BubbleBottomButton>
+        </chats:ChatBottomButton>
 
-        <controls:ChatSearchMask
+        <chats:ChatSearchMask
             x:Name="SearchMask"
             Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
             Grid.RowSpan="4"/>
