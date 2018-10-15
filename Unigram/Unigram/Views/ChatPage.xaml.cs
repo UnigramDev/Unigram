@@ -1133,7 +1133,7 @@ namespace Unigram.Views
 
             CreateFlyoutItem(ref flyout, MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.Resources.SaveToGIFs);
             CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, message, Strings.Additional.SaveAs);
-            //CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveDownloadCommand, message, Strings.Resources.SaveToDownloads);
+            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageOpenFolderCommand, message, "Show in Folder");
 
             CreateFlyoutItem(ref flyout, MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.Resources.AddContactTitle);
             //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Resources.SaveToDownloads);

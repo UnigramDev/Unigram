@@ -1210,7 +1210,7 @@ namespace Unigram.Views
             {
                 if (_anchors.TryGetValue(fragment, out Border anchor))
                 {
-                    await ScrollingHost.ScrollToItem(anchor, SnapPointsAlignment.Near, false);
+                    await ScrollingHost.ScrollToItem(anchor, VerticalAlignment.Top, false);
                 }
             }
             else

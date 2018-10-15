@@ -34,14 +34,47 @@ namespace Unigram.ViewModels
     {
         #region Reply
 
-        public RelayCommand MessageReplyLastCommand { get; }
-        private async void MessageReplyLastExecute()
+        public RelayCommand MessageReplyPreviousCommand { get; }
+        private async void MessageReplyPreviousExecute()
         {
-            var last = Items.LastOrDefault();
+            MessageViewModel last = null;
+
+            var data = _embedData;
+            if (data != null && data.ReplyToMessage != null)
+            {
+                last = Items.Reverse().FirstOrDefault(x => x.Id != 0 && x.Id < data.ReplyToMessage.Id) ?? Items.LastOrDefault();
+            }
+            else
+            {
+                last = Items.LastOrDefault();
+            }
+
             if (last != null)
             {
                 MessageReplyCommand.Execute(last);
-                await ListField?.ScrollToItem(last, SnapPointsAlignment.Far, true, 4);
+                await ListField?.ScrollToItem(last, VerticalAlignment.Center, true);
+            }
+        }
+
+        public RelayCommand MessageReplyNextCommand { get; }
+        private async void MessageReplyNextExecute()
+        {
+            MessageViewModel last = null;
+
+            var data = _embedData;
+            if (data != null && data.ReplyToMessage != null)
+            {
+                last = Items.FirstOrDefault(x => x.Id != 0 && x.Id > data.ReplyToMessage.Id) ?? Items.LastOrDefault();
+            }
+            else
+            {
+                last = Items.LastOrDefault();
+            }
+
+            if (last != null)
+            {
+                MessageReplyCommand.Execute(last);
+                await ListField?.ScrollToItem(last, VerticalAlignment.Center, true);
             }
         }
 
@@ -787,7 +820,7 @@ namespace Unigram.ViewModels
             if (last != null)
             {
                 MessageEditCommand.Execute(last);
-                await ListField?.ScrollToItem(last, SnapPointsAlignment.Far, true, 4);
+                await ListField?.ScrollToItem(last, VerticalAlignment.Bottom, true, 4);
             }
         }
 
@@ -1076,6 +1109,12 @@ namespace Unigram.ViewModels
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeCallback callback)
                 {
+                    var bot = GetBot(message);
+                    if (bot != null)
+                    {
+                        InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
+                    }
+
                     var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadData(callback.Data)));
                     if (response is CallbackQueryAnswer answer)
                     {
@@ -1087,7 +1126,6 @@ namespace Unigram.ViewModels
                             }
                             else
                             {
-                                var bot = GetBot(message);
                                 if (bot == null)
                                 {
                                     // TODO:
@@ -1346,6 +1384,30 @@ namespace Unigram.ViewModels
             {
                 ProtoService.Send(new AddSavedAnimation(new InputFileId(text.WebPage.Animation.AnimationValue.Id)));
             }
+        }
+
+        #endregion
+
+        #region Show in folder
+
+        public RelayCommand<MessageViewModel> MessageOpenFolderCommand { get; }
+        private async void MessageOpenFolderExecute(MessageViewModel message)
+        {
+            var result = message.Get().GetFileAndName(true);
+
+            var file = result.File;
+            if (file == null || !file.Local.IsDownloadingCompleted)
+            {
+                return;
+            }
+
+            var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+            var folder = await item.GetParentAsync();
+
+            var options = new FolderLauncherOptions();
+            options.ItemsToSelect.Add(item);
+
+            await Launcher.LaunchFolderAsync(folder, options);
         }
 
         #endregion

@@ -174,7 +174,8 @@ namespace Unigram.ViewModels
             MessagesCopyCommand = new RelayCommand(MessagesCopyExecute, MessagesCopyCanExecute);
             MessagesReportCommand = new RelayCommand(MessagesReportExecute, MessagesReportCanExecute);
 
-            MessageReplyLastCommand = new RelayCommand(MessageReplyLastExecute);
+            MessageReplyPreviousCommand = new RelayCommand(MessageReplyPreviousExecute);
+            MessageReplyNextCommand = new RelayCommand(MessageReplyNextExecute);
             MessageReplyCommand = new RelayCommand<MessageViewModel>(MessageReplyExecute);
             MessageDeleteCommand = new RelayCommand<MessageViewModel>(MessageDeleteExecute);
             MessageForwardCommand = new RelayCommand<MessageViewModel>(MessageForwardExecute);
@@ -193,6 +194,7 @@ namespace Unigram.ViewModels
             MessageSaveMediaCommand = new RelayCommand<MessageViewModel>(MessageSaveMediaExecute);
             MessageSaveDownloadCommand = new RelayCommand<MessageViewModel>(MessageSaveDownloadExecute);
             MessageSaveAnimationCommand = new RelayCommand<MessageViewModel>(MessageSaveAnimationExecute);
+            MessageOpenFolderCommand = new RelayCommand<MessageViewModel>(MessageOpenFolderExecute);
             MessageAddContactCommand = new RelayCommand<MessageViewModel>(MessageAddContactExecute);
             MessageServiceCommand = new RelayCommand<MessageViewModel>(MessageServiceExecute);
 
@@ -899,13 +901,13 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, SnapPointsAlignment.Far, 8);
+                await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
             }
 
             TextField?.FocusMaybe(FocusState.Keyboard);
         }
 
-        public async Task LoadMessageSliceAsync(long? previousId, long maxId, SnapPointsAlignment alignment = SnapPointsAlignment.Center, double? pixel = null, bool second = false)
+        public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, bool second = false)
         {
             var already = Items.FirstOrDefault(x => x.Id == maxId);
             if (already != null)
@@ -913,7 +915,7 @@ namespace Unigram.ViewModels
                 var field = ListField;
                 if (field != null)
                 {
-                    await field.ScrollToItem(already, alignment, alignment == SnapPointsAlignment.Center, pixel);
+                    await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center, pixel);
                 }
 
                 return;
@@ -982,9 +984,9 @@ namespace Unigram.ViewModels
 
                     // If we're loading the last message and it has been read already
                     // then we want to align it at bottom, as it might be taller than the window height
-                    if (maxId == _chat.LastReadInboxMessageId && maxId == _chat.LastMessage?.Id && alignment != SnapPointsAlignment.Center)
+                    if (maxId == _chat.LastReadInboxMessageId && maxId == _chat.LastMessage?.Id && alignment != VerticalAlignment.Center)
                     {
-                        alignment = SnapPointsAlignment.Far;
+                        alignment = VerticalAlignment.Bottom;
                         pixel = 8;
                     }
 
@@ -1004,8 +1006,6 @@ namespace Unigram.ViewModels
                 IsLoading = false;
             }
 
-            //await Task.Delay(200);
-            //await LoadNextSliceAsync(true);
             await LoadMessageSliceAsync(null, maxId, alignment, pixel, true);
         }
 
@@ -1392,16 +1392,16 @@ namespace Unigram.ViewModels
                 {
                     if (_scrollingPixel.TryRemove(chat.Id, out double pixel))
                     {
-                        LoadMessageSliceAsync(null, start, SnapPointsAlignment.Far, pixel);
+                        LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom, pixel);
                     }
                     else
                     {
-                        LoadMessageSliceAsync(null, start, SnapPointsAlignment.Far);
+                        LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom);
                     }
                 }
                 else
                 {
-                    LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, SnapPointsAlignment.Near);
+                    LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, VerticalAlignment.Top);
                 }
             }
 #pragma warning restore CS4014
@@ -2132,7 +2132,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, SnapPointsAlignment.Far, 8);
+                    await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
                 }
             }
 

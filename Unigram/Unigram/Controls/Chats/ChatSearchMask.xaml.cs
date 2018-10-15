@@ -9,6 +9,7 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Dialogs;
 using Windows.Foundation.Metadata;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -116,9 +117,16 @@ namespace Unigram.Controls.Chats
 
         private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            if (e.Key == Windows.System.VirtualKey.Enter && Field.State != ChatSearchState.Members)
+            var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+
+            if (e.Key == Windows.System.VirtualKey.Enter && !shift && Field.State != ChatSearchState.Members)
             {
                 ViewModel.Search(Field.Text, Field.From);
+                e.Handled = true;
+            }
+            else if (e.Key == Windows.System.VirtualKey.Enter && shift && Field.State != ChatSearchState.Members)
+            {
+                ViewModel.PreviousCommand.Execute();
                 e.Handled = true;
             }
             else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(Field.Text))

@@ -1050,12 +1050,12 @@
 
                     <Grid x:Name="ButtonRecord" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Bottom" Grid.Column="3" Canvas.ZIndex="1000">
                         <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <controls:VoiceButton x:Name="btnVoiceMessage"
-                                              AllowFocusOnInteraction="False"
-                                              RecordingStarted="VoiceButton_RecordingStarted"
-                                              RecordingStopped="VoiceButton_RecordingStopped"
-                                              ManipulationDelta="VoiceButton_ManipulationDelta"
-                                              ManipulationMode="TranslateX"/>
+                        <chats:ChatRecordButton x:Name="btnVoiceMessage"
+                                                AllowFocusOnInteraction="False"
+                                                RecordingStarted="VoiceButton_RecordingStarted"
+                                                RecordingStopped="VoiceButton_RecordingStopped"
+                                                ManipulationDelta="VoiceButton_ManipulationDelta"
+                                                ManipulationMode="TranslateX"/>
                     </Grid>
 
                     <controls:GlyphButton x:Name="btnSendMessage"

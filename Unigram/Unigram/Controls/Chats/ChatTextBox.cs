@@ -766,7 +766,12 @@ namespace Unigram.Controls.Chats
                 }
                 else if (e.Key == VirtualKey.Up && ctrl)
                 {
-                    ViewModel.MessageReplyLastCommand.Execute();
+                    ViewModel.MessageReplyPreviousCommand.Execute();
+                    e.Handled = true;
+                }
+                else if (e.Key == VirtualKey.Down && ctrl)
+                {
+                    ViewModel.MessageReplyNextCommand.Execute();
                     e.Handled = true;
                 }
                 else if ((e.Key == VirtualKey.Up && alt) || (e.Key == VirtualKey.PageUp && ctrl) || (e.Key == VirtualKey.Tab && ctrl && shift))

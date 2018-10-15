@@ -86,7 +86,7 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, SnapPointsAlignment.Far, 8);
+                    await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
                 }
 
                 page.ViewModel.TextField?.FocusMaybe(FocusState.Keyboard);
