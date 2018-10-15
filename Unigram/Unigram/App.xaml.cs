@@ -67,6 +67,7 @@ namespace Unigram
     sealed partial class App : BootStrapper
     {
         public static ShareOperation ShareOperation { get; set; }
+        public static Window ShareWindow { get; set; }
 
         public static ConcurrentDictionary<long, DataPackageView> DataPackages { get; } = new ConcurrentDictionary<long, DataPackageView>();
 

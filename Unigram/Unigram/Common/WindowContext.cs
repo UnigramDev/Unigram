@@ -281,13 +281,34 @@ namespace Unigram.Common
                     package.SetWebLink(await operation.GetWebLinkAsync());
                 }
 
+                var query = "tg://";
+
+                var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
+                if (contactId is int userId)
+                {
+                    var response = await _lifetime.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+                    if (response is Chat chat)
+                    {
+                        query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
+                        App.DataPackages[chat.Id] = package.GetView();
+                    }
+                    else
+                    {
+                        App.DataPackages[0] = package.GetView();
+                    }
+                }
+                else
+                {
+                    App.DataPackages[0] = package.GetView();
+                }
+
                 App.ShareOperation = share.ShareOperation;
-                App.DataPackages[0] = package.GetView();
+                App.ShareWindow = _window;
 
                 var options = new Windows.System.LauncherOptions();
                 options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
 
-                await Windows.System.Launcher.LaunchUriAsync(new Uri("tg://"), options);
+                await Windows.System.Launcher.LaunchUriAsync(new Uri(query), options);
             }
             else if (args is VoiceCommandActivatedEventArgs voice)
             {
@@ -317,50 +338,17 @@ namespace Unigram.Common
                 var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
                 contact.ContactPanel.HeaderColor = backgroundBrush.Color;
 
-                var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
-                var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
-                if (store != null && annotationStore != null)
+                var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);
+                if (contactId is int userId)
                 {
-                    try
+                    var response = await _lifetime.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+                    if (response is Chat chat)
                     {
-                        var full = await store.GetContactAsync(contact.Contact.Id);
-                        if (full == null)
-                        {
-                            ContactPanelFallback(service);
-                        }
-                        else
-                        {
-                            var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
-
-                            var first = annotations.FirstOrDefault();
-                            if (first == null)
-                            {
-                                ContactPanelFallback(service);
-                            }
-                            else
-                            {
-                                var remote = first.RemoteId;
-                                if (int.TryParse(remote.Substring(1), out int userId))
-                                {
-                                    var response = await _lifetime.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
-                                    if (response is Chat chat)
-                                    {
-                                        service.NavigateToChat(chat);
-                                    }
-                                }
-                                else
-                                {
-                                    ContactPanelFallback(service);
-                                }
-                            }
-                        }
+                        service.NavigateToChat(chat);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        if ((uint)ex.HResult == 0x80004004)
-                        {
-                            ContactPanelFallback(service);
-                        }
+                        ContactPanelFallback(service);
                     }
                 }
                 else
@@ -372,19 +360,28 @@ namespace Unigram.Common
             {
                 Execute.Initialize();
 
+                if (service?.Frame?.Content is MainPage page)
+                {
+                    page.Activate(protocol.Uri.ToString());
+                }
+                else
+                {
+                    service.NavigateToMain(protocol.Uri.ToString());
+                }
+
                 if (App.ShareOperation != null)
                 {
                     App.ShareOperation.ReportCompleted();
                     App.ShareOperation = null;
                 }
 
-                if (service?.Frame?.Content is MainPage page)
+                if (App.ShareWindow != null)
                 {
-                    page.Activate(protocol.Uri);
-                }
-                else
-                {
-                    service.NavigateToMain(protocol.Uri.ToString());
+                    await App.ShareWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        App.ShareWindow.Close();
+                        App.ShareWindow = null;
+                    });
                 }
             }
             //else if (args is CommandLineActivatedEventArgs commandLine && TryParseCommandLine(commandLine, out int id, out bool test))

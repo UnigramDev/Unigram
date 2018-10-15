@@ -375,5 +375,55 @@ namespace Unigram.Services
                 Debug.WriteLine("UNSYNCED CONTACTS");
             }
         }
+
+        public static Task<int?> GetContactIdAsync(Contact contact)
+        {
+            if (contact == null)
+            {
+                return Task.FromResult<int?>(null);
+            }
+
+            return GetContactIdAsync(contact.Id);
+        }
+
+        public static async Task<int?> GetContactIdAsync(string contactId)
+        {
+            var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
+            var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
+            if (store != null && annotationStore != null)
+            {
+                try
+                {
+                    var full = await store.GetContactAsync(contactId);
+                    if (full == null)
+                    {
+                        return null;
+                    }
+
+                    var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
+
+                    var first = annotations.FirstOrDefault();
+                    if (first == null)
+                    {
+                        return null;
+                    }
+
+                    var remote = first.RemoteId;
+                    if (int.TryParse(remote.Substring(1), out int userId))
+                    {
+                        return userId;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if ((uint)ex.HResult == 0x80004004)
+                    {
+                        return null;
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }
