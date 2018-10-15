@@ -13,6 +13,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
+using Unigram.Controls.Chats;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Services;
@@ -443,6 +444,13 @@ namespace Unigram.Views
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
 
             OnStateChanged(null, null);
+
+            var update = new UpdateConnectionState(ViewModel.CacheService.GetConnectionState());
+            if (update.State != null)
+            {
+                Handle(update);
+                ViewModel.Aggregator.Publish(update);
+            }
 
             if (_unloaded)
             {
@@ -1861,35 +1869,6 @@ namespace Unigram.Views
             if (sender is ChatBackgroundPresenter presenter)
             {
                 presenter.Update(ViewModel.SessionId, ((TLViewModelBase)ViewModel).Settings, ViewModel.Aggregator);
-            }
-        }
-
-        private void ChatsList_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
-        {
-            var chat = e.Items.LastOrDefault() as Chat;
-            if (chat == null || e.Items.Count > 1)
-            {
-                ChatsList.CanReorderItems = false;
-                e.Cancel = true;
-                return;
-            }
-
-            if (chat.IsPinned)
-            {
-                ChatsList.CanReorderItems = true;
-            }
-            else
-            {
-                ChatsList.CanReorderItems = false;
-                e.Cancel = true;
-            }
-        }
-
-        private void ChatsList_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
-        {
-            if (args.DropResult == Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move)
-            {
-                ViewModel.ProtoService.Send(new SetPinnedChats(ViewModel.Chats.Items.Where(x => x.IsPinned).Select(x => x.Id).ToArray()));
             }
         }
     }

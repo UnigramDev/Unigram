@@ -1,10 +1,16 @@
-﻿using Unigram.Common;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Unigram.Collections;
+using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.Updates;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsGeneralViewModel : TLViewModelBase
+    public class SettingsGeneralViewModel : TLViewModelBase, IHandle<UpdateChatIsPinned>
     {
         private readonly IContactsService _contactsService;
 
@@ -12,6 +18,34 @@ namespace Unigram.ViewModels.Settings
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
+
+            PinnedChats = new MvxObservableCollection<Chat>();
+        }
+
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        {
+            PinnedChats.ReplaceWith(CacheService.GetPinnedChats());
+            Aggregator.Subscribe(this);
+
+            return base.OnNavigatedToAsync(parameter, mode, state);
+        }
+
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            Aggregator.Unsubscribe(this);
+            return base.OnNavigatedFromAsync(pageState, suspending);
+        }
+
+        public MvxObservableCollection<Chat> PinnedChats { get; private set; }
+
+        public void SetPinnedChats()
+        {
+            ProtoService.Send(new SetPinnedChats(PinnedChats.Select(x => x.Id).ToArray()));
+        }
+
+        public void Handle(UpdateChatIsPinned update)
+        {
+            PinnedChats.ReplaceWith(CacheService.GetPinnedChats());
         }
 
         public bool IsSendByEnterEnabled

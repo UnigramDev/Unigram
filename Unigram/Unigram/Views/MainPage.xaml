@@ -442,16 +442,12 @@
                                 ScrollingHost="{x:Bind ChatsList}"
                                 VerticalAlignment="Top"/>
                             <controls:ChatsListView x:Name="ChatsList"
-                                                   ItemsSource="{x:Bind ViewModel.Chats.Items}"
-                                                   IsItemClickEnabled="True"
-                                                   SelectionMode="None"
-                                                   ItemClick="ListView_ItemClick"
-                                                   SelectionChanged="ListView_SelectionChanged"
-                                                   AllowDrop="True">
-                                                   <!--CanDragItems="True"
-                                                   CanReorderItems="True"
-                                                   DragItemsStarting="ChatsList_DragItemsStarting"
-                                                   DragItemsCompleted="ChatsList_DragItemsCompleted"-->
+                                                    ItemsSource="{x:Bind ViewModel.Chats.Items}"
+                                                    IsItemClickEnabled="True"
+                                                    SelectionMode="None"
+                                                    ItemClick="ListView_ItemClick"
+                                                    SelectionChanged="ListView_SelectionChanged"
+                                                    AllowDrop="True">
                                 <ListView.ItemContainerStyleSelector>
                                     <selectors:DialogStyleSelector CacheService="{x:Bind ViewModel.CacheService}">
                                         <selectors:DialogStyleSelector.DialogStyle>
