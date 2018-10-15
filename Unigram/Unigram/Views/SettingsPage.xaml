@@ -151,13 +151,6 @@
                 </StackPanel>
 
                 <StackPanel Margin="0,24,0,0">
-                    <controls:GlyphButton Content="{CustomResource General}"
-                                          Glyph="&#xE115;"
-                                          Click="General_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
-                </StackPanel>
-
-                <StackPanel Margin="0,24,0,0">
                     <controls:GlyphButton Content="{CustomResource NotificationsAndSounds}"
                                           Glyph="&#xEC42;"
                                           Click="Notifications_Click"
@@ -183,6 +176,10 @@
                          Glyph="&#xE164;"
                          Click="Language_Click"
                          Style="{StaticResource GlyphButtonStyle}"/>-->
+                    <controls:GlyphButton Content="{CustomResource PrivacyAdvanced}"
+                                          Glyph="&#xEC7A;"
+                                          Click="Advanced_Click"
+                                          Style="{StaticResource GlyphButtonStyle}"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind ViewModel.HasPassportData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"

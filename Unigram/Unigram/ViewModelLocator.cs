@@ -198,7 +198,7 @@ namespace Unigram
                 builder.RegisterType<SecretChatCreateViewModel>();
                 builder.RegisterType<InstantViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsViewModel>().SingleInstance();
-                builder.RegisterType<SettingsGeneralViewModel>().SingleInstance();
+                builder.RegisterType<SettingsAdvancedViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPhoneIntroViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPhoneViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPhoneSentCodeViewModel>().SingleInstance();

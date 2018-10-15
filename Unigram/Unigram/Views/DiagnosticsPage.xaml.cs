@@ -52,12 +52,12 @@ namespace Unigram.Views
 
 
 
-            var options = TLContainer.Current.Resolve<IOptionsService>();
+            var cache = TLContainer.Current.Resolve<ICacheService>();
             var properties = typeof(IOptionsService).GetProperties();
 
             foreach (var prop in properties)
             {
-                Options.Items.Add($"{prop.Name}: {prop.GetValue(options)}");
+                Options.Items.Add($"{prop.Name}: {prop.GetValue(cache.Options)}");
             }
         }
 

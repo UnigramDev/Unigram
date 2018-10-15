@@ -6,14 +6,14 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsGeneralPage : Page
+    public sealed partial class SettingsAdvancedPage : Page
     {
-        public SettingsGeneralViewModel ViewModel => DataContext as SettingsGeneralViewModel;
+        public SettingsAdvancedViewModel ViewModel => DataContext as SettingsAdvancedViewModel;
 
-        public SettingsGeneralPage()
+        public SettingsAdvancedPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsGeneralViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsAdvancedViewModel>();
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

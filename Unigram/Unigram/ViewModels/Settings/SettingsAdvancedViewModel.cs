@@ -10,15 +10,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsGeneralViewModel : TLViewModelBase, IHandle<UpdateChatIsPinned>
+    public class SettingsAdvancedViewModel : TLViewModelBase, IHandle<UpdateChatIsPinned>
     {
-        private readonly IContactsService _contactsService;
-
-        public SettingsGeneralViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService)
+        public SettingsAdvancedViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _contactsService = contactsService;
-
             PinnedChats = new MvxObservableCollection<Chat>();
         }
 

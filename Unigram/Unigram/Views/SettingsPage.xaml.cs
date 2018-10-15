@@ -65,9 +65,9 @@ namespace Unigram.Views
         }
 
 
-        private void General_Click(object sender, RoutedEventArgs e)
+        private void Advanced_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsGeneralPage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsAdvancedPage));
         }
 
         private void Phone_Click(object sender, RoutedEventArgs e)
@@ -164,7 +164,7 @@ namespace Unigram.Views
 
         private void Passport_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(PassportMrzPage));
+            MasterDetail.NavigationService.Navigate(typeof(PassportPage));
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)

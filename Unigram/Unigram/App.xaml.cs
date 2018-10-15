@@ -231,8 +231,8 @@ namespace Unigram
                     return container.Resolve<SettingsDataAndStorageViewModel>(id);
                 case SettingsDataAutoPage settingsDataAuto:
                     return container.Resolve<SettingsDataAutoViewModel>(id);
-                case SettingsGeneralPage settingsGeneral:
-                    return container.Resolve<SettingsGeneralViewModel>(id);
+                case SettingsAdvancedPage settingsGeneral:
+                    return container.Resolve<SettingsAdvancedViewModel>(id);
                 case SettingsLanguagePage settingsLanguage:
                     return container.Resolve<SettingsLanguageViewModel>(id);
                 case SettingsMasksArchivedPage settingsMasksArchived:

@@ -548,10 +548,10 @@
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverViewModelBase.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowStatusViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyViewModelBase.cs" />
+    <Compile Include="ViewModels\Settings\SettingsAdvancedViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAppearanceViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsDataAndStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsDataAutoViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsGeneralViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsLanguageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNetworkViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPasscodeViewModel.cs" />
@@ -726,14 +726,14 @@
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowStatusPage.xaml.cs">
       <DependentUpon>SettingsPrivacyShowStatusPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsAdvancedPage.xaml.cs">
+      <DependentUpon>SettingsAdvancedPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsAppearancePage.xaml.cs">
       <DependentUpon>SettingsAppearancePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsDataAutoPage.xaml.cs">
       <DependentUpon>SettingsDataAutoPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsGeneralPage.xaml.cs">
-      <DependentUpon>SettingsGeneralPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsLanguagePage.xaml.cs">
       <DependentUpon>SettingsLanguagePage.xaml</DependentUpon>
@@ -2044,6 +2044,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\SettingsAdvancedPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\SettingsAppearancePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2051,10 +2055,6 @@
     <Page Include="Views\Settings\SettingsDataAutoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\SettingsGeneralPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsLanguagePage.xaml">
       <SubType>Designer</SubType>
