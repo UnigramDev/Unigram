@@ -76,7 +76,14 @@ namespace Unigram
                     }
                     else
                     {
-                        Task.Factory.StartNew((path) => Directory.Delete((string)path, true), folder);
+                        Task.Factory.StartNew((path) =>
+                        {
+                            try
+                            {
+                                Directory.Delete((string)path, true);
+                            }
+                            catch { }
+                        }, folder);
                     }
                 }
             }

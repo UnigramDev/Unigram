@@ -10,10 +10,12 @@ namespace Unigram.Collections
     public class SortedObservableCollection<T> : MvxObservableCollection<T>
     {
         private readonly IComparer<T> _comparer;
+        private readonly bool _ignore;
 
-        public SortedObservableCollection(IComparer<T> comparer)
+        public SortedObservableCollection(IComparer<T> comparer, bool ignore = false)
         {
             _comparer = comparer;
+            _ignore = ignore;
         }
 
         public SortedObservableCollection(IComparer<T> comparer, IEnumerable<T> source)
@@ -24,6 +26,12 @@ namespace Unigram.Collections
 
         protected override void InsertItem(int index, T item)
         {
+            if (_ignore)
+            {
+                base.InsertItem(index, item);
+                return;
+            }
+
             index = Array.BinarySearch(Items.ToArray(), item, _comparer);
             if (index >= 0) ; /*throw new ArgumentException("Cannot insert duplicated items");*/
             else base.InsertItem(~index, item);

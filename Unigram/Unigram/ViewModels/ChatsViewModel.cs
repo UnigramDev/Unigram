@@ -243,7 +243,7 @@ namespace Unigram.ViewModels
                         if (next >= 0 && index != next)
                         {
                             Items.Remove(chat);
-                            Items.Add(chat);
+                            Items.Insert(next, chat);
                         }
                     }
                 });
@@ -279,11 +279,11 @@ namespace Unigram.ViewModels
 
             private readonly IProtoService _protoService;
             private readonly IEventAggregator _aggregator;
-
+             
             private readonly ChatsViewModel _viewModel;
 
             public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel)
-                : base(new ChatComparer())
+                : base(new ChatComparer(), true)
             {
                 _protoService = protoService;
                 _aggregator = aggregator;

@@ -25,7 +25,7 @@
                   SelectionMode="None"
                   Grid.Row="1">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="td:Chat">
+                <DataTemplate>
                     <Grid Margin="12,6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -37,13 +37,6 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <!--<ListView.ItemTemplateSelector>
-                 <selectors:SearchTemplateSelector>
-                 <selectors:SearchTemplateSelector.ChatTemplate>
-                 
-                 </selectors:SearchTemplateSelector.ChatTemplate>
-                 </selectors:SearchTemplateSelector>
-                 </ListView.ItemTemplateSelector>-->
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

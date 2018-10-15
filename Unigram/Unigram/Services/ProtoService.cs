@@ -43,6 +43,7 @@ namespace Unigram.Services
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
         IList<Chat> GetChats(int count);
+        IList<Chat> GetPinnedChats();
 
         IDictionary<int, ChatAction> GetChatActions(long id);
 
@@ -279,7 +280,14 @@ namespace Unigram.Services
                 var response = await SendAsync(new CreatePrivateChat(777000, false));
                 if (response is Chat chat)
                 {
-                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(new FormattedText(SettingsService.CurrentChangelog, new TextEntity[0]), true, false)));
+                    ulong major = (SettingsService.CurrentVersion & 0xFFFF000000000000L) >> 48;
+                    ulong minor = (SettingsService.CurrentVersion & 0x0000FFFF00000000L) >> 32;
+                    ulong build = (SettingsService.CurrentVersion & 0x00000000FFFF0000L) >> 16;
+
+                    var title = $"What's new in Unigram {major}.{minor}.{build}:";
+                    var message = title + Environment.NewLine + SettingsService.CurrentChangelog;
+
+                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(new FormattedText(message, new[] { new TextEntity { Offset = 0, Length = title.Length, Type = new TextEntityTypeBold() } }), true, false)));
                 }
             }
 
@@ -623,6 +631,11 @@ namespace Unigram.Services
         public IList<Chat> GetChats(int count)
         {
             return _chats.Values.Where(x => x.Order != 0).OrderByDescending(x => x.Order).Take(count).ToList();
+        }
+
+        public IList<Chat> GetPinnedChats()
+        {
+            return _chats.Values.Where(x => x.Order != 0).OrderByDescending(x => x.Order).Where(x => x.IsPinned).ToList();
         }
 
         public SecretChat GetSecretChat(int id)
