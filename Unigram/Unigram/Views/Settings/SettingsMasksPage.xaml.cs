@@ -38,12 +38,9 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsMasksArchivedPage));
         }
 
-        private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is StickerSetInfo stickerSet)
-            {
-                await StickerSetView.GetForCurrentView().ShowAsync(stickerSet.Id);
-            }
+            ViewModel.StickerSetOpenCommand.Execute(e.ClickedItem);
         }
 
         #region Recycle
