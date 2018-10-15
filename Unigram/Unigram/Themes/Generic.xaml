@@ -37,7 +37,7 @@
                                     <Grid.Children>
                                         <Grid x:Name="ContentPaneTopPadding" Padding="{TemplateBinding Padding}"/>
                                         <Border Background="{ThemeResource NavigationViewAccentPaneBackground}" Margin="0,0,0,-52" Grid.RowSpan="3"/>
-                                        <Border Background="{ThemeResource NavigationViewDefaultPaneBackground}" Margin="0,52,0,0" Grid.Row="3" Grid.RowSpan="3"/>
+                                        <Border Background="{ThemeResource NavigationViewChromePaneBackground}" Margin="0,52,0,0" Grid.Row="3" Grid.RowSpan="3"/>
                                         <Border x:Name="HeaderContentBorder" Grid.Row="3" Child="{TemplateBinding PaneHeader}"/>
 
                                         <Border x:Name="FooterContentBorder" Grid.Row="4" Child="{TemplateBinding PaneFooter}"/>
@@ -1883,7 +1883,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:VoiceButton">
+    <Style TargetType="chats:ChatRecordButton">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -1902,7 +1902,7 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:VoiceButton">
+                <ControlTemplate TargetType="chats:ChatRecordButton">
                     <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">

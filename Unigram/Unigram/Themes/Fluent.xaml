@@ -8,11 +8,11 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
-            <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
+            <StaticResource x:Key="NavigationViewChromePaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
             <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlAccentAcrylicElementAccentMediumHighBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
-            <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
+            <StaticResource x:Key="NavigationViewChromePaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
             <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlAccentAcrylicElementAccentMediumHighBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>

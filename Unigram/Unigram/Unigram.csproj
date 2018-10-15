@@ -123,7 +123,6 @@
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\TLContainer.cs" />
     <Compile Include="Common\Execute.cs" />
-    <Compile Include="Common\Fluent.cs" />
     <Compile Include="Common\AutoDownloadPreferences.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\InactivityHelper.cs" />
@@ -148,7 +147,6 @@
     <Compile Include="Common\WindowContext.cs" />
     <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Constants.Secret.cs" />
-    <Compile Include="Controls\ChatActionIndicator.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\CallCell.xaml.cs">
       <DependentUpon>CallCell.xaml</DependentUpon>
@@ -172,15 +170,21 @@
       <DependentUpon>WebSessionCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ChannelStickersButton.cs" />
-    <Compile Include="Controls\ChatBackground.xaml.cs">
+    <Compile Include="Controls\ChatsListView.cs" />
+    <Compile Include="Controls\Chats\ChatActionIndicator.cs" />
+    <Compile Include="Controls\Chats\ChatBackground.xaml.cs">
       <DependentUpon>ChatBackground.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ChatBackgroundPresenter.cs" />
-    <Compile Include="Controls\ChatListView.cs" />
-    <Compile Include="Controls\ChatSearchMask.xaml.cs">
+    <Compile Include="Controls\Chats\ChatBackgroundPresenter.cs" />
+    <Compile Include="Controls\Chats\ChatBottomButton.cs" />
+    <Compile Include="Controls\Chats\ChatListView.cs" />
+    <Compile Include="Controls\Chats\ChatListViewItem.cs" />
+    <Compile Include="Controls\Chats\ChatRecordButton.cs" />
+    <Compile Include="Controls\Chats\ChatSearchMask.xaml.cs">
       <DependentUpon>ChatSearchMask.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ChatSearchTextBox.cs" />
+    <Compile Include="Controls\Chats\ChatSearchTextBox.cs" />
+    <Compile Include="Controls\Chats\ChatTextBox.cs" />
     <Compile Include="Controls\DialogListView.cs" />
     <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
@@ -466,6 +470,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
+    <Compile Include="Themes\Fluent.cs" />
     <Compile Include="Triggers\CompactTrigger.cs" />
     <Compile Include="Triggers\DeviceFamilyTrigger.cs" />
     <Compile Include="Triggers\EnumTrigger.cs" />
@@ -1151,7 +1156,6 @@
     <Content Include="Assets\Emojis\2753.png" />
     <Content Include="Assets\Emojis\2757.png" />
     <Content Include="Assets\Fonts\Telegram.ttf" />
-    <Compile Include="Controls\BubbleBottomButton.cs" />
     <Compile Include="Controls\GlyphToggleButton.cs" />
     <Compile Include="Controls\ProgressShape.cs" />
     <Compile Include="Controls\ProgressVoice.cs" />
@@ -1188,7 +1192,6 @@
     <Compile Include="Controls\TLMessageDialog.xaml.cs">
       <DependentUpon>TLMessageDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\VoiceButton.cs" />
     <Compile Include="Converters\EditToVisibilityConverter.cs" />
     <Compile Include="Selectors\DialogStyleSelector.cs" />
     <Compile Include="Selectors\InlineBotResultTemplateSelector.cs" />
@@ -1203,9 +1206,6 @@
     <Compile Include="Common\IncrementalCollection.cs" />
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\MessageHelper.cs" />
-    <Compile Include="Controls\BubbleListView.cs" />
-    <Compile Include="Controls\BubbleListViewItem.cs" />
-    <Compile Include="Controls\BubbleTextBox.cs" />
     <Compile Include="Controls\GlyphButton.cs" />
     <Compile Include="Controls\InputDialog.xaml.cs">
       <DependentUpon>InputDialog.xaml</DependentUpon>
@@ -1572,11 +1572,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ChatBackground.xaml">
+    <Page Include="Controls\Chats\ChatBackground.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\ChatSearchMask.xaml">
+    <Page Include="Controls\Chats\ChatSearchMask.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

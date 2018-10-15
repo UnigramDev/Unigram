@@ -5,11 +5,11 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
-            <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
+            <StaticResource x:Key="NavigationViewChromePaneBackground" ResourceKey="SystemChromeMediumHighColor" />
             <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlForegroundAccentBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
-            <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
+            <StaticResource x:Key="NavigationViewChromePaneBackground" ResourceKey="SystemChromeMediumHighColor" />
             <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlForegroundAccentBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>

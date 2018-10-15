@@ -22,9 +22,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Chats
 {
-    public class VoiceButton : GlyphToggleButton
+    public class ChatRecordButton : GlyphToggleButton
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -75,9 +75,9 @@ namespace Unigram.Controls
             }
         }
 
-        public VoiceButton()
+        public ChatRecordButton()
         {
-            DefaultStyleKey = typeof(VoiceButton);
+            DefaultStyleKey = typeof(ChatRecordButton);
 
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromMilliseconds(300);
