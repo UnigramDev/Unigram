@@ -77,17 +77,14 @@ namespace Unigram.Views
             }
             else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
             {
+                if (chat.Photo == null)
+                {
+                    return;
+                }
+
                 var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, chat);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
-
-            //var user = ViewModel.Item as TLUser;
-            //var userFull = ViewModel.Full as TLUserFull;
-            //if (userFull != null && userFull.ProfilePhoto is TLPhoto && user != null)
-            //{
-            //    var viewModel = new UserPhotosViewModel(ViewModel.LegacyService, userFull, user);
-            //    await GalleryView.Current.ShowAsync(viewModel, () => Photo);
-            //}
         }
 
         private void Notifications_Toggled(object sender, RoutedEventArgs e)
