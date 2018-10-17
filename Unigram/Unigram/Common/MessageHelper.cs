@@ -34,6 +34,8 @@ using Telegram.Td.Api;
 using Unigram.Entities;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls.Primitives;
+using Unigram.Views.Passport;
+using Windows.ApplicationModel;
 
 namespace Unigram.Common
 {
@@ -208,50 +210,226 @@ namespace Unigram.Common
             //    return uri.Host.Equals(meUri.Host, StringComparison.OrdinalIgnoreCase);
             //}
 
-            return false;
+            return IsTelegramScheme(uri);
         }
 
-        public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, string url)
+        public static bool IsTelegramScheme(Uri uri)
         {
-            if (url.Contains("telegra.ph"))
+            return string.Equals(uri.Scheme, "tg", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static async void OpenTelegramScheme(IProtoService protoService, INavigationService navigation, Uri scheme)
+        {
+            string username = null;
+            string group = null;
+            string sticker = null;
+            string[] instantView = null;
+            Dictionary<string, object> auth = null;
+            string botUser = null;
+            string botChat = null;
+            string message = null;
+            string phone = null;
+            string game = null;
+            string phoneHash = null;
+            string post = null;
+            string server = null;
+            string port = null;
+            string user = null;
+            string pass = null;
+            string secret = null;
+            bool hasUrl = false;
+
+            var query = scheme.Query.ParseQueryString();
+            if (scheme.AbsoluteUri.StartsWith("tg:resolve") || scheme.AbsoluteUri.StartsWith("tg://resolve"))
             {
-                navigation.Navigate(typeof(InstantPage), url);
-            }
-            else if (url.Contains("joinchat"))
-            {
-                var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
-                if (index != -1)
+                username = query.GetParameter("domain");
+
+                if (string.Equals(username, "telegrampassport", StringComparison.OrdinalIgnoreCase))
                 {
-                    var text = url.Substring(index).Replace("/", string.Empty);
-                    if (!string.IsNullOrEmpty(text))
+                    username = null;
+                    auth = new Dictionary<string, object>();
+                    var scope = query.GetParameter("scope");
+                    if (!string.IsNullOrEmpty(scope) && scope.StartsWith("{") && scope.EndsWith("}"))
                     {
-                        NavigateToInviteLink(protoService, navigation, text);
+                        auth.Add("nonce", query.GetParameter("nonce"));
                     }
+                    else
+                    {
+                        auth.Add("payload", query.GetParameter("payload"));
+                    }
+
+                    auth.Add("bot_id", int.Parse(query.GetParameter("bot_id")));
+                    auth.Add("scope", scope);
+                    auth.Add("public_key", query.GetParameter("public_key"));
+                    auth.Add("callback_url", query.GetParameter("callback_url"));
+                }
+                else
+                {
+                    botUser = query.GetParameter("start");
+                    botChat = query.GetParameter("startgroup");
+                    game = query.GetParameter("game");
+                    post = query.GetParameter("post");
                 }
             }
-            else if (url.Contains("addstickers"))
+            else if (scheme.AbsoluteUri.StartsWith("tg:join") || scheme.AbsoluteUri.StartsWith("tg://join"))
             {
-                var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
-                if (index != -1)
+                group = query.GetParameter("invite");
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:addstickers") || scheme.AbsoluteUri.StartsWith("tg://addstickers"))
+            {
+                sticker = query.GetParameter("set");
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:msg") || scheme.AbsoluteUri.StartsWith("tg://msg") || scheme.AbsoluteUri.StartsWith("tg://share") || scheme.AbsoluteUri.StartsWith("tg:share"))
+            {
+                message = query.GetParameter("url");
+                if (message == null)
                 {
-                    var text = url.Substring(index).Replace("/", string.Empty);
-                    if (!string.IsNullOrEmpty(text))
-                    {
-                        NavigateToStickerSet(text);
-                    }
+                    message = "";
                 }
+                if (query.GetParameter("text") != null)
+                {
+                    if (message.Length > 0)
+                    {
+                        hasUrl = true;
+                        message += "\n";
+                    }
+                    message += query.GetParameter("text");
+                }
+                if (message.Length > 4096 * 4)
+                {
+                    message = message.Substring(0, 4096 * 4);
+                }
+                while (message.EndsWith("\n"))
+                {
+                    message = message.Substring(0, message.Length - 1);
+                }
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:confirmphone") || scheme.AbsoluteUri.StartsWith("tg://confirmphone"))
+            {
+                phone = query.GetParameter("phone");
+                phoneHash = query.GetParameter("hash");
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:passport") || scheme.AbsoluteUri.StartsWith("tg://passport") || scheme.AbsoluteUri.StartsWith("tg:secureid") || scheme.AbsoluteUri.StartsWith("tg://secureid"))
+            {
+                //url = url.replace("tg:passport", "tg://telegram.org").replace("tg://passport", "tg://telegram.org").replace("tg:secureid", "tg://telegram.org");
+                //data = Uri.parse(url);
+                //auth = new HashMap<>();
+                //String scope = data.getQueryParameter("scope");
+                //if (!TextUtils.isEmpty(scope) && scope.startsWith("{") && scope.endsWith("}"))
+                //{
+                //    auth.put("nonce", data.getQueryParameter("nonce"));
+                //}
+                //else
+                //{
+                //    auth.put("payload", data.getQueryParameter("payload"));
+                //}
+                //auth.put("bot_id", data.getQueryParameter("bot_id"));
+                //auth.put("scope", scope);
+                //auth.put("public_key", data.getQueryParameter("public_key"));
+                //auth.put("callback_url", data.getQueryParameter("callback_url"));
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks") || scheme.AbsoluteUri.StartsWith("tg:proxy") || scheme.AbsoluteUri.StartsWith("tg://proxy"))
+            {
+                server = query.GetParameter("server");
+                port = query.GetParameter("port");
+                user = query.GetParameter("user");
+                pass = query.GetParameter("pass");
+                secret = query.GetParameter("secret");
+            }
+
+            if (message != null && message.StartsWith("@"))
+            {
+                message = " " + message;
+            }
+
+            if (phone != null || phoneHash != null)
+            {
+                NavigateToConfirmPhone(protoService, phone, phoneHash);
+            }
+            if (server != null && int.TryParse(port, out int portCode))
+            {
+                NavigateToProxy(protoService, server, portCode, user, pass, secret);
+            }
+            else if (group != null)
+            {
+                NavigateToInviteLink(protoService, navigation, group);
+            }
+            else if (sticker != null)
+            {
+                NavigateToStickerSet(sticker);
+            }
+            else if (username != null)
+            {
+                NavigateToUsername(protoService, navigation, username, botUser ?? botChat, post, game);
+            }
+            else if (message != null)
+            {
+                NavigateToShare(message, hasUrl);
+            }
+            else if (auth != null)
+            {
+                navigation.Navigate(typeof(PassportPage), state: auth);
             }
             else
             {
-                var query = url.ParseQueryString();
-
-                var accessToken = GetAccessToken(query, out PageKind pageKind);
-                var post = query.GetParameter("post");
-                var game = query.GetParameter("game");
-                var result = url.StartsWith("http") ? url : ("https://" + url);
-
-                if (Uri.TryCreate(result, UriKind.Absolute, out Uri uri))
+                var response = await protoService.SendAsync(new GetDeepLinkInfo(scheme.ToString()));
+                if (response is DeepLinkInfo info)
                 {
+                    var confirm = await TLMessageDialog.ShowAsync(info.Text, Strings.Resources.AppName, Strings.Resources.OK, info.NeedUpdateApplication ? Strings.Resources.UpdateApp : null);
+                    if (confirm == ContentDialogResult.Secondary)
+                    {
+                        await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + Package.Current.Id.FamilyName));
+                    }
+                }
+            }
+        }
+
+        public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, Uri uri)
+        {
+            if (IsTelegramScheme(uri))
+            {
+                OpenTelegramScheme(protoService, navigation, uri);
+            }
+            else
+            {
+                var url = uri.ToString();
+                if (url.Contains("telegra.ph"))
+                {
+                    navigation.Navigate(typeof(InstantPage), url);
+                }
+                else if (url.Contains("joinchat"))
+                {
+                    var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
+                    if (index != -1)
+                    {
+                        var text = url.Substring(index).Replace("/", string.Empty);
+                        if (!string.IsNullOrEmpty(text))
+                        {
+                            NavigateToInviteLink(protoService, navigation, text);
+                        }
+                    }
+                }
+                else if (url.Contains("addstickers"))
+                {
+                    var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
+                    if (index != -1)
+                    {
+                        var text = url.Substring(index).Replace("/", string.Empty);
+                        if (!string.IsNullOrEmpty(text))
+                        {
+                            NavigateToStickerSet(text);
+                        }
+                    }
+                }
+                else
+                {
+                    var query = url.ParseQueryString();
+
+                    var accessToken = GetAccessToken(query, out PageKind pageKind);
+                    var post = query.GetParameter("post");
+                    var game = query.GetParameter("game");
+                    var result = url.StartsWith("http") ? url : ("https://" + url);
+
                     if (uri.Segments.Length >= 2)
                     {
                         var username = uri.Segments[1].Replace("/", string.Empty);

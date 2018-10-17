@@ -1229,7 +1229,7 @@ namespace Unigram.Views
 
                     if (MessageHelper.IsTelegramUrl(uri))
                     {
-                        MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, ViewModel.NavigationService, urlText.Url);
+                        MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, ViewModel.NavigationService, uri);
                     }
                     else
                     {
@@ -1294,7 +1294,7 @@ namespace Unigram.Views
 
         public bool CanBeDownloaded(MessageViewModel message)
         {
-            return !ViewModel.ProtoService.Preferences.Disabled;
+            return !ViewModel.Settings.AutoDownload.Disabled;
         }
 
         public void DownloadFile(MessageViewModel message, File file)

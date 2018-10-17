@@ -242,11 +242,12 @@ namespace Unigram.ViewModels
 
                 NavigationService.Navigate(typeof(InstantPage), webPage.Url);
             }
-            else if (string.Equals(webPage.Type, "telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
+            else if (MessageHelper.TryCreateUri(webPage.Url, out Uri uri) &&
+                    (string.Equals(webPage.Type, "telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(webPage.Type, "telegram_channel", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(webPage.Type, "telegram_message", StringComparison.OrdinalIgnoreCase))
+                     string.Equals(webPage.Type, "telegram_message", StringComparison.OrdinalIgnoreCase)))
             {
-                MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, webPage.Url);
+                MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
             }
         }
 
@@ -381,7 +382,7 @@ namespace Unigram.ViewModels
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, url);
+                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
                 }
                 else
                 {
