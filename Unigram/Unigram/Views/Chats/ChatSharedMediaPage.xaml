@@ -41,7 +41,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <microsoft:NavigationView x:Name="Header" PaneDisplayMode="Top" ItemInvoked="NavigationView_ItemInvoked" IsSettingsVisible="False" IsBackButtonVisible="Collapsed" Grid.RowSpan="2">
+        <microsoft:NavigationView x:Name="Header" OverflowLabelMode="NoLabel" PaneDisplayMode="Top" ItemInvoked="NavigationView_ItemInvoked" IsSettingsVisible="False" IsBackButtonVisible="Collapsed" Grid.RowSpan="2">
             <microsoft:NavigationView.MenuItems>
                 <microsoft:NavigationViewItem x:Name="MediaHeader" Content="{CustomResource SharedMediaTab}" IsSelected="True"/>
                 <microsoft:NavigationViewItem x:Name="FilesHeader" Content="{CustomResource SharedFilesTab}"/>

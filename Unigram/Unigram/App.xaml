@@ -205,7 +205,6 @@
                 <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
                 <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
                 <themes:Messages/>
-                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
