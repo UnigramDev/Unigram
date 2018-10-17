@@ -80,9 +80,6 @@ namespace Unigram.Services
         bool IsStickerFavorite(int id);
         bool IsStickerSetInstalled(long id);
 
-        AutoDownloadPreferences Preferences { get; }
-        void SetPreferences(AutoDownloadPreferences preferences);
-
         int UnreadCount { get; }
         int UnreadUnmutedCount { get; }
     }
@@ -115,8 +112,6 @@ namespace Unigram.Services
         private readonly SimpleFileContext<long> _chatsMap = new SimpleFileContext<long>();
         private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
 
-        private AutoDownloadPreferences _preferences;
-
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
         private IList<long> _installedMaskSets;
@@ -131,8 +126,6 @@ namespace Unigram.Services
             _settings = settings;
             _optionsService = new OptionsService(this, this, settings, aggregator);
             _aggregator = aggregator;
-
-            _preferences = new AutoDownloadPreferences(ApplicationData.Current.LocalSettings.CreateContainer("autoDownload", ApplicationDataCreateDisposition.Always));
 
             Initialize(online);
         }
@@ -400,20 +393,6 @@ namespace Unigram.Services
         }
 
 
-
-        public AutoDownloadPreferences Preferences
-        {
-            get
-            {
-                return _preferences;
-            }
-        }
-
-        public void SetPreferences(AutoDownloadPreferences preferences)
-        {
-            _preferences = preferences ?? AutoDownloadPreferences.Default;
-            _preferences.Save(ApplicationData.Current.LocalSettings.CreateContainer("autoDownload", ApplicationDataCreateDisposition.Always));
-        }
 
         public AuthorizationState GetAuthorizationState()
         {

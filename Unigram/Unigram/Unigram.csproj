@@ -123,7 +123,6 @@
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\TLContainer.cs" />
     <Compile Include="Common\Execute.cs" />
-    <Compile Include="Common\AutoDownloadPreferences.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\InactivityHelper.cs" />
     <Compile Include="Common\Locale.cs" />
@@ -427,6 +426,7 @@
     <Compile Include="Selectors\StorageStatisticsTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
+    <Compile Include="Services\Settings\AppearanceSettings.cs" />
     <Compile Include="Services\ContactsService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
     <Compile Include="Services\EventAggregator.cs" />
@@ -439,12 +439,16 @@
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\NotificationsService.cs" />
+    <Compile Include="Services\Settings\AutoDownloadSettings.cs" />
+    <Compile Include="Services\Settings\NotificationsSettings.cs" />
     <Compile Include="Services\OptionsService.cs" />
+    <Compile Include="Services\Settings\PasscodeLockSettings.cs" />
     <Compile Include="Services\PasscodeService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\ProtoService.cs" />
     <Compile Include="Services\SessionService.cs" />
     <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="Services\Settings\StickersSettings.cs" />
     <Compile Include="Services\Stripe\Card.cs" />
     <Compile Include="Services\Stripe\CardUtils.cs" />
     <Compile Include="Services\Stripe\DateUtils.cs" />

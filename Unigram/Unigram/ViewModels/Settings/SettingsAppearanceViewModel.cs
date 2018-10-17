@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Windows.UI.Xaml;
 using Unigram.Services;
+using Unigram.Services.Settings;
 
 namespace Unigram.ViewModels.Settings
 {

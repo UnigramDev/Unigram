@@ -17,6 +17,7 @@ using Unigram.Views.Settings;
 using Telegram.Td.Api;
 using Windows.Storage.Pickers;
 using Windows.Storage.AccessCache;
+using Unigram.Services.Settings;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -58,11 +59,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return !ProtoService.Preferences.Disabled;
+                return !Settings.AutoDownload.Disabled;
             }
             set
             {
-                ProtoService.SetPreferences(ProtoService.Preferences.UpdateDisabled(!value));
+                Settings.AutoDownload = Settings.AutoDownload.UpdateDisabled(!value);
                 RaisePropertyChanged();
             }
         }
@@ -183,7 +184,7 @@ namespace Unigram.ViewModels.Settings
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.SetPreferences(AutoDownloadPreferences.Default);
+                Settings.AutoDownload = AutoDownloadSettings.Default;
                 RaisePropertyChanged(() => AutoDownloadEnabled);
             }
         }

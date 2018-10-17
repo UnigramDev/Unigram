@@ -10,6 +10,7 @@ using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Unigram.ViewModels;
 using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Channels;
@@ -93,17 +94,12 @@ namespace Unigram
 
         private MediaExtensionManager m_mediaExtensionManager;
 
-        public App() : this(0)
-        {
-
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
-        public App(int session)
+        public App()
         {
 #if DEBUG
             Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en";

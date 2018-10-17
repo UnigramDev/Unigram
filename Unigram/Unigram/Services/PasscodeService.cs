@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Unigram.Common;
+using Unigram.Services.Settings;
 using Unigram.Services.Updates;
 using Unigram.Views;
 using Windows.Security.Cryptography;

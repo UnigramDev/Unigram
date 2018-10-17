@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Windows.Storage;
 
-namespace Unigram.Common
+namespace Unigram.Services.Settings
 {
     [Flags]
     public enum AutoDownloadMode
@@ -51,14 +52,14 @@ namespace Unigram.Common
         Channel
     }
 
-    public class AutoDownloadPreferences
+    public class AutoDownloadSettings
     {
-        private AutoDownloadPreferences()
+        private AutoDownloadSettings()
         {
 
         }
 
-        public AutoDownloadPreferences(ApplicationDataContainer container)
+        public AutoDownloadSettings(ApplicationDataContainer container)
         {
             _disabled = container.GetBoolean("disabled", false);
             _photos = (AutoDownloadMode)container.GetInt32("photos", (int)AutoDownloadMode.All);
@@ -86,11 +87,11 @@ namespace Unigram.Common
             container.Values["animations"] = (int)_animations;
         }
 
-        public static AutoDownloadPreferences Default
+        public static AutoDownloadSettings Default
         {
             get
             {
-                var preferences = new AutoDownloadPreferences();
+                var preferences = new AutoDownloadSettings();
                 preferences._photos = AutoDownloadMode.All;
                 preferences._videos = AutoDownloadMode.None;
                 preferences._maximumVideoSize = 10;
@@ -131,9 +132,9 @@ namespace Unigram.Common
         public AutoDownloadMode Audios => _audios;
         public AutoDownloadMode Animations => _animations;
 
-        public AutoDownloadPreferences UpdateDisabled(bool disabled)
+        public AutoDownloadSettings UpdateDisabled(bool disabled)
         {
-            var preferences = new AutoDownloadPreferences();
+            var preferences = new AutoDownloadSettings();
             preferences._disabled = disabled;
             preferences._photos = _photos;
             preferences._videos = _videos;
@@ -147,9 +148,9 @@ namespace Unigram.Common
             return preferences;
         }
 
-        public AutoDownloadPreferences UpdatePhotosMode(AutoDownloadMode mode)
+        public AutoDownloadSettings UpdatePhotosMode(AutoDownloadMode mode)
         {
-            var preferences = new AutoDownloadPreferences();
+            var preferences = new AutoDownloadSettings();
             preferences._photos = mode;
             preferences._videos = _videos;
             preferences._maximumVideoSize = _maximumVideoSize;
@@ -162,9 +163,9 @@ namespace Unigram.Common
             return preferences;
         }
 
-        public AutoDownloadPreferences UpdateVideosMode(AutoDownloadMode mode, int maximumSize)
+        public AutoDownloadSettings UpdateVideosMode(AutoDownloadMode mode, int maximumSize)
         {
-            var preferences = new AutoDownloadPreferences();
+            var preferences = new AutoDownloadSettings();
             preferences._photos = _photos;
             preferences._videos = mode;
             preferences._maximumVideoSize = maximumSize;
@@ -177,9 +178,9 @@ namespace Unigram.Common
             return preferences;
         }
 
-        public AutoDownloadPreferences UpdateDocumentsMode(AutoDownloadMode mode, int maximumSize)
+        public AutoDownloadSettings UpdateDocumentsMode(AutoDownloadMode mode, int maximumSize)
         {
-            var preferences = new AutoDownloadPreferences();
+            var preferences = new AutoDownloadSettings();
             preferences._photos = _photos;
             preferences._videos = _videos;
             preferences._maximumVideoSize = _maximumVideoSize;
@@ -192,9 +193,9 @@ namespace Unigram.Common
             return preferences;
         }
 
-        public AutoDownloadPreferences UpdateVoiceNotesMode(AutoDownloadMode mode)
+        public AutoDownloadSettings UpdateVoiceNotesMode(AutoDownloadMode mode)
         {
-            var preferences = new AutoDownloadPreferences();
+            var preferences = new AutoDownloadSettings();
             preferences._photos = _photos;
             preferences._videos = _videos;
             preferences._maximumVideoSize = _maximumVideoSize;
@@ -207,9 +208,9 @@ namespace Unigram.Common
             return preferences;
         }
 
-        public AutoDownloadPreferences UpdateVideoNotesMode(AutoDownloadMode mode)
+        public AutoDownloadSettings UpdateVideoNotesMode(AutoDownloadMode mode)
         {
-            var preferences = new AutoDownloadPreferences();
+            var preferences = new AutoDownloadSettings();
             preferences._photos = _photos;
             preferences._videos = _videos;
             preferences._maximumVideoSize = _maximumVideoSize;
@@ -222,9 +223,9 @@ namespace Unigram.Common
             return preferences;
         }
 
-        public AutoDownloadPreferences UpdateAnimationsMode(AutoDownloadMode mode)
+        public AutoDownloadSettings UpdateAnimationsMode(AutoDownloadMode mode)
         {
-            var preferences = new AutoDownloadPreferences();
+            var preferences = new AutoDownloadSettings();
             preferences._photos = _photos;
             preferences._videos = _videos;
             preferences._maximumVideoSize = _maximumVideoSize;
@@ -237,9 +238,9 @@ namespace Unigram.Common
             return preferences;
         }
 
-        public AutoDownloadPreferences UpdateAudiosMode(AutoDownloadMode mode)
+        public AutoDownloadSettings UpdateAudiosMode(AutoDownloadMode mode)
         {
-            var preferences = new AutoDownloadPreferences();
+            var preferences = new AutoDownloadSettings();
             preferences._photos = _photos;
             preferences._videos = _videos;
             preferences._maximumVideoSize = _maximumVideoSize;

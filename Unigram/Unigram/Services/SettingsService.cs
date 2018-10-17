@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Windows.Storage;
 using Windows.UI.Xaml;
 
@@ -11,12 +12,13 @@ namespace Unigram.Services
     public interface ISettingsService
     {
         int Session { get; }
-        int Version { get; }
+        ulong Version { get; }
 
         void UpdateVersion();
 
         NotificationsSettings Notifications { get; }
         StickersSettings Stickers { get; }
+        AutoDownloadSettings AutoDownload { get; set; }
         AppearanceSettings Appearance { get; }
         PasscodeLockSettings PasscodeLock { get; }
 
@@ -153,25 +155,25 @@ namespace Unigram.Services
 
         #region App version
 
-        public const int CurrentVersion = 2117670;
-        public const string CurrentChangelog = "New in Unigram version 2.1.1767:\r\n- To play GIFs in full screen and video messages with audio turned on, just click on them.\r\n- You can now play any received or sent video in PiP mode.\r\n- Use the new rich context menu to format messages with bold, italic, monospace and links.\r\n- The app is now optimized for October 2018 Update.\r\n- Zoom stickers in the stickers panel right clicking them.\r\n- Bug fixes and improvements.";
+        public const ulong CurrentVersion = (2UL << 48) | (2UL << 32) | (1850UL << 16);
+        public const string CurrentChangelog = "- Sort pinned chats from Settings > Advanced.\r\n- Clear recent stickers from Settings > Stickers.\r\n- Bug fixes and improvements.";
 
         public int Session => _session;
 
-        private int? _version;
-        public int Version
+        private ulong? _version;
+        public ulong Version
         {
             get
             {
                 if (_version == null)
-                    _version = GetValueOrDefault("AppVersion", 0);
+                    _version = GetValueOrDefault("LongVersion", 0UL);
 
                 return _version ?? 0;
             }
             private set
             {
                 _version = value;
-                AddOrUpdateValue("AppVersion", value);
+                AddOrUpdateValue("LongVersion", value);
             }
         }
 
@@ -197,6 +199,20 @@ namespace Unigram.Services
             get
             {
                 return _stickers = _stickers ?? new StickersSettings(_container);
+            }
+        }
+
+        private AutoDownloadSettings _autoDownload;
+        public AutoDownloadSettings AutoDownload
+        {
+            get
+            {
+                return _autoDownload = _autoDownload ?? new AutoDownloadSettings(_own.CreateContainer("AutoDownload", ApplicationDataCreateDisposition.Always));
+            }
+            set
+            {
+                _autoDownload = value ?? AutoDownloadSettings.Default;
+                _autoDownload.Save(_own.CreateContainer("AutoDownload", ApplicationDataCreateDisposition.Always));
             }
         }
 
@@ -659,363 +675,5 @@ namespace Unigram.Services
                 _local.Values.Remove($"User{UserId}");
             }
         }
-    }
-
-    public class NotificationsSettings : SettingsServiceBase
-    {
-        public NotificationsSettings(ApplicationDataContainer container)
-            : base(container)
-        {
-
-        }
-
-        private bool? _inAppPreview;
-        public bool InAppPreview
-        {
-            get
-            {
-                if (_inAppPreview == null)
-                    _inAppPreview = GetValueOrDefault("InAppPreview", true);
-
-                return _inAppPreview ?? true;
-            }
-            set
-            {
-                _inAppPreview = value;
-                AddOrUpdateValue("InAppPreview", value);
-            }
-        }
-
-        private bool? _inAppVibrate;
-        public bool InAppVibrate
-        {
-            get
-            {
-                if (_inAppVibrate == null)
-                    _inAppVibrate = GetValueOrDefault("InAppVibrate", true);
-
-                return _inAppVibrate ?? true;
-            }
-            set
-            {
-                _inAppVibrate = value;
-                AddOrUpdateValue("InAppVibrate", value);
-            }
-        }
-
-        private bool? _inAppSounds;
-        public bool InAppSounds
-        {
-            get
-            {
-                if (_inAppSounds == null)
-                    _inAppSounds = GetValueOrDefault("InAppSounds", true);
-
-                return _inAppSounds ?? true;
-            }
-            set
-            {
-                _inAppSounds = value;
-                AddOrUpdateValue("InAppSounds", value);
-            }
-        }
-
-        private bool? _includeMutedChats;
-        public bool IncludeMutedChats
-        {
-            get
-            {
-                if (_includeMutedChats == null)
-                    _includeMutedChats = GetValueOrDefault("IncludeMutedChats", false);
-
-                return _includeMutedChats ?? false;
-            }
-            set
-            {
-                _includeMutedChats = value;
-                AddOrUpdateValue("IncludeMutedChats", value);
-            }
-        }
-
-        private bool? _countUnreadMessages;
-        public bool CountUnreadMessages
-        {
-            get
-            {
-                if (_countUnreadMessages == null)
-                    _countUnreadMessages = GetValueOrDefault("CountUnreadMessages", true);
-
-                return _countUnreadMessages ?? true;
-            }
-            set
-            {
-                _countUnreadMessages = value;
-                AddOrUpdateValue("CountUnreadMessages", value);
-            }
-        }
-
-        private bool? _isPinnedEnabled;
-        public bool IsPinnedEnabled
-        {
-            get
-            {
-                if (_isPinnedEnabled == null)
-                    _isPinnedEnabled = GetValueOrDefault("IsPinnedEnabled", true);
-
-                return _isPinnedEnabled ?? true;
-            }
-            set
-            {
-                _isPinnedEnabled = value;
-                AddOrUpdateValue("IsPinnedEnabled", value);
-            }
-        }
-
-        private bool? _isContactEnabled;
-        public bool IsContactEnabled
-        {
-            get
-            {
-                if (_isContactEnabled == null)
-                    _isContactEnabled = GetValueOrDefault("IsContactEnabled", true);
-
-                return _isContactEnabled ?? true;
-            }
-            set
-            {
-                _isContactEnabled = value;
-                AddOrUpdateValue("IsContactEnabled", value);
-            }
-        }
-    }
-
-    public class AppearanceSettings : SettingsServiceBase
-    {
-        public AppearanceSettings()
-            : base(ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always))
-        {
-
-        }
-
-        private TelegramTheme? _requestedTheme;
-        public TelegramTheme RequestedTheme
-        {
-            get
-            {
-                if (_requestedTheme == null)
-                {
-                    _requestedTheme = (TelegramTheme)GetValueOrDefault(_container, "Theme", (int)(TelegramTheme.Default | TelegramTheme.Brand));
-                }
-
-                return _requestedTheme ?? (TelegramTheme.Default | TelegramTheme.Brand);
-            }
-            set
-            {
-                _requestedTheme = value;
-                AddOrUpdateValue(_container, "Theme", (int)value);
-            }
-        }
-    }
-
-    public class StickersSettings : SettingsServiceBase
-    {
-        public StickersSettings(ApplicationDataContainer container)
-            : base(container)
-        {
-
-        }
-
-        private int? _suggestionMode;
-        public StickersSuggestionMode SuggestionMode
-        {
-            get
-            {
-                if (_suggestionMode == null)
-                    _suggestionMode = GetValueOrDefault("SuggestionMode", 0);
-
-                return (StickersSuggestionMode)(_suggestionMode ?? 0);
-            }
-            set
-            {
-                _suggestionMode = (int)value;
-                AddOrUpdateValue("SuggestionMode", (int)value);
-            }
-        }
-    }
-
-    public class PasscodeLockSettings : SettingsServiceBase
-    {
-        public PasscodeLockSettings()
-            : base(ApplicationData.Current.LocalSettings.CreateContainer("PasscodeLock", ApplicationDataCreateDisposition.Always))
-        {
-        }
-
-        public override void Clear()
-        {
-            base.Clear();
-
-            _hash = null;
-            _salt = null;
-            _isSimple = null;
-            _closeTime = null;
-            _autolockTimeout = null;
-            _isLocked = null;
-            _isHelloEnabled = null;
-            _isScreenshotEnabled = null;
-        }
-
-        private byte[] _hash;
-        public byte[] Hash
-        {
-            get
-            {
-                if (_hash == null)
-                    _hash = Convert.FromBase64String(GetValueOrDefault("Hash", string.Empty));
-
-                return _hash ?? new byte[0];
-            }
-            set
-            {
-                _hash = value;
-                AddOrUpdateValue("Hash", Convert.ToBase64String(value));
-            }
-        }
-
-        private byte[] _salt;
-        public byte[] Salt
-        {
-            get
-            {
-                if (_salt == null)
-                    _salt = Convert.FromBase64String(GetValueOrDefault("Salt", string.Empty));
-
-                return _salt ?? new byte[0];
-            }
-            set
-            {
-                _salt = value;
-                AddOrUpdateValue("Salt", Convert.ToBase64String(value));
-            }
-        }
-
-        private bool? _isSimple;
-        public bool IsSimple
-        {
-            get
-            {
-                if (_isSimple == null)
-                    _isSimple = GetValueOrDefault("IsSimple", true);
-
-                return _isSimple ?? true;
-            }
-            set
-            {
-                _isSimple = value;
-                AddOrUpdateValue("IsSimple", value);
-            }
-        }
-
-        private DateTime? _closeTime;
-        public DateTime CloseTime
-        {
-            get
-            {
-                if (_closeTime == null)
-                    _closeTime = DateTime.FromFileTimeUtc(GetValueOrDefault("CloseTime", 2650467743999999999 /* DateTime.MaxValue */));
-
-                return _closeTime ?? DateTime.MaxValue;
-            }
-            set
-            {
-                _closeTime = value;
-                AddOrUpdateValue("CloseTime", value.ToFileTimeUtc());
-            }
-        }
-
-        private int? _autolockTimeout;
-        public int AutolockTimeout
-        {
-            get
-            {
-                if (_autolockTimeout == null)
-                    _autolockTimeout = GetValueOrDefault("AutolockTimeout", 0);
-
-                return _autolockTimeout ?? 0;
-            }
-            set
-            {
-                _autolockTimeout = value;
-                AddOrUpdateValue("AutolockTimeout", value);
-            }
-        }
-
-        private bool? _isLocked;
-        public bool IsLocked
-        {
-            get
-            {
-                if (_isLocked == null)
-                    _isLocked = GetValueOrDefault("IsLocked", false);
-
-                return _isLocked ?? false;
-            }
-            set
-            {
-                _isLocked = value;
-                AddOrUpdateValue("IsLocked", value);
-            }
-        }
-
-        private bool? _isHelloEnabled;
-        public bool IsHelloEnabled
-        {
-            get
-            {
-                if (_isHelloEnabled == null)
-                    _isHelloEnabled = GetValueOrDefault("IsHelloEnabled", false);
-
-                return _isHelloEnabled ?? false;
-            }
-            set
-            {
-                _isHelloEnabled = value;
-                AddOrUpdateValue("IsHelloEnabled", value);
-            }
-        }
-
-        private bool? _isScreenshotEnabled;
-        public bool IsScreenshotEnabled
-        {
-            get
-            {
-                if (_isScreenshotEnabled == null)
-                    _isScreenshotEnabled = GetValueOrDefault("IsScreenshotEnabled", true);
-
-                return _isScreenshotEnabled ?? true;
-            }
-            set
-            {
-                _isScreenshotEnabled = value;
-                AddOrUpdateValue("IsScreenshotEnabled", value);
-            }
-        }
-    }
-
-    public enum StickersSuggestionMode
-    {
-        All,
-        Installed,
-        None
-    }
-
-    [Flags]
-    public enum TelegramTheme
-    {
-        Default = 1 << 0,
-        Light = 1 << 1,
-        Dark = 1 << 2,
-
-        Brand = 1 << 3,
-        Custom = 1 << 4,
     }
 }

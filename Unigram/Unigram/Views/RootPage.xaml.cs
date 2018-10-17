@@ -9,6 +9,7 @@ using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Unigram.ViewModels;
 using Unigram.Views.SignIn;
 using Windows.ApplicationModel.Core;

@@ -23,6 +23,7 @@ using Unigram.Native;
 using Windows.Storage;
 using System.Windows.Input;
 using Unigram.Services;
+using Unigram.Services.Settings;
 
 namespace Unigram.Views.Settings
 {

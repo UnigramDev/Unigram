@@ -18,6 +18,7 @@ using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Gallery;
+using Unigram.Services.Settings;
 
 namespace Unigram.ViewModels
 {
@@ -117,19 +118,19 @@ namespace Unigram.ViewModels
 
             if (content is Animation animation)
             {
-                return ProtoService.Preferences.ShouldDownloadAnimation(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadAnimation(GetChatType(chat), new NetworkTypeWiFi());
             }
             else if (content is Audio audio)
             {
-                return ProtoService.Preferences.ShouldDownloadAudio(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadAudio(GetChatType(chat), new NetworkTypeWiFi());
             }
             else if (content is Document document)
             {
-                return ProtoService.Preferences.ShouldDownloadDocument(GetChatType(chat), new NetworkTypeWiFi(), document.DocumentValue.Size);
+                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), new NetworkTypeWiFi(), document.DocumentValue.Size);
             }
             else if (content is Photo photo)
             {
-                return ProtoService.Preferences.ShouldDownloadPhoto(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadPhoto(GetChatType(chat), new NetworkTypeWiFi());
             }
             else if (content is Sticker sticker)
             {
@@ -137,15 +138,15 @@ namespace Unigram.ViewModels
             }
             else if (content is Video video)
             {
-                return ProtoService.Preferences.ShouldDownloadVideo(GetChatType(chat), new NetworkTypeWiFi(), video.VideoValue.Size);
+                return Settings.AutoDownload.ShouldDownloadVideo(GetChatType(chat), new NetworkTypeWiFi(), video.VideoValue.Size);
             }
             else if (content is VideoNote videoNote)
             {
-                return ProtoService.Preferences.ShouldDownloadVideoNote(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadVideoNote(GetChatType(chat), new NetworkTypeWiFi());
             }
             else if (content is VoiceNote voiceNote)
             {
-                return ProtoService.Preferences.ShouldDownloadVoiceNote(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadVoiceNote(GetChatType(chat), new NetworkTypeWiFi());
             }
 
             return false;

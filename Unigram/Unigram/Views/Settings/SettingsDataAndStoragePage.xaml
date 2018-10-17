@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
-    xmlns:common="using:Unigram.Common"
+    xmlns:settings="using:Unigram.Services.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -85,14 +85,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <common:AutoDownloadType x:Key="AutoDownloadPhotos">Photos</common:AutoDownloadType>
-        <common:AutoDownloadType x:Key="AutoDownloadVideos">Videos</common:AutoDownloadType>
-        <common:AutoDownloadType x:Key="AutoDownloadDocuments">Documents</common:AutoDownloadType>
-        <common:AutoDownloadType x:Key="AutoDownloadVoiceNotes">VoiceNotes</common:AutoDownloadType>
-        <common:AutoDownloadType x:Key="AutoDownloadVideoNotes">VideoNotes</common:AutoDownloadType>
-        <common:AutoDownloadType x:Key="AutoDownloadAudios">Audios</common:AutoDownloadType>
-        <common:AutoDownloadType x:Key="AutoDownloadAnimations">Animations</common:AutoDownloadType>
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -126,61 +118,74 @@
                         Header="{CustomResource AutoDownloadMedia}"
                         Style="{StaticResource CheckButtonStyle}"/>
                     <!--<Button
-                        Command="{x:Bind ViewModel.DownloadLocationCommand}"
-                        Tag="Download location"
-                        Content="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
-                        Style="{StaticResource HyperVerticalDetailButtonStyle}"/>-->
+                         Command="{x:Bind ViewModel.DownloadLocationCommand}"
+                         Tag="Download location"
+                         Content="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
+                         Style="{StaticResource HyperVerticalDetailButtonStyle}"/>-->
 
-                    <Button
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        CommandParameter="{StaticResource AutoDownloadPhotos}"
-                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Tag="{CustomResource LocalPhotoCache}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <Button
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        CommandParameter="{StaticResource AutoDownloadVideos}"
-                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Tag="{CustomResource LocalVideoCache}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <Button
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        CommandParameter="{StaticResource AutoDownloadDocuments}"
-                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Tag="{CustomResource FilesDataUsage}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                            Tag="{CustomResource LocalPhotoCache}"
+                            Style="{StaticResource HyperDetailButtonStyle}">
+                        <Button.CommandParameter>
+                            <settings:AutoDownloadType>Photos</settings:AutoDownloadType>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                            Tag="{CustomResource LocalVideoCache}"
+                            Style="{StaticResource HyperDetailButtonStyle}">
+                        <Button.CommandParameter>
+                            <settings:AutoDownloadType>Videos</settings:AutoDownloadType>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                            Tag="{CustomResource FilesDataUsage}"
+                            Style="{StaticResource HyperDetailButtonStyle}">
+                        <Button.CommandParameter>
+                            <settings:AutoDownloadType>Documents</settings:AutoDownloadType>
+                        </Button.CommandParameter>
+                    </Button>
                     <!--<controls:HyperButton
                          Tag="{CustomResource AttachMusic}"
                          Style="{StaticResource HyperDetailButtonStyle}"/>-->
-                    <Button
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        CommandParameter="{StaticResource AutoDownloadVoiceNotes}"
-                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Tag="{CustomResource AudioAutodownload}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <Button
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        CommandParameter="{StaticResource AutoDownloadVideoNotes}"
-                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Tag="{CustomResource VideoMessagesAutodownload}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <Button
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        CommandParameter="{StaticResource AutoDownloadAudios}"
-                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Tag="{CustomResource LocalMusicCache}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <Button
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        CommandParameter="{StaticResource AutoDownloadAnimations}"
-                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Tag="{CustomResource LocalGifCache}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <Button
-                        Command="{x:Bind ViewModel.ResetAutoDownloadCommand}"
-                        Tag="{CustomResource ResetAutomaticMediaDownload}"
-                        Style="{StaticResource HyperDetailButtonStyle}"
-                        Foreground="Red"/>
+                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                            Tag="{CustomResource AudioAutodownload}"
+                            Style="{StaticResource HyperDetailButtonStyle}">
+                        <Button.CommandParameter>
+                            <settings:AutoDownloadType>VoiceNotes</settings:AutoDownloadType>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                            Tag="{CustomResource VideoMessagesAutodownload}"
+                            Style="{StaticResource HyperDetailButtonStyle}">
+                        <Button.CommandParameter>
+                            <settings:AutoDownloadType>VideoNotes</settings:AutoDownloadType>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                            Tag="{CustomResource LocalMusicCache}"
+                            Style="{StaticResource HyperDetailButtonStyle}">
+                        <Button.CommandParameter>
+                            <settings:AutoDownloadType>Audios</settings:AutoDownloadType>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                            Tag="{CustomResource LocalGifCache}"
+                            Style="{StaticResource HyperDetailButtonStyle}">
+                        <Button.CommandParameter>
+                            <settings:AutoDownloadType>Animations</settings:AutoDownloadType>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Command="{x:Bind ViewModel.ResetAutoDownloadCommand}"
+                            Tag="{CustomResource ResetAutomaticMediaDownload}"
+                            Style="{StaticResource HyperDetailButtonStyle}"
+                            Foreground="Red"/>
                 </StackPanel>
                 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">

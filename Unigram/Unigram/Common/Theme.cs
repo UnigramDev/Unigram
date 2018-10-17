@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;

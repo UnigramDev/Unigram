@@ -10,6 +10,7 @@ using Template10.Services.NavigationService;
 using Unigram.Controls;
 using Unigram.Native;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.ApplicationModel;
