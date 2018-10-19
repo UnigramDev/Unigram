@@ -207,7 +207,7 @@ namespace Unigram.Controls.Messages
                 var title = string.Empty;
                 if (message.ForwardInfo is MessageForwardedFromUser fromUser)
                 {
-                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(fromUser.SenderUserId));
+                    title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
                 }
                 else if (message.ForwardInfo is MessageForwardedPost post)
                 {
