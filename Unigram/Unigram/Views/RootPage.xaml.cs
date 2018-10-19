@@ -15,6 +15,8 @@ using Unigram.Views.SignIn;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System.Profile;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -61,7 +63,16 @@ namespace Unigram.Views
         {
             var sender = CoreApplication.GetCurrentView().TitleBar;
 
-            Navigation.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+            if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Desktop") && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+            {
+                // If running on PC and tablet mode is disabled, then titlebar is most likely visible
+                // So we're going to force it
+                Navigation.Padding = new Thickness(0, 32, 0, 0);
+            }
+            else
+            {
+                Navigation.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+            }
 
             sender.ExtendViewIntoTitleBar = true;
             sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
