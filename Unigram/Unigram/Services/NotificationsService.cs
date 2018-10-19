@@ -231,7 +231,7 @@ namespace Unigram.Services
             var caption = GetCaption(chat);
             var content = GetContent(chat, update.Message);
             var sound = "";
-            var launch = GetLaunch(chat);
+            var launch = GetLaunch(chat, update.Message);
             var tag = GetTag(update.Message);
             var group = GetGroup(chat);
             var picture = GetPhoto(chat);
@@ -312,7 +312,7 @@ namespace Unigram.Services
                 var caption = GetCaption(chat);
                 var content = GetContent(chat, message);
                 var sound = "";
-                var launch = GetLaunch(chat);
+                var launch = GetLaunch(chat, message);
                 var tag = GetTag(message);
                 var group = GetGroup(chat);
                 var picture = GetPhoto(chat);
@@ -363,24 +363,25 @@ namespace Unigram.Services
             return group;
         }
 
-        public string GetLaunch(Chat chat)
+        public string GetLaunch(Chat chat, Message message)
         {
-            var launch = string.Empty;
+            var launch = string.Format(CultureInfo.InvariantCulture, "msg_id={0}", message.Id >> 20);
+
             if (chat.Type is ChatTypePrivate privata)
             {
-                launch += string.Format(CultureInfo.InvariantCulture, "from_id={0}", privata.UserId);
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;from_id={1}", launch, privata.UserId);
             }
             else if (chat.Type is ChatTypeSecret secret)
             {
-                launch += string.Format(CultureInfo.InvariantCulture, "secret_id={0}", secret.SecretChatId);
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;secret_id={1}", launch, secret.SecretChatId);
             }
             else if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                launch += string.Format(CultureInfo.InvariantCulture, "channel_id={0}", supergroup.SupergroupId);
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;channel_id={1}", launch, supergroup.SupergroupId);
             }
             else if (chat.Type is ChatTypeBasicGroup basicGroup)
             {
-                launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", basicGroup.BasicGroupId);
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;chat_id={1}", launch, basicGroup.BasicGroupId);
             }
 
             return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _protoService.SessionId);
@@ -541,7 +542,7 @@ namespace Unigram.Services
                     var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
                     var entities = Markdown.Parse(_protoService, ref messageText);
 
-                    var replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) << 20 : 0;
+                    var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
                     var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, false, true, null, new InputMessageText(new FormattedText(messageText, entities), false, false)));
                 }
                 else if (string.Equals(action, "markasread", StringComparison.OrdinalIgnoreCase))
