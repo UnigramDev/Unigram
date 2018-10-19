@@ -192,13 +192,6 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        protected override void BeginOnUIThread(Action action)
-        {
-            // This is somehow needed because this viewmodel requires a Dispatcher
-            // in some situations where base one might be null.
-            Execute.BeginOnUIThread(action);
-        }
-
         public void Handle(UpdateChatOrder update)
         {
             Handle(update.ChatId, update.Order);

@@ -909,7 +909,7 @@ namespace Unigram.Views
 
             try
             {
-                Execute.BeginOnThreadPool(() =>
+                Task.Run(() =>
                 {
                     //dialogs.LoadFirstSlice();
                     contacts.LoadContacts();

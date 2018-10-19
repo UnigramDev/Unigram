@@ -1552,10 +1552,6 @@ namespace Unigram.ViewModels
 
 
 
-            RemoveNotifications();
-
-
-
             if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
             {
                 await HandlePackageAsync(package);
@@ -1768,40 +1764,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        private void RemoveNotifications()
-        {
-            return;
-
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var group = string.Empty;
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                group = "u" + privata.UserId;
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                group = "s" + secret.SecretChatId;
-            }
-            else if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                group = "c" + supergroup.SupergroupId;
-            }
-            else if (chat.Type is ChatTypeBasicGroup basicGroup)
-            {
-                group = "c" + basicGroup.BasicGroupId;
-            }
-
-            Execute.BeginOnThreadPool(() =>
-            {
-                ToastNotificationManager.History.RemoveGroup(group, "App");
-            });
-        }
-
         public void SaveDraft()
         {
             if (_currentInlineBot != null)
@@ -1922,7 +1884,7 @@ namespace Unigram.ViewModels
         //        }
         //        else
         //        {
-        //            Execute.ShowDebugMessage("messages.getMessages error " + response.Error);
+        //            Logs.Log.Write("messages.getMessages error " + response.Error);
         //        }
         //    }
         //}

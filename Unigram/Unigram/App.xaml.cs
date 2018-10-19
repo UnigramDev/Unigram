@@ -315,7 +315,7 @@ namespace Unigram
 
         private void Inactivity_Detected(object sender, EventArgs e)
         {
-            Execute.BeginOnUIThread(() =>
+            WindowContext.Default().Dispatcher.Dispatch(() =>
             {
                 var passcode = TLContainer.Current.Resolve<IPasscodeService>();
                 if (passcode != null && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
@@ -431,8 +431,6 @@ namespace Unigram
 
             if (Window.Current != null)
             {
-                Execute.Initialize();
-
                 Window.Current.Activated -= Window_Activated;
                 Window.Current.Activated += Window_Activated;
                 Window.Current.VisibilityChanged -= Window_VisibilityChanged;

@@ -123,7 +123,6 @@
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\TLContainer.cs" />
-    <Compile Include="Common\Execute.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\InactivityHelper.cs" />
     <Compile Include="Common\Locale.cs" />

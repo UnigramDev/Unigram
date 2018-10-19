@@ -261,7 +261,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     //this.HasError = true;
                     //this.Error = string.Empty;
-                    //Telegram.Api.Helpers.Execute.ShowDebugMessage("account.updateUsername error " + error);
+                    //Telegram.Api.Helpers.Logs.Log.Write("account.updateUsername error " + error);
                 }
             }
         }

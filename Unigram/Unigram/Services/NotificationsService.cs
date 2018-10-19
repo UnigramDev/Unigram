@@ -253,7 +253,7 @@ namespace Unigram.Services
 
         private void Update(Chat chat, Action action)
         {
-            Execute.BeginOnUIThread(() =>
+            WindowContext.Default().Dispatcher.Dispatch(() =>
             {
                 if (_sessionService.IsActive)
                 {

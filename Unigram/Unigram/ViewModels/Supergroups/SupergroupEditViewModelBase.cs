@@ -227,7 +227,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else if (response is Error error)
             {
-                Execute.ShowDebugMessage("channels.getAdminedPublicChannels error " + error);
+                Logs.Log.Write("channels.getAdminedPublicChannels error " + error);
             }
         }
 

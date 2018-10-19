@@ -131,7 +131,7 @@ namespace Unigram.ViewModels
         {
             if (mode == NavigationMode.New)
             {
-                Execute.BeginOnThreadPool(() => _pushService.RegisterAsync());
+                Task.Run(() => _pushService.RegisterAsync());
             }
 
             //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));

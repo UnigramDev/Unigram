@@ -102,7 +102,7 @@ namespace Unigram.ViewModels.SignIn
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
                 }
 
-                Execute.ShowDebugMessage("account.checkPassword error " + error);
+                Logs.Log.Write("account.checkPassword error " + error);
             }
         }
 

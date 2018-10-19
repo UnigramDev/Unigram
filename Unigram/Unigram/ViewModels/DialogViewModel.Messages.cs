@@ -872,7 +872,7 @@ namespace Unigram.ViewModels
             //        //    MessageBox.Show(Strings.Additional.EditMessageError, Strings.Additional.Error, 0);
             //        //    return;
             //        //}
-            //        Execute.ShowDebugMessage("messages.getMessageEditData error " + response.Error);
+            //        Logs.Log.Write("messages.getMessageEditData error " + response.Error);
             //    });
             //}
         }

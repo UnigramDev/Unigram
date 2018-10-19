@@ -136,7 +136,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Execute.ShowDebugMessage("auth.resetAuthotization error " + error);
+                    Logs.Log.Write("auth.resetAuthotization error " + error);
                 }
             }
         }
@@ -154,7 +154,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Execute.ShowDebugMessage("auth.resetAuthotizations error " + error);
+                    Logs.Log.Write("auth.resetAuthotizations error " + error);
                 }
             }
         }

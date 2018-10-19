@@ -108,7 +108,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Execute.ShowDebugMessage("auth.resetWebAuthotization error " + error);
+                    Logs.Log.Write("auth.resetWebAuthotization error " + error);
                 }
 
                 ProtoService.Send(new BlockUser(bot.Id));
@@ -128,7 +128,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Execute.ShowDebugMessage("auth.resetWebAuthotizations error " + error);
+                    Logs.Log.Write("auth.resetWebAuthotizations error " + error);
                 }
             }
         }

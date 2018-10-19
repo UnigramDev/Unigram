@@ -143,7 +143,7 @@ namespace Unigram.ViewModels.Settings
             //        //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
             //    }
 
-            //    Execute.ShowDebugMessage("account.checkPassword error " + response.Error);
+            //    Logs.Log.Write("account.checkPassword error " + response.Error);
             //}
         }
 

@@ -13,6 +13,7 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
 using Unigram.Views;
+using Unigram.Views.SignIn;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Contacts;
@@ -214,11 +215,10 @@ namespace Unigram.Common
                         UseActivatedArgs(args, service);
                         break;
                     case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
-                        Execute.Initialize();
-                        service.Navigate(service.CurrentPageType != null ? typeof(Views.SignIn.SignInPage) : typeof(Views.IntroPage));
+                        service.Navigate(service.CurrentPageType != null ? typeof(SignInPage) : typeof(IntroPage));
                         break;
                     case AuthorizationStateWaitCode waitCode:
-                        service.Navigate(waitCode.IsRegistered ? typeof(Views.SignIn.SignInSentCodePage) : typeof(Views.SignIn.SignUpPage));
+                        service.Navigate(waitCode.IsRegistered ? typeof(SignInSentCodePage) : typeof(SignUpPage));
                         break;
                     case AuthorizationStateWaitPassword waitPassword:
                         if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
@@ -226,7 +226,7 @@ namespace Unigram.Common
                             await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
                         }
 
-                        service.Navigate(typeof(Views.SignIn.SignInPasswordPage));
+                        service.Navigate(typeof(SignInPasswordPage));
                         break;
                 }
             }
@@ -284,14 +284,21 @@ namespace Unigram.Common
 
                 var query = "tg://";
 
-                var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
-                if (contactId is int userId)
+                if (ApiInformation.IsPropertyPresent("Windows.ApplicationModel.DataTransfer.ShareTarget.ShareOperation", "Contacts"))
                 {
-                    var response = await _lifetime.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
-                    if (response is Chat chat)
+                    var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
+                    if (contactId is int userId)
                     {
-                        query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
-                        App.DataPackages[chat.Id] = package.GetView();
+                        var response = await _lifetime.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+                        if (response is Chat chat)
+                        {
+                            query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
+                            App.DataPackages[chat.Id] = package.GetView();
+                        }
+                        else
+                        {
+                            App.DataPackages[0] = package.GetView();
+                        }
                     }
                     else
                     {
@@ -313,8 +320,6 @@ namespace Unigram.Common
             }
             else if (args is VoiceCommandActivatedEventArgs voice)
             {
-                Execute.Initialize();
-
                 SpeechRecognitionResult speechResult = voice.Result;
                 string command = speechResult.RulePath[0];
 
@@ -359,8 +364,6 @@ namespace Unigram.Common
             }
             else if (args is ProtocolActivatedEventArgs protocol)
             {
-                Execute.Initialize();
-
                 if (service?.Frame?.Content is MainPage page)
                 {
                     page.Activate(protocol.Uri.ToString());
@@ -385,14 +388,8 @@ namespace Unigram.Common
                     });
                 }
             }
-            //else if (args is CommandLineActivatedEventArgs commandLine && TryParseCommandLine(commandLine, out int id, out bool test))
-            //{
-
-            //}
             else
             {
-                Execute.Initialize();
-
                 var activate = args as ToastNotificationActivatedEventArgs;
                 var launched = args as LaunchActivatedEventArgs;
                 var launch = activate?.Argument ?? launched?.Arguments;

@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
 using Windows.Storage;
@@ -46,7 +47,7 @@ namespace Unigram.Logs
             }
             else
             {
-                Execute.BeginOnThreadPool(() =>
+                Task.Run(() =>
                 {
                     WriteInternal(str, callback);
                 });

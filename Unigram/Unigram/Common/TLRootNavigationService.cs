@@ -35,8 +35,6 @@ namespace Unigram.Common
                     Navigate(typeof(MainPage));
                     break;
                 case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
-                    Execute.Initialize();
-
                     if (_lifetimeService.Items.Count > 1)
                     {
                         Navigate(typeof(SignInPage));

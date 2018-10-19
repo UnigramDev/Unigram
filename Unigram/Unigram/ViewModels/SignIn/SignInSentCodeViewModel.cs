@@ -180,7 +180,7 @@ namespace Unigram.ViewModels.SignIn
                     //}
                     //else
                     //{
-                    //    Execute.ShowDebugMessage("account.getPassword error " + password.Error);
+                    //    Logs.Log.Write("account.getPassword error " + password.Error);
                     //}
                 }
                 else if (error.CodeEquals(ErrorCode.FLOOD))
@@ -188,7 +188,7 @@ namespace Unigram.ViewModels.SignIn
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({error.Message})", Resources.Error).ShowAsync();
                 }
 
-                Execute.ShowDebugMessage("account.signIn error " + error);
+                Logs.Log.Write("account.signIn error " + error);
             }
         }
 

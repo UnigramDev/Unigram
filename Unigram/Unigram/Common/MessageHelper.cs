@@ -558,7 +558,7 @@ namespace Unigram.Common
             //    //{
             //    //    return;
             //    //}
-            //    //Telegram.Api.Helpers.Execute.ShowDebugMessage(string.Format("account.sendConfirmPhoneCode error {0}", error));
+            //    //Telegram.Api.Helpers.Logs.Log.Write(string.Format("account.sendConfirmPhoneCode error {0}", error));
             //};
         }
 
@@ -651,7 +651,7 @@ namespace Unigram.Common
                     {
                         if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
                         {
-                            Execute.ShowDebugMessage("messages.importChatInvite error " + error);
+                            Logs.Log.Write("messages.importChatInvite error " + error);
                             return;
                         }
                         if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
@@ -674,7 +674,7 @@ namespace Unigram.Common
                             return;
                         }
 
-                        Execute.ShowDebugMessage("messages.importChatInvite error " + error);
+                        Logs.Log.Write("messages.importChatInvite error " + error);
                     }
                 }
             }
@@ -682,7 +682,7 @@ namespace Unigram.Common
             {
                 if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
                 {
-                    Execute.ShowDebugMessage("messages.checkChatInvite error " + error);
+                    Logs.Log.Write("messages.checkChatInvite error " + error);
                     return;
                 }
                 if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
@@ -692,7 +692,7 @@ namespace Unigram.Common
                     return;
                 }
 
-                Execute.ShowDebugMessage("messages.checkChatInvite error " + error);
+                Logs.Log.Write("messages.checkChatInvite error " + error);
             }
         }
 
