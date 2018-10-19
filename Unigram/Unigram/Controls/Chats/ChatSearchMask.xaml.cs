@@ -126,7 +126,7 @@ namespace Unigram.Controls.Chats
             }
             else if (e.Key == Windows.System.VirtualKey.Enter && shift && Field.State != ChatSearchState.Members)
             {
-                ViewModel.PreviousCommand.Execute();
+                ViewModel.NextCommand.Execute();
                 e.Handled = true;
             }
             else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(Field.Text))
