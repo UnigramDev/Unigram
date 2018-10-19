@@ -139,6 +139,9 @@ namespace Unigram.Views.Supergroups
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var member = args.Item as ChatMember;
 
+            args.ItemContainer.Tag = args.Item;
+            content.Tag = args.Item;
+
             var user = ViewModel.ProtoService.GetUser(member.UserId);
             if (user == null)
             {
