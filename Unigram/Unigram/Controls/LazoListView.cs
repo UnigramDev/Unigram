@@ -69,6 +69,14 @@ namespace Unigram.Controls
             if (_operation)
             {
                 SelectRange(new ItemIndexRange(first, (uint)Math.Max(1, last - first + 1)));
+
+                for (int i = first; i <= last; i++)
+                {
+                    if (CantSelect(Items[i]))
+                    {
+                        SelectedItems.Remove(Items[i]);
+                    }
+                }
             }
             else
             {
@@ -155,6 +163,11 @@ namespace Unigram.Controls
             }
 
             e.Handled = handled;
+        }
+
+        protected virtual bool CantSelect(object item)
+        {
+            return false;
         }
     }
 }

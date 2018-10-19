@@ -161,5 +161,10 @@ namespace Unigram.Controls.Chats
         {
             return new ChatListViewItem(this);
         }
+
+        protected override bool CantSelect(object item)
+        {
+            return item is MessageViewModel message && message.IsService();
+        }
     }
 }

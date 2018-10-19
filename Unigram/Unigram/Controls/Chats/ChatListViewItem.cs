@@ -32,12 +32,9 @@ namespace Unigram.Controls.Chats
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            if (Messages.SelectionMode == ListViewSelectionMode.Multiple)
+            if (Messages.SelectionMode == ListViewSelectionMode.Multiple && !IsSelected)
             {
-                if (Content is FrameworkElement element && element.Tag is MessageViewModel message && message.IsService())
-                {
-                    e.Handled = true;
-                }
+                e.Handled = CantSelect();
 
                 //if (Content is TLMessageService serviceMessage)
                 //{
@@ -53,6 +50,11 @@ namespace Unigram.Controls.Chats
             }
 
             base.OnPointerPressed(e);
+        }
+
+        public override bool CantSelect()
+        {
+            return ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message && message.IsService();
         }
     }
 }
