@@ -243,7 +243,7 @@
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" DoubleTapped="Message_DoubleTapped">
+            <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -260,7 +260,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" DoubleTapped="Message_DoubleTapped"/>
+                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested"/>
 
                 <Border x:Name="Action"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -283,7 +283,7 @@
                 <controls:ProfilePicture x:Name="Photo"
                                          Click="Photo_Click"
                                          Style="{StaticResource MessageBubbleProfilePictureStyle}"/>
-                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" DoubleTapped="Message_DoubleTapped" Grid.Column="1"/>
+                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" Grid.Column="1"/>
 
                 <Border x:Name="Action"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -364,7 +364,7 @@
                 <ColumnDefinition x:Name="Show"/>
                 <ColumnDefinition x:Name="Hide" Width="0"/>
             </Grid.ColumnDefinitions>
-            <Border x:Name="FlyoutArea" MinHeight="{ThemeResource AppBarThemeCompactHeight}"/>
+            <Border x:Name="FlyoutArea" MinHeight="{ThemeResource TelegramToolBarHeight}"/>
         </Grid>
 
         <controls:ContentPageHeader x:Name="Header">

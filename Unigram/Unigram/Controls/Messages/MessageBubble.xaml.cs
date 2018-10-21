@@ -1163,5 +1163,16 @@ namespace Unigram.Controls.Messages
                     return false;
             }
         }
+
+        private void ContentPanel_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            var message = _message;
+            if (message == null)
+            {
+                return;
+            }
+
+            message.Delegate.ReplyToMessage(message);
+        }
     }
 }

@@ -18,7 +18,8 @@
               MinHeight="30"
               Padding="{ThemeResource MessageContentPadding}"
               CornerRadius="{ThemeResource MessageCornerRadius}"
-              Background="{ThemeResource MessageBackgroundBrush}">
+              Background="{ThemeResource MessageBackgroundBrush}"
+              DoubleTapped="ContentPanel_DoubleTapped">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="Normal"/>

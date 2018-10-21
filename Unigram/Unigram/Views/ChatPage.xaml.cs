@@ -15,6 +15,7 @@ using Unigram.Common.Chats;
 using Unigram.Controls;
 using Unigram.Controls.Chats;
 using Unigram.Controls.Messages;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Native;
@@ -820,6 +821,18 @@ namespace Unigram.Views
             {
                 return;
             }
+
+            //VisualTreeHelper.DisconnectChildrenRecursive(KeyboardItems);
+            //KeyboardItems.Children.Remove(StickersPanel);
+
+            //ViewModel.OpenStickersCommand.Execute(null);
+
+            //var flyout = new Flyout();
+            //flyout.Content = new Border { Width = 376, Height = 500, Child = new StickersView { DataContext = DataContext } };
+            //flyout.ShowMode = FlyoutShowMode.TransientWithDismissOnPointerMoveAway;
+            //flyout.ShowAt(ButtonStickers);
+
+            //return;
 
             VisualStateManager.GoToState(this, Window.Current.Bounds.Width < 500 ? "NarrowState" : "FilledState", false);
 
@@ -2024,19 +2037,6 @@ namespace Unigram.Views
             }
 
             ViewModel.MessageServiceCommand.Execute(message);
-        }
-
-        private void Message_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            var button = sender as FrameworkElement;
-            var message = button.Tag as MessageViewModel;
-
-            if (message == null)
-            {
-                return;
-            }
-
-            ViewModel.MessageReplyCommand.Execute(message);
         }
 
         private void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

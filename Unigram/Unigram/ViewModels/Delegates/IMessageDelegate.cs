@@ -8,6 +8,8 @@ namespace Unigram.ViewModels.Delegates
         bool CanBeDownloaded(MessageViewModel message);
         void DownloadFile(MessageViewModel message, File file);
 
+        void ReplyToMessage(MessageViewModel message);
+
         void OpenReply(MessageViewModel message);
 
         void OpenFile(File file);

@@ -205,6 +205,11 @@ namespace Unigram.ViewModels
 
 
 
+        public void ReplyToMessage(MessageViewModel message)
+        {
+            MessageReplyCommand.Execute(message);
+        }
+
         public async void OpenReply(MessageViewModel message)
         {
             await LoadMessageSliceAsync(message.Id, message.ReplyToMessageId);

@@ -759,6 +759,10 @@ namespace Unigram.ViewModels.Supergroups
         {
         }
 
+        public void ReplyToMessage(MessageViewModel message)
+        {
+        }
+
         public void OpenReply(MessageViewModel message)
         {
         }
