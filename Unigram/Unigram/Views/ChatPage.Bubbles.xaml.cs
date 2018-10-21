@@ -652,6 +652,10 @@ namespace Unigram.Views
                 {
                     return "ServiceMessagePhotoTemplate";
                 }
+                else if (message.Content is MessageHeaderUnread)
+                {
+                    return "ServiceMessageUnreadTemplate";
+                }
 
                 return "ServiceMessageTemplate";
             }

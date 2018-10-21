@@ -744,6 +744,7 @@ namespace Unigram.Common
                     }
                     return true;
                 case MessageHeaderDate headerDate:
+                case MessageHeaderUnread headerUnread:
                     return true;
                 default:
                     return false;
@@ -1808,6 +1809,14 @@ namespace Telegram.Td.Api
     }
 
     public class MessageHeaderDate : MessageContent
+    {
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MessageHeaderUnread : MessageContent
     {
         public NativeObject ToUnmanaged()
         {

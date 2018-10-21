@@ -240,6 +240,19 @@
             </messages:MessageService>
         </DataTemplate>
 
+        <DataTemplate x:Key="ServiceMessageUnreadTemplate">
+            <Grid Margin="-12,4,-12,4" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                <TextBlock Text="{CustomResource UnreadMessages}" Padding="0" Margin="0,4" TextAlignment="Center" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+
+                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                          Glyph="&#xE0E5;"
+                          FontSize="12"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Center"
+                          Margin="0,2,18,0"/>
+            </Grid>
+        </DataTemplate>
+
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">

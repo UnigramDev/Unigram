@@ -626,7 +626,7 @@ namespace Unigram.ViewModels
                 //}
 
                 //var maxId = first?.Id ?? int.MaxValue;
-                var maxId = Items.FirstOrDefault().Id;
+                var maxId = Items.FirstOrDefault(x => x.Id != 0).Id;
                 var limit = 50;
 
                 //for (int i = 0; i < Items.Count; i++)
@@ -708,7 +708,7 @@ namespace Unigram.ViewModels
 
                 Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
-                var maxId = Items.LastOrDefault().Id;
+                var maxId = Items.LastOrDefault(x => x.Id != 0).Id;
                 var limit = 50;
 
                 //for (int i = 0; i < Messages.Count; i++)
@@ -782,7 +782,7 @@ namespace Unigram.ViewModels
                 fullInfo = await ProtoService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
             }
 
-            if (fullInfo != null)
+            if (fullInfo != null && fullInfo.BotInfo.Description.Length > 0)
             {
                 var result = ProtoService.Execute(new GetTextEntities(fullInfo.BotInfo.Description)) as TextEntities;
                 var entities = result?.Entities ?? new List<TextEntity>();
@@ -1035,11 +1035,15 @@ namespace Unigram.ViewModels
                     // then we want to skip it to align first unread message at top
                     if (maxId == _chat.LastReadInboxMessageId)
                     {
-                        foreach (var item in replied)
+                        for (int i = 0; i < replied.Count; i++)
                         {
-                            if (item.Id > maxId)
+                            var previous = replied[i];
+                            if (previous.Id > maxId)
                             {
-                                maxId = item.Id;
+                                replied.Insert(i, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderUnread(), null)));
+
+                                maxId = previous.Id;
+                                pixel = 28 + 48 + 4;
                                 break;
                             }
                         }
@@ -1456,7 +1460,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                if (_scrollingIndex.TryRemove(chat.Id, out long start))
+                if (_scrollingIndex.TryRemove(chat.Id, out long start) && start < chat.LastReadInboxMessageId)
                 {
                     if (_scrollingPixel.TryRemove(chat.Id, out double pixel))
                     {

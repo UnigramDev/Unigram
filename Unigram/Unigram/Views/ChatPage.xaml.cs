@@ -91,6 +91,7 @@ namespace Unigram.Views
             _typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceMessageUnreadTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
 
             _windowContext = TLWindowContext.GetForCurrentView();
