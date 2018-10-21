@@ -379,7 +379,8 @@ namespace Unigram.ViewModels
             }
 
             var formattedText = GetFormattedText(true);
-            selectedItem.Caption = formattedText;
+            selectedItem.Caption = formattedText
+                .Substring(0, CacheService.Options.MessageCaptionLengthMax);
 
             var dialog = new SendMediaView { ViewModel = this, IsTTLEnabled = chat.Type is ChatTypePrivate };
             dialog.SetItems(media);
@@ -783,7 +784,8 @@ namespace Unigram.ViewModels
 
                 if (package.Contains(StandardDataFormats.Text))
                 {
-                    media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
+                    media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0])
+                        .Substring(0, CacheService.Options.MessageCaptionLengthMax);
                 }
 
                 SendMediaExecute(media, media[0]);

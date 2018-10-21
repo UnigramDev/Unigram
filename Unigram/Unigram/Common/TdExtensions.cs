@@ -272,6 +272,58 @@ namespace Unigram.Common
                  string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
         }
 
+        public static IEnumerable<FormattedText> Split(this FormattedText text, int maxLength)
+        {
+            int count = (int)Math.Ceiling(text.Text.Length / (double)maxLength);
+            for (int a = 0; a < count; a++)
+            {
+                yield return text.Substring(a * maxLength, maxLength);
+            }
+        }
+
+        public static FormattedText Substring(this FormattedText text, int startIndex, int length)
+        {
+            if (text.Text.Length < length)
+            {
+                return text;
+            }
+
+            var message = text.Text.Substring(startIndex, Math.Min(text.Text.Length - startIndex, length));
+            var sub = new List<TextEntity>();
+
+            foreach (var entity in text.Entities)
+            {
+                // Included, Included
+                if (entity.Offset >= startIndex && entity.Offset + entity.Length <= startIndex + length)
+                {
+                    var replace = new TextEntity { Offset = entity.Offset - startIndex, Length = entity.Length };
+                    sub.Add(replace);
+                }
+                // Before, Included
+                else if (entity.Offset < startIndex && entity.Offset + entity.Length > startIndex && entity.Offset + entity.Length <= startIndex + length)
+                {
+                    var replace = new TextEntity { Offset = 0, Length = entity.Length - (startIndex - entity.Offset) };
+                    sub.Add(replace);
+                }
+                // Included, After
+                else if (entity.Offset >= startIndex && entity.Offset < startIndex + length && entity.Offset + entity.Length > startIndex + length)
+                {
+                    var difference = (entity.Offset + entity.Length) - startIndex + length;
+
+                    var replace = new TextEntity { Offset = entity.Offset - startIndex, Length = entity.Length - difference };
+                    sub.Add(replace);
+                }
+                // Before, After
+                else if (entity.Offset < startIndex && entity.Offset + entity.Length > startIndex + length)
+                {
+                    var replace = new TextEntity { Offset = 0, Length = message.Length };
+                    sub.Add(replace);
+                }
+            }
+
+            return new FormattedText(message, sub);
+        }
+
         public static string ToPlainText(this RichText text)
         {
             switch (text)

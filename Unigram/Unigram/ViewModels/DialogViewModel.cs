@@ -2139,26 +2139,18 @@ namespace Unigram.ViewModels
             {
                 var reply = GetReply(true);
 
-                if (text.Length > 0)
+                if (text.Length > CacheService.Options.MessageTextLengthMax)
                 {
-                    int count = (int)Math.Ceiling(text.Length / 4096.0);
-                    for (int a = 0; a < count; a++)
+                    foreach (var split in formattedText.Split(CacheService.Options.MessageTextLengthMax))
                     {
-                        var message = text.Substr(a * 4096, Math.Min((a + 1) * 4096, text.Length));
-                        var sub = new List<TextEntity>();
-
-                        // Todo
-                        foreach (var entity in formattedText.Entities)
-                        {
-                            if (entity.Offset >= a * 4096 || entity.Offset + entity.Length >= a * 4096)
-                            {
-                                sub.Add(entity);
-                            }
-                        }
-
-                        var input = new InputMessageText(formattedText, disablePreview, true);
+                        var input = new InputMessageText(split, disablePreview, true);
                         await SendMessageAsync(reply, input);
                     }
+                }
+                else if (text.Length > 0)
+                {
+                    var input = new InputMessageText(formattedText, disablePreview, true);
+                    await SendMessageAsync(reply, input);
                 }
                 else
                 {

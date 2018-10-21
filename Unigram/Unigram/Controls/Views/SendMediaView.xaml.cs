@@ -56,7 +56,8 @@ namespace Unigram.Controls.Views
             {
                 if (_selectedItem != null && value != null)
                 {
-                    value.Caption = CaptionInput.GetFormattedText(ViewModel.ProtoService);
+                    value.Caption = CaptionInput.GetFormattedText(ViewModel.ProtoService)
+                        .Substring(0, ViewModel.CacheService.Options.MessageCaptionLengthMax);
                 }
 
                 if (_selectedItem != value)
@@ -67,7 +68,8 @@ namespace Unigram.Controls.Views
 
                 if (_selectedItem != null)
                 {
-                    CaptionInput.SetText(_selectedItem.Caption);
+                    CaptionInput.SetText(_selectedItem.Caption
+                        .Substring(0, ViewModel.CacheService.Options.MessageCaptionLengthMax));
                 }
             }
         }
@@ -345,7 +347,8 @@ namespace Unigram.Controls.Views
                 ViewModel.Settings.IsSendGrouped = IsGrouped;
             }
 
-            SelectedItem.Caption = CaptionInput.GetFormattedText(ViewModel.ProtoService);
+            SelectedItem.Caption = CaptionInput.GetFormattedText(ViewModel.ProtoService)
+                .Substring(0, ViewModel.CacheService.Options.MessageCaptionLengthMax);
 
             Hide(ContentDialogResult.Primary);
         }
