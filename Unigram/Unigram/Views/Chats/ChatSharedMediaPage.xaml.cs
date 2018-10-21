@@ -250,8 +250,13 @@ namespace Unigram.Views.Chats
             {
                 if (args.ItemContainer.ContentTemplateRoot is SimpleHyperlinkButton content)
                 {
-                    var photo = content.Content as Image;
+                    var grid = content.Content as Grid;
+                    var photo = grid.Children[0] as Image;
                     photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, videoMessage.Video.Thumbnail.Photo, 0, 0);
+
+                    var panel = grid.Children[1] as Grid;
+                    var duration = panel.Children[1] as TextBlock;
+                    duration.Text = videoMessage.Video.GetDuration();
                 }
             }
             else if (args.ItemContainer.ContentTemplateRoot is SharedFileCell fileCell)

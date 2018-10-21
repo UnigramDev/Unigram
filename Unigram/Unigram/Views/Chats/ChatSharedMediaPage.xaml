@@ -121,13 +121,31 @@
                                 </GroupStyle.HeaderTemplate>
                             </GroupStyle>
                         </GridView.GroupStyle>
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <controls:SimpleHyperlinkButton Click="Photo_Click" ContextRequested="Message_ContextRequested" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                                    <Image Stretch="UniformToFill"/>
-                                </controls:SimpleHyperlinkButton>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
+                        <GridView.ItemTemplateSelector>
+                            <selectors:MessageContentTemplateSelector>
+                                <selectors:MessageContentTemplateSelector.PhotoTemplate>
+                                    <DataTemplate>
+                                        <controls:SimpleHyperlinkButton Click="Photo_Click" ContextRequested="Message_ContextRequested" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                            <Image Stretch="UniformToFill"/>
+                                        </controls:SimpleHyperlinkButton>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.PhotoTemplate>
+                                <selectors:MessageContentTemplateSelector.VideoTemplate>
+                                    <DataTemplate>
+                                        <controls:SimpleHyperlinkButton Click="Photo_Click" ContextRequested="Message_ContextRequested" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                            <Grid>
+                                                <Image Stretch="UniformToFill"/>
+                                                
+                                                <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" Padding="4,4,8,4">
+                                                    <FontIcon Glyph="&#xE102;" Foreground="White" HorizontalAlignment="Left" FontSize="12"/>
+                                                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                                                </Grid>
+                                            </Grid>
+                                        </controls:SimpleHyperlinkButton>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.VideoTemplate>
+                            </selectors:MessageContentTemplateSelector>
+                        </GridView.ItemTemplateSelector>
                         <GridView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top" GroupPadding="0,0,0,8"/>
