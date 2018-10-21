@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
+using Template10.Services.NavigationService;
 using Unigram.Common;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.Foundation;
@@ -24,14 +26,19 @@ namespace Unigram.Controls.Cells
     public sealed partial class SharedLinkCell : UserControl
     {
         private Message _message;
+        private IProtoService _protoService;
+        private INavigationService _navigationService;
 
         public SharedLinkCell()
         {
             InitializeComponent();
         }
 
-        public void UpdateMessage(Message message)
+        public void UpdateMessage(Message message, IProtoService protoService, INavigationService navigationService)
         {
+            _protoService = protoService;
+            _navigationService = navigationService;
+
             var text = message.Content as MessageText;
             if (text == null)
             {
@@ -227,15 +234,21 @@ namespace Unigram.Controls.Cells
             for (int i = 0; i < links.Count; i++)
             {
                 var link = links[i];
-                if (Uri.TryCreate(link, UriKind.Absolute, out Uri uri))
+                if (MessageHelper.TryCreateUri(link, out Uri uri))
                 {
                     var paragraph = new TextBlock { TextTrimming = TextTrimming.CharacterEllipsis };
-                    var hyperlink = new Hyperlink { NavigateUri = uri, UnderlineStyle = UnderlineStyle.None };
+                    var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
 
                     if (link == webPageLink && webPageCached)
                     {
                         hyperlink.Inlines.Add(new Run { Text = "\uE611", FontSize = 12, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
                         hyperlink.Inlines.Add(new Run { Text = " \u200D" });
+
+                        hyperlink.Click += (s, args) => InstantView_Click(s, link);
+                    }
+                    else
+                    {
+                        hyperlink.Click += (s, args) => Hyperlink_Click(s, uri);
                     }
 
                     hyperlink.Inlines.Add(new Run { Text = link });
@@ -247,6 +260,23 @@ namespace Unigram.Controls.Cells
 
                     Grid.SetRow(paragraph, i);
                 }
+            }
+        }
+
+        private void InstantView_Click(Hyperlink sender, string link)
+        {
+            _navigationService.Navigate(typeof(InstantPage), link);
+        }
+
+        private async void Hyperlink_Click(Hyperlink sender, Uri uri)
+        {
+            if (MessageHelper.IsTelegramUrl(uri))
+            {
+                MessageHelper.OpenTelegramUrl(_protoService, _navigationService, uri);
+            }
+            else
+            {
+                await Launcher.LaunchUriAsync(uri);
             }
         }
 

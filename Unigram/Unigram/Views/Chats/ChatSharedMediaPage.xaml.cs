@@ -265,7 +265,7 @@ namespace Unigram.Views.Chats
             }
             else if (args.ItemContainer.ContentTemplateRoot is SharedLinkCell linkCell)
             {
-                linkCell.UpdateMessage(message);
+                linkCell.UpdateMessage(message, ViewModel.ProtoService, ViewModel.NavigationService);
             }
 
             var element = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
