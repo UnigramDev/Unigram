@@ -250,6 +250,19 @@ namespace Unigram.ViewModels
 
         public DialogStickersViewModel Stickers => _stickers;
 
+        private Chat _migratedChat;
+        public Chat MigratedChat
+        {
+            get
+            {
+                return _migratedChat;
+            }
+            set
+            {
+                Set(ref _migratedChat, value);
+            }
+        }
+
         private Chat _chat;
         public Chat Chat
         {
@@ -590,6 +603,12 @@ namespace Unigram.ViewModels
         {
             using (await _loadMoreLock.WaitAsync())
             {
+                var chat = _migratedChat ?? _chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
                 if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat == null || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
@@ -622,7 +641,7 @@ namespace Unigram.ViewModels
 
                 //return;
 
-                var response = await ProtoService.SendAsync(new GetChatHistory(_chat.Id, maxId, 0, limit, false));
+                var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId, 0, limit, false));
                 if (response is Telegram.Td.Api.Messages messages)
                 {
                     if (messages.MessagesValue.Count > 0)
@@ -631,14 +650,23 @@ namespace Unigram.ViewModels
                     }
 
                     var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
-                    ProcessFiles(_chat, replied);
+                    ProcessFiles(chat, replied);
                     ProcessReplies(replied);
-
-                    //Items.InsertRange(0, replied);
 
                     foreach (var message in replied)
                     {
-                        Items.Insert(0, message);
+                        if (message.Content is MessageChatUpgradeFrom chatUpgradeFrom)
+                        {
+                            var chatUpgradeTo = await PrepareMigratedAsync(chatUpgradeFrom.BasicGroupId);
+                            if (chatUpgradeTo != null)
+                            {
+                                Items.Insert(0, chatUpgradeTo);
+                            }
+                        }
+                        else
+                        {
+                            Items.Insert(0, message);
+                        }
 
                         //var index = InsertMessageInOrder(Messages, message);
                     }
@@ -778,6 +806,41 @@ namespace Unigram.ViewModels
             {
                 Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null)));
             }
+        }
+
+        private async Task<MessageViewModel> PrepareMigratedAsync(int basicGroupId)
+        {
+            if (_migratedChat != null)
+            {
+                return null;
+            }
+
+            var chat = _chat;
+            if (chat == null)
+            {
+                return null;
+            }
+
+            var supergroup = CacheService.GetSupergroup(chat);
+            if (supergroup == null)
+            {
+                return null;
+            }
+
+            var response = await ProtoService.SendAsync(new CreateBasicGroupChat(basicGroupId, false));
+            if (response is Chat migrated)
+            {
+                var messages = await ProtoService.SendAsync(new GetChatHistory(migrated.Id, 0, 0, 1, false)) as Messages;
+                if (messages != null && messages.MessagesValue.Count > 0)
+                {
+                    MigratedChat = migrated;
+                    IsLastSliceLoaded = false;
+
+                    return _messageFactory.Create(this, messages.MessagesValue[0]);
+                }
+            }
+
+            return null;
         }
 
         private List<long> _mentions = new List<long>();
@@ -988,6 +1051,11 @@ namespace Unigram.ViewModels
                     {
                         alignment = VerticalAlignment.Bottom;
                         pixel = 8;
+                    }
+
+                    if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
+                    {
+                        replied[0] = await PrepareMigratedAsync(chatUpgradeFrom.BasicGroupId);
                     }
 
                     Items.ReplaceWith(replied);
