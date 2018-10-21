@@ -96,7 +96,7 @@ namespace Unigram.Services
             if (terms.ShowPopup)
             {
                 await Task.Delay(2000);
-                await WindowContext.Default().Dispatcher.Dispatch(async () =>
+                BeginOnUIThread(async () =>
                 {
                     var confirm = await TLMessageDialog.ShowAsync(terms.Text, Strings.Resources.PrivacyPolicyAndTerms, Strings.Resources.Agree, Strings.Resources.Cancel);
                     if (confirm != ContentDialogResult.Primary)
@@ -134,7 +134,7 @@ namespace Unigram.Services
                 return;
             }
 
-            WindowContext.Default().Dispatcher.Dispatch(async () =>
+            BeginOnUIThread(async () =>
             {
                 if (update.Type.StartsWith("AUTH_KEY_DROP_"))
                 {
@@ -253,7 +253,7 @@ namespace Unigram.Services
 
         private void Update(Chat chat, Action action)
         {
-            WindowContext.Default().Dispatcher.Dispatch(() =>
+            BeginOnUIThread(() =>
             {
                 if (_sessionService.IsActive)
                 {
@@ -795,6 +795,27 @@ namespace Unigram.Services
             }
 
             return false;
+        }
+
+        private void BeginOnUIThread(Action action, Action fallback = null)
+        {
+            var dispatcher = WindowContext.Default()?.Dispatcher;
+            if (dispatcher != null)
+            {
+                dispatcher.Dispatch(action);
+            }
+            else if (fallback != null)
+            {
+                fallback();
+            }
+            else
+            {
+                try
+                {
+                    action();
+                }
+                catch { }
+            }
         }
     }
 }

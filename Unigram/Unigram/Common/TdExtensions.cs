@@ -641,6 +641,10 @@ namespace Unigram.Common
                     return video.IsSecret;
                 case MessageVideoNote videoNote:
                     return videoNote.IsSecret;
+
+                //case MessageExpiredPhoto expiredPhoto:
+                //case MessageExpiredVideo expiredVideo:
+                //    return true;
                 default:
                     return false;
             }

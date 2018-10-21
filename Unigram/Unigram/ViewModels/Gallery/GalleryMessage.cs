@@ -96,7 +96,7 @@ namespace Unigram.ViewModels.Gallery
                 }
                 else if (_message.Content is MessageText text)
                 {
-                    return text.WebPage?.Video != null;
+                    return text.WebPage?.Video != null || text.WebPage?.Animation != null;
                 }
 
                 return false;

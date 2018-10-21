@@ -72,8 +72,8 @@
                     <Style TargetType="ListViewItem">
                         <Setter Property="Margin" Value="0"/>
                         <Setter Property="Padding" Value="0"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                         <Setter Property="Width" Value="{ThemeResource TelegramToolBarSmallHeight}"/>
                         <Setter Property="Height" Value="{ThemeResource TelegramToolBarSmallHeight}"/>
                         <Setter Property="MinWidth" Value="0"/>
@@ -82,7 +82,9 @@
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="x:String">
-                        <TextBlock Text="{x:Bind}"/>
+                        <Border Background="Transparent">
+                            <TextBlock Text="{x:Bind}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.Footer>

@@ -485,7 +485,14 @@ namespace Unigram.Controls
 
         public void SetText(FormattedText formattedText)
         {
-            SetText(formattedText.Text, formattedText.Entities);
+            if (formattedText != null)
+            {
+                SetText(formattedText.Text, formattedText.Entities);
+            }
+            else
+            {
+                Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
+            }
         }
 
         public void SetText(string text, IList<TextEntity> entities)

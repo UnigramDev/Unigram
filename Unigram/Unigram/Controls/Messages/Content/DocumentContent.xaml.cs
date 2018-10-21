@@ -7,6 +7,7 @@ using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -14,8 +15,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -179,6 +178,25 @@ namespace Unigram.Controls.Messages.Content
             else
             {
                 _message.Delegate.OpenFile(file);
+            }
+        }
+
+        private async void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            var document = GetContent(_message.Content);
+            if (document == null)
+            {
+                return;
+            }
+
+            var file = document.DocumentValue;
+            if (file.Local.IsDownloadingCompleted)
+            {
+                var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+
+                args.AllowedOperations = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
+                args.Data.SetStorageItems(new[] { item });
+                args.DragUI.SetContentFromDataPackage();
             }
         }
     }

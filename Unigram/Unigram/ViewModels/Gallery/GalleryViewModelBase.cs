@@ -203,7 +203,7 @@ namespace Unigram.ViewModels.Gallery
             NavigationService.GoBack();
 
             var message = _selectedItem as GalleryMessage;
-            if (message == null)
+            if (message == null || !message.CanView)
             {
                 return;
             }
@@ -224,7 +224,7 @@ namespace Unigram.ViewModels.Gallery
         protected async void CopyExecute()
         {
             var item = _selectedItem;
-            if (item == null)
+            if (item == null || !item.CanCopy)
             {
                 return;
             }
@@ -249,7 +249,7 @@ namespace Unigram.ViewModels.Gallery
         protected virtual async void SaveExecute()
         {
             var item = _selectedItem;
-            if (item == null)
+            if (item == null || !item.CanSave)
             {
                 return;
             }
@@ -295,7 +295,7 @@ namespace Unigram.ViewModels.Gallery
         protected virtual async void OpenWithExecute()
         {
             var item = _selectedItem;
-            if (item == null)
+            if (item == null || !CanOpenWith)
             {
                 return;
             }

@@ -240,7 +240,7 @@ namespace Unigram.Controls
 
         private void Grip_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            VisualStateManager.GoToState(Children[2] as UserControl, "Pressed", false);
+            VisualStateManager.GoToState(Children[2] as UserControl, "Normal", false);
 
             var point = e.GetCurrentPoint(Children[2]);
             if (point.Position.X < 0 || point.Position.X > 12)

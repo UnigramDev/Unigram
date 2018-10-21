@@ -93,7 +93,7 @@ namespace Unigram.Controls.Messages.Content
                 var width = (int)(small.Width * ratio);
                 var height = (int)(small.Height * ratio);
 
-                Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

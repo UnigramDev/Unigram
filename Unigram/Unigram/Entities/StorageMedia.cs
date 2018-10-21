@@ -207,6 +207,7 @@ namespace Unigram.Entities
             IsForceFile = false;
             Caption = null;
             CropRectangle = null;
+            Ttl = 0;
 
             //_thumbnail = null;
             _preview = null;

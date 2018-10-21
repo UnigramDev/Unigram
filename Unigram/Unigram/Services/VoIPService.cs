@@ -58,7 +58,7 @@ namespace Unigram.Services
             aggregator.Subscribe(this);
         }
 
-        public void Handle(UpdateCall update)
+        public async void Handle(UpdateCall update)
         {
             _call = update.Call;
 
@@ -152,7 +152,7 @@ namespace Unigram.Services
                 _call = null;
             }
 
-            BeginOnUIThread(() =>
+            await Dispatcher.DispatchAsync(() =>
             {
                 switch (update.Call.State)
                 {
@@ -304,12 +304,18 @@ namespace Unigram.Services
 
         private void ApplicationView_Consolidated(ApplicationView sender, ApplicationViewConsolidatedEventArgs args)
         {
-            _callLifetime.StopViewInUse();
-            _callLifetime.WindowWrapper.Window.Close();
-            _callLifetime = null;
+            if (_callLifetime != null)
+            {
+                _callLifetime.StopViewInUse();
+                _callLifetime.WindowWrapper.Window.Close();
+                _callLifetime = null;
+            }
 
-            _callPage.Dispose();
-            _callPage = null;
+            if (_callPage != null)
+            {
+                _callPage.Dispose();
+                _callPage = null;
+            }
 
             Aggregator.Publish(new UpdateCallDialog(_call, false));
         }

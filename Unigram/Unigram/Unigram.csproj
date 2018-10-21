@@ -748,6 +748,9 @@
     <Compile Include="Views\Settings\SettingsPasswordPage.xaml.cs">
       <DependentUpon>SettingsPasswordPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsProfilePage.xaml.cs">
+      <DependentUpon>SettingsProfilePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsProxiesPage.xaml.cs">
       <DependentUpon>SettingsProxiesPage.xaml</DependentUpon>
     </Compile>
@@ -2070,6 +2073,10 @@
     <Page Include="Views\Settings\SettingsPasswordPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\SettingsProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsProxiesPage.xaml">
       <SubType>Designer</SubType>

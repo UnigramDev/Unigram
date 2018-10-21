@@ -50,15 +50,12 @@
                         Header="{CustomResource AutoplayGifs}"
                         Style="{StaticResource CheckButtonStyle}"/>
 
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsWorkModeVisible, Mode=TwoWay}"
+                        Header="Show work mode toggle"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                    
                     <controls:StartupSwitch Margin="0,24"/>
-
-                    <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                        <TextBlock Text="Advanced" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                        <ToggleSwitch
-                            IsOn="{x:Bind ViewModel.IsWorkModeVisible, Mode=TwoWay}"
-                            Header="Show work mode toggle"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                    </StackPanel>
 
                     <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                         <TextBlock Text="Sort pinned chats" Margin="12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>

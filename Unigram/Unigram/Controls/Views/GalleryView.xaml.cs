@@ -43,7 +43,7 @@ using Unigram.ViewModels.Gallery;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class GalleryView : ContentDialogBase, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>
+    public sealed partial class GalleryView : ContentDialogBase, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
@@ -73,6 +73,9 @@ namespace Unigram.Controls.Views
                 FlyoutCopy.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.C, ScopeOwner = this });
                 FlyoutSaveAs.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.S, ScopeOwner = this });
             }
+
+            //CreateKeyboardAccelerator(Windows.System.VirtualKey.C);
+            //CreateKeyboardAccelerator(Windows.System.VirtualKey.S);
 
             Layer.Visibility = Visibility.Collapsed;
 
@@ -109,9 +112,48 @@ namespace Unigram.Controls.Views
             }
         }
 
+        private void CreateKeyboardAccelerator(Windows.System.VirtualKey key, Windows.System.VirtualKeyModifiers modifiers = Windows.System.VirtualKeyModifiers.Control)
+        {
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
+            {
+                var accelerator = new KeyboardAccelerator { Modifiers = modifiers, Key = key, ScopeOwner = this };
+                accelerator.Invoked += FlyoutAccelerator_Invoked;
+
+                KeyboardAccelerators.Add(accelerator);
+            }
+        }
+
+        private void FlyoutAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            if (sender.Key == Windows.System.VirtualKey.C && sender.Modifiers == Windows.System.VirtualKeyModifiers.Control)
+            {
+                ViewModel.CopyCommand.Execute();
+            }
+            else if (sender.Key == Windows.System.VirtualKey.S && sender.Modifiers == Windows.System.VirtualKeyModifiers.Control)
+            {
+                ViewModel.SaveCommand.Execute();
+            }
+        }
+
         public void Handle(UpdateFile update)
         {
             this.BeginOnUIThread(() => UpdateFile(update.File));
+        }
+
+        public void Handle(UpdateDeleteMessages update)
+        {
+
+        }
+
+        public void Handle(UpdateMessageContent update)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                if (ViewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
+                {
+                    OnBackRequestedOverride(this, new HandledEventArgs());
+                }
+            });
         }
 
         public void UpdateFile(File file)
@@ -895,6 +937,11 @@ namespace Unigram.Controls.Views
             Grid.SetColumn(next, 2);
 
             var index = ViewModel.SelectedIndex;
+            if (index < 0)
+            {
+                return;
+            }
+
             var set = TrySet(target, ViewModel.Items[index]);
             TrySet(previous, ViewModel.SelectedIndex > 0 ? ViewModel.Items[index - 1] : null);
             TrySet(next, ViewModel.SelectedIndex < ViewModel.Items.Count - 1 ? ViewModel.Items[index + 1] : null);

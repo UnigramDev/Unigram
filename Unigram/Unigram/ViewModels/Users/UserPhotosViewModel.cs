@@ -85,19 +85,17 @@ namespace Unigram.ViewModels.Users
                 var response = await ProtoService.SendAsync(new DeleteProfilePhoto(item.Id));
                 if (response is Ok)
                 {
-                    NavigationService.GoBack();
-
-                    //var index = Items.IndexOf(item);
-                    //if (index < Items.Count - 1)
-                    //{
-                    //    Items.Remove(item);
-                    //    SelectedItem = Items[index > 0 ? index - 1 : index];
-                    //    TotalItems--;
-                    //}
-                    //else
-                    //{
-                    //    NavigationService.GoBack();
-                    //}
+                    var index = Items.IndexOf(item);
+                    if (index < Items.Count - 1)
+                    {
+                        SelectedItem = Items[index > 0 ? index - 1 : index + 1];
+                        Items.Remove(item);
+                        TotalItems--;
+                    }
+                    else
+                    {
+                        NavigationService.GoBack();
+                    }
                 }
             }
             else if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryUserProfilePhoto profileItem)

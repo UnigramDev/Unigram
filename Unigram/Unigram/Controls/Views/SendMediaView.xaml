@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Views"
     xmlns:controls="using:Unigram.Controls"
-    xmlns:models="using:Unigram.Entities"
+    xmlns:entities="using:Unigram.Entities"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -667,10 +667,10 @@
                 Grid.RowSpan="4"
                 Grid.ColumnSpan="2">
                 <FlipView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="entities:StorageMedia">
                         <Border Tapped="Select_Tapped" Background="Transparent">
                             <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" StretchDirection="DownOnly">
-                                <Image Source="{Binding Preview}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
+                                <Image Source="{x:Bind Preview, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
                             </Viewbox>
                         </Border>
                     </DataTemplate>
@@ -723,7 +723,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:StorageMedia">
+                        <DataTemplate x:DataType="entities:StorageMedia">
                             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                 <Image Source="{x:Bind Thumbnail, Mode=OneWay}" Width="40" Height="40"/>
                                 <Border BorderBrush="#26000000" BorderThickness="1"/>

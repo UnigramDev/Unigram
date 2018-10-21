@@ -72,6 +72,8 @@ namespace Unigram.Controls
                 Visibility = Visibility.Visible;
             }
 
+            UpdateRate();
+
             PlaybackButton.Glyph = _playbackService.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
 
             var message = _playbackService.CurrentItem;
@@ -129,8 +131,8 @@ namespace Unigram.Controls
         {
             if (ApiInformation.IsMethodPresent("Windows.Media.Playback.MediaPlaybackSession", "IsSupportedPlaybackRateRange"))
             {
-                //RateButton.Visibility = _playbackService.Session.IsSupportedPlaybackRateRange(2.0, 2.0) ? Visibility.Visible : Visibility.Collapsed;
-                RateButton.Visibility = Visibility.Visible;
+                RateButton.Visibility = _playbackService.Session.IsSupportedPlaybackRateRange(2.0, 2.0) ? Visibility.Visible : Visibility.Collapsed;
+                //RateButton.Visibility = Visibility.Visible;
             }
             else
             {

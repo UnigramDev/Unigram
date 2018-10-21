@@ -225,6 +225,8 @@ namespace Unigram.Controls
                     VisualTreeHelper.DisconnectChildrenRecursive(parent);
                 }
 
+                //Grid.SetRow(DetailFrame, 1);
+
                 DetailFrame.Navigated += OnNavigated;
                 DetailPresenter.Children.Add(DetailFrame);
 
@@ -263,6 +265,15 @@ namespace Unigram.Controls
             {
                 return;
             }
+
+            //if (e.Content is Page page)
+            //{
+            //    PageHeader = GetHeader(page);
+            //}
+            //else
+            //{
+            //    PageHeader = null;
+            //}
 
             if (e.NavigationMode == NavigationMode.New && DetailFrame.CanGoBack)
             {
@@ -458,6 +469,40 @@ namespace Unigram.Controls
                 }
             }
         }
+
+        #endregion
+
+        #region Header
+
+        public static UIElement GetHeader(DependencyObject obj)
+        {
+            return (UIElement)obj.GetValue(HeaderProperty);
+        }
+
+        public static void SetHeader(DependencyObject obj, UIElement value)
+        {
+            obj.SetValue(HeaderProperty, value);
+        }
+
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.RegisterAttached("Header", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region PageHeader
+
+
+
+        public UIElement PageHeader
+        {
+            get { return (UIElement)GetValue(PageHeaderProperty); }
+            set { SetValue(PageHeaderProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for PageHeader.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty PageHeaderProperty =
+            DependencyProperty.Register("PageHeader", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
+
 
         #endregion
     }

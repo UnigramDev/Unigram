@@ -112,6 +112,12 @@
                                 <!--<Border x:Name="DropShadow" Loaded="DropShadow_Loaded"/>-->
                                 <chats:ChatBackgroundPresenter Loading="ChatBackgroundPresenter_Loading" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                                 <Grid x:Name="DetailPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}"/>
+                                <!--<Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <ContentControl Content="{TemplateBinding PageHeader}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                                </Grid>-->
                             </Grid>
                             <ContentPresenter x:Name="MasterFrame"
                                               Content="{TemplateBinding Content}"
