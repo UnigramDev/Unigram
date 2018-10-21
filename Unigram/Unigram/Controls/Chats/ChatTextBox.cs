@@ -78,16 +78,8 @@ namespace Unigram.Controls.Chats
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
 
-            ContextMenuOpening += OnContextMenuOpening;
-
-            if (ApiInfo.CanAddContextRequestedEvent)
-            {
-                AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(OnContextRequested), true);
-            }
-            else
-            {
-                ContextRequested += OnContextRequested;
-            }
+            ContextFlyout = new MenuFlyout();
+            ContextFlyout.Opening += OnContextFlyoutOpening;
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "DisabledFormattingAccelerators"))
             {
@@ -108,13 +100,29 @@ namespace Unigram.Controls.Chats
 
         #region Context menu
 
-        private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
+        private void OnContextFlyoutOpening(object sender, object e)
         {
-            e.Handled = true;
-        }
+            var flyout = ContextFlyout as MenuFlyout;
+            if (flyout == null)
+            {
+                return;
+            }
 
-        private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
-        {
+            flyout.Items.Clear();
+
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "ProofingMenuFlyout") && ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
+            {
+                var sub = new MenuFlyoutItem();
+                sub.Text = "Proofing";
+                sub.Click += (s, args) =>
+                {
+                    proofing.ShowAt(this);
+                };
+
+                flyout.Items.Add(sub);
+                flyout.Items.Add(new MenuFlyoutSeparator());
+            }
+
             var selection = Document.Selection;
             var format = Document.Selection.CharacterFormat;
 
@@ -135,7 +143,6 @@ namespace Unigram.Controls.Chats
             formatting.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(formatting.Items, length && !IsDefault(format), ContextPlain_Click, "Plain text", VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
-            var flyout = new MenuFlyout();
             CreateFlyoutItem(flyout.Items, Document.CanUndo(), ContextUndo_Click, "Undo", VirtualKey.Z);
             CreateFlyoutItem(flyout.Items, Document.CanRedo(), ContextRedo_Click, "Redo", VirtualKey.Y);
             flyout.Items.Add(new MenuFlyoutSeparator());
@@ -147,29 +154,6 @@ namespace Unigram.Controls.Chats
             flyout.Items.Add(formatting);
             flyout.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", VirtualKey.A);
-
-            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
-            {
-                if (point.X < 0 || point.Y < 0)
-                {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
-                {
-                    // We don't want to unfocus the text are when the context menu gets opened
-                    flyout.ShowAt(this, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
-                }
-                else
-                {
-                    flyout.AllowFocusOnInteraction = false;
-                    flyout.ShowAt(this, point);
-                }
-            }
-            else if (flyout.Items.Count > 0)
-            {
-                flyout.ShowAt(this);
-            }
         }
 
         private void ContextBold_Click()
