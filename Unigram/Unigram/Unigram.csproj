@@ -561,6 +561,7 @@
     <Compile Include="ViewModels\Settings\SettingsWallPaperViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
+    <Compile Include="ViewModels\SignIn\SignInRecoveryViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
@@ -757,6 +758,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsWebSessionsPage.xaml.cs">
       <DependentUpon>SettingsWebSessionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SignIn\SignInRecoveryPage.xaml.cs">
+      <DependentUpon>SignInRecoveryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
@@ -2089,6 +2093,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SignIn\SignInPasswordPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SignIn\SignInRecoveryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

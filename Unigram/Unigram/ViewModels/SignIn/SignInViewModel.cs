@@ -189,15 +189,21 @@ namespace Unigram.ViewModels.SignIn
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
                     //needShowInvalidAlert(req.phone_number, false);
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
+                }
+                else if (error.TypeEquals(ErrorType.PHONE_PASSWORD_FLOOD))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Resources.PhoneNumberFlood, Strings.Resources.AppName, Strings.Resources.OK);
                 }
-                //else if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_BANNED))
-                //{
-                //    needShowInvalidAlert(req.phone_number, true);
-                //}
+                else if (error.TypeEquals(ErrorType.PHONE_NUMBER_BANNED))
+                {
+                    //needShowInvalidAlert(req.phone_number, true);
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.BannedPhoneNumber, Strings.Resources.OK);
+                }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);

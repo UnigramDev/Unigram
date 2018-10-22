@@ -54,7 +54,7 @@ namespace Unigram.Common
                         await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
-                    Navigate(typeof(SignInPasswordPage));
+                    Navigate(string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern) ? typeof(SignInPasswordPage) : typeof(SignInRecoveryPage));
                     break;
             }
         }

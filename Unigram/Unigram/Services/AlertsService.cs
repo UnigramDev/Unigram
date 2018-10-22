@@ -344,10 +344,10 @@ namespace Unigram.Services
             //toast.show();
             //return toast;
 
-            ShowSimpleAlert(fragment, text);
+            ShowSimpleAlert(text);
         }
 
-        public static async void ShowSimpleAlert(IDispatcherWrapper fragment, String text)
+        public static async void ShowSimpleAlert(String text)
         {
             if (text == null)
             {
@@ -368,14 +368,14 @@ namespace Unigram.Services
             return string.Format(Strings.Resources.FloodWaitTime, Locale.FormatCallDuration(time));
         }
 
-        public static void ShowFloodWaitAlert(IDispatcherWrapper fragment, String error)
+        public static void ShowFloodWaitAlert(String error)
         {
             if (error == null || !error.StartsWith("FLOOD_WAIT"))
             {
                 return;
             }
 
-            ShowSimpleAlert(fragment, GetFloodWaitString(error));
+            ShowSimpleAlert(GetFloodWaitString(error));
         }
 
         public static async void ShowAddUserAlert(IDispatcherWrapper fragment, string error, bool channel)

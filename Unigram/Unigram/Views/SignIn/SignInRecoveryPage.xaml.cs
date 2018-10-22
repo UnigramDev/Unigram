@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Views;
+using Unigram.Common;
 using Unigram.ViewModels.SignIn;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -14,19 +14,17 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Unigram.Common;
-using Telegram.Td.Api;
 
 namespace Unigram.Views.SignIn
 {
-    public sealed partial class SignInPasswordPage : Page
+    public sealed partial class SignInRecoveryPage : Page
     {
-        public SignInPasswordViewModel ViewModel => DataContext as SignInPasswordViewModel;
+        public SignInRecoveryViewModel ViewModel => DataContext as SignInRecoveryViewModel;
 
-        public SignInPasswordPage()
+        public SignInRecoveryPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SignInPasswordViewModel>();
+            DataContext = TLContainer.Current.Resolve<SignInRecoveryViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
@@ -35,7 +33,7 @@ namespace Unigram.Views.SignIn
         {
             switch (e.PropertyName)
             {
-                case "PASSWORD_INVALID":
+                case "RECOVERY_CODE_INVALID":
                     VisualUtilities.ShakeView(PrimaryInput);
                     break;
             }
@@ -54,5 +52,14 @@ namespace Unigram.Views.SignIn
                 e.Handled = true;
             }
         }
+
+        #region Binding
+
+        private string ConvertTrouble(string pattern)
+        {
+            return string.Format("");
+        }
+
+        #endregion
     }
 }

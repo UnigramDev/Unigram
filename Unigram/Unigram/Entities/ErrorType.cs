@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Unigram.Entities
+namespace Telegram.Td.Api
 {
     public enum ErrorType
     {
@@ -19,6 +19,8 @@ namespace Unigram.Entities
         PHONE_NUMBER_OCCUPIED,
         PHONE_NUMBER_UNOCCUPIED,
         PHONE_NUMBER_FLOOD,
+        PHONE_NUMBER_BANNED,
+        PHONE_PASSWORD_FLOOD,
         FLOOD_WAIT,
         PEER_FLOOD,
         FIRSTNAME_INVALID,

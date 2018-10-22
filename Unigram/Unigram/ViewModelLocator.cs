@@ -164,6 +164,7 @@ namespace Unigram
                 builder.RegisterType<SignUpViewModel>();
                 builder.RegisterType<SignInSentCodeViewModel>();
                 builder.RegisterType<SignInPasswordViewModel>();
+                builder.RegisterType<SignInRecoveryViewModel>();
                 builder.RegisterType<MainViewModel>().SingleInstance();
                 builder.RegisterType<PlaybackViewModel>().SingleInstance();
                 builder.RegisterType<ShareViewModel>().SingleInstance();

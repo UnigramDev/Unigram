@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,21 +8,16 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Entities;
 using Unigram.Services;
-using Unigram.Views;
-using Unigram.Views.SignIn;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.SignIn
 {
-    public class SignInPasswordViewModel : TLViewModelBase
+    public class SignInRecoveryViewModel : TLViewModelBase
     {
         private AuthorizationStateWaitPassword _parameters;
 
-        public SignInPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public SignInRecoveryViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -36,35 +31,35 @@ namespace Unigram.ViewModels.SignIn
             if (authState is AuthorizationStateWaitPassword waitPassword)
             {
                 _parameters = waitPassword;
-                PasswordHint = waitPassword.PasswordHint;
+                RecoveryEmailAddressPattern = waitPassword.RecoveryEmailAddressPattern;
             }
 
             return Task.CompletedTask;
         }
 
-        private string _passwordHint;
-        public string PasswordHint
+        private string _recoveryEmailAddressPattern;
+        public string RecoveryEmailAddressPattern
         {
             get
             {
-                return _passwordHint;
+                return _recoveryEmailAddressPattern;
             }
             set
             {
-                Set(ref _passwordHint, value);
+                Set(ref _recoveryEmailAddressPattern, value);
             }
         }
 
-        private string _password;
-        public string Password
+        private string _recoveryCode;
+        public string RecoveryCode
         {
             get
             {
-                return _password;
+                return _recoveryCode;
             }
             set
             {
-                Set(ref _password, value);
+                Set(ref _recoveryCode, value);
             }
         }
 
@@ -84,23 +79,24 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (string.IsNullOrEmpty(_password))
+            if (string.IsNullOrEmpty(_recoveryCode))
             {
-                RaisePropertyChanged("PASSWORD_INVALID");
+                RaisePropertyChanged("RECOVERY_CODE_INVALID");
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CheckAuthenticationPassword(_password));
+            var response = await ProtoService.SendAsync(new RecoverAuthenticationPassword(_recoveryCode));
             if (response is Error error)
             {
-                if (error.TypeEquals(ErrorType.PASSWORD_HASH_INVALID))
+                if (error.TypeEquals(ErrorType.CODE_INVALID))
                 {
-                    Password = string.Empty;
-                    RaisePropertyChanged("PASSWORD_INVALID");
+                    RecoveryCode = string.Empty;
+                    RaisePropertyChanged("RECOVERY_CODE_INVALID");
                 }
                 else if (error.CodeEquals(ErrorCode.FLOOD))
                 {
                     AlertsService.ShowFloodWaitAlert(error.Message);
+                    //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
                 }
 
                 Logs.Log.Write("account.checkPassword error " + error);

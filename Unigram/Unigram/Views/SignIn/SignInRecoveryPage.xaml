@@ -1,5 +1,5 @@
-<Page
-    x:Class="Unigram.Views.SignIn.SignInPasswordPage"
+﻿<Page
+    x:Class="Unigram.Views.SignIn.SignInRecoveryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Loaded="OnLoaded"
     mc:Ignorable="d">
-    
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -37,15 +37,15 @@
                 Text="{CustomResource LoginPassword}"
                 Style="{StaticResource TitleTextBlockStyle}"/>
             <TextBlock
-                Text="{CustomResource LoginPasswordText}"
+                Text="{CustomResource RestoreEmailSentInfo}"
                 Style="{StaticResource BodyTextBlockStyle}"
                 Padding="0,8,0,16"
                 Grid.Row="1"/>
 
             <PasswordBox x:Name="PrimaryInput"
-                         Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Password="{x:Bind ViewModel.RecoveryCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,12,0,4"
-                         PlaceholderText="{x:Bind ViewModel.PasswordHint}"
+                         PlaceholderText="{CustomResource PasswordCode}"
                          KeyDown="PasswordBox_KeyDown"
                          Grid.Row="3"/>
 
@@ -62,7 +62,7 @@
                     Visibility="Collapsed"/>
 
             <HyperlinkButton Command="{x:Bind ViewModel.ForgotCommand}"
-                             Content="{CustomResource ForgotPassword}"
+                             Content="{x:Bind ViewModel.RecoveryEmailAddressPattern, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=RestoreEmailTrouble}"
                              Grid.Row="6"/>
 
             <StackPanel Visibility="{x:Bind (Visibility)ViewModel.IsResettable, Mode=OneWay}" Margin="0,24,0,0" Grid.Row="7">
