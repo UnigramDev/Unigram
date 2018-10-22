@@ -237,7 +237,7 @@ namespace Unigram.Views
                     var options = new Windows.System.LauncherOptions();
                     options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
 
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri("tg://toast?from_id=" + privata.UserId), options);
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-contact-profile://meh?ContactRemoteIds=u" + privata.UserId), options);
                 }
             });
         }

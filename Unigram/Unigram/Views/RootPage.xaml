@@ -72,138 +72,134 @@
 
     <controls:NavigationView x:Name="Navigation">
         <controls:NavigationView.PaneHeader>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Button Click="Expand_Click" RequestedTheme="Dark" Style="{StaticResource EmptyButtonStyle}">
-                    <Grid Padding="12,8">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="NameLabel"
-                                    TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
-                        <TextBlock x:Name="PhoneLabel"
-                                    VerticalAlignment="Top"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Grid.Row="1"
-                                    MaxLines="1"/>
-                        <CheckBox x:Name="Expanded" MinWidth="0" IsEnabled="False" Style="{StaticResource NavigationViewExpanderStyle}" Grid.Column="1" Grid.RowSpan="2"/>
-                    </Grid>
-                </Button>
-                <ListView x:Name="NavigationViewList"
-                          ItemClick="OnItemClick"
-                          IsItemClickEnabled="True"
-                          SelectionMode="None"
-                          ContainerContentChanging="OnContainerContentChanging"
-                          Grid.Row="1">
-                    <ListView.ItemsSource>
-                        <local:AnyCollection x:Name="NavigationViewItems">
-                            <controls:NavigationViewItemSeparator Height="0"/>
-                            <controls:NavigationViewItem
-                                x:Name="NavigationNewChat"
-                                Text="{CustomResource NewGroup}"
-                                Glyph="&#xE125;" />
-                            <controls:NavigationViewItem
-                                x:Name="NavigationNewSecretChat"
-                                Text="{CustomResource NewSecretChat}"
-                                Glyph="&#xE1F6;" />
-                            <controls:NavigationViewItem
-                                x:Name="NavigationNewChannel"
-                                Text="{CustomResource NewChannel}"
-                                Glyph="&#xE789;" />
-                            <controls:NavigationViewItemSeparator/>
-                            <controls:NavigationViewItem
-                                x:Name="NavigationChats"
-                                Text="Chats"
-                                IsChecked="True"
-                                Glyph="&#xE8BD;" />
-                            <controls:NavigationViewItem
-                                x:Name="NavigationContacts"
-                                Text="{CustomResource Contacts}"
-                                Glyph="&#xE8D4;" />
-                            <controls:NavigationViewItem
-                                x:Name="NavigationCalls"
-                                Text="{CustomResource Calls}"
-                                Glyph="&#xE717;" />
-                            <!--<controls:NavigationViewItem
-                                 x:Name="NavigationInviteFriends"
-                                 Text="{CustomResource InviteFriends}"
-                                 Glyph="&#xE789;" />-->
-                            <controls:NavigationViewItem
-                                x:Name="NavigationSettings"
-                                Text="{CustomResource Settings}"
-                                Glyph="&#xE115;" />
-                            <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
-                            <controls:NavigationViewItemSeparator/>
-                            <controls:NavigationViewItem
-                                x:Name="NavigationSavedMessages"
-                                Text="{CustomResource SavedMessages}"
-                                Glyph="&#xE907;"
-                                FontFamily="{StaticResource TelegramThemeFontFamily}" />
-                            <controls:NavigationViewItem
-                                x:Name="NavigationNews"
-                                Text="News"
-                                Glyph="&#xE789;" />
-                            <controls:NavigationViewItemSeparator/>
-                        </local:AnyCollection>
-                    </ListView.ItemsSource>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="Padding" Value="0"/>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplateSelector>
-                        <local:NavigationViewTemplateSelector>
-                            <local:NavigationViewTemplateSelector.SessionTemplate>
-                                <DataTemplate x:DataType="services:ISessionService">
-                                    <Grid Margin="0,6">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <controls:ProfilePicture IsEnabled="False" Width="28" Height="28" Margin="10,0,10,0"/>
-                                        <Rectangle Width="6"
-                                                   Height="24"
-                                                   HorizontalAlignment="Left"
-                                                   VerticalAlignment="Center"
-                                                   Visibility="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                   Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" />
-
-                                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Grid.Column="1"/>
-
-                                        <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
-                                                Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
-                                                MinWidth="20"
-                                                Height="20"
-                                                CornerRadius="10"
-                                                VerticalAlignment="Center"
-                                                Margin="8,0,12,0"
-                                                Grid.Column="2">
-                                            <TextBlock Text="{x:Bind UnreadCount, Mode=OneWay}"
-                                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                                       Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
-                                                       TextAlignment="Center"
-                                                       Margin="4,2,4,0"/>
-                                        </Border>
-                                    </Grid>
-                                </DataTemplate>
-                            </local:NavigationViewTemplateSelector.SessionTemplate>
-                        </local:NavigationViewTemplateSelector>
-                    </ListView.ItemTemplateSelector>
-                </ListView>
-            </Grid>
+            <Button Click="Expand_Click" RequestedTheme="Dark" Style="{StaticResource EmptyButtonStyle}">
+                <Grid Padding="12,8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="NameLabel"
+                                TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
+                    <TextBlock x:Name="PhoneLabel"
+                                VerticalAlignment="Top"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap"
+                                Grid.Row="1"
+                                MaxLines="1"/>
+                    <CheckBox x:Name="Expanded" MinWidth="0" IsEnabled="False" Style="{StaticResource NavigationViewExpanderStyle}" Grid.Column="1" Grid.RowSpan="2"/>
+                </Grid>
+            </Button>
         </controls:NavigationView.PaneHeader>
+        <controls:NavigationView.PaneFooter>
+            <ListView x:Name="NavigationViewList"
+                        ItemClick="OnItemClick"
+                        IsItemClickEnabled="True"
+                        SelectionMode="None"
+                        ContainerContentChanging="OnContainerContentChanging"
+                        Grid.Row="1">
+                <ListView.ItemsSource>
+                    <local:AnyCollection x:Name="NavigationViewItems">
+                        <controls:NavigationViewItemSeparator Height="0"/>
+                        <controls:NavigationViewItem
+                            x:Name="NavigationNewChat"
+                            Text="{CustomResource NewGroup}"
+                            Glyph="&#xE125;" />
+                        <controls:NavigationViewItem
+                            x:Name="NavigationNewSecretChat"
+                            Text="{CustomResource NewSecretChat}"
+                            Glyph="&#xE1F6;" />
+                        <controls:NavigationViewItem
+                            x:Name="NavigationNewChannel"
+                            Text="{CustomResource NewChannel}"
+                            Glyph="&#xE789;" />
+                        <controls:NavigationViewItemSeparator/>
+                        <controls:NavigationViewItem
+                            x:Name="NavigationChats"
+                            Text="Chats"
+                            IsChecked="True"
+                            Glyph="&#xE8BD;" />
+                        <controls:NavigationViewItem
+                            x:Name="NavigationContacts"
+                            Text="{CustomResource Contacts}"
+                            Glyph="&#xE8D4;" />
+                        <controls:NavigationViewItem
+                            x:Name="NavigationCalls"
+                            Text="{CustomResource Calls}"
+                            Glyph="&#xE717;" />
+                        <!--<controls:NavigationViewItem
+                                x:Name="NavigationInviteFriends"
+                                Text="{CustomResource InviteFriends}"
+                                Glyph="&#xE789;" />-->
+                        <controls:NavigationViewItem
+                            x:Name="NavigationSettings"
+                            Text="{CustomResource Settings}"
+                            Glyph="&#xE115;" />
+                        <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
+                        <controls:NavigationViewItemSeparator/>
+                        <controls:NavigationViewItem
+                            x:Name="NavigationSavedMessages"
+                            Text="{CustomResource SavedMessages}"
+                            Glyph="&#xE907;"
+                            FontFamily="{StaticResource TelegramThemeFontFamily}" />
+                        <controls:NavigationViewItem
+                            x:Name="NavigationNews"
+                            Text="News"
+                            Glyph="&#xE789;" />
+                        <controls:NavigationViewItemSeparator/>
+                    </local:AnyCollection>
+                </ListView.ItemsSource>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Padding" Value="0"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplateSelector>
+                    <local:NavigationViewTemplateSelector>
+                        <local:NavigationViewTemplateSelector.SessionTemplate>
+                            <DataTemplate x:DataType="services:ISessionService">
+                                <Grid Margin="0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <controls:ProfilePicture IsEnabled="False" Width="28" Height="28" Margin="10,0,10,0"/>
+                                    <Rectangle Width="6"
+                                                Height="24"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Visibility="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" />
+
+                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Grid.Column="1"/>
+
+                                    <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                                            Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                                            MinWidth="20"
+                                            Height="20"
+                                            CornerRadius="10"
+                                            VerticalAlignment="Center"
+                                            Margin="8,0,12,0"
+                                            Grid.Column="2">
+                                        <TextBlock Text="{x:Bind UnreadCount, Mode=OneWay}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                    TextAlignment="Center"
+                                                    Margin="4,2,4,0"/>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </local:NavigationViewTemplateSelector.SessionTemplate>
+                    </local:NavigationViewTemplateSelector>
+                </ListView.ItemTemplateSelector>
+            </ListView>
+        </controls:NavigationView.PaneFooter>
     </controls:NavigationView>
 </Page>

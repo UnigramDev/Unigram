@@ -18,7 +18,7 @@ using Unigram.Common;
 
 namespace Unigram.Controls.Chats
 {
-    public class ChatActionIndicator : Control
+    public class ChatActionIndicator : FrameworkElement
     {
         private const float PI = 3.1415926535897931f;
 
@@ -40,7 +40,7 @@ namespace Unigram.Controls.Chats
 
             var width = 18f;
             var height = 8f;
-            var color = ((SolidColorBrush)Foreground).Color;
+            var color = Fill;
 
             var visual = GetVisual(action, Window.Current.Compositor, width, height, color);
             //if (visual != null)
@@ -52,6 +52,19 @@ namespace Unigram.Controls.Chats
                 InvalidateMeasure();
             }
         }
+
+        #region Fill
+
+        public Color Fill
+        {
+            get { return (Color)GetValue(FillProperty); }
+            set { SetValue(FillProperty, value); }
+        }
+
+        public static readonly DependencyProperty FillProperty =
+            DependencyProperty.Register("Fill", typeof(Color), typeof(ChatActionIndicator), new PropertyMetadata(null));
+
+        #endregion
 
         private Visual GetVisual(ChatAction action, Compositor compositor, float width, float height, Color color)
         {

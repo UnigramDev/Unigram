@@ -241,7 +241,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageUnreadTemplate">
-            <Grid Margin="-12,4,-12,4" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+            <Grid Margin="-12,4,-12,4" Background="{ThemeResource MessageBackgroundBrush}">
                 <TextBlock Text="{CustomResource UnreadMessages}" Padding="0" Margin="0,4" TextAlignment="Center" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
 
                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -417,7 +417,7 @@
                                                    TextTrimming="CharacterEllipsis"/>
                                         <StackPanel x:Name="ChatActionPanel" Orientation="Horizontal" Visibility="Collapsed">
                                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
-                                                                       Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                                                       Fill="{ThemeResource SystemAccentColor}"
                                                                        VerticalAlignment="Bottom"
                                                                        Margin="0,0,0,-2"/>
                                             <TextBlock x:Name="ChatActionLabel"

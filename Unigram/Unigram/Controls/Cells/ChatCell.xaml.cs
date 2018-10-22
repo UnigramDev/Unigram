@@ -569,7 +569,7 @@ namespace Unigram.Controls.Cells
         {
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                return supergroup.IsChannel ? "\uE789" : "\uE125";
+                return supergroup.IsChannel ? "\uE789" : "\uE902"; //"\uE125";
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {

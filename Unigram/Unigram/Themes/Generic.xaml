@@ -37,11 +37,11 @@
                                     </Grid.RowDefinitions>
                                     <Grid.Children>
                                         <Grid x:Name="ContentPaneTopPadding" Padding="{TemplateBinding Padding}"/>
-                                        <Border Background="{ThemeResource NavigationViewAccentPaneBackground}" Margin="0,0,0,-52" Grid.RowSpan="3"/>
-                                        <Border Background="{ThemeResource NavigationViewChromePaneBackground}" Margin="0,52,0,0" Grid.Row="3" Grid.RowSpan="3"/>
-                                        <Border x:Name="HeaderContentBorder" Grid.Row="3" Child="{TemplateBinding PaneHeader}"/>
+                                        <Border Background="{ThemeResource NavigationViewAccentPaneBackground}" Grid.RowSpan="3"/>
+                                        <Border Background="{ThemeResource NavigationViewChromePaneBackground}" Grid.Row="3" Grid.RowSpan="3"/>
+                                        <Border x:Name="HeaderContentBorder" Grid.Row="2" Child="{TemplateBinding PaneHeader}"/>
 
-                                        <Border x:Name="FooterContentBorder" Grid.Row="4" Child="{TemplateBinding PaneFooter}"/>
+                                        <Border x:Name="FooterContentBorder" Grid.Row="3" Child="{TemplateBinding PaneFooter}"/>
                                         <!--<local:NavigationViewItem x:Name="SettingsNavPaneItem" Glyph="&#xE115;" Grid.Row="5" />-->
                                     </Grid.Children>
                                 </Grid>
@@ -928,37 +928,6 @@
                         <FontIcon x:Name="Star3" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
                         <FontIcon x:Name="Star4" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
                     </StackPanel>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="local:SwipeListViewItem">
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
-        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-        <Setter Property="TabNavigation" Value="Local"/>
-        <Setter Property="IsHoldingEnabled" Value="False"/>
-        <Setter Property="Margin" Value="0"/>
-        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-        <Setter Property="VerticalContentAlignment" Value="Top"/>
-        <Setter Property="RightBackground" Value="#ff3b30"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="local:SwipeListViewItem">
-                    <Grid>
-                        <Border x:Name="RightContainer" HorizontalAlignment="Right">
-                            <ContentControl Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding RightContentTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" RenderTransformOrigin="0.5,0.5">
-                                <ContentControl.RenderTransform>
-                                    <TranslateTransform x:Name="RightTransform"/>
-                                </ContentControl.RenderTransform>
-                            </ContentControl>
-                        </Border>
-                        <ContentPresenter x:Name="DragContainer" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Background="Transparent" ManipulationMode="System,TranslateX">
-                            <ContentPresenter.RenderTransform>
-                                <TranslateTransform x:Name="ContentDragTransform"/>
-                            </ContentPresenter.RenderTransform>
-                        </ContentPresenter>
-                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
