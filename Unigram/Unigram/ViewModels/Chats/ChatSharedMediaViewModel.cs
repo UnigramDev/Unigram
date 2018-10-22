@@ -467,6 +467,10 @@ namespace Unigram.ViewModels.Chats
         {
         }
 
+        public void ReplyToMessage(MessageViewModel message)
+        {
+        }
+
         public void OpenReply(MessageViewModel message)
         {
         }

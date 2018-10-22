@@ -67,6 +67,18 @@ namespace Unigram.Common
             return success;
         }
 
+        public static void Put<T>(this IList<T> source, bool begin, T item)
+        {
+            if (begin)
+            {
+                source.Insert(0, item);
+            }
+            else
+            {
+                source.Add(item);
+            }
+        }
+
         public static string Enqueue(this StorageItemAccessList list, IStorageItem item)
         {
             try

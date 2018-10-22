@@ -194,8 +194,6 @@
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
-    <Compile Include="Controls\ItemSwipeEventArgs.cs" />
-    <Compile Include="Controls\ItemSwipeEventHandler.cs" />
     <Compile Include="Controls\LazoListView.cs" />
     <Compile Include="Controls\LazoListViewItem.cs" />
     <Compile Include="Controls\MasterDetailPanel.cs" />
@@ -300,10 +298,6 @@
     <Compile Include="Controls\StartupSwitch.xaml.cs">
       <DependentUpon>StartupSwitch.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SwipeListBehavior.cs" />
-    <Compile Include="Controls\SwipeListDirection.cs" />
-    <Compile Include="Controls\SwipeListViewItem.cs" />
-    <Compile Include="Controls\TitleBarPlaceholder.cs" />
     <Compile Include="Controls\TLContentDialog.cs" />
     <Compile Include="Controls\VideoTimelineControl.xaml.cs">
       <DependentUpon>VideoTimelineControl.xaml</DependentUpon>
@@ -489,6 +483,7 @@
     <Compile Include="ViewModels\ChatsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatCreateStep2ViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatGalleryViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
@@ -499,7 +494,6 @@
     <Compile Include="ViewModels\Delegates\IGalleryDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ILiveLocationDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISettingsDelegate.cs" />
-    <Compile Include="ViewModels\Dialogs\DialogGalleryViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogShareLocationViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Delegate.cs" />
@@ -1524,7 +1518,6 @@
     <Content Include="Assets\Mockup\a8.png" />
     <Content Include="Assets\Mockup\a9.png" />
     <Content Include="Assets\Mockup\hot.png" />
-    <Content Include="Assets\Noise.jpg" />
     <Content Include="Assets\Sounds\Default.wav" />
     <Content Include="Assets\Sounds\Sound1.wav" />
     <Content Include="Assets\Sounds\Sound2.wav" />

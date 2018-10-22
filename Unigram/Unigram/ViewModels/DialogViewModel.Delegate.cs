@@ -435,7 +435,7 @@ namespace Unigram.ViewModels
                 GalleryViewModelBase viewModel;
                 if ((message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
                 {
-                    viewModel = new DialogGalleryViewModel(ProtoService, Aggregator, message.ChatId, message.Get());
+                    viewModel = new ChatGalleryViewModel(ProtoService, Aggregator, message.ChatId, message.Get());
                 }
                 else if (webPage != null && webPage.IsInstantGallery())
                 {

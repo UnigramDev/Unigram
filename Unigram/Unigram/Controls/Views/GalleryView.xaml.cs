@@ -923,7 +923,8 @@ namespace Unigram.Controls.Views
 
         private void PrepareNext(int direction)
         {
-            if (ViewModel == null)
+            var viewModel = ViewModel;
+            if (viewModel == null)
             {
                 return;
             }
@@ -954,20 +955,20 @@ namespace Unigram.Controls.Views
             Grid.SetColumn(previous, 0);
             Grid.SetColumn(next, 2);
 
-            var index = ViewModel.SelectedIndex;
+            var index = viewModel.SelectedIndex;
             if (index < 0)
             {
                 return;
             }
 
-            var set = TrySet(target, ViewModel.Items[index]);
-            TrySet(previous, ViewModel.SelectedIndex > 0 ? ViewModel.Items[index - 1] : null);
-            TrySet(next, ViewModel.SelectedIndex < ViewModel.Items.Count - 1 ? ViewModel.Items[index + 1] : null);
+            var set = TrySet(target, viewModel.Items[index]);
+            TrySet(previous, viewModel.SelectedIndex > 0 ? viewModel.Items[index - 1] : null);
+            TrySet(next, viewModel.SelectedIndex < viewModel.Items.Count - 1 ? viewModel.Items[index + 1] : null);
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
-                Transport.PreviousVisibility = ViewModel.SelectedIndex > 0 ? Visibility.Visible : Visibility.Collapsed;
-                Transport.NextVisibility = ViewModel.SelectedIndex < ViewModel.Items.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
+                Transport.PreviousVisibility = viewModel.SelectedIndex > 0 ? Visibility.Visible : Visibility.Collapsed;
+                Transport.NextVisibility = viewModel.SelectedIndex < viewModel.Items.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
             }
             else
             {
@@ -978,7 +979,7 @@ namespace Unigram.Controls.Views
             if (set)
             {
                 Dispose();
-                ViewModel.OpenMessage(ViewModel.Items[index]);
+                viewModel.OpenMessage(viewModel.Items[index]);
             }
 
             //_selecting = false;

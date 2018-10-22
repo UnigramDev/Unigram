@@ -109,7 +109,7 @@ namespace Unigram.Views.Chats
             var element = sender as FrameworkElement;
             var message = element.Tag as Message;
 
-            var viewModel = new DialogGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, message.ChatId, message);
+            var viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, message.ChatId, message, true);
             await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => element);
         }
 
@@ -304,7 +304,8 @@ namespace Unigram.Views.Chats
                         var thumb = video.Video.Thumbnail;
                         if (thumb != null && thumb.Photo.Id == file.Id && file.Local.IsDownloadingCompleted)
                         {
-                            var thumbnail = content.Content as Image;
+                            var grid = content.Content as Grid;
+                            var thumbnail = grid.Children[0] as Image;
                             thumbnail.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, thumb.Photo, 0, 0);
                         }
                     }

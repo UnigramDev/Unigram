@@ -5,19 +5,23 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Gallery;
 
-namespace Unigram.ViewModels.Dialogs
+namespace Unigram.ViewModels.Chats
 {
-    public class DialogGalleryViewModel : GalleryViewModelBase
+    public class ChatGalleryViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly long _chatId;
 
+        private readonly bool _isMirrored;
+
         private readonly MvxObservableCollection<GalleryContent> _group;
         private long _current;
 
-        public DialogGalleryViewModel(IProtoService protoService, IEventAggregator aggregator, long chatId, Message selected)
+        public ChatGalleryViewModel(IProtoService protoService, IEventAggregator aggregator, long chatId, Message selected, bool mirrored = false)
             : base(protoService, aggregator)
         {
+            _isMirrored = mirrored;
+
             _group = new MvxObservableCollection<GalleryContent>();
             _chatId = chatId;
 
@@ -49,15 +53,15 @@ namespace Unigram.ViewModels.Dialogs
                 var offset = -limit / 2;
 
                 var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterPhotoAndVideo()));
-                if (response is Telegram.Td.Api.Messages messages)
+                if (response is Messages messages)
                 {
                     TotalItems = messages.TotalCount;
 
-                    foreach (var message in messages.MessagesValue.Where(x => x.Id < fromMessageId))
+                    foreach (var message in messages.MessagesValue.Where(x => x.Id < fromMessageId).OrderByDescending(x => x.Id))
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
-                            Items.Insert(0, new GalleryMessage(ProtoService, message));
+                            Items.Put(!_isMirrored, new GalleryMessage(ProtoService, message));
                         }
                         else
                         {
@@ -69,7 +73,7 @@ namespace Unigram.ViewModels.Dialogs
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
-                            Items.Add(new GalleryMessage(ProtoService, message));
+                            Items.Put(_isMirrored, new GalleryMessage(ProtoService, message));
                         }
                         else
                         {
@@ -98,11 +102,11 @@ namespace Unigram.ViewModels.Dialogs
                 var offset = -limit / 2;
 
                 var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterPhotoAndVideo()));
-                if (response is Telegram.Td.Api.Messages messages)
+                if (response is Messages messages)
                 {
                     TotalItems = messages.TotalCount;
 
-                    foreach (var message in messages.MessagesValue.Where(x => x.Id < fromMessageId))
+                    foreach (var message in _isMirrored ? messages.MessagesValue.Where(x => x.Id > fromMessageId).OrderBy(x => x.Id) : messages.MessagesValue.Where(x => x.Id < fromMessageId).OrderByDescending(x => x.Id))
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
@@ -117,39 +121,6 @@ namespace Unigram.ViewModels.Dialogs
                     OnSelectedItemChanged(_selectedItem);
                 }
             }
-
-            //var offset = item.Message.Id;
-
-            //var limit = 20;
-            //var req = new TLMessagesSearch
-            //{
-            //    Peer = _peer,
-            //    Filter = new TLInputMessagesFilterPhotoVideo(),
-            //    OffsetId = offset,
-            //    AddOffset = 0,
-            //    Limit = limit,
-            //};
-
-            ////var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
-            //var response = await LegacyService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
-            //if (response.IsSucceeded && response.Result is ITLMessages result)
-            //{
-            //    CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
-
-            //    foreach (var photo in result.Messages.Where(x => x.Id < offset))
-            //    {
-            //        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo()))
-            //        {
-            //            Items.Insert(0, new GalleryMessageItem(message));
-            //        }
-            //        else
-            //        {
-            //            TotalItems--;
-            //        }
-            //    }
-
-            //    OnSelectedItemChanged(_selectedItem);
-            //}
         }
 
         protected override async void LoadNext()
@@ -168,11 +139,11 @@ namespace Unigram.ViewModels.Dialogs
                 var offset = -limit / 2;
 
                 var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterPhotoAndVideo()));
-                if (response is Telegram.Td.Api.Messages messages)
+                if (response is Messages messages)
                 {
                     TotalItems = messages.TotalCount;
 
-                    foreach (var message in messages.MessagesValue.Where(x => x.Id > fromMessageId).OrderBy(x => x.Id))
+                    foreach (var message in _isMirrored ? messages.MessagesValue.Where(x => x.Id < fromMessageId).OrderByDescending(x => x.Id) : messages.MessagesValue.Where(x => x.Id > fromMessageId).OrderBy(x => x.Id))
                     {
                         if (message.Content is MessagePhoto || message.Content is MessageVideo)
                         {
@@ -189,7 +160,7 @@ namespace Unigram.ViewModels.Dialogs
             }
         }
 
-        public override int Position => TotalItems - (Items.Count - base.Position);
+        public override int Position => _isMirrored ? base.Position : TotalItems - (Items.Count - base.Position);
 
         public override MvxObservableCollection<GalleryContent> Group => _group;
 
