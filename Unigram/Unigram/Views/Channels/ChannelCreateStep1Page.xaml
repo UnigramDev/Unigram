@@ -34,16 +34,15 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Grid Height="64" Width="64" CornerRadius="32" Margin="12" Grid.RowSpan="2">
-                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="32"/>
-                    <controls:GlyphButton Click="EditPhoto_Click" Glyph="&#xE114;" FontSize="16" CornerRadius="32" Width="64" Height="64"/>
-                    <controls:ProfilePicture Click="EditPhoto_Click" Source="{x:Bind ViewModel.Preview, Mode=OneWay}"/>
-                </Grid>
+                <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
+                <controls:GlyphButton Visibility="{x:Bind ConvertPhotoVisibility(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Glyph="&#xE114;" FontSize="16" CornerRadius="32" Width="64" Height="64" RequestedTheme="Dark" Margin="12,6"/>
+                
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                    <TextBox
-                        Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        MaxLength="{StaticResource ChannelTitleMaxLength}"
-                        PlaceholderText="{CustomResource EnterChannelName}"/>
+                    <TextBox x:Name="Title"
+                             Loaded="Title_Loaded"
+                             Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             MaxLength="{StaticResource ChannelTitleMaxLength}"
+                             PlaceholderText="{CustomResource EnterChannelName}"/>
                 </Border>
             </Grid>
 

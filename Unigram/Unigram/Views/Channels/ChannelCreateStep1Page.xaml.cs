@@ -18,6 +18,7 @@ using Windows.Storage.Pickers;
 using Unigram.Controls.Views;
 using Unigram.Controls;
 using Unigram.Common;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views.Channels
 {
@@ -29,6 +30,11 @@ namespace Unigram.Views.Channels
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ChannelCreateStep1ViewModel>();
+        }
+
+        private void Title_Loaded(object sender, RoutedEventArgs e)
+        {
+            Title.Focus(FocusState.Keyboard);
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
@@ -54,5 +60,24 @@ namespace Unigram.Views.Channels
                 }
             }
         }
+
+        #region Binding
+
+        private ImageSource ConvertPhoto(string title, BitmapImage preview)
+        {
+            if (preview != null)
+            {
+                return preview;
+            }
+
+            return PlaceholderHelper.GetNameForChat(title, 64, 64);
+        }
+
+        private Visibility ConvertPhotoVisibility(string title, BitmapImage preview)
+        {
+            return !string.IsNullOrWhiteSpace(title) || preview != null ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        #endregion
     }
 }
