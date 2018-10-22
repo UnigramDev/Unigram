@@ -222,9 +222,10 @@
                         <StackPanel x:Name="ChatsOptions" Orientation="Horizontal" Grid.Column="1">
                             <controls:GlyphButton
                                 x:Name="Proxy"
-                                Glyph="&#xE730;"
+                                Glyph="&#xE915;"
                                 Click="Proxy_Click"
                                 Visibility="Collapsed"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"/>
                             <controls:GlyphToggleButton
                                 x:Name="Lock"

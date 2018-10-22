@@ -350,6 +350,8 @@ namespace Unigram.Views
                         break;
                 }
             }
+
+            Proxy.Glyph = connectionState is ConnectionStateReady && proxyId != 0 ? "\uE916" : "\uE915";
         }
 
         private void ShowStatus(string text)
