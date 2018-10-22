@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -320,7 +320,7 @@
     <value>Tambahkan penerima</value>
   </data>
   <data name="AddShortcut" xml:space="preserve">
-    <value>Buat pintasan</value>
+    <value>Tambahkan ke layar utama</value>
   </data>
   <data name="AddStickers" xml:space="preserve">
     <value>Tambahkan Sticker</value>
@@ -778,7 +778,7 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
     <value>BLOKIR DARI GRUP</value>
   </data>
   <data name="BannedPhoneNumber" xml:space="preserve">
-    <value>Nomor telepon diblokir</value>
+    <value>Nomor ponsel ini diblokir.</value>
   </data>
   <data name="BlockContact" xml:space="preserve">
     <value>Blokir</value>
@@ -1004,7 +1004,8 @@ Catatan: jika Anda lupa kode sandi, Anda perlu menghapus dan memasang ulang apli
     <value>BUAT CHANNEL</value>
   </data>
   <data name="ChannelAlertText" xml:space="preserve">
-    <value>Channel adalah sarana menyiarkan pesan Anda ke khayalak luas.</value>
+    <value>Channel adalah sarana untuk menyiarkan pesan Anda 
+kepada banyak pengguna.</value>
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Apa itu Channel?</value>
@@ -1130,7 +1131,7 @@ Catatan: jika Anda lupa kode sandi, Anda perlu menghapus dan memasang ulang apli
     <value>SENYAPKAN</value>
   </data>
   <data name="ChannelNotifyMembersInfoOff" xml:space="preserve">
-    <value>Anggota tidak mendapat notifikasi ketika Anda mengirim siaran.</value>
+    <value>Anggota tidak mendapat notifikasi ketika Anda mengirim siaran</value>
   </data>
   <data name="ChannelNotifyMembersInfoOn" xml:space="preserve">
     <value>Anggota akan diberitahukan ketika Anda memposting</value>
@@ -1705,7 +1706,7 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergroup:
     <value>Hapus chat</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
-    <value>Hapus</value>
+    <value>Hapus kontak</value>
   </data>
   <data name="DeleteForAll" xml:space="preserve">
     <value>Hapus untuk semua anggota</value>
@@ -1855,7 +1856,7 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergroup:
     <value>Edit Keterangan</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>Edit</value>
+    <value>Ganti Nama Kontak</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Edit pesan</value>
@@ -4569,7 +4570,7 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
     <value>Informasi Pembayaran</value>
   </data>
   <data name="PaymentCardName" xml:space="preserve">
-    <value>Nama Pemegang</value>
+    <value>Nama Depan dan Belakang</value>
   </data>
   <data name="PaymentCardNumber" xml:space="preserve">
     <value>Nomor Kartu</value>
@@ -5240,7 +5241,7 @@ Channel "**{1}**" akan menjadi privat.</value>
     <value>Simpan ke galeri</value>
   </data>
   <data name="SaveToGallerySettings" xml:space="preserve">
-    <value>Simpan ke galeri</value>
+    <value>Simpan ke Galeri</value>
   </data>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Simpan di musik</value>
@@ -5410,7 +5411,7 @@ Anda mungkin perlu memulai ulang aplikasi agar berlaku.</value>
     <value>Diperbarui langsung ketika Anda bergerak</value>
   </data>
   <data name="SendLocation" xml:space="preserve">
-    <value>Kirim lokasi Anda saat ini</value>
+    <value>Kirim lokasi saya saat ini</value>
   </data>
   <data name="SendMessageRestricted" xml:space="preserve">
     <value>Admin group telah membatasi Anda untuk mengirim pesan hingga {0}</value>

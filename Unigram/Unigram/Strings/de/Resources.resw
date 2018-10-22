@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -98,7 +98,7 @@
     <value>un1 hat dich hinzugefügt</value>
   </data>
   <data name="ActionBotAllowed" xml:space="preserve">
-    <value>Du hast diesem Bot erlaubt dich anzuschreiben, wenn du dich bei {0} anmeldest.</value>
+    <value>Du hast diesem Bot erlaubt, dich anschreiben, als du dich auf {0} angemeldet hast.</value>
   </data>
   <data name="ActionBotDocumentAddress" xml:space="preserve">
     <value>Adresse</value>
@@ -785,7 +785,7 @@ Sonnenaufgang: {1}</value>
     <value>NUTZER EINSCHRÄNKEN</value>
   </data>
   <data name="BannedPhoneNumber" xml:space="preserve">
-    <value>Gesperrte Telefonnummer</value>
+    <value>Diese Nummer wurde gesperrt.</value>
   </data>
   <data name="BlockContact" xml:space="preserve">
     <value>Blockieren</value>
@@ -967,7 +967,7 @@ Sonnenaufgang: {1}</value>
 Übrigens: Wenn du den Pincode vergisst, musst du Telegram löschen und neu installieren. Dadurch verlierst du alle Geheimen Chats.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>Kennwort ändern</value>
+    <value>Passwort ändern</value>
   </data>
   <data name="ChangePhoneHelp" xml:space="preserve">
     <value>Der Bestätigungscode kommt per SMS an deine neue Nummer.</value>
@@ -1344,7 +1344,7 @@ Wenn du das nicht möchtest, empfehlen wir dir einen privaten Kanal.</value>
     <value>Cache leeren</value>
   </data>
   <data name="ClearMediaCache" xml:space="preserve">
-    <value>Cache Leeren</value>
+    <value>Cache leeren</value>
   </data>
   <data name="ClearOtherSessionsHelp" xml:space="preserve">
     <value>Alle Geräte außer diesem werden abgemeldet.</value>
@@ -1713,7 +1713,7 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
     <value>Chat löschen</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
-    <value>Löschen</value>
+    <value>Kontakt löschen</value>
   </data>
   <data name="DeleteForAll" xml:space="preserve">
     <value>Bei allen Mitgliedern löschen</value>
@@ -1863,7 +1863,7 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
     <value>Beschriftung bearbeiten</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>Bearbeiten</value>
+    <value>Kontakt umbenennen</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Nachricht bearbeiten</value>
@@ -1923,7 +1923,7 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
   </data>
   <data name="EnabledPasswordText" xml:space="preserve">
     <value>Du hast die zweistufige Bestätigung aktiviert.
-Wenn du dich bei Telegram anmeldest, brauchst du dein Kennwort.</value>
+Wenn du dich bei Telegram anmeldest, brauchst du dein Passwort.</value>
   </data>
   <data name="EncryptedChatStartedIncoming" xml:space="preserve">
     <value>Du bist dem geheimen Chat beigetreten.</value>
@@ -2152,7 +2152,7 @@ die deinen Suchbegriff beinhalten.</value>
     <value>Das ist eine Liste aller Aktionen, die von Gruppenmitgliedern und Admins in den letzten 48 Stunden durchgeführt wurden.</value>
   </data>
   <data name="EventLogInfoDetailChannel" xml:space="preserve">
-    <value>Das ist eine Liste aller Aktionen, die von Gruppenmitgliedern und Admins in den letzten 48 Stunden durchgeführt wurden.</value>
+    <value>Das ist eine Liste aller Aktionen, die von Kanalmitgliedern und Admins in den letzten 48 Stunden durchgeführt wurden.</value>
   </data>
   <data name="EventLogInfoTitle" xml:space="preserve">
     <value>Was sind letzte Aktionen?</value>
@@ -2379,7 +2379,7 @@ Dauer: {1}</value>
     <value>Textgröße</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
-    <value>Kennwort vergessen?</value>
+    <value>Passwort vergessen?</value>
   </data>
   <data name="Forward" xml:space="preserve">
     <value>Weiterleiten</value>
@@ -2848,19 +2848,19 @@ zu Telegram?</value>
     <value>{0} nimmt eine Videonachricht auf...</value>
   </data>
   <data name="IsSendingAudio" xml:space="preserve">
-    <value>{0} schickt Audio...</value>
+    <value>{0} sendet Audio...</value>
   </data>
   <data name="IsSendingFile" xml:space="preserve">
-    <value>{0} schickt Datei...</value>
+    <value>{0} sendet Datei...</value>
   </data>
   <data name="IsSendingGame" xml:space="preserve">
     <value>{0} spielt ein Spiel...</value>
   </data>
   <data name="IsSendingPhoto" xml:space="preserve">
-    <value>{0} schickt Bild...</value>
+    <value>{0} sendet Bild...</value>
   </data>
   <data name="IsSendingVideo" xml:space="preserve">
-    <value>{0} schickt Video...</value>
+    <value>{0} sendet Video...</value>
   </data>
   <data name="IsTyping" xml:space="preserve">
     <value>tippt...</value>
@@ -2964,7 +2964,7 @@ Alle Medien bleiben in der Telegram Cloud gespeichert und können jederzeit wied
     <value>Niemand (+{0})</value>
   </data>
   <data name="LastSeenTitle" xml:space="preserve">
-    <value>Wer kann deinen Online Status sehen?</value>
+    <value>Wer darf deinen Online-Status sehen?</value>
   </data>
   <data name="Lately" xml:space="preserve">
     <value>zuletzt kürzlich gesehen</value>
@@ -3083,10 +3083,10 @@ Hinweis: Der Vorgang kann mehrere Minuten dauern.</value>
     <value>Abmelden</value>
   </data>
   <data name="LoginPassword" xml:space="preserve">
-    <value>Kennwort</value>
+    <value>Passwort</value>
   </data>
   <data name="LoginPasswordText" xml:space="preserve">
-    <value>Du hast die zweistufige Bestätigung aktiviert. Dein Konto ist mit einem zusätzlichen Kennwort geschützt.</value>
+    <value>Du hast die zweistufige Bestätigung aktiviert. Dein Konto ist mit einem zusätzlichen Passwort geschützt.</value>
   </data>
   <data name="Long" xml:space="preserve">
     <value>Lang</value>
@@ -3125,7 +3125,7 @@ Hinweis: Der Vorgang kann mehrere Minuten dauern.</value>
     <value>Google</value>
   </data>
   <data name="MapPreviewProviderNobody" xml:space="preserve">
-    <value>Keine</value>
+    <value>Keine Vorschau</value>
   </data>
   <data name="MapPreviewProviderTelegram" xml:space="preserve">
     <value>Telegram</value>
@@ -4006,8 +4006,8 @@ vor Hacker-Angriffen.</value>
     <value>Sicher</value>
   </data>
   <data name="Page5Message" xml:space="preserve">
-    <value>**Telegram** hat keine Begrenzungen auf
-die Größe deiner Medien oder Chats.</value>
+    <value>**Telegram** begrenzt die Größe
+deiner Medien und Chats nicht.</value>
   </data>
   <data name="Page5Title" xml:space="preserve">
     <value>Leistungsstark</value>
@@ -4045,7 +4045,7 @@ synchronisiert benutzen.</value>
     <value>Pincode</value>
   </data>
   <data name="PasscodePassword" xml:space="preserve">
-    <value>Kennwort</value>
+    <value>Passwort</value>
   </data>
   <data name="PassportAddAddressUploadInfo" xml:space="preserve">
     <value>Um deine Adresse zu bestätigen, Scan oder ein Bild der ausgewählten Dokumente (alle Seiten) hochladen.</value>
@@ -4504,7 +4504,7 @@ Mehr dazu in unseren FAQs.</value>
     <value>**{0}** verlangt Zugriff auf deine persönlichen Daten, damit du dich dort registrieren kannst.</value>
   </data>
   <data name="PassportRequestPasswordInfo" xml:space="preserve">
-    <value>Dein Kennwort wird benötigt, um die Daten zu entschlüsseln.</value>
+    <value>Dein Passwort wird benötigt, um die Daten zu entschlüsseln.</value>
   </data>
   <data name="PassportRequestedInformation" xml:space="preserve">
     <value>Angeforderte Informationen</value>
@@ -4558,7 +4558,7 @@ Mehr dazu in unseren FAQs.</value>
     <value>Läuft nicht ab</value>
   </data>
   <data name="PassportSelfRequest" xml:space="preserve">
-    <value>Bitte dein Telegram-Kennwort eingeben, damit du auf deine persönlichen Daten zugreifen kannst.</value>
+    <value>Bitte dein Telegram-Passwort eingeben, damit du auf deine persönlichen Daten zugreifen kannst.</value>
   </data>
   <data name="PassportSelfie" xml:space="preserve">
     <value>Selfie</value>
@@ -4606,7 +4606,7 @@ Mehr dazu in unseren FAQs.</value>
     <value>Bitte nur lateinische Schriftzeichen benutzen.</value>
   </data>
   <data name="PasswordAsHintError" xml:space="preserve">
-    <value>Der Hinweis darf nicht das Kennwort sein.</value>
+    <value>Der Hinweis darf nicht das Passwort sein.</value>
   </data>
   <data name="PasswordCode" xml:space="preserve">
     <value>Code</value>
@@ -4618,16 +4618,16 @@ Mehr dazu in unseren FAQs.</value>
     <value>Ungültige E-Mail</value>
   </data>
   <data name="PasswordHint" xml:space="preserve">
-    <value>Kennwort-Erinnerung</value>
+    <value>Passwort-Erinnerung</value>
   </data>
   <data name="PasswordHintText" xml:space="preserve">
-    <value>Bitte Hinweis auf dein Kennwort eingeben</value>
+    <value>Bitte Hinweis auf dein Passwort eingeben</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
-    <value>Kennwort zurücksetzen</value>
+    <value>Passwort zurücksetzen</value>
   </data>
   <data name="PasswordReset" xml:space="preserve">
-    <value>Kennwort deaktiviert</value>
+    <value>Passwort deaktiviert</value>
   </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>Rechnungsadresse</value>
@@ -4642,7 +4642,7 @@ Mehr dazu in unseren FAQs.</value>
     <value>Zahlungsinformationen</value>
   </data>
   <data name="PaymentCardName" xml:space="preserve">
-    <value>Vollständiger Name</value>
+    <value>Vor- und Nachname</value>
   </data>
   <data name="PaymentCardNumber" xml:space="preserve">
     <value>Kartennummer</value>
@@ -4684,7 +4684,7 @@ Mehr dazu in unseren FAQs.</value>
     <value>Versandart</value>
   </data>
   <data name="PaymentConfirmationMessage" xml:space="preserve">
-    <value>Deine Karte {0} ist bereits gespeichert. Um mit dieser Karte zu bezahlen, tippe dein Kennwort der zweistufigen Bestätigung ein.</value>
+    <value>Deine Karte {0} ist bereits gespeichert. Um mit dieser Karte zu bezahlen, tippe dein Passwort der zweistufigen Bestätigung ein.</value>
   </data>
   <data name="PaymentConfirmationNewCard" xml:space="preserve">
     <value>Wähle eine andere Karte</value>
@@ -4705,28 +4705,28 @@ Mehr dazu in unseren FAQs.</value>
     <value>Tut uns sehr leid, leider kann an deine Adresse nichts geliefert werden.</value>
   </data>
   <data name="PaymentPassword" xml:space="preserve">
-    <value>Kennwort &amp; E-Mail</value>
+    <value>Passwort &amp; E-Mail</value>
   </data>
   <data name="PaymentPasswordEmail" xml:space="preserve">
     <value>Deine E-Mail</value>
   </data>
   <data name="PaymentPasswordEmailInfo" xml:space="preserve">
-    <value>Benutze bitte eine gültige E-Mail-Adresse. Das ist die einzige Möglichkeit, ein vergessenes Kennwort wiederherzustellen.</value>
+    <value>Benutze bitte eine gültige E-Mail-Adresse. Das ist die einzige Möglichkeit, ein vergessenes Passwort wiederherzustellen.</value>
   </data>
   <data name="PaymentPasswordEmailTitle" xml:space="preserve">
     <value>Wiederherstellung</value>
   </data>
   <data name="PaymentPasswordEnter" xml:space="preserve">
-    <value>Kennwort eingeben</value>
+    <value>Passwort eingeben</value>
   </data>
   <data name="PaymentPasswordInfo" xml:space="preserve">
-    <value>Um deine Zahlungsinformationen zu schützen, erstelle bitte ein Kennwort. Du brauchst dieses bei der Anmeldung.</value>
+    <value>Um deine Zahlungsinformationen zu schützen, erstelle bitte ein Passwort. Du brauchst dieses bei der Anmeldung.</value>
   </data>
   <data name="PaymentPasswordReEnter" xml:space="preserve">
-    <value>Kennwort erneut eingeben</value>
+    <value>Passwort erneut eingeben</value>
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
-    <value>Kennwort</value>
+    <value>Passwort</value>
   </data>
   <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
     <value>Nummer und E-Mail werden an {0} als Rechnungsinformation weitergeleitet.</value>
@@ -4815,7 +4815,7 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
     <value>Deine E-Mail Adresse {0} wurde noch verifiziert und ist daher noch nicht aktiv.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram benötigt Zugriff auf deine Kontakte, um dich auf all deinen Geräten mit deinen Freunden zu verbinden.</value>
+    <value>Damit du dich mit Freunden auf all deinen Geräten verbinden kannst, werden deine Kontakte durchgehend mit den stark verschlüsselten Cloud Servern von Telegram synchronisiert.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram braucht Zugriff auf die Funktion 'Über andere Apps einblenden'. Nur so können Videos im Bild in Bild Modus wiedergegeben werden.</value>
@@ -4925,19 +4925,19 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
     <value>Medien bitte zuerst herunterladen</value>
   </data>
   <data name="PleaseEnterCurrentPassword" xml:space="preserve">
-    <value>Bitte aktuelles Kennwort eingeben</value>
+    <value>Bitte aktuelles Passwort eingeben</value>
   </data>
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
-    <value>Kennwort eingeben</value>
+    <value>Passwort eingeben</value>
   </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
-    <value>Bitte neues Kennwort eingeben</value>
+    <value>Bitte neues Passwort eingeben</value>
   </data>
   <data name="PleaseLoginPassport" xml:space="preserve">
     <value>Bitte melde dich mit deinem Telegram-Konto an, um Telegram Passport nutzen zu können.</value>
   </data>
   <data name="PleaseReEnterPassword" xml:space="preserve">
-    <value>Bitte erneut dein Kennwort eingeben</value>
+    <value>Bitte erneut dein Passwort eingeben</value>
   </data>
   <data name="PleaseStreamDownload" xml:space="preserve">
     <value>Bitte warte, bis das Video vollständig heruntergeladen wurde.</value>
@@ -5189,7 +5189,7 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
     <value>Deine vorherigen Versuche das Konto zurückzusetzen wurden durch den aktiven Nutzer abgebrochen. Bitte in 7 Tagen erneut probieren.</value>
   </data>
   <data name="ResetAccountInfo" xml:space="preserve">
-    <value>Da dein Konto **{0}** aktiv und durch ein Kennwort geschützt ist, löschen wir es aus Sicherheitsgründen in einer Woche. 
+    <value>Da dein Konto **{0}** aktiv und durch ein Passwort geschützt ist, löschen wir es aus Sicherheitsgründen in einer Woche. 
 
 Du kannst den Vorgang jederzeit abbrechen.</value>
   </data>
@@ -5246,10 +5246,10 @@ Wenn du dein Konto zurücksetzt, sind alle Chats gelöscht.</value>
     <value>Du hast keinen Zugang zu deiner Adresse {0}?</value>
   </data>
   <data name="RestoreEmailTroubleText" xml:space="preserve">
-    <value>Wenn du nicht in deine E-Mails kommst, kannst du nur hoffen, dass dir dein Kennwort wieder einfällt oder du musst dein Telegram Konto zurückzusetzen.</value>
+    <value>Wenn du nicht in deine E-Mails kommst, kannst du nur hoffen, dass dir dein Passwort wieder einfällt oder du musst dein Telegram-Konto zurücksetzen.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
-    <value>Da du für diesen Fall keine E-Mail Adresse hinterlegt hast, kannst du nur noch hoffen, dass dir dein Kennwort wieder einfällt oder du musst dein Telegram Konto zurückzusetzen.</value>
+    <value>Da du für diesen Fall keine E-Mail Adresse hinterlegt hast, kannst du nur noch hoffen, dass dir dein Passwort wieder einfällt oder du musst dein Telegram-Konto zurückzusetzen.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Tut uns leid</value>
@@ -5551,16 +5551,16 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
     <value>Überprüfe alle deine angemeldeten Sitzungen.</value>
   </data>
   <data name="SessionsTitle" xml:space="preserve">
-    <value>Sitzungen</value>
+    <value>Aktive Sitzungen</value>
   </data>
   <data name="Set" xml:space="preserve">
     <value>Wählen</value>
   </data>
   <data name="SetAdditionalPassword" xml:space="preserve">
-    <value>Zusätzliches Kennwort festlegen</value>
+    <value>Zusätzliches Passwort festlegen</value>
   </data>
   <data name="SetAdditionalPasswordInfo" xml:space="preserve">
-    <value>Du kannst ein eigenes Kennwort festlegen, um dich an einem neuen Gerät anzumelden, zusätzlich zum SMS-Code.</value>
+    <value>Du kannst ein eigenes Passwort festlegen, um dich an einem neuen Gerät anzumelden, zusätzlich zum SMS-Code.</value>
   </data>
   <data name="SetAdmins" xml:space="preserve">
     <value>Administratoren</value>
@@ -5593,7 +5593,7 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
     <value>Schatten</value>
   </data>
   <data name="ShareComment" xml:space="preserve">
-    <value>Kommentar hinterlassen...</value>
+    <value>Kommentar hinzufügen...</value>
   </data>
   <data name="ShareContact" xml:space="preserve">
     <value>Teilen</value>
@@ -5893,7 +5893,7 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
     <value>{0} Kontakte bei Telegram</value>
   </data>
   <data name="TelegramFaq" xml:space="preserve">
-    <value>Fragen und Antworten</value>
+    <value>Telegram FAQ</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq/de</value>
@@ -5902,12 +5902,12 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
     <value>Telegram Passport</value>
   </data>
   <data name="TelegramPassportCreatePassword" xml:space="preserve">
-    <value>EIN KENNWORT ERSTELLEN</value>
+    <value>EIN PASSWORT ERSTELLEN</value>
   </data>
   <data name="TelegramPassportCreatePasswordInfo" xml:space="preserve">
-    <value>Bitte Kennwort einrichten, um deine persönlichen Daten mit Ende-zu-Ende-Verschlüsselung zu schützen.
+    <value>Bitte Passwort einrichten, um deine persönlichen Daten mit Ende-zu-Ende-Verschlüsselung zu schützen.
 
-Das Kennwort wird außerdem benötigt, wenn du dich mit Telegram von einem neuen Gerät verbindest.</value>
+Das Passwort wird außerdem benötigt, wenn du dich mit Telegram von einem neuen Gerät verbindest.</value>
   </data>
   <data name="TelegramPassportDelete" xml:space="preserve">
     <value>Telegram Passport löschen</value>
@@ -6031,13 +6031,13 @@ Wenn du dennoch mit unseren bescheidenen Anforderungen nicht einverstanden bist,
     <value>Insgesamt</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
-    <value>Kennwort deaktivieren</value>
+    <value>Passwort deaktivieren</value>
   </data>
   <data name="TurnPasswordOffPassport" xml:space="preserve">
     <value>Warnung! Alle Daten in deinem Telegram Passport gehen verloren!</value>
   </data>
   <data name="TurnPasswordOffQuestion" xml:space="preserve">
-    <value>Sicher, dass du dein Kennwort deaktivieren willst?</value>
+    <value>Sicher, dass du dein Passwort deaktivieren willst?</value>
   </data>
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Zweistufige Bestätigung</value>
@@ -6172,7 +6172,7 @@ Wenn du dennoch mit unseren bescheidenen Anforderungen nicht einverstanden bist,
     <value>SOCKS5 Proxy-Einstellungen</value>
   </data>
   <data name="UseProxyPassword" xml:space="preserve">
-    <value>Kennwort</value>
+    <value>Passwort</value>
   </data>
   <data name="UseProxyPort" xml:space="preserve">
     <value>Port</value>
@@ -6589,7 +6589,7 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
     <value>Bitte überprüfe deine Mails (auch den Spam-Ordner) um die zweistufige Bestätigung abzuschließen.</value>
   </data>
   <data name="YourEmailInfo" xml:space="preserve">
-    <value>Falls du dein Kennwort vergisst, benötigen wir deine richtige E-Mail Adresse.</value>
+    <value>Falls du dein Passwort vergisst, benötigen wir deine richtige E-Mail Adresse.</value>
   </data>
   <data name="YourEmailSkip" xml:space="preserve">
     <value>Überspringen</value>
@@ -6606,13 +6606,13 @@ Wenn du dein Passwort vergisst, verlierst du den Zugang zu deinem Telegram Konto
     <value>Dein Name</value>
   </data>
   <data name="YourPassword" xml:space="preserve">
-    <value>Dein Kennwort</value>
+    <value>Dein Passwort</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Geschafft!</value>
   </data>
   <data name="YourPasswordSuccessText" xml:space="preserve">
-    <value>Dein Kennwort für die zweistufige Bestätigung ist jetzt aktiv.</value>
+    <value>Dein Passwort für die zweistufige Bestätigung ist jetzt aktiv.</value>
   </data>
   <data name="YourPhone" xml:space="preserve">
     <value>Dein Telefon</value>

@@ -1429,7 +1429,7 @@ Una volta che {1} avrà aggiornato Telegram, le foto con il timer minore di 1 mi
     <value>Disattiva</value>
   </data>
   <data name="ConnectingToProxyDisableAlert" xml:space="preserve">
-    <value>Sei sicuro di voler disattivare il server proxy {0}? Puoi riattivarlo più tardi nelle Impostazioni (Dati e archivio).</value>
+    <value>Sei sicuro di voler disattivare il server proxy {0}? Puoi riattivarlo più tardi in Impostazioni > Dati e archivio.</value>
   </data>
   <data name="ConnectingToProxyEnable" xml:space="preserve">
     <value>Attiva</value>
@@ -1918,7 +1918,7 @@ Per superare il limite e sbloccare nuove funzioni, aggiorna a supergruppo:
     <value>Sei sicuro di voler attivare questo proxy?</value>
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
-    <value>Puoi cambiare il tuo server proxy più tardi nelle Impostazioni (Dati e archivio).</value>
+    <value>Puoi cambiare il tuo server proxy più tardi in Impostazioni > Dati e archivio.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Streaming file video e audio</value>
@@ -2596,7 +2596,7 @@ Durata: {1}</value>
     <value>da {0} chat</value>
   </data>
   <data name="FromFormatted" xml:space="preserve">
-    <value>Da  {0}</value>
+    <value>Da {0}</value>
   </data>
   <data name="FromGalley" xml:space="preserve">
     <value>Dalla galleria</value>
@@ -2810,7 +2810,7 @@ su Telegram?</value>
     <value/>
   </data>
   <data name="InviteTextNumOne" xml:space="preserve">
-    <value>Ehi, sto usando Telegram per messaggiare – così come {0} dei nostri altri contatti. Unisciti a noi! Scaricalo qui: {1}</value>
+    <value>Ehi, sto usando Telegram per messaggiare – così come {0} altro nostri contatti. Unisciti a noi! Scaricalo qui: {1}</value>
   </data>
   <data name="InviteTextNumTwo" xml:space="preserve">
     <value/>
@@ -2822,7 +2822,7 @@ su Telegram?</value>
     <value/>
   </data>
   <data name="InviteTextNumOther" xml:space="preserve">
-    <value>Ehi, sto usando Telegram per messaggiare – così come {0} dei nostri altri contatti. Unisciti a noi! Scaricalo qui: {1}</value>
+    <value>Ehi, sto usando Telegram per messaggiare – così come altri {0} dei nostri contatti. Unisciti a noi! Scaricalo qui: {1}</value>
   </data>
   <data name="InviteToChannelError" xml:space="preserve">
     <value>Spiacenti, non puoi aggiungere questo utente al canale a causa delle sue impostazioni di privacy.</value>
@@ -3456,7 +3456,7 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
     <value>Non hai applicazioni che possono gestire il tipo di file '{0}': installane una per proseguire</value>
   </data>
   <data name="NoMailInstalled" xml:space="preserve">
-    <value>Invia un’email a sms@stel.com spiegandoci il problema.</value>
+    <value>Per favore invia un’e-mail a sms@stel.com spiegandoci il problema.</value>
   </data>
   <data name="NoMasks" xml:space="preserve">
     <value>Ancora nessuna maschera</value>
@@ -4728,7 +4728,7 @@ Puoi visitare le nostre FAQ per saperne di più.</value>
     <value>Password</value>
   </data>
   <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
-    <value>Il numero e l'e-mail saranno passati a  {0} come info di fatturazione.</value>
+    <value>Il numero e l'e-mail saranno passati a {0} come info di fatturazione.</value>
   </data>
   <data name="PaymentPhoneToProvider" xml:space="preserve">
     <value>Il numero sarà usato da {0} come info di fatturazione.</value>
@@ -4755,7 +4755,7 @@ Puoi visitare le nostre FAQ per saperne di più.</value>
     <value>Nazione</value>
   </data>
   <data name="PaymentShippingEmailPlaceholder" xml:space="preserve">
-    <value>EMail</value>
+    <value>E-mail</value>
   </data>
   <data name="PaymentShippingInfo" xml:space="preserve">
     <value>Info di spedizione</value>
@@ -4987,7 +4987,7 @@ I pagamenti saranno inviati direttamente allo sviluppatore di {0}. Telegram non 
     <value>Disattivando il peer-to-peer, tutte le chiamate verranno inviate tramite i server di Telegram per evitare di rivelare l'indirizzo IP, ma la qualità audio diminuirà leggermente.</value>
   </data>
   <data name="PrivacyCallsP2PTitle" xml:space="preserve">
-    <value>Peer-to-Peer</value>
+    <value>Peer-to-peer</value>
   </data>
   <data name="PrivacyClearPayment" xml:space="preserve">
     <value>Info di pagamento</value>
@@ -6615,7 +6615,7 @@ Se dimentichi la tua password, perderai l'accesso al tuo account Telegram. Non c
     <value>La password per la verifica in due passaggi è ora attiva.</value>
   </data>
   <data name="YourPhone" xml:space="preserve">
-    <value>Il tuo telefono</value>
+    <value>Il tuo numero</value>
   </data>
   <data name="TgCancel" xml:space="preserve">
     <value>Annulla</value>

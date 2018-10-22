@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -320,7 +320,7 @@
     <value>Ontvanger toevoegen</value>
   </data>
   <data name="AddShortcut" xml:space="preserve">
-    <value>Snelkoppeling toevoegen</value>
+    <value>Toevoegen aan startscherm</value>
   </data>
   <data name="AddStickers" xml:space="preserve">
     <value>Stickers toevoegen</value>
@@ -785,7 +785,7 @@ Zonsopkomst: {1}</value>
     <value>LID BEPERKEN</value>
   </data>
   <data name="BannedPhoneNumber" xml:space="preserve">
-    <value>Geblokkeerd telefoonnumer</value>
+    <value>Dit nummer is geblokkeerd.</value>
   </data>
   <data name="BlockContact" xml:space="preserve">
     <value>Blokkeer</value>
@@ -1011,7 +1011,7 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
     <value>MAAK KANAAL</value>
   </data>
   <data name="ChannelAlertText" xml:space="preserve">
-    <value>Kanalen zijn een nieuwe functie om berichten naar een groot publiek te sturen.</value>
+    <value>Kanalen zijn een functie om berichten naar een ongelimiteerd publiek te sturen.</value>
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Wat is een kanaal?</value>
@@ -3025,7 +3025,7 @@ Alle media zal in de Telegram-cloud bewaard blijven en kan opnieuw worden gedown
     <value>Gedeelde links</value>
   </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
-    <value>Kies hoelang je je nauwkeurige locatie met mensen in deze chat wilt delen.</value>
+    <value>Kies hoelang je je Live-locatie met mensen in deze chat wilt delen.</value>
   </data>
   <data name="LiveLocationAlertPrivate" xml:space="preserve">
     <value>Kies hoelang je je nauwkeurige locatie met {0} wilt delen.</value>
@@ -4641,7 +4641,7 @@ Je kunt onze veelgestelde vragen bekijken voor meer informatie.</value>
     <value>Betaalinformatie</value>
   </data>
   <data name="PaymentCardName" xml:space="preserve">
-    <value>Achternaam</value>
+    <value>Voor- en Achternaam</value>
   </data>
   <data name="PaymentCardNumber" xml:space="preserve">
     <value>Kaartnummer</value>
@@ -4814,7 +4814,7 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
     <value>Je herstel-e-mailadres {0} is nog niet actief en in afwachting van bevestiging.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram heeft toegang tot je contacten nodig om vanaf al je apparaten contact te kunnen leggen met je vrienden.</value>
+    <value>Om vanaf al je apparaten contact te kunnen leggen met je vrienden zullen je contacten continu worden gesynchroniseerd met onze zwaar versleutelde Cloud-servers.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram heeft de toestemming 'over andere apps tekenen' nodig om video's af te spelen in Picture-in-Picture-modus.</value>
@@ -5239,7 +5239,7 @@ Al je chats, berichten en data gaan verloren als je je account reset.</value>
 {0}</value>
   </data>
   <data name="RestoreEmailSentInfo" xml:space="preserve">
-    <value>Controleer je e-mail en geef de 6-cijferige code in die we je hebben gestuurd.</value>
+    <value>Controleer je E-mail en geef de 6-cijferige code in die we je hebben gestuurd.</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>Kun je je e-mail niet benaderen {0}?</value>
@@ -5763,7 +5763,7 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
     <value>Archiveer</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>Stickers</value>
+    <value>Stickers en Maskers</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Verwijder</value>
@@ -6270,7 +6270,7 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
 Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is **5** tekens.</value>
   </data>
   <data name="UsernameHelpLink" xml:space="preserve">
-    <value>Deze link opent een chat met je in Telegram:
+    <value>Deze link opent een chat met je:
 {0}</value>
   </data>
   <data name="UsernameInUse" xml:space="preserve">

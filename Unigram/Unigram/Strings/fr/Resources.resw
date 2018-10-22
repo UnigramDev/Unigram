@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -320,7 +320,7 @@
     <value>Ajouter un destinataire</value>
   </data>
   <data name="AddShortcut" xml:space="preserve">
-    <value>Ajouter un raccourci</value>
+    <value>Ajouter à l'écran d'accueil</value>
   </data>
   <data name="AddStickers" xml:space="preserve">
     <value>Ajouter le lot</value>
@@ -515,7 +515,7 @@
     <value>{0} écrivent...</value>
   </data>
   <data name="AreYouSure" xml:space="preserve">
-    <value>Voulez-vous vraiment faire ça ?</value>
+    <value>Voulez-vous vraiment faire cela ?</value>
   </data>
   <data name="AreYouSureBlockContact" xml:space="preserve">
     <value>Voulez-vous vraiment bloquer ce contact ?</value>
@@ -782,7 +782,7 @@ Coucher : {1}</value>
     <value>BANNIR DU GROUPE</value>
   </data>
   <data name="BannedPhoneNumber" xml:space="preserve">
-    <value>Numéro de téléphone banni</value>
+    <value>Ce numéro de téléphone est banni.</value>
   </data>
   <data name="BlockContact" xml:space="preserve">
     <value>Bloquer</value>
@@ -955,10 +955,10 @@ Si ce n'était pas vous, merci d'insérer le code que nous venons de vous envoye
     <value>Légende</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
-    <value>Vous pouvez changer la langue à tout moment dans les paramètres</value>
+    <value>Vous pouvez changer de langue à tout moment dans les paramètres</value>
   </data>
   <data name="ChangePasscode" xml:space="preserve">
-    <value>Changer le code d'accès</value>
+    <value>Modifier le code d'accès</value>
   </data>
   <data name="ChangePasscodeInfo" xml:space="preserve">
     <value>Une fois le code défini, une icône apparaîtra sur la page des échanges. Touchez-la pour verrouiller et déverrouiller Telegram.
@@ -966,7 +966,7 @@ Si ce n'était pas vous, merci d'insérer le code que nous venons de vous envoye
 Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application. Tous les échanges secrets seront perdus.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>Changer le mot de passe</value>
+    <value>Modifier le mot de passe</value>
   </data>
   <data name="ChangePhoneHelp" xml:space="preserve">
     <value>Nous enverrons un SMS avec un code de confirmation à votre nouveau numéro.</value>
@@ -981,7 +981,7 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
     <value>Vous avez réservé trop de liens publics. Vous pouvez révoquer le lien d'un de vos groupes ou canaux plus anciens, ou rendre celui-ci privé.</value>
   </data>
   <data name="ChangeRecoveryEmail" xml:space="preserve">
-    <value>Changer le courriel de récupération</value>
+    <value>Modifier le courriel de récupération</value>
   </data>
   <data name="ChannelAddAdmin" xml:space="preserve">
     <value>Ajouter un administrateur</value>
@@ -1008,7 +1008,7 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
     <value>CRÉER UN CANAL</value>
   </data>
   <data name="ChannelAlertText" xml:space="preserve">
-    <value>Les canaux sont un nouvel outil pour diffuser vos messages à de larges audiences.</value>
+    <value>Les canaux permettent de diffuser vos messages à des audiences illimitées.</value>
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Qu'est-ce qu'un canal ?</value>
@@ -1423,13 +1423,13 @@ Une fois que {1} aura mis à jour Telegram, le mode "Touchez et maintenez pour v
     <value>Désactiver</value>
   </data>
   <data name="ConnectingToProxyDisableAlert" xml:space="preserve">
-    <value>Voulez-vous vraiment désactiver le proxy {0} ? Vous pouvez le réactiver plus tard dans les paramètres (Données et stockage).</value>
+    <value>Voulez-vous vraiment désactiver le proxy {0} ? Vous pouvez le réactiver à tout moment dans Paramètres > Données et stockage.</value>
   </data>
   <data name="ConnectingToProxyEnable" xml:space="preserve">
     <value>Activer</value>
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
-    <value>Toucher pour désactiver le proxy...</value>
+    <value>Touchez pour désactiver le proxy...</value>
   </data>
   <data name="ContactBirthday" xml:space="preserve">
     <value>Anniversaire</value>
@@ -1709,7 +1709,7 @@ Pour aller au delà, passez à un supergroupe :
     <value>Supprimer l'échange</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
-    <value>Supprimer</value>
+    <value>Supprimer le contact</value>
   </data>
   <data name="DeleteForAll" xml:space="preserve">
     <value>Supprimer pour tous les membres</value>
@@ -1766,7 +1766,7 @@ Pour aller au delà, passez à un supergroupe :
     <value>Partage direct</value>
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
-    <value>Montre des échanges dans le menu de partage</value>
+    <value>Montre des échanges dans le menu de partage Android</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>GIF secret</value>
@@ -1826,10 +1826,10 @@ Pour aller au delà, passez à un supergroupe :
     <value>Vous ne pouvez pas modifier les droits de cet administrateur.</value>
   </data>
   <data name="EditAdminChangeChannelInfo" xml:space="preserve">
-    <value>Changer les infos du canal</value>
+    <value>Modifier les infos du canal</value>
   </data>
   <data name="EditAdminChangeGroupInfo" xml:space="preserve">
-    <value>Changer les infos du groupe</value>
+    <value>Modifier les infos du groupe</value>
   </data>
   <data name="EditAdminDeleteMessages" xml:space="preserve">
     <value>Supprimer les messages des autres</value>
@@ -1859,7 +1859,7 @@ Pour aller au delà, passez à un supergroupe :
     <value>Modifier la légende</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>Modifier</value>
+    <value>Renommer le contact</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Modifier le message</value>
@@ -1912,7 +1912,7 @@ Pour aller au delà, passez à un supergroupe :
     <value>Voulez-vous vraiment activer ce proxy ?</value>
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
-    <value>Vous pouvez changer votre proxy plus tard dans les paramètres (Données et stockage).</value>
+    <value>Vous pouvez changer votre proxy à tout moment dans Paramètres > Données et stockage.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Lire les médias en flux</value>
@@ -2171,10 +2171,10 @@ ne correspond à votre requête.</value>
     <value>Bannir des utilisateurs</value>
   </data>
   <data name="EventLogPromotedChangeChannelInfo" xml:space="preserve">
-    <value>Changer les infos du canal</value>
+    <value>Modifier les infos du canal</value>
   </data>
   <data name="EventLogPromotedChangeGroupInfo" xml:space="preserve">
-    <value>Changer les infos du groupe</value>
+    <value>Modifier les infos du groupe</value>
   </data>
   <data name="EventLogPromotedDeleteMessages" xml:space="preserve">
     <value>Supprimer des messages</value>
@@ -2299,7 +2299,7 @@ Durée : {1}</value>
     <value>Confirmer l'empreinte pour continuer</value>
   </data>
   <data name="FingerprintNotRecognized" xml:space="preserve">
-    <value>Empreinte non reconnue. Réessayez</value>
+    <value>Empreinte non reconnue, réessayez</value>
   </data>
   <data name="FirstName" xml:space="preserve">
     <value>Prénom (requis)</value>
@@ -3057,7 +3057,7 @@ Cette opération peut prendre plusieurs minutes.</value>
     <value>Google</value>
   </data>
   <data name="MapPreviewProviderNobody" xml:space="preserve">
-    <value>Aucune</value>
+    <value>Pas d'aperçus</value>
   </data>
   <data name="MapPreviewProviderTelegram" xml:space="preserve">
     <value>Telegram</value>
@@ -4079,7 +4079,7 @@ messages depuis plusieurs appareils.</value>
     <value>Ville</value>
   </data>
   <data name="PassportCorrectErrors" xml:space="preserve">
-    <value>Toucher pour corriger les erreurs.</value>
+    <value>Touchez pour corriger les erreurs.</value>
   </data>
   <data name="PassportCountry" xml:space="preserve">
     <value>Pays</value>
@@ -4151,7 +4151,7 @@ messages depuis plusieurs appareils.</value>
     <value>Vous recevrez un code de confirmation à l'adresse courriel que vous indiquez.</value>
   </data>
   <data name="PassportEmailVerifyInfo" xml:space="preserve">
-    <value>Merci d'enter le code de confirmation que nous venons d'envoyer à {0}.</value>
+    <value>Merci d'entrer le code de confirmation que nous venons d'envoyer à {0}.</value>
   </data>
   <data name="PassportExpired" xml:space="preserve">
     <value>Expiration</value>
@@ -4574,7 +4574,7 @@ Vous pouvez consulter notre FAQ pour plus d'information.</value>
     <value>Infos de paiement</value>
   </data>
   <data name="PaymentCardName" xml:space="preserve">
-    <value>Prénom, Nom</value>
+    <value>Prénom et nom</value>
   </data>
   <data name="PaymentCardNumber" xml:space="preserve">
     <value>Numéro de carte</value>
@@ -4622,7 +4622,7 @@ Vous pouvez consulter notre FAQ pour plus d'information.</value>
     <value>Choisir une carte différente</value>
   </data>
   <data name="PaymentConnectionFailed" xml:space="preserve">
-    <value>Serveur de paiement injoignable. Vérifiez votre connexion Internet et réessayez.</value>
+    <value>Serveur de paiement injoignable. Merci de vérifier votre connexion Internet et de réessayer.</value>
   </data>
   <data name="PaymentEmailToProvider" xml:space="preserve">
     <value>Votre courriel sera transféré à {0} comme donnée de facturation.</value>
@@ -4747,7 +4747,7 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
     <value>Votre courriel de récupération {0} est inactif et doit être confirmé.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram doit accéder a vos contacts pour que vous puissiez joindre vos amis sur tous vos appareils.</value>
+    <value>Pour vous permettre de joindre vos proches sur tous vos appareils, vos contacts seront synchronisés en continu sur les serveurs chiffrés de Telegram.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram doit pouvoir se superposer à d'autres applications pour lire des vidéos en incrustation.</value>
@@ -4792,7 +4792,7 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
     <value>Votre nouveau numéro sera ajouté aux contacts de toutes les personnes qui ont votre ancien numéro et que vous n'avez pas bloqué sur Telegram.</value>
   </data>
   <data name="PhoneNumberChange" xml:space="preserve">
-    <value>CHANGER LE NUMÉRO</value>
+    <value>CHANGER DE NUMÉRO</value>
   </data>
   <data name="PhoneNumberFlood" xml:space="preserve">
     <value>Vous avez récemment créé et supprimé votre compte trop souvent. Merci de patienter quelques jours avant de vous inscrire à nouveau.</value>
@@ -4908,7 +4908,7 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
     <value>Les notifications de priorité élevée fonctionneront même en mode Ne Pas Déranger.</value>
   </data>
   <data name="PrivacyAdvanced" xml:space="preserve">
-    <value>Avancés</value>
+    <value>Avancé</value>
   </data>
   <data name="PrivacyBots" xml:space="preserve">
     <value>Bots et sites web</value>
@@ -5167,7 +5167,7 @@ Si vous réinitialisez votre compte, tous vos échanges seront supprimés.</valu
     <value>Voulez-vous réinitialiser vos statistiques d'utilisation ?</value>
   </data>
   <data name="RestoreEmailSent" xml:space="preserve">
-    <value>Un code de récupération a été envoyé à votre courriel : 
+    <value>Un code de récupération a été envoyé à votre courriel :
 
 {0}</value>
   </data>
@@ -5245,7 +5245,7 @@ Le canal "**{1}**" deviendra privé.</value>
     <value>Ajouter à la galerie</value>
   </data>
   <data name="SaveToGallerySettings" xml:space="preserve">
-    <value>Ajouter les photos à la galerie</value>
+    <value>Ajouter à la galerie</value>
   </data>
   <data name="SaveToMusic" xml:space="preserve">
     <value>Télécharger</value>
@@ -5415,7 +5415,7 @@ Il est possible que vous deviez redémarrer l'application pour que cela prenne e
     <value>Actualisée quand vous vous déplacez</value>
   </data>
   <data name="SendLocation" xml:space="preserve">
-    <value>Envoyer votre position actuelle</value>
+    <value>Envoyer ma position actuelle</value>
   </data>
   <data name="SendMessageRestricted" xml:space="preserve">
     <value>Les administrateurs du groupe vous ont restreint d'écrire ici jusqu'au {0}</value>
@@ -5552,7 +5552,7 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>Cela enverra votre position actuelle au bot.</value>
   </data>
   <data name="ShareYouLocationInline" xml:space="preserve">
-    <value>Ce bot voudrait connaître votre position pour chaque demande que vous faites. Cela peut servir à fournir des résultats localisés.</value>
+    <value>Ce bot voudrait connaître votre position pour chaque demande que vous faites. Cela peut servir à proposer des résultats localisés.</value>
   </data>
   <data name="ShareYouLocationTitle" xml:space="preserve">
     <value>Partager votre position ?</value>
@@ -5591,7 +5591,7 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>VOIX</value>
   </data>
   <data name="SharingLiveLocationTitle" xml:space="preserve">
-    <value>Vous partagez votre position en temps réel avec {0}</value>
+    <value>Vous partagez votre position en temps réel dans {0}</value>
   </data>
   <data name="SharingYouAndOtherName" xml:space="preserve">
     <value>Vous et {0}</value>
@@ -5696,7 +5696,7 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>Archiver</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>Autocollants</value>
+    <value>Autocollants et masques</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Supprimer</value>
@@ -5804,7 +5804,7 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>Accédez aux GIF enregistrés ici</value>
   </data>
   <data name="TapToChangePhone" xml:space="preserve">
-    <value>Toucher pour changer de numéro de téléphone</value>
+    <value>Touchez pour changer de numéro</value>
   </data>
   <data name="TelegramContactsZero" xml:space="preserve">
     <value/>
@@ -5863,7 +5863,7 @@ Ce mot de passe sera aussi requis à chaque fois que vous vous connecterez à Te
     <value>Fermer cette session ?</value>
   </data>
   <data name="TerminateWebSessionInfo" xml:space="preserve">
-    <value>Toucher pour déconnecter de votre compte Telegram.</value>
+    <value>Touchez pour déconnecter de votre compte Telegram.</value>
   </data>
   <data name="TerminateWebSessionQuestion" xml:space="preserve">
     <value>Déconnecter {0} ?</value>
@@ -5934,7 +5934,7 @@ vous acceptez les *conditions de service*.</value>
   </data>
   <data name="TooManyTries" xml:space="preserve">
     <value>Trop de tentatives.
-Réessayez dans {0}.</value>
+Merci de réessayer dans {0}.</value>
   </data>
   <data name="TosAgeText" xml:space="preserve">
     <value>Tapez Accepter pour confirmer que vous avez plus de {0} ans.</value>
@@ -6202,7 +6202,7 @@ Mais si les besoins modestes de Telegram ne vous conviennent pas, il nous est im
 Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur minimale est de **5** caractères.</value>
   </data>
   <data name="UsernameHelpLink" xml:space="preserve">
-    <value>Ce lien ouvre un échange avec vous sur Telegram :
+    <value>Ce lien ouvre un échange avec vous :
 {0}</value>
   </data>
   <data name="UsernameInUse" xml:space="preserve">
@@ -6530,7 +6530,7 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
     <value>Attention</value>
   </data>
   <data name="YourEmailSkipWarningText" xml:space="preserve">
-    <value>Non, vraiment.
+    <value>Non, sérieusement.
 
 Si vous oubliez votre mot de passe, vous perdrez l'accès à votre compte Telegram, il ne pourra pas être récupéré.</value>
   </data>

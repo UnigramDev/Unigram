@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -141,7 +141,7 @@
     <value>قبض خدمات شهری</value>
   </data>
   <data name="ActionBotDocuments" xml:space="preserve">
-    <value>⁧⁨{0}⁩ سند مقابل را دریافت کرد: ⁨{1}⁩⁩</value>
+    <value>⁧⁨{0}⁩ سندهای مقابل را دریافت کرد: ⁨{1}⁩⁩</value>
   </data>
   <data name="ActionChangedPhoto" xml:space="preserve">
     <value>⁧⁨un1⁩ عکس گروه را تغییر داد⁩</value>
@@ -285,7 +285,7 @@
     <value>متأسفانه شما نمی‌توانید این کاربر را به عنوان مدیر اضافه کنید زیرا او عضو این گروه نیست و شما مجاز به دعوت او نیستید.</value>
   </data>
   <data name="AddBannedErrorAdmin" xml:space="preserve">
-    <value>متأسفانه شما نمی‌توانید این کاربر را محروم کنید زیرا او در این گروه مدیر است و شما مجاز به کسر مقام او نیستید.</value>
+    <value>متأسفانه شما نمی‌توانید این کاربر را محروم کنید زیرا او مدیری در این گروه است و شما اجازه ندارید مقام او را کسر کنید.</value>
   </data>
   <data name="AddCaption" xml:space="preserve">
     <value>عنوانی اضافه کنید...</value>
@@ -321,7 +321,7 @@
     <value>افزودن دریافت کننده</value>
   </data>
   <data name="AddShortcut" xml:space="preserve">
-    <value>افزودن میان‌بر</value>
+    <value>افزودن به صفحه اصلی</value>
   </data>
   <data name="AddStickers" xml:space="preserve">
     <value>افزودن استیکر</value>
@@ -573,7 +573,7 @@
     <value>آیا از به اشتراک گذاری شماره تلفن خود اطمینان دارید؟</value>
   </data>
   <data name="AreYouSureShareMyContactInfoBot" xml:space="preserve">
-    <value>این ربات از شماره تلفن شما اطلاع خواهد یافت. این موضوع می‌تواند برای همگام‌سازی با سایر خدمات مفید باشد.</value>
+    <value>این ربات از شماره تلفن شما اطلاع خواهد یافت. این موضوع می‌تواند برای همگام‌سازی با سایر سرویس‌ها مفید باشد.</value>
   </data>
   <data name="AreYouSureShareMyContactInfoUser" xml:space="preserve">
     <value>⁧آیا از به اشتراک‌ گذاری شماره تلفن خود ⁨{0}⁩ با **⁨{1}⁩** اطمینان دارید؟⁩</value>
@@ -594,9 +594,9 @@
     <value>پرسیدن سؤال</value>
   </data>
   <data name="AskAQuestionInfo" xml:space="preserve">
-    <value>لطفاً توجه داشته باشید که پشتیبانی تلگرام توسط داوطلبان انجام می‌گردد. ما سعی می‌کنیم هر چه سریع‌تر پاسخگو باشیم، اما ممکن است مدتی طول بکشد.
+    <value>لطفاً توجه داشته باشید که پشتیبانی تلگرام توسط داوطلبان انجام می‌شود. ما سعی می‌کنیم هر چه سریع‌تر پاسخگو باشیم، اما ممکن است مدتی طول بکشد.
 
-لطفاً به صفحه <![CDATA[<a href="https://telegram.org/faq#general-questions">پرسش‌های متداول تلگرام</a>]]> سری بزنید: این بخش حاوی توصیه‌های مهمی برای <![CDATA[<a href="https://telegram.org/faq#troubleshooting">رفع اشکال</a>]]> و پاسخ به اکثر سؤالات ممکن است.</value>
+لطفاً به صفحه <![CDATA[<a href="https://telegram.org/faq/fa#a">پرسش‌های متداول تلگرام</a>]]> سری بزنید: این بخش حاوی پاسخ به اکثر پرسش‌ها و توصیه‌های مهمی برای <![CDATA[<a href="https://telegram.org/faq/fa#j">عیب‌یابی</a>]]>  است.</value>
   </data>
   <data name="AskButton" xml:space="preserve">
     <value>پرسش از یک داوطلب</value>
@@ -728,7 +728,7 @@
     <value>برنامه‌ریزی شده</value>
   </data>
   <data name="AutoNightTheme" xml:space="preserve">
-    <value>قالب شب خودکار</value>
+    <value>حالت شب خودکار</value>
   </data>
   <data name="AutoNightTo" xml:space="preserve">
     <value>تا</value>
@@ -737,7 +737,7 @@
     <value>به‌روزرسانی موقعیت</value>
   </data>
   <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
-    <value>⁧محاسبه زمان‌های غروب و طلوع نیازمند به یک بار چک کردن موقعیت تقریبی شما است. توجه داشته باشد که این موقعیت تنها در دستگاه شما به صورت محلی ذخیره می‌شود.
+    <value>⁧محاسبه زمان‌های غروب و طلوع نیازمند به یک بار بررسی موقعیت تقریبی شما است. توجه داشته باشد که این موقعیت تنها در دستگاه شما به صورت محلی ذخیره می‌شود.
 
 غروب: ⁨{0}⁩
 طلوع: ⁨{1}⁩⁩</value>
@@ -785,7 +785,7 @@
     <value>محروم کردن از گروه</value>
   </data>
   <data name="BannedPhoneNumber" xml:space="preserve">
-    <value>این شماره تلفن محروم شده است</value>
+    <value>این شماره تلفن محروم شده است.</value>
   </data>
   <data name="BlockContact" xml:space="preserve">
     <value>مسدود کردن</value>
@@ -943,7 +943,7 @@
     <value>لینک منقضی شده یا نامعتبر است.</value>
   </data>
   <data name="CancelLinkSuccess" xml:space="preserve">
-    <value>⁧فرایند حذف حساب کاربری شما (⁨{0}⁩) لغو شد. شما می‌توانید این پنجره را ببندید.⁩</value>
+    <value>⁧فرآیند حذف حساب کاربری شما (⁨{0}⁩) لغو شد. شما می‌توانید این پنجره را ببندید.⁩</value>
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>لغو ثبت نام</value>
@@ -972,7 +972,7 @@
     <value>تغییر گذرواژه</value>
   </data>
   <data name="ChangePhoneHelp" xml:space="preserve">
-    <value>ما یک پیام حاوی کد تأییدیه به شماره جدیدتان ارسال می‌کنیم.</value>
+    <value>ما پیامکی حاوی کد تأییدیه به شماره جدیدتان ارسال می‌کنیم.</value>
   </data>
   <data name="ChangePhoneNewNumber" xml:space="preserve">
     <value>شماره تلفن جدید</value>
@@ -1011,7 +1011,7 @@
     <value>ایجاد کانال</value>
   </data>
   <data name="ChannelAlertText" xml:space="preserve">
-    <value>کانال‌ها روش جدیدی برای انتشار پیام‌های شما برای تعداد زیادی مخاطب هستند.</value>
+    <value>کانال‌ها روشی برای انتشار پیام‌های شما برای تعداد نامحدودی مخاطب هستند.</value>
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>کانال چيست؟ </value>
@@ -1152,7 +1152,7 @@
     <value>تنها از طریق لینک دعوت می‌توان به کانال‌های خصوصی پیوست.</value>
   </data>
   <data name="ChannelPrivateLinkHelp" xml:space="preserve">
-    <value>دیگران می‌توانند با استفاده از این لینک به کانال شما بپیوندند. شما می‌توانید لینک را هر زمان که بخواهید باطل کنید.</value>
+    <value>افراد می‌توانند با استفاده از این لینک به کانال شما بپیوندند. شما می‌توانید لینک را هر زمان که بخواهید باطل کنید.</value>
   </data>
   <data name="ChannelPublic" xml:space="preserve">
     <value>کانال عمومی</value>
@@ -1208,7 +1208,7 @@
     <value>متأسفانه این کاربر تصمیم به ترک این کانال گرفته است و شما نمی‌توانید دوباره او را به اینجا دعوت کنید.</value>
   </data>
   <data name="ChannelUsernameHelp" xml:space="preserve">
-    <value>دیگران می‌توانند این لینک را با بقیه به اشتراک بگذارند و با جستجوی تلگرام کانال شما را پیدا کنند.</value>
+    <value>افراد می‌توانند این لینک را با دیگران به اشتراک بگذارند و با استفاده از جستجوی تلگرام کانال شما را پیدا کنند.</value>
   </data>
   <data name="ChannelUsernamePlaceholder" xml:space="preserve">
     <value>لینک</value>
@@ -1426,7 +1426,7 @@
     <value>غیرفعال کردن</value>
   </data>
   <data name="ConnectingToProxyDisableAlert" xml:space="preserve">
-    <value>⁧آیا از غیرفعال کردن سرور پروکسی ⁨{0}⁩ اطمینان دارید؟ شما می‌توانید آن را بعداً در تنظیمات دوباره فعال کنید (داده‌ها و ذخیره‌سازی).⁩</value>
+    <value>⁧آیا از غیرفعال کردن سرور پروکسی ⁨{0}⁩ اطمینان دارید؟ شما می‌توانید بعداً آن را در قسمت تنظیمات > داده‌ها و ذخیره‌سازی مجدداً فعال کنید.⁩</value>
   </data>
   <data name="ConnectingToProxyEnable" xml:space="preserve">
     <value>فعال کردن</value>
@@ -1456,7 +1456,7 @@
     <value>مخاطبین</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>**تلگرام** نیازمند دسترسی به مخاطبین شما است تا بتوانید در تمامی دستگاه‌هایتان با دوستانتان ارتباط برقرار کنید. مخاطبین شما به طور مداوم با سرورهای ابری و رمزگذاری شده تلگرام همگام‌سازی خواهند شد.</value>
+    <value>**تلگرام** باید به مخاطبین شما دسترسی داشته باشد تا بتوانید در تمامی دستگاه‌هایتان با دوستانتان ارتباط برقرار کنید. مخاطبین شما به طور مداوم با سرورهای ابری و رمزگذاری شده تلگرام همگام‌سازی خواهند شد.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>ادامه</value>
@@ -1712,7 +1712,7 @@
     <value>حذف گفتگو</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
-    <value>حذف</value>
+    <value>حذف مخاطب</value>
   </data>
   <data name="DeleteForAll" xml:space="preserve">
     <value>حذف برای تمامی اعضا</value>
@@ -1769,7 +1769,7 @@
     <value>به اشتراک گذاری مستقیم</value>
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
-    <value>نمایش گفتگوهای اخیر در فهرست به اشتراک گذاری</value>
+    <value>نمایش گفتگوهای اخیر در فهرست به اشتراک گذاری اندروید</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>گیف محرمانه</value>
@@ -1802,7 +1802,7 @@
     <value>فایل‌های اشتراکی</value>
   </data>
   <data name="Done" xml:space="preserve">
-    <value>انجام</value>
+    <value>تأیید</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>پیش‌نویس</value>
@@ -1862,7 +1862,7 @@
     <value>ویرایش عنوان</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>ویرایش</value>
+    <value>تغییر نام مخاطب</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>ویرایش پیام</value>
@@ -1915,7 +1915,7 @@
     <value>آیا از فعال کردن این پروکسی اطمینان دارید؟</value>
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
-    <value>شما می‌توانید سرور پروکسی خود را در قسمت تنظیمات (داده‌ها و ذخیره‌سازی) تغییر دهید.</value>
+    <value>شما می‌توانید سرور پروکسی خود را بعداً در قسمت تنظیمات > داده‌ها و ذخیره‌سازی تغییر دهید.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>پخش پیوسته ویدئوها و فایل‌های صوتی</value>
@@ -2077,14 +2077,14 @@
 
 اعضا و مدیران این گروه
 در 48 ساعت گذشته
-فعالیتی انجام نداده‌اند.</value>
+فعالیت سرویسی انجام نداده‌اند.</value>
   </data>
   <data name="EventLogEmptyChannel" xml:space="preserve">
     <value>**هنوز فعالیتی در اینجا موجود نیست**
 
 مدیران این کانال
 در 48 ساعت گذشته
-فعالیتی انجام نداده‌اند.</value>
+فعالیت سرویسی انجام نداده‌اند.</value>
   </data>
   <data name="EventLogEmptySearch" xml:space="preserve">
     <value>**فعالیتی یافت نشد**
@@ -2128,10 +2128,10 @@
     <value>⁧⁨un1⁩ به گروه پیوست⁩</value>
   </data>
   <data name="EventLogInfoDetail" xml:space="preserve">
-    <value>این فهرستی از تمامی فعالیت‌های صورت گرفته توسط اعضا و مدیران این گروه در 48 ساعت گذشته است.</value>
+    <value>این فهرستی از تمامی فعالیت‌های سرویس انجام شده توسط اعضا و مدیران این گروه در 48 ساعت گذشته است.</value>
   </data>
   <data name="EventLogInfoDetailChannel" xml:space="preserve">
-    <value>این فهرستی از تمامی فعالیت‌های انجام شده توسط مدیران این کانال در 48 ساعت گذشته است.</value>
+    <value>این فهرستی از تمامی فعالیت‌های سرویس انجام شده توسط مدیران این کانال در 48 ساعت گذشته است.</value>
   </data>
   <data name="EventLogInfoTitle" xml:space="preserve">
     <value>فعالیت‌های اخیر چیست؟</value>
@@ -2584,7 +2584,7 @@
     <value>اعلان‌های گروه</value>
   </data>
   <data name="GroupPhotosHelp" xml:space="preserve">
-    <value>قرار دادن گروه رسانه‌ها در یک پیام</value>
+    <value>گروه‌بندی رسانه‌ها در یک پیام</value>
   </data>
   <data name="GroupStickers" xml:space="preserve">
     <value>استیکرهای گروه</value>
@@ -2901,7 +2901,7 @@
     <value>چه کسی می‌تواند زمان آخرین بازدید شما را ببیند؟</value>
   </data>
   <data name="Lately" xml:space="preserve">
-    <value>آخرین بازدید به‌ تازگی</value>
+    <value>آخرین بازدید به تازگی</value>
   </data>
   <data name="Later" xml:space="preserve">
     <value>بعداً</value>
@@ -2961,7 +2961,7 @@
     <value>لینک‌های اشتراکی</value>
   </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
-    <value>انتخاب کنید که تا چه مدت دیگران در این گفتگو بتوانند موقعیت دقیق شما را ببینند.</value>
+    <value>انتخاب کنید که تا چه مدت افراد در این گفتگو بتوانند موقعیت لحظه‌ای شما را ببینند.</value>
   </data>
   <data name="LiveLocationAlertPrivate" xml:space="preserve">
     <value>⁧انتخاب کنید که تا چه مدت ⁨{0}⁩ بتواند موقعیت دقیق شما را ببیند.⁩</value>
@@ -3059,13 +3059,13 @@
     <value>گوگل</value>
   </data>
   <data name="MapPreviewProviderNobody" xml:space="preserve">
-    <value>هیچ‌کس</value>
+    <value>بدون پیش‌نمایش</value>
   </data>
   <data name="MapPreviewProviderTelegram" xml:space="preserve">
     <value>تلگرام</value>
   </data>
   <data name="MapPreviewProviderYandex" xml:space="preserve">
-    <value>یاندکس</value>
+    <value>Yandex</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
     <value>علامت زدن به عنوان خوانده شده</value>
@@ -3122,7 +3122,7 @@
     <value>تنها با اضافه شدن توسط سایر اعضا یا داشتن لینک دعوت می‌توان به گروه‌های خصوصی پیوست.</value>
   </data>
   <data name="MegaPrivateLinkHelp" xml:space="preserve">
-    <value>دیگران می‌توانند با استفاده از این لینک به گروه شما بپیوندند. شما می‌توانید لینک را هر زمان که بخواهید باطل کنید.</value>
+    <value>افراد می‌توانند با استفاده از این لینک به گروه شما بپیوندند. شما می‌توانید لینک را هر زمان که بخواهید باطل کنید.</value>
   </data>
   <data name="MegaPublic" xml:space="preserve">
     <value>گروه عمومی</value>
@@ -3131,7 +3131,7 @@
     <value>گروه‌های عمومی در نتایج جستجو پیدا می‌شوند، تاریخچه گفتگو برای همه قابل دسترسی است و هر کسی می‌تواند به این گروه‌ها بپیوندد.</value>
   </data>
   <data name="MegaUsernameHelp" xml:space="preserve">
-    <value>دیگران می‌توانند این لینک را با بقیه به اشتراک بگذارند و با جستجوی تلگرام گروه شما را پیدا کنند.</value>
+    <value>افراد می‌توانند این لینک را با دیگران به اشتراک بگذارند و با استفاده از جستجوی تلگرام گروه شما را پیدا کنند.</value>
   </data>
   <data name="MembersZero" xml:space="preserve">
     <value/>
@@ -3383,7 +3383,7 @@
   <data name="NoExceptions" xml:space="preserve">
     <value>در این قسمت تمامی گفتگوها با تنظیمات اعلان غیرپیش‌فرض فهرست خواهد شد.
 
-شما می‌توانید اعلان‌های یک گفتگو را با باز کردن پروفایل آن بر انتخاب 'اعلان ها' سفارشی‌سازی کنید.</value>
+شما می‌توانید اعلان‌های یک گفتگو را با باز کردن پروفایل آن بر انتخاب 'اعلان‌ها' سفارشی‌سازی کنید.</value>
   </data>
   <data name="NoGroupsInCommon" xml:space="preserve">
     <value>هنوز گروه مشترکی موجود نیست</value>
@@ -3398,7 +3398,7 @@
     <value>هنوز ماسکی موجود نیست</value>
   </data>
   <data name="NoMedia" xml:space="preserve">
-    <value> عکس‌ها و فیلم‌های این گفتگو را به اشتراک بگذارید و از هر دستگاه‌ خود به آن‌ها دسترسی داشته باشید.</value>
+    <value>عکس‌ها و ویدئوها را در این گفتگو به اشتراک بگذارید و از هر دستگاه‌ خود به آن‌ها دسترسی داشته باشید.</value>
   </data>
   <data name="NoMediaAutoDownload" xml:space="preserve">
     <value>هیچ رسانه‌ای </value>
@@ -3425,7 +3425,7 @@
     <value>هنوز عکسی موجود نیست</value>
   </data>
   <data name="NoPlayerInstalled" xml:space="preserve">
-    <value>شما هیچ برنامه‌ای جهت پخش فیلم ندارید، لطفاً جهت ادامه یک برنامه پخش کننده فیلم نصب نمایید</value>
+    <value>شما هیچ برنامه‌ای جهت پخش ویدئو ندارید، لطفاً جهت ادامه یک برنامه پخش کننده ویدئو نصب نمایید</value>
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>بدون پاپ‌آپ</value>
@@ -3744,12 +3744,12 @@
 دستگاه: ⁨{2}⁩
 موقعیت: ⁨{3}⁩
 
-اگر آن شخص شما نیستید، می‌توانید با مراجعه به تنظیمات > حریم خصوصی و امنیت > نشست‌ها، دسترسی آن شخص به حساب کاربری خود را قطع کنید.
+اگر این ورود توسط شما انجام نشده است، می‌توانید با مراجعه به قسمت تنظیمات > حریم خصوصی و امنیت > نشست‌ها، به آن نشست پایان دهید.
 
-اگر گمان می‌کنید فردی بدون اطلاع و خواست شما وارد حساب کاربریتان شده است می‌توانید از بخش تنظیمات حریم خصوصی و امنیت، تأیید دو مرحله‌ای را فعال نمایید.
+اگر فکر می‌کنید کسى بدون اجازه شما وارد حساب کاربریتان شده است، می‌توانید تأیید دو مرحله‌ای را در قسمت حریم خصوصی و امنیت فعال نمایید.
 
-با احترام، 
- تیم تلگرام⁩</value>
+با احترام،
+تیم تلگرام⁩</value>
   </data>
   <data name="Notifications" xml:space="preserve">
     <value>اعلان‌ها</value>
@@ -3890,7 +3890,7 @@
     <value>مشاهده کانال</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>نمایش گروه</value>
+    <value>مشاهده گروه</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>باز کردن در…</value>
@@ -3899,7 +3899,7 @@
     <value>باز کردن در...</value>
   </data>
   <data name="OpenMessage" xml:space="preserve">
-    <value>نمایش پیام</value>
+    <value>مشاهده پیام</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>⁧آدرس ⁨{0}⁩ باز شود؟⁩</value>
@@ -3942,9 +3942,8 @@
     <value>امن</value>
   </data>
   <data name="Page5Message" xml:space="preserve">
-    <value>**تلگرام** هیچ محدودیتی در حجم
-گفتگوها و رسانه‌های شما ندارد.
-</value>
+    <value>**تلگرام** هیچ محدودیتی برای حجم
+گفتگوها و رسانه‌های شما ندارد.</value>
   </data>
   <data name="Page5Title" xml:space="preserve">
     <value>قدرتمند</value>
@@ -4391,7 +4390,7 @@
     <value>خالی</value>
   </data>
   <data name="PassportNoPolicy" xml:space="preserve">
-    <value>⁧شما در حال ارسال مستقیم سندهای خود به  ⁨{0}⁩ هستید و به @⁨{1}⁩ آن‌ها اجازه می‌دهید تا برای شما پیام‌ ارسال کند.⁩</value>
+    <value>⁧شما در حال ارسال مستقیم سندهای خود به ⁨{0}⁩ هستید و به @⁨{1}⁩ آن‌ اجازه می‌دهید تا برای شما پیام‌ ارسال کند.⁩</value>
   </data>
   <data name="PassportPersonal" xml:space="preserve">
     <value>اطلاعات شخصی</value>
@@ -4421,7 +4420,7 @@
     <value>⁧استفاده از ⁨{0}⁩⁩</value>
   </data>
   <data name="PassportPhoneUseSameEmailInfo" xml:space="preserve">
-    <value>استفاده از آدرس ایمیل استفاده شده در تلگرام</value>
+    <value>از ایمیل استفاده شده در تلگرام استفاده کنید.</value>
   </data>
   <data name="PassportPhoneUseSameInfo" xml:space="preserve">
     <value>از شماره تلفن استفاده شده در تلگرام استفاده کنید.</value>
@@ -4436,10 +4435,10 @@
     <value>اطلاعات ارائه شده</value>
   </data>
   <data name="PassportRequest" xml:space="preserve">
-    <value>⁧**⁨{0}⁩** اجازه دسترسی به اطلاعات شخصی شما را می‌خواهد تا شما را برای دریافت خدمات خود ثبت نام کند.⁩</value>
+    <value>⁧**⁨{0}⁩** اجازه دسترسی به داده‌های شخصی شما را می‌خواهد تا شما را برای دریافت سرویس‌های خود ثبت نام کند.⁩</value>
   </data>
   <data name="PassportRequestPasswordInfo" xml:space="preserve">
-    <value>لطفاً جهت رمزگشایی اطلاعات خود گذرواژه تلگرامتان را وارد کنید.</value>
+    <value>لطفاً جهت رمزگشایی داده‌های خود گذرواژه تلگرامتان را وارد کنید.</value>
   </data>
   <data name="PassportRequestedInformation" xml:space="preserve">
     <value>اطلاعات درخواستی</value>
@@ -4493,7 +4492,7 @@
     <value>منقضی نمی‌شود</value>
   </data>
   <data name="PassportSelfRequest" xml:space="preserve">
-    <value>جهت دسترسی به اطلاعات شخصی خود، گذرواژه خود را وارد کنید.</value>
+    <value>گذرواژه خود را جهت دسترسی به داده‌های شخصی خود وارد کنید.</value>
   </data>
   <data name="PassportSelfie" xml:space="preserve">
     <value>سلفی</value>
@@ -4589,7 +4588,7 @@
     <value>شما می‌توانید اطلاعات پرداخت خود را برای استفاده‌های بعدی ذخیره کنید.</value>
   </data>
   <data name="PaymentCardSavePaymentInformationInfoLine2" xml:space="preserve">
-    <value>لطفا برای فعال کردن این گزینه *تأیید دو‌مرحله‌ای را فعال کنید*.</value>
+    <value>لطفاً برای فعال کردن این گزینه *تأیید دو‌مرحله‌ای را فعال کنید*.</value>
   </data>
   <data name="PaymentCardTitle" xml:space="preserve">
     <value>کارت پرداخت</value>
@@ -4750,22 +4749,22 @@
     <value>⁧ایمیل بازیابی شما ⁨{0}⁩ هنوز فعال نشده و در انتظار تأیید است.⁩</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>تلگرام نیازمند دسترسی به مخاطبین شما است تا بتوانید در تمامی دستگاه‌هایتان با دوستانتان ارتباط برقرار کنید.</value>
+    <value>برای اینکه شما بتوانید در تمامی دستگاه‌های خود با دوستانتان ارتباط برقرار کنید، مخاطبین شما به طور مداوم با سرورهای اَبری و رمزگذاری شده تلگرام همگام‌سازی خواهند شد.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
-    <value>تلگرام برای پخش ویدئوها در حالت تصویر در تصویر نیازمند دسترسی به گزینه فعال بودن بر روی برنامه‌های دیگر است.</value>
+    <value>تلگرام جهت پخش ویدئوها در حالت تصویر در تصویر باید به گزینه فعال بودن بر روی برنامه‌های دیگر دسترسی داشته باشد.</value>
   </data>
   <data name="PermissionNoAudio" xml:space="preserve">
-    <value>تلگرام نیازمند دسترسی به میکروفن شما است تا بتوانید پیام‌های صوتی ارسال کنید.</value>
+    <value>تلگرام باید به میکروفن شما دسترسی داشته باشد تا بتوانید پیام‌های صوتی ارسال کنید.</value>
   </data>
   <data name="PermissionNoAudioVideo" xml:space="preserve">
-    <value>تلگرام نیازمند دسترسی به میکروفن شما است تا بتوانید ویدئو ضبط کنید.</value>
+    <value>تلگرام باید به میکروفن شما دسترسی داشته باشد تا بتوانید ویدئو ضبط کنید.</value>
   </data>
   <data name="PermissionNoCamera" xml:space="preserve">
-    <value>تلگرام نیازمند دسترسی به دوربین شما است تا بتوانید عکس و فیلم بگیرید.</value>
+    <value>تلگرام باید به دوربین شما دسترسی داشته باشد تا بتوانید عکس و ویدئو بگیرید.</value>
   </data>
   <data name="PermissionNoLocation" xml:space="preserve">
-    <value>تلگرام نیازمند دسترسی به موقعیت شماست تا بتوانید آن را با دوستانتان به اشتراک بگذارید.</value>
+    <value>تلگرام باید به موقعیت شما دسترسی داشته باشد تا بتوانید آن را با دوستانتان به اشتراک بگذارید.</value>
   </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
     <value>تلگرام نیازمند دسترسی به موقعیت شماست.</value>
@@ -4774,7 +4773,7 @@
     <value>تنظیمات</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
-    <value>تلگرام نیازمند دسترسی به فضای ذخیره‌سازی شماست تا بتوانید عکس‌ها، ویدئوها، موسیقی‌ها و دیگر رسانه‌ها را ارسال و ذخیره کنید.</value>
+    <value>تلگرام باید به فضای ذخیره‌سازی شما دسترسی داشته باشد تا بتوانید عکس‌ها، ویدئوها، موسیقی‌ها و دیگر رسانه‌ها را ارسال و ذخیره کنید.</value>
   </data>
   <data name="Phone" xml:space="preserve">
     <value>تلفن</value>
@@ -5174,7 +5173,7 @@
 ⁨{0}⁩⁩</value>
   </data>
   <data name="RestoreEmailSentInfo" xml:space="preserve">
-    <value>لطفاً ایمیل خود را بررسی کرده و کد 6 رقمی که برای شما ارسال شده را در اینجا وارد کنید.</value>
+    <value>لطفاً ایمیل خود را بررسی کرده و کد 6 رقمی که برای شما ارسال کردیم را در قسمت زیر وارد کنید.</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>⁧در دسترسی به ایمیل خود ⁨{0}⁩ مشکلی دارید؟⁩</value>
@@ -5354,7 +5353,7 @@
     <value>پیش‌نمایش‌های لینک</value>
   </data>
   <data name="SecretWebPageInfo" xml:space="preserve">
-    <value>پیش‌نمایش‌های لینک بر روی سرورهای تلگرام ایجاد می‌شوند. ما اطلاعاتی درباره لینک‌های ارسالی توسط شما ذخیره نمی‌کنیم.</value>
+    <value>پیش‌نمایش‌های لینک بر روی سرورهای تلگرام ایجاد می‌شوند. ما اطلاعات مربوط به لینک‌های ارسالی شما را ذخیره نمی‌کنیم.</value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>امنیت</value>
@@ -5417,7 +5416,7 @@
     <value>در هنگام حرکت شما در زمان واقعی به‌روزرسانی می‌شود</value>
   </data>
   <data name="SendLocation" xml:space="preserve">
-    <value>موقعیت فعلی خود را ارسال کنید</value>
+    <value>ارسال موقعیت فعلی من</value>
   </data>
   <data name="SendMessageRestricted" xml:space="preserve">
     <value>⁧مدیران این گروه شما را از نوشتن در اینجا تا ⁨{0}⁩ محدود کرده‌اند⁩</value>
@@ -5465,7 +5464,7 @@
     <value>در حال ارسال ویدئو...</value>
   </data>
   <data name="SentAppCode" xml:space="preserve">
-    <value>ما کد را به برنامه‌ **تلگرام** نصب‌ شده در دستگاه دیگرتان ارسال کردیم.</value>
+    <value>ما کد را به برنامه‌ **تلگرام** نصب‌ شده در دستگاه دیگرتان ارسال کرده‌ایم.</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>⁧ما با شماره شما **⁨{0}⁩** تماس می‌گیریم.
@@ -5476,10 +5475,10 @@
     <value>⁧ما در حال تماس با شماره شما **⁨{0}⁩** برای اعلام کد هستیم.⁩</value>
   </data>
   <data name="SentSmsCode" xml:space="preserve">
-    <value>⁧ما پیامکی حاوی کد فعال‌سازی به تلفن شما  **⁨{0}⁩** ارسال کردیم.⁩</value>
+    <value>⁧ما پیامکی حاوی کد فعال‌سازی به شماره شما **⁨{0}⁩** ارسال کرده‌ایم.⁩</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
-    <value>اعلان‌های خدمات</value>
+    <value>اعلان‌های سرویس‌</value>
   </data>
   <data name="SessionsInfo" xml:space="preserve">
     <value>نشست‌های خود بر روی دستگاه‌های دیگر کنترل کنید.</value>
@@ -5698,7 +5697,7 @@
     <value>بایگانی</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>استیکر‌ها</value>
+    <value>استیکر‌ها و ماسک‌ها</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>حذف</value>
@@ -5758,7 +5757,7 @@
     <value>این کار تمامی اطلاعات مربوط به افرادی که مکرراً برای آن‌ها پیام ارسال می‌کنید و همچنین ربات‌های درون‌خطی که احتمال دارد از آن‌ها استفاده کنید را حذف می‌کند.</value>
   </data>
   <data name="SuggestContactsInfo" xml:space="preserve">
-    <value>نمایش افرادی که مکرراً برای آن‌ها پیام ارسال می‌کنید در بالای قسمت جستجوی دسترسی سریع.</value>
+    <value>افرادی که مکرراً برای آن‌ها پیام ارسال می‌کنید در بالای قسمت جستجوی دسترسی سریع نمایش داده می‌شوند.</value>
   </data>
   <data name="SuggestStickers" xml:space="preserve">
     <value>پیشنهاد بر اساس شکلک</value>
@@ -5803,7 +5802,7 @@
     <value>ریشه سیستم</value>
   </data>
   <data name="TapHereGifs" xml:space="preserve">
-    <value>برای دسترسی به گیف‌های ذخیره شده اینجا را لمس کنید</value>
+    <value>جهت دسترسی به گیف‌های ذخیره شده اینجا را لمس کنید</value>
   </data>
   <data name="TapToChangePhone" xml:space="preserve">
     <value>برای تغییر شماره تلفن لمس کنید</value>
@@ -5839,9 +5838,9 @@
     <value>ایجاد گذرواژه</value>
   </data>
   <data name="TelegramPassportCreatePasswordInfo" xml:space="preserve">
-    <value>لطفاً جهت محافظت از اطلاعات شخصی خود با رمزگذاری سرتاسر گذرواژه‌ای ایجاد کنید.
+    <value>لطفاً جهت محافظت از داده‌های شخصی خود با رمزگذاری سرتاسر گذرواژه‌ای ایجاد کنید.
 
-این گذرواژه همچنین هنگامی که از یک دستگاه جدید به حساب کاربری تلگرام خود وارد می‌شوید از شما خواسته می‌شود.</value>
+این گذرواژه همچنین هنگامی که شما از یک دستگاه جدید وارد حساب کاربری تلگرام خود می‌شوید از شما خواسته می‌شود.</value>
   </data>
   <data name="TelegramPassportDelete" xml:space="preserve">
     <value>حذف پاسپورت</value>
@@ -5947,19 +5946,19 @@
   <data name="TosDecline" xml:space="preserve">
     <value>متأسفانه این یعنی شما نمی‌توانید در تلگرام ثبت نام کنید.
 
-برخلاف برنامه‌های دیگر، ما از اطلاعات شما برای تبلیغات و یا سایر اهداف تجاری استفاده نمی‌کنیم. تلگرام فقط اطلاعاتی را ذخیره می‌کند که برای عمل به‌ عنوان یک سرویس ابری با امکانات زیاد به آن‌ها نیاز دارد. شما می‌توانید نحوه استفاده ما از اطلاعات خود را در تنظیمات حریم خصوصی و امنیت تنظیم کنید (برای مثال با حذف مخاطبین همگام‌سازی شده).
+برخلاف برنامه‌های دیگر، ما از اطلاعات شما برای تبلیغات و یا سایر اهداف تجاری استفاده نمی‌کنیم. تلگرام فقط اطلاعاتی را ذخیره می‌کند که برای عمل به‌ عنوان یک سرویس ابری با امکانات زیاد به آن‌ها نیاز دارد. شما می‌توانید نحوه استفاده ما از داده‌های خود را در تنظیمات حریم خصوصی و امنیت تنظیم کنید (برای مثال با حذف مخاطبین همگام‌سازی شده).
 
 اما اگر در حالت کلی با نیازهای نسبتاً کم تلگرام مشکل دارید، ارائه این سرویس برای ما امکان‌پذیر نخواهد بود.</value>
   </data>
   <data name="TosDeclineDeleteAccount" xml:space="preserve">
     <value>هشدار، این کار حساب کاربری تلگرام شما را به همراه تمامی داده‌هایی که در ابر تلگرام ذخیره می‌کنید به صورت بازگشت‌ناپذیری حذف می‌کند.
 
-توجه: شما می‌توانید همین الان این عمل را لغو کرده و پیش از حذف حساب کاربری خود و از دست دادن تمامی اطلاعات خود، آن‌ها را ذخیره کنید. (جهت انجام این کار، آخرین نسخه تلگرام دسکتاپ را باز کرده و به قسمت تنظیمات > ذخیره اطلاعات تلگرام مراجعه کنید.)</value>
+توجه: شما می‌توانید همین الان این عمل را لغو کرده و پیش از حذف حساب کاربری خود و از دست دادن تمامی داده‌هایتان، آن‌ها را ذخیره کنید. (جهت انجام این کار، آخرین نسخه تلگرام دسکتاپ را باز کرده و به قسمت تنظیمات > ذخیره داده‌های تلگرام مراجعه کنید.)</value>
   </data>
   <data name="TosUpdateDecline" xml:space="preserve">
-    <value>متأسفانه این یعنی ما مجبوریم در اینجا راهمان را از هم جدا کنیم. برخلاف دیگران، ما از اطلاعات شما برای تبلیغات و یا سایر اهداف تجاری استفاده نمی‌کنیم. تلگرام فقط اطلاعاتی را ذخیره می‌کند که برای فعالیت به‌ عنوان یک سرویس ابری با امکانات زیاد به آن‌ها نیاز دارد. شما می‌توانید در تنظیمات حریم خصوصی و امنیت نحوه استفاده ما از اطلاعات خود را تنظیم کنید (برای مثال با حذف مخاطبین همگام‌سازی شده).
+    <value>متأسفانه این یعنی ما مجبوریم در اینجا راهمان را از هم جدا کنیم. برخلاف دیگران، ما از داده‌های شما برای تبلیغات و یا سایر اهداف تجاری استفاده نمی‌کنیم. تلگرام فقط اطلاعاتی را ذخیره می‌کند که برای فعالیت به‌ عنوان یک سرویس ابری با امکانات زیاد به آن‌ها نیاز دارد. شما می‌توانید در تنظیمات حریم خصوصی و امنیت نحوه استفاده ما از داده‌های خود را تنظیم کنید (برای مثال با حذف مخاطبین همگام‌سازی شده).
 
-اما اگر در حالت کلی با نیازهای نسبتاً کم تلگرام مشکل دارید، ارائه این سرویس برای ما امکان‌پذیر نخواهد بود. شما می‌توانید همین حالا حساب کاربری خود را غیرفعال کنید - و یا کمی صبر کرده و بعداً در صورتی که همچنان از نحوه استفاده ما از اطلاعات خود راضی نیستید آن را غیرفعال کنید.</value>
+اما اگر در حالت کلی با نیازهای نسبتاً کم تلگرام مشکل دارید، ارائه این سرویس برای ما امکان‌پذیر نخواهد بود. شما می‌توانید همین حالا حساب کاربری خود را غیرفعال کنید - و یا کمی صبر کرده و بعداً در صورتی که همچنان از نحوه استفاده ما از داده‌های خود راضی نیستید آن را غیرفعال کنید.</value>
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>مجموع</value>
@@ -6199,12 +6198,12 @@
     <value>خالی</value>
   </data>
   <data name="UsernameHelp" xml:space="preserve">
-    <value>شما می‌توانید در**تلگرام** برای خود یک نام کاربری انتخاب کنید. با این کار، دیگران می‌توانند بدون دانستن شماره تلفن شما، با استفاده از این نام کاربری شما را پیدا کرده و با شما ارتباط برقرار کنند.
+    <value>شما می‌توانید در**تلگرام** برای خود یک نام کاربری انتخاب کنید. با این کار، سایر افراد می‌توانند بدون دانستن شماره تلفن شما، با استفاده از این نام کاربری شما را پیدا کرده و با شما ارتباط برقرار کنند.
 
 شما می‌توانید از کاراکترهای **9–0**، **a–z** و زیرخط استفاده کنید. حداقل طول مجاز **5** کاراکتر می‌باشد.</value>
   </data>
   <data name="UsernameHelpLink" xml:space="preserve">
-    <value>⁧این لینک گفتگویی را با خودتان در تلگرام باز می‌کند:
+    <value>⁧این لینک گفتگویی را با خودتان باز می‌کند:
 ⁨{0}⁩⁩</value>
   </data>
   <data name="UsernameInUse" xml:space="preserve">
@@ -6329,7 +6328,7 @@
     <value>تماس دریافتی</value>
   </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
-    <value>تلگرام نیازمند دسترسی به میکروفن شما است تا بتوانید تماس برقرار کنید.</value>
+    <value>تلگرام باید به میکروفن شما دسترسی داشته باشد تا بتوانید تماس برقرار کنید.</value>
   </data>
   <data name="VoipNotificationSettings" xml:space="preserve">
     <value>تماس‌های صوتی</value>

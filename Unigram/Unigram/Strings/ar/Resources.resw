@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -170,7 +170,7 @@
     <value>⁧⁨un1⁩ انضم للمجموعة عبر رابط دعوة⁩</value>
   </data>
   <data name="ActionInviteYou" xml:space="preserve">
-    <value>انضممتَ للمجموعة عبر رابط دعوة</value>
+    <value>انضممت للمجموعة عبر رابط دعوة</value>
   </data>
   <data name="ActionKickUser" xml:space="preserve">
     <value>⁧⁨un1⁩ أزال ⁨un2⁩⁩</value>
@@ -275,7 +275,7 @@
     <value>إضافة</value>
   </data>
   <data name="AddAccount" xml:space="preserve">
-    <value>أضف حساب</value>
+    <value>إضافة حساب</value>
   </data>
   <data name="AddAdminErrorBlacklisted" xml:space="preserve">
     <value>المعذرة، لا يمكنك إضافة هذا المستخدم كمشرف لأنه في قائمة المحظورين ولا يمكنك رفع الحظر عنه.</value>
@@ -320,7 +320,7 @@
     <value>إضافة مستلم</value>
   </data>
   <data name="AddShortcut" xml:space="preserve">
-    <value>إضافة اختصار</value>
+    <value>إضافة إلى الشاشة الرئيسية</value>
   </data>
   <data name="AddStickers" xml:space="preserve">
     <value>إضافة ملصق</value>
@@ -410,7 +410,7 @@
     <value>أظهرها دائمًا</value>
   </data>
   <data name="AndMoreTypingZero" xml:space="preserve">
-    <value>⁧و⁨{0}⁩  يكتب الآن⁩</value>
+    <value>⁧و⁨{0}⁩ عضو يكتب الآن⁩</value>
   </data>
   <data name="AndMoreTypingOne" xml:space="preserve">
     <value>وعضوٌ آخرُ يكتبان الآن</value>
@@ -677,7 +677,7 @@
     <value>الرسائل الصوتية</value>
   </data>
   <data name="AudioTitle" xml:space="preserve">
-    <value>الصوتيات المتبادَلة</value>
+    <value>الصوتيات المتبادلة</value>
   </data>
   <data name="AudioUnknownArtist" xml:space="preserve">
     <value>المؤدي غير معروف</value>
@@ -785,7 +785,7 @@
     <value>حظر من المجموعة</value>
   </data>
   <data name="BannedPhoneNumber" xml:space="preserve">
-    <value>رقم الهاتف محظور</value>
+    <value>تم حظر هذا الرقم.</value>
   </data>
   <data name="BlockContact" xml:space="preserve">
     <value>حظر</value>
@@ -860,7 +860,7 @@
     <value>إفراغ</value>
   </data>
   <data name="CalculatingSize" xml:space="preserve">
-    <value>جارٍ الحساب...</value>
+    <value>يتم الحساب...</value>
   </data>
   <data name="Call" xml:space="preserve">
     <value>اتصال</value>
@@ -993,7 +993,7 @@
     <value>إضافة أعضاء</value>
   </data>
   <data name="ChannelAddTo" xml:space="preserve">
-    <value>⁧هل ترغب بإضافة ⁨{0}⁩ للقناة؟⁩</value>
+    <value>⁧هل ترغب بإضافة ⁨{0}⁩ إلى القناة؟⁩</value>
   </data>
   <data name="ChannelAddedBy" xml:space="preserve">
     <value>⁧⁨un1⁩ أضافك لهذه القناة⁩</value>
@@ -1011,7 +1011,7 @@
     <value>إنشاء قناة</value>
   </data>
   <data name="ChannelAlertText" xml:space="preserve">
-    <value>القنوات هي أداة جديدة لإيصال رسائلك لجمهور واسع وغير محدود.</value>
+    <value>القنوات هي أداة جديدة لإيصال رسائلك لجمهور غير محدود.</value>
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>ما هي القنوات؟</value>
@@ -1137,7 +1137,7 @@
     <value>كتم</value>
   </data>
   <data name="ChannelNotifyMembersInfoOff" xml:space="preserve">
-    <value>لن يتم إشعار الأعضاء بالمنشورات الجديدة</value>
+    <value>سيتلقى الأعضاء إشعاراتٍ صامتة</value>
   </data>
   <data name="ChannelNotifyMembersInfoOn" xml:space="preserve">
     <value>سيتم إشعار الأعضاء بالمنشورات الجديدة</value>
@@ -1298,7 +1298,7 @@
     <value>⁧⁨{0}⁩ محادثة⁩</value>
   </data>
   <data name="Checking" xml:space="preserve">
-    <value>جارٍ التحقق...</value>
+    <value>يتم التحقق...</value>
   </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>اختر دولة</value>
@@ -1417,19 +1417,19 @@
     <value>متصل</value>
   </data>
   <data name="Connecting" xml:space="preserve">
-    <value>جارٍ الاتصال...</value>
+    <value>يتم الاتصال...</value>
   </data>
   <data name="ConnectingConnectProxy" xml:space="preserve">
     <value>الاتصال بالبروكسي</value>
   </data>
   <data name="ConnectingToProxy" xml:space="preserve">
-    <value>جارٍ الاتصال بالبروكسي</value>
+    <value>يتم الاتصال بالبروكسي</value>
   </data>
   <data name="ConnectingToProxyDisable" xml:space="preserve">
     <value>تعطيل</value>
   </data>
   <data name="ConnectingToProxyDisableAlert" xml:space="preserve">
-    <value>⁧هل أنت متأكد من رغبتك في تعطيل البروكسي ⁨{0}⁩؟ يمكنك إعادة تفعيله لاحقًا عن طريق الإعدادات (البيانات والتخزين).⁩</value>
+    <value>⁧هل أنت متأكد من رغبتك في تعطيل البروكسي ⁨{0}⁩؟ يمكنك إعادة تفعيله لاحقًا عن طريق الإعدادات > البيانات والتخزين.⁩</value>
   </data>
   <data name="ConnectingToProxyEnable" xml:space="preserve">
     <value>تفعيل</value>
@@ -1716,7 +1716,7 @@
     <value>حذف المحادثة</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
-    <value>حذف</value>
+    <value>حذف الجهة</value>
   </data>
   <data name="DeleteForAll" xml:space="preserve">
     <value>حذف من عند كافة الأعضاء</value>
@@ -1773,7 +1773,7 @@
     <value>مشاركة مباشرة</value>
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
-    <value>اظهار المحادثات الأخيرة في قائمة المشاركة</value>
+    <value>إظهار آخر المحادثات في قائمة المشاركة</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>صورة متحركة سرية</value>
@@ -1803,7 +1803,7 @@
     <value>تجاهل الرسالة الصوتية</value>
   </data>
   <data name="DocumentsTitle" xml:space="preserve">
-    <value>الملفات المتبادَلة</value>
+    <value>الملفات المتبادلة</value>
   </data>
   <data name="Done" xml:space="preserve">
     <value>تم</value>
@@ -1866,7 +1866,7 @@
     <value>تعديل الوصف</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>تعديل</value>
+    <value>تعديل الاسم</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>تعديل الرسالة</value>
@@ -1918,7 +1918,7 @@
     <value>هل أنت متأكد من رغبتك في تفعيل هذا البروكسي؟</value>
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
-    <value>يمكنك تغيير خادم البروكسي لاحقًا من الإعدادات (البيانات والتخزين)</value>
+    <value>يمكنك تغيير خادم البروكسي لاحقًا من الإعدادات > البيانات والتخزين.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>بَثُّ الصوتيات والمقاطع المرئية</value>
@@ -1960,7 +1960,7 @@
   <data name="EncryptionKeyDescription" xml:space="preserve">
     <value>⁧تم اشتقاق الصورة والنص من مفتاح تشفير هذه المحادثة السرية مع **⁨{0}⁩**.
 
-إن كانت مطابقة لما يظهر على جهاز **⁨{1}⁩**،  فالتشفير من البداية للنهاية مضمون.
+إن كانت مطابقة لما يظهر على جهاز **⁨{1}⁩**، فالتشفير من البداية للنهاية مضمون.
 
 للاستزادة، اطلع على telegram.org⁩</value>
   </data>
@@ -1968,7 +1968,7 @@
     <value>https://telegram.org/faq/ar#g</value>
   </data>
   <data name="EncryptionProcessing" xml:space="preserve">
-    <value>جارٍ مبادلة مفاتيح التشفير...</value>
+    <value>تتم مبادلة مفاتيح التشفير...</value>
   </data>
   <data name="EncryptionRejected" xml:space="preserve">
     <value>تم إلغاء المحادثة السرية</value>
@@ -2095,11 +2095,11 @@
 خلال الـ 48 ساعة الماضية.</value>
   </data>
   <data name="EventLogEmptyChannel" xml:space="preserve">
-    <value>**لا توجد أحداث هنا بعد**
+    <value>**ما من أحداث هنا بعد**
 
-مشرفي القناة
-لم يقوموا بأي أحداث
-خلال الـ 48 ساعة الماضية.</value>
+لم يقم مشرفوا القناة
+باتخاذ أي إجراءات خلال
+الـ 48 ساعة الماضية.</value>
   </data>
   <data name="EventLogEmptySearch" xml:space="preserve">
     <value>**لم يتم العثور على أحداث**
@@ -2291,7 +2291,7 @@
     <value>⁧فعّل ⁨un1⁩ التواقيع⁩</value>
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
-    <value>⁧⁨un1⁩  ألغى تثبيت رسالة⁩</value>
+    <value>⁧ألغى ⁨un1⁩ تثبيت رسالة⁩</value>
   </data>
   <data name="EventLogYouChannelJoined" xml:space="preserve">
     <value/>
@@ -2615,7 +2615,7 @@
     <value>عام</value>
   </data>
   <data name="GettingLinkInfo" xml:space="preserve">
-    <value>جارٍ جلب معلومات الرابط...</value>
+    <value>يتم جلب معلومات الرابط...</value>
   </data>
   <data name="GifCaption" xml:space="preserve">
     <value>وصف الصورة المتحركة</value>
@@ -2990,7 +2990,7 @@
     <value>⁧⁨{0}⁩ متاح.⁩</value>
   </data>
   <data name="LinkChecking" xml:space="preserve">
-    <value>جارٍ التحقق من الاسم...</value>
+    <value>يتم التحقق من الاسم...</value>
   </data>
   <data name="LinkCopied" xml:space="preserve">
     <value>تم نسخ الرابط للحافظة</value>
@@ -3023,10 +3023,10 @@
     <value>معاينة الرابط</value>
   </data>
   <data name="LinksTitle" xml:space="preserve">
-    <value>الروابط المتبادَلة</value>
+    <value>الروابط المتبادلة</value>
   </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
-    <value>اختر المدة التي سيتمكن خلالها أعضاء هذه المحادثة من مشاهدة موقعك الفعلي.</value>
+    <value>اختر المدة التي سيتمكن خلالها أعضاء هذه المحادثة من مشاهدة موقعك الحي.</value>
   </data>
   <data name="LiveLocationAlertPrivate" xml:space="preserve">
     <value>⁧اختر المدة التي سيتمكن خلالها ⁨{0}⁩ من مشاهدة موقعك الفعلي.⁩</value>
@@ -3035,7 +3035,7 @@
     <value>المواقع الحية</value>
   </data>
   <data name="Loading" xml:space="preserve">
-    <value>جارٍ التحميل...</value>
+    <value>يتم التحميل...</value>
   </data>
   <data name="LocalAudioCache" xml:space="preserve">
     <value>الرسائل الصوتية/المرئية</value>
@@ -3073,7 +3073,7 @@
     <value>تم تحديثه</value>
   </data>
   <data name="LocationUpdatedFormatted" xml:space="preserve">
-    <value>⁧محدث  ⁨{0}⁩⁩</value>
+    <value>⁧تم تحديث الموقع ⁨{0}⁩⁩</value>
   </data>
   <data name="LocationUpdatedJustNow" xml:space="preserve">
     <value>تم تحديثه الآن</value>
@@ -3124,7 +3124,7 @@
     <value>جوجل</value>
   </data>
   <data name="MapPreviewProviderNobody" xml:space="preserve">
-    <value>لا أحد</value>
+    <value>بلا معاينات</value>
   </data>
   <data name="MapPreviewProviderTelegram" xml:space="preserve">
     <value>تيليجرام</value>
@@ -3133,10 +3133,10 @@
     <value>ياندكس</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
-    <value>وضع علامة مقروء</value>
+    <value>تعليم كمقروء</value>
   </data>
   <data name="MarkAsUnread" xml:space="preserve">
-    <value>وضع علامة غير مقروء</value>
+    <value>تعليم كغير مقروء</value>
   </data>
   <data name="Masks" xml:space="preserve">
     <value>الأقنعة</value>
@@ -3229,7 +3229,7 @@
     <value>عداد التدمير الذاتي</value>
   </data>
   <data name="MessageLifetimeChanged" xml:space="preserve">
-    <value>⁧⁨{0}⁩ عيّن عداد التدمير الذاتي ليصبح ⁨{1}⁩⁩</value>
+    <value>⁧عيّن ⁨{0}⁩ عداد التدمير الذاتي ليصبح ⁨{1}⁩⁩</value>
   </data>
   <data name="MessageLifetimeChangedOutgoing" xml:space="preserve">
     <value>⁧قمت بتعيين عداد التدمير الذاتي ليصبح ⁨{0}⁩⁩</value>
@@ -3379,7 +3379,7 @@
     <value>قناة جديدة</value>
   </data>
   <data name="NewConversationShortcut" xml:space="preserve">
-    <value>محادثات جديدة</value>
+    <value>محادثة جديدة</value>
   </data>
   <data name="NewGroup" xml:space="preserve">
     <value>مجموعة جديدة</value>
@@ -3739,7 +3739,7 @@
     <value>⁧أرسل ⁨{0}⁩ مقطعًا صوتيًا لمجموعة ⁨{1}⁩⁩</value>
   </data>
   <data name="NotificationMessageGroupNoText" xml:space="preserve">
-    <value>⁧⁨{0}⁩  أرسل رسالة للمجموعة ⁨{1}⁩⁩</value>
+    <value>⁧أرسل ⁨{0}⁩ رسالة للمجموعة ⁨{1}⁩⁩</value>
   </data>
   <data name="NotificationMessageGroupPhoto" xml:space="preserve">
     <value>⁧أرسل ⁨{0}⁩ صورةً لمجموعة ⁨{1}⁩⁩</value>
@@ -3802,7 +3802,7 @@
     <value>⁧⁨{0}⁩ ⁨{1}⁩⁩</value>
   </data>
   <data name="NotificationUnrecognizedDevice" xml:space="preserve">
-    <value>⁧⁨{0}⁩، 
+    <value>⁧⁨{0}⁩، 
 لقد تم تسجيل الدخول لحسابك هذا من جهاز جديد في: ⁨{1}⁩
 
 الجهاز: ⁨{2}⁩
@@ -3812,7 +3812,7 @@
 
 إذا كنت تعتقد أن شخصًا ما قام بتسجيل الدخول دون إذنك فيمكنك تفعيل التحقق بخطوتين من خلال قسم الخصوصية واﻷمان في الإعدادات.
 
-شكرًا، 
+شكرًا، 
 فريق تيليجرام⁩</value>
   </data>
   <data name="Notifications" xml:space="preserve">
@@ -3951,10 +3951,10 @@
     <value>فتح</value>
   </data>
   <data name="OpenChannel" xml:space="preserve">
-    <value>افتح القناة</value>
+    <value>فتح القناة</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>افتح المجموعة</value>
+    <value>فتح المجموعة</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>فتح بواسطة...</value>
@@ -3999,7 +3999,7 @@
     <value>مجاني</value>
   </data>
   <data name="Page4Message" xml:space="preserve">
-    <value>**تيليجرام** يحمي رسائلك
+    <value>يحمي **تيليجرام** رسائلك
 من هجمات المخترقين.</value>
   </data>
   <data name="Page4Title" xml:space="preserve">
@@ -4013,7 +4013,7 @@
     <value>قوي</value>
   </data>
   <data name="Page6Message" xml:space="preserve">
-    <value>**تيليجرام** يمكنك من الوصول إلى الرسائل الخاصة بك
+    <value>**تيليجرام** يتيح لك الوصول لرسائلك
 من أجهزة متعددة.</value>
   </data>
   <data name="Page6Title" xml:space="preserve">
@@ -4131,7 +4131,7 @@
     <value>رفع دليل لإثبات عنوان السكن</value>
   </data>
   <data name="PassportAddressNoUploadInfo" xml:space="preserve">
-    <value>يرجى تزويد عنوانك</value>
+    <value>قم بإضافة عنوانك</value>
   </data>
   <data name="PassportAuthorize" xml:space="preserve">
     <value>السماح</value>
@@ -4641,7 +4641,7 @@
     <value>معلومات الدفع</value>
   </data>
   <data name="PaymentCardName" xml:space="preserve">
-    <value>الاسم</value>
+    <value>الاسم الأول واسم العائلة</value>
   </data>
   <data name="PaymentCardNumber" xml:space="preserve">
     <value>رقم البطاقة</value>
@@ -4814,7 +4814,7 @@
     <value>⁧بريد الاسترداد الخاص بك ⁨{0}⁩ غير مفعل ويَلزمك تفعيله عبر الرسالة الواردة إليه.⁩</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>يحتاج تيليجرام إلى الوصول لجهات اتصالك لتتمكن من التواصل مع أصدقائك عبر جميع أجهزتك.</value>
+    <value>لكي تتمكن من التواصل مع أصدقائك عبر جميع أجهزتك، ستتم مزامنة جهات اتصالك باستمرار مع خوادم تيليجرام السحابية شديدة التشفير.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>يحتاج تيليجرام إلى صلاحية الظهور فوق التطبيقات لتشغيل المقاطع المرئية في وضع (صورة في الصورة).</value>
@@ -4984,7 +4984,7 @@
     <value>المواقع التي سجلتَ دخولك إليها عبر تيليجرام.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
-    <value>تعطيل خيار النِّد للنِّد سيجعل جميع المكالمات معتمِدةً على خوادم تيليجرام لحماية عنوان الـ IP الخاص بك، لكن بالمقابل ستنخفض جودةُ الصوت قليلًا.</value>
+    <value>سيجعل تعطيل الند للند جميع المكالمات معتمِدة على خوادم تيليجرام؛ وذلك لتجنب الكشف عن عنوان الـ IP الخاص بجهازك، لكنَّ جودة الصوت ستنخفض قليلا.</value>
   </data>
   <data name="PrivacyCallsP2PTitle" xml:space="preserve">
     <value>النِّد للنِّد</value>
@@ -5239,7 +5239,7 @@
 ⁨{0}⁩⁩</value>
   </data>
   <data name="RestoreEmailSentInfo" xml:space="preserve">
-    <value>يرجى تفقُّد بريدك وإدخال رمز التفعيل الذي قمنا بإرساله والمكون من 6 أرقام.</value>
+    <value>يرجى تفقُّد بريدك وإدخال الرمز المرسَل والمكون من 6 أرقام.</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>⁧هل تواجه صعوبات في الدخول إلى بريدك ⁨{0}⁩؟⁩</value>
@@ -5248,7 +5248,7 @@
     <value>إن لم تستطع الوصول إلى البريد الإلكتروني، فإن خياراتك المتبقية هي إما أن تتذكر كلمة المرور الخاصة بك أو أن تعيد تعيين حسابك.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
-    <value>بما أنك لم تقم بإضافة بريدًا إلكترونيًا لاسترداد حسابك عند تعيين كلمة مرورك فإن خياراتك المتبقية هي إما تذكّر كلمة مرورك أو إعادة تعيين حسابك.</value>
+    <value>بما أنك لم تقم بإضافة بريد إلكتروني لاسترداد حسابك عند تعيين كلمة مرورك؛ فإن خياراتك المتبقية هي إما تذكّر كلمة مرورك أو إعادة تعيين حسابك.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>المعذرة</value>
@@ -5442,10 +5442,10 @@
     <value>إرسال</value>
   </data>
   <data name="SendAsFile" xml:space="preserve">
-    <value>إرسال دون ضغط</value>
+    <value>إرسال كملف</value>
   </data>
   <data name="SendAsFiles" xml:space="preserve">
-    <value>إرسال دون ضغط</value>
+    <value>إرسال كملفات</value>
   </data>
   <data name="SendByEnter" xml:space="preserve">
     <value>إرسال بمفتاح الإدخال</value>
@@ -5481,7 +5481,7 @@
     <value>يتم تحديثه مباشرةً أثناء تنقلك</value>
   </data>
   <data name="SendLocation" xml:space="preserve">
-    <value>أرسل موقعك الحالي</value>
+    <value>إرسال موقعي الحالي</value>
   </data>
   <data name="SendMessageRestricted" xml:space="preserve">
     <value>⁧مشرفو هذه المجموعة قيدوك من الكتابة فيها حتى ⁨{0}⁩⁩</value>
@@ -5517,13 +5517,13 @@
     <value>يلعب لعبة...</value>
   </data>
   <data name="SendingGif" xml:space="preserve">
-    <value>جارٍ إرسال الصورة المتحركة...</value>
+    <value>يتم إرسال الصورة المتحركة...</value>
   </data>
   <data name="SendingPhoto" xml:space="preserve">
     <value>يرسل صورة...</value>
   </data>
   <data name="SendingVideo" xml:space="preserve">
-    <value>جارٍ إرسال المقطع المرئي...</value>
+    <value>يتم إرسال المقطع المرئي...</value>
   </data>
   <data name="SendingVideoStatus" xml:space="preserve">
     <value>يرسل مقطعًا مرئيًا...</value>
@@ -5639,13 +5639,13 @@
     <value>روابط</value>
   </data>
   <data name="SharedMedia" xml:space="preserve">
-    <value>الوسائط المتبادَلة</value>
+    <value>الوسائط المتبادلة</value>
   </data>
   <data name="SharedMediaTab" xml:space="preserve">
     <value>وسائط</value>
   </data>
   <data name="SharedMediaTitle" xml:space="preserve">
-    <value>الوسائط المتبادَلة</value>
+    <value>الوسائط المتبادلة</value>
   </data>
   <data name="SharedMusicTab" xml:space="preserve">
     <value>صوتيات</value>
@@ -5735,7 +5735,7 @@
     <value>ابدأ المراسلة</value>
   </data>
   <data name="StartText" xml:space="preserve">
-    <value>يرجى التحقق من صحة رمز بلدك وإدخال رقم هاتفك المحمول.</value>
+    <value>يرجى تأكيد رمز بلدك وإدخال رقم هاتفك.</value>
   </data>
   <data name="StickersZero" xml:space="preserve">
     <value>⁧⁨{0}⁩ ملصقات⁩</value>
@@ -5762,7 +5762,7 @@
     <value>أرشفة</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>الملصقات</value>
+    <value>الملصقات والأقنعة</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>إزالة</value>
@@ -5905,7 +5905,7 @@
   <data name="TelegramPassportCreatePasswordInfo" xml:space="preserve">
     <value>يرجى إنشاء كلمة مرور لحماية بياناتك الشخصية باستخدام التشفير من البداية للنهاية.
 
-ستكون كلمة المرور هذه مطلوبة أيضًا عند تسجيل دخولك إلى تيليجرام على جهاز جديد.</value>
+ستُطلب كلمة المرور هذه في كل مرة تقوم فيها بتسجيل الدخول لجهازٍ جديد. </value>
   </data>
   <data name="TelegramPassportDelete" xml:space="preserve">
     <value>حذف جواز تيليجرام</value>
@@ -6137,7 +6137,7 @@
     <value>⁧تم تحديثه قبل ⁨{0}⁩ دقيقة⁩</value>
   </data>
   <data name="Updating" xml:space="preserve">
-    <value>جارٍ التحديث...</value>
+    <value>يتم التحديث...</value>
   </data>
   <data name="UpgradeGroup" xml:space="preserve">
     <value>قم بالتحديث لمجموعة خارقة</value>
@@ -6258,7 +6258,7 @@
     <value>⁧⁨{0}⁩ متاح.⁩</value>
   </data>
   <data name="UsernameChecking" xml:space="preserve">
-    <value>جارٍ التحقق من اسم المستخدم...</value>
+    <value>يتم التحقق من اسم المستخدم...</value>
   </data>
   <data name="UsernameEmpty" xml:space="preserve">
     <value>لا شيء</value>
@@ -6269,7 +6269,7 @@
 يمكنك استخدام **الحروف والأرقام الإنجليزية** وكذلك الشَّرطة السفلية. الطول الأدنى هو **خمسُ خانات**.</value>
   </data>
   <data name="UsernameHelpLink" xml:space="preserve">
-    <value>⁧يقوم هذا الرابط بفتح محادثة معك في تيليجرام:
+    <value>⁧يقوم هذا الرابط بفتح محادثة معك:
 ⁨{0}⁩⁩</value>
   </data>
   <data name="UsernameInUse" xml:space="preserve">
@@ -6321,7 +6321,7 @@
     <value>وصف المقطع المرئي</value>
   </data>
   <data name="VideoDoesNotSupportStreaming" xml:space="preserve">
-    <value>هذا المقطع المرئي غير مُخصصًا للبث. قد تحتاج إلى تحميله قبل مشاهدته.</value>
+    <value>هذا المقطع ليس معالَجا ليتم عرضُه فورَ تشغيله، قد تحتاج لتحميله بالكامل قبل مشاهدته.</value>
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>الرسائل المرئية</value>
@@ -6360,7 +6360,7 @@
     <value>تم إنهاء المكالمة</value>
   </data>
   <data name="VoipConnecting" xml:space="preserve">
-    <value>جارٍ الاتصال</value>
+    <value>يتم الوصل</value>
   </data>
   <data name="VoipDeclineCall" xml:space="preserve">
     <value>رفض</value>
@@ -6372,7 +6372,7 @@
     <value>لا يمكن إجراء مكالمة تيليجرام حاليًا.</value>
   </data>
   <data name="VoipExchangingKeys" xml:space="preserve">
-    <value>جارٍ مبادلة مفاتيح التشفير</value>
+    <value>تتم مبادلة مفاتيح التشفير</value>
   </data>
   <data name="VoipFailed" xml:space="preserve">
     <value>فشل الاتصال</value>
@@ -6381,7 +6381,7 @@
     <value>إضافة تعليق اختياري</value>
   </data>
   <data name="VoipHangingUp" xml:space="preserve">
-    <value>جارٍ إنهاء المكالمة</value>
+    <value>يتم إنهاء المكالمة</value>
   </data>
   <data name="VoipInCallBranding" xml:space="preserve">
     <value>مكالمة تيليجرام</value>
@@ -6438,7 +6438,7 @@
     <value>فضلًا قم بتقييم جودة اتصالك في تيليجرام</value>
   </data>
   <data name="VoipRequesting" xml:space="preserve">
-    <value>جارٍ الطلب</value>
+    <value>يتم الطلب</value>
   </data>
   <data name="VoipRinging" xml:space="preserve">
     <value>يرن</value>
@@ -6641,10 +6641,10 @@
     <value>MMM dd yyyy, HH:mm</value>
   </data>
   <data name="FormatterBannedUntilThisYear12H" xml:space="preserve">
-    <value>MMM dd, h:mm a</value>
+    <value>dd MMM, h:mm a</value>
   </data>
   <data name="FormatterBannedUntilThisYear24H" xml:space="preserve">
-    <value>MMM dd, HH:mm</value>
+    <value>dd MMM, HH:mm</value>
   </data>
   <data name="FormatterDay12H" xml:space="preserve">
     <value>h:mm a</value>
@@ -6668,10 +6668,10 @@
     <value>EEE</value>
   </data>
   <data name="FormatterYear" xml:space="preserve">
-    <value>dd.MM.yy</value>
+    <value>yy.MM.dd</value>
   </data>
   <data name="FormatterYearMax" xml:space="preserve">
-    <value>dd.MM.yyyy</value>
+    <value>yyyy.MM.dd</value>
   </data>
   <data name="ItemsZero" xml:space="preserve">
     <value>⁧⁨{0}⁩ عنصر⁩</value>

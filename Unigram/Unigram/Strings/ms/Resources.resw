@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -320,7 +320,7 @@
     <value>Tambah penerima</value>
   </data>
   <data name="AddShortcut" xml:space="preserve">
-    <value>Tambah cara mudah </value>
+    <value>Tambah ke skrin Utama</value>
   </data>
   <data name="AddStickers" xml:space="preserve">
     <value>Tambah Sticker</value>
@@ -782,7 +782,7 @@ Matahari naik: {1}</value>
     <value>DILARANG DARI GROUP</value>
   </data>
   <data name="BannedPhoneNumber" xml:space="preserve">
-    <value>Nombor fon yang dilarang</value>
+    <value>Nombor fon ini dilarang</value>
   </data>
   <data name="BlockContact" xml:space="preserve">
     <value>Sekat</value>
@@ -961,7 +961,7 @@ Jika bukan anda, sila masukkan kod yang kami baru kirim melalui SMS ke nombor an
     <value>Tukar Kod Laluan</value>
   </data>
   <data name="ChangePasscodeInfo" xml:space="preserve">
-    <value>Bila anda guna kod laluan tambahan, ikon kunci akan keluar di jendela chat. Ketik untuk kunci atau buka Telegram anda.
+    <value>Bila anda guna kod laluan tambahan, ikon kunci akan keluar di jendela chat. Sentuh untuk kunci atau buka Telegram anda.
 
 Nota: kalau anda lupa kod laluan, anda terpaksa hapus dan pasangkan balik aplikasi. Semua secret chat akan hilang.</value>
   </data>
@@ -1008,7 +1008,7 @@ Nota: kalau anda lupa kod laluan, anda terpaksa hapus dan pasangkan balik aplika
     <value>CIPTA CHANNEL</value>
   </data>
   <data name="ChannelAlertText" xml:space="preserve">
-    <value>Channel adalah alat baru untuk menyebarkan mesej anda ke khalayak ramai. </value>
+    <value>Channel adalah alat untuk menyebarkan mesej anda ke khalayak ramai. </value>
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>Apa itu Channel?</value>
@@ -1402,7 +1402,7 @@ Jika tidak berminat, kami cadang tubuhkan channel peribadi.</value>
   <data name="CompatibilityChat" xml:space="preserve">
     <value>{0} mengguna versi lama Telegram, jadi foto rahsia akan nampak dalam mod tak serasi.
 
-Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang akan mula bergerak dalam mod "Ketik lama untuk lihat", dan anda akan diberitahu bila pihak sebelah ambil gambar skrin.   </value>
+Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang akan mula bergerak dalam mod "Sentuh lama untuk lihat", dan anda akan diberitahu bila pihak sebelah ambil gambar skrin.   </value>
   </data>
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
     <value>Anda pasti mahu hapuskan nombor ini dari log panggilan?</value>
@@ -1423,13 +1423,13 @@ Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang a
     <value>Nyahaktif</value>
   </data>
   <data name="ConnectingToProxyDisableAlert" xml:space="preserve">
-    <value>Anda pasti mahu nyahaktif proksi pelayan {0}? Anda boleh mengaktifkannya semula dalam Aturan nanti (Data dan Storan).</value>
+    <value>Anda pasti mahu nyahaktif proksi pelayan {0}? Anda boleh mengaktifkannya semula dalam Aturan nanti > Data dan Storan.</value>
   </data>
   <data name="ConnectingToProxyEnable" xml:space="preserve">
     <value>Aktif</value>
   </data>
   <data name="ConnectingToProxyTapToDisable" xml:space="preserve">
-    <value>Ketik di sini untuk nyahaktif proksi...</value>
+    <value>Sentuh di sini untuk nyahaktif proksi...</value>
   </data>
   <data name="ContactBirthday" xml:space="preserve">
     <value>Tarikh lahir</value>
@@ -1529,7 +1529,7 @@ Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang a
     <value>Cipta Tema Baru</value>
   </data>
   <data name="CreateNewThemeHelp" xml:space="preserve">
-    <value>Ketik ikon pelet untuk lihat senarai unsur di setiap skrin dan sunting mereka.</value>
+    <value>Sentuh ikon pelet untuk lihat senarai unsur di setiap skrin dan sunting mereka.</value>
   </data>
   <data name="CreateNewThemeInfo" xml:space="preserve">
     <value>Anda boleh cipta tema anda sendiri dengan menukar warna di dalam aplikasi. Anda boleh tukar balik ke tema asal Telegram di sini.</value>
@@ -1709,7 +1709,7 @@ Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang a
     <value>Hapus chat</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
-    <value>Hapus</value>
+    <value>Hapus kenalan</value>
   </data>
   <data name="DeleteForAll" xml:space="preserve">
     <value>Hapus untuk semua ahli</value>
@@ -1766,7 +1766,7 @@ Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang a
     <value>Kongsi Terus</value>
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
-    <value>Tunjuk chat baru-baru ini dalam menu kongsi</value>
+    <value>Tunjuk chat terbarui dalam menu kongsi Android</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>GIF Rahsia</value>
@@ -1860,7 +1860,7 @@ mesej audio anda?</value>
     <value>Subting Kepsyen</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>Sunting</value>
+    <value>Namakan Semula Kenalan</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Sunting Mesej</value>
@@ -1869,7 +1869,7 @@ mesej audio anda?</value>
     <value>Maaf, anda tak boleh sunting mesej ini.</value>
   </data>
   <data name="EditMessageMedia" xml:space="preserve">
-    <value>Ketik &amp; sunting media</value>
+    <value>Sentuh &amp; sunting media</value>
   </data>
   <data name="EditName" xml:space="preserve">
     <value>Sunting nama</value>
@@ -1886,7 +1886,7 @@ mesej audio anda?</value>
 1. Buka emel anda (jangan lupa periksa folder spam)
 {0}
 
-2. Ketik link pengesahan.</value>
+2.  Ketik pengesahan.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
@@ -1913,7 +1913,7 @@ mesej audio anda?</value>
     <value>Anda pasti mahu aktifkan proksi ini?</value>
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
-    <value>Anda boleh tukar proksi pelayan anda nanti dalam Aturan (Data dan Storan).</value>
+    <value>Anda boleh tukar proksi pelayan anda nanti dalam Aturan > Data dan Storan.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Strim Video dan Fail Audio</value>
@@ -2631,10 +2631,10 @@ tentang Telegram?</value>
     <value>Sejarah dipadamkan</value>
   </data>
   <data name="HoldToAudio" xml:space="preserve">
-    <value>Tahan untuk merakam audio. Ketik untuk menukar ke video.</value>
+    <value>Tahan untuk merakam audio. Sentuh untuk menukar ke video.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
-    <value>Tahan untuk merakam video. Ketik untuk tukar ke audio.</value>
+    <value>Tahan untuk merakam video. Sentuh untuk tukar ke audio.</value>
   </data>
   <data name="HoursZero" xml:space="preserve">
     <value/>
@@ -2960,7 +2960,7 @@ Semua media akan berada di awan Telegram dan boleh dimuat turun jika perlu. </va
     <value>Link Kongsi</value>
   </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
-    <value>Pilih berapa lama orang dalam chat ini akan dapat lihat lokasi tepat anda. </value>
+    <value>Pilih berapa lama orang dalam chat ini akan dapat lihat lokasi langsung anda. </value>
   </data>
   <data name="LiveLocationAlertPrivate" xml:space="preserve">
     <value>Pilih berapa lama  {0} akan melihat lokasi tepat anda.</value>
@@ -3058,7 +3058,7 @@ Operasi ini akan mengambil masa beberapa minit.</value>
     <value>Google</value>
   </data>
   <data name="MapPreviewProviderNobody" xml:space="preserve">
-    <value>Tiada sesiapa</value>
+    <value>Tiada pratonton</value>
   </data>
   <data name="MapPreviewProviderTelegram" xml:space="preserve">
     <value>Telegram</value>
@@ -3103,7 +3103,7 @@ Operasi ini akan mengambil masa beberapa minit.</value>
     <value>un1 tambah anda ke group ini</value>
   </data>
   <data name="MegaAdminsInfo" xml:space="preserve">
-    <value>Anda boleh tambah pentadbir untuk bantu mengurus group. Ketik lama, untuk keluarkan mereka.</value>
+    <value>Anda boleh tambah pentadbir untuk bantu mengurus group. Sentuh lama, untuk keluarkan mereka.</value>
   </data>
   <data name="MegaDeleteAlert" xml:space="preserve">
     <value>Sebentar! Memadamkan group ini akan mengeluarkan semua ahli dan semua mesej akan hilang. Mahu teruskan?</value>
@@ -3369,12 +3369,12 @@ Operasi ini akan mengambil masa beberapa minit.</value>
   <data name="NoChatsContactsHelp" xml:space="preserve">
     <value>Mula bermesej dengan menekan butang baru 
 di penjuru kanan bawah atau 
-ketik butang menu untuk pilihan lanjut.</value>
+sentuh butang menu untuk pilihan lanjut.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
     <value>Tekan butang mesej baru di bahagian 
 sudut kanan untuk mula mesej atau 
-ketik butang menu untuk pilihan lain.</value>
+sentuh butang menu untuk pilihan lain.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>Belum ada kenalan </value>
@@ -4079,7 +4079,7 @@ dari pelbagai peranti.</value>
     <value>Bandar</value>
   </data>
   <data name="PassportCorrectErrors" xml:space="preserve">
-    <value>Ketik untuk betulkan ralat</value>
+    <value>Sentuh untuk betulkan ralat</value>
   </data>
   <data name="PassportCountry" xml:space="preserve">
     <value>Negara</value>
@@ -4574,7 +4574,7 @@ Anda boleh ke FAQ kami untuk pelajari seterusnya.</value>
     <value>Maklumat pembayaran</value>
   </data>
   <data name="PaymentCardName" xml:space="preserve">
-    <value>Nama Keluarga</value>
+    <value>Nama Pertama dan Akhir</value>
   </data>
   <data name="PaymentCardNumber" xml:space="preserve">
     <value>Nombor Kad</value>
@@ -4746,7 +4746,7 @@ Pembayaran akan dibuat terus kepada pemaju {0}. Telegram tidak memberikan sebara
     <value>Emel pemulihan anda {0} belum diaktifkan lagi dan menunggu pengesahan.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Telegram perlu akses ke kenalan anda supaya anda dapat berhubung dengan kenalan anda di semua peranti anda.</value>
+    <value>Untuk membolehkan anda berhubung dengan rakan di semua peranti anda, kenalan anda akan diselaraskan secara berterusan dengan pelayan awan Telegram yang disulittkan dengan kukuh. </value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram perlu akses untuk menarik ke atas aplikasi lain untuk mainkan video dalam mod Gambar-dalam-Gambar.</value>
@@ -5048,7 +5048,7 @@ Pembayaran akan dibuat terus kepada pemaju {0}. Telegram tidak memberikan sebara
     <value>Biasa</value>
   </data>
   <data name="RemoveFromListText" xml:space="preserve">
-    <value>Ketik lama atas pengguna untuk hapus.</value>
+    <value>Sentuh lama atas pengguna untuk hapus.</value>
   </data>
   <data name="RemovedFromFavorites" xml:space="preserve">
     <value>Sticker dikeluarkan dari Kegemaran</value>
@@ -5171,7 +5171,7 @@ Sekiranya anda set semula akaun anda, kesemua mesej dan chat akan terhapus.</val
 {0}</value>
   </data>
   <data name="RestoreEmailSentInfo" xml:space="preserve">
-    <value>Sila semak emel anda dan masukkan ke sini kod 6 aksara yang dikirim.</value>
+    <value>Sila semak emel anda dan masukkan kod 6 aksara yang  kami kirim di bawah.</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>Ada masalah membuka emel anda {0}?</value>
@@ -5414,7 +5414,7 @@ Anda mungkin diminta untuk mula semula aplikasi bagi mengaktfikannya.</value>
     <value>Dikemaskini secara langsung manurut pergerakan anda </value>
   </data>
   <data name="SendLocation" xml:space="preserve">
-    <value>Kirim lokasi terkini anda</value>
+    <value>Kirim lokasi terkini saya</value>
   </data>
   <data name="SendMessageRestricted" xml:space="preserve">
     <value>Pentadbir group ini telah menghadkan anda dari menulis di sini hingga {0}</value>
@@ -5695,7 +5695,7 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
     <value>Arkib</value>
   </data>
   <data name="StickersName" xml:space="preserve">
-    <value>Sticker</value>
+    <value>Sticker dan Topeng</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Keluarkan</value>
@@ -5800,10 +5800,10 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
     <value>Akar Sistem</value>
   </data>
   <data name="TapHereGifs" xml:space="preserve">
-    <value>Ketik di sini untuk akses GIF tersimpan</value>
+    <value>Sentuh di sini untuk akses GIF tersimpan</value>
   </data>
   <data name="TapToChangePhone" xml:space="preserve">
-    <value>Ketik untuk tukar nombor fon</value>
+    <value>Sentuh untuk tukar nombor fon</value>
   </data>
   <data name="TelegramContactsZero" xml:space="preserve">
     <value/>
@@ -5856,13 +5856,13 @@ Kata laluan ini akan juga diperlukan bila anda log masuk ke Telegram di peranti 
     <value>Putuskan Sambungan ke Semua Laman Web</value>
   </data>
   <data name="TerminateSessionInfo" xml:space="preserve">
-    <value>Ketik atas sesi untuk tamat.</value>
+    <value>Sentuh atas sesi untuk tamat.</value>
   </data>
   <data name="TerminateSessionQuestion" xml:space="preserve">
     <value>Tamatkan sesi ini?</value>
   </data>
   <data name="TerminateWebSessionInfo" xml:space="preserve">
-    <value>Ketik untuk putuskan sambungan ke akaun Telegram anda.</value>
+    <value>Sentuh untuk putuskan sambungan ke akaun Telegram anda.</value>
   </data>
   <data name="TerminateWebSessionQuestion" xml:space="preserve">
     <value>Putuskan  {0}?</value>
@@ -5935,7 +5935,7 @@ Kata laluan ini akan juga diperlukan bila anda log masuk ke Telegram di peranti 
 Sila cuba lagi dalam {0}.</value>
   </data>
   <data name="TosAgeText" xml:space="preserve">
-    <value>Ketik Setuju sekiranya anda adalah  {0} tahun atau lebih.</value>
+    <value>Setuh Setuju sekiranya anda adalah  {0} tahun atau lebih.</value>
   </data>
   <data name="TosAgeTitle" xml:space="preserve">
     <value>Verifikasi Umur</value>
@@ -5988,13 +5988,13 @@ Namun sekiranya anda tidak bersetuju dengan keperluan kecil Telegram, kami tak a
     <value>Tidak dilarang</value>
   </data>
   <data name="UnbanText" xml:space="preserve">
-    <value>Ketik lama atas pengguna untuk bebas dari larangan</value>
+    <value>Tekan lama atas pengguna untuk bebas dari larangan</value>
   </data>
   <data name="Unblock" xml:space="preserve">
     <value>Jangan sekat</value>
   </data>
   <data name="UnblockText" xml:space="preserve">
-    <value>Ketik lama pada pengguna untuk keluar dari sekatan.</value>
+    <value>Sentuh lama pada pengguna untuk keluar dari sekatan.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Tukar balik aturan notifikasi tersuai untuk semua kenalan dan group</value>
@@ -6200,7 +6200,7 @@ Namun sekiranya anda tidak bersetuju dengan keperluan kecil Telegram, kami tak a
 Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</value>
   </data>
   <data name="UsernameHelpLink" xml:space="preserve">
-    <value>Link ini akan buka chat dengan anda melalui Telegram:
+    <value>Link ini membuka chat dengan anda:
 {0}</value>
   </data>
   <data name="UsernameInUse" xml:space="preserve">

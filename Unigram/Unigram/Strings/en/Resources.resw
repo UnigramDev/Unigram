@@ -1433,7 +1433,7 @@ Once {1} updates Telegram, photos with timers for 1 minute or less will start wo
     <value>Disable</value>
   </data>
   <data name="ConnectingToProxyDisableAlert" xml:space="preserve">
-    <value>Are you sure you want to disable proxy server {0}? You can reenable it in the Settings later (Data and Storage).</value>
+    <value>Are you sure you want to disable proxy server {0}? You can reenable it later in Settings > Data and Storage.</value>
   </data>
   <data name="ConnectingToProxyEnable" xml:space="preserve">
     <value>Enable</value>
@@ -1869,7 +1869,7 @@ To go over the limit and get additional features, upgrade to a supergroup:
     <value>Edit Caption</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>Rename Contact</value>
+    <value>Edit contact</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Edit Message</value>
@@ -1923,7 +1923,7 @@ To go over the limit and get additional features, upgrade to a supergroup:
     <value>Are you sure you want to enable this proxy?</value>
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
-    <value>You can change your proxy server later in the Settings (Data and Storage).</value>
+    <value>You can change your proxy server later in Settings > Data and Storage.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Stream Videos and Audio Files</value>
