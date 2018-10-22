@@ -40,6 +40,7 @@ using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Template10.Services.ViewService;
 using Unigram.ViewModels.Gallery;
+using Unigram.Controls.Gallery;
 
 namespace Unigram.Controls.Views
 {
@@ -87,8 +88,6 @@ namespace Unigram.Controls.Views
             _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
 
             Initialize();
-
-            Transport.Focus(FocusState.Programmatic);
 
             if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
             {
@@ -333,6 +332,8 @@ namespace Unigram.Controls.Views
                 RoutedEventHandler handler = null;
                 handler = new RoutedEventHandler(async (s, args) =>
                 {
+                    Transport.Focus(FocusState.Programmatic);
+
                     Loaded -= handler;
                     await ViewModel?.OnNavigatedToAsync(parameter, NavigationMode.New, null);
                 });
@@ -557,6 +558,11 @@ namespace Unigram.Controls.Views
 
                 _surface = parent;
                 _surface.Children.Add(_mediaPlayerElement);
+
+                if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MediaTransportControls", "ShowAndHideAutomatically"))
+                {
+                    Transport.ShowAndHideAutomatically = true;
+                }
             }
             catch { }
         }
@@ -596,6 +602,11 @@ namespace Unigram.Controls.Views
             {
                 _request.RequestRelease();
                 _request = null;
+            }
+
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MediaTransportControls", "ShowAndHideAutomatically"))
+            {
+                Transport.ShowAndHideAutomatically = false;
             }
         }
 
@@ -686,6 +697,11 @@ namespace Unigram.Controls.Views
             LayoutRoot.ManipulationStarted += LayoutRoot_ManipulationStarted;
             LayoutRoot.ManipulationDelta += LayoutRoot_ManipulationDelta;
             LayoutRoot.ManipulationCompleted += LayoutRoot_ManipulationCompleted;
+
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MediaTransportControls", "ShowAndHideAutomatically"))
+            {
+                Transport.ShowAndHideAutomatically = false;
+            }
         }
 
         protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
@@ -828,6 +844,8 @@ namespace Unigram.Controls.Views
                 }
 
                 _layout.StartAnimation("Offset.Y", animation);
+
+                _selecting = false;
             }
 
             e.Handled = true;
@@ -945,6 +963,17 @@ namespace Unigram.Controls.Views
             var set = TrySet(target, ViewModel.Items[index]);
             TrySet(previous, ViewModel.SelectedIndex > 0 ? ViewModel.Items[index - 1] : null);
             TrySet(next, ViewModel.SelectedIndex < ViewModel.Items.Count - 1 ? ViewModel.Items[index + 1] : null);
+
+            if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+            {
+                Transport.PreviousVisibility = ViewModel.SelectedIndex > 0 ? Visibility.Visible : Visibility.Collapsed;
+                Transport.NextVisibility = ViewModel.SelectedIndex < ViewModel.Items.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else
+            {
+                Transport.PreviousVisibility = Visibility.Collapsed;
+                Transport.NextVisibility = Visibility.Collapsed;
+            }
 
             if (set)
             {
@@ -1143,6 +1172,11 @@ namespace Unigram.Controls.Views
             };
 
             OnBackRequestedOverride(this, new HandledEventArgs());
+        }
+
+        private void Transport_Switch(GalleryTransportControls sender, int args)
+        {
+            Scroll(args);
         }
     }
 }

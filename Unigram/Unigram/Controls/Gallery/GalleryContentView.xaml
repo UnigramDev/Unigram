@@ -1,5 +1,5 @@
 <Grid
-    x:Class="Unigram.Controls.GalleryContentView"
+    x:Class="Unigram.Controls.Gallery.GalleryContentView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls"
