@@ -24,6 +24,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                 <Grid.RowDefinitions>
@@ -34,25 +36,24 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Grid Height="64" Width="64" CornerRadius="32" Margin="12,6" Grid.RowSpan="2">
-                    <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="32"/>
-                    <controls:GlyphButton Glyph="&#xE114;" FontSize="16" CornerRadius="32" Width="64" Height="64"/>
-                </Grid>
+                <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ConvertPhoto(ViewModel.FirstName, ViewModel.LastName), Mode=OneWay}" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
+
                 <StackPanel VerticalAlignment="Center" Grid.Column="1" Grid.RowSpan="2">
-                    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,0,12,-1">
-                        <TextBox
-                            Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            MaxLength="{StaticResource UserFirstNameMaxLength}"
-                            PlaceholderText="{CustomResource FirstName}"/>
-                    </Border>
-                    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,-1,12,0">
-                        <TextBox
-                            Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            MaxLength="{StaticResource UserLastNameMaxLength}"
-                            PlaceholderText="{CustomResource LastName}"/>
-                    </Border>
                 </StackPanel>
             </Grid>
+            
+            <TextBox x:Name="FirstName"
+                     Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     MaxLength="{StaticResource UserFirstNameMaxLength}"
+                     PlaceholderText="{CustomResource FirstName}"
+                     Loaded="FirstName_Loaded"
+                     Margin="12,12,12,0"
+                     Grid.Row="1"/>
+            <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     MaxLength="{StaticResource UserLastNameMaxLength}"
+                     PlaceholderText="{CustomResource LastName}"
+                     Margin="12,12,12,24"
+                     Grid.Row="2"/>
 
             <ComboBox ItemsSource="{x:Bind ViewModel.Countries}"
                       SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
@@ -60,7 +61,7 @@
                       MinWidth="280"
                       HorizontalAlignment="Stretch"
                       Margin="12,12,12,0"
-                      Grid.Row="1">
+                      Grid.Row="3">
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="models:Country">
                         <TextBlock Style="{StaticResource BodyTextBlockStyle}">
@@ -71,7 +72,7 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
 
-            <Grid Margin="12,12,12,4" Grid.Row="2">
+            <Grid Margin="12,12,12,4" Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>

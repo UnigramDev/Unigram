@@ -69,6 +69,11 @@ namespace Unigram.Converters
                 }
             }
 
+            return Convert(word1, word2);
+        }
+
+        public static string Convert(string word1, string word2)
+        {
             var si1 = StringInfo.GetTextElementEnumerator(word1);
             var si2 = StringInfo.GetTextElementEnumerator(word2);
 

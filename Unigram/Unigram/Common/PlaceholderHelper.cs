@@ -115,6 +115,23 @@ namespace Unigram.Common
             return bitmap;
         }
 
+        public static ImageSource GetNameForUser(string firstName, string lastName, int width, int height)
+        {
+            var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                try
+                {
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[5], InitialNameStringConverter.Convert(firstName, lastName), stream);
+
+                    bitmap.SetSource(stream);
+                }
+                catch { }
+            }
+
+            return bitmap;
+        }
+
         public static ImageSource GetSavedMessages(int id, int width, int height)
         {
             var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
