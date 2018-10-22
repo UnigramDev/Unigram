@@ -543,7 +543,7 @@ namespace Unigram.Controls.Views
 
                 if (_mediaPlayer == null)
                 {
-                    _mediaPlayer = new MediaPlayer();
+                    _mediaPlayer = Task.Run(() => new MediaPlayer()).Result;
                     _mediaPlayer.SourceChanged += OnSourceChanged;
                     _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
                     _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
