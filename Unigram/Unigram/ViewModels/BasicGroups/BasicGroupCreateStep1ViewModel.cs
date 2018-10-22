@@ -5,19 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Views.BasicGroups;
 using Unigram.Views.Chats;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using ChatCreateStep2Tuple = System.Tuple<string, object>;
 
-namespace Unigram.ViewModels.Chats
+namespace Unigram.ViewModels.BasicGroups
 {
-    public class ChatCreateStep1ViewModel : TLViewModelBase
+    public class BasicGroupCreateStep1ViewModel : TLViewModelBase
     {
         private bool _uploadingPhoto;
         private Action _uploadingCallback;
 
-        public ChatCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public BasicGroupCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
@@ -55,7 +56,7 @@ namespace Unigram.ViewModels.Chats
         private void SendExecute()
         {
             {
-                NavigationService.Navigate(typeof(ChatCreateStep2Page), new ChatCreateStep2Tuple(_title, null));
+                NavigationService.Navigate(typeof(BasicGroupCreateStep2Page), new ChatCreateStep2Tuple(_title, null));
             }
         }
 
@@ -67,7 +68,7 @@ namespace Unigram.ViewModels.Chats
 
         private void ContinueUploadingPhoto()
         {
-            NavigationService.Navigate(typeof(ChatCreateStep2Page), new ChatCreateStep2Tuple(_title, null));
+            NavigationService.Navigate(typeof(BasicGroupCreateStep2Page), new ChatCreateStep2Tuple(_title, null));
         }
     }
 }

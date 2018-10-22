@@ -194,8 +194,8 @@ namespace Unigram
                 builder.RegisterType<ChannelCreateStep1ViewModel>(); //.SingleInstance();
                 builder.RegisterType<ChannelCreateStep2ViewModel>(); //.SingleInstance();
                 builder.RegisterType<ChannelCreateStep3ViewModel>(); //.SingleInstance();
-                builder.RegisterType<ChatCreateStep1ViewModel>(); //.SingleInstance();
-                builder.RegisterType<ChatCreateStep2ViewModel>(); //.SingleInstance();
+                builder.RegisterType<BasicGroupCreateStep1ViewModel>(); //.SingleInstance();
+                builder.RegisterType<BasicGroupCreateStep2ViewModel>(); //.SingleInstance();
                 builder.RegisterType<SecretChatCreateViewModel>();
                 builder.RegisterType<InstantViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsViewModel>().SingleInstance();

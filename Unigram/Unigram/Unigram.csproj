@@ -478,14 +478,14 @@
     <Compile Include="Triggers\EnumTrigger.cs" />
     <Compile Include="Triggers\UserInteractionTrigger.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
+    <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep1ViewModel.cs" />
+    <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep2ViewModel.cs" />
     <Compile Include="ViewModels\BasicGroups\BasicGroupEditViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep2ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep3ViewModel.cs" />
     <Compile Include="ViewModels\ChatsViewModel.cs" />
-    <Compile Include="ViewModels\Chats\ChatCreateStep1ViewModel.cs" />
-    <Compile Include="ViewModels\Chats\ChatCreateStep2ViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatGalleryViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
@@ -596,6 +596,12 @@
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
+    <Compile Include="Views\BasicGroups\BasicGroupCreateStep1Page.xaml.cs">
+      <DependentUpon>BasicGroupCreateStep1Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\BasicGroups\BasicGroupCreateStep2Page.xaml.cs">
+      <DependentUpon>BasicGroupCreateStep2Page.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\BasicGroups\BasicGroupEditPage.xaml.cs">
       <DependentUpon>BasicGroupEditPage.xaml</DependentUpon>
     </Compile>
@@ -613,12 +619,6 @@
     </Compile>
     <Compile Include="Views\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatCreateStep1Page.xaml.cs">
-      <DependentUpon>ChatCreateStep1Page.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatCreateStep2Page.xaml.cs">
-      <DependentUpon>ChatCreateStep2Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatInviteLinkPage.xaml.cs">
       <DependentUpon>ChatInviteLinkPage.xaml</DependentUpon>
@@ -1864,6 +1864,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\BasicGroups\BasicGroupCreateStep1Page.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BasicGroups\BasicGroupCreateStep2Page.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\BasicGroups\BasicGroupEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1881,14 +1889,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ChatPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Chats\ChatCreateStep1Page.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Chats\ChatCreateStep2Page.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

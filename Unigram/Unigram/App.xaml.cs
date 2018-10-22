@@ -161,10 +161,10 @@ namespace Unigram
                     return container.Resolve<ChannelCreateStep2ViewModel>(id);
                 case ChannelCreateStep3Page channelCreateStep3:
                     return container.Resolve<ChannelCreateStep3ViewModel>(id);
-                case ChatCreateStep1Page chatCreateStep1:
-                    return container.Resolve<ChatCreateStep1ViewModel>(id);
-                case ChatCreateStep2Page chatCreateStep2:
-                    return container.Resolve<ChatCreateStep2ViewModel>(id);
+                case BasicGroupCreateStep1Page chatCreateStep1:
+                    return container.Resolve<BasicGroupCreateStep1ViewModel>(id);
+                case BasicGroupCreateStep2Page chatCreateStep2:
+                    return container.Resolve<BasicGroupCreateStep2ViewModel>(id);
                 case ChatInviteLinkPage chatInviteLink:
                     return container.Resolve<ChatInviteLinkViewModel>(id);
                 case ChatInvitePage chatInvite:

@@ -14,13 +14,13 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Services;
 
-namespace Unigram.ViewModels.Chats
+namespace Unigram.ViewModels.BasicGroups
 {
-    public class ChatCreateStep2ViewModel : UsersSelectionViewModel
+    public class BasicGroupCreateStep2ViewModel : UsersSelectionViewModel
     {
         private string _title;
 
-        public ChatCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public BasicGroupCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _maximum = CacheService.Options.SupergroupSizeMax;

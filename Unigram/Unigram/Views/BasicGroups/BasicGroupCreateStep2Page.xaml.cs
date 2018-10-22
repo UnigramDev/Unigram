@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Chats;
 using Unigram.Views;
 using Windows.Foundation;
@@ -15,14 +16,14 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Chats
+namespace Unigram.Views.BasicGroups
 {
-    public sealed partial class ChatCreateStep2Page : Page
+    public sealed partial class BasicGroupCreateStep2Page : Page
     {
-        public ChatCreateStep2Page()
+        public BasicGroupCreateStep2Page()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChatCreateStep2ViewModel>();
+            DataContext = TLContainer.Current.Resolve<BasicGroupCreateStep2ViewModel>();
             View.Attach();
         }
     }

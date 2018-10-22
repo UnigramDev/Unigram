@@ -19,17 +19,18 @@ using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using Unigram.ViewModels.BasicGroups;
 
-namespace Unigram.Views.Chats
+namespace Unigram.Views.BasicGroups
 {
-    public sealed partial class ChatCreateStep1Page : Page
+    public sealed partial class BasicGroupCreateStep1Page : Page
     {
-        public ChatCreateStep1ViewModel ViewModel => DataContext as ChatCreateStep1ViewModel;
+        public BasicGroupCreateStep1ViewModel ViewModel => DataContext as BasicGroupCreateStep1ViewModel;
 
-        public ChatCreateStep1Page()
+        public BasicGroupCreateStep1Page()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChatCreateStep1ViewModel>();
+            DataContext = TLContainer.Current.Resolve<BasicGroupCreateStep1ViewModel>();
         }
 
         private void Title_Loaded(object sender, RoutedEventArgs e)
