@@ -511,7 +511,7 @@ namespace Unigram.ViewModels
             field.SetScrollMode(mode, force);
         }
 
-        public string GetText()
+        public string GetText(TextGetOptions options = TextGetOptions.NoHidden)
         {
             var field = TextField;
             if (field == null)
@@ -519,7 +519,7 @@ namespace Unigram.ViewModels
                 return null;
             }
 
-            field.Document.GetText(TextGetOptions.NoHidden, out string text);
+            field.Document.GetText(options, out string text);
             return text;
         }
 
@@ -1033,17 +1033,20 @@ namespace Unigram.ViewModels
 
                     // If we're loading from the last read message
                     // then we want to skip it to align first unread message at top
-                    if (maxId == _chat.LastReadInboxMessageId)
+                    if (_chat.LastReadInboxMessageId != _chat.LastMessage?.Id)
                     {
                         for (int i = 0; i < replied.Count; i++)
                         {
                             var previous = replied[i];
-                            if (previous.Id > maxId)
+                            if (previous.Id > _chat.LastReadInboxMessageId && !previous.IsOutgoing)
                             {
-                                replied.Insert(i, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderUnread(), null)));
+                                if (maxId == _chat.LastReadInboxMessageId)
+                                {
+                                    maxId = previous.Id;
+                                    pixel = 28 + 48 + 4;
+                                }
 
-                                maxId = previous.Id;
-                                pixel = 28 + 48 + 4;
+                                replied.Insert(i, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderUnread(), null)));
                                 break;
                             }
                         }
@@ -1054,12 +1057,16 @@ namespace Unigram.ViewModels
                     if (maxId == _chat.LastReadInboxMessageId && maxId == _chat.LastMessage?.Id && alignment != VerticalAlignment.Center)
                     {
                         alignment = VerticalAlignment.Bottom;
-                        pixel = 8;
+                        pixel = 4;
                     }
 
                     if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
                     {
-                        replied[0] = await PrepareMigratedAsync(chatUpgradeFrom.BasicGroupId);
+                        var chatUpgradeTo = await PrepareMigratedAsync(chatUpgradeFrom.BasicGroupId);
+                        if (chatUpgradeTo != null)
+                        {
+                            replied[0] = chatUpgradeTo;
+                        }
                     }
 
                     Items.ReplaceWith(replied);
@@ -1423,6 +1430,8 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            Aggregator.Subscribe(this);
+
             _chatId = (long)parameter;
 
             var chat = ProtoService.GetChat((long)parameter);
@@ -1627,6 +1636,15 @@ namespace Unigram.ViewModels
             if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
             {
                 await HandlePackageAsync(package);
+            }
+        }
+
+        public override async Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            if (suspending)
+            {
+                await OnNavigatingFromAsync(new NavigatingEventArgs(null));
+                Items.Clear();
             }
         }
 
