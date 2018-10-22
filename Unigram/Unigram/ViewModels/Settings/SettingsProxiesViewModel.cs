@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsProxiesViewModel : TLViewModelBase, IHandle<UpdateConnectionState>
+    public class SettingsProxiesViewModel : TLViewModelBase, IHandle<UpdateConnectionState>, IHandle<UpdateOption>
     {
         public SettingsProxiesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -48,49 +48,52 @@ namespace Unigram.ViewModels.Settings
                     _selectedItem.IsEnabled = true;
                 }
 
-                IEnumerable<List<T>> splitList<T>(List<T> locations, int nSize = 30)
+                Parallel.ForEach(items, async (item) =>
                 {
-                    for (int i = 0; i < locations.Count; i += nSize)
-                    {
-                        yield return locations.GetRange(i, Math.Min(nSize, locations.Count - i));
-                    }
-                }
-
-                var lists = splitList(items.Select<ConnectionViewModel, Func<Task>>(x => () => UpdateAsync(x)).ToList(), 5);
-
-                foreach (var tiny in lists)
-                {
-                    await Task.WhenAll(tiny.Select(x => x()));
-                }
+                    await UpdateAsync(item);
+                });
             }
         }
 
         private async Task UpdateAsync(ConnectionViewModel proxy)
         {
             var status = await ProtoService.SendAsync(new PingProxy(proxy.Id));
-            if (status is Seconds seconds)
+            BeginOnUIThread(() =>
             {
-                proxy.Seconds = seconds.SecondsValue;
-                proxy.Error = null;
-                proxy.Status = new ConnectionStatusReady(proxy.IsEnabled, seconds.SecondsValue);
-            }
-            else if (status is Error error)
-            {
-                proxy.Seconds = 0;
-                proxy.Error = error;
-                proxy.Status = new ConnectionStatusError(error);
-            }
+                if (status is Seconds seconds)
+                {
+                    proxy.Seconds = seconds.SecondsValue;
+                    proxy.Error = null;
+                    proxy.Status = new ConnectionStatusReady(proxy.IsEnabled, seconds.SecondsValue);
+                }
+                else if (status is Error error)
+                {
+                    proxy.Seconds = 0;
+                    proxy.Error = error;
+                    proxy.Status = new ConnectionStatusError(error);
+                }
+            });
         }
 
         public void Handle(UpdateConnectionState update)
         {
-            BeginOnUIThread(() => Handle(update.State));
+            BeginOnUIThread(() => Handle(update.State, CacheService.Options.EnabledProxyId));
         }
 
-        private void Handle(ConnectionState state)
+        public void Handle(UpdateOption update)
+        {
+            if (string.Equals(update.Name, "enabled_proxy_id", StringComparison.OrdinalIgnoreCase))
+            {
+                BeginOnUIThread(() => Handle(CacheService.GetConnectionState(), CacheService.Options.EnabledProxyId));
+            }
+        }
+
+        private void Handle(ConnectionState state, int enabledProxyId)
         {
             foreach (var item in Items)
             {
+                item.IsEnabled = item.Id == enabledProxyId;
+
                 if (!item.IsEnabled)
                 {
                     if (item.Error != null)
@@ -170,7 +173,7 @@ namespace Unigram.ViewModels.Settings
                 await ProtoService.SendAsync(new DisableProxy());
             }
 
-            Handle(ProtoService.GetConnectionState());
+            Handle(CacheService.GetConnectionState(), CacheService.Options.EnabledProxyId);
         }
 
         public RelayCommand<ConnectionViewModel> EditCommand { get; }
@@ -194,7 +197,7 @@ namespace Unigram.ViewModels.Settings
                 await UpdateAsync(edited);
             }
 
-            Handle(ProtoService.GetConnectionState());
+            Handle(CacheService.GetConnectionState(), CacheService.Options.EnabledProxyId);
         }
 
         public RelayCommand<ProxyViewModel> RemoveCommand { get; }
@@ -212,7 +215,7 @@ namespace Unigram.ViewModels.Settings
                 Items.Remove(proxy);
             }
 
-            Handle(ProtoService.GetConnectionState());
+            Handle(CacheService.GetConnectionState(), CacheService.Options.EnabledProxyId);
         }
 
         public RelayCommand<ProxyViewModel> ShareCommand { get; }
