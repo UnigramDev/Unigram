@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 
@@ -15,8 +16,7 @@ namespace Unigram.Controls
     public class LazoListView : SelectListView
     {
         private IList<ItemIndexRange> _ranges;
-        private ListViewItem _firstItem;
-        private int _firstIndex = -1;
+        private object _firstItem;
         private bool _operation;
 
         private bool _pressed;
@@ -52,9 +52,15 @@ namespace Unigram.Controls
                 SelectionMode = ListViewSelectionMode.Multiple;
             }
 
+            var begin = Items.IndexOf(_firstItem);
+            if (begin < 0)
+            {
+                return;
+            }
+
             var index = IndexFromContainer(item);
-            var first = Math.Min(_firstIndex, index);
-            var last = Math.Max(_firstIndex, index);
+            var first = Math.Min(begin, index);
+            var last = Math.Max(begin, index);
 
             if (SelectedItems.Count > 0)
             {
@@ -86,7 +92,13 @@ namespace Unigram.Controls
 
         internal void OnPointerMoved(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            if ((_firstItem != null && _firstItem != item) || !_pressed || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            var child = ItemFromContainer(item);
+            if (child == null)
+            {
+                return;
+            }
+
+            if ((_firstItem != null && _firstItem != child) || !_pressed || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
             {
                 return;
             }
@@ -101,21 +113,14 @@ namespace Unigram.Controls
 
             if (_firstItem == null)
             {
-                _firstItem = item;
-                _firstIndex = IndexFromContainer(item);
+                _firstItem = ItemFromContainer(item);
                 _ranges = SelectedRanges.ToArray();
-                _operation = !_firstItem.IsSelected;
+                _operation = !item.IsSelected;
 
                 _position = point.Position;
             }
-            else if (_firstItem == item)
+            else if (_firstItem == child)
             {
-                var child = ItemFromContainer(item);
-                if (child == null)
-                {
-                    return;
-                }
-
                 var contains = SelectedItems.Contains(child);
 
                 var delta = Math.Abs(point.Position.Y - _position.Y);
@@ -148,10 +153,10 @@ namespace Unigram.Controls
 
         internal void OnPointerReleased(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            var handled = _firstItem != null && _firstItem.IsSelected == _operation;
+            var first = _firstItem != null ? ContainerFromItem(_firstItem) as SelectorItem : null;
+            var handled = first != null && first.IsSelected == _operation;
 
             _firstItem = null;
-            _firstIndex = -1;
             _ranges = null;
 
             _pressed = false;
@@ -168,6 +173,11 @@ namespace Unigram.Controls
         protected virtual bool CantSelect(object item)
         {
             return false;
+        }
+
+        protected virtual long IdFromContainer(DependencyObject containter)
+        {
+            return IndexFromContainer(containter);
         }
     }
 }

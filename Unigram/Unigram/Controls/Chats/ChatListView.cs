@@ -166,5 +166,16 @@ namespace Unigram.Controls.Chats
         {
             return item is MessageViewModel message && message.IsService();
         }
+
+        protected override long IdFromContainer(DependencyObject container)
+        {
+            var item = ItemFromContainer(container) as MessageViewModel;
+            if (item != null)
+            {
+                return item.Id;
+            }
+
+            return -1;
+        }
     }
 }
