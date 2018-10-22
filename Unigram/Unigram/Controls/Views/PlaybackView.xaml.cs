@@ -161,12 +161,12 @@ namespace Unigram.Controls.Views
                 //NextButton = groupHeader.FindName("NextButton") as GlyphButton;
 
                 ViewModel.Playback.PropertyChanged -= OnCurrentItemChanged;
-                ViewModel.Playback.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
-                ViewModel.Playback.Session.PositionChanged -= OnPositionChanged;
+                ViewModel.Playback.PlaybackStateChanged -= OnPlaybackStateChanged;
+                ViewModel.Playback.PositionChanged -= OnPositionChanged;
 
                 ViewModel.Playback.PropertyChanged += OnCurrentItemChanged;
-                ViewModel.Playback.Session.PlaybackStateChanged += OnPlaybackStateChanged;
-                ViewModel.Playback.Session.PositionChanged += OnPositionChanged;
+                ViewModel.Playback.PlaybackStateChanged += OnPlaybackStateChanged;
+                ViewModel.Playback.PositionChanged += OnPositionChanged;
 
                 UpdateGlyph();
                 UpdateDuration();
@@ -209,7 +209,7 @@ namespace Unigram.Controls.Views
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.Playback.Session.PlaybackState == MediaPlaybackState.Playing)
+            if (ViewModel.Playback.PlaybackState == MediaPlaybackState.Playing)
             {
                 ViewModel.Playback.Pause();
             }
@@ -221,10 +221,10 @@ namespace Unigram.Controls.Views
 
         private void UpdatePosition()
         {
-            PositionLabel.Text = ViewModel.Playback.Session.Position.ToString("mm\\:ss");
-            DurationLabel.Text = ViewModel.Playback.Session.NaturalDuration.ToString("mm\\:ss");
-            ProgressSlider.Maximum = ViewModel.Playback.Session.NaturalDuration.TotalMilliseconds;
-            ProgressSlider.Value = ViewModel.Playback.Session.Position.TotalMilliseconds;
+            PositionLabel.Text = ViewModel.Playback.Position.ToString("mm\\:ss");
+            DurationLabel.Text = ViewModel.Playback.Duration.ToString("mm\\:ss");
+            ProgressSlider.Maximum = ViewModel.Playback.Duration.TotalMilliseconds;
+            ProgressSlider.Value = ViewModel.Playback.Position.TotalMilliseconds;
         }
 
         private void UpdateDuration()
@@ -264,7 +264,7 @@ namespace Unigram.Controls.Views
 
         private void UpdateGlyph()
         {
-            PlaybackButton.Glyph = ViewModel.Playback.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
+            PlaybackButton.Glyph = ViewModel.Playback.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
         }
 
         #endregion

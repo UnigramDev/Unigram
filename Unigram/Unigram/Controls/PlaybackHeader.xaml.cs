@@ -45,8 +45,8 @@ namespace Unigram.Controls
 
             _playbackService.PropertyChanged -= OnCurrentItemChanged;
             _playbackService.PropertyChanged += OnCurrentItemChanged;
-            _playbackService.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
-            _playbackService.Session.PlaybackStateChanged += OnPlaybackStateChanged;
+            _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+            _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
             UpdateGlyph();
             UpdateRate();
         }
@@ -74,7 +74,7 @@ namespace Unigram.Controls
 
             UpdateRate();
 
-            PlaybackButton.Glyph = _playbackService.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
+            PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
 
             var message = _playbackService.CurrentItem;
             if (message == null)
@@ -129,22 +129,13 @@ namespace Unigram.Controls
 
         private void UpdateRate()
         {
-            if (ApiInformation.IsMethodPresent("Windows.Media.Playback.MediaPlaybackSession", "IsSupportedPlaybackRateRange"))
-            {
-                RateButton.Visibility = _playbackService.Session.IsSupportedPlaybackRateRange(2.0, 2.0) ? Visibility.Visible : Visibility.Collapsed;
-                //RateButton.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                RateButton.Visibility = Visibility.Visible;
-            }
-
+            RateButton.Visibility = _playbackService.IsSupportedPlaybackRateRange(2.0, 2.0) ? Visibility.Visible : Visibility.Collapsed;
             RateButton.IsChecked = _playbackService.PlaybackRate == 2.0;
         }
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
-            if (_playbackService.Session.PlaybackState == MediaPlaybackState.Playing)
+            if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
             {
                 _playbackService.Pause();
             }

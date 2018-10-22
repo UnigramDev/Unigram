@@ -46,7 +46,7 @@ namespace Unigram.Controls.Media
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             Playback.PropertyChanged += OnCurrentItemChanged;
-            Playback.Session.PlaybackStateChanged += OnPlaybackStateChanged;
+            Playback.PlaybackStateChanged += OnPlaybackStateChanged;
 
             UpdateGlyph();
         }
@@ -54,7 +54,7 @@ namespace Unigram.Controls.Media
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Playback.PropertyChanged -= OnCurrentItemChanged;
-            Playback.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
+            Playback.PlaybackStateChanged -= OnPlaybackStateChanged;
         }
 
         private void OnCurrentItemChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -120,7 +120,7 @@ namespace Unigram.Controls.Media
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
-            if (Playback.Session.PlaybackState == MediaPlaybackState.Playing)
+            if (Playback.PlaybackState == MediaPlaybackState.Playing)
             {
                 Playback.Pause();
             }

@@ -37,8 +37,8 @@ namespace Unigram.Controls.Messages.Content
             }
 
             message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
-            message.PlaybackService.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.Session.PositionChanged -= OnPositionChanged;
+            message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+            message.PlaybackService.PositionChanged -= OnPositionChanged;
         }
 
         public void UpdateMessage(MessageViewModel message)
@@ -47,8 +47,8 @@ namespace Unigram.Controls.Messages.Content
 
             message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
             message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
-            message.PlaybackService.Session.PlaybackStateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.Session.PlaybackStateChanged += OnPlaybackStateChanged;
+            message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+            message.PlaybackService.PlaybackStateChanged += OnPlaybackStateChanged;
 
             var voiceNote = GetContent(message.Content);
             if (voiceNote == null)
@@ -129,9 +129,9 @@ namespace Unigram.Controls.Messages.Content
 
             if (message.Equals(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
             {
-                Subtitle.Text = FormatTime(message.PlaybackService.Session.Position) + " / " + FormatTime(message.PlaybackService.Session.NaturalDuration);
-                Progress.Maximum = /*Slider.Maximum =*/ message.PlaybackService.Session.NaturalDuration.TotalMilliseconds;
-                Progress.Value = /*Slider.Value =*/ message.PlaybackService.Session.Position.TotalMilliseconds;
+                Subtitle.Text = FormatTime(message.PlaybackService.Position) + " / " + FormatTime(message.PlaybackService.Duration);
+                Progress.Maximum = /*Slider.Maximum =*/ message.PlaybackService.Duration.TotalMilliseconds;
+                Progress.Value = /*Slider.Value =*/ message.PlaybackService.Position.TotalMilliseconds;
             }
         }
 
@@ -159,7 +159,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateFile(MessageViewModel message, File file)
         {
-            message.PlaybackService.Session.PositionChanged -= OnPositionChanged;
+            message.PlaybackService.PositionChanged -= OnPositionChanged;
 
             var voiceNote = GetContent(message.Content);
             if (voiceNote == null)
@@ -197,10 +197,10 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (Equals(message, message.PlaybackService.CurrentItem))
                 {
-                    Button.Glyph = message.PlaybackService.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
+                    Button.Glyph = message.PlaybackService.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
                     UpdatePosition();
 
-                    message.PlaybackService.Session.PositionChanged += OnPositionChanged;
+                    message.PlaybackService.PositionChanged += OnPositionChanged;
                 }
                 else
                 {
@@ -265,7 +265,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (_message.Equals(_message.PlaybackService.CurrentItem))
                 {
-                    if (_message.PlaybackService.Session.PlaybackState == MediaPlaybackState.Playing)
+                    if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
                     {
                         _message.PlaybackService.Pause();
                     }

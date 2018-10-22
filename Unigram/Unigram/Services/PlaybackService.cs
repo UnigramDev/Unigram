@@ -24,7 +24,6 @@ namespace Unigram.Services
     {
         IReadOnlyList<Message> Items { get; }
 
-        MediaPlaybackSession Session { get; }
         MediaPlaybackList List { get; }
 
         Message CurrentItem { get; }
@@ -39,6 +38,20 @@ namespace Unigram.Services
         void Clear();
 
         void Enqueue(Message message);
+
+        TimeSpan Position { get; }
+        TimeSpan Duration { get; }
+
+        MediaPlaybackState PlaybackState { get; }
+
+
+
+        bool IsSupportedPlaybackRateRange(double min, double max);
+
+
+
+        event TypedEventHandler<MediaPlaybackSession, object> PlaybackStateChanged;
+        event TypedEventHandler<MediaPlaybackSession, object> PositionChanged;
     }
 
     public class PlaybackService : BindableBase, IPlaybackService, IHandle<UpdateFile>
@@ -59,6 +72,9 @@ namespace Unigram.Services
         private List<Message> _items;
         private Queue<Message> _queue;
 
+        public event TypedEventHandler<MediaPlaybackSession, object> PlaybackStateChanged;
+        public event TypedEventHandler<MediaPlaybackSession, object> PositionChanged;
+
         public PlaybackService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;
@@ -67,6 +83,7 @@ namespace Unigram.Services
 
             _mediaPlayer = new MediaPlayer();
             _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+            _mediaPlayer.PlaybackSession.PositionChanged += OnPositionChanged;
             //_mediaPlayer.CommandManager.IsEnabled = false;
 
             //_transport = _mediaPlayer.SystemMediaTransportControls;
@@ -88,6 +105,13 @@ namespace Unigram.Services
             {
                 Clear();
             }
+
+            PlaybackStateChanged?.Invoke(sender, args);
+        }
+
+        private void OnPositionChanged(MediaPlaybackSession sender, object args)
+        {
+            PositionChanged?.Invoke(sender, args);
         }
 
         #region Proximity
@@ -212,6 +236,11 @@ namespace Unigram.Services
             }
         }
 
+        public TimeSpan Position => _mediaPlayer?.PlaybackSession?.Position ?? TimeSpan.Zero;
+        public TimeSpan Duration => _mediaPlayer?.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
+
+        public MediaPlaybackState PlaybackState => _mediaPlayer?.PlaybackSession?.PlaybackState ?? MediaPlaybackState.None;
+
         private double _playbackRate = 1.0;
         public double PlaybackRate
         {
@@ -331,6 +360,10 @@ namespace Unigram.Services
             _playlist.MaxPrefetchTime = TimeSpan.FromMinutes(10);
             _playlist.CurrentItemChanged += OnCurrentItemChanged;
             _playlist.Items.Add(item);
+
+            //_mediaPlayer.CommandManager.IsEnabled = !(message.Content is MessageVoiceNote);
+            //_mediaPlayer.AudioDeviceType = message.Content is MessageVoiceNote ? MediaPlayerAudioDeviceType.Communications : MediaPlayerAudioDeviceType.Multimedia;
+            //_mediaPlayer.AudioCategory = message.Content is MessageVoiceNote ? MediaPlayerAudioCategory.Communications : MediaPlayerAudioCategory.Media;
 
             _mediaPlayer.Source = _playlist;
             _mediaPlayer.Play();
@@ -468,6 +501,16 @@ namespace Unigram.Services
             //    _sensor.ReadingChanged -= OnReadingChanged;
             //    _sensor = null;
             //}
+        }
+
+        public bool IsSupportedPlaybackRateRange(double min, double max)
+        {
+            if (_mediaPlayer != null && ApiInformation.IsMethodPresent("Windows.Media.Playback.MediaPlaybackSession", "IsSupportedPlaybackRateRange"))
+            {
+                return _mediaPlayer.PlaybackSession.IsSupportedPlaybackRateRange(min,  max);
+            }
+
+            return false;
         }
     }
 }
