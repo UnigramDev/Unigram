@@ -42,7 +42,7 @@ using Template10.Services.ViewService;
 using Unigram.ViewModels.Gallery;
 using Unigram.Controls.Gallery;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Controls.Gallery
 {
     public sealed partial class GalleryView : ContentDialogBase, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
     {

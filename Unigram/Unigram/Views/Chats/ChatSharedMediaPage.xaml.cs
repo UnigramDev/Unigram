@@ -31,6 +31,7 @@ using Unigram.ViewModels.Delegates;
 using System.Reactive.Linq;
 using Unigram.ViewModels.Chats;
 using Unigram.Controls.Cells;
+using Unigram.Controls.Gallery;
 
 namespace Unigram.Views.Chats
 {

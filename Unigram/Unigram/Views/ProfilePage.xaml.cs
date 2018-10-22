@@ -30,6 +30,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Text;
 using Unigram.ViewModels.Delegates;
 using System.Reactive.Linq;
+using Unigram.Controls.Gallery;
 
 namespace Unigram.Views
 {

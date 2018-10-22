@@ -38,6 +38,7 @@ using Unigram.Controls.Messages;
 using Unigram.ViewModels.Dialogs;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
+using Unigram.Controls.Gallery;
 
 namespace Unigram.Views
 {

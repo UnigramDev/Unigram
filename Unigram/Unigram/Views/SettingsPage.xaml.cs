@@ -25,6 +25,7 @@ using Windows.Media.Capture;
 using Unigram.ViewModels.Delegates;
 using Windows.ApplicationModel;
 using Unigram.Views.Passport;
+using Unigram.Controls.Gallery;
 
 namespace Unigram.Views
 {

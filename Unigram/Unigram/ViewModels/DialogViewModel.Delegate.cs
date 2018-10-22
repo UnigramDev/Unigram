@@ -19,6 +19,7 @@ using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Gallery;
 using Unigram.Services.Settings;
+using Unigram.Controls.Gallery;
 
 namespace Unigram.ViewModels
 {

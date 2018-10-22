@@ -191,6 +191,9 @@
       <DependentUpon>GalleryContentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Gallery\GalleryTransportControls.cs" />
+    <Compile Include="Controls\Gallery\GalleryView.xaml.cs">
+      <DependentUpon>GalleryView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
@@ -1216,9 +1219,6 @@
       <DependentUpon>InputDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MasterDetailView.cs" />
-    <Compile Include="Controls\Views\GalleryView.xaml.cs">
-      <DependentUpon>GalleryView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\PivotRadioButton.cs" />
     <Compile Include="Controls\Messages\MessageReference.xaml.cs">
       <DependentUpon>MessageReference.xaml</DependentUpon>
@@ -1588,6 +1588,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Gallery\GalleryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Messages\Content\AudioContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1757,10 +1761,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\JoinChatView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Views\GalleryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
