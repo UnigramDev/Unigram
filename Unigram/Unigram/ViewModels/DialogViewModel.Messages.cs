@@ -39,7 +39,7 @@ namespace Unigram.ViewModels
         {
             MessageViewModel last = null;
 
-            var data = _embedData;
+            var data = _composerHeader;
             if (data != null && data.ReplyToMessage != null)
             {
                 last = Items.Reverse().FirstOrDefault(x => x.Id != 0 && x.Id < data.ReplyToMessage.Id) ?? Items.LastOrDefault();
@@ -61,7 +61,7 @@ namespace Unigram.ViewModels
         {
             MessageViewModel last = null;
 
-            var data = _embedData;
+            var data = _composerHeader;
             if (data != null && data.ReplyToMessage != null)
             {
                 last = Items.FirstOrDefault(x => x.Id != 0 && x.Id > data.ReplyToMessage.Id) ?? Items.LastOrDefault();
@@ -119,7 +119,7 @@ namespace Unigram.ViewModels
             //}
 
             //Reply = message;
-            EmbedData = new MessageEmbedData { ReplyToMessage = message };
+            ComposerHeader = new MessageComposerHeader { ReplyToMessage = message };
             TextField?.Focus(Windows.UI.Xaml.FocusState.Keyboard);
         }
 
@@ -820,7 +820,7 @@ namespace Unigram.ViewModels
             if (last != null)
             {
                 MessageEditCommand.Execute(last);
-                await ListField?.ScrollToItem(last, VerticalAlignment.Bottom, true, 4);
+                await ListField?.ScrollToItem(last, VerticalAlignment.Center, true);
             }
         }
 
@@ -830,7 +830,7 @@ namespace Unigram.ViewModels
             DisposeSearch();
             CurrentInlineBot = null;
 
-            var container = new MessageEmbedData { EditingMessage = message };
+            var container = new MessageComposerHeader { EditingMessage = message };
             var input = message.Content.GetCaption();
 
             if (message.Content is MessageText text)
@@ -840,7 +840,7 @@ namespace Unigram.ViewModels
                 container.WebPageUrl = text.WebPage?.Url;
             }
 
-            EmbedData = container;
+            ComposerHeader = container;
             SetText(input);
 
             //if (message?.Media is TLMessageMediaGroup groupMedia)

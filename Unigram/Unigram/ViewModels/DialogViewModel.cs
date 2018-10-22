@@ -1778,7 +1778,7 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.SendAsync(new GetMessage(chat.Id, draft.ReplyToMessageId));
                     if (response is Message message)
                     {
-                        EmbedData = new MessageEmbedData { ReplyToMessage = _messageFactory.Create(this, message) };
+                        ComposerHeader = new MessageComposerHeader { ReplyToMessage = _messageFactory.Create(this, message) };
                     }
                 }
             }
@@ -1843,7 +1843,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var embedded = _embedData;
+            var embedded = _composerHeader;
             if (embedded != null && embedded.EditingMessage != null)
             {
                 return;
@@ -1986,20 +1986,16 @@ namespace Unigram.ViewModels
 
         #region Reply 
 
-        private MessageEmbedData _embedData;
-        public MessageEmbedData EmbedData
+        private MessageComposerHeader _composerHeader;
+        public MessageComposerHeader ComposerHeader
         {
             get
             {
-                return _embedData;
+                return _composerHeader;
             }
             set
             {
-                if (_embedData != value)
-                {
-                    _embedData = value;
-                    RaisePropertyChanged();
-                }
+                Set(ref _composerHeader, value);
             }
         }
 
@@ -2031,7 +2027,7 @@ namespace Unigram.ViewModels
         public RelayCommand ClearReplyCommand { get; }
         private void ClearReplyExecute()
         {
-            var container = _embedData;
+            var container = _composerHeader;
             if (container == null)
             {
                 return;
@@ -2039,7 +2035,15 @@ namespace Unigram.ViewModels
 
             if (container.WebPagePreview != null)
             {
-                EmbedData = new MessageEmbedData { EditingMessage = container.EditingMessage, ReplyToMessage = container.ReplyToMessage, WebPagePreview = null };
+                if (container.IsEmpty)
+                {
+                    ComposerHeader = null;
+                }
+                else
+                {
+                    ComposerHeader = new MessageComposerHeader { EditingMessage = container.EditingMessage, ReplyToMessage = container.ReplyToMessage, WebPagePreview = null };
+                }
+
                 DisableWebPagePreview = true;
             }
             else
@@ -2050,13 +2054,13 @@ namespace Unigram.ViewModels
                     //Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
                 }
 
-                EmbedData = null;
+                ComposerHeader = null;
             }
         }
 
         private long GetReply(bool clean)
         {
-            var embedded = _embedData;
+            var embedded = _composerHeader;
             if (embedded == null || embedded.ReplyToMessage == null)
             {
                 return 0;
@@ -2064,7 +2068,7 @@ namespace Unigram.ViewModels
 
             if (clean)
             {
-                EmbedData = null;
+                ComposerHeader = null;
             }
 
             return embedded.ReplyToMessage.Id;
@@ -2106,7 +2110,7 @@ namespace Unigram.ViewModels
             var disablePreview = DisableWebPagePreview;
             DisableWebPagePreview = false;
 
-            var embedded = EmbedData;
+            var embedded = ComposerHeader;
             if (embedded != null && embedded.EditingMessage != null)
             {
                 var editing = embedded.EditingMessage;
@@ -2124,14 +2128,14 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(function);
                 if (response is Message message)
                 {
-                    EmbedData = null;
+                    ComposerHeader = null;
                     Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
                 }
                 else if (response is Error error)
                 {
                     if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
                     {
-                        EmbedData = null;
+                        ComposerHeader = null;
                     }
                     else
                     {
@@ -3260,7 +3264,7 @@ namespace Unigram.ViewModels
         }
     }
 
-    public class MessageEmbedData
+    public class MessageComposerHeader
     {
         public MessageViewModel ReplyToMessage { get; set; }
         public MessageViewModel EditingMessage { get; set; }

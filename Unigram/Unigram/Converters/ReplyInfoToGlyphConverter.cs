@@ -32,7 +32,7 @@ namespace Unigram.Converters
 
             if (parameter != null)
             {
-                var replyInfo = value as MessageEmbedData;
+                var replyInfo = value as MessageComposerHeader;
                 if (replyInfo != null)
                 {
                     return replyInfo.EditingMessage != null ? ConfirmGlyph : SendGlyph;
@@ -42,7 +42,7 @@ namespace Unigram.Converters
             }
             else
             {
-                var replyInfo = value as MessageEmbedData;
+                var replyInfo = value as MessageComposerHeader;
                 if (replyInfo == null)
                 {
                     return ReplyGlyph;

@@ -520,7 +520,7 @@ namespace Unigram.Views
                 args.Handled = true;
             }
 
-            if (ViewModel.EmbedData != null && ViewModel.EmbedData.EditingMessage != null)
+            if (ViewModel.ComposerHeader != null && ViewModel.ComposerHeader.EditingMessage != null)
             {
                 ViewModel.ClearReplyCommand.Execute(null);
                 args.Handled = true;
@@ -578,8 +578,8 @@ namespace Unigram.Views
                 return;
             }
 
-            var text = ViewModel.GetText();
-            var embedded = ViewModel.EmbedData;
+            var text = ViewModel.GetText(TextGetOptions.None);
+            var embedded = ViewModel.ComposerHeader;
 
             var response = ViewModel.ProtoService.Execute(new GetTextEntities(text));
             if (response is TextEntities entities)
@@ -597,7 +597,7 @@ namespace Unigram.Views
                     {
                         this.BeginOnUIThread(() =>
                         {
-                            if (!string.Equals(text, ViewModel.GetText()))
+                            if (!string.Equals(text, ViewModel.GetText(TextGetOptions.None)))
                             {
                                 return;
                             }
@@ -606,22 +606,22 @@ namespace Unigram.Views
                             {
                                 if (embedded == null)
                                 {
-                                    ViewModel.EmbedData = new MessageEmbedData { WebPagePreview = webPage, WebPageUrl = address };
+                                    ViewModel.ComposerHeader = new MessageComposerHeader { WebPagePreview = webPage, WebPageUrl = address };
                                 }
                                 else
                                 {
-                                    ViewModel.EmbedData = new MessageEmbedData { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = webPage, WebPageUrl = address };
+                                    ViewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = webPage, WebPageUrl = address };
                                 }
                             }
                             else if (embedded != null)
                             {
                                 if (embedded.IsEmpty)
                                 {
-                                    ViewModel.EmbedData = null;
+                                    ViewModel.ComposerHeader = null;
                                 }
                                 else if (embedded.WebPagePreview != null)
                                 {
-                                    ViewModel.EmbedData = new MessageEmbedData { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
+                                    ViewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
                                 }
                             }
                         });
@@ -631,11 +631,11 @@ namespace Unigram.Views
                 {
                     if (embedded.IsEmpty)
                     {
-                        ViewModel.EmbedData = null;
+                        ViewModel.ComposerHeader = null;
                     }
                     else if (embedded.WebPagePreview != null)
                     {
-                        ViewModel.EmbedData = new MessageEmbedData { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
+                        ViewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
                     }
                 }
             }

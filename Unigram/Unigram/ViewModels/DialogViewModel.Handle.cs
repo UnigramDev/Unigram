@@ -345,7 +345,7 @@ namespace Unigram.ViewModels
 
                     foreach (var id in update.MessageIds)
                     {
-                        if (_embedData != null && _embedData.Matches(id))
+                        if (_composerHeader != null && _composerHeader.Matches(id))
                         {
                             ClearReplyCommand.Execute();
                             break;

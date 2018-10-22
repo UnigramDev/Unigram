@@ -54,10 +54,10 @@ namespace Unigram.Controls.Messages
 
         private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((MessageReference)d).UpdateEmbedData(e.NewValue as MessageEmbedData);
+            ((MessageReference)d).UpdateEmbedData(e.NewValue as MessageComposerHeader);
         }
 
-        private void UpdateEmbedData(MessageEmbedData embedded)
+        private void UpdateEmbedData(MessageComposerHeader embedded)
         {
             if (embedded == null)
             {
