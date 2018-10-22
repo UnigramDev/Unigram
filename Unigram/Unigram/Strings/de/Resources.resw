@@ -98,7 +98,7 @@
     <value>un1 hat dich hinzugefügt</value>
   </data>
   <data name="ActionBotAllowed" xml:space="preserve">
-    <value>Du hast diesem Bot erlaubt dich anzuschreiben, wenn du dich bei {0} anmeldest.</value>
+    <value>Du hast diesem Bot erlaubt dich anzuschreiben, als du dich bei {0} angemeldet hast.</value>
   </data>
   <data name="ActionBotDocumentAddress" xml:space="preserve">
     <value>Adresse</value>
