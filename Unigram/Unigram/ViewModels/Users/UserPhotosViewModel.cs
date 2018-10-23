@@ -46,6 +46,7 @@ namespace Unigram.ViewModels.Users
                         if (item.Id == user.ProfilePhoto.Id && Items[0] is GalleryProfilePhoto main)
                         {
                             main.SetDate(item.AddedDate);
+                            RaisePropertyChanged(() => SelectedItem);
                         }
                         else
                         {

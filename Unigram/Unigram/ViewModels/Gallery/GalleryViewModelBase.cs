@@ -95,6 +95,7 @@ namespace Unigram.ViewModels.Gallery
             set
             {
                 Set(ref _totalItems, value);
+                RaisePropertyChanged(() => Position);
             }
         }
 
