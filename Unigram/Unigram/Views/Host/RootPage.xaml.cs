@@ -25,7 +25,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views
+namespace Unigram.Views.Host
 {
     public sealed partial class RootPage : Page
     {

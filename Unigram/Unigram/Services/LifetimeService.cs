@@ -14,6 +14,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Host;
 using Windows.Storage;
 
 namespace Unigram.Services

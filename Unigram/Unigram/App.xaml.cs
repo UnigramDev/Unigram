@@ -29,6 +29,7 @@ using Unigram.Views.BasicGroups;
 using Unigram.Views.Channels;
 using Unigram.Views.Chats;
 using Unigram.Views.Dialogs;
+using Unigram.Views.Host;
 using Unigram.Views.Payments;
 using Unigram.Views.SecretChats;
 using Unigram.Views.Settings;
@@ -467,6 +468,10 @@ namespace Unigram
 
             var navService = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"{TLContainer.Current.Lifetime.ActiveItem.Id}");
             var service = TLContainer.Current.Resolve<IProtoService>();
+            if (service == null)
+            {
+                return;
+            }
 
             var state = service.GetAuthorizationState();
             if (state == null)

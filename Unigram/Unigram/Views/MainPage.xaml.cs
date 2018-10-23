@@ -19,8 +19,10 @@ using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.ViewModels;
+using Unigram.Views.BasicGroups;
 using Unigram.Views.Channels;
 using Unigram.Views.Chats;
+using Unigram.Views.Host;
 using Unigram.Views.Passport;
 using Unigram.Views.SecretChats;
 using Unigram.Views.Settings;
@@ -1660,7 +1662,7 @@ namespace Unigram.Views
         {
             if (destination == RootDestination.NewChat)
             {
-                MasterDetail.NavigationService.Navigate(typeof(ChatCreateStep1Page));
+                MasterDetail.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
             }
             else if (destination == RootDestination.NewSecretChat)
             {

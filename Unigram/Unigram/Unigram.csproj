@@ -635,6 +635,9 @@
     <Compile Include="Views\Dialogs\DialogShareLocationPage.xaml.cs">
       <DependentUpon>DialogShareLocationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Host\RootPage.xaml.cs">
+      <DependentUpon>RootPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\IdenticonPage.xaml.cs">
       <DependentUpon>IdenticonPage.xaml</DependentUpon>
     </Compile>
@@ -686,9 +689,6 @@
     </Compile>
     <Compile Include="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\RootPage.xaml.cs">
-      <DependentUpon>RootPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SecretChats\SecretChatCreatePage.xaml.cs">
       <DependentUpon>SecretChatCreatePage.xaml</DependentUpon>
@@ -1912,6 +1912,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Host\RootPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\IdenticonPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1991,10 +1995,6 @@
     <Page Include="Views\ProfilePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\RootPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SecretChats\SecretChatCreatePage.xaml">
       <SubType>Designer</SubType>
