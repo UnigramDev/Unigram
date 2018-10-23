@@ -526,6 +526,11 @@ namespace Unigram
             }
         }
 
+        public override UIElement CreateRootElement(Frame frame)
+        {
+            return new StandalonePage(frame);
+        }
+
         protected override INavigationService CreateNavigationService(Frame frame, int session, string id, bool root)
         {
             if (root)
