@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Controls;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 
@@ -12,6 +13,9 @@ namespace Unigram.Themes
     {
         public Fluent()
         {
+            var commonStyles = new ResourceDictionary { Source = new Uri("ms-appx:///Common/CommonStyles.xaml") };
+            MergedDictionaries.Add(commonStyles);
+
             if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
             {
                 MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Fluent.xaml") });
@@ -19,6 +23,19 @@ namespace Unigram.Themes
             else
             {
                 MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Plain.xaml") });
+            }
+
+            if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.RevealBrush"))
+            {
+                this[typeof(GlyphMenuFlyoutItem)] = new Style { TargetType = typeof(GlyphMenuFlyoutItem), BasedOn = App.Current.Resources["MenuFlyoutItemRevealStyle"] as Style };
+            }
+            else if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MenuFlyoutItem", "Icon"))
+            {
+
+            }
+            else
+            {
+                this[typeof(GlyphMenuFlyoutItem)] = new Style { TargetType = typeof(GlyphMenuFlyoutItem), BasedOn = commonStyles["MenuFlyoutItemGlyphStyle"] as Style };
             }
 
             if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7))

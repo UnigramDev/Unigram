@@ -931,68 +931,31 @@
                                           Grid.Row="1">
                         <FlyoutBase.AttachedFlyout>
                             <MenuFlyout Placement="Top">
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:True), Mode=OneWay}"
-                                                Command="{x:Bind ViewModel.SendMediaCommand}"
-                                                Tag="&#xEB9F;"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:False), Mode=OneWay}"
-                                                Command="{x:Bind ViewModel.SendFileCommand}"
-                                                Tag="&#xE160;"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                Text="{CustomResource ChatLocation}"
-                                                IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                                Command="{x:Bind ViewModel.SendLocationCommand}"
-                                                Tag="&#xE1C4;"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                Text="{CustomResource AttachContact}"
-                                                IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                                Command="{x:Bind ViewModel.SendContactCommand}"
-                                                Tag="&#xE187;"/>
-                                <MenuFlyout.MenuFlyoutPresenterStyle>
-                                    <Style TargetType="MenuFlyoutPresenter">
-                                        <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
-                                        <Setter Property="BorderBrush" Value="{ThemeResource TelegramBackgroundAccentBrush}" />
-                                        <Setter Property="BorderThickness" Value="{ThemeResource FlyoutBorderThemeThickness}" />
-                                        <Setter Property="Padding" Value="{ThemeResource MenuFlyoutPresenterThemePadding}" />
-                                        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
-                                        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
-                                        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto" />
-                                        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-                                        <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False" />
-                                        <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="False" />
-                                        <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
-                                        <Setter Property="MaxWidth" Value="{ThemeResource FlyoutThemeMaxWidth}" />
-                                        <Setter Property="MinHeight" Value="{ThemeResource MenuFlyoutThemeMinHeight}" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="MenuFlyoutPresenter">
-                                                    <Grid Background="{TemplateBinding Background}">
-                                                        <ScrollViewer x:Name="MenuFlyoutPresenterScrollViewer"
-                                                                      Padding="{TemplateBinding Padding}"
-                                                                      Margin="{TemplateBinding BorderThickness}"
-                                                                      MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.FlyoutContentMinWidth}"
-                                                                      HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                                                                      HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                                                      VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                                                                      VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                                                      IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                                                                      IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                                                                      ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
-                                                                      AutomationProperties.AccessibilityView="Raw">
-                                                            <ItemsPresenter Margin="0,0,0,8">
-                                                                <ItemsPresenter.Header>
-                                                                    <controls:AttachPickerFlyout ItemClick="AttachPickerFlyout_ItemClick"/>
-                                                                </ItemsPresenter.Header>
-                                                            </ItemsPresenter>
-                                                        </ScrollViewer>
-                                                        <Border x:Name="MenuFlyoutPresenterBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
-                                                    </Grid>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </MenuFlyout.MenuFlyoutPresenterStyle>
+                                <MenuFlyoutSeparator>
+                                    <MenuFlyoutSeparator.Template>
+                                        <ControlTemplate TargetType="MenuFlyoutSeparator">
+                                            <controls:AttachPickerFlyout ItemClick="AttachPickerFlyout_ItemClick"/>
+                                        </ControlTemplate>
+                                    </MenuFlyoutSeparator.Template>
+                                </MenuFlyoutSeparator>
+                                <controls:GlyphMenuFlyoutItem
+                                    Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:True), Mode=OneWay}"
+                                    Command="{x:Bind ViewModel.SendMediaCommand}"
+                                    Glyph="&#xEB9F;"/>
+                                <controls:GlyphMenuFlyoutItem
+                                    Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:False), Mode=OneWay}"
+                                    Command="{x:Bind ViewModel.SendFileCommand}"
+                                    Glyph="&#xE160;"/>
+                                <controls:GlyphMenuFlyoutItem
+                                    Text="{CustomResource ChatLocation}"
+                                    IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                    Command="{x:Bind ViewModel.SendLocationCommand}"
+                                    Glyph="&#xE1C4;"/>
+                                <controls:GlyphMenuFlyoutItem
+                                    Text="{CustomResource AttachContact}"
+                                    IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                    Command="{x:Bind ViewModel.SendContactCommand}"
+                                    Glyph="&#xE187;"/>
                             </MenuFlyout>
                         </FlyoutBase.AttachedFlyout>
                     </controls:GlyphButton>

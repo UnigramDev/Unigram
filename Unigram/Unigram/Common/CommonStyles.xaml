@@ -3534,7 +3534,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="IconMenuFlyoutItemStyle" TargetType="MenuFlyoutItem">
+    <Style x:Key="MenuFlyoutItemGlyphStyle" TargetType="controls:GlyphMenuFlyoutItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="Padding" Value="{ThemeResource MenuFlyoutItemThemePadding}" />
@@ -3544,7 +3544,7 @@
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="MenuFlyoutItem">
+                <ControlTemplate TargetType="controls:GlyphMenuFlyoutItem">
                     <Grid x:Name="LayoutRoot"
                           Padding="{TemplateBinding Padding}"
                           Background="{TemplateBinding Background}"
@@ -3612,7 +3612,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <StackPanel Orientation="Horizontal">
-                            <FontIcon x:Name="Glyph" Margin="0,0,12,0" Glyph="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                            <FontIcon x:Name="Glyph" Margin="0,0,12,0" Glyph="{TemplateBinding Glyph}" />
                             <TextBlock x:Name="TextBlock"
                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"

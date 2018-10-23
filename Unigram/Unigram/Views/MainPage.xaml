@@ -113,11 +113,11 @@
                                 <chats:ChatBackgroundPresenter Loading="ChatBackgroundPresenter_Loading" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                                 <Grid x:Name="DetailPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}"/>
                                 <!--<Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
-                                    <ContentControl Content="{TemplateBinding PageHeader}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-                                </Grid>-->
+                                     <RowDefinition Height="Auto"/>
+                                     <RowDefinition/>
+                                     </Grid.RowDefinitions>
+                                     <ContentControl Content="{TemplateBinding PageHeader}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                                     </Grid>-->
                             </Grid>
                             <ContentPresenter x:Name="MasterFrame"
                                               Content="{TemplateBinding Content}"
@@ -194,16 +194,16 @@
                                           Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                                 <Button.Flyout>
                                     <MenuFlyout>
-                                        <MenuFlyoutItem x:Name="EditNameItem"
-                                                        Click="{x:Bind SettingsView.EditName_Click}"
-                                                        Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                        Text="{CustomResource EditName}"
-                                                        Tag="&#xE104;"/>
-                                        <MenuFlyoutItem x:Name="LogoutItem"
-                                                        Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
-                                                        Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                        Text="{CustomResource LogOut}"
-                                                        Tag="&#xE10A;"/>
+                                        <controls:GlyphMenuFlyoutItem
+                                            x:Name="EditNameItem"
+                                            Click="{x:Bind SettingsView.EditName_Click}"
+                                            Text="{CustomResource EditName}"
+                                            Glyph="&#xE104;"/>
+                                        <controls:GlyphMenuFlyoutItem
+                                            x:Name="LogoutItem"
+                                            Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
+                                            Text="{CustomResource LogOut}"
+                                            Glyph="&#xE10A;"/>
                                     </MenuFlyout>
                                 </Button.Flyout>
                             </Button>
@@ -259,22 +259,22 @@
             </controls:ContentPageHeader>
 
             <!--<Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}" Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="48"/>
-                </Grid.ColumnDefinitions>
-
-                <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                    <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
-                        <Run Text="{CustomResource AttachLiveLocation}" FontWeight="SemiBold"/>
-                        <Run Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}"/>
-                    </TextBlock>
-                </Button>
-
-                <controls:GlyphButton Command="{x:Bind ViewModel.StopLiveLocationCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
-
-                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-            </Grid>-->
+                 <Grid.ColumnDefinitions>
+                 <ColumnDefinition />
+                 <ColumnDefinition Width="48"/>
+                 </Grid.ColumnDefinitions>
+                 
+                 <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
+                 <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
+                 <Run Text="{CustomResource AttachLiveLocation}" FontWeight="SemiBold"/>
+                 <Run Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}"/>
+                 </TextBlock>
+                 </Button>
+                 
+                 <controls:GlyphButton Command="{x:Bind ViewModel.StopLiveLocationCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
+                 
+                 <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                 </Grid>-->
 
             <Grid x:Name="CallBanner" Visibility="Collapsed" Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}" Grid.Row="2">
                 <Button Command="{x:Bind ViewModel.ReturnToCallCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
