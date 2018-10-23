@@ -1243,10 +1243,17 @@ namespace Unigram.ViewModels
 
         #region Sticker info
 
-        public RelayCommand<MessageViewModel> MessageStickerPackInfoCommand { get; }
-        private async void MessageStickerPackInfoExecute(MessageViewModel message)
+        public RelayCommand<MessageViewModel> MessageAddStickerCommand { get; }
+        private void MessageAddStickerExecute(MessageViewModel message)
         {
-
+            if (message.Content is MessageSticker sticker && sticker.Sticker.SetId != 0)
+            {
+                OpenSticker(sticker.Sticker);
+            }
+            else if (message.Content is MessageText text && text.WebPage?.Sticker != null && text.WebPage.Sticker.SetId != 0)
+            {
+                OpenSticker(text.WebPage.Sticker);
+            }
         }
 
         #endregion

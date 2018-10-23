@@ -139,4 +139,7 @@
   <data name="Select" xml:space="preserve">
     <value>Auswählen</value>
   </data>
+  <data name="ShowInFolder" xml:space="preserve">
+    <value>Im Ordner anzeigen</value>
+  </data>
 </root>

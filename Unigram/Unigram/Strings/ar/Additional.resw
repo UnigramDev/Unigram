@@ -139,4 +139,7 @@
   <data name="Select" xml:space="preserve">
     <value>حدد</value>
   </data>
+  <data name="ShowInFolder" xml:space="preserve">
+    <value>اعرض في المجلد</value>
+  </data>
 </root>

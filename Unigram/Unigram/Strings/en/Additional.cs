@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 09/19/2018 13:25:04
+// 	Generated: 10/23/2018 13:40:35
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -51,7 +51,7 @@ namespace Unigram.Strings
                 resourceLoader = ResourceLoader.GetForViewIndependentUse(currentAssemblyName + "/Additional");
             }
         }
-                
+        
         /// <summary>
         /// Localized resource similar to "Chats"
         /// </summary>
@@ -64,7 +64,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Copy image"
+        /// Localized resource similar to "Copy Image"
         /// </summary>
         public static string CopyImage
         {
@@ -126,6 +126,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Select");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show in Folder"
+        /// </summary>
+        public static string ShowInFolder
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowInFolder");
             }
         }
     }

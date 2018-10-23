@@ -139,4 +139,7 @@
   <data name="Select" xml:space="preserve">
     <value>Выбрать</value>
   </data>
+  <data name="ShowInFolder" xml:space="preserve">
+    <value>Открыть папку с файлом</value>
+  </data>
 </root>

@@ -121,7 +121,7 @@
     <value>Chats</value>
   </data>
   <data name="CopyImage" xml:space="preserve">
-    <value>Copy image</value>
+    <value>Copy Image</value>
   </data>
   <data name="DeletedMessage" xml:space="preserve">
     <value>Deleted message</value>
@@ -138,5 +138,8 @@
   </data>
   <data name="Select" xml:space="preserve">
     <value>Select</value>
+  </data>
+  <data name="ShowInFolder" xml:space="preserve">
+    <value>Show in Folder</value>
   </data>
 </root>

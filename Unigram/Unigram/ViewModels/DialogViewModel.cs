@@ -188,7 +188,7 @@ namespace Unigram.ViewModels
             MessageEditCommand = new RelayCommand<MessageViewModel>(MessageEditExecute);
             MessagePinCommand = new RelayCommand<MessageViewModel>(MessagePinExecute);
             MessageReportCommand = new RelayCommand<MessageViewModel>(MessageReportExecute);
-            MessageStickerPackInfoCommand = new RelayCommand<MessageViewModel>(MessageStickerPackInfoExecute);
+            MessageAddStickerCommand = new RelayCommand<MessageViewModel>(MessageAddStickerExecute);
             MessageFaveStickerCommand = new RelayCommand<MessageViewModel>(MessageFaveStickerExecute);
             MessageUnfaveStickerCommand = new RelayCommand<MessageViewModel>(MessageUnfaveStickerExecute);
             MessageSaveMediaCommand = new RelayCommand<MessageViewModel>(MessageSaveMediaExecute);
@@ -626,7 +626,12 @@ namespace Unigram.ViewModels
                 //}
 
                 //var maxId = first?.Id ?? int.MaxValue;
-                var maxId = Items.FirstOrDefault(x => x != null && x.Id != 0).Id;
+                var maxId = Items.FirstOrDefault(x => x != null && x.Id != 0)?.Id;
+                if (maxId == null)
+                {
+                    return;
+                }
+
                 var limit = 50;
 
                 //for (int i = 0; i < Items.Count; i++)
@@ -641,7 +646,7 @@ namespace Unigram.ViewModels
 
                 //return;
 
-                var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId, 0, limit, false));
+                var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId.Value, 0, limit, false));
                 if (response is Messages messages)
                 {
                     if (messages.MessagesValue.Count > 0)
@@ -714,7 +719,12 @@ namespace Unigram.ViewModels
 
                 Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
-                var maxId = Items.LastOrDefault(x => x != null && x.Id != 0).Id;
+                var maxId = Items.LastOrDefault(x => x != null && x.Id != 0)?.Id;
+                if (maxId == null)
+                {
+                    return;
+                }
+
                 var limit = 50;
 
                 //for (int i = 0; i < Messages.Count; i++)
@@ -725,7 +735,7 @@ namespace Unigram.ViewModels
                 //    }
                 //}
 
-                var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId, -49, limit, false));
+                var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId.Value, -49, limit, false));
                 if (response is Messages messages)
                 {
                     if (messages.MessagesValue.Any(x => !Items.ContainsKey(x.Id)))

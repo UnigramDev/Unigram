@@ -1117,7 +1117,11 @@ namespace Unigram.Views
 
             // Generic
             CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply);
+            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit);
 
+            CreateFlyoutSeparator(ref flyout);
+
+            // Manage
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
                 var fullInfo = ViewModel.CacheService.GetSupergroupFull(supergroup.SupergroupId);
@@ -1131,28 +1135,42 @@ namespace Unigram.Views
                 }
             }
 
-            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit);
             CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward);
             CreateFlyoutItem(ref flyout, MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat);
             CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete);
             CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select);
+
+            CreateFlyoutSeparator(ref flyout);
+
+            // Copy
             CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy);
-            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.Additional.CopyImage);
             CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, message, Strings.Resources.CopyLink);
+            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.Additional.CopyImage);
+
+            CreateFlyoutSeparator(ref flyout);
 
             // Stickers
-            //CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), message, Strings.Resources.AddToStickers);
+            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, ViewModel.MessageAddStickerCommand, message, Strings.Resources.AddToStickers);
             CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.Resources.AddToFavorites);
             CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.Resources.DeleteFromFavorites);
 
+            CreateFlyoutSeparator(ref flyout);
+
+            // Files
             CreateFlyoutItem(ref flyout, MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.Resources.SaveToGIFs);
             CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, message, Strings.Additional.SaveAs);
-            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageOpenFolderCommand, message, "Show in Folder");
+            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageOpenFolderCommand, message, Strings.Additional.ShowInFolder);
 
+            // Contacts
             CreateFlyoutItem(ref flyout, MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.Resources.AddContactTitle);
             //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Resources.SaveToDownloads);
 
             //sender.ContextFlyout = menu;
+
+            if (flyout.Items.Count > 0 && flyout.Items[flyout.Items.Count  -1] is MenuFlyoutSeparator)
+            {
+                flyout.Items.RemoveAt(flyout.Items.Count - 1);
+            }
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -1166,6 +1184,14 @@ namespace Unigram.Views
             else if (flyout.Items.Count > 0)
             {
                 flyout.ShowAt(element);
+            }
+        }
+
+        private void CreateFlyoutSeparator(ref MenuFlyout flyout)
+        {
+            if (flyout.Items.Count > 0 && flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem)
+            {
+                flyout.Items.Add(new MenuFlyoutSeparator());
             }
         }
 
@@ -1332,19 +1358,13 @@ namespace Unigram.Views
 
         private Visibility MessageAddSticker_Loaded(MessageViewModel message)
         {
-            if (message.Content is MessageSticker sticker)
+            if (message.Content is MessageSticker sticker && sticker.Sticker.SetId != 0)
             {
-                // TODO: ...
+                return ViewModel.ProtoService.IsStickerSetInstalled(sticker.Sticker.SetId) ? Visibility.Collapsed : Visibility.Visible;
             }
-
-            return Visibility.Collapsed;
-        }
-
-        private Visibility MessageSaveSticker_Loaded(MessageViewModel message)
-        {
-            if (message.Content is MessageSticker sticker)
+            else if (message.Content is MessageText text && text.WebPage?.Sticker != null && text.WebPage.Sticker.SetId != 0)
             {
-                // TODO: ...
+                return ViewModel.ProtoService.IsStickerSetInstalled(text.WebPage.Sticker.SetId) ? Visibility.Collapsed : Visibility.Visible;
             }
 
             return Visibility.Collapsed;
