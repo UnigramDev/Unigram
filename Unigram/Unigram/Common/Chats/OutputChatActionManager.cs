@@ -27,7 +27,7 @@ namespace Unigram.Common.Chats
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
+            if (chat.Type is ChatTypeSupergroup super && super.IsChannel || chat.Type is ChatTypePrivate privata && privata.UserId == _protoService.Options.MyId)
             {
                 return;
             }

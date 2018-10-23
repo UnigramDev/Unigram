@@ -2201,6 +2201,14 @@ namespace Unigram.Views
 
         public void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions)
         {
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.CacheService.Options.MyId)
+            {
+                ChatActionIndicator.UpdateAction(null);
+                ChatActionPanel.Visibility = Visibility.Collapsed;
+                Subtitle.Opacity = 1;
+                return;
+            }
+
             if (actions != null && actions.Count > 0)
             {
                 ChatActionLabel.Text = InputChatActionManager.GetTypingString(chat, actions, ViewModel.CacheService.GetUser, out ChatAction commonAction);
