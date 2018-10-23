@@ -596,7 +596,14 @@ namespace Unigram.Controls.Cells
             var tooltip = sender as ToolTip;
             if (tooltip != null)
             {
-                tooltip.Content = BriefInfo.Text;
+                if (string.IsNullOrEmpty(BriefInfo.Text) || ApiInfo.CanCheckTextTrimming && !BriefInfo.IsTextTrimmed)
+                {
+                    tooltip.IsOpen = false;
+                }
+                else
+                {
+                    tooltip.Content = BriefInfo.Text;
+                }
             }
         }
 
