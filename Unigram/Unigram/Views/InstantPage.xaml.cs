@@ -610,7 +610,7 @@ namespace Unigram.Views
             var element = new StackPanel { Style = Resources["BlockPhotoStyle"] as Style };
 
             var content = new PhotoContent(message);
-            content.Tag = message;
+            content.Tag = galleryItem;
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
@@ -641,7 +641,7 @@ namespace Unigram.Views
             var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new VideoContent(message);
-            content.Tag = message;
+            content.Tag = galleryItem;
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
@@ -674,7 +674,7 @@ namespace Unigram.Views
             var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new AnimationContent(message);
-            content.Tag = message;
+            content.Tag = galleryItem;
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
@@ -779,7 +779,7 @@ namespace Unigram.Views
                     var message = GetMessage(new MessagePhoto(photoBlock.Photo, null, false));
 
                     var content = new PhotoContent(message);
-                    content.Tag = message;
+                    content.Tag = galleryItem;
                     content.HorizontalAlignment = HorizontalAlignment.Center;
                     content.ClearValue(MaxWidthProperty);
                     content.ClearValue(MaxHeightProperty);
@@ -799,7 +799,7 @@ namespace Unigram.Views
                     var message = GetMessage(new MessageVideo(videoBlock.Video, null, false));
 
                     var content = new VideoContent(message);
-                    content.Tag = message;
+                    content.Tag = galleryItem;
                     content.HorizontalAlignment = HorizontalAlignment.Center;
                     content.ClearValue(MaxWidthProperty);
                     content.ClearValue(MaxHeightProperty);
@@ -1332,10 +1332,14 @@ namespace Unigram.Views
 
         public async void OpenMedia(MessageViewModel message, FrameworkElement target)
         {
-            //ViewModel.Gallery.SelectedItem = item;
-            //ViewModel.Gallery.FirstItem = item;
-            ViewModel.Gallery.SelectedItem = ViewModel.Gallery.Items.FirstOrDefault();
-            ViewModel.Gallery.FirstItem = ViewModel.Gallery.Items.FirstOrDefault();
+            var content = target.Tag as GalleryContent;
+            if (content == null)
+            {
+                content = ViewModel.Gallery.Items.FirstOrDefault();
+            }
+
+            ViewModel.Gallery.SelectedItem = content;
+            ViewModel.Gallery.FirstItem = content;
 
             await GalleryView.GetForCurrentView().ShowAsync(ViewModel.Gallery, () => target);
         }
