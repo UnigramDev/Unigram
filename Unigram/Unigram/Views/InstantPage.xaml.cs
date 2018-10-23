@@ -380,10 +380,9 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessAuthorDate(PageBlockAuthorDate block)
         {
-            var textBlock = new TextBlock { Style = Resources["AuthorDateBlockStyle"] as Style };
-            textBlock.FontSize = 15;
+            var textBlock = new TextBlock { Style = Resources["BlockAuthorDateTextBlockStyle"] as Style };
 
-            if (block.Author != null)
+            if (!block.Author.IsNullOrEmpty())
             {
                 var span = new Span();
                 textBlock.Inlines.Add(new Run { Text = string.Format(Strings.Resources.ArticleByAuthor, string.Empty) });
@@ -399,7 +398,7 @@ namespace Unigram.Views
                     textBlock.Inlines.Add(new Run { Text = " — " });
                 }
 
-                textBlock.Inlines.Add(new Run { Text = BindConvert.Current.DateTime(block.PublishDate).ToString("dd MMMM yyyy") });
+                textBlock.Inlines.Add(new Run { Text = BindConvert.Current.DayMonthFullYear.Format(BindConvert.Current.DateTime(block.PublishDate)) });
             }
 
             return textBlock;
@@ -482,55 +481,51 @@ namespace Unigram.Views
                     //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                     break;
                 case PageBlockHeader header:
-                    textBlock.FontSize = 24;
-                    textBlock.FontFamily = new FontFamily("Times New Roman");
-                    //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                    textBlock.Style = Resources["BlockHeaderTextBlockStyle"] as Style;
                     break;
                 case PageBlockSubheader subheader:
-                    textBlock.FontSize = 19;
-                    textBlock.FontFamily = new FontFamily("Times New Roman");
-                    //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                    textBlock.Style = Resources["BlockSubheaderTextBlockStyle"] as Style;
                     break;
                 case PageBlockParagraph paragraphz:
-                    textBlock.FontSize = 17;
+                    textBlock.Style = Resources["BlockBodyTextBlockStyle"] as Style;
                     break;
                 case PageBlockPreformatted preformatted:
                     textBlock.FontSize = 16;
                     break;
                 case PageBlockFooter footer:
-                    textBlock.FontSize = 15;
-                    textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                    textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
                     //textBlock.TextAlignment = TextAlignment.Center;
                     break;
                 case PageBlockPhoto photo:
                 case PageBlockVideo video:
-                    textBlock.FontSize = 15;
-                    textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                    textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
                     textBlock.TextAlignment = TextAlignment.Center;
                     break;
                 case PageBlockSlideshow slideshow:
                 case PageBlockEmbedded embed:
                 case PageBlockEmbeddedPost embedPost:
-                    textBlock.FontSize = 15;
-                    textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                    textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
                     //textBlock.TextAlignment = TextAlignment.Center;
                     break;
                 case PageBlockBlockQuote blockquote:
-                    textBlock.FontSize = caption ? 15 : 17;
                     if (caption)
                     {
-                        textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                        textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
                         textBlock.Margin = new Thickness(0, 12, 0, 0);
-                    }
-                    break;
-                case PageBlockPullQuote pullquote:
-                    textBlock.FontSize = caption ? 15 : 17;
-                    if (caption)
-                    {
-                        textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
                     }
                     else
                     {
+                        textBlock.Style = Resources["BlockBodyTextBlockStyle"] as Style;
+                    }
+                    break;
+                case PageBlockPullQuote pullquote:
+                    if (caption)
+                    {
+                        textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
+                    }
+                    else
+                    {
+                        textBlock.Style = Resources["BlockBodyTextBlockStyle"] as Style;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
                         //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         textBlock.TextAlignment = TextAlignment.Center;
@@ -560,15 +555,15 @@ namespace Unigram.Views
         private FrameworkElement ProcessList(PageBlockList block)
         {
             var textBlock = new RichTextBlock();
-            textBlock.FontSize = 17;
+            textBlock.Style = Resources["BlockBodyTextBlockStyle"] as Style;
             textBlock.TextWrapping = TextWrapping.Wrap;
 
             for (int i = 0; i < block.Items.Count; i++)
             {
                 var text = block.Items[i];
                 var par = new Paragraph();
-                par.TextIndent = -24;
-                par.Margin = new Thickness(24, 0, 0, 0);
+                par.TextIndent = -20;
+                par.Margin = new Thickness(20, 0, 0, 0);
 
                 var span = new Span();
                 par.Inlines.Add(new Run { Text = block.IsOrdered ? (i + 1) + ".\t" : "•\t" });

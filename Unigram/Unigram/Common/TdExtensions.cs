@@ -356,6 +356,16 @@ namespace Unigram.Common
             }
         }
 
+        public static bool IsNullOrEmpty(this RichText text)
+        {
+            if (text == null)
+            {
+                return true;
+            }
+
+            return string.IsNullOrEmpty(text.ToPlainText());
+        }
+
         public static bool IsEditable(this TextEntity entity)
         {
             switch (entity.Type)
