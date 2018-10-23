@@ -229,11 +229,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return Settings.Notifications.IsContactEnabled;
+                return !CacheService.Options.DisableContactRegisteredNotifications && Settings.Notifications.IsContactEnabled;
             }
             set
             {
-                Settings.Notifications.IsContactEnabled = value;
+                CacheService.Options.DisableContactRegisteredNotifications = !(Settings.Notifications.IsContactEnabled = value);
                 RaisePropertyChanged();
             }
         }

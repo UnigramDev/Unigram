@@ -528,7 +528,7 @@ namespace Unigram.ViewModels
             var field = TextField;
             if (field == null)
             {
-                return null;
+                return new FormattedText(string.Empty, new TextEntity[0]);
             }
 
             return field.GetFormattedText(clear);
@@ -609,7 +609,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat == null || Items.Count < 1 || IsLastSliceLoaded == true)
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
                 }
@@ -626,7 +626,7 @@ namespace Unigram.ViewModels
                 //}
 
                 //var maxId = first?.Id ?? int.MaxValue;
-                var maxId = Items.FirstOrDefault(x => x.Id != 0).Id;
+                var maxId = Items.FirstOrDefault(x => x != null && x.Id != 0).Id;
                 var limit = 50;
 
                 //for (int i = 0; i < Items.Count; i++)
@@ -642,7 +642,7 @@ namespace Unigram.ViewModels
                 //return;
 
                 var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId, 0, limit, false));
-                if (response is Telegram.Td.Api.Messages messages)
+                if (response is Messages messages)
                 {
                     if (messages.MessagesValue.Count > 0)
                     {
@@ -688,7 +688,13 @@ namespace Unigram.ViewModels
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat == null || Items.Count < 1)
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || chat == null || Items.Count < 1)
                 {
                     return;
                 }
@@ -708,7 +714,7 @@ namespace Unigram.ViewModels
 
                 Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
-                var maxId = Items.LastOrDefault(x => x.Id != 0).Id;
+                var maxId = Items.LastOrDefault(x => x != null && x.Id != 0).Id;
                 var limit = 50;
 
                 //for (int i = 0; i < Messages.Count; i++)
@@ -719,8 +725,8 @@ namespace Unigram.ViewModels
                 //    }
                 //}
 
-                var response = await ProtoService.SendAsync(new GetChatHistory(_chat.Id, maxId, -49, limit, false));
-                if (response is Telegram.Td.Api.Messages messages)
+                var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId, -49, limit, false));
+                if (response is Messages messages)
                 {
                     if (messages.MessagesValue.Any(x => !Items.ContainsKey(x.Id)))
                     {
@@ -998,7 +1004,13 @@ namespace Unigram.ViewModels
 
             using (await _loadMoreLock.WaitAsync())
             {
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat == null)
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice)
                 {
                     return;
                 }
@@ -1019,8 +1031,8 @@ namespace Unigram.ViewModels
                 var offset = -25;
                 var limit = 50;
 
-                var response = await ProtoService.SendAsync(new GetChatHistory(_chat.Id, maxId, offset, limit, false));
-                if (response is Telegram.Td.Api.Messages messages)
+                var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId, offset, limit, false));
+                if (response is Messages messages)
                 {
                     if (messages.MessagesValue.Count > 0)
                     {
@@ -1028,19 +1040,19 @@ namespace Unigram.ViewModels
                     }
 
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
-                    ProcessFiles(_chat, replied);
+                    ProcessFiles(chat, replied);
                     ProcessReplies(replied);
 
                     // If we're loading from the last read message
                     // then we want to skip it to align first unread message at top
-                    if (_chat.LastReadInboxMessageId != _chat.LastMessage?.Id)
+                    if (chat.LastReadInboxMessageId != chat.LastMessage?.Id)
                     {
                         for (int i = 0; i < replied.Count; i++)
                         {
                             var previous = replied[i];
-                            if (previous.Id > _chat.LastReadInboxMessageId && !previous.IsOutgoing)
+                            if (previous.Id > chat.LastReadInboxMessageId && !previous.IsOutgoing)
                             {
-                                if (maxId == _chat.LastReadInboxMessageId)
+                                if (maxId == chat.LastReadInboxMessageId)
                                 {
                                     maxId = previous.Id;
                                     pixel = 28 + 48 + 4;
@@ -1054,7 +1066,7 @@ namespace Unigram.ViewModels
 
                     // If we're loading the last message and it has been read already
                     // then we want to align it at bottom, as it might be taller than the window height
-                    if (maxId == _chat.LastReadInboxMessageId && maxId == _chat.LastMessage?.Id && alignment != VerticalAlignment.Center)
+                    if (maxId == chat.LastReadInboxMessageId && maxId == chat.LastMessage?.Id && alignment != VerticalAlignment.Center)
                     {
                         alignment = VerticalAlignment.Bottom;
                         pixel = 4;
@@ -1430,7 +1442,7 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            Aggregator.Subscribe(this);
+            //Aggregator.Subscribe(this);
 
             _chatId = (long)parameter;
 
@@ -1639,14 +1651,14 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override async Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
-        {
-            if (suspending)
-            {
-                await OnNavigatingFromAsync(new NavigatingEventArgs(null));
-                Items.Clear();
-            }
-        }
+        //public override async Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        //{
+        //    if (suspending)
+        //    {
+        //        await OnNavigatingFromAsync(new NavigatingEventArgs(null));
+        //        Items.Clear();
+        //    }
+        //}
 
         public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
         {

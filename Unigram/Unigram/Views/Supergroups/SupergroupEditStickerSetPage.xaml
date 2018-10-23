@@ -192,7 +192,7 @@
                     <TextBox x:Name="ShortName"
                              Header="t.me/addstickers/"
                              PlaceholderText="{CustomResource ChooseStickerSetPlaceholder}"
-                             Text="{x:Bind ViewModel.ShortName, Mode=TwoWay}"
+                             Text="{x:Bind ViewModel.ShortName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource InlinePlaceholderTextBoxStyle}"
                              Margin="12,8,12,2"/>
 
@@ -202,10 +202,29 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <ContentControl Content="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
-                                        ContentTemplate="{StaticResource StickerSetItemTemplate}"
                                         HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Stretch"
-                                        Padding="12,0,0,0"/>
+                                        Padding="12,0,0,0">
+                            <ContentControl.ContentTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,6" Background="Transparent" DataContextChanged="Grid_DataContextChanged">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Image Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+
+                                        <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                                        <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ContentControl.ContentTemplate>
+                        </ContentControl>
                         <controls:GlyphButton Command="{x:Bind ViewModel.CancelCommand}" Glyph="&#xE10A;" VerticalAlignment="Center" Width="40" Height="40" Margin="4" CornerRadius="20" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="12,6,0,6" Background="Transparent" Visibility="Collapsed">

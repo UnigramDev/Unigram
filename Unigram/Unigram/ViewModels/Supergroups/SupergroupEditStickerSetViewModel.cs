@@ -37,6 +37,19 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
+        private bool _isAvailable;
+        public bool IsAvailable
+        {
+            get
+            {
+                return _isAvailable;
+            }
+            set
+            {
+                Set(ref _isAvailable, value);
+            }
+        }
+
         private string _shortName;
         public string ShortName
         {
@@ -280,6 +293,25 @@ namespace Unigram.ViewModels.Supergroups
         {
             ShortName = null;
             SelectedItem = null;
+        }
+
+        public async void CheckAvailability(string shortName)
+        {
+            IsLoading = true;
+
+            var response = await ProtoService.SendAsync(new SearchStickerSet(shortName));
+            if (response is StickerSet stickerSet)
+            {
+                IsLoading = false;
+                IsAvailable = true;
+                SelectedItem = new StickerSetInfo(stickerSet.Id, stickerSet.Title, stickerSet.Name, stickerSet.IsInstalled, stickerSet.IsArchived, stickerSet.IsOfficial, stickerSet.IsMasks, stickerSet.IsViewed, stickerSet.Stickers.Count, stickerSet.Stickers);
+            }
+            else
+            {
+                IsLoading = false;
+                IsAvailable = false;
+                SelectedItem = null;
+            }
         }
     }
 }

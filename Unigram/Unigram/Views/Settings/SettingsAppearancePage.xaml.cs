@@ -174,16 +174,17 @@ namespace Unigram.Views.Settings
 
             foreach (TLWindowContext window in WindowContext.ActiveWrappers)
             {
-                window.UpdateTitleBar();
-
-                if (window.Content is FrameworkElement element)
+                window.Dispatcher.Dispatch(() =>
                 {
-                    element.RequestedTheme = ViewModel.GetElementTheme();
-                }
+                    window.UpdateTitleBar();
+
+                    if (window.Content is FrameworkElement element)
+                    {
+                        element.RequestedTheme = ViewModel.GetElementTheme();
+                    }
+                });
             }
         }
-
-        bool a = true;
 
         private void Switch_Click(object sender, RoutedEventArgs e)
         {

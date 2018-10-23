@@ -250,7 +250,7 @@ namespace Unigram.ViewModels.Supergroups
                     return;
                 }
 
-                var username = _isPublic ? _username?.Trim() : string.Empty;
+                var username = _isPublic ? _username?.Trim() ?? string.Empty : string.Empty;
 
                 if (!string.Equals(username, item.Username))
                 {

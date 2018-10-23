@@ -1262,6 +1262,11 @@ namespace Unigram.Views
                 return Visibility.Collapsed;
             }
 
+            if (message.IsService())
+            {
+                return Visibility.Collapsed;
+            }
+
             var myId = ViewModel.ProtoService.GetMyId();
             return message.SenderUserId != myId ? Visibility.Visible : Visibility.Collapsed;
         }

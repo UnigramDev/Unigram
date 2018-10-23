@@ -161,7 +161,12 @@ namespace Unigram.Services
                     return;
                 }
 
-                ToastNotificationManager.History.RemoveGroup(GetGroup(chat), "App");
+                try
+                {
+                    // Notifications APIs like to crash
+                    ToastNotificationManager.History.RemoveGroup(GetGroup(chat), "App");
+                }
+                catch { }
             }
         }
 
