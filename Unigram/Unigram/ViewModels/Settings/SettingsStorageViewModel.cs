@@ -142,17 +142,15 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var dialog = new ContentDialogBase();
-            var page = new SettingsStorageOptimizationPage(ProtoService, dialog, byChat);
-            dialog.Content = page;
+            var dialog = new SettingsStorageOptimizationPage(ProtoService, byChat);
 
-            var confirm = await dialog.ShowAsync();
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var types = page.SelectedItems ?? new FileType[0];
+            var types = dialog.SelectedItems ?? new FileType[0];
             if (types.IsEmpty())
             {
                 return;

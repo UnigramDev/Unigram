@@ -18,29 +18,23 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views.Settings
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class SettingsStorageOptimizationPage : Page
+    public sealed partial class SettingsStorageOptimizationPage : ContentDialog
     {
-        private readonly ContentDialogBase _dialog;
-
-        public SettingsStorageOptimizationPage(IProtoService protoService, ContentDialogBase dialog, StorageStatisticsByChat statistics)
+        public SettingsStorageOptimizationPage(IProtoService protoService, StorageStatisticsByChat statistics)
         {
             InitializeComponent();
 
-            _dialog = dialog;
+            PrimaryButtonText = Strings.Resources.CacheClear;
+            SecondaryButtonText = Strings.Resources.Close;
 
             var chat = protoService.GetChat(statistics.ChatId);
 
             Title.Text = chat == null ? "Other Chats" : protoService.GetTitle(chat);
             Subtitle.Text = FileSizeConverter.Convert(statistics.Size);
 
-            Photo.Source = chat == null ? null : PlaceholderHelper.GetChat(protoService, chat, 36, 36);
+            Photo.Source = chat == null ? null : PlaceholderHelper.GetChat(protoService, chat, (int)Photo.Width, (int)Photo.Height);
             Photo.Visibility = chat == null ? Visibility.Collapsed : Visibility.Visible;
 
             List.ItemsSource = statistics.ByFileType.OrderByDescending(x => x.Size).ToList();
@@ -133,23 +127,22 @@ namespace Unigram.Views.Settings
             subtitle.Text = FileSizeConverter.Convert(fileType.Size);
         }
 
-        private void Clear_Click(object sender, RoutedEventArgs e)
+        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var items = List.ItemsSource as IList<StorageStatisticsByFileType>;
             if (items != null)
             {
                 SelectedItems = List.SelectedItems.Cast<StorageStatisticsByFileType>().Select(x => x.FileType).ToList();
-                _dialog.Hide(ContentDialogResult.Primary);
             }
             else
             {
-                _dialog.Hide(ContentDialogResult.Secondary);
+                SelectedItems = null;
             }
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
+        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            _dialog.Hide(ContentDialogResult.Secondary);
+            SelectedItems = null;
         }
     }
 }
