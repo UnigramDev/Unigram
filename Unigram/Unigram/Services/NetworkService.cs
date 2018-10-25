@@ -32,28 +32,37 @@ namespace Unigram.Services
 
         private void Update(ConnectionProfile profile)
         {
+            _protoService.Send(new SetNetworkType(_type = GetNetworkType(profile)));
+        }
+
+        private NetworkType GetNetworkType(ConnectionProfile profile)
+        {
             if (profile == null)
             {
-                return;
+                return new NetworkTypeNone();
+            }
+
+            var level = profile.GetNetworkConnectivityLevel();
+            if (level == NetworkConnectivityLevel.LocalAccess || level == NetworkConnectivityLevel.None)
+            {
+                return new NetworkTypeNone();
             }
 
             var cost = profile.GetConnectionCost();
             if (cost != null && cost.Roaming)
             {
-                _protoService.Send(new SetNetworkType(_type = new NetworkTypeMobileRoaming()));
+                return new NetworkTypeMobileRoaming();
             }
             else if (profile.IsWlanConnectionProfile)
             {
-                _protoService.Send(new SetNetworkType(_type = new NetworkTypeWiFi()));
+                return new NetworkTypeWiFi();
             }
             else if (profile.IsWwanConnectionProfile)
             {
-                _protoService.Send(new SetNetworkType(_type = new NetworkTypeMobile()));
+                return new NetworkTypeMobile();
             }
-            else
-            {
-                _protoService.Send(new SetNetworkType(_type = new NetworkTypeOther()));
-            }
+
+            return new NetworkTypeOther();
         }
 
         private NetworkType _type = new NetworkTypeOther();
