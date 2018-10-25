@@ -582,8 +582,14 @@ namespace Unigram.Controls.Views
                 items.Insert(1, chat);
             }
 
-
-            ChatsPanel.SelectedItems.Add(chat);
+            if (ChatsPanel.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                ChatsPanel.SelectedItems.Add(chat);
+            }
+            else
+            {
+                ChatsPanel.SelectedItem = chat;
+            }
         }
 
         private void List_SizeChanged(object sender, SizeChangedEventArgs e)
