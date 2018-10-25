@@ -162,61 +162,95 @@ namespace Unigram.Views
 
             //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
             //{
-            //    var visual2 = ElementCompositionPreview.GetElementVisual(Header);
-            //    visual2.Clip = Window.Current.Compositor.CreateInsetClip();
+            //    var showShowAnimation = Window.Current.Compositor.CreateSpringScalarAnimation();
+            //    showShowAnimation.InitialValue = 0;
+            //    showShowAnimation.FinalValue = 1;
+            //    showShowAnimation.Target = nameof(Visual.Opacity);
 
-            //    var showShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    showShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
-            //    showShowAnimation.InsertKeyFrame(1.0f, new Vector3());
-            //    showShowAnimation.Target = nameof(Visual.Offset);
-            //    showShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    var showHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    showHideAnimation.InsertKeyFrame(0.0f, new Vector3());
-            //    showHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0));
-            //    showHideAnimation.Target = nameof(Visual.Offset);
-            //    showHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    var hideHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    hideHideAnimation.InsertKeyFrame(0.0f, new Vector3());
-            //    hideHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0));
-            //    hideHideAnimation.Target = nameof(Visual.Offset);
-            //    hideHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    var hideShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    hideShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0));
-            //    hideShowAnimation.InsertKeyFrame(1.0f, new Vector3());
-            //    hideShowAnimation.Target = nameof(Visual.Offset);
-            //    hideShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
+            //    var hideHideAnimation = Window.Current.Compositor.CreateSpringScalarAnimation();
+            //    hideHideAnimation.InitialValue = 1;
+            //    hideHideAnimation.FinalValue = 0;
+            //    hideHideAnimation.Target = nameof(Visual.Opacity);
 
             //    ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, showShowAnimation);
             //    ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
-            //    ElementCompositionPreview.SetImplicitShowAnimation(InfoPanel, hideShowAnimation);
-            //    ElementCompositionPreview.SetImplicitHideAnimation(InfoPanel, showHideAnimation);
-
-
-
-            //    var visual3 = ElementCompositionPreview.GetElementVisual(Clipper);
-            //    visual3.Clip = Window.Current.Compositor.CreateInsetClip();
-
-            //    var showShowAnimation2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    showShowAnimation2.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
-            //    showShowAnimation2.InsertKeyFrame(1.0f, new Vector3());
-            //    showShowAnimation2.Target = nameof(Visual.Offset);
-            //    showShowAnimation2.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    var hideHideAnimation2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    hideHideAnimation2.InsertKeyFrame(0.0f, new Vector3());
-            //    hideHideAnimation2.InsertKeyFrame(1.0f, new Vector3(0, -48, 0));
-            //    hideHideAnimation2.Target = nameof(Visual.Offset);
-            //    hideHideAnimation2.Duration = TimeSpan.FromMilliseconds(400);
-
-            //    ElementCompositionPreview.SetImplicitShowAnimation(PinnedMessagePanel, showShowAnimation);
-            //    ElementCompositionPreview.SetImplicitHideAnimation(PinnedMessagePanel, hideHideAnimation);
             //}
 
             _textShadowVisual = Shadow.Attach(Separator, 20, 0.25f);
             _textShadowVisual.IsVisible = false;
+
+            FocusManager.GettingFocus += (s, args) =>
+            {
+#if DEBUG
+                var element = args.NewFocusedElement as FrameworkElement;
+                if (element != null)
+                {
+                    ViewModel.LastSeen = Enum.GetName(typeof(FocusInputDeviceKind), args.InputDevice) + ", " + Enum.GetName(typeof(FocusState), args.FocusState) + ": ";
+
+
+                    //var control = element as Control;
+                    //if (control != null)
+                    //{
+                    //    if (control.FocusState == FocusState.Pointer && control is ChatListViewItem && args.OldFocusedElement is ChatTextBox)
+                    //    {
+                    //        args.Cancel = true;
+                    //    }
+                    //}
+
+                    if (element.Name != null)
+                    {
+                        if (ViewModel.LastSeen != null)
+                        {
+                            ViewModel.LastSeen += element.Name + ", ";
+                        }
+                        else
+                        {
+                            ViewModel.LastSeen = element.Name + ", ";
+                        }
+                    }
+
+                    ViewModel.LastSeen += element.GetType().FullName;
+                }
+                else
+                {
+                    ViewModel.LastSeen = null;
+                }
+#endif
+
+                // We want to apply this behavior when using mouse only
+                if (args.InputDevice != FocusInputDeviceKind.Mouse)
+                {
+                    return;
+                }
+
+                // We don't want to steal focus from text areas/keyboard navigation
+                if (args.FocusState == FocusState.Keyboard || args.NewFocusedElement is TextBox || args.NewFocusedElement is RichEditBox)
+                {
+                    return;
+                }
+
+                // If new focused element supports programmatic focus (so it's a control)
+                // then we can freely steal focus from it
+                if (args.NewFocusedElement is Control)
+                {
+                    if (args.FocusState == FocusState.Programmatic && args.OldFocusedElement is ChatTextBox)
+                    {
+                        args.TryCancel();
+                    }
+                    else if (args.FocusState == FocusState.Programmatic)
+                    {
+                        args.TrySetNewFocusedElement(TextField);
+                    }
+                    else if (args.OldFocusedElement is ChatTextBox)
+                    {
+                        args.TryCancel();
+                    }
+                    else if (args.NewFocusedElement is ChatListViewItem)
+                    {
+                        args.TrySetNewFocusedElement(TextField);
+                    }
+                }
+            };
         }
 
         private void ContactPanel_LaunchFullAppRequested(Windows.ApplicationModel.Contacts.ContactPanel sender, Windows.ApplicationModel.Contacts.ContactPanelLaunchFullAppRequestedEventArgs args)
@@ -2161,6 +2195,8 @@ namespace Unigram.Views
             Action.IsEnabled = enabled;
             Action.Visibility = Visibility.Visible;
             TextArea.Visibility = Visibility.Collapsed;
+
+            Messages.Focus(FocusState.Programmatic);
         }
 
         private void ShowArea()
