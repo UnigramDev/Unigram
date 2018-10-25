@@ -427,9 +427,9 @@ namespace Unigram.ViewModels
         {
             var webPage = message.Content is MessageText text ? text.WebPage : null;
 
-            if (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || ((message.Content is MessageAnimation || (webPage != null && webPage.Animation != null)) && !Settings.IsAutoPlayEnabled))
+            if (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || message.Content is MessageAnimation || (webPage != null && webPage.Animation != null))
             {
-                Delegate?.PlayMessage(message);
+                Delegate?.PlayMessage(message, target);
             }
             else
             {
@@ -453,19 +453,12 @@ namespace Unigram.ViewModels
 
         public void PlayMessage(MessageViewModel message)
         {
-            if (message.Content is MessageAnimation || message.Content is MessageVideoNote || message.Content is MessageText text && text.WebPage != null && text.WebPage.Animation != null)
+            if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
             {
-                Delegate?.PlayMessage(message);
+                ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
             }
-            else
-            {
-                if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
-                {
-                    ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
-                }
 
-                _playbackService.Enqueue(message.Get());
-            }
+            _playbackService.Enqueue(message.Get());
         }
 
 

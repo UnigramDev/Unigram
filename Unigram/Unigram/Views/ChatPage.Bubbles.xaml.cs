@@ -44,6 +44,8 @@ using LinqToVisualTree;
 using Telegram.Td.Api;
 using Windows.Foundation.Metadata;
 using Unigram.Controls.Chats;
+using Unigram.ViewModels.Gallery;
+using Unigram.Controls.Gallery;
 
 namespace Unigram.Views
 {
@@ -224,10 +226,12 @@ namespace Unigram.Views
 
         private Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
 
-        public void PlayMessage(MessageViewModel message)
+        public async void PlayMessage(MessageViewModel message, FrameworkElement target)
         {
+            var text = message.Content as MessageText;
+
             // If autoplay is enabled and the message contains a video note, then we want a different behavior
-            if (ViewModel.Settings.IsAutoPlayEnabled && (message.Content is MessageVideoNote || message.Content is MessageText text && text.WebPage != null && text.WebPage.Video != null))
+            if (ViewModel.Settings.IsAutoPlayEnabled && (message.Content is MessageVideoNote || text?.WebPage != null && text.WebPage.Video != null))
             {
                 if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
                 {
@@ -263,6 +267,18 @@ namespace Unigram.Views
                     {
                         item.Presenter.MediaPlayer.Pause();
                     }
+                }
+            }
+            else if (ViewModel.Settings.IsAutoPlayEnabled && (message.Content is MessageAnimation || text?.WebPage != null && text.WebPage.Animation != null))
+            {
+                if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
+                {
+                    var viewModel = new SingleGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ProtoService, message.Get()));
+                    await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);
+                }
+                else
+                {
+                    ViewVisibleMessages(false);
                 }
             }
             else
@@ -356,7 +372,7 @@ namespace Unigram.Views
                     {
                         target = messageVideoNote.VideoNote;
                     }
-                    
+
                     if (target is VideoNote)
                     {
                         panel = panel.FindName("Presenter") as Panel;

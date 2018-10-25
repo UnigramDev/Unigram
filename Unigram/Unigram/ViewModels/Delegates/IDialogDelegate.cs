@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Telegram.Td.Api;
+using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels.Delegates
 {
@@ -18,6 +19,6 @@ namespace Unigram.ViewModels.Delegates
 
 
 
-        void PlayMessage(MessageViewModel message);
+        void PlayMessage(MessageViewModel message, FrameworkElement target);
     }
 }
