@@ -268,7 +268,8 @@
                                           Toggled="Notifications_Toggled"/>
 
                             <controls:BadgeButton Content="{CustomResource SharedMedia}"
-                                                  Command="{x:Bind ViewModel.MediaCommand}"/>
+                                                  Command="{x:Bind ViewModel.MediaCommand}"
+                                                  Badge="{x:Bind ViewModel.SharedMedia, Mode=OneWay}"/>
 
                             <controls:BadgeButton x:Name="SecretLifetime"
                                                   Visibility="Collapsed"
@@ -296,18 +297,20 @@
                                                   Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"/>
 
                             <Button x:Name="GroupLeave"
+                                    Visibility="Collapsed"
                                     Content="{CustomResource LeaveChannel}"
                                     Command="{x:Bind ViewModel.DeleteCommand}"
                                     Style="{StaticResource HyperButtonStyle}"
                                     Foreground="Red"/>
                             <Button x:Name="GroupInvite"
+                                    Visibility="Collapsed"
                                     Content="{CustomResource AddMember}"
                                     Command="{x:Bind ViewModel.InviteCommand}"
                                     Style="{StaticResource HyperButtonStyle}"
                                     Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                         </StackPanel>
 
-                        <StackPanel Margin="0,24,0,18">
+                        <StackPanel Margin="0,24,0,0">
                             <Button x:Name="EventLog"
                                     Visibility="Collapsed"
                                     Content="{CustomResource EventLog}"

@@ -94,27 +94,22 @@ namespace Unigram.ViewModels
         protected Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get { return _chat; }
+            set { Set(ref _chat, value); }
+        }
+
+        private int _sharedMedia;
+        public int SharedMedia
+        {
+            get { return _sharedMedia; }
+            set { Set(ref _sharedMedia, value); }
         }
 
         protected ObservableCollection<ChatMember> _members;
         public ObservableCollection<ChatMember> Members
         {
-            get
-            {
-                return _members;
-            }
-            set
-            {
-                Set(ref _members, value);
-            }
+            get { return _members; }
+            set { Set(ref _members, value); }
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -198,6 +193,14 @@ namespace Unigram.ViewModels
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
             }
+
+            ProtoService.Send(new SearchChatMessages(chat.Id, string.Empty, 0, 0, 0, 1, new SearchMessagesFilterPhotoAndVideo()), result =>
+            {
+                if (result is Messages messages)
+                {
+                    BeginOnUIThread(() => SharedMedia = messages.TotalCount);
+                }
+            });
 
             return Task.CompletedTask;
         }
