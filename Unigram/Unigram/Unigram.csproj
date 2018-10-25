@@ -1414,6 +1414,11 @@
     <PRIResource Include="Strings\uk\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>
+    <Content Include="Assets\Images\Reply.scale-100.png" />
+    <Content Include="Assets\Images\Reply.scale-125.png" />
+    <Content Include="Assets\Images\Reply.scale-150.png" />
+    <Content Include="Assets\Images\Reply.scale-200.png" />
+    <Content Include="Assets\Images\Reply.scale-400.png" />
     <Content Include="Assets\Mockup\sticker0.webp" />
     <Content Include="Assets\Mockup\sticker1.webp" />
     <PRIResource Include="Strings\zh-CN\Resources.resw">

@@ -34,6 +34,8 @@ namespace Unigram.Common
                 this.Add("MessageServiceBackgroundBrush", GetBrushOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
                 this.Add("MessageServiceBackgroundPressedBrush", GetBrushOrDefault("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96)));
 
+                this.Add("MessageServiceBackgroundColor", GetColorOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
+
                 this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d));
             }
             catch { }

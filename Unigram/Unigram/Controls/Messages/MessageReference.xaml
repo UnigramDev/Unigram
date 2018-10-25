@@ -13,6 +13,7 @@
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
     Padding="0"
+    ManipulationMode="TranslateX,TranslateY,System"
     d:DesignHeight="36"
     mc:Ignorable="d">
 

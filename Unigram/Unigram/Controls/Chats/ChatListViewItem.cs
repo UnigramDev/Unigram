@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
+using Windows.Foundation.Metadata;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -9,15 +11,16 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Chats
 {
     public class ChatListViewItem : LazoListViewItem
     {
         private readonly ChatListView _parent;
-        private bool _pressed;
+
         private Visual _visual;
-        private SpriteVisual _indicator;
+        private ContainerVisual _indicator;
 
         public ChatListViewItem(ChatListView parent)
             : base(parent)
@@ -46,19 +49,8 @@ namespace Unigram.Controls.Chats
             {
                 e.Handled = CantSelect();
             }
-            else if (e.OriginalSource is ListViewItemPresenter /*&& e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Touch*/)
-            {
-                _pressed = true;
-            }
 
-            //base.OnPointerPressed(e);
-        }
-
-        protected override void OnPointerReleased(PointerRoutedEventArgs e)
-        {
-            _pressed = false;
-
-            base.OnPointerReleased(e);
+            base.OnPointerPressed(e);
         }
 
         public override bool CantSelect()
@@ -68,14 +60,12 @@ namespace Unigram.Controls.Chats
 
         protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs e)
         {
-            if (_pressed)
-            {
-
-            }
-            else
+#if !DEBUG
+            if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch || CantSelect())
             {
                 e.Complete();
             }
+#endif
 
             base.OnManipulationStarted(e);
         }
@@ -88,14 +78,41 @@ namespace Unigram.Controls.Chats
             {
                 var presenter = VisualTreeHelper.GetChild(this, 0) as ListViewItemPresenter;
                 _visual = ElementCompositionPreview.GetElementVisual(presenter);
+
+                if (e.Container.PointerCaptures != null && e.Container.PointerCaptures.Count > 0)
+                {
+                    e.Container.ReleasePointerCaptures();
+                }
             }
 
-            if (_indicator == null /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
+            if (_indicator == null && ApiInfo.CanUseDirectComposition /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
             {
-                _indicator = _visual.Compositor.CreateSpriteVisual();
-                _indicator.Brush = _visual.Compositor.CreateColorBrush(Windows.UI.Colors.Red);
-                _indicator.Size = new System.Numerics.Vector2(30, 30);
-                _indicator.CenterPoint = new System.Numerics.Vector3(15);
+                var sprite = _visual.Compositor.CreateSpriteVisual();
+                sprite.Size = new Vector2(30, 30);
+                sprite.CenterPoint = new Vector3(15);
+
+                var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/Reply.png"));
+                surface.LoadCompleted += (s, args) =>
+                {
+                    sprite.Brush = _visual.Compositor.CreateSurfaceBrush(s);
+                };
+
+                var ellipse = _visual.Compositor.CreateEllipseGeometry();
+                ellipse.Radius = new Vector2(15);
+
+                var ellipseShape = _visual.Compositor.CreateSpriteShape(ellipse);
+                ellipseShape.FillBrush = _visual.Compositor.CreateColorBrush((Windows.UI.Color)App.Current.Resources["MessageServiceBackgroundColor"]);
+                ellipseShape.Offset = new Vector2(15);
+
+                var shape = _visual.Compositor.CreateShapeVisual();
+                shape.Shapes.Add(ellipseShape);
+                shape.Size = new Vector2(30, 30);
+
+                _indicator = _visual.Compositor.CreateContainerVisual();
+                _indicator.Children.InsertAtBottom(shape);
+                _indicator.Children.InsertAtTop(sprite);
+                _indicator.Size = new Vector2(30, 30);
+                _indicator.CenterPoint = new Vector3(15);
 
                 ElementCompositionPreview.SetElementChildVisual(this, _indicator);
             }
@@ -108,11 +125,14 @@ namespace Unigram.Controls.Chats
             var width = (float)ActualWidth;
             var height = (float)ActualHeight;
 
-            _visual.Offset = new System.Numerics.Vector3(offset, 0, 0);
+            _visual.Offset = new Vector3(offset, 0, 0);
 
-            _indicator.Offset = new System.Numerics.Vector3(width - percent * 60, (height - 30) / 2, 0);
-            _indicator.Scale = new System.Numerics.Vector3(0.8f + percent * 0.2f);
-            _indicator.Opacity = percent;
+            if (_indicator != null)
+            {
+                _indicator.Offset = new Vector3(width - percent * 60, (height - 30) / 2, 0);
+                _indicator.Scale = new Vector3(0.8f + percent * 0.2f);
+                _indicator.Opacity = percent;
+            }
 
             base.OnManipulationDelta(e);
         }
@@ -125,23 +145,33 @@ namespace Unigram.Controls.Chats
             {
                 var animation = _visual.Compositor.CreateSpringVector3Animation();
                 animation.InitialValue = _visual.Offset;
-                animation.FinalValue = new System.Numerics.Vector3();
+                animation.FinalValue = new Vector3();
 
                 _visual.StartAnimation("Offset", animation);
             }
 
             if (_indicator != null)
             {
+                var batch = _visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
                 var animation = _visual.Compositor.CreateSpringVector3Animation();
                 animation.InitialValue = _indicator.Offset;
-                animation.FinalValue = new System.Numerics.Vector3((float)ActualWidth, ((float)ActualHeight - 30) / 2, 0);
+                animation.FinalValue = new Vector3((float)ActualWidth, ((float)ActualHeight - 30) / 2, 0);
 
                 _indicator.Opacity = 1;
-                _indicator.Scale = new System.Numerics.Vector3(1);
+                _indicator.Scale = new Vector3(1);
                 _indicator.StartAnimation("Offset", animation);
+
+                batch.Completed += (s, args) =>
+                {
+                    _indicator.Dispose();
+                    _indicator = null;
+                };
+
+                batch.End();
             }
 
-            if (Math.Abs(e.Cumulative.Translation.X) >= 45)
+            if (e.Cumulative.Translation.X <= -45)
             {
                 _parent.ViewModel.ReplyToMessage(_parent.ItemFromContainer(this) as MessageViewModel);
             }
