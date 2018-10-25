@@ -692,7 +692,8 @@ namespace Unigram.ViewModels
                         return;
                     }
 
-                    await LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, VerticalAlignment.Bottom);
+                    //await LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, VerticalAlignment.Bottom);
+                    await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom, 4);
                 }
             }
         }

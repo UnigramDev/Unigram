@@ -744,8 +744,8 @@
         <Grid Grid.Row="1">
             <Border x:Name="LineBottom" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
 
-            <Border Visibility="{x:Bind ConvertCommentVisibility(ViewModel.SelectedItems.Count, ViewModel.IsCommentEnabled), Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8,12,0" Grid.ColumnSpan="2">
-                <TextBox Text="{x:Bind ViewModel.Comment, Mode=TwoWay}" PlaceholderText="{CustomResource ShareComment}"/>
+            <Border x:Name="CommentPanel" Visibility="Collapsed" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8,12,0" Grid.ColumnSpan="2">
+                <TextBox Text="{x:Bind ViewModel.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="{CustomResource ShareComment}"/>
             </Border>
         </Grid>
     </Grid>

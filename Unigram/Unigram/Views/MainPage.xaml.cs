@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Linq;
@@ -112,6 +113,11 @@ namespace Unigram.Views
             {
                 visual.Size = new Vector2(20, (float)args.NewSize.Height);
             };
+        }
+
+        ~MainPage()
+        {
+            Debug.WriteLine("Released mainpage");
         }
 
         private void InitializeTitleBar()
@@ -682,11 +688,13 @@ namespace Unigram.Views
             {
                 Root?.SetPaneToggleButtonVisibility(e.SourcePageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
                 SetTitleBarVisibility(Visibility.Visible);
+                MasterDetail.AllowCompact = true;
             }
             else
             {
                 Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
                 SetTitleBarVisibility(e.SourcePageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
+                MasterDetail.AllowCompact = e.SourcePageType != typeof(BlankPage);
             }
 
             if (e.SourcePageType == typeof(ChatPage))
@@ -863,7 +871,7 @@ namespace Unigram.Views
             var listView = sender as ListView;
             if (listView.SelectedItem != null)
             {
-                listView.ScrollIntoView(listView.SelectedItem);
+                //listView.ScrollIntoView(listView.SelectedItem);
             }
             else
             {
@@ -1721,6 +1729,11 @@ namespace Unigram.Views
             {
                 presenter.Update(ViewModel.SessionId, ((TLViewModelBase)ViewModel).Settings, ViewModel.Aggregator);
             }
+        }
+
+        private void EditName_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsView.EditName_Click(sender, e);
         }
     }
 

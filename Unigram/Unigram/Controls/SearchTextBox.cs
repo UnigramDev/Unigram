@@ -88,6 +88,11 @@ namespace Unigram.Controls
             }
         }
 
+        public void OnKeyDownOverride(KeyRoutedEventArgs e)
+        {
+            base.OnKeyDown(e);
+        }
+
         //protected override void OnKeyDown(KeyRoutedEventArgs e)
         //{
         //    if (e.Key == Windows.System.VirtualKey.Enter)

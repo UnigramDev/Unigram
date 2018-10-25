@@ -65,7 +65,6 @@ namespace Unigram.Views
             }
         }
 
-
         private void Advanced_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsAdvancedPage));

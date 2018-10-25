@@ -196,7 +196,7 @@
                                     <MenuFlyout>
                                         <controls:GlyphMenuFlyoutItem
                                             x:Name="EditNameItem"
-                                            Click="{x:Bind SettingsView.EditName_Click}"
+                                            Click="EditName_Click"
                                             Text="{CustomResource EditName}"
                                             Glyph="&#xE104;"/>
                                         <controls:GlyphMenuFlyoutItem

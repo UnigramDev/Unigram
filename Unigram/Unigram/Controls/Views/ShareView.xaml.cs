@@ -528,6 +528,8 @@ namespace Unigram.Controls.Views
             Subtitle.Visibility = ViewModel.SelectedItems.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
             Subtitle.Text = string.Join(", ", ViewModel.SelectedItems.Select(x => ViewModel.CacheService.GetTitle(x)));
 
+            CommentPanel.Visibility = ViewModel.SelectedItems.Count > 0 && ViewModel.IsCommentEnabled ? Visibility.Visible : Visibility.Collapsed;
+
             IsPrimaryButtonEnabled = ViewModel.SelectedItems.Count > 0;
         }
 

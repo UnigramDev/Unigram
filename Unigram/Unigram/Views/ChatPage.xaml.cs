@@ -1293,6 +1293,11 @@ namespace Unigram.Views
                     return Visibility.Collapsed;
                 }
 
+                if (message.IsService())
+                {
+                    return Visibility.Collapsed;
+                }
+
                 return supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.CanPinMessages || supergroup.IsChannel && admin.CanEditMessages)) ? Visibility.Visible : Visibility.Collapsed;
             }
 

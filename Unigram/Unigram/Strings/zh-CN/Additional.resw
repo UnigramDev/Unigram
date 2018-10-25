@@ -140,6 +140,6 @@
     <value>选择</value>
   </data>
   <data name="ShowInFolder" xml:space="preserve">
-    <value>Show in Folder</value>
+    <value>打开文件夹</value>
   </data>
 </root>

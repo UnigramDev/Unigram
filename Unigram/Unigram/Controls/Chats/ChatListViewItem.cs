@@ -60,12 +60,10 @@ namespace Unigram.Controls.Chats
 
         protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs e)
         {
-#if !DEBUG
             if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch || CantSelect())
             {
                 e.Complete();
             }
-#endif
 
             base.OnManipulationStarted(e);
         }
@@ -141,30 +139,32 @@ namespace Unigram.Controls.Chats
         {
             e.Handled = true;
 
-            if (_visual != null)
+            var visual = _visual;
+            if (visual != null)
             {
-                var animation = _visual.Compositor.CreateSpringVector3Animation();
-                animation.InitialValue = _visual.Offset;
+                var animation = visual.Compositor.CreateSpringVector3Animation();
+                animation.InitialValue = visual.Offset;
                 animation.FinalValue = new Vector3();
 
-                _visual.StartAnimation("Offset", animation);
+                visual.StartAnimation("Offset", animation);
             }
 
-            if (_indicator != null)
+            var indicator = _indicator;
+            if (indicator != null && visual != null)
             {
-                var batch = _visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
-                var animation = _visual.Compositor.CreateSpringVector3Animation();
-                animation.InitialValue = _indicator.Offset;
+                var animation = visual.Compositor.CreateSpringVector3Animation();
+                animation.InitialValue = indicator.Offset;
                 animation.FinalValue = new Vector3((float)ActualWidth, ((float)ActualHeight - 30) / 2, 0);
 
-                _indicator.Opacity = 1;
-                _indicator.Scale = new Vector3(1);
-                _indicator.StartAnimation("Offset", animation);
+                indicator.Opacity = 1;
+                indicator.Scale = new Vector3(1);
+                indicator.StartAnimation("Offset", animation);
 
                 batch.Completed += (s, args) =>
                 {
-                    _indicator.Dispose();
+                    _indicator?.Dispose();
                     _indicator = null;
                 };
 
