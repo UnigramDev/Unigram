@@ -50,7 +50,7 @@ namespace Unigram.Controls.Chats
                 e.Handled = CantSelect();
             }
 
-            base.OnPointerPressed(e);
+            //base.OnPointerPressed(e);
         }
 
         public override bool CantSelect()
@@ -60,10 +60,10 @@ namespace Unigram.Controls.Chats
 
         protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs e)
         {
-            if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch || CantSelect())
-            {
-                e.Complete();
-            }
+            //if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch || CantSelect())
+            //{
+            //    e.Complete();
+            //}
 
             base.OnManipulationStarted(e);
         }
@@ -142,9 +142,21 @@ namespace Unigram.Controls.Chats
             var visual = _visual;
             if (visual != null)
             {
-                var animation = visual.Compositor.CreateSpringVector3Animation();
-                animation.InitialValue = visual.Offset;
-                animation.FinalValue = new Vector3();
+                CompositionAnimation animation;
+                if (ApiInfo.CanUseDirectComposition)
+                {
+                    var temp = visual.Compositor.CreateSpringVector3Animation();
+                    temp.InitialValue = visual.Offset;
+                    temp.FinalValue = new Vector3();
+                    animation = temp;
+                }
+                else
+                {
+                    var temp = visual.Compositor.CreateVector3KeyFrameAnimation();
+                    temp.InsertKeyFrame(0, visual.Offset);
+                    temp.InsertKeyFrame(1, new Vector3());
+                    animation = temp;
+                }
 
                 visual.StartAnimation("Offset", animation);
             }
@@ -154,9 +166,21 @@ namespace Unigram.Controls.Chats
             {
                 var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
-                var animation = visual.Compositor.CreateSpringVector3Animation();
-                animation.InitialValue = indicator.Offset;
-                animation.FinalValue = new Vector3((float)ActualWidth, ((float)ActualHeight - 30) / 2, 0);
+                CompositionAnimation animation;
+                if (ApiInfo.CanUseDirectComposition)
+                {
+                    var temp = visual.Compositor.CreateSpringVector3Animation();
+                    temp.InitialValue = indicator.Offset;
+                    temp.FinalValue = new Vector3((float)ActualWidth, ((float)ActualHeight - 30) / 2, 0);
+                    animation = temp;
+                }
+                else
+                {
+                    var temp = visual.Compositor.CreateVector3KeyFrameAnimation();
+                    temp.InsertKeyFrame(0, indicator.Offset);
+                    temp.InsertKeyFrame(1, new Vector3((float)ActualWidth, ((float)ActualHeight - 30) / 2, 0));
+                    animation = temp;
+                }
 
                 indicator.Opacity = 1;
                 indicator.Scale = new Vector3(1);

@@ -179,78 +179,81 @@ namespace Unigram.Views
             _textShadowVisual = Shadow.Attach(Separator, 20, 0.25f);
             _textShadowVisual.IsVisible = false;
 
-            FocusManager.GettingFocus += (s, args) =>
+            if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Input.FocusManager", "GettingFocus"))
             {
+                FocusManager.GettingFocus += (s, args) =>
+                {
 #if DEBUG
-                var element = args.NewFocusedElement as FrameworkElement;
-                if (element != null)
-                {
-                    ViewModel.LastSeen = Enum.GetName(typeof(FocusInputDeviceKind), args.InputDevice) + ", " + Enum.GetName(typeof(FocusState), args.FocusState) + ": ";
-
-
-                    //var control = element as Control;
-                    //if (control != null)
-                    //{
-                    //    if (control.FocusState == FocusState.Pointer && control is ChatListViewItem && args.OldFocusedElement is ChatTextBox)
-                    //    {
-                    //        args.Cancel = true;
-                    //    }
-                    //}
-
-                    if (element.Name != null)
+                    var element = args.NewFocusedElement as FrameworkElement;
+                    if (element != null)
                     {
-                        if (ViewModel.LastSeen != null)
-                        {
-                            ViewModel.LastSeen += element.Name + ", ";
-                        }
-                        else
-                        {
-                            ViewModel.LastSeen = element.Name + ", ";
-                        }
-                    }
+                        ViewModel.LastSeen = Enum.GetName(typeof(FocusInputDeviceKind), args.InputDevice) + ", " + Enum.GetName(typeof(FocusState), args.FocusState) + ": ";
 
-                    ViewModel.LastSeen += element.GetType().FullName;
-                }
-                else
-                {
-                    ViewModel.LastSeen = null;
-                }
+
+                        //var control = element as Control;
+                        //if (control != null)
+                        //{
+                        //    if (control.FocusState == FocusState.Pointer && control is ChatListViewItem && args.OldFocusedElement is ChatTextBox)
+                        //    {
+                        //        args.Cancel = true;
+                        //    }
+                        //}
+
+                        if (element.Name != null)
+                        {
+                            if (ViewModel.LastSeen != null)
+                            {
+                                ViewModel.LastSeen += element.Name + ", ";
+                            }
+                            else
+                            {
+                                ViewModel.LastSeen = element.Name + ", ";
+                            }
+                        }
+
+                        ViewModel.LastSeen += element.GetType().FullName;
+                    }
+                    else
+                    {
+                        ViewModel.LastSeen = null;
+                    }
 #endif
 
-                // We want to apply this behavior when using mouse only
-                if (args.InputDevice != FocusInputDeviceKind.Mouse)
-                {
-                    return;
-                }
+                    // We want to apply this behavior when using mouse only
+                    if (args.InputDevice != FocusInputDeviceKind.Mouse)
+                    {
+                        return;
+                    }
 
-                // We don't want to steal focus from text areas/keyboard navigation
-                if (args.FocusState == FocusState.Keyboard || args.NewFocusedElement is TextBox || args.NewFocusedElement is RichEditBox)
-                {
-                    return;
-                }
+                    // We don't want to steal focus from text areas/keyboard navigation
+                    if (args.FocusState == FocusState.Keyboard || args.NewFocusedElement is TextBox || args.NewFocusedElement is RichEditBox)
+                    {
+                        return;
+                    }
 
-                // If new focused element supports programmatic focus (so it's a control)
-                // then we can freely steal focus from it
-                if (args.NewFocusedElement is Control)
-                {
-                    if (args.FocusState == FocusState.Programmatic && args.OldFocusedElement is ChatTextBox)
+                    // If new focused element supports programmatic focus (so it's a control)
+                    // then we can freely steal focus from it
+                    if (args.NewFocusedElement is Control)
                     {
-                        args.TryCancel();
+                        if (args.FocusState == FocusState.Programmatic && args.OldFocusedElement is ChatTextBox)
+                        {
+                            args.TryCancel();
+                        }
+                        else if (args.FocusState == FocusState.Programmatic)
+                        {
+                            args.TrySetNewFocusedElement(TextField);
+                        }
+                        else if (args.OldFocusedElement is ChatTextBox)
+                        {
+                            args.TryCancel();
+                        }
+                        else if (args.NewFocusedElement is ChatListViewItem)
+                        {
+                            args.TrySetNewFocusedElement(TextField);
+                        }
                     }
-                    else if (args.FocusState == FocusState.Programmatic)
-                    {
-                        args.TrySetNewFocusedElement(TextField);
-                    }
-                    else if (args.OldFocusedElement is ChatTextBox)
-                    {
-                        args.TryCancel();
-                    }
-                    else if (args.NewFocusedElement is ChatListViewItem)
-                    {
-                        args.TrySetNewFocusedElement(TextField);
-                    }
-                }
-            };
+                };
+            }
         }
 
         private void ContactPanel_LaunchFullAppRequested(Windows.ApplicationModel.Contacts.ContactPanel sender, Windows.ApplicationModel.Contacts.ContactPanelLaunchFullAppRequestedEventArgs args)
@@ -1201,7 +1204,7 @@ namespace Unigram.Views
 
             //sender.ContextFlyout = menu;
 
-            if (flyout.Items.Count > 0 && flyout.Items[flyout.Items.Count  -1] is MenuFlyoutSeparator)
+            if (flyout.Items.Count > 0 && flyout.Items[flyout.Items.Count - 1] is MenuFlyoutSeparator)
             {
                 flyout.Items.RemoveAt(flyout.Items.Count - 1);
             }
