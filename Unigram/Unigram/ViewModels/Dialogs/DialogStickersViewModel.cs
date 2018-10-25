@@ -92,7 +92,30 @@ namespace Unigram.ViewModels.Dialogs
             {
                 if (result is Stickers recent)
                 {
-                    BeginOnUIThread(() => _recentSet.Update(recent, true));
+                    BeginOnUIThread(() =>
+                    {
+                        for (int i = 0; i < _favoriteSet.Stickers.Count; i++)
+                        {
+                            var favSticker = _favoriteSet.Stickers[i];
+                            for (int j = 0; j < recent.StickersValue.Count; j++)
+                            {
+                                var recSticker = recent.StickersValue[j];
+                                if (recSticker.StickerValue.Id == favSticker.StickerValue.Id)
+                                {
+                                    recent.StickersValue.Remove(recSticker);
+                                    break;
+                                }
+                            }
+                        }
+
+                        for (int i = 20; i < recent.StickersValue.Count; i++)
+                        {
+                            recent.StickersValue.RemoveAt(20);
+                            i--;
+                        }
+
+                        _recentSet.Update(recent, true);
+                    });
                 }
             });
         }
@@ -322,30 +345,35 @@ namespace Unigram.ViewModels.Dialogs
                     {
                         if (result1 is Stickers favorite && result2 is Stickers recent && result3 is StickerSets sets)
                         {
-                            _favoriteSet.Update(favorite);
-                            _recentSet.Update(recent);
-
-                            for (int i = 0; i < _favoriteSet.Stickers.Count; i++)
+                            for (int i = 0; i < favorite.StickersValue.Count; i++)
                             {
-                                var favSticker = _favoriteSet.Stickers[i];
-                                for (int j = 0; j < _recentSet.Stickers.Count; j++)
+                                var favSticker = favorite.StickersValue[i];
+                                for (int j = 0; j < recent.StickersValue.Count; j++)
                                 {
-                                    var recSticker = _recentSet.Stickers[j];
+                                    var recSticker = recent.StickersValue[j];
                                     if (recSticker.StickerValue.Id == favSticker.StickerValue.Id)
                                     {
-                                        _recentSet.Stickers.Remove(recSticker);
+                                        recent.StickersValue.Remove(recSticker);
                                         break;
                                     }
                                 }
                             }
 
+                            for (int i = 20; i < recent.StickersValue.Count; i++)
+                            {
+                                recent.StickersValue.RemoveAt(20);
+                                i--;
+                            }
+
+                            _favoriteSet.Update(favorite);
+                            _recentSet.Update(recent);
 
                             var stickers = new List<StickerSetViewModel>();
-                            if (favorite.StickersValue.Count > 0)
+                            if (_favoriteSet.Stickers.Count > 0)
                             {
                                 stickers.Add(_favoriteSet);
                             }
-                            if (recent.StickersValue.Count > 0)
+                            if (_recentSet.Stickers.Count > 0)
                             {
                                 stickers.Add(_recentSet);
                             }
