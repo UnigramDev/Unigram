@@ -51,12 +51,10 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="NotificationTask.cpp" />
-    <ClCompile Include="VoIPCallTask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="NotificationTask.h" />
-    <ClInclude Include="VoIPCallTask.h" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\de\Resources.resw">

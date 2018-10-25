@@ -220,7 +220,6 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="NotificationTask.h" />
-    <ClInclude Include="VoIPCallTask.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -232,7 +231,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="NotificationTask.cpp" />
-    <ClCompile Include="VoIPCallTask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\de\Resources.resw" />

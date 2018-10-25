@@ -1430,11 +1430,6 @@
     <Content Include="Assets\Icons\Toast\Send.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-dark.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-light.png" />
-    <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-100.png" />
-    <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-125.png" />
-    <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-150.png" />
-    <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-200.png" />
-    <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-400.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-16.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-24.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-256.png" />
