@@ -502,7 +502,7 @@ namespace Unigram.Views
                 //item = menu.addItem(10, R.drawable.ic_ab_other);
                 if (basicGroup.Status is ChatMemberStatusCreator)
                 {
-                    CreateFlyoutItem(ref flyout, null, Strings.Resources.SetAdmins);
+                    CreateFlyoutItem(ref flyout, ViewModel.SetAdminsCommand, Strings.Resources.SetAdmins);
                 }
                 if (!basicGroup.EveryoneIsAdministrator || basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator)
                 {

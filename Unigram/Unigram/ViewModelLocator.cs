@@ -196,6 +196,7 @@ namespace Unigram
                 builder.RegisterType<ChannelCreateStep3ViewModel>(); //.SingleInstance();
                 builder.RegisterType<BasicGroupCreateStep1ViewModel>(); //.SingleInstance();
                 builder.RegisterType<BasicGroupCreateStep2ViewModel>(); //.SingleInstance();
+                builder.RegisterType<BasicGroupEditAdministratorsViewModel>();
                 builder.RegisterType<SecretChatCreateViewModel>();
                 builder.RegisterType<InstantViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsViewModel>().SingleInstance();
@@ -208,7 +209,7 @@ namespace Unigram
                 builder.RegisterType<SettingsUsernameViewModel>().SingleInstance();
                 builder.RegisterType<SettingsSessionsViewModel>().SingleInstance();
                 builder.RegisterType<SettingsWebSessionsViewModel>().SingleInstance();
-                builder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
+                builder.RegisterType<SettingsBlockedUsersViewModel>();
                 builder.RegisterType<SettingsBlockUserViewModel>();
                 builder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
                 builder.RegisterType<SettingsDataAndStorageViewModel>().SingleInstance();

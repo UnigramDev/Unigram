@@ -79,6 +79,7 @@ namespace Unigram.ViewModels
             MigrateCommand = new RelayCommand(MigrateExecute);
             InviteCommand = new RelayCommand(InviteExecute);
             ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
+            SetAdminsCommand = new RelayCommand(SetAdminsExecute);
             MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
             MemberRestrictCommand = new RelayCommand<ChatMember>(MemberRestrictExecute);
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
@@ -391,6 +392,18 @@ namespace Unigram.ViewModels
             {
                 NavigationService.Navigate(typeof(UserCommonChatsPage), secret.UserId);
             }
+        }
+
+        public RelayCommand SetAdminsCommand { get; }
+        private void SetAdminsExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(BasicGroupEditAdministratorsPage), chat.Id);
         }
 
         public RelayCommand SystemCallCommand { get; }
