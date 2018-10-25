@@ -25,11 +25,7 @@ namespace Unigram.Themes
                 MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Plain.xaml") });
             }
 
-            if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.RevealBrush"))
-            {
-                this[typeof(GlyphMenuFlyoutItem)] = new Style { TargetType = typeof(GlyphMenuFlyoutItem), BasedOn = App.Current.Resources["MenuFlyoutItemRevealStyle"] as Style };
-            }
-            else if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MenuFlyoutItem", "Icon"))
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MenuFlyoutItem", "Icon"))
             {
 
             }
