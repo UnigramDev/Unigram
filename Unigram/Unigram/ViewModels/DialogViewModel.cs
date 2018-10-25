@@ -1805,6 +1805,7 @@ namespace Unigram.ViewModels
             if (draft == null)
             {
                 SetText(null as string);
+                ComposerHeader = null;
             }
             else
             {
