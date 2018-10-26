@@ -23,6 +23,6 @@
     <controls:AspectView x:Name="Panel" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Image x:Name="Texture" Stretch="UniformToFill"/>
 
-        <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource ImmersiveFileButtonStyle}"/>
+        <controls:FileButton x:Name="Button" Click="Button_Click" ManipulationMode="System" Style="{StaticResource ImmersiveFileButtonStyle}"/>
     </controls:AspectView>
 </Grid>
