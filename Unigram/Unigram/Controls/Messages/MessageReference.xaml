@@ -13,7 +13,8 @@
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
     Padding="0"
-    ManipulationMode="TranslateX,TranslateY,System"
+    ManipulationMode="TranslateX,TranslateRailsX,System"
+    AllowFocusOnInteraction="False"
     d:DesignHeight="36"
     mc:Ignorable="d">
 

@@ -27,7 +27,7 @@ namespace Unigram.Controls.Chats
         {
             _parent = parent;
 
-            ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.System;
+            ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateRailsX | ManipulationModes.System;
         }
 
         #region ContentMargin
@@ -50,7 +50,7 @@ namespace Unigram.Controls.Chats
                 e.Handled = CantSelect();
             }
 
-            //base.OnPointerPressed(e);
+            base.OnPointerPressed(e);
         }
 
         public override bool CantSelect()
@@ -58,12 +58,36 @@ namespace Unigram.Controls.Chats
             return ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message && message.IsService();
         }
 
+        private bool CantReply()
+        {
+            if (ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
+            {
+                var chat = message.GetChat();
+                if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
+                {
+                    var supergroup = _parent.ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
+                    if (supergroup.IsChannel)
+                    {
+                        return !(supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator);
+                    }
+                    else if (supergroup.Status is ChatMemberStatusRestricted restricted)
+                    {
+                        return !restricted.CanSendMessages;
+                    }
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
         protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs e)
         {
-            //if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch || CantSelect())
-            //{
-            //    e.Complete();
-            //}
+            if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch || CantSelect() || CantReply())
+            {
+                e.Complete();
+            }
 
             base.OnManipulationStarted(e);
         }
@@ -76,11 +100,6 @@ namespace Unigram.Controls.Chats
             {
                 var presenter = VisualTreeHelper.GetChild(this, 0) as ListViewItemPresenter;
                 _visual = ElementCompositionPreview.GetElementVisual(presenter);
-
-                if (e.Container.PointerCaptures != null && e.Container.PointerCaptures.Count > 0)
-                {
-                    e.Container.ReleasePointerCaptures();
-                }
             }
 
             if (_indicator == null && ApiInfo.CanUseDirectComposition /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
@@ -132,6 +151,7 @@ namespace Unigram.Controls.Chats
                 _indicator.Opacity = percent;
             }
 
+            e.Container.ReleasePointerCaptures();
             base.OnManipulationDelta(e);
         }
 
@@ -139,26 +159,30 @@ namespace Unigram.Controls.Chats
         {
             e.Handled = true;
 
-            var visual = _visual;
-            if (visual != null)
+            CompositionAnimation CreateAnimation(Compositor compositor, Vector3 initial, Vector3 final)
             {
-                CompositionAnimation animation;
                 if (ApiInfo.CanUseDirectComposition)
                 {
-                    var temp = visual.Compositor.CreateSpringVector3Animation();
-                    temp.InitialValue = visual.Offset;
-                    temp.FinalValue = new Vector3();
-                    animation = temp;
+                    var temp = compositor.CreateSpringVector3Animation();
+                    temp.InitialValue = initial;
+                    temp.FinalValue = final;
+
+                    return temp;
                 }
                 else
                 {
-                    var temp = visual.Compositor.CreateVector3KeyFrameAnimation();
-                    temp.InsertKeyFrame(0, visual.Offset);
-                    temp.InsertKeyFrame(1, new Vector3());
-                    animation = temp;
-                }
+                    var temp = compositor.CreateVector3KeyFrameAnimation();
+                    temp.InsertKeyFrame(0, initial);
+                    temp.InsertKeyFrame(1, final);
 
-                visual.StartAnimation("Offset", animation);
+                    return temp;
+                }
+            }
+
+            var visual = _visual;
+            if (visual != null)
+            {
+                visual.StartAnimation("Offset", CreateAnimation(visual.Compositor, visual.Offset, new Vector3()));
             }
 
             var indicator = _indicator;
@@ -166,25 +190,12 @@ namespace Unigram.Controls.Chats
             {
                 var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
-                CompositionAnimation animation;
-                if (ApiInfo.CanUseDirectComposition)
-                {
-                    var temp = visual.Compositor.CreateSpringVector3Animation();
-                    temp.InitialValue = indicator.Offset;
-                    temp.FinalValue = new Vector3((float)ActualWidth, ((float)ActualHeight - 30) / 2, 0);
-                    animation = temp;
-                }
-                else
-                {
-                    var temp = visual.Compositor.CreateVector3KeyFrameAnimation();
-                    temp.InsertKeyFrame(0, indicator.Offset);
-                    temp.InsertKeyFrame(1, new Vector3((float)ActualWidth, ((float)ActualHeight - 30) / 2, 0));
-                    animation = temp;
-                }
+                var width = (float)ActualWidth;
+                var height = (float)ActualHeight;
 
                 indicator.Opacity = 1;
                 indicator.Scale = new Vector3(1);
-                indicator.StartAnimation("Offset", animation);
+                indicator.StartAnimation("Offset", CreateAnimation(visual.Compositor, indicator.Offset, new Vector3(width, (height - 30) / 2, 0)));
 
                 batch.Completed += (s, args) =>
                 {

@@ -155,8 +155,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (2UL << 48) | (2UL << 32) | (1850UL << 16);
-        public const string CurrentChangelog = "- Sort pinned chats from Settings > Advanced.\r\n- Clear recent stickers from Settings > Stickers.\r\n- Bug fixes and improvements.";
+        public const ulong CurrentVersion = (2UL << 48) | (3UL << 32) | (1924UL << 16);
+        public const string CurrentChangelog = "- Swipe left on any message to reply to it.\r\n- Manage basic groups administrators.\r\n- Bug fixes and improvements.";
 
         public int Session => _session;
 
