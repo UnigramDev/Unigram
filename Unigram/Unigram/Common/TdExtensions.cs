@@ -272,6 +272,11 @@ namespace Unigram.Common
                  string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
         }
 
+        public static InputThumbnail ToInputThumbnail(this PhotoSize photo)
+        {
+            return new InputThumbnail(new InputFileId(photo.Photo.Id), photo.Width, photo.Height);
+        }
+
         public static IEnumerable<FormattedText> Split(this FormattedText text, int maxLength)
         {
             int count = (int)Math.Ceiling(text.Text.Length / (double)maxLength);
